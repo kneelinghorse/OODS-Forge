@@ -47,14 +47,12 @@
         "theme": {
           "type": "string",
           "enum": ["light", "dark"],
-          "default": "light",
-          "description": "Application and embedded chart theme. Workflow shells set this scope on html and body, including at mount."
+          "description": "Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults."
         },
         "brand": {
           "type": "string",
           "enum": ["A", "B"],
-          "default": "A",
-          "description": "Token brand shared by the generated shell and embedded charts."
+          "description": "Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A."
         },
         "typescript": {
           "type": "boolean",

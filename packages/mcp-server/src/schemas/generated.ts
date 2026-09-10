@@ -1247,11 +1247,11 @@ export namespace CodeGenerateInputSchema {
     };
     options?: {
       /**
-       * Application and embedded chart theme. Workflow shells set this scope on html and body, including at mount.
+       * Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults.
        */
       theme?: 'light' | 'dark';
       /**
-       * Token brand shared by the generated shell and embedded charts.
+       * Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A.
        */
       brand?: 'A' | 'B';
       /**

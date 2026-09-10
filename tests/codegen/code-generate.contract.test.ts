@@ -367,6 +367,15 @@ describe('code.generate contracts — HTML', () => {
     expect(result.imports).toEqual([]);
   });
 
+  it.each([{ theme: 'dark', brand: 'B' }, { theme: 'light', brand: 'A' }] as const)('applies an explicit HTML scope once: %j', async options => {
+    const result = await handle({ schema: SIMPLE_SCHEMA, framework: 'html', options });
+    expect(result.status).toBe('ok');
+    expect(result.code).toContain(`<html lang="en" data-theme="${options.theme}" data-brand="${options.brand}">`);
+    expect(result.code).toContain(`<body data-theme="${options.theme}" data-brand="${options.brand}">`);
+    expect(result.code).toContain(`:root { color-scheme: ${options.theme}; }`);
+    expect(result.code.match(/#oods-preview-root \{/g)).toHaveLength(1);
+  });
+
   it('matches repl.render document mode output', async () => {
     const codeGenResult = await handle({ schema: NESTED_SCHEMA, framework: 'html' });
 

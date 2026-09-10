@@ -244,8 +244,9 @@ export async function handle(
   const options: CodegenOptions = {
     typescript: input.options?.typescript ?? rc.typescript ?? true,
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
-    theme: input.options?.theme ?? 'light',
-    brand: input.options?.brand ?? 'A',
+    // App shells default to light/A. Unscoped HTML retains the existing repl document contract.
+    theme: input.options?.theme ?? (framework === 'html' ? undefined : 'light'),
+    brand: input.options?.brand ?? (framework === 'html' ? undefined : 'A'),
   };
 
   if (framework === 'html' && options.styling === 'tailwind') {

@@ -32,9 +32,11 @@ describe('generated applications own their token scope (s191)', () => {
     const explicit = await generate({ schema: composition.schema, framework, options: { theme: 'light', brand: 'A' } });
     expect(implicit.artifact).toEqual(explicit.artifact);
   }, 60_000);
-  it('HTML selects a real brand and propagates explicit scope', async () => {
+  it('HTML preserves unscoped compatibility and propagates an explicit application scope', async () => {
     const composition = { schema: { version: '1.0', screens: [{ id: 'screen', component: 'Text', props: { text: 'Theme proof' } }] } };
-    const light = await generate({ schema: composition.schema, framework: 'html' });
+    const legacy = await generate({ schema: composition.schema, framework: 'html' });
+    expect(legacy.code).toContain('data-brand="default"');
+    const light = await generate({ schema: composition.schema, framework: 'html', options: { theme: 'light' } });
     expect(light.code).toContain('data-brand="A"');
     expect(light.code).not.toContain('data-brand="default"');
     const dark = await generate({ schema: composition.schema, framework: 'html', options: { theme: 'dark', brand: 'B' } });

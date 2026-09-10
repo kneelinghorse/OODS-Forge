@@ -151,12 +151,13 @@ describe('fragment-anchor contract: data-oods-label durable, data-oods-node-id b
 
     // Concrete pins of the mechanism:
     //  - `header` precedes the tab block, so both its label and node-id are stable.
-    //  - `metadata` follows the tab block, so its label is stable but its
-    //    node-id shifts when tabs are added — the durable-vs-best-effort split.
+    //  - `tab-3` survives template/section recomposition but its allocated id shifts.
+    //    The former metadata pin was an undeclared AuditTimeline, removed in s191-m03.
+    //    A removed slot is outside this surviving-anchor contract.
     expect(fewer.has('header') && more.has('header')).toBe(true);
     expect(more.get('header')).toBe(fewer.get('header'));
 
-    expect(fewer.has('metadata') && more.has('metadata')).toBe(true);
-    expect(more.get('metadata')).not.toBe(fewer.get('metadata'));
+    expect(fewer.has('tab-3') && more.has('tab-3')).toBe(true);
+    expect(more.get('tab-3')).not.toBe(fewer.get('tab-3'));
   });
 });
