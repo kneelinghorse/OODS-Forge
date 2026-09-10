@@ -1,0 +1,172 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+
+ ✓ |core| tests/tokens/brand-css-no-tie.test.ts (6 tests) 6ms
+ ❯ |core| tests/tokens/brand-theme-matrix.test.ts (10 tests | 2 failed) 9ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > emits a block for every one of the six brand x theme scopes 1ms
+   × s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > A/base: every brand token carries its OWN scope's source value 4ms
+     → expected 43 to be 44 // Object.is equality
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > A/dark: every brand token carries its OWN scope's source value 0ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > A/hc: every brand token carries its OWN scope's source value 0ms
+   × s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > B/base: every brand token carries its OWN scope's source value 0ms
+     → expected 43 to be 44 // Object.is equality
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > B/dark: every brand token carries its OWN scope's source value 0ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > B/hc: every brand token carries its OWN scope's source value 0ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > no scope carries another scope's value (cross-contamination control) 0ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > the cross-contamination control is discriminating (seeded contamination) 2ms
+   ✓ s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > regression pin: brand A base is its own colour, never the hc forced-colors keyword 0ms
+ ❯ |core| tests/tokens/brand-semantic-bridge.test.ts (14 tests | 5 failed) 16ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the authored map accounts for every slot in the frozen contract with no recorded gaps 2ms
+   × s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the 18 ratified focus cells equal the independent source contract 7ms
+     → the ratified focus token values changed; regenerate CSS only after reconciling the source contract: expected [ …(2) ] to deeply equal []
+   × s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the focus contract is discriminating against a reverted branded-light token 1ms
+     → expected [ …(2) ] to deeply equal []
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > emits a bridge block for every one of the six cells 0ms
+   × s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the base row also matches the MCP theme vocabulary ('light', not just 'base') 1ms
+     → A light --theme-focus-ring-outer: expected 'oklch(0.495 0.17 45)' to be '{color.brand.A.text.accent}' // Object.is equality
+   × s167 m02 — the brand→semantic bridge in the emitted CSS artifact > A/base: every bridged slot carries THIS cell's brand value 0ms
+     → A/base bridge is wrong:
+  --theme-focus-ring-outer: expected "{color.brand.A.text.accent}", got "oklch(0.495 0.17 45)": expected [ Array(1) ] to deeply equal []
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > A/dark: every bridged slot carries THIS cell's brand value 0ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > A/hc: every bridged slot carries THIS cell's brand value 0ms
+   × s167 m02 — the brand→semantic bridge in the emitted CSS artifact > B/base: every bridged slot carries THIS cell's brand value 0ms
+     → B/base bridge is wrong:
+  --theme-focus-ring-outer: expected "{color.brand.B.text.accent}", got "oklch(0.48 0.14 238)": expected [ Array(1) ] to deeply equal []
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > B/dark: every bridged slot carries THIS cell's brand value 0ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > B/hc: every bridged slot carries THIS cell's brand value 0ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > no cell carries another cell's value (cross-cell control) 0ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the cross-cell control is discriminating (seeded leak) 2ms
+   ✓ s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the bridge is not a no-op: cells genuinely diverge from the :root default 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/brand-semantic-bridge.test.ts > s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the 18 ratified focus cells equal the independent source contract
+AssertionError: the ratified focus token values changed; regenerate CSS only after reconciling the source contract: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "A/base --theme-focus-ring-outer: expected \"oklch(0.70875 0.098 67.5)\", got \"{color.brand.A.text.accent}\"",
++   "B/base --theme-focus-ring-outer: expected \"oklch(0.705 0.07835 243.4)\", got \"{color.brand.B.text.accent}\"",
++ ]
+
+ ❯ tests/tokens/brand-semantic-bridge.test.ts:220:7
+    218|       findFocusContractMismatches(table, contract),
+    219|       'the ratified focus token values changed; regenerate CSS only af…
+    220|     ).toEqual([]);
+       |       ^
+    221|   });
+    222| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  |core| tests/tokens/brand-semantic-bridge.test.ts > s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the focus contract is discriminating against a reverted branded-light token
+AssertionError: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "A/base --theme-focus-ring-outer: expected \"oklch(0.70875 0.098 67.5)\", got \"{color.brand.A.text.accent}\"",
++   "B/base --theme-focus-ring-outer: expected \"oklch(0.705 0.07835 243.4)\", got \"{color.brand.B.text.accent}\"",
++ ]
+
+ ❯ tests/tokens/brand-semantic-bridge.test.ts:229:58
+    227|       'A/base --theme-focus-text',
+    228|     );
+    229|     expect(findFocusContractMismatches(table, contract)).toEqual([]);
+       |                                                          ^
+    230|   });
+    231| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  |core| tests/tokens/brand-semantic-bridge.test.ts > s167 m02 — the brand→semantic bridge in the emitted CSS artifact > the base row also matches the MCP theme vocabulary ('light', not just 'base')
+AssertionError: A light --theme-focus-ring-outer: expected 'oklch(0.495 0.17 45)' to be '{color.brand.A.text.accent}' // Object.is equality
+
+Expected: "{color.brand.A.text.accent}"
+Received: "oklch(0.495 0.17 45)"
+
+ ❯ tests/tokens/brand-semantic-bridge.test.ts:255:65
+    253|       const baseExpected = table.get(`${brand}/base`)!;
+    254|       for (const [slot, want] of baseExpected) {
+    255|         expect(lightBlock!.get(slot), `${brand} light ${slot}`).toBe(w…
+       |                                                                 ^
+    256|       }
+    257|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  |core| tests/tokens/brand-semantic-bridge.test.ts > s167 m02 — the brand→semantic bridge in the emitted CSS artifact > A/base: every bridged slot carries THIS cell's brand value
+AssertionError: A/base bridge is wrong:
+  --theme-focus-ring-outer: expected "{color.brand.A.text.accent}", got "oklch(0.495 0.17 45)": expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "--theme-focus-ring-outer: expected \"{color.brand.A.text.accent}\", got \"oklch(0.495 0.17 45)\"",
++ ]
+
+ ❯ tests/tokens/brand-semantic-bridge.test.ts:265:86
+    263|         expect(table.get(`${brand}/${theme}`)!.size).toBe(41);
+    264|         const wrong = findWrongSlots(blocks, table, brand, theme);
+    265|         expect(wrong, `${brand}/${theme} bridge is wrong:\n  ${wrong.j…
+       |                                                                                      ^
+    266|       });
+    267|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  |core| tests/tokens/brand-semantic-bridge.test.ts > s167 m02 — the brand→semantic bridge in the emitted CSS artifact > B/base: every bridged slot carries THIS cell's brand value
+AssertionError: B/base bridge is wrong:
+  --theme-focus-ring-outer: expected "{color.brand.B.text.accent}", got "oklch(0.48 0.14 238)": expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "--theme-focus-ring-outer: expected \"{color.brand.B.text.accent}\", got \"oklch(0.48 0.14 238)\"",
++ ]
+
+ ❯ tests/tokens/brand-semantic-bridge.test.ts:265:86
+    263|         expect(table.get(`${brand}/${theme}`)!.size).toBe(41);
+    264|         const wrong = findWrongSlots(blocks, table, brand, theme);
+    265|         expect(wrong, `${brand}/${theme} bridge is wrong:\n  ${wrong.j…
+       |                                                                                      ^
+    266|       });
+    267|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  |core| tests/tokens/brand-theme-matrix.test.ts > s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > A/base: every brand token carries its OWN scope's source value
+ FAIL  |core| tests/tokens/brand-theme-matrix.test.ts > s167 m01 — brand x theme matrix is scope-correct in the emitted CSS > B/base: every brand token carries its OWN scope's source value
+AssertionError: expected 43 to be 44 // Object.is equality
+
+- Expected
++ Received
+
+- 44
++ 43
+
+ ❯ tests/tokens/brand-theme-matrix.test.ts:198:31
+    196|         // 44 brand-source leaves per file — distinct from the 41 sema…
+    197|         // A table that silently emptied would otherwise pass vacuousl…
+    198|         expect(expected.size).toBe(44);
+       |                               ^
+    199| 
+    200|         const wrong = findWrongValues(blocks, table, brand, theme);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  7 failed | 23 passed (30)
+   Start at  13:39:39
+   Duration  307ms (transform 64ms, setup 0ms, collect 94ms, tests 31ms, environment 0ms, prepare 165ms)
+

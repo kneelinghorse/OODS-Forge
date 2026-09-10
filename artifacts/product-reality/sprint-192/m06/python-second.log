@@ -1,0 +1,28 @@
+......................F...                                [100%]
+=================================== FAILURES ===================================
+______ RefreshStructuredDataTest.test_structured_payloads_match_snapshot _______
+
+self = <test_refresh_structured_data.RefreshStructuredDataTest testMethod=test_structured_payloads_match_snapshot>
+
+    def test_structured_payloads_match_snapshot(self) -> None:
+        # Preserve the frozen s182 target; a routine refresh replaces the live planning export.
+        frozen_dir = CMOS_ROOT.parent / "artifacts/structured-data"
+        expected_components = json.loads((frozen_dir / "oods-components-2026-09-04.json").read_text())
+        expected_tokens = json.loads((frozen_dir / "oods-tokens-2026-09-04.json").read_text())
+        historical_projection = copy.deepcopy({key: value for key, value in self.components_payload.items() if key != "obligationScope"})
+        # Sprint 190 placed the real area chart on Subscription/detail. Preserve
+        # the frozen s182 comparison after checking exactly those later inputs.
+        area = next(row for row in historical_projection["traits"] if row["name"] == "MarkArea")
+        chart = next(row for row in area["parameters"] if row["name"] == "chart")
+        self.assertEqual(chart["type"], "object")
+        self.assertEqual(area["objects"], ["Subscription"])
+        area["parameters"].remove(chart)
+        area["objects"] = []
+        subscription = next(row for row in historical_projection["objects"] if row["name"] == "Subscription")
+>       self.assertIn("MarkArea", subscription["traits"])
+E       AssertionError: 'MarkArea' not found in [{'reference': 'lifecycle/Stateful', 'alias': 'SubscriptionLifecycle', 'parameters': {'states': ['future', 'trialing', 'active', 'paused', 'pending_cancellation', 'past_due', 'unpaid', 'terminated'], 'initialState': 'future'}}, {'reference': 'SaaSBillingBillable', 'alias': 'PlanDetails', 'parameters': {'supportedIntervals': ['monthly', 'quarterly', 'annual', 'biennial']}}, {'reference': 'SaaSBillingMetered', 'alias': 'UsageMeter', 'parameters': {'unit': 'seats', 'rolloverStrategy': 'carry_forward', 'sampleWindowDays': 30}}, {'reference': 'SaaSBillingRefundable', 'alias': 'RefundPolicy', 'parameters': {}}]
+
+cmos/tests/test_refresh_structured_data.py:377: AssertionError
+=========================== short test summary info ============================
+FAILED cmos/tests/test_refresh_structured_data.py::RefreshStructuredDataTest::test_structured_payloads_match_snapshot
+1 failed, 25 passed, 15 subtests passed in 2.77s

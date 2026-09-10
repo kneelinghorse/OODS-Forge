@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import copy
 import sys
 import tempfile
 import unittest
@@ -26,6 +27,7 @@ from scripts.refresh_structured_data import (  # noqa: E402
     load_component_intake,
     parse_args,
     project_trait_recipe_surfaces,
+    project_measured_surfaces,
     project_foundation_surfaces,
     refresh_structured_data,
 )
@@ -47,6 +49,68 @@ class RefreshStructuredDataTest(unittest.TestCase):
             generated_at=EXPECTED_GENERATED_AT,
             component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
         )
+
+    def test_current_measurements_preserve_every_obligation_and_do_not_approve_classes(self) -> None:
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        projected = project_measured_surfaces(baseline)
+        self.assertEqual(set(projected), set(baseline))
+        for surface in ("accessibility", "theme"):
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 75)
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "unavailable" for row in projected.values()), 34)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "verified" for row in projected.values()), 24)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "not-applicable" for row in projected.values()), 51)
+        for row in projected.values():
+            self.assertEqual(row["reconciliationState"], "proposed-awaiting-derek-approval")
+            for surface in ("accessibility", "theme", "interaction"):
+                cell = row["surfaces"][surface]
+                self.assertNotEqual(cell["state"], "unverified")
+                if cell["state"] in ("not-applicable", "unavailable"):
+                    self.assertTrue(cell["reason"])
+        self.assertEqual(projected["PaymentEventTimeline"]["proposedClassification"], "alias")
+        self.assertEqual(baseline["PaymentEventTimeline"]["proposedClassification"], "authoring-only")
+
+    def test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        for mutation, surface in (("axe", "accessibility"), ("theme", "theme"), ("readiness", "accessibility"), ("interaction", "interaction")):
+            def incomplete(path):
+                document = original(path)
+                name = str(path)
+                if mutation == "axe" and name.endswith("m05/react-measured.json"):
+                    for file in document["testResults"]:
+                        file["assertionResults"] = [test for test in file["assertionResults"] if "for the Button shared scenario" not in test["fullName"]]
+                if mutation == "theme" and name.endswith("ci-theme/react/report.json"):
+                    document["cells"][0]["rows"] = [row for row in document["cells"][0]["rows"] if row["componentId"] != "Button"]
+                if name.endswith("components-react/evidence/react-readiness.v1.json"):
+                    row = next(row for row in document["rows"] if row["componentId"] == "Button")
+                    if mutation == "readiness":
+                        row["evidence"]["frameworkScenario"]["status"] = "missing"
+                    if mutation == "interaction":
+                        row["evidence"]["interaction"]["classification"] = "not-applicable"
+                        row["evidence"]["interaction"]["reason"] = "Wrongly declared static"
+                return document
+            with self.subTest(mutation=mutation), patch("scripts.refresh_structured_data.load_json", side_effect=incomplete):
+                self.assertEqual(project_measured_surfaces(baseline)["Button"]["surfaces"][surface]["state"], "fail")
+
+    def test_theme_receipts_and_pending_approval_are_integrity_boundaries(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        for mutation, message in (("hash", "hash mismatch"), ("approval", "without approval"), ("membership", "all obligations")):
+            def corrupt(path):
+                document = original(path)
+                if mutation == "hash" and str(path).endswith("ci-theme/react/report.json"):
+                    document["cells"][0]["screenshotSha256"] = "0" * 64
+                if str(path).endswith("component-reconciliation.proposed.v2.json"):
+                    if mutation == "approval":
+                        document["approvedRuntimeCensus"] = 109
+                    elif mutation == "membership":
+                        document["rows"].pop()
+                return document
+            with self.subTest(mutation=mutation), patch("scripts.refresh_structured_data.load_json", side_effect=corrupt):
+                with self.assertRaisesRegex(ValueError, message):
+                    project_measured_surfaces(baseline)
 
     def test_foundation_projection_promotes_only_the_reviewed_14_target_pairs(self) -> None:
         frozen = COMPONENT_CAPABILITY_PATH.read_bytes()
@@ -143,7 +207,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
         self.assertEqual(scope["controllingObligationDenominator"], len(self.components_payload["components"]))
         self.assertEqual(scope["controllingObligationDenominator"], 109)
         self.assertIsNone(scope["approvedRuntimeCensus"])
-        self.assertEqual(scope["classificationStatus"], "historical-proposals-unapproved")
+        self.assertEqual(scope["classificationStatus"], "proposed-awaiting-derek-approval")
         original = json.loads((CMOS_ROOT.parent / "packages/component-contracts/registry/component-reconciliation.proposed.v1.json").read_text())
         self.assertIsNone(original["approvedRuntimeCensus"])
 
@@ -300,7 +364,19 @@ class RefreshStructuredDataTest(unittest.TestCase):
         frozen_dir = CMOS_ROOT.parent / "artifacts/structured-data"
         expected_components = json.loads((frozen_dir / "oods-components-2026-09-04.json").read_text())
         expected_tokens = json.loads((frozen_dir / "oods-tokens-2026-09-04.json").read_text())
-        historical_projection = {key: value for key, value in self.components_payload.items() if key != "obligationScope"}
+        historical_projection = copy.deepcopy({key: value for key, value in self.components_payload.items() if key != "obligationScope"})
+        # Sprint 190 placed the real area chart on Subscription/detail. Preserve
+        # the frozen s182 comparison after checking exactly those later inputs.
+        area = next(row for row in historical_projection["traits"] if row["name"] == "MarkArea")
+        chart = next(row for row in area["parameters"] if row["name"] == "chart")
+        self.assertEqual(chart["type"], "object")
+        self.assertEqual(area["objects"], ["Subscription"])
+        area["parameters"].remove(chart)
+        area["objects"] = []
+        subscription = next(row for row in historical_projection["objects"] if row["source"] == "objects/core/Subscription.object.yaml")
+        placement = next(row for row in subscription["traits"] if row["reference"] == "viz/MarkArea")
+        self.assertEqual(placement["parameters"]["chart"]["source"], "payment-events")
+        subscription["traits"].remove(placement)
         self.assertEqual(historical_projection, expected_components)
         self.assertEqual(self.tokens_payload, expected_tokens)
 
@@ -314,7 +390,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "d022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3",
+            "3148149776d59d7d8c4c7195818e644adf6bd76a8ccce25db5e0df9dd7bee13e",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),

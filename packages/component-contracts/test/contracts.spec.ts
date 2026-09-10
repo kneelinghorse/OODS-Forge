@@ -71,8 +71,8 @@ describe('Sprint 182 canonical component truth plane', () => {
     for (const scenario of sharedScenarios) {
       expect(scenario.oodsComponentId).toBeTruthy();
       expect(Object.keys(scenario.props).length + Object.keys(scenario.slots).length).toBeGreaterThan(0);
-      expect(scenario.event.name).toBeTruthy();
-      expect(scenario.event.trigger).toBeTruthy();
+      expect(scenario.renderExpectation.name).toBeTruthy();
+      expect(scenario.renderExpectation.trigger).toBeTruthy();
       expect(scenario.assertions.length).toBeGreaterThan(0);
     }
   });

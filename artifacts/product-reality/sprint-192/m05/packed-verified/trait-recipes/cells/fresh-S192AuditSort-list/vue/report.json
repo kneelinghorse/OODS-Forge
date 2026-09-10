@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s192-m05",
+  "cellRelative": "cells/fresh-S192AuditSort-list/vue",
+  "reportPath": "cells/fresh-S192AuditSort-list/vue/report.json",
+  "schema": "fresh-S192AuditSort-list",
+  "schemaRef": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+  "composition": {
+    "handler": "design.compose",
+    "input": {
+      "object": "S192AuditSort",
+      "context": "list"
+    },
+    "sourceHead": "0539cf1885bff0a2ac9b7a203112d2cdc71f4c27",
+    "sourceDiffSha256": "sha256:24718850d2f0cf1b7d27784b5edd01608288122450d0947f7c7f01ff8db08503",
+    "sourceDiffPath": "live-generation/source.diff",
+    "schemaSha256": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+    "composedAt": "2026-09-10T19:29:33.693Z"
+  },
+  "framework": "vue",
+  "status": "failed",
+  "selected": 8,
+  "passed": 3,
+  "notApplicable": 0,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-S192AuditSort-list/vue/logs/install.log",
+        "cells/fresh-S192AuditSort-list/vue/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-S192AuditSort-list/vue/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-S192AuditSort-list/vue/logs/production-build.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "failed",
+      "logs": [
+        "cells/fresh-S192AuditSort-list/vue/logs/server-render-build.log",
+        "cells/fresh-S192AuditSort-list/vue/logs/server-render-render.log"
+      ],
+      "reason": "fresh-S192AuditSort-list/vue: server render omitted generated selector handleSortChange."
+    },
+    {
+      "name": "mount",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after server-render failed."
+    },
+    {
+      "name": "hydration",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after server-render failed."
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after server-render failed."
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after server-render failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "applicableGateCount": 8,
+    "provenCount": 3,
+    "notApplicableCount": 0,
+    "notApplicable": [],
+    "namedUnprovenCount": 5,
+    "namedUnproven": [
+      {
+        "name": "server-render",
+        "status": "failed",
+        "reason": "fresh-S192AuditSort-list/vue: server render omitted generated selector handleSortChange."
+      },
+      {
+        "name": "mount",
+        "status": "unproven",
+        "reason": "Not reached after server-render failed."
+      },
+      {
+        "name": "hydration",
+        "status": "unproven",
+        "reason": "Not reached after server-render failed."
+      },
+      {
+        "name": "shared-css-resolution",
+        "status": "unproven",
+        "reason": "Not reached after server-render failed."
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after server-render failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "fresh-S192AuditSort-list/vue: server render omitted generated selector handleSortChange."
+}

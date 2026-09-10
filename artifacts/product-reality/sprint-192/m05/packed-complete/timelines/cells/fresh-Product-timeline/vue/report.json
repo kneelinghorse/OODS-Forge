@@ -1,0 +1,959 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s192-m05",
+  "cellRelative": "cells/fresh-Product-timeline/vue",
+  "reportPath": "cells/fresh-Product-timeline/vue/report.json",
+  "schema": "fresh-Product-timeline",
+  "schemaRef": "sha256:114dabb60549c1d406a062bcc2e159bba82157e7d6c7d844d9b66963cc0c23a5",
+  "composition": {
+    "handler": "design.compose",
+    "input": {
+      "object": "Product",
+      "context": "timeline"
+    },
+    "sourceHead": "edfbd1d0afadec0b4dd954ac490bbf672434e88f",
+    "sourceDiffSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sourceDiffPath": "live-generation/source.diff",
+    "schemaSha256": "sha256:114dabb60549c1d406a062bcc2e159bba82157e7d6c7d844d9b66963cc0c23a5",
+    "composedAt": "2026-09-10T19:38:56.090Z"
+  },
+  "framework": "vue",
+  "status": "passed",
+  "selected": 8,
+  "passed": 7,
+  "notApplicable": 1,
+  "failed": 0,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/install.log",
+        "cells/fresh-Product-timeline/vue/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/production-build.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/server-render-build.log",
+        "cells/fresh-Product-timeline/vue/logs/server-render-render.log"
+      ],
+      "detail": {
+        "bytes": 2108,
+        "sha256": "sha256:09b136215c69c99c7416e027779cc07da8c0fb55a5b2e4d174381baa89a67bd7",
+        "requiredSsrNodes": [
+          {
+            "nodeId": "screen-timeline-14",
+            "component": "Stack",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-header-1",
+            "component": "Stack",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-header-1-title",
+            "component": "Text",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-entries-13-empty",
+            "component": "Banner",
+            "requiredInitially": false,
+            "reason": "populated collection timeline-entries-13",
+            "present": false,
+            "passed": true
+          },
+          {
+            "nodeId": "slot-entry-0-4-0",
+            "component": "TimelineEntryLabel",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "slot-entry-0-4-1",
+            "component": "TimelineEntryLabel",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/browser-proof.log"
+      ],
+      "detail": {
+        "rootId": "screen-timeline-14",
+        "componentCounts": {
+          "Card": 2,
+          "Stack": 2,
+          "Text": 1,
+          "TimelineEntryLabel": 2
+        },
+        "mountedExpectedComponents": [
+          "Card",
+          "Stack",
+          "Text",
+          "TimelineEntryLabel"
+        ],
+        "generatedCoreComponents": [
+          "Banner",
+          "Stack",
+          "Text",
+          "TimelineEntryLabel"
+        ],
+        "generatedPortedComponents": [],
+        "labelVisibility": [],
+        "boundValues": [
+          {
+            "nodeId": "slot-entry-0-4-0",
+            "field": "label",
+            "kind": "family-text",
+            "expected": "Consumer label",
+            "editable": false,
+            "actual": "Consumer label",
+            "visible": true,
+            "passed": true
+          }
+        ],
+        "requiredMounts": [
+          {
+            "nodeId": "screen-timeline-14",
+            "component": "Stack",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-header-1",
+            "component": "Stack",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-header-1-title",
+            "component": "Text",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "timeline-entries-13-empty",
+            "component": "Banner",
+            "requiredInitially": false,
+            "reason": "populated collection timeline-entries-13",
+            "present": false,
+            "passed": true
+          },
+          {
+            "nodeId": "slot-entry-0-4-0",
+            "component": "TimelineEntryLabel",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "slot-entry-0-4-1",
+            "component": "TimelineEntryLabel",
+            "requiredInitially": true,
+            "present": true,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/browser-proof.log"
+      ],
+      "detail": {
+        "hydrationInvariant": {
+          "before": {
+            "rootChildren": [
+              {
+                "tag": "DIV",
+                "id": "screen-timeline-14",
+                "component": "Stack"
+              }
+            ],
+            "elements": [
+              {
+                "tag": "DIV",
+                "id": "screen-timeline-14",
+                "component": "Stack",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-header-1",
+                "component": "Stack",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "timeline-header-1-title",
+                "component": "Text",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SECTION",
+                "id": "timeline-entries-13",
+                "component": null,
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-entries-13-entry-0",
+                "component": "Card",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "slot-entry-0-4-0",
+                "component": "TimelineEntryLabel",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-entries-13-entry-1",
+                "component": "Card",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "slot-entry-0-4-1",
+                "component": "TimelineEntryLabel",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              }
+            ]
+          },
+          "after": {
+            "rootChildren": [
+              {
+                "tag": "DIV",
+                "id": "screen-timeline-14",
+                "component": "Stack"
+              }
+            ],
+            "elements": [
+              {
+                "tag": "DIV",
+                "id": "screen-timeline-14",
+                "component": "Stack",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-header-1",
+                "component": "Stack",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "timeline-header-1-title",
+                "component": "Text",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SECTION",
+                "id": "timeline-entries-13",
+                "component": null,
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-entries-13-entry-0",
+                "component": "Card",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "slot-entry-0-4-0",
+                "component": "TimelineEntryLabel",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "DIV",
+                "id": "timeline-entries-13-entry-1",
+                "component": "Card",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              },
+              {
+                "tag": "SPAN",
+                "id": "slot-entry-0-4-1",
+                "component": "TimelineEntryLabel",
+                "role": null,
+                "selected": null,
+                "hidden": false
+              }
+            ]
+          },
+          "equal": true
+        },
+        "runtimeErrors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/css-proof.log",
+        "cells/fresh-Product-timeline/vue/logs/browser-proof.log"
+      ],
+      "detail": {
+        "files": [
+          "index-5T-uhyJY.css"
+        ],
+        "bytes": 219268,
+        "sha256": "sha256:e569aede85b2bad0ee46fe3f8a8f7c4b9f978a15e69fcf535e0ac9bb38c241eb",
+        "core": true,
+        "ported": true,
+        "requiresPorted": false,
+        "tokens": true,
+        "browser": {
+          "primaryTextToken": "oklch(0.92 0.02 92)",
+          "canvasToken": "oklch(0.18 0.05 45)"
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "not-applicable",
+      "logs": [
+        "cells/fresh-Product-timeline/vue/logs/browser-proof.log",
+        "cells/fresh-Product-timeline/vue/logs/source-ownership.log"
+      ],
+      "reason": "no interactive element declared",
+      "detail": {
+        "interactionEvidence": {
+          "kind": "none",
+          "reason": "no interactive element declared",
+          "disabledPaginationNodeIds": [],
+          "status": "not-applicable",
+          "disabledControls": []
+        },
+        "selectorEvidence": [],
+        "actionCounts": {},
+        "actionArgs": {},
+        "expectedArguments": {},
+        "sourceOwnership": {
+          "generatedFile": "src/GeneratedUI.vue",
+          "bindingMarkerCount": 0,
+          "actionSelectors": [],
+          "generatedOwnsEverySelector": true,
+          "generatedForwardsEveryAction": true,
+          "consumerEntryFiles": [
+            "index.html",
+            "src/consumer-data.ts",
+            "src/consumer.css",
+            "src/main.ts",
+            "src/ssr.ts",
+            "src/window.d.ts",
+            "tsconfig.json",
+            "vite.config.mjs"
+          ],
+          "selectorOccurrencesInConsumerEntries": 0,
+          "consumerComponentDeclarations": [],
+          "interaction": {
+            "kind": "none",
+            "reason": "no interactive element declared",
+            "disabledPaginationNodeIds": []
+          },
+          "generatedInteractionNodeOccurrences": 0
+        }
+      }
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "applicableGateCount": 7,
+    "provenCount": 7,
+    "notApplicableCount": 1,
+    "notApplicable": [
+      {
+        "name": "interaction-evidence",
+        "reason": "no interactive element declared"
+      }
+    ],
+    "namedUnprovenCount": 0,
+    "namedUnproven": [],
+    "balanced": true
+  },
+  "generation": {
+    "sourcePath": "live-generation/fresh-Product-timeline/vue/GeneratedUI.vue",
+    "sourceSha256": "sha256:8914bdcf349fa12a759efc8193a5cb17cb8ebd649a24bf8bdef3a5643ee72b03",
+    "artifactContentHash": "sha256:2acee2280dd8d70dd6f60770d0b3919bd9d5d6883704c797c6b5e3530a5eae9f",
+    "generationLog": "live-generation/fresh-Product-timeline/vue/generation.log",
+    "fingerprint": {
+      "handler": "code.generate",
+      "invocation": "live-in-process",
+      "profile": "build",
+      "sourceOfArtifact": "current-in-run-output",
+      "artifactContentHash": "sha256:2acee2280dd8d70dd6f60770d0b3919bd9d5d6883704c797c6b5e3530a5eae9f",
+      "generatedAt": "2026-09-10T19:38:56.129Z"
+    }
+  },
+  "sourceOwnership": {
+    "generatedFile": "src/GeneratedUI.vue",
+    "bindingMarkerCount": 0,
+    "actionSelectors": [],
+    "generatedOwnsEverySelector": true,
+    "generatedForwardsEveryAction": true,
+    "consumerEntryFiles": [
+      "index.html",
+      "src/consumer-data.ts",
+      "src/consumer.css",
+      "src/main.ts",
+      "src/ssr.ts",
+      "src/window.d.ts",
+      "tsconfig.json",
+      "vite.config.mjs"
+    ],
+    "selectorOccurrencesInConsumerEntries": 0,
+    "consumerComponentDeclarations": [],
+    "interaction": {
+      "kind": "none",
+      "reason": "no interactive element declared",
+      "disabledPaginationNodeIds": []
+    },
+    "generatedInteractionNodeOccurrences": 0
+  },
+  "isolation": {
+    "outsidePnpmWorkspace": true,
+    "freshNodeModules": true,
+    "emptyVerifierOwnedNpmConfiguration": true,
+    "installScripts": false,
+    "localPackagesFromBuiltTarballsOnly": true,
+    "workspaceAliases": false,
+    "workspaceSymlinks": false,
+    "repositorySourceImports": false,
+    "inheritedNodeModules": false,
+    "allResolvedPathsOutsideRepository": true,
+    "installed": [
+      {
+        "name": "@oods/tokens",
+        "version": "0.1.0",
+        "consumerRelative": "node_modules/@oods/tokens"
+      },
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "consumerRelative": "node_modules/@oods/component-contracts"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "consumerRelative": "node_modules/@oods/component-styles"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "consumerRelative": "node_modules/@oods/components-vue"
+      }
+    ]
+  },
+  "localTarballs": [
+    {
+      "name": "@oods/tokens",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-tokens-0.1.0.tgz",
+      "sha256": "sha256:c79e732b9e3867a8cab7277327454fb659f0c45256fe498875d6ca1664ab90c9",
+      "bytes": 238169
+    },
+    {
+      "name": "@oods/component-contracts",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-component-contracts-0.1.0.tgz",
+      "sha256": "sha256:fa77ef39f1453e158a2b07f9dee678d42ae6fb2c8b0666f3e90a6931012a8c62",
+      "bytes": 118132
+    },
+    {
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-component-styles-0.1.0.tgz",
+      "sha256": "sha256:94854db89dfc35e959f4886e90b041810ca173d4920c063dfd05ccddd599803c",
+      "bytes": 11947
+    },
+    {
+      "name": "@oods/components-vue",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-components-vue-0.1.0.tgz",
+      "sha256": "sha256:9c664b03a68e731a48670827b4d05bcc3cab6720d890e65f4076f969e401714d",
+      "bytes": 94336
+    }
+  ],
+  "manifest": {
+    "name": "oods-s184-m06-vue-live-consumer",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+      "@oods/tokens": "file:<consumer-tarballs>/oods-tokens-0.1.0.tgz",
+      "@oods/component-contracts": "file:<consumer-tarballs>/oods-component-contracts-0.1.0.tgz",
+      "@oods/component-styles": "file:<consumer-tarballs>/oods-component-styles-0.1.0.tgz",
+      "@oods/components-vue": "file:<consumer-tarballs>/oods-components-vue-0.1.0.tgz",
+      "vue": "3.5.42",
+      "@vue/server-renderer": "3.5.42"
+    },
+    "devDependencies": {
+      "@types/node": "20.19.21",
+      "@vitejs/plugin-vue": "5.2.4",
+      "@vue/compiler-sfc": "3.5.42",
+      "typescript": "5.9.3",
+      "vite": "6.4.1",
+      "vue-tsc": "3.3.11"
+    }
+  },
+  "browser": {
+    "framework": "vue",
+    "schema": "fresh-Product-timeline",
+    "screenshot": {
+      "file": "mounted.png",
+      "sha256": "sha256:220d048c7f70bf12a891b4273c824e4f67ba79299575b40e174a0d148c84b371"
+    },
+    "boundValues": [
+      {
+        "nodeId": "slot-entry-0-4-0",
+        "field": "label",
+        "kind": "family-text",
+        "expected": "Consumer label",
+        "editable": false,
+        "actual": "Consumer label",
+        "visible": true,
+        "passed": true
+      }
+    ],
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "mount": "passed",
+    "rootId": "screen-timeline-14",
+    "rootCount": 1,
+    "hydration": "passed",
+    "hydrationProbe": {
+      "selector": null,
+      "selectorCount": 0,
+      "eventHandlerAttached": false,
+      "reusedServerNodes": {
+        "root": true,
+        "action": true,
+        "everyCapturedNode": true
+      },
+      "attachment": {
+        "attached": true,
+        "containerProperty": "__vue_app__",
+        "rootProperty": null
+      }
+    },
+    "hydrationInvariant": {
+      "before": {
+        "rootChildren": [
+          {
+            "tag": "DIV",
+            "id": "screen-timeline-14",
+            "component": "Stack"
+          }
+        ],
+        "elements": [
+          {
+            "tag": "DIV",
+            "id": "screen-timeline-14",
+            "component": "Stack",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-header-1",
+            "component": "Stack",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "timeline-header-1-title",
+            "component": "Text",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SECTION",
+            "id": "timeline-entries-13",
+            "component": null,
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-entries-13-entry-0",
+            "component": "Card",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "slot-entry-0-4-0",
+            "component": "TimelineEntryLabel",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-entries-13-entry-1",
+            "component": "Card",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "slot-entry-0-4-1",
+            "component": "TimelineEntryLabel",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          }
+        ]
+      },
+      "after": {
+        "rootChildren": [
+          {
+            "tag": "DIV",
+            "id": "screen-timeline-14",
+            "component": "Stack"
+          }
+        ],
+        "elements": [
+          {
+            "tag": "DIV",
+            "id": "screen-timeline-14",
+            "component": "Stack",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-header-1",
+            "component": "Stack",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "timeline-header-1-title",
+            "component": "Text",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SECTION",
+            "id": "timeline-entries-13",
+            "component": null,
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-entries-13-entry-0",
+            "component": "Card",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "slot-entry-0-4-0",
+            "component": "TimelineEntryLabel",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "DIV",
+            "id": "timeline-entries-13-entry-1",
+            "component": "Card",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          },
+          {
+            "tag": "SPAN",
+            "id": "slot-entry-0-4-1",
+            "component": "TimelineEntryLabel",
+            "role": null,
+            "selected": null,
+            "hidden": false
+          }
+        ]
+      },
+      "equal": true
+    },
+    "interactionEvidence": {
+      "kind": "none",
+      "reason": "no interactive element declared",
+      "disabledPaginationNodeIds": [],
+      "status": "not-applicable",
+      "disabledControls": []
+    },
+    "labelVisibility": [],
+    "runtimeErrors": [],
+    "componentCounts": {
+      "Card": 2,
+      "Stack": 2,
+      "Text": 1,
+      "TimelineEntryLabel": 2
+    },
+    "requiredMounts": [
+      {
+        "nodeId": "screen-timeline-14",
+        "component": "Stack",
+        "requiredInitially": true,
+        "present": true,
+        "passed": true
+      },
+      {
+        "nodeId": "timeline-header-1",
+        "component": "Stack",
+        "requiredInitially": true,
+        "present": true,
+        "passed": true
+      },
+      {
+        "nodeId": "timeline-header-1-title",
+        "component": "Text",
+        "requiredInitially": true,
+        "present": true,
+        "passed": true
+      },
+      {
+        "nodeId": "timeline-entries-13-empty",
+        "component": "Banner",
+        "requiredInitially": false,
+        "reason": "populated collection timeline-entries-13",
+        "present": false,
+        "passed": true
+      },
+      {
+        "nodeId": "slot-entry-0-4-0",
+        "component": "TimelineEntryLabel",
+        "requiredInitially": true,
+        "present": true,
+        "passed": true
+      },
+      {
+        "nodeId": "slot-entry-0-4-1",
+        "component": "TimelineEntryLabel",
+        "requiredInitially": true,
+        "present": true,
+        "passed": true
+      }
+    ],
+    "selectorEvidence": [],
+    "actionCounts": {},
+    "actionArgs": {},
+    "actionsFrozen": true,
+    "css": {
+      "primaryTextToken": "oklch(0.92 0.02 92)",
+      "canvasToken": "oklch(0.18 0.05 45)"
+    }
+  },
+  "css": {
+    "files": [
+      "index-5T-uhyJY.css"
+    ],
+    "bytes": 219268,
+    "sha256": "sha256:e569aede85b2bad0ee46fe3f8a8f7c4b9f978a15e69fcf535e0ac9bb38c241eb",
+    "core": true,
+    "ported": true,
+    "requiresPorted": false,
+    "tokens": true
+  },
+  "build": {
+    "client": {
+      "files": [
+        {
+          "path": "assets/index-5T-uhyJY.css",
+          "bytes": 219268,
+          "sha256": "sha256:e569aede85b2bad0ee46fe3f8a8f7c4b9f978a15e69fcf535e0ac9bb38c241eb"
+        },
+        {
+          "path": "assets/index-D92o9NDh.js",
+          "bytes": 375825,
+          "sha256": "sha256:7fdf6f4218375edb3f5ee1559fee436fc4e5fdc8a1100767be8e6cc1608fc4b7"
+        },
+        {
+          "path": "assets/index-D92o9NDh.js.map",
+          "bytes": 1245648,
+          "sha256": "sha256:8758a6ad9af3deb3175aaf6cf155a6326349577e04ea014ffdd7a62a78a0b75e"
+        },
+        {
+          "path": "index.html",
+          "bytes": 3498,
+          "sha256": "sha256:6d2f2e3d5b4cbc55485cf62a327c9fe63233183b799e1e672d68f7a608594f5a"
+        }
+      ],
+      "contentHash": "sha256:c06ecbdf3d93140496dbb13a00b1e22e3fe3af288f3f1b4652b53f5045485c35"
+    },
+    "server": {
+      "files": [
+        {
+          "path": "ssr.js",
+          "bytes": 11639,
+          "sha256": "sha256:2b14b584dc8902847e688b018a8b446bb8649688428511cbf96130c59e47d81f"
+        },
+        {
+          "path": "ssr.js.map",
+          "bytes": 13617,
+          "sha256": "sha256:df77b5fd70b4e4a599a73cd24bb547342e164c53763e63add6680174f574ee7c"
+        }
+      ],
+      "contentHash": "sha256:dd1621d719788c277d65f11bcfedab832879f1e515552a42d5a572b93f471c5f"
+    }
+  }
+}

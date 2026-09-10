@@ -1,6 +1,14 @@
 @import "@oods/tokens/css";
 @import "./statusables.css";
 
+/* Legacy unprefixed geometry used by billing recipes. Values come from the
+ * semantic layer; preserve these names until their authored callers migrate. */
+:root {
+  --space-2: var(--sys-control-gap);
+  --space-3: var(--sys-field-padding-inline);
+  --radius-md: var(--sys-radius-control);
+}
+
 :where(.oods-badge, [data-oods-component='Badge']) {
   display: inline-flex;
   align-items: center;
@@ -150,7 +158,10 @@
   cursor: not-allowed;
 }
 
-:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action):focus-visible {
+/* Native controls in governed forms need the same semantic ring on every OS. */
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action,
+  [data-oods-component] input, [data-oods-component] textarea, [data-oods-component] select,
+  [data-oods-component] button, [data-oods-component='Checkbox']):focus-visible {
   outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
   outline-offset: 2px;
 }
@@ -1206,7 +1217,8 @@
   width: 100%;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-  opacity: var(--status-archive-overlay-opacity, 0.6);
+  /* Retain archived dimming without dropping its label below 4.5:1. */
+  opacity: var(--status-archive-overlay-opacity, 0.7);
 }
 [data-oods-component='ArchivedRowOverlay'] > .oods-collection-row { flex: 1; min-width: 0; }
 /* The archived card owns both the interactive row and its status badge. */
@@ -1224,8 +1236,8 @@
   flex-shrink: 0;
   padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
   border-radius: var(--radius-sm, 0.25rem);
-  color: var(--status-archive-text, CanvasText);
-  background: var(--status-archive-bg, ButtonFace);
+  color: var(--status-archive-text, var(--sys-text-primary));
+  background: var(--status-archive-bg, var(--sys-surface-raised));
 }
 
 [data-oods-component='CancellationSummary'] dl {
@@ -1242,9 +1254,18 @@
 
 /* Generated collection screens share one row/event presentation in both frameworks. */
 .oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
-.oods-collection-row { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+.oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+[data-theme='hc'] .oods-collection-row:not(:disabled) { background: var(--sys-surface-raised); color: var(--sys-text-primary); }
 .oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: 600; }
 .oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
 [data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
 .oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
 @media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
+
+:where(.oods-audit-summary, [data-oods-component='AuditSummaryCard']) { padding: var(--cmp-spacing-inset-default); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); }
+.oods-audit-summary h3 { margin-top: 0; }
+.oods-audit-summary dl { display: grid; grid-template-columns: auto 1fr; gap: var(--cmp-spacing-inline-sm); }
+.oods-audit-summary dd { margin: 0; }
+:where(.oods-sort-indicator, [data-oods-component='SortIndicator']) { border-collapse: collapse; color: var(--cmp-text-body); }
+.oods-sort-indicator button { padding: var(--cmp-spacing-inline-sm); background: var(--cmp-surface-panel); color: var(--cmp-text-body); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); cursor: pointer; }
+[data-oods-component='TimelineEntryLabel'] { color: var(--cmp-text-body); }

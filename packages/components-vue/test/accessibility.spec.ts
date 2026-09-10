@@ -1,3 +1,5 @@
+import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
+import { renderSharedScenario } from './scenario-fixtures.js';
 import { mount } from '@vue/test-utils';
 import { axe } from 'vitest-axe';
 import { defineComponent, h } from 'vue';
@@ -71,6 +73,22 @@ const AccessibilityShowcase = defineComponent({
 });
 
 describe('@oods/components-vue accessibility outcomes', () => {
+  const axeScenarios = sharedScenarios;
+  it('runs every governed root through the axe loop exactly once', () => {
+    expect(axeScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+    expect(axeScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
+  });
+  for (const scenario of axeScenarios) {
+    it(`passes axe for the ${scenario.oodsComponentId} shared scenario`, async () => {
+      const wrapper = mount(defineComponent({ render: () => h('main', {}, [renderSharedScenario(scenario)]) }), { attachTo: document.body });
+      try {
+        const result = await axe(wrapper.element, { rules: { 'color-contrast': { enabled: false } } });
+        expect(result.violations).toEqual([]);
+        expect(wrapper.text().trim().length).toBeGreaterThan(0);
+      } finally { wrapper.unmount(); }
+    });
+  }
+
   it('associates field labels, help, validation, and invalid state', () => {
     const wrapper = mount(Input, {
       props: {

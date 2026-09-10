@@ -1,0 +1,58 @@
+import type { PageProps } from './GeneratedUI.js';
+
+export const model: Omit<PageProps, 'actions'> = {
+  "activeFilters": [],
+  "allowedTransitions": [],
+  "billingInterval": "Consumer billing interval",
+  "categories": [],
+  "classificationMetadata": "Consumer classification metadata",
+  "createdAt": "2026-09-05T12:00:00.000Z",
+  "currency": "Consumer currency",
+  "description": "Consumer description",
+  "filterCount": 0,
+  "filters": [],
+  "inventoryStatus": "in_stock",
+  "label": "Consumer label",
+  "lastEvent": "Consumer last event",
+  "lastEventAt": "2026-09-05T12:00:00.000Z",
+  "page": 0,
+  "pageSize": 0,
+  "placeholder": "Consumer placeholder",
+  "pricingModel": "Consumer pricing model",
+  "primaryCategoryId": "consumer-primary-category-id",
+  "primaryCategoryPath": "Consumer primary category path",
+  "productId": "consumer-product-id",
+  "releaseChannel": "alpha",
+  "requiresSubscription": false,
+  "searchActive": false,
+  "searchQuery": "Consumer searchQuery",
+  "sku": "Consumer sku",
+  "stateHistory": [],
+  "status": "Consumer status",
+  "summaryBlurb": "Consumer summary blurb",
+  "supportLevel": "standard",
+  "tagCount": 0,
+  "tagPreview": "Consumer tag preview",
+  "tags": [],
+  "taxBehavior": "exclusive",
+  "totalItems": 0,
+  "totalPages": 0,
+  "unitAmountCents": 0,
+  "updatedAt": "2026-09-05T12:00:00.000Z",
+  "events": [
+    {
+      "id": "consumer-event-1",
+      "kind": "state",
+      "at": "2026-09-05T12:00:00Z",
+      "title": "Created",
+      "description": "Initial state"
+    },
+    {
+      "id": "consumer-event-2",
+      "kind": "state",
+      "at": "2026-09-06T12:00:00Z",
+      "title": "Updated",
+      "description": "Next state"
+    }
+  ]
+};

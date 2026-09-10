@@ -1,6 +1,6 @@
 import intakeJson from '../registry/component-intake.v1.json';
-import reconciliationJson from '../registry/component-reconciliation.proposed.v1.json';
-import capabilitiesJson from '../registry/component-capability-baseline.v1.json';
+import reconciliationJson from '../registry/component-reconciliation.proposed.v2.json';
+import capabilitiesJson from '../registry/component-capability-ledger.v1.json';
 
 export * from './types.js';
 export * from './contracts.js';
@@ -52,3 +52,7 @@ export * from './billing-views.js';
 export * from './date-time.js';
 
 export * from './static-svg.js';
+
+export * from './behaviors.js';
+
+export * from './disputed.js';

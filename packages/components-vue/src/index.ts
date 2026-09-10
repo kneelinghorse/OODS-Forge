@@ -83,3 +83,5 @@ export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, Canc
 export { BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector } from './billing.js';
 
 export { CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay } from './billing-views.js';
+
+export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';

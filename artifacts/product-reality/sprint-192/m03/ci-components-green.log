@@ -1,0 +1,1172 @@
+﻿2026-09-10T18:27:48.7660269Z Current runner version: '2.337.0'
+2026-09-10T18:27:48.7711206Z ##[group]Runner Image Provisioner
+2026-09-10T18:27:48.7712911Z Hosted Compute Agent
+2026-09-10T18:27:48.7713781Z Version: 20260828.587
+2026-09-10T18:27:48.7714686Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-10T18:27:48.7716118Z Build Date: 2026-08-28T16:44:25Z
+2026-09-10T18:27:48.7717190Z Worker ID: {fe3753dd-947b-4177-919d-6e019bad040c}
+2026-09-10T18:27:48.7718392Z Azure Region: westus3
+2026-09-10T18:27:48.7719308Z ##[endgroup]
+2026-09-10T18:27:48.7721495Z ##[group]Operating System
+2026-09-10T18:27:48.7722711Z Ubuntu
+2026-09-10T18:27:48.7723468Z 24.04.5
+2026-09-10T18:27:48.7724242Z LTS
+2026-09-10T18:27:48.7724984Z ##[endgroup]
+2026-09-10T18:27:48.7725966Z ##[group]Runner Image
+2026-09-10T18:27:48.7726899Z Image: ubuntu-24.04
+2026-09-10T18:27:48.7727752Z Version: 20260907.300.1
+2026-09-10T18:27:48.7729725Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-10T18:27:48.7732031Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-10T18:27:48.7733525Z ##[endgroup]
+2026-09-10T18:27:48.7735610Z ##[group]GITHUB_TOKEN Permissions
+2026-09-10T18:27:48.7738842Z Contents: read
+2026-09-10T18:27:48.7739694Z Metadata: read
+2026-09-10T18:27:48.7740591Z PullRequests: write
+2026-09-10T18:27:48.7741494Z ##[endgroup]
+2026-09-10T18:27:48.7745102Z Secret source: Actions
+2026-09-10T18:27:48.7746757Z Cache mode: write
+2026-09-10T18:27:48.7748212Z Prepare workflow directory
+2026-09-10T18:27:48.8351502Z Prepare all required actions
+2026-09-10T18:27:48.8431917Z Getting action download info
+2026-09-10T18:27:49.2670691Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-10T18:27:49.3915241Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-10T18:27:50.2384579Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-10T18:27:50.4173281Z Complete job name: component-packages
+2026-09-10T18:27:50.5109072Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:27:50.5119104Z ##[group]Run actions/checkout@v4
+2026-09-10T18:27:50.5119906Z with:
+2026-09-10T18:27:50.5120375Z   fetch-depth: 0
+2026-09-10T18:27:50.5120880Z   repository: kneelinghorse/OODS-Forge
+2026-09-10T18:27:50.5125326Z   token: ***
+2026-09-10T18:27:50.5125952Z   ssh-strict: true
+2026-09-10T18:27:50.5126459Z   ssh-user: git
+2026-09-10T18:27:50.5126961Z   persist-credentials: true
+2026-09-10T18:27:50.5127501Z   clean: true
+2026-09-10T18:27:50.5128014Z   sparse-checkout-cone-mode: true
+2026-09-10T18:27:50.5128587Z   fetch-tags: false
+2026-09-10T18:27:50.5129132Z   show-progress: true
+2026-09-10T18:27:50.5129639Z   lfs: false
+2026-09-10T18:27:50.5130154Z   submodules: false
+2026-09-10T18:27:50.5130655Z   set-safe-directory: true
+2026-09-10T18:27:50.5131223Z   allow-unsafe-pr-checkout: false
+2026-09-10T18:27:50.5132077Z env:
+2026-09-10T18:27:50.5132531Z   NODE_VERSION: 24
+2026-09-10T18:27:50.5133001Z ##[endgroup]
+2026-09-10T18:27:50.6442383Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-10T18:27:50.6446670Z ##[group]Getting Git version info
+2026-09-10T18:27:50.6448191Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-10T18:27:50.6450294Z [command]/usr/bin/git version
+2026-09-10T18:27:50.6532571Z git version 2.55.0
+2026-09-10T18:27:50.6609075Z ##[endgroup]
+2026-09-10T18:27:50.6626959Z Temporarily overriding HOME='/home/runner/work/_temp/367d9280-d1c7-47c4-9d19-b9e84406b3e5' before making global git config changes
+2026-09-10T18:27:50.6630286Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-10T18:27:50.6633527Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:27:50.6704869Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-10T18:27:50.6708176Z ##[group]Initializing the repository
+2026-09-10T18:27:50.6709959Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:27:50.6833765Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-10T18:27:50.6858314Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-10T18:27:50.6877176Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-10T18:27:50.6879290Z hint: call:
+2026-09-10T18:27:50.6896571Z hint:
+2026-09-10T18:27:50.6897973Z hint: 	git config --global init.defaultBranch <name>
+2026-09-10T18:27:50.6900131Z hint:
+2026-09-10T18:27:50.6901589Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-10T18:27:50.6905019Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-10T18:27:50.6907212Z hint:
+2026-09-10T18:27:50.6911721Z hint: 	git branch -m <name>
+2026-09-10T18:27:50.6931167Z hint:
+2026-09-10T18:27:50.6943845Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-10T18:27:50.6946049Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-10T18:27:50.6950368Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-10T18:27:50.6960022Z ##[endgroup]
+2026-09-10T18:27:50.6961823Z ##[group]Disabling automatic garbage collection
+2026-09-10T18:27:50.6963398Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-10T18:27:50.7015887Z ##[endgroup]
+2026-09-10T18:27:50.7017971Z ##[group]Setting up auth
+2026-09-10T18:27:50.7020211Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-10T18:27:50.7091014Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-10T18:27:50.7767725Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-10T18:27:50.7818982Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-10T18:27:50.8147738Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-10T18:27:50.8248450Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-10T18:27:50.8498199Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-10T18:27:50.8557523Z ##[endgroup]
+2026-09-10T18:27:50.8577480Z ##[group]Fetching the repository
+2026-09-10T18:27:50.8596309Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-09-10T18:28:02.7796642Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-10T18:28:02.7798016Z  * [new branch]        Forge-expansion -> origin/Forge-expansion
+2026-09-10T18:28:02.7798823Z  * [new branch]        OODS-pro        -> origin/OODS-pro
+2026-09-10T18:28:02.7817081Z  * [new branch]        codex/sprint-189-browser-design-loop -> origin/codex/sprint-189-browser-design-loop
+2026-09-10T18:28:02.7832520Z  * [new branch]        codex/sprint-190-viz-public-render -> origin/codex/sprint-190-viz-public-render
+2026-09-10T18:28:02.7834106Z  * [new branch]        codex/sprint-191-paydown -> origin/codex/sprint-191-paydown
+2026-09-10T18:28:02.7835826Z  * [new branch]        codex/sprint-192-component-truth -> origin/codex/sprint-192-component-truth
+2026-09-10T18:28:02.7836975Z  * [new branch]        main            -> origin/main
+2026-09-10T18:28:02.7843953Z [command]/usr/bin/git branch --list --remote origin/codex/sprint-192-component-truth
+2026-09-10T18:28:02.7853125Z   origin/codex/sprint-192-component-truth
+2026-09-10T18:28:02.7874461Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/sprint-192-component-truth
+2026-09-10T18:28:02.7891053Z 91a5a465506a174e23e0d14c68e0c8e70292f083
+2026-09-10T18:28:02.7898127Z ##[endgroup]
+2026-09-10T18:28:02.7899283Z ##[group]Determining the checkout info
+2026-09-10T18:28:02.7900652Z ##[endgroup]
+2026-09-10T18:28:02.7905540Z [command]/usr/bin/git sparse-checkout disable
+2026-09-10T18:28:02.7957469Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-10T18:28:02.7985837Z ##[group]Checking out the ref
+2026-09-10T18:28:02.7990543Z [command]/usr/bin/git checkout --progress --force -B codex/sprint-192-component-truth refs/remotes/origin/codex/sprint-192-component-truth
+2026-09-10T18:28:03.8304271Z Updating files:  46% (12398/26428)
+2026-09-10T18:28:03.8728178Z Updating files:  47% (12422/26428)
+2026-09-10T18:28:03.9156834Z Updating files:  48% (12686/26428)
+2026-09-10T18:28:03.9582507Z Updating files:  49% (12950/26428)
+2026-09-10T18:28:04.0012042Z Updating files:  50% (13214/26428)
+2026-09-10T18:28:04.0261468Z Updating files:  51% (13479/26428)
+2026-09-10T18:28:04.0564458Z Updating files:  52% (13743/26428)
+2026-09-10T18:28:04.0853210Z Updating files:  53% (14007/26428)
+2026-09-10T18:28:04.1303040Z Updating files:  54% (14272/26428)
+2026-09-10T18:28:04.1511101Z Updating files:  55% (14536/26428)
+2026-09-10T18:28:04.1938293Z Updating files:  56% (14800/26428)
+2026-09-10T18:28:04.2104349Z Updating files:  57% (15064/26428)
+2026-09-10T18:28:04.2651327Z Updating files:  58% (15329/26428)
+2026-09-10T18:28:04.2881573Z Updating files:  59% (15593/26428)
+2026-09-10T18:28:04.3087750Z Updating files:  60% (15857/26428)
+2026-09-10T18:28:04.3320280Z Updating files:  61% (16122/26428)
+2026-09-10T18:28:04.3556681Z Updating files:  62% (16386/26428)
+2026-09-10T18:28:04.3928270Z Updating files:  63% (16650/26428)
+2026-09-10T18:28:04.4077478Z Updating files:  64% (16914/26428)
+2026-09-10T18:28:04.4392406Z Updating files:  65% (17179/26428)
+2026-09-10T18:28:04.4526571Z Updating files:  66% (17443/26428)
+2026-09-10T18:28:04.4815996Z Updating files:  67% (17707/26428)
+2026-09-10T18:28:04.5074017Z Updating files:  68% (17972/26428)
+2026-09-10T18:28:04.5339648Z Updating files:  69% (18236/26428)
+2026-09-10T18:28:04.5628231Z Updating files:  70% (18500/26428)
+2026-09-10T18:28:04.6080352Z Updating files:  71% (18764/26428)
+2026-09-10T18:28:04.6353662Z Updating files:  72% (19029/26428)
+2026-09-10T18:28:04.6722804Z Updating files:  73% (19293/26428)
+2026-09-10T18:28:04.6965901Z Updating files:  74% (19557/26428)
+2026-09-10T18:28:04.7231205Z Updating files:  75% (19821/26428)
+2026-09-10T18:28:04.7621290Z Updating files:  76% (20086/26428)
+2026-09-10T18:28:04.8048756Z Updating files:  77% (20350/26428)
+2026-09-10T18:28:04.8256834Z Updating files:  78% (20614/26428)
+2026-09-10T18:28:04.8430049Z Updating files:  78% (20728/26428)
+2026-09-10T18:28:04.8784669Z Updating files:  79% (20879/26428)
+2026-09-10T18:28:04.9110710Z Updating files:  80% (21143/26428)
+2026-09-10T18:28:04.9685104Z Updating files:  81% (21407/26428)
+2026-09-10T18:28:04.9895064Z Updating files:  82% (21671/26428)
+2026-09-10T18:28:05.1181790Z Updating files:  83% (21936/26428)
+2026-09-10T18:28:05.4311152Z Updating files:  84% (22200/26428)
+2026-09-10T18:28:05.4520269Z Updating files:  85% (22464/26428)
+2026-09-10T18:28:05.4806367Z Updating files:  86% (22729/26428)
+2026-09-10T18:28:05.5152145Z Updating files:  87% (22993/26428)
+2026-09-10T18:28:05.5315090Z Updating files:  88% (23257/26428)
+2026-09-10T18:28:05.5416758Z Updating files:  89% (23521/26428)
+2026-09-10T18:28:05.5578197Z Updating files:  90% (23786/26428)
+2026-09-10T18:28:05.5765962Z Updating files:  91% (24050/26428)
+2026-09-10T18:28:05.5919834Z Updating files:  92% (24314/26428)
+2026-09-10T18:28:05.6063640Z Updating files:  93% (24579/26428)
+2026-09-10T18:28:05.6263865Z Updating files:  94% (24843/26428)
+2026-09-10T18:28:05.6462237Z Updating files:  95% (25107/26428)
+2026-09-10T18:28:05.6616488Z Updating files:  96% (25371/26428)
+2026-09-10T18:28:05.6758068Z Updating files:  97% (25636/26428)
+2026-09-10T18:28:05.6890597Z Updating files:  98% (25900/26428)
+2026-09-10T18:28:05.7005891Z Updating files:  99% (26164/26428)
+2026-09-10T18:28:05.7006839Z Updating files: 100% (26428/26428)
+2026-09-10T18:28:05.7007548Z Updating files: 100% (26428/26428), done.
+2026-09-10T18:28:05.8681234Z Switched to a new branch 'codex/sprint-192-component-truth'
+2026-09-10T18:28:05.8684532Z branch 'codex/sprint-192-component-truth' set up to track 'origin/codex/sprint-192-component-truth'.
+2026-09-10T18:28:05.8867031Z ##[endgroup]
+2026-09-10T18:28:05.8898220Z [command]/usr/bin/git log -1 --format=%H
+2026-09-10T18:28:05.8943130Z 91a5a465506a174e23e0d14c68e0c8e70292f083
+2026-09-10T18:28:05.9673669Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:28:05.9675705Z ##[group]Run pnpm/action-setup@v4
+2026-09-10T18:28:05.9675963Z with:
+2026-09-10T18:28:05.9676158Z   run_install: false
+2026-09-10T18:28:05.9676375Z   dest: ~/setup-pnpm
+2026-09-10T18:28:05.9676574Z   cache: false
+2026-09-10T18:28:05.9676789Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-10T18:28:05.9677068Z   package_json_file: package.json
+2026-09-10T18:28:05.9677306Z   standalone: false
+2026-09-10T18:28:05.9677506Z env:
+2026-09-10T18:28:05.9677677Z   NODE_VERSION: 24
+2026-09-10T18:28:05.9677869Z ##[endgroup]
+2026-09-10T18:28:06.1289472Z ##[group]Running self-installer...
+2026-09-10T18:28:07.0357475Z (node:2032) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:28:07.0362744Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:28:07.2782654Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-10T18:28:07.2939782Z Packages: +1
+2026-09-10T18:28:07.2950433Z +
+2026-09-10T18:28:07.6833214Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-10T18:28:07.9676813Z 
+2026-09-10T18:28:07.9677555Z dependencies:
+2026-09-10T18:28:07.9678270Z + pnpm 9.12.2 (12.3.4 is available)
+2026-09-10T18:28:07.9678775Z 
+2026-09-10T18:28:08.0766030Z Done in 1.4s
+2026-09-10T18:28:08.0881345Z ##[endgroup]
+2026-09-10T18:28:08.0882092Z Installation Completed!
+2026-09-10T18:28:08.1044129Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:28:08.1045325Z ##[group]Run actions/setup-node@v4
+2026-09-10T18:28:08.1045892Z with:
+2026-09-10T18:28:08.1046081Z   node-version: 24
+2026-09-10T18:28:08.1046281Z   cache: pnpm
+2026-09-10T18:28:08.1046474Z   always-auth: false
+2026-09-10T18:28:08.1046689Z   check-latest: false
+2026-09-10T18:28:08.1049542Z   token: ***
+2026-09-10T18:28:08.1049728Z env:
+2026-09-10T18:28:08.1049913Z   NODE_VERSION: 24
+2026-09-10T18:28:08.1050179Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:28:08.1050480Z ##[endgroup]
+2026-09-10T18:28:08.2565047Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-10T18:28:08.2569388Z (node:2045) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:28:08.2570697Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:28:08.2573041Z ##[group]Environment details
+2026-09-10T18:28:08.8020461Z node: v24.20.0
+2026-09-10T18:28:08.8021506Z npm: 11.19.0
+2026-09-10T18:28:08.8022017Z yarn: 1.22.22
+2026-09-10T18:28:08.8023544Z ##[endgroup]
+2026-09-10T18:28:08.8076551Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-10T18:28:09.2457842Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-10T18:28:09.4640650Z pnpm cache is not found
+2026-09-10T18:28:09.4773004Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-10T18:28:09.4773478Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-10T18:28:09.4810790Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:28:09.4811065Z env:
+2026-09-10T18:28:09.4811270Z   NODE_VERSION: 24
+2026-09-10T18:28:09.4811538Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:28:09.4811840Z ##[endgroup]
+2026-09-10T18:28:10.0494997Z Scope: all 22 workspace projects
+2026-09-10T18:28:10.1256858Z Lockfile is up to date, resolution step is skipped
+2026-09-10T18:28:10.2159248Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-10T18:28:10.3579513Z Packages: +946
+2026-09-10T18:28:10.3580709Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-10T18:28:11.2191894Z Progress: resolved 946, reused 0, downloaded 59, added 56
+2026-09-10T18:28:12.2216429Z Progress: resolved 946, reused 0, downloaded 184, added 172
+2026-09-10T18:28:13.2214221Z Progress: resolved 946, reused 0, downloaded 297, added 285
+2026-09-10T18:28:14.2216954Z Progress: resolved 946, reused 0, downloaded 432, added 416
+2026-09-10T18:28:15.2246801Z Progress: resolved 946, reused 0, downloaded 506, added 490
+2026-09-10T18:28:16.2232875Z Progress: resolved 946, reused 0, downloaded 573, added 560
+2026-09-10T18:28:17.2269292Z Progress: resolved 946, reused 0, downloaded 640, added 627
+2026-09-10T18:28:18.2296357Z Progress: resolved 946, reused 0, downloaded 737, added 728
+2026-09-10T18:28:19.2361421Z Progress: resolved 946, reused 0, downloaded 858, added 844
+2026-09-10T18:28:20.2338365Z Progress: resolved 946, reused 0, downloaded 945, added 946, done
+2026-09-10T18:28:20.7753544Z .../es5-ext@0.10.64/node_modules/es5-ext postinstall$  node -e "try{require('./_postinstall')}catch(e){}" || exit 0
+2026-09-10T18:28:20.7776883Z .../node_modules/protobufjs postinstall$ node scripts/postinstall
+2026-09-10T18:28:20.8080130Z .../@bundled-es-modules/glob postinstall$ patch-package
+2026-09-10T18:28:20.8127003Z .../esbuild@0.25.10/node_modules/esbuild postinstall$ node install.js
+2026-09-10T18:28:20.9326686Z .../node_modules/protobufjs postinstall: Done
+2026-09-10T18:28:20.9447882Z .../es5-ext@0.10.64/node_modules/es5-ext postinstall: Done
+2026-09-10T18:28:20.9707209Z .../esbuild@0.25.10/node_modules/esbuild postinstall: Done
+2026-09-10T18:28:21.1664037Z .../@bundled-es-modules/glob postinstall: patch-package 8.0.1
+2026-09-10T18:28:21.1676413Z .../@bundled-es-modules/glob postinstall: Applying patches...
+2026-09-10T18:28:21.1687525Z .../@bundled-es-modules/glob postinstall: No patch files found
+2026-09-10T18:28:21.1716597Z .../@bundled-es-modules/glob postinstall: Done
+2026-09-10T18:28:21.1828396Z .../node_modules/style-dictionary postinstall$ patch-package
+2026-09-10T18:28:21.4087896Z .../node_modules/style-dictionary postinstall: patch-package 8.0.1
+2026-09-10T18:28:21.4111928Z .../node_modules/style-dictionary postinstall: Applying patches...
+2026-09-10T18:28:21.4129759Z .../node_modules/style-dictionary postinstall: No patch files found
+2026-09-10T18:28:21.4189841Z .../node_modules/style-dictionary postinstall: Done
+2026-09-10T18:28:21.7927483Z 
+2026-09-10T18:28:21.7928231Z dependencies:
+2026-09-10T18:28:21.7929236Z + @radix-ui/react-slot 1.2.3
+2026-09-10T18:28:21.7937691Z + @rjsf/core 5.24.13
+2026-09-10T18:28:21.7939049Z + @rjsf/utils 5.24.13
+2026-09-10T18:28:21.7940042Z + @rjsf/validator-ajv8 5.24.13
+2026-09-10T18:28:21.7940686Z + @types/geojson 7946.0.16
+2026-09-10T18:28:21.7941282Z + @types/topojson-client 3.1.5
+2026-09-10T18:28:21.7942185Z + @types/topojson-specification 1.0.5
+2026-09-10T18:28:21.7945540Z + ajv 8.17.1
+2026-09-10T18:28:21.7947305Z + ajv-formats 3.0.1
+2026-09-10T18:28:21.7948610Z + d3-geo 3.1.1
+2026-09-10T18:28:21.7949205Z + d3-scale 4.0.2
+2026-09-10T18:28:21.7949738Z + echarts 6.0.0
+2026-09-10T18:28:21.7950451Z + js-yaml 4.1.0
+2026-09-10T18:28:21.7951107Z + luxon 3.7.2
+2026-09-10T18:28:21.7951609Z + pg 8.16.3
+2026-09-10T18:28:21.7952081Z + react 19.2.0
+2026-09-10T18:28:21.7953777Z + react-dom 19.2.0
+2026-09-10T18:28:21.7955766Z + react-window 1.8.11
+2026-09-10T18:28:21.7956686Z + topojson-client 3.1.0
+2026-09-10T18:28:21.7957171Z + vega 6.2.0
+2026-09-10T18:28:21.7957671Z + vega-embed 7.1.0
+2026-09-10T18:28:21.7958097Z + zod 4.1.12
+2026-09-10T18:28:21.7958400Z 
+2026-09-10T18:28:21.7958682Z devDependencies:
+2026-09-10T18:28:21.7959234Z + @chromatic-com/storybook 4.1.1
+2026-09-10T18:28:21.7960047Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-10T18:28:21.7978983Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-10T18:28:21.7992382Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-10T18:28:21.7999192Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-10T18:28:21.7999959Z + @playwright/test 1.56.1
+2026-09-10T18:28:21.8000578Z + @storybook/addon-a11y 9.1.10
+2026-09-10T18:28:21.8001374Z + @storybook/addon-docs 9.1.10
+2026-09-10T18:28:21.8002228Z + @storybook/addon-onboarding 9.1.10
+2026-09-10T18:28:21.8026464Z + @storybook/mdx2-csf 1.1.0
+2026-09-10T18:28:21.8028254Z + @storybook/react 9.1.10
+2026-09-10T18:28:21.8039739Z + @storybook/react-vite 9.1.10
+2026-09-10T18:28:21.8041631Z + @testing-library/dom 10.4.1
+2026-09-10T18:28:21.8042275Z + @testing-library/jest-dom 6.9.1
+2026-09-10T18:28:21.8042839Z + @testing-library/react 16.3.0
+2026-09-10T18:28:21.8043471Z + @testing-library/user-event 14.6.1
+2026-09-10T18:28:21.8044117Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-10T18:28:21.8044690Z + @types/d3-geo 3.1.0
+2026-09-10T18:28:21.8045160Z + @types/d3-scale 4.0.9
+2026-09-10T18:28:21.8045882Z + @types/js-yaml 4.0.9
+2026-09-10T18:28:21.8046371Z + @types/luxon 3.7.1
+2026-09-10T18:28:21.8046877Z + @types/node 20.19.21
+2026-09-10T18:28:21.8047332Z + @types/pg 8.15.6
+2026-09-10T18:28:21.8047767Z + @types/react 19.2.2
+2026-09-10T18:28:21.8048230Z + @types/react-dom 19.2.2
+2026-09-10T18:28:21.8049178Z + @types/react-window 1.8.8
+2026-09-10T18:28:21.8058102Z + @types/semver 7.7.1
+2026-09-10T18:28:21.8061692Z + @types/sql.js 1.4.9
+2026-09-10T18:28:21.8062460Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-10T18:28:21.8063391Z + @typescript-eslint/parser 6.21.0
+2026-09-10T18:28:21.8064720Z + @vitejs/plugin-react 5.0.4
+2026-09-10T18:28:21.8065720Z + @vitest/browser 3.2.4
+2026-09-10T18:28:21.8066346Z + @vitest/coverage-v8 3.2.4
+2026-09-10T18:28:21.8067429Z + axe-core 4.11.0
+2026-09-10T18:28:21.8067973Z + colorjs.io 0.5.2
+2026-09-10T18:28:21.8068401Z + dotenv 17.4.2
+2026-09-10T18:28:21.8068855Z + eslint 8.57.1
+2026-09-10T18:28:21.8069386Z + eslint-plugin-storybook 9.1.10
+2026-09-10T18:28:21.8069906Z + globals 17.6.0
+2026-09-10T18:28:21.8070375Z + jsdom 24.1.3
+2026-09-10T18:28:21.8070965Z + json-schema-to-typescript 13.1.2
+2026-09-10T18:28:21.8071777Z + markdown-to-jsx 7.7.15
+2026-09-10T18:28:21.8072323Z + pg-mem 3.0.5
+2026-09-10T18:28:21.8072827Z + playwright 1.56.1
+2026-09-10T18:28:21.8073323Z + postcss 8.5.28
+2026-09-10T18:28:21.8073780Z + prettier 3.6.2
+2026-09-10T18:28:21.8074209Z + rimraf 5.0.10
+2026-09-10T18:28:21.8074672Z + semver 7.7.3
+2026-09-10T18:28:21.8075097Z + sql.js 1.13.0
+2026-09-10T18:28:21.8075772Z + storybook 9.1.10
+2026-09-10T18:28:21.8076272Z + style-dictionary 4.4.0
+2026-09-10T18:28:21.8076781Z + tailwindcss 3.4.18
+2026-09-10T18:28:21.8077270Z + tsup 8.5.0
+2026-09-10T18:28:21.8077719Z + tsx 4.20.6
+2026-09-10T18:28:21.8078146Z + typescript 5.3.3
+2026-09-10T18:28:21.8078984Z + vega-lite 6.4.1
+2026-09-10T18:28:21.8079557Z + vite-tsconfig-paths 5.1.4
+2026-09-10T18:28:21.8080028Z + vitest 3.2.4
+2026-09-10T18:28:21.8080517Z + vitest-axe 0.1.0
+2026-09-10T18:28:21.8080850Z 
+2026-09-10T18:28:21.8537869Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-10T18:28:21.8897229Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-10T18:28:21.8947951Z . prepare: Done
+2026-09-10T18:28:21.9070707Z Done in 12.3s
+2026-09-10T18:28:21.9481635Z ##[group]Run pnpm --filter @oods/tokens run build
+2026-09-10T18:28:21.9482085Z [36;1mpnpm --filter @oods/tokens run build[0m
+2026-09-10T18:28:21.9504442Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:28:21.9504703Z env:
+2026-09-10T18:28:21.9504891Z   NODE_VERSION: 24
+2026-09-10T18:28:21.9505144Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:28:21.9505655Z ##[endgroup]
+2026-09-10T18:28:22.4496274Z 
+2026-09-10T18:28:22.4497499Z > @oods/tokens@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens
+2026-09-10T18:28:22.4518667Z > rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-10T18:28:22.4536160Z 
+2026-09-10T18:28:22.8460672Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-10T18:28:22.8464413Z Building design tokens with Style Dictionary…
+2026-09-10T18:28:22.9364828Z 
+2026-09-10T18:28:22.9365298Z Token collisions detected (2):
+2026-09-10T18:28:22.9366440Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:22.9367455Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:23.1176694Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.1187390Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.1189137Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.1190817Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.1192474Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.1194111Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.1196002Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.1197725Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.1199393Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.1201059Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.1202787Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.1204415Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.1206151Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.1207759Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.1209459Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.1211094Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.1212662Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1214103Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1215761Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.1217164Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.1218697Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.1220155Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.1222394Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1223899Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1225551Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.1226995Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.1228397Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.1229902Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.1231366Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1232752Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.1234300Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.1235818Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.1237048Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.1238359Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.1239747Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:23.1241249Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:23.4344798Z 
+2026-09-10T18:28:23.4345701Z ios-swift
+2026-09-10T18:28:23.4346612Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-10T18:28:23.4357833Z 
+2026-09-10T18:28:23.4358371Z compose
+2026-09-10T18:28:23.4359170Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-10T18:28:23.5608431Z 
+2026-09-10T18:28:23.5611450Z ts
+2026-09-10T18:28:23.5612298Z ! dist/ts/tokens.ts, does not exist
+2026-09-10T18:28:23.5621246Z 
+2026-09-10T18:28:23.5621703Z tailwind
+2026-09-10T18:28:23.5622438Z ! dist/tailwind/tokens.json, does not exist
+2026-09-10T18:28:23.6457893Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.6459939Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.6461883Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.6463875Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.6465941Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.6467758Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.6469609Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.6471407Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.6473138Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.6474910Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.6476945Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.6478696Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.6480408Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.6482975Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.6484790Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.6486723Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.6488386Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6489950Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6491521Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.6493007Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.6494566Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.6496377Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.6497926Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6499475Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6500974Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.6502497Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.6504026Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.6505736Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.6507288Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6508920Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.6510417Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.6511946Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.6513516Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.6522568Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.6524571Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:23.6526514Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:23.9696182Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.9698272Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:23.9700126Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.9701998Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:23.9703836Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.9705731Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:23.9707478Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.9709258Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:23.9711042Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.9713593Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:23.9718683Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.9720608Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:23.9722381Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.9724115Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:23.9725985Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.9727741Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:23.9729408Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9731017Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9732540Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.9734070Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:23.9735688Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.9737261Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.9738791Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9740340Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9741865Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.9743433Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:23.9745024Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.9746754Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:23.9748303Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9749865Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:23.9751403Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.9752937Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:23.9754565Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.9756399Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:23.9758417Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:23.9760077Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:24.4686164Z 
+2026-09-10T18:28:24.4690065Z ios-swift
+2026-09-10T18:28:24.4691167Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-10T18:28:24.4691623Z 
+2026-09-10T18:28:24.4691866Z compose
+2026-09-10T18:28:24.4696618Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-10T18:28:24.5342011Z 
+2026-09-10T18:28:24.5345008Z ts
+2026-09-10T18:28:24.5346748Z ✔︎ dist/ts/tokens.ts
+2026-09-10T18:28:24.5347166Z 
+2026-09-10T18:28:24.5347454Z tailwind
+2026-09-10T18:28:24.5348019Z ✔︎ dist/tailwind/tokens.json
+2026-09-10T18:28:24.6182903Z 
+2026-09-10T18:28:24.6183706Z Token collisions detected (2):
+2026-09-10T18:28:24.6185647Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:24.6186855Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:24.8194259Z 
+2026-09-10T18:28:24.8194937Z css
+2026-09-10T18:28:24.8196209Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:24.8647317Z 
+2026-09-10T18:28:24.8648040Z Token collisions detected (2):
+2026-09-10T18:28:24.8649100Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:24.8650307Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:25.0131079Z 
+2026-09-10T18:28:25.0131840Z css
+2026-09-10T18:28:25.0132787Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:25.1556175Z 
+2026-09-10T18:28:25.1576563Z Token collisions detected (252):
+2026-09-10T18:28:25.1578079Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:25.1590274Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:25.2983230Z 
+2026-09-10T18:28:25.2984194Z css
+2026-09-10T18:28:25.2985185Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:25.4276684Z 
+2026-09-10T18:28:25.4277523Z Token collisions detected (227):
+2026-09-10T18:28:25.4278731Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:25.4280071Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:25.5642970Z 
+2026-09-10T18:28:25.5643697Z css
+2026-09-10T18:28:25.5644617Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:25.7081063Z 
+2026-09-10T18:28:25.7082703Z Token collisions detected (2):
+2026-09-10T18:28:25.7083904Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:25.7085005Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:25.8425970Z 
+2026-09-10T18:28:25.8426367Z css
+2026-09-10T18:28:25.8427037Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:25.9645930Z 
+2026-09-10T18:28:25.9646644Z Token collisions detected (252):
+2026-09-10T18:28:25.9647510Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:25.9656779Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:26.1001539Z 
+2026-09-10T18:28:26.1002150Z css
+2026-09-10T18:28:26.1002962Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:26.2146208Z 
+2026-09-10T18:28:26.2147266Z Token collisions detected (227):
+2026-09-10T18:28:26.2148309Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:26.2149370Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:26.3503050Z 
+2026-09-10T18:28:26.3503712Z css
+2026-09-10T18:28:26.3504581Z ✔︎ dist/css/tokens.css
+2026-09-10T18:28:26.4668941Z 
+2026-09-10T18:28:26.4669722Z Token collisions detected (2):
+2026-09-10T18:28:26.4670701Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:26.4671757Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:26.6055850Z ✔︎ tokens built successfully in 3.76s
+2026-09-10T18:28:26.6056738Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-10T18:28:26.6057436Z    types:    dist/ts/tokens.ts
+2026-09-10T18:28:26.6057948Z    tailwind: dist/tailwind/tokens.json
+2026-09-10T18:28:26.6058489Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-10T18:28:26.6059011Z    compose:  dist/compose/OodsTokens.kt
+2026-09-10T18:28:26.7114880Z ##[group]Run pnpm run build:packages
+2026-09-10T18:28:26.7115206Z [36;1mpnpm run build:packages[0m
+2026-09-10T18:28:26.7137913Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:28:26.7138175Z env:
+2026-09-10T18:28:26.7138366Z   NODE_VERSION: 24
+2026-09-10T18:28:26.7138622Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:28:26.7138919Z ##[endgroup]
+2026-09-10T18:28:27.1656157Z 
+2026-09-10T18:28:27.1657142Z > @oods/foundry-mcp@0.1.0 build:packages /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:28:27.1658259Z > pnpm --filter @oods/* run build
+2026-09-10T18:28:27.1658908Z 
+2026-09-10T18:28:27.6257361Z Scope: 21 of 22 workspace projects
+2026-09-10T18:28:27.6290405Z apps/playground build$ tsc -b && vite build
+2026-09-10T18:28:27.6298105Z packages/a11y-tools build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:28:27.6303498Z packages/artifacts build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true
+2026-09-10T18:28:27.6307253Z packages/component-contracts build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:28:29.3078748Z packages/a11y-tools build: [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:28:29.3163795Z packages/a11y-tools build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:28:29.3207894Z packages/a11y-tools build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:29.3238777Z packages/a11y-tools build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/a11y-tools/tsup.config.ts
+2026-09-10T18:28:29.3317162Z packages/component-contracts build: [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:28:29.3383268Z packages/component-contracts build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:28:29.3459185Z packages/component-contracts build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:29.3524010Z packages/component-contracts build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+2026-09-10T18:28:29.3606932Z packages/a11y-tools build: [34mCLI[39m Target: node20
+2026-09-10T18:28:29.3732691Z packages/component-contracts build: [34mCLI[39m Target: es2022
+2026-09-10T18:28:29.3852702Z packages/a11y-tools build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:28:29.4092638Z packages/component-contracts build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:28:29.4109995Z packages/a11y-tools build: [34mESM[39m Build start
+2026-09-10T18:28:29.4222972Z packages/a11y-tools build: [34mCJS[39m Build start
+2026-09-10T18:28:29.4303282Z packages/component-contracts build: [34mESM[39m Build start
+2026-09-10T18:28:29.4472278Z packages/component-contracts build: [34mCJS[39m Build start
+2026-09-10T18:28:30.7510694Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js     [22m[32m14.75 KB[39m
+2026-09-10T18:28:30.7607205Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js.map [22m[32m35.22 KB[39m
+2026-09-10T18:28:30.7719772Z packages/a11y-tools build: [32mESM[39m ⚡️ Build success in 1411ms
+2026-09-10T18:28:30.7807207Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs     [22m[32m15.34 KB[39m
+2026-09-10T18:28:30.7847008Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m35.23 KB[39m
+2026-09-10T18:28:30.7907234Z packages/a11y-tools build: [32mCJS[39m ⚡️ Build success in 1416ms
+2026-09-10T18:28:31.9206464Z packages/a11y-tools build: [34mDTS[39m Build start
+2026-09-10T18:28:32.3967279Z packages/component-contracts build: [34mDTS[39m Build start
+2026-09-10T18:28:32.4193071Z packages/component-contracts build: [32mESM[39m [1mdist/index.js [22m[32m409.23 KB[39m
+2026-09-10T18:28:32.4335786Z packages/component-contracts build: [32mESM[39m ⚡️ Build success in 3068ms
+2026-09-10T18:28:32.4429692Z packages/component-contracts build: [32mCJS[39m [1mdist/index.cjs [22m[32m410.54 KB[39m
+2026-09-10T18:28:32.4498172Z packages/component-contracts build: [32mCJS[39m ⚡️ Build success in 3072ms
+2026-09-10T18:28:34.2986685Z packages/artifacts build: Done
+2026-09-10T18:28:34.3058461Z packages/mcp-bridge build$ rimraf dist && tsc -p tsconfig.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-10T18:28:40.4517340Z packages/a11y-tools build: [32mDTS[39m ⚡️ Build success in 8529ms
+2026-09-10T18:28:40.4557253Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m9.01 KB[39m
+2026-09-10T18:28:40.4597064Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.cts [22m[32m9.01 KB[39m
+2026-09-10T18:28:40.6221475Z packages/a11y-tools build: Done
+2026-09-10T18:28:40.6290591Z packages/release-utils build$ rimraf dist && tsc -p tsconfig.json
+2026-09-10T18:28:41.2996573Z apps/playground build: [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+2026-09-10T18:28:41.9587533Z packages/component-contracts build: [32mDTS[39m ⚡️ Build success in 9978ms
+2026-09-10T18:28:41.9605606Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m59.71 KB[39m
+2026-09-10T18:28:41.9697252Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.cts [22m[32m59.71 KB[39m
+2026-09-10T18:28:42.2367073Z packages/component-contracts build: Done
+2026-09-10T18:28:42.2417021Z packages/tokens build$ rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-10T18:28:43.1036710Z apps/playground build: transforming...
+2026-09-10T18:28:43.2024614Z apps/playground build: Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-09-10T18:28:43.2067147Z apps/playground build:   npx update-browserslist-db@latest
+2026-09-10T18:28:43.2086620Z apps/playground build:   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-09-10T18:28:43.7354686Z packages/mcp-bridge build: Done
+2026-09-10T18:28:43.7395633Z packages/tw-variants build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:28:43.7827315Z packages/tokens build: ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-10T18:28:43.7867839Z packages/tokens build: Building design tokens with Style Dictionary…
+2026-09-10T18:28:44.1720974Z packages/tokens build: Token collisions detected (2):
+2026-09-10T18:28:44.1754119Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:44.1804938Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:44.9190404Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:44.9240887Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:44.9301915Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:44.9349071Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:44.9384015Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:44.9447200Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:44.9503789Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:44.9549849Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:44.9575632Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:44.9631767Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:44.9709740Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:44.9747554Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:44.9777147Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:44.9825651Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:44.9927856Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:44.9979350Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:44.9998976Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0055576Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0087044Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:45.0106991Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:45.0147132Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:45.0227678Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:45.0257490Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0317542Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0377411Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:45.0417237Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:45.0448662Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:45.0492061Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:45.0568701Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0616125Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:45.0644984Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:45.0688760Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:45.0707778Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:45.0758784Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:45.0779221Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:45.0827414Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:45.4317502Z packages/tw-variants build: [34mCLI[39m Building entry: src/context-matrix.ts, src/index.ts
+2026-09-10T18:28:45.4467471Z packages/tw-variants build: [34mCLI[39m Using tsconfig: ../../tsconfig.json
+2026-09-10T18:28:45.4554863Z packages/tw-variants build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:45.4660930Z packages/tw-variants build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+2026-09-10T18:28:45.4731393Z packages/tw-variants build: [34mCLI[39m Target: node20
+2026-09-10T18:28:45.4856028Z packages/tw-variants build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:28:45.4891553Z packages/tw-variants build: [34mESM[39m Build start
+2026-09-10T18:28:45.5040270Z packages/tw-variants build: [34mCJS[39m Build start
+2026-09-10T18:28:45.5933853Z packages/release-utils build: Done
+2026-09-10T18:28:45.6016891Z packages/viz-render build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:28:46.4717539Z packages/tokens build: ios-swift
+2026-09-10T18:28:46.4777100Z packages/tokens build: ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-10T18:28:46.4856828Z packages/tokens build: compose
+2026-09-10T18:28:46.4896806Z packages/tokens build: ! dist/compose/OodsTokens.kt, does not exist
+2026-09-10T18:28:46.7407341Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js     [22m[32m139.00 B[39m
+2026-09-10T18:28:46.7432563Z packages/tw-variants build: [32mESM[39m [1mdist/index.js              [22m[32m8.03 KB[39m
+2026-09-10T18:28:46.7484844Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js     [22m[32m6.39 KB[39m
+2026-09-10T18:28:46.7507191Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js.map [22m[32m78.00 B[39m
+2026-09-10T18:28:46.7537392Z packages/tw-variants build: [32mESM[39m [1mdist/index.js.map          [22m[32m19.16 KB[39m
+2026-09-10T18:28:46.7569251Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js.map [22m[32m13.51 KB[39m
+2026-09-10T18:28:46.7605610Z packages/tw-variants build: [32mESM[39m ⚡️ Build success in 1283ms
+2026-09-10T18:28:46.7607201Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs     [22m[32m6.42 KB[39m
+2026-09-10T18:28:46.7657423Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs              [22m[32m14.54 KB[39m
+2026-09-10T18:28:46.7697085Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs.map [22m[32m13.51 KB[39m
+2026-09-10T18:28:46.7700180Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs.map          [22m[32m32.63 KB[39m
+2026-09-10T18:28:46.7729850Z packages/tw-variants build: [32mCJS[39m ⚡️ Build success in 1280ms
+2026-09-10T18:28:46.9686425Z packages/tokens build: ts
+2026-09-10T18:28:46.9773459Z packages/tokens build: ! dist/ts/tokens.ts, does not exist
+2026-09-10T18:28:46.9806643Z packages/tokens build: tailwind
+2026-09-10T18:28:46.9812254Z packages/tokens build: ! dist/tailwind/tokens.json, does not exist
+2026-09-10T18:28:47.1520110Z packages/tw-variants build: [34mDTS[39m Build start
+2026-09-10T18:28:47.2890773Z packages/viz-render build: [34mCLI[39m Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+2026-09-10T18:28:47.2947635Z packages/viz-render build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:28:47.2956078Z packages/viz-render build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:47.2977470Z packages/viz-render build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-render/tsup.config.ts
+2026-09-10T18:28:47.3073736Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:47.3164677Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:47.3218992Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:47.3273261Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:47.3303386Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:47.3358010Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:47.3391341Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:47.3432940Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:47.3493222Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:47.3527390Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:47.3554327Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:47.3662363Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:47.3735897Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:47.3802416Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:47.3857667Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:47.3918039Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:47.3973215Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4040680Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4087932Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:47.4189988Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:47.4258029Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:47.4307387Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:47.4337382Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4383643Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4421384Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:47.4498616Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:47.4577977Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:47.4637787Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:47.4689288Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4757702Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:47.4794375Z packages/viz-render build: [34mCLI[39m Target: node20
+2026-09-10T18:28:47.4857992Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:47.4899151Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:47.4957790Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:47.4997858Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:47.5054169Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:47.5087295Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:47.5096832Z packages/viz-render build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:28:47.5147008Z packages/viz-render build: [34mESM[39m Build start
+2026-09-10T18:28:47.5207075Z packages/viz-render build: [34mCJS[39m Build start
+2026-09-10T18:28:49.3777493Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs                   [22m[32m3.92 KB[39m
+2026-09-10T18:28:49.3837500Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs                     [22m[32m21.51 KB[39m
+2026-09-10T18:28:49.3905267Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs     [22m[32m24.51 KB[39m
+2026-09-10T18:28:49.3962447Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs.map               [22m[32m12.80 KB[39m
+2026-09-10T18:28:49.3994014Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs.map                 [22m[32m52.80 KB[39m
+2026-09-10T18:28:49.4047424Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs.map [22m[32m59.80 KB[39m
+2026-09-10T18:28:49.4120851Z packages/viz-render build: [32mCJS[39m ⚡️ Build success in 2024ms
+2026-09-10T18:28:49.4207480Z packages/viz-render build: [32mESM[39m [1mdist/index.js                     [22m[32m7.61 KB[39m
+2026-09-10T18:28:49.4277388Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js                   [22m[32m3.59 KB[39m
+2026-09-10T18:28:49.4342835Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js     [22m[32m11.64 KB[39m
+2026-09-10T18:28:49.4379202Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js            [22m[32m13.57 KB[39m
+2026-09-10T18:28:49.4417521Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js            [22m[32m456.00 B[39m
+2026-09-10T18:28:49.4477405Z packages/viz-render build: [32mESM[39m [1mdist/index.js.map                 [22m[32m18.69 KB[39m
+2026-09-10T18:28:49.4527539Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js.map               [22m[32m11.73 KB[39m
+2026-09-10T18:28:49.4577347Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js.map [22m[32m25.74 KB[39m
+2026-09-10T18:28:49.4667397Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js.map        [22m[32m33.43 KB[39m
+2026-09-10T18:28:49.4680545Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js.map        [22m[32m1.11 KB[39m
+2026-09-10T18:28:49.4743645Z packages/viz-render build: [32mESM[39m ⚡️ Build success in 2025ms
+2026-09-10T18:28:49.4797697Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:49.4854613Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:28:49.4917478Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:49.4942764Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:28:49.4998224Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:49.5036689Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:28:49.5077868Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:49.5137993Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:28:49.5846919Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:49.5849684Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:28:49.6713560Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:49.6737479Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:28:49.7137759Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:49.7560624Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:28:49.7627995Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:49.8256689Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:28:49.8267645Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:49.8935877Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:28:49.9057323Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:49.9581216Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:28:49.9667688Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:50.0008305Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:28:50.0247707Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:50.0297165Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:28:50.0383703Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:50.0538974Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:28:50.0743462Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:50.0808485Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:28:50.0810444Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:50.0812781Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:28:50.0814677Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:50.0816835Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:28:50.0818829Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:50.0820890Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:28:50.0822939Z packages/tokens build: ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:50.0824990Z packages/tokens build: ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:28:50.0865133Z packages/viz-render build: [34mDTS[39m Build start
+2026-09-10T18:28:50.0866310Z apps/playground build: [32m✓[39m 48 modules transformed.
+2026-09-10T18:28:50.3437823Z apps/playground build: rendering chunks...
+2026-09-10T18:28:50.3466950Z apps/playground build: computing gzip size...
+2026-09-10T18:28:50.4625138Z apps/playground build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.69 kB[22m[1m[22m[2m │ gzip:  0.39 kB[22m
+2026-09-10T18:28:50.4667558Z apps/playground build: [2mdist/[22m[2massets/[22m[35mindex-DBhKWpVX.css  [39m[1m[2m 25.90 kB[22m[1m[22m[2m │ gzip:  5.53 kB[22m
+2026-09-10T18:28:50.4688060Z apps/playground build: [2mdist/[22m[2massets/[22m[36mindex-CjtZwImZ.js   [39m[1m[2m394.49 kB[22m[1m[22m[2m │ gzip: 88.73 kB[22m
+2026-09-10T18:28:50.4737015Z apps/playground build: [32m✓ built in 9.02s[39m
+2026-09-10T18:28:50.5957238Z apps/playground build: Done
+2026-09-10T18:28:51.8343691Z packages/tokens build: ios-swift
+2026-09-10T18:28:51.8346833Z packages/tokens build: ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-10T18:28:51.8358234Z packages/tokens build: compose
+2026-09-10T18:28:51.8377350Z packages/tokens build: ✔︎ dist/compose/OodsTokens.kt
+2026-09-10T18:28:52.0549665Z packages/tokens build: ts
+2026-09-10T18:28:52.0627068Z packages/tokens build: ✔︎ dist/ts/tokens.ts
+2026-09-10T18:28:52.0645213Z packages/tokens build: tailwind
+2026-09-10T18:28:52.0717055Z packages/tokens build: ✔︎ dist/tailwind/tokens.json
+2026-09-10T18:28:52.2436704Z packages/tokens build: Token collisions detected (2):
+2026-09-10T18:28:52.2438200Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:52.2483045Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:52.8837763Z packages/tokens build: css
+2026-09-10T18:28:52.8840352Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:53.0397350Z packages/tokens build: Token collisions detected (2):
+2026-09-10T18:28:53.0827849Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:53.0886866Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:53.4727817Z packages/tokens build: css
+2026-09-10T18:28:53.4927890Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:53.9727645Z packages/tokens build: Token collisions detected (252):
+2026-09-10T18:28:53.9766933Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:53.9995028Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:54.5527509Z packages/tokens build: css
+2026-09-10T18:28:54.5531910Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:55.1321118Z packages/tokens build: Token collisions detected (227):
+2026-09-10T18:28:55.1362351Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:55.1719024Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:55.5697419Z packages/tokens build: css
+2026-09-10T18:28:55.5736813Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:55.9326389Z packages/tw-variants build: [32mDTS[39m ⚡️ Build success in 8758ms
+2026-09-10T18:28:55.9328292Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.ts           [22m[32m685.00 B[39m
+2026-09-10T18:28:55.9387196Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.ts  [22m[32m573.00 B[39m
+2026-09-10T18:28:55.9411754Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.cts          [22m[32m685.00 B[39m
+2026-09-10T18:28:55.9417738Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.cts [22m[32m573.00 B[39m
+2026-09-10T18:28:56.0116721Z packages/tw-variants build: Done
+2026-09-10T18:28:56.0206658Z packages/tokens build: Token collisions detected (2):
+2026-09-10T18:28:56.0226836Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:56.0246721Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:56.3514521Z packages/tokens build: css
+2026-09-10T18:28:56.3535928Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:56.6406703Z packages/tokens build: Token collisions detected (252):
+2026-09-10T18:28:56.6446920Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:56.6466853Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:56.9837780Z packages/tokens build: css
+2026-09-10T18:28:56.9856908Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:57.2256656Z packages/tokens build: Token collisions detected (227):
+2026-09-10T18:28:57.2296885Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:57.2336801Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:57.4896524Z packages/tokens build: css
+2026-09-10T18:28:57.4956754Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-10T18:28:57.7136676Z packages/tokens build: Token collisions detected (2):
+2026-09-10T18:28:57.7177090Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:28:57.7196612Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:28:58.0107363Z packages/tokens build: ✔︎ tokens built successfully in 14.23s
+2026-09-10T18:28:58.0117268Z packages/tokens build:    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-10T18:28:58.0136542Z packages/tokens build:    types:    dist/ts/tokens.ts
+2026-09-10T18:28:58.0156620Z packages/tokens build:    tailwind: dist/tailwind/tokens.json
+2026-09-10T18:28:58.0167207Z packages/tokens build:    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-10T18:28:58.0176296Z packages/tokens build:    compose:  dist/compose/OodsTokens.kt
+2026-09-10T18:28:58.3109306Z packages/tokens build: Done
+2026-09-10T18:28:58.5756723Z packages/viz-render build: [32mDTS[39m ⚡️ Build success in 9170ms
+2026-09-10T18:28:58.5774150Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.ts  [22m[32m13.00 B[39m
+2026-09-10T18:28:58.5775913Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.ts                [22m[32m1.45 KB[39m
+2026-09-10T18:28:58.5777291Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.ts                  [22m[32m5.51 KB[39m
+2026-09-10T18:28:58.5778468Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.cts [22m[32m13.00 B[39m
+2026-09-10T18:28:58.5779636Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.cts               [22m[32m1.45 KB[39m
+2026-09-10T18:28:58.5781003Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.cts                 [22m[32m5.51 KB[39m
+2026-09-10T18:28:58.6347649Z packages/viz-render build: Done
+2026-09-10T18:28:58.6351729Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+2026-09-10T18:28:58.6353156Z packages/viz-core build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:28:59.2358217Z packages/component-styles build: [34mCLI[39m Building entry: src/index.ts, src/ported.ts
+2026-09-10T18:28:59.2360025Z packages/component-styles build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:28:59.2377182Z packages/component-styles build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:59.2394734Z packages/component-styles build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+2026-09-10T18:28:59.2466951Z packages/viz-core build: [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:28:59.2471156Z packages/viz-core build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:28:59.2496630Z packages/viz-core build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:28:59.2528375Z packages/viz-core build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-core/tsup.config.ts
+2026-09-10T18:28:59.2582566Z packages/component-styles build: [34mCLI[39m Target: es2022
+2026-09-10T18:28:59.2583919Z packages/component-styles build: [34mESM[39m Build start
+2026-09-10T18:28:59.2599846Z packages/component-styles build: [34mCJS[39m Build start
+2026-09-10T18:28:59.2656845Z packages/viz-core build: [34mCLI[39m Target: node20
+2026-09-10T18:28:59.2677096Z packages/viz-core build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:28:59.2712943Z packages/viz-core build: [34mESM[39m Build start
+2026-09-10T18:28:59.2774413Z packages/viz-core build: [34mCJS[39m Build start
+2026-09-10T18:28:59.5477440Z packages/component-styles build: [32mCJS[39m [1mdist/index.cjs  [22m[32m1.97 KB[39m
+2026-09-10T18:28:59.5509824Z packages/component-styles build: [32mCJS[39m [1mdist/ported.cjs [22m[32m1.93 KB[39m
+2026-09-10T18:28:59.5546651Z packages/component-styles build: [32mCJS[39m ⚡️ Build success in 285ms
+2026-09-10T18:28:59.5627732Z packages/component-styles build: [32mESM[39m [1mdist/index.js          [22m[32m143.00 B[39m
+2026-09-10T18:28:59.5680031Z packages/component-styles build: [32mESM[39m [1mdist/ported.js         [22m[32m513.00 B[39m
+2026-09-10T18:28:59.5747537Z packages/component-styles build: [32mESM[39m [1mdist/chunk-FPEPL7UR.js [22m[32m1.83 KB[39m
+2026-09-10T18:28:59.5807647Z packages/component-styles build: [32mESM[39m ⚡️ Build success in 288ms
+2026-09-10T18:29:00.3006943Z packages/component-styles build: [34mDTS[39m Build start
+2026-09-10T18:29:00.3667388Z packages/viz-core build: [34mDTS[39m Build start
+2026-09-10T18:29:08.5957335Z packages/component-styles build: [32mDTS[39m ⚡️ Build success in 8296ms
+2026-09-10T18:29:08.6037374Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m1.87 KB[39m
+2026-09-10T18:29:08.6077016Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m500.00 B[39m
+2026-09-10T18:29:08.6137189Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m1.87 KB[39m
+2026-09-10T18:29:08.6156977Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m500.00 B[39m
+2026-09-10T18:29:08.8401786Z packages/component-styles build: Done
+2026-09-10T18:29:09.5595955Z packages/viz-core build: [32mESM[39m [1mdist/index.js     [22m[32m2.03 MB[39m
+2026-09-10T18:29:09.5597668Z packages/viz-core build: [32mESM[39m [1mdist/index.js.map [22m[32m3.69 MB[39m
+2026-09-10T18:29:09.5602107Z packages/viz-core build: [32mESM[39m ⚡️ Build success in 10291ms
+2026-09-10T18:29:09.5627163Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs     [22m[32m2.04 MB[39m
+2026-09-10T18:29:09.5641433Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m3.69 MB[39m
+2026-09-10T18:29:09.5678100Z packages/viz-core build: [32mCJS[39m ⚡️ Build success in 10294ms
+2026-09-10T18:29:10.8718897Z packages/viz-core build: [32mDTS[39m ⚡️ Build success in 10508ms
+2026-09-10T18:29:10.8720264Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m301.30 KB[39m
+2026-09-10T18:29:10.8721714Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.cts [22m[32m301.30 KB[39m
+2026-09-10T18:29:10.9545653Z packages/viz-core build: Done
+2026-09-10T18:29:10.9547209Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:29:10.9549847Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+2026-09-10T18:29:11.5416573Z packages/components-vue build: [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:29:11.5457175Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:29:11.5468752Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:29:11.5501707Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+2026-09-10T18:29:11.5531999Z packages/components-react build: [34mCLI[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+2026-09-10T18:29:11.5574104Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-10T18:29:11.5597635Z packages/components-react build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:29:11.5636650Z packages/components-react build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:29:11.5678070Z packages/components-react build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+2026-09-10T18:29:11.5686990Z packages/components-vue build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:29:11.5715216Z packages/components-vue build: [34mESM[39m Build start
+2026-09-10T18:29:11.5766641Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-10T18:29:11.5795268Z packages/components-react build: [34mCLI[39m Target: es2022
+2026-09-10T18:29:11.5824381Z packages/components-react build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:29:11.5861592Z packages/components-react build: [34mESM[39m Build start
+2026-09-10T18:29:11.5907042Z packages/components-react build: [34mCJS[39m Build start
+2026-09-10T18:29:12.0167022Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-10T18:29:13.0391501Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-10T18:29:13.6330702Z packages/components-react build: [34mDTS[39m Build start
+2026-09-10T18:29:13.6653425Z packages/components-react build: [32mCJS[39m [1mdist/status.cjs [22m[32m11.08 KB[39m
+2026-09-10T18:29:13.6655563Z packages/components-react build: [32mCJS[39m [1mdist/types.cjs  [22m[32m15.00 B[39m
+2026-09-10T18:29:13.6710503Z packages/components-react build: [32mCJS[39m [1mdist/table.cjs  [22m[32m17.07 KB[39m
+2026-09-10T18:29:13.6742880Z packages/components-react build: [32mCJS[39m [1mdist/ported.cjs [22m[32m52.76 KB[39m
+2026-09-10T18:29:13.6788481Z packages/components-react build: [32mCJS[39m [1mdist/index.cjs  [22m[32m135.60 KB[39m
+2026-09-10T18:29:13.6837204Z packages/components-react build: [32mCJS[39m ⚡️ Build success in 2078ms
+2026-09-10T18:29:13.6917158Z packages/components-react build: [32mESM[39m [1mdist/ported.js         [22m[32m192.00 B[39m
+2026-09-10T18:29:13.6925045Z packages/components-react build: [32mESM[39m [1mdist/status.js         [22m[32m171.00 B[39m
+2026-09-10T18:29:13.6967129Z packages/components-react build: [32mESM[39m [1mdist/table.js          [22m[32m149.00 B[39m
+2026-09-10T18:29:13.6968852Z packages/components-react build: [32mESM[39m [1mdist/chunk-YCI5AEWL.js [22m[32m6.37 KB[39m
+2026-09-10T18:29:13.7093851Z packages/components-react build: [32mESM[39m [1mdist/types.js          [22m[32m1.00 B[39m
+2026-09-10T18:29:13.7167346Z packages/components-react build: [32mESM[39m [1mdist/chunk-G74PKSW3.js [22m[32m10.89 KB[39m
+2026-09-10T18:29:13.7187374Z packages/components-react build: [32mESM[39m [1mdist/index.js          [22m[32m71.77 KB[39m
+2026-09-10T18:29:13.7243211Z packages/components-react build: [32mESM[39m [1mdist/chunk-XMIP5ZGO.js [22m[32m40.39 KB[39m
+2026-09-10T18:29:13.7291559Z packages/components-react build: [32mESM[39m ⚡️ Build success in 2080ms
+2026-09-10T18:29:13.7496197Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-10T18:29:13.7592978Z packages/components-vue build: [32mESM[39m [1mdist/index.js [22m[32m112.98 KB[39m
+2026-09-10T18:29:13.7627102Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 2196ms
+2026-09-10T18:29:13.7646919Z packages/components-vue build: [32mCJS[39m [1mdist/index.cjs [22m[32m116.53 KB[39m
+2026-09-10T18:29:13.7666856Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 2199ms
+2026-09-10T18:29:23.3257616Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 10332ms
+2026-09-10T18:29:23.3273168Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m105.15 KB[39m
+2026-09-10T18:29:23.3275026Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.cts [22m[32m105.15 KB[39m
+2026-09-10T18:29:23.6234574Z packages/components-react build: [32mDTS[39m ⚡️ Build success in 10476ms
+2026-09-10T18:29:23.6259646Z packages/components-react build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m13.05 KB[39m
+2026-09-10T18:29:23.6278097Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m7.12 KB[39m
+2026-09-10T18:29:23.6297076Z packages/components-react build: [32mDTS[39m [1mdist/status.d.ts  [22m[32m1.39 KB[39m
+2026-09-10T18:29:23.6306847Z packages/components-react build: [32mDTS[39m [1mdist/table.d.ts   [22m[32m1.06 KB[39m
+2026-09-10T18:29:23.6326719Z packages/components-react build: [32mDTS[39m [1mdist/types.d.ts   [22m[32m23.79 KB[39m
+2026-09-10T18:29:23.6336803Z packages/components-react build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m13.05 KB[39m
+2026-09-10T18:29:23.6358192Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m7.12 KB[39m
+2026-09-10T18:29:23.6385032Z packages/components-react build: [32mDTS[39m [1mdist/status.d.cts [22m[32m1.39 KB[39m
+2026-09-10T18:29:23.6396933Z packages/components-react build: [32mDTS[39m [1mdist/table.d.cts  [22m[32m1.07 KB[39m
+2026-09-10T18:29:23.6417018Z packages/components-react build: [32mDTS[39m [1mdist/types.d.cts  [22m[32m23.79 KB[39m
+2026-09-10T18:29:23.7124060Z packages/components-react build: Done
+2026-09-10T18:29:23.8406772Z packages/components-vue build: [34mCLI[39m Building entry: src/ported.ts
+2026-09-10T18:29:23.8429133Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:29:23.8431701Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:29:23.8433521Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+2026-09-10T18:29:23.8517533Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-10T18:29:23.8534287Z packages/components-vue build: [34mESM[39m Build start
+2026-09-10T18:29:23.8553928Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-10T18:29:24.3857167Z packages/components-vue build: [32mCJS[39m [1mdist/ported.cjs [22m[32m46.73 KB[39m
+2026-09-10T18:29:24.3858360Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 533ms
+2026-09-10T18:29:24.3859582Z packages/components-vue build: [32mESM[39m [1mdist/ported.js [22m[32m46.06 KB[39m
+2026-09-10T18:29:24.3867472Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 533ms
+2026-09-10T18:29:24.4566976Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-10T18:29:28.2859885Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 3828ms
+2026-09-10T18:29:28.2861365Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m20.67 KB[39m
+2026-09-10T18:29:28.2863049Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m20.67 KB[39m
+2026-09-10T18:29:28.3453376Z packages/components-vue build: Done
+2026-09-10T18:29:28.3460825Z packages/mcp-server build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-10T18:29:35.0231565Z packages/mcp-server build: Done
+2026-09-10T18:29:35.0235969Z packages/sdk build$ rimraf dist && tsc -p tsconfig.json
+2026-09-10T18:29:36.4599954Z packages/sdk build: Done
+2026-09-10T18:29:36.4823353Z ##[group]Run pnpm exec playwright install chromium
+2026-09-10T18:29:36.4824017Z [36;1mpnpm exec playwright install chromium[0m
+2026-09-10T18:29:36.4857678Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:29:36.4858095Z env:
+2026-09-10T18:29:36.4858378Z   NODE_VERSION: 24
+2026-09-10T18:29:36.4858792Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:29:36.4859261Z ##[endgroup]
+2026-09-10T18:29:37.5286856Z Downloading Chromium 141.0.7390.37 (playwright build v1194) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1194/chromium-linux.zip
+2026-09-10T18:29:37.7097289Z |                                                                                |   0% of 173.9 MiB
+2026-09-10T18:29:37.9976476Z |■■■■■■■■                                                                        |  10% of 173.9 MiB
+2026-09-10T18:29:38.2999746Z |■■■■■■■■■■■■■■■■                                                                |  20% of 173.9 MiB
+2026-09-10T18:29:38.4903212Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 173.9 MiB
+2026-09-10T18:29:38.8156880Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 173.9 MiB
+2026-09-10T18:29:39.0116378Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 173.9 MiB
+2026-09-10T18:29:39.2376969Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 173.9 MiB
+2026-09-10T18:29:39.5868962Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 173.9 MiB
+2026-09-10T18:29:39.8380313Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 173.9 MiB
+2026-09-10T18:29:40.0621369Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 173.9 MiB
+2026-09-10T18:29:40.2604585Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 173.9 MiB
+2026-09-10T18:29:43.6807099Z Chromium 141.0.7390.37 (playwright build v1194) downloaded to /home/runner/.cache/ms-playwright/chromium-1194
+2026-09-10T18:29:43.6817094Z Downloading FFMPEG playwright build v1011 from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-09-10T18:29:44.0635145Z |                                                                                |   0% of 2.3 MiB
+2026-09-10T18:29:44.0665526Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-09-10T18:29:44.0687474Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-09-10T18:29:44.0714489Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-09-10T18:29:44.0731181Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-09-10T18:29:44.0756109Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-09-10T18:29:44.0771064Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-09-10T18:29:44.0797040Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-09-10T18:29:44.0824887Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-09-10T18:29:44.0841485Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-09-10T18:29:44.0849327Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-09-10T18:29:44.1442065Z FFMPEG playwright build v1011 downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-09-10T18:29:44.1446987Z Downloading Chromium Headless Shell 141.0.7390.37 (playwright build v1194) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1194/chromium-headless-shell-linux.zip
+2026-09-10T18:29:44.3008002Z |                                                                                |   0% of 104.3 MiB
+2026-09-10T18:29:44.4544350Z |■■■■■■■■                                                                        |  10% of 104.3 MiB
+2026-09-10T18:29:44.5651892Z |■■■■■■■■■■■■■■■■                                                                |  20% of 104.3 MiB
+2026-09-10T18:29:44.7948161Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 104.3 MiB
+2026-09-10T18:29:44.9957795Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 104.3 MiB
+2026-09-10T18:29:45.0895550Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 104.3 MiB
+2026-09-10T18:29:45.2027222Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 104.3 MiB
+2026-09-10T18:29:45.4023090Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 104.3 MiB
+2026-09-10T18:29:45.5096251Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 104.3 MiB
+2026-09-10T18:29:45.6233918Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 104.3 MiB
+2026-09-10T18:29:45.7226339Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 104.3 MiB
+2026-09-10T18:29:48.2277556Z Chromium Headless Shell 141.0.7390.37 (playwright build v1194) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1194
+2026-09-10T18:29:48.6169634Z ##[group]Run node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue
+2026-09-10T18:29:48.6171284Z [36;1mnode scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue[0m
+2026-09-10T18:29:48.6229098Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:29:48.6229500Z env:
+2026-09-10T18:29:48.6229804Z   NODE_VERSION: 24
+2026-09-10T18:29:48.6230248Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:29:48.6230770Z ##[endgroup]
+2026-09-10T18:29:48.6608623Z $ pnpm --filter @oods/component-contracts exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-GAjiz5/component-contracts.json
+2026-09-10T18:29:49.5116322Z 
+2026-09-10T18:29:49.5150776Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts[39m
+2026-09-10T18:29:49.5156107Z 
+2026-09-10T18:29:50.1592901Z  [32m✓[39m test/breadth-contracts.s186.spec.ts [2m([22m[2m48 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-09-10T18:29:52.2354015Z  [32m✓[39m test/baseline-fold.s185.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 763[2mms[22m[39m
+2026-09-10T18:29:52.2359605Z    [33m[2m✓[22m[39m Sprint 185 baseline surface evidence preserves the identity denominator[2m > [22mderives the fold from the actual target readiness and resolves every underlying reference occurrence [33m 432[2mms[22m[39m
+2026-09-10T18:29:52.4825113Z  [32m✓[39m test/breadth-contracts.s185.spec.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-09-10T18:29:52.7401536Z  [32m✓[39m test/contracts.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+2026-09-10T18:29:52.9922955Z  [32m✓[39m test/ported-contracts.s184.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-09-10T18:29:53.2414236Z  [32m✓[39m test/measured-contracts.s192.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-09-10T18:29:53.4777051Z  [32m✓[39m test/breadth-contracts.s187.spec.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-09-10T18:29:53.7332423Z  [32m✓[39m test/readiness-measurements.s192.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-09-10T18:29:53.9653003Z  [32m✓[39m test/contract-amendments.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-09-10T18:29:54.1868080Z  [32m✓[39m test/static-svg.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-09-10T18:29:54.4195698Z  [32m✓[39m test/workflow-states.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-09-10T18:29:54.4316124Z 
+2026-09-10T18:29:54.4339167Z [2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+2026-09-10T18:29:54.4340200Z [2m      Tests [22m [1m[32m126 passed[39m[22m[90m (126)[39m
+2026-09-10T18:29:54.4356486Z [2m   Start at [22m 18:29:49
+2026-09-10T18:29:54.4372572Z [2m   Duration [22m 4.92s[2m (transform 378ms, setup 0ms, collect 1.75s, tests 904ms, environment 2ms, prepare 668ms)[22m
+2026-09-10T18:29:54.4388629Z 
+2026-09-10T18:29:54.4389613Z JSON report written to /tmp/oods-component-suite-GAjiz5/component-contracts.json
+2026-09-10T18:29:54.5697556Z $ pnpm --filter @oods/component-styles exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-GAjiz5/component-styles.json
+2026-09-10T18:29:55.3696070Z 
+2026-09-10T18:29:55.3720289Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles[39m
+2026-09-10T18:29:55.3745946Z 
+2026-09-10T18:29:59.0071171Z  [32m✓[39m test/high-contrast.browser.spec.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 2964[2mms[22m[39m
+2026-09-10T18:29:59.5670072Z  [32m✓[39m test/styles.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+2026-09-10T18:29:59.9609113Z  [32m✓[39m test/token-resolution.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 133[2mms[22m[39m
+2026-09-10T18:30:00.1888744Z  [32m✓[39m test/ported-styles.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-09-10T18:30:00.2016255Z 
+2026-09-10T18:30:00.2020110Z [2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+2026-09-10T18:30:00.2032322Z [2m      Tests [22m [1m[32m39 passed[39m[22m[90m (39)[39m
+2026-09-10T18:30:00.2033284Z [2m   Start at [22m 18:29:55
+2026-09-10T18:30:00.2034758Z [2m   Duration [22m 4.83s[2m (transform 273ms, setup 0ms, collect 660ms, tests 3.24s, environment 1ms, prepare 265ms)[22m
+2026-09-10T18:30:00.2040185Z 
+2026-09-10T18:30:00.2056717Z JSON report written to /tmp/oods-component-suite-GAjiz5/component-styles.json
+2026-09-10T18:30:00.3489591Z $ pnpm --filter @oods/components-react exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-GAjiz5/components-react.json
+2026-09-10T18:30:01.1543871Z 
+2026-09-10T18:30:01.1561144Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/components-react[39m
+2026-09-10T18:30:01.1578546Z 
+2026-09-10T18:30:03.2418846Z  [32m✓[39m test/scenarios.spec.tsx [2m([22m[2m73 tests[22m[2m)[22m[33m 664[2mms[22m[39m
+2026-09-10T18:30:04.3658450Z  [32m✓[39m test/breadth.s186.spec.tsx [2m([22m[2m25 tests[22m[2m)[22m[33m 350[2mms[22m[39m
+2026-09-10T18:30:05.2517782Z  [32m✓[39m test/breadth.s187.spec.tsx [2m([22m[2m19 tests[22m[2m)[22m[32m 186[2mms[22m[39m
+2026-09-10T18:30:06.1777580Z  [32m✓[39m test/breadth.s185.spec.tsx [2m([22m[2m35 tests[22m[2m)[22m[32m 209[2mms[22m[39m
+2026-09-10T18:30:07.1970578Z  [32m✓[39m test/interactions.spec.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 270[2mms[22m[39m
+2026-09-10T18:30:09.5800855Z  [32m✓[39m test/accessibility.spec.tsx [2m([22m[2m77 tests[22m[2m)[22m[33m 1379[2mms[22m[39m
+2026-09-10T18:30:10.5612142Z  [32m✓[39m test/ported-scenarios.spec.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 261[2mms[22m[39m
+2026-09-10T18:30:11.2134322Z  [32m✓[39m test/package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+2026-09-10T18:30:11.8350625Z  [32m✓[39m test/ported-package-contract.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-09-10T18:30:12.6507077Z  [32m✓[39m test/billing-views.spec.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+2026-09-10T18:30:13.5068514Z  [32m✓[39m test/billing.spec.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+2026-09-10T18:30:14.6637478Z  [32m✓[39m test/ported-accessibility.spec.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 219[2mms[22m[39m
+2026-09-10T18:30:15.4114332Z  [32m✓[39m test/badge-tone.s185.spec.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+2026-09-10T18:30:17.3250829Z  [32m✓[39m test/scenario-interactions.spec.tsx [2m([22m[2m170 tests[22m[2m)[22m[33m 1163[2mms[22m[39m
+2026-09-10T18:30:18.1072822Z  [32m✓[39m test/contract-amendments.s184.spec.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 86[2mms[22m[39m
+2026-09-10T18:30:18.7692146Z  [32m✓[39m test/viz-area-svg.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 11[2mms[22m[39m
+2026-09-10T18:30:19.4912481Z  [32m✓[39m test/table-empty.s184.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 29[2mms[22m[39m
+2026-09-10T18:30:19.9343769Z  [32m✓[39m test/ported-ssr.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 31[2mms[22m[39m
+2026-09-10T18:30:20.4265280Z  [32m✓[39m test/ssr.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 73[2mms[22m[39m
+2026-09-10T18:30:20.4419785Z 
+2026-09-10T18:30:20.4476942Z [2m Test Files [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+2026-09-10T18:30:20.4478099Z [2m      Tests [22m [1m[32m447 passed[39m[22m[90m (447)[39m
+2026-09-10T18:30:20.4496576Z [2m   Start at [22m 18:30:01
+2026-09-10T18:30:20.4499150Z [2m   Duration [22m 19.29s[2m (transform 799ms, setup 0ms, collect 4.08s, tests 5.28s, environment 6.09s, prepare 1.14s)[22m
+2026-09-10T18:30:20.4499989Z 
+2026-09-10T18:30:20.4532337Z JSON report written to /tmp/oods-component-suite-GAjiz5/components-react.json
+2026-09-10T18:30:20.5930935Z $ pnpm --filter @oods/components-vue exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-GAjiz5/components-vue.json
+2026-09-10T18:30:21.3841239Z 
+2026-09-10T18:30:21.3858103Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue[39m
+2026-09-10T18:30:21.3876232Z 
+2026-09-10T18:30:23.0067300Z  [32m✓[39m test/scenarios.spec.ts [2m([22m[2m73 tests[22m[2m)[22m[33m 357[2mms[22m[39m
+2026-09-10T18:30:23.8930075Z  [32m✓[39m test/breadth.s186.spec.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 192[2mms[22m[39m
+2026-09-10T18:30:24.8189780Z  [32m✓[39m test/breadth.s187.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 219[2mms[22m[39m
+2026-09-10T18:30:25.6203738Z  [32m✓[39m test/breadth.s185.spec.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 129[2mms[22m[39m
+2026-09-10T18:30:26.3896792Z  [32m✓[39m test/interactions.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 105[2mms[22m[39m
+2026-09-10T18:30:27.1012210Z  [32m✓[39m test/ssr.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 57[2mms[22m[39m
+2026-09-10T18:30:29.3846057Z  [32m✓[39m test/accessibility.spec.ts [2m([22m[2m77 tests[22m[2m)[22m[33m 1358[2mms[22m[39m
+2026-09-10T18:30:30.1340684Z  [32m✓[39m test/ported-scenarios.spec.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 95[2mms[22m[39m
+2026-09-10T18:30:31.2601577Z  [32m✓[39m test/package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 101[2mms[22m[39m
+2026-09-10T18:30:32.1798043Z  [32m✓[39m test/ported-package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+2026-09-10T18:30:33.3097379Z  [32m✓[39m test/ported-accessibility.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 228[2mms[22m[39m
+2026-09-10T18:30:34.0285879Z  [32m✓[39m test/billing-views.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+2026-09-10T18:30:34.7548129Z  [32m✓[39m test/billing.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+2026-09-10T18:30:35.4688058Z  [32m✓[39m test/craft.s191.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+2026-09-10T18:30:37.3155721Z  [32m✓[39m test/scenario-interactions.spec.ts [2m([22m[2m170 tests[22m[2m)[22m[33m 1080[2mms[22m[39m
+2026-09-10T18:30:37.9863299Z  [32m✓[39m test/ported-ssr.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 32[2mms[22m[39m
+2026-09-10T18:30:38.6789921Z  [32m✓[39m test/contract-amendments.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-09-10T18:30:39.3322513Z [90mstderr[2m | test/viz-area-svg.spec.ts[2m > [22m[2membeds a labelled static figure without altering renderer IDs or ARIA
+2026-09-10T18:30:39.3337985Z [22m[39m[Vue warn]: Unhandled error during execution of render function 
+2026-09-10T18:30:39.3339214Z   at <OodsVizAreaPreview svg="<svg><script>bad()</script></svg>" > 
+2026-09-10T18:30:39.3340396Z  [32m✓[39m test/viz-area-svg.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-09-10T18:30:39.3343846Z   at <App>
+2026-09-10T18:30:39.3344273Z 
+2026-09-10T18:30:40.0275069Z  [32m✓[39m test/table-empty.s184.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 29[2mms[22m[39m
+2026-09-10T18:30:40.0474455Z 
+2026-09-10T18:30:40.0478812Z [2m Test Files [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+2026-09-10T18:30:40.0506954Z [2m      Tests [22m [1m[32m430 passed[39m[22m[90m (430)[39m
+2026-09-10T18:30:40.0526726Z [2m   Start at [22m 18:30:21
+2026-09-10T18:30:40.0547037Z [2m   Duration [22m 18.66s[2m (transform 534ms, setup 0ms, collect 3.85s, tests 4.25s, environment 6.72s, prepare 1.13s)[22m
+2026-09-10T18:30:40.0549270Z 
+2026-09-10T18:30:40.0564795Z JSON report written to /tmp/oods-component-suite-GAjiz5/components-vue.json
+2026-09-10T18:30:40.1902005Z {"packages":4,"passed":1042,"failed":0,"skipped":0,"success":true}
+2026-09-10T18:30:40.2031438Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:30:40.2032588Z Post job cleanup.
+2026-09-10T18:30:40.3328224Z (node:4858) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:30:40.3329803Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:30:40.3684317Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --files-from manifest.txt --use-compress-program zstdmt
+2026-09-10T18:30:43.5661605Z Failed to save: Unable to reserve cache with key node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d, another job may be creating this cache.
+2026-09-10T18:30:43.5847947Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:30:43.5849106Z Post job cleanup.
+2026-09-10T18:30:43.7318600Z Pruning is unnecessary.
+2026-09-10T18:30:43.7509739Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:30:43.7512009Z Post job cleanup.
+2026-09-10T18:30:43.8646766Z [command]/usr/bin/git version
+2026-09-10T18:30:43.8736682Z git version 2.55.0
+2026-09-10T18:30:43.8816894Z Temporarily overriding HOME='/home/runner/work/_temp/cc3bcc11-0e63-4ee8-bf9f-429fa9d4dceb' before making global git config changes
+2026-09-10T18:30:43.8836481Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-10T18:30:43.8854901Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:30:43.8881366Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-10T18:30:43.8949603Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-10T18:30:43.9518022Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-10T18:30:43.9569423Z http.https://github.com/.extraheader
+2026-09-10T18:30:43.9587809Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-10T18:30:43.9648138Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-10T18:30:44.0056946Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-10T18:30:44.0088202Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-10T18:30:44.0633019Z Cleaning up orphan processes
+2026-09-10T18:30:44.0861951Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

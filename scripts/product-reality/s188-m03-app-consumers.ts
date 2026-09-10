@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import type { Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 import { fieldLabel } from '../../packages/mcp-server/src/compose/label-generator.js';
+import { schemaNodes } from './s185-m04-consumer-contract.js';
+import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { isTraitRecipe } from '../../packages/mcp-server/src/compose/trait-recipes.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
@@ -54,6 +56,23 @@ async function mountedRecipes(page: Page) {
   return roots.filter((root) => isTraitRecipe(root.component));
 }
 
+/** Expected obligations come from declarations, never from whichever DOM survived. */
+export function expectedWorkflowFlow(schema: UiSchema): string[] {
+  const nodes = schemaNodes(schema);
+  const fields = schema.objectSchema ?? {};
+  const billing = nodes.some(node => node.component === 'BillingAmountInput');
+  const address = nodes.some(node => node.component === 'AddressEditor');
+  const cancel = nodes.some(node => Object.values(node.bindings ?? {}).includes('handleCancel'));
+  return ['ten-sample-records', 'detail-navigation', 'edit-seeded-values',
+    ...(billing ? ['billing-edit-values'] : []), fields.plan_name ? 'save-plan-name' : 'save-record-title',
+    ...(billing ? ['billing-save-persists'] : []), ...(address ? ['address-save-persists'] : []),
+    ...(cancel ? ['cancel-detail', 'cancel-list-badge'] : []), 'timeline-navigation-and-history'];
+}
+export function assertWorkflowFlow(rows: Row[], expected: readonly string[]) {
+  assert.deepEqual(rows.map(row => row.name), expected, 'Every declared flow obligation must execute in order');
+  assert.ok(rows.every(row => row.status === 'passed'), JSON.stringify(rows));
+}
+
 export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name'): Promise<Row[]> {
   const rows: Row[] = [];
   const selectedId = `${object.toLowerCase()}-003`;
@@ -85,7 +104,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         assert.ok((await overlay.getAttribute('aria-label') ?? '').startsWith(`Archived: ${object}`));
         assert.equal(await overlay.locator('.oods-archive-badge').innerText(), 'Archived');
         const opacity = await overlay.evaluate((node) => getComputedStyle(node).opacity);
-        assert.equal(opacity, '0.6');
+        assert.equal(opacity, '0.7'); // s192-m04 measured contrast correction (#1887)
         archivePresentation = { opacity, accessibleName: await overlay.getAttribute('aria-label'), tabLabel: await overlay.getAttribute('data-archive-tab'), keyboardNavigation: true };
         await archiveTabs.getByRole('tab', { name: 'Active', exact: true }).click();
       } else await page.getByRole('button', { name: 'Show active', exact: true }).click();
@@ -258,7 +277,11 @@ export async function observeCollectionControls(page: Page, url: string, object 
   const rows: Row[] = [];
   const records = page.locator('[data-oods-collection="rows"] [data-record-id]');
   const total = await records.count();
-  const activeIds = await records.evaluateAll(nodes => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === 'active').map(node => node.getAttribute('data-record-id')));
+  const statusControl = page.getByRole('combobox', { name: 'Status', exact: true });
+  const options = await statusControl.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value));
+  const selectedStatus = options.includes('active') ? 'active' : options.find(value => value !== '');
+  assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
+  const expectedIds = await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
   await observe(rows, 'type-through-empty-results', async () => {
     await search.focus(); await search.pressSequentially('not-a-record');
@@ -271,12 +294,12 @@ export async function observeCollectionControls(page: Page, url: string, object 
     return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
   });
   await observe(rows, 'filter-composed-rows', async () => {
-    await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('active');
-    assert.equal(await records.count(), activeIds.length);
-    assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), activeIds);
+    await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption(selectedStatus);
+    assert.equal(await records.count(), expectedIds.length);
+    assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), expectedIds);
     await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('');
     assert.equal(await records.count(), total);
-    return { activeCount: activeIds.length, restoredCount: total };
+    return { selectedStatus, selectedCount: expectedIds.length, expectedIds, restoredCount: total };
   });
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
@@ -297,11 +320,11 @@ export async function observeCollectionControls(page: Page, url: string, object 
   return rows;
 }
 
-export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean, object = 'Subscription', titleField = 'plan_name') {
+export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean, object: string, titleField: string, requiredFlow: readonly string[]) {
   const rows: Array<Record<string, unknown>> = [];
   const selectedId = `${object.toLowerCase()}-003`;
   const flow = await observeFlow(page, url, requireBillingViews, object, titleField);
-  assert.equal(flow.length, object === 'Subscription' ? (flow.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(flow.every((row) => row.status === 'passed'));
+  assertWorkflowFlow(flow, requiredFlow);
   await go(page, 'list'); await ready(page, 'list');
   for (const width of [390, 820, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -344,6 +367,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? composition.schema.workflow!.data.idField;
   const requireBillingViews = JSON.stringify(composition.schema).includes('CycleProgressCard');
   const requireAddressViews = JSON.stringify(composition.schema).includes('AddressEditor');
+  const requiredFlow = expectedWorkflowFlow(composition.schema);
   const artifacts = new Map<Framework, GeneratedArtifact>();
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
@@ -439,13 +463,13 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           const flow = await observeFlow(page, url, requireBillingViews, object, titleField); cell.flow = flow;
           assert.equal(flow.some(row => row.name === 'address-save-persists' && row.status === 'passed'), requireAddressViews, 'Declared address editor must pass save and detail readback');
           await json(path.join(cellRoot, 'flow.json'), flow);
-          assert.equal(flow.length, object === 'Subscription' ? (flow.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.equal(flow.filter((row) => row.status !== 'passed').length, 0, JSON.stringify(flow));
+          assertWorkflowFlow(flow, requiredFlow);
           const states = await observeStates(page, url, framework); allStates.push(...states);
           await json(path.join(cellRoot, 'states.json'), states);
           const collectionControls = await observeCollectionControls(page, url, object);
           await json(path.join(cellRoot, 'collection-controls.json'), collectionControls);
           assert.ok(collectionControls.every(row => row.status === 'passed'), JSON.stringify(collectionControls));
-          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField); allScreenshots.push(...images);
+          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField, requiredFlow); allScreenshots.push(...images);
           assert.deepEqual(errors, []);
           pass(activeGate, { flowRows: flow.length, stateObservations: states.length, screenshots: images.length, errors });
           await page.close();
@@ -474,9 +498,9 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
       const restore = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true }); requireGreen(restore, 'restore navigation');
       await json(path.join(output, 'bite-restore-build.json'), restore);
       const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
-      assert.equal(green.length, object === 'Subscription' ? (green.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(green.every((row) => row.status === 'passed'));
+      assertWorkflowFlow(green, requiredFlow);
       const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
-      assert.equal(unaffected.length, object === 'Subscription' ? (unaffected.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(unaffected.every((row) => row.status === 'passed'));
+      assertWorkflowFlow(unaffected, requiredFlow);
       await json(path.join(output, 'navigation-bite.json'), { framework: 'react', source: 'src/application.ts', beforeHash: digest(original), afterHash: digest(mutated), restoredHash: digest(await fs.readFile(file)), red, restored: green, unaffectedFramework: 'vue', unaffected });
       await page.close();
     }

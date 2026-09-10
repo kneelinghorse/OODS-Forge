@@ -30,7 +30,18 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
-        case 'billing-cycle-progress':
+        case 'AuditSummaryCard':
+            expect([...component!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
+            break;
+          case 'SortIndicator':
+            expect(component!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
+            expect(component!.querySelector('button')?.getAttribute('aria-label')).toBe('Sort name');
+            break;
+          case 'TimelineEntryLabel':
+            expect(component!.textContent).toBe('Long in...');
+            expect(component!.getAttribute('data-compact')).toBe('true');
+            break;
+          case 'billing-cycle-progress':
           expect(screen.getByRole('progressbar').getAttribute('value')).toBe('40');
           expect(screen.getByRole('progressbar').getAttribute('aria-label')).toBe('40% complete · 18 days remaining');
           break;
@@ -524,8 +535,8 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'status-timeline-history': {
-          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('Current status: Active');
-          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('2 transitions available.');
+          // The reviewed timeline names the current status; transition actions are not summary copy.
+          expect(component?.querySelector('[data-timeline-current]')?.textContent).toBe('Current status: Active');
           expect(component?.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
           break;
         }
@@ -585,7 +596,8 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'archive-summary-false-and-reason': {
-          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          // Preserve false as the human-readable Archived answer and format the associated timestamp.
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
           break;
         }
         case 'cancellation-form-presentational-controls': {

@@ -100,18 +100,37 @@ describe("how Forge works narrative truth", () => {
     const bridge = read("packages/tokens/scripts/brand-bridge.mjs");
     const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
 
-    expect(uniqueCssVariables.size).toBe(782);
+    expect(uniqueCssVariables.size).toBe(916);
     expect(countTokenLeaves(brandBase)).toBe(44);
     expect(bridgedSlots).toHaveLength(41);
     expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
     expect(BRAND_CONTRAST_RULES).toHaveLength(228);
 
-    expect(html).toContain("CSS custom properties (782 variables)");
+    expect(html).toContain("CSS custom properties (916 variables)");
     expect(html).toContain("44 leaves each");
     expect(html).toContain("re-assigns 41 shared theme slots");
     expect(html).toContain(
       "228 brand-contrast rules (57 text/icon pairs per brand per theme)",
     );
+  });
+
+  it("derives current Sprint 192 claims from the served ledger without approving the proposal", () => {
+    const ledger = JSON.parse(read("packages/component-contracts/registry/component-capability-ledger.v1.json"));
+    const counts = (surface: string, state: string) => ledger.rows.filter((row: { surfaces: Record<string, { state: string }> }) => row.surfaces[surface].state === state).length;
+    expect(ledger.rows).toHaveLength(109);
+    expect(counts("react", "implemented-evidence-complete")).toBe(75);
+    expect(counts("vue", "implemented-evidence-complete")).toBe(75);
+    expect(counts("html", "mapped")).toBe(109);
+    expect(counts("accessibility", "verified")).toBe(75);
+    expect(counts("theme", "verified")).toBe(75);
+    expect(counts("interaction", "verified")).toBe(24);
+    expect(counts("interaction", "not-applicable")).toBe(51);
+    expect(counts("interaction", "unavailable")).toBe(34);
+    expect(ledger.approvedRuntimeCensus).toBeNull();
+    expect(html).toContain("75 React and 75 Vue implementations, 109 HTML mappings");
+    expect(html).toContain("verified for 24 and explicitly not applicable for 51 static rows");
+    expect(html).toContain("24 native, 84 recipe and 1 alias");
+    expect(nearRoadmap).toContain("24 verified / 51 not-applicable (static) / 34 unavailable");
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

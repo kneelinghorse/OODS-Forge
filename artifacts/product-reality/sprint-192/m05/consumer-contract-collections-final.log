@@ -1,0 +1,78 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/consumer-contract.s185.spec.ts (22 tests | 1 failed) 55ms
+   ✓ Sprint 185 saved-schema consumer contract > keeps the original two-schema default and includes six new plus four regression cells in the wrapper 1ms
+   ✓ Sprint 185 saved-schema consumer contract > selects declared Tabs before domain actions for cmos-messages-redesign 1ms
+   ✓ Sprint 185 saved-schema consumer contract > selects declared Tabs before domain actions for user-card-showcase 1ms
+   ✓ Sprint 185 saved-schema consumer contract > selects declared Tabs before domain actions for subscription-detail-dark 0ms
+   ✓ Sprint 185 saved-schema consumer contract > selects Plan declared actions before its fields and independently identifies the real heading subscription 1ms
+   ✓ Sprint 185 saved-schema consumer contract > prefers a clickable screen action over an editor change binding, and falls back to the editor when nothing is clickable 1ms
+   ✓ Sprint 185 saved-schema consumer contract > selects an existing PT SearchInput without inventing a schema binding 0ms
+   ✓ Sprint 185 saved-schema consumer contract > names distinct non-applicable reasons and identifies the disabled dashboard controls 1ms
+   ✓ Sprint 185 saved-schema consumer contract > does not waive a declared enabled control whose behavior is unsupported, or select a disabled action 0ms
+   ✓ Sprint 185 saved-schema consumer contract > fills every real Plan/User field with a type-compatible shape and retains established Subscription values 2ms
+   × Sprint 185 saved-schema consumer contract > derives the old list action operands without branching on schema name 5ms
+     → expected { Object (handleFilter, handleRowClick, ...) } to deeply equal { handleFilter: [ [ {} ] ], …(2) }
+   ✓ Sprint 185 saved-schema consumer contract > react consumer passes only the generated public model/actions API and preserves source bytes 0ms
+   ✓ Sprint 185 saved-schema consumer contract > vue consumer passes only the generated public model/actions API and preserves source bytes 0ms
+   ✓ Sprint 185 saved-schema consumer contract > does not pass model values as invented attributes to a Vue form with internal field refs 0ms
+   ✓ Sprint 185 saved-schema consumer contract > keeps non-applicable gates named and outside the passed/applicable denominator 0ms
+   ✓ Sprint 185 saved-schema consumer contract > rejects a component omitted from both SSR and mounted HTML using obligations retained from generated source 30ms
+   ✓ Sprint 185 saved-schema consumer contract > react checks every populated repeated node and rejects its removal or wrong marker 3ms
+   ✓ Sprint 185 saved-schema consumer contract > vue checks every populated repeated node and rejects its removal or wrong marker 1ms
+   ✓ Sprint 185 saved-schema consumer contract > binds collection proof to producer-owned controls and their actual public callback operands 1ms
+   ✓ Sprint 185 saved-schema consumer contract > names inactive initial Tabs panel obligations without relaxing the active panel or its content 1ms
+   ✓ Sprint 185 saved-schema consumer contract > react attachment does not accept inert SSR or a consumer-authored hydrated flag 3ms
+   ✓ Sprint 185 saved-schema consumer contract > vue attachment does not accept inert SSR or a consumer-authored hydrated flag 2ms
+ ✓ test/product-reality/disputed.s192.spec.ts (7 tests) 165ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/consumer-contract.s185.spec.ts > Sprint 185 saved-schema consumer contract > derives the old list action operands without branching on schema name
+AssertionError: expected { Object (handleFilter, handleRowClick, ...) } to deeply equal { handleFilter: [ [ {} ] ], …(2) }
+
+- Expected
++ Received
+
+  {
+    "handleFilter": [
+      [
+-       {},
++       {
++         "search": "generated",
++       },
+      ],
+    ],
+    "handleRowClick": [
+      [
+        "sub-s184-001",
+      ],
+    ],
+    "handleSort": [
+      [
+-       "status",
++       undefined,
+      ],
+    ],
+  }
+
+ ❯ test/product-reality/consumer-contract.s185.spec.ts:108:45
+    106|       action('handleRowClick', root, [{ name: 'rowId', type: 'string' …
+    107|       action('handleSort', root, [{ name: 'column', type: 'string' }]),
+    108|     ], { subscriptionId: 'sub-s184-001' })).toEqual({ handleFilter: [[…
+       |                                             ^
+    109|   });
+    110| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 28 passed (29)
+   Start at  14:28:23
+   Duration  2.26s (transform 795ms, setup 16ms, collect 1.75s, tests 219ms, environment 0ms, prepare 81ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/consumer-contract.s185.spec.ts test/product-reality/disputed.s192.spec.ts

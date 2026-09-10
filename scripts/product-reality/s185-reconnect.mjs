@@ -20,6 +20,19 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's192-m07') {
+    const head = movers.s192.head;
+    const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const body = [
+      `Sprint 192 candidate ${head}; prepared for Sprint 193 after independent review and delivery.`,
+      'catalog_list productReality.surfaces now serves measured evidence from export 2026-09-10:109 obligations,75 React/Vue implementations,109 HTML mappings;75 verified accessibility/theme rows;interaction24 verified and51 explicitly static not-applicable. The other34 are unavailable with reasons. approvedRuntimeCensus remains null; classifications await Derek.',
+      'New governed rows: AuditSummaryCard, SortIndicator, TimelineEntryLabel. The component suites run in CI and the fifth capture suite. Semantic component token aliases resolve colour roles without reachable system-colour fallbacks outside forced-colors; all six formerly unguarded names are defined.',
+      'Fresh generation77/77 schemas154/154 cells is separate from packed runtime coverage. Reconnect to refresh discovery after the reviewed head is delivered. dashboard-demos is archived; no notice targets it.',
+      `Advertised/public movers from ${movers.s192.base}..${head}:\n${movers.s192.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's192-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-193', targets,
+      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint192 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
+  }
   if (movers.missionId === 's191-m05') {
     const head = movers.s191.head;
     const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];

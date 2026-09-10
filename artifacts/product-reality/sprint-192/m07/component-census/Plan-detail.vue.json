@@ -1,0 +1,114 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <OwnershipSummary id=\"slot-header-2\" data-oods-component=\"OwnershipSummary\" :ownerId=\"ownerId\" :ownerType=\"ownerType\" :role=\"ownershipRole\" />\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style=\"align-items: start; display: grid; gap: var(--ref-space-cluster-default); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)\">\n            <div data-sidebar-main>\n              <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" :items=\"[{'id':'detail-tab-panel-14','label':'Details','panel':''}]\">\n                        <template #panel=\"{ item }\">\n                          <template v-if=\"item.id === 'detail-tab-panel-14'\">\n                            <Stack id=\"detail-tab-panel-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Text id=\"slot-tab-3-15\" data-oods-component=\"Text\" label=\"Amount minor\">{{ amountMinor }}</Text>\n                            </Stack>\n                          </template>\n                        </template>\n                      </Tabs>\n            </div>\n            <aside data-sidebar-aside>\n              <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\" />\n            </aside>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, OwnershipSummary, Stack, Tabs, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n}\n\ninterface Props {\n  actions: GeneratedUIActions;\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\nconst { actions, addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:cf978bf3a3b4c522f5a7c265d88b5769cb108e41c8fbbd6be834f689ca729e40"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [
+      {
+        "name": "handleDelete",
+        "parameters": [],
+        "sources": [
+          {
+            "nodeId": "screen-detail-13",
+            "component": "Stack",
+            "event": "onDelete"
+          }
+        ]
+      },
+      {
+        "name": "handleEdit",
+        "parameters": [],
+        "sources": [
+          {
+            "nodeId": "screen-detail-13",
+            "component": "Stack",
+            "event": "onEdit"
+          }
+        ]
+      }
+    ],
+    "contentHash": "sha256:bfc8838500185198ed50eff77c9ed8c11178cb2acb25e6a0ef4b5dddf653a9d0"
+  },
+  "code": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <OwnershipSummary id=\"slot-header-2\" data-oods-component=\"OwnershipSummary\" :ownerId=\"ownerId\" :ownerType=\"ownerType\" :role=\"ownershipRole\" />\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style=\"align-items: start; display: grid; gap: var(--ref-space-cluster-default); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)\">\n            <div data-sidebar-main>\n              <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" :items=\"[{'id':'detail-tab-panel-14','label':'Details','panel':''}]\">\n                        <template #panel=\"{ item }\">\n                          <template v-if=\"item.id === 'detail-tab-panel-14'\">\n                            <Stack id=\"detail-tab-panel-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Text id=\"slot-tab-3-15\" data-oods-component=\"Text\" label=\"Amount minor\">{{ amountMinor }}</Text>\n                            </Stack>\n                          </template>\n                        </template>\n                      </Tabs>\n            </div>\n            <aside data-sidebar-aside>\n              <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\" />\n            </aside>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, OwnershipSummary, Stack, Tabs, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n}\n\ninterface Props {\n  actions: GeneratedUIActions;\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\nconst { actions, addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:bfc8838500185198ed50eff77c9ed8c11178cb2acb25e6a0ef4b5dddf653a9d0"
+    }
+  },
+  "meta": {
+    "nodeCount": 8,
+    "componentCount": 5
+  }
+}

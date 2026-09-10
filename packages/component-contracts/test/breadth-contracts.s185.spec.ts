@@ -72,21 +72,21 @@ describe('Sprint 185 component breadth contracts', () => {
       for (const prop of Object.keys(scenario.props)) expect(contract.props).toContain(prop);
       for (const slot of Object.keys(scenario.slots)) expect(contract.slots).toContain(slot);
       expect(Object.keys(scenario.props).length + Object.keys(scenario.slots).length).toBeGreaterThan(0);
-      expect(scenario.event.name).toBe('render');
-      expect(scenario.event.trigger).toBeTruthy();
-      expect(scenario.event.expected).toBeTruthy();
+      expect(scenario.renderExpectation.name).toBe('render');
+      expect(scenario.renderExpectation.trigger).toBeTruthy();
+      expect(scenario.renderExpectation.expected).toBeTruthy();
       expect(scenario.assertions.length).toBeGreaterThan(0);
     });
   }
 
-  it('versions the static SVG extension while retaining the three Sprint 184 amendments', () => {
+  it('retains the static SVG and prior amendments when all governed contracts reach v1.1', () => {
     const amended = Object.values(componentContracts)
       .filter(({ version }) => version === COMPONENT_CONTRACT_VERSION_1_1)
       .map(({ id }) => id)
       .sort();
-    expect(amended).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
+    expect(amended).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     const original = Object.values(componentContracts)
-      .filter(({ version }) => version === COMPONENT_CONTRACT_VERSION)
+      .filter(({ version }) => version === '1.0.0')
       .map(({ id }) => id)
       .sort();
     expect(original).toEqual([...NUCLEUS_COMPONENT_IDS].filter((id) => !amended.includes(id)).sort());
@@ -120,7 +120,7 @@ describe('Sprint 185 component breadth contracts', () => {
       expect(accessibility).toContain('Color is never the sole');
       const scenario = sharedScenarios.find(({ oodsComponentId }) => oodsComponentId === id)!;
       expect(scenario.props.label).toBeTruthy();
-      expect(scenario.event.trigger).toContain('forced-colors');
+      expect(scenario.renderExpectation.trigger).toContain('forced-colors');
       expect(scenario.assertions.some((assertion) => assertion.includes('without color'))).toBe(true);
     }
     expect(componentContracts.ColorizedBadge.accessibility.join(' ')).toContain('Badge inline noninteractive status label semantics');
@@ -141,7 +141,7 @@ describe('Sprint 185 component breadth contracts', () => {
     const scenario = sharedScenarios.find(({ oodsComponentId }) => oodsComponentId === 'VizAreaPreview')!;
     expect(scenario.props).toEqual({ width: 640, height: 360 });
     expect(scenario.slots.default).toBeTruthy();
-    expect(scenario.event.trigger).toBe('remove the default slot and then restore it');
+    expect(scenario.renderExpectation.trigger).toBe('remove the default slot and then restore it');
     expect(scenario.assertions).toContain('renders no chart pixels');
     expect(scenario.assertions).toContain('not visualization evidence');
   });

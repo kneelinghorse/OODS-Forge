@@ -1,0 +1,179 @@
+$ pnpm --filter @oods/component-contracts exec vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/component-contracts.json
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/component-contracts
+
+ ✓ test/breadth-contracts.s187.spec.ts (15 tests) 9ms
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 8ms
+ ✓ test/contracts.spec.ts (7 tests) 12ms
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 7ms
+ ✓ test/measured-contracts.s192.spec.ts (3 tests) 14ms
+ ✓ test/breadth-contracts.s186.spec.ts (48 tests) 19ms
+ ✓ test/static-svg.spec.ts (19 tests) 6ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 3ms
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 3ms
+ ✓ test/readiness-measurements.s192.spec.ts (2 tests) 25ms
+ ✓ test/baseline-fold.s185.spec.ts (9 tests) 595ms
+
+ Test Files  11 passed (11)
+      Tests  126 passed (126)
+   Start at  13:25:28
+   Duration  4.92s (transform 428ms, setup 0ms, collect 5.47s, tests 700ms, environment 1ms, prepare 948ms)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/component-contracts.json
+$ pnpm --filter @oods/component-styles exec vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/component-styles.json
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/component-styles
+
+ ✓ test/ported-styles.spec.ts (4 tests) 5ms
+ ✓ test/token-resolution.spec.ts (5 tests) 80ms
+ ✓ test/styles.spec.ts (9 tests) 131ms
+ ✓ test/high-contrast.browser.spec.ts (21 tests) 2476ms
+   ✓ Sprint 182 shared component-style browser corrections > s185-m02 preserves visible color labels in A/light, forcedColors=none  332ms
+
+ Test Files  4 passed (4)
+      Tests  39 passed (39)
+   Start at  13:25:34
+   Duration  3.09s (transform 234ms, setup 0ms, collect 807ms, tests 2.69s, environment 0ms, prepare 376ms)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/component-styles.json
+$ pnpm --filter @oods/components-react exec vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-react.json
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react
+
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 269ms
+ ✓ test/breadth.s185.spec.tsx (35 tests) 252ms
+ ✓ test/interactions.spec.tsx (5 tests) 433ms
+ ✓ test/breadth.s186.spec.tsx (25 tests) 433ms
+ ✓ test/scenarios.spec.tsx (73 tests) 931ms
+ ✓ test/breadth.s187.spec.tsx (19 tests) 369ms
+ ✓ test/billing-views.spec.tsx (7 tests) 225ms
+ ✓ test/scenario-interactions.spec.tsx (170 tests) 2102ms
+ ✓ test/billing.spec.tsx (6 tests) 272ms
+ ✓ test/accessibility.spec.tsx (77 tests) 2266ms
+ ✓ test/contract-amendments.s184.spec.tsx (3 tests) 129ms
+ ✓ test/ported-accessibility.spec.tsx (2 tests) 358ms
+ ✓ test/ported-ssr.spec.tsx (1 test) 49ms
+ ✓ test/ssr.spec.tsx (1 test) 97ms
+ ✓ test/table-empty.s184.spec.tsx (1 test) 29ms
+ ❯ test/package-contract.spec.ts (3 tests | 1 failed) 40ms
+   × @oods/components-react package contract > B-05 exports the exact React nucleus with public declarations 4ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react/dist/index.d.ts'
+   ✓ @oods/components-react package contract > pins the declared React and shared-style dependency closure 1ms
+   ✓ @oods/components-react package contract > publishes one independently derived React emission-eligibility row per nucleus id 34ms
+ ✓ test/viz-area-svg.spec.tsx (1 test) 7ms
+ ❯ test/ported-package-contract.spec.ts (4 tests | 1 failed) 13ms
+   × @oods/components-react ported package contract > exports the historical eight implementation exports with public declarations 7ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react/dist/ported.d.ts'
+   ✓ @oods/components-react ported package contract > dependency-closure publishes only the coordinated additive subpaths 1ms
+   ✓ @oods/components-react ported package contract > publishes exactly eight historical ported readiness rows 3ms
+   ✓ @oods/components-react ported package contract > includes every compatibility family in the root export and root readiness 1ms
+ ✓ test/badge-tone.s185.spec.tsx (4 tests) 131ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-react package contract > B-05 exports the exact React nucleus with public declarations
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react/dist/index.d.ts'
+ ❯ test/package-contract.spec.ts:73:26
+     71|     expect(Object.keys(reactPackage).sort()).toEqual([...canonicalIds]…
+     72| 
+     73|     const declarations = readFileSync(`${packageRoot}/dist/index.d.ts`…
+       |                          ^
+     74|     for (const componentId of canonicalIds) {
+     75|       expect(declarations, `${componentId} public value declaration`).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/ported-package-contract.spec.ts > @oods/components-react ported package contract > exports the historical eight implementation exports with public declarations
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react/dist/ported.d.ts'
+ ❯ test/ported-package-contract.spec.ts:38:26
+     36|     expect(Object.keys(portedPackage).sort()).toEqual([...portedIds]);
+     37| 
+     38|     const declarations = readFileSync(`${packageRoot}/dist/ported.d.ts…
+       |                          ^
+     39|     for (const componentId of portedIds) {
+     40|       expect(declarations, `${componentId} public value declaration`).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 17 passed (19)
+      Tests  2 failed | 445 passed (447)
+   Start at  13:25:37
+   Duration  4.72s (transform 1.01s, setup 0ms, collect 7.47s, tests 8.40s, environment 10.43s, prepare 1.48s)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-react.json
+undefined
+/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-react.json
+$ pnpm --filter @oods/components-vue exec vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-vue.json
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue
+
+ ✓ test/breadth.s185.spec.ts (26 tests) 250ms
+ ✓ test/breadth.s186.spec.ts (17 tests) 385ms
+ ✓ test/breadth.s187.spec.ts (19 tests) 438ms
+ ✓ test/scenarios.spec.ts (73 tests) 607ms
+ ✓ test/ported-accessibility.spec.ts (3 tests) 366ms
+ ✓ test/interactions.spec.ts (7 tests) 89ms
+ ✓ test/ported-scenarios.spec.ts (10 tests) 78ms
+ ✓ test/billing.spec.ts (6 tests) 145ms
+ ✓ test/scenario-interactions.spec.ts (170 tests) 1601ms
+ ✓ test/ssr.spec.ts (1 test) 78ms
+ ✓ test/package-contract.spec.ts (3 tests) 70ms
+ ✓ test/accessibility.spec.ts (77 tests) 1836ms
+ ✓ test/ported-ssr.spec.ts (1 test) 45ms
+ ✓ test/billing-views.spec.ts (7 tests) 115ms
+ ✓ test/craft.s191.spec.ts (3 tests) 117ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 33ms
+ ✓ test/table-empty.s184.spec.ts (1 test) 25ms
+stderr | test/viz-area-svg.spec.ts > embeds a labelled static figure without altering renderer IDs or ARIA
+[Vue warn]: Unhandled error during execution of render function 
+  at <OodsVizAreaPreview svg="<svg><script>bad()</script></svg>" > 
+  at <App>
+
+ ✓ test/viz-area-svg.spec.ts (1 test) 7ms
+ ❯ test/ported-package-contract.spec.ts (3 tests | 2 failed) 7ms
+   × @oods/components-vue ported package contract > publishes exactly the historical eight implementation exports on the ported runtime and declaration 4ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue/dist/ported.d.ts'
+   × @oods/components-vue ported package contract > dependency-closure exposes only built, package-local ported files 1ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue/dist/ported.d.ts'
+   ✓ @oods/components-vue ported package contract > publishes historical readiness rows alongside the root alias 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/ported-package-contract.spec.ts > @oods/components-vue ported package contract > publishes exactly the historical eight implementation exports on the ported runtime and declaration
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue/dist/ported.d.ts'
+ ❯ test/ported-package-contract.spec.ts:57:50
+     55|     expect(Object.keys(builtPorted).sort()).toEqual([...portedIds].sor…
+     56| 
+     57|     const declarations = declarationValueExports(readFileSync(`${packa…
+       |                                                  ^
+     58|     expect(portedIds.filter((name) => declarations.has(name))).toEqual…
+     59|     expect(Object.keys(portedComponentContracts)).toEqual(portedIds);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/ported-package-contract.spec.ts > @oods/components-vue ported package contract > dependency-closure exposes only built, package-local ported files
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue/dist/ported.d.ts'
+ ❯ test/ported-package-contract.spec.ts:95:21
+     93|       'dist/ported.d.ts',
+     94|       'package.json',
+     95|     ].map((path) => readFileSync(`${packageRoot}/${path}`, 'utf8')).jo…
+       |                     ^
+     96|     expect(distributableText).not.toMatch(/(?:from|require\()\s*["'](?…
+     97|     expect(distributableText).not.toMatch(/\b(?:workspace|file|link):/…
+ ❯ test/ported-package-contract.spec.ts:95:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 18 passed (19)
+      Tests  2 failed | 428 passed (430)
+   Start at  13:25:43
+   Duration  4.56s (transform 748ms, setup 0ms, collect 7.88s, tests 6.29s, environment 9.55s, prepare 1.38s)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-vue.json
+undefined
+/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/components-vue:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-component-suite-ajUM0e/components-vue.json
+{"packages":4,"passed":1038,"failed":4,"skipped":0,"success":false}

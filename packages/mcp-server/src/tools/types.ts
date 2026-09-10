@@ -381,6 +381,7 @@ export type ComponentClassification =
 
 export type ComponentCapabilityEvidence = {
   state: string;
+  reason?: string;
   evidence: string[];
 };
 
@@ -447,7 +448,7 @@ export type ComponentObligationScope = {
   disposition: "retain-all-obligations";
   controllingObligationDenominator: number;
   approvedRuntimeCensus: null;
-  classificationStatus: "historical-proposals-unapproved";
+  classificationStatus: "historical-proposals-unapproved" | "proposed-awaiting-derek-approval";
 };
 
 export type CatalogListOutput = {

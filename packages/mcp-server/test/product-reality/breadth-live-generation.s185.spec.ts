@@ -22,7 +22,7 @@ const schemaNames = [
 ];
 
 describe('Sprint 185 m03 live readiness and root export generation', () => {
-  it('preserves every predecessor readiness row while adding only the measured five', () => {
+  it('preserves predecessor emission evidence while adding measured maturity and later roots', () => {
     for (const framework of frameworks) {
       const relativePath = `packages/components-${framework}/evidence/${framework}-readiness.v1.json`;
       const previous = JSON.parse(execFileSync('git', ['show', `b659a6ee:${relativePath}`], { cwd: root, encoding: 'utf8' }));
@@ -30,7 +30,13 @@ describe('Sprint 185 m03 live readiness and root export generation', () => {
       const previousIds = new Set(previous.rows.map((row: { componentId: string }) => row.componentId));
       expect(current.rows.map((row: { componentId: string }) => row.componentId)).toEqual(NUCLEUS_COMPONENT_IDS);
       for (const row of previous.rows) {
-        expect(current.rows.find((candidate: { componentId: string }) => candidate.componentId === row.componentId)).toEqual(row);
+        const measured = current.rows.find((candidate: { componentId: string }) => candidate.componentId === row.componentId);
+        // Sprint 192 adds three measurement classes; the original six remain exact.
+        expect({ ...measured, evidence: Object.fromEntries(Object.keys(row.evidence).map(key => [key, measured.evidence[key]])) }).toEqual(row);
+        for (const key of ['accessibility', 'interaction', 'visualThemes']) {
+          expect(measured.evidence[key].status).toBe('passed');
+          expect(measured.evidence[key].refs.length).toBeGreaterThan(0);
+        }
       }
       // Later waves append further rows behind the same derivation; this sprint's five must be among them.
       expect(current.rows.filter((row: { componentId: string }) => !previousIds.has(row.componentId))

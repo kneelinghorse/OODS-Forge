@@ -23,6 +23,8 @@ describe('Sprint 183 binding analysis', () => {
       kind: definition.kind,
       parameters: definition.signature.parameters,
     }))).toEqual([
+      // s192-m05 adds the native sort control's structured domain callback.
+      { id: 'component:SortIndicator.onChange', kind: 'domain', parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] },
       { id: 'component:Banner.onDismiss', kind: 'local', parameters: [] },
       { id: 'component:Button.onActivate', kind: 'domain', parameters: [] },
       { id: 'component:Checkbox.onChange', kind: 'local', parameters: [{ name: 'checked', type: 'boolean' }] },

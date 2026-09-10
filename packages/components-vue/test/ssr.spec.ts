@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
   ArchivedRowOverlay, BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
@@ -143,6 +144,9 @@ const ServerShowcase = defineComponent({
       }),
       h(Text, { as: 'strong', content: 'Account owner' }),
       h(Textarea, { id: 'notes', label: 'Notes', value: 'Call before renewal' }),
+      h(AuditSummaryCard, { auditLog: [] }),
+      h(SortIndicator, { sortField: 'name' }),
+      h(TimelineEntryLabel, { label: 'Timeline label' }),
       // Sprint 188 added these eight families to the nucleus inventory.
       h(ArchivedRowOverlay, { isArchived: true, label: 'Retained subscription' }, { default: () => 'Archived record' }),
       h(BillingSummaryBadge, { amount: 1900, currency: 'usd', interval: 'monthly' }),

@@ -1,4 +1,4 @@
-import { assertStaticSvg } from '@oods/component-contracts';
+import { auditSummary, initialSort, ariaSort, assertStaticSvg } from '@oods/component-contracts';
 import { dateTimeInputValue, formatDateTime, summaryValue } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
@@ -1203,6 +1203,32 @@ function renderStatusTimeline(node: UiElement, childrenHtml = ''): string {
   });
 }
 
+function renderAuditSummaryCard(node: UiElement): string {
+  const props = node.props ?? {};
+  const title = asString(props.title) ?? 'Audit summary';
+  const summary = auditSummary({ auditLog: Array.isArray(props.auditLog) ? props.auditLog : [], lastN: asNumber(props.lastN) });
+  const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, consumedProps: new Set(['title', 'auditLog', 'auditLogField', 'lastN', 'showTransitionCount', 'showLastTransitionTime', 'showLastActor']), htmlOverrides: { class: 'oods-audit-summary', 'aria-label': title } });
+  const count = props.showTransitionCount === false ? '' : `<dt>Transitions</dt><dd>${summary.count}</dd>`;
+  const actor = props.showLastActor === false ? '' : `<dt>Last actor</dt><dd>${escapeHtml(summary.actor)}</dd>`;
+  const time = props.showLastTransitionTime === false ? '' : `<dt>Last transition</dt><dd>${summary.at ? `<time datetime="${escapeHtml(summary.at)}">${escapeHtml(summary.timestamp)}</time>` : summary.timestamp}</dd>`;
+  const recent = summary.recent.length ? `<ol aria-label="Recent transitions">${summary.recent.map(entry => `<li>${escapeHtml(String(entry.to_state ?? 'Transition'))}</li>`).join('')}</ol>` : '';
+  return `<section${attrs}><h3>${escapeHtml(title)}</h3><dl>${count}${actor}${time}</dl>${recent}</section>`;
+}
+
+function renderSortIndicator(node: UiElement): string {
+  const props = node.props ?? {};
+  const state = initialSort({ sortField: asString(props.sortField), sortDirection: asString(props.sortDirection), sortActive: props.sortActive === true, defaultSortField: asString(props.defaultSortField), defaultSortDirection: asString(props.defaultSortDirection), sortableFields: Array.isArray(props.sortableFields) ? props.sortableFields.filter((field): field is string => typeof field === 'string') : undefined });
+  const label = asString(props.label) ?? 'Sort';
+  const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, consumedProps: new Set(['sortField', 'sortDirection', 'sortActive', 'sortableFields', 'triStateSort', 'defaultSortField', 'defaultSortDirection', 'label']), htmlOverrides: { class: 'oods-sort-indicator', 'aria-label': label } });
+  return `<table${attrs}><thead><tr><th scope="col" aria-sort="${ariaSort(state)}"><button type="button" aria-label="${escapeHtml(`${label} ${state.field}`)}">${escapeHtml(`${state.field}: ${ariaSort(state)}`)}</button></th></tr></thead></table>`;
+}
+
+function renderTimelineEntryLabel(node: UiElement, childrenHtml = ''): string {
+  const props = node.props ?? {};
+  const { compact = true, ...rest } = props;
+  return renderInlineLabel({ ...node, props: { ...rest, maxLength: props.maxLength ?? (compact ? 40 : undefined), 'data-timeline-label': 'true', 'data-compact': compact } }, childrenHtml);
+}
+
 function renderAuditEvent(node: UiElement, childrenHtml = ''): string {
   return renderEventArticle(node, childrenHtml, {
     defaultLabel: 'Audit Event',
@@ -2039,6 +2065,9 @@ function renderFilterPanel(node: UiElement, childrenHtml = ''): string {
 }
 
 export const componentRenderers: Record<string, ComponentRenderer> = {
+  AuditSummaryCard: renderAuditSummaryCard,
+  SortIndicator: renderSortIndicator,
+  TimelineEntryLabel: renderTimelineEntryLabel,
   Button: renderButton,
   Card: renderCard,
   CardHeader: renderCardHeader,

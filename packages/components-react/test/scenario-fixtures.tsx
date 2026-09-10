@@ -8,6 +8,7 @@ import type {
 } from '../src/index.js';
 
 import {
+  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
@@ -75,6 +76,9 @@ export function renderSharedScenario(
 ): ReactElement {
   const { onEvent } = handlers;
   switch (scenario.id) {
+    case 'AuditSummaryCard': return <AuditSummaryCard {...scenario.props} />;
+    case 'SortIndicator': return <SortIndicator {...scenario.props} onChange={onEvent} />;
+    case 'TimelineEntryLabel': return <TimelineEntryLabel {...scenario.props} />;
     case 'billing-cycle-progress': return <CycleProgressCard {...scenario.props} />;
     case 'billing-payment-detail': return <PaymentTimeline {...scenario.props} />;
     case 'billing-payment-events': return <PaymentEventTimeline {...scenario.props} />;

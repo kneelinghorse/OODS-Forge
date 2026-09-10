@@ -106,14 +106,14 @@ describe('catalog.list', () => {
     expect(output.components.map((row) => row.name).sort()).toEqual(data.components.map((row) => row.id).sort());
     expect(new Set(output.components.map((row) => row.name)).size).toBe(109);
     expect(output.obligationScope).toEqual(data.obligationScope);
-    expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'historical-proposals-unapproved' });
+    expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'proposed-awaiting-derek-approval' });
     expect(validateOutput(output)).toBe(true);
     expect(validateOutput({ ...output, obligationScope: { ...output.obligationScope, approvedRuntimeCensus: 98 } })).toBe(false);
-    // A retained historical proposal is still visible but cannot remove the row.
-    expect(output.components.find((row) => row.name === 'BillingAmountInput')?.productReality?.proposedClassification).toBe('authoring-only');
+    // Measured implementation changes the proposal, never the approved denominator.
+    expect(output.components.find((row) => row.name === 'BillingAmountInput')?.productReality?.proposedClassification).toBe('native');
   });
 
-  it('keeps HTML-stable discovery distinct from actual target readiness and unverified maturity', async () => {
+  it('keeps HTML-stable discovery distinct from actual target readiness and measured maturity', async () => {
     const stable = await handle({ status: 'stable', detail: 'summary', pageSize: 200 });
     const governed = stable.components.find((row) => row.name === 'ArchivePill')!;
     const unavailable = stable.components.find((row) => row.name === 'ArchiveEvent')!;
@@ -129,8 +129,9 @@ describe('catalog.list', () => {
       }
     }
     for (const surface of ['accessibility', 'theme', 'interaction'] as const) {
-      expect(governed.productReality?.surfaces[surface].state).toBe('unverified');
-      expect(unavailable.productReality?.surfaces[surface].state).toBe('unverified');
+      expect(governed.productReality?.surfaces[surface].state).toBe(surface === 'interaction' ? 'not-applicable' : 'verified');
+      expect(unavailable.productReality?.surfaces[surface].state).toBe('unavailable');
+      expect(unavailable.productReality?.surfaces[surface].reason).toContain('implementation remains pending');
     }
     const planned = await handle({ status: 'planned', detail: 'summary', pageSize: 200 });
     expect(planned.components.some((row) => row.name === 'BillingAmountInput')).toBe(false);
@@ -535,13 +536,13 @@ describe('catalog.list', () => {
     }
   });
 
-  it('keeps the legacy status census scoped to the 106 mapped / 3 fallback HTML surface after eight declared recipe implementations', async () => {
+  it('keeps the legacy status census scoped to the 109 mapped / 0 fallback HTML surface after the three disputed roots', async () => {
     const stable = await handle({ status: 'stable' });
     const planned = await handle({ status: 'planned' });
     const beta = await handle({ status: 'beta' });
 
-    expect(stable.totalCount).toBe(106);
-    expect(planned.totalCount).toBe(3);
+    expect(stable.totalCount).toBe(109);
+    expect(planned.totalCount).toBe(0);
     expect(beta.totalCount).toBe(0);
   });
 

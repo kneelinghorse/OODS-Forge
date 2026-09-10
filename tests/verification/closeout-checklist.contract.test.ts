@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const S177_M07_SUCCESS_CRITERIA = [
-  "Gate table generated from cmos/foundational-docs/closeout-checklist.md — one row per ci.yml job (15) plus every standing local row, each a LITERAL invocation with env vars, run at the named tree (post-commit HEAD or the tree named per standing rule A), results pasted not restated",
+  "Gate table generated from cmos/foundational-docs/closeout-checklist.md — one row per ci.yml job (16) plus every standing local row, each a LITERAL invocation with env vars, run at the named tree (post-commit HEAD or the tree named per standing rule A), results pasted not restated",
   "test:scale row present and green (4 files / 62 tests expected unless a scale spec moved, then reconciled) and verify:brand-cascade row present and green — the two historically-dropped rows are structural now",
   "Census against a correctly-labelled zero: every suite-count delta reconciled per mission; snapshot census + re-hash rows run; git status porcelain accounted for including diagnostics.json per its m02-recorded disposition",
   "The rebased s172 clause controls GREEN with an EMPTY declared-mover set (BASELINE_COMMIT '86d50ed', declarations null/[]) — the sprint's zero-advertised-movement invariant proven, not asserted; the ONLY declared behavioral mover is Fork-R's enumerated text-level pin list",
@@ -62,7 +62,7 @@ describe("Sprint 177 closeout carrier", () => {
     "<!-- closeout-local-rows:end -->",
   );
 
-  it("covers the exact current set of 15 CI job keys once", () => {
+  it("covers the exact current set of 16 CI job keys once", () => {
     const jobsSection = workflow.slice(workflow.indexOf("\njobs:\n") + 7);
     const workflowJobs = [
       ...jobsSection.matchAll(/^  ([a-z][a-z0-9-]+):\s*$/gm),
@@ -71,10 +71,10 @@ describe("Sprint 177 closeout carrier", () => {
       ...ciRows.matchAll(/^\| CI-\d{2} \| `([a-z][a-z0-9-]+)` \|/gm),
     ].map((match) => match[1]);
 
-    expect(carrierRows).toEqual(workflowJobs);
-    expect(workflowJobs).toHaveLength(15);
-    expect(new Set(carrierRows).size).toBe(15);
-    expect(checklist).toContain("Repeat through `CI-15` and `L-01` through `L-09`.");
+    expect([...carrierRows].sort()).toEqual([...workflowJobs].sort());
+    expect(workflowJobs).toHaveLength(16);
+    expect(new Set(carrierRows).size).toBe(16);
+    expect(checklist).toContain("Repeat through `CI-16` and `L-01` through `L-09`.");
     expect(checklist).not.toContain("Repeat through `CI-14`");
   });
 

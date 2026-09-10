@@ -876,6 +876,8 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
     live_roots = (
         "artifacts/product-reality/sprint-188/m04/resolved-packed-consumers-final",
         "artifacts/product-reality/sprint-188/m05/packed-consumers",
+        "artifacts/product-reality/sprint-192/m05/packed-complete/trait-recipes",
+        "artifacts/product-reality/sprint-192/m05/packed-complete/timelines",
     )
     # React mounts a payment recipe only after its detail tab is selected.
     # The application observer records those visible roots after real navigation.
@@ -942,6 +944,79 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
     return result
 
 
+def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
+    """Current measurements can establish a surface, never approve a classification."""
+    result = copy.deepcopy(capabilities)
+    proof_root = "artifacts/product-reality/sprint-192/m05"
+    foundation_classes = ("versionedContract", "targetImplementation", "packageExport", "publicDeclaration", "dependencyClosure", "frameworkScenario")
+    targets, measurements, themes = {}, {}, {}
+    for target in ("react", "vue"):
+        targets[target] = {row["componentId"]: row for row in load_json(REPO_ROOT / f"packages/components-{target}/evidence/{target}-readiness.v1.json")["rows"]}
+        measurements[target] = load_json(REPO_ROOT / f"{proof_root}/{target}-measured.json")
+        themes[target] = load_json(REPO_ROOT / f"{proof_root}/ci-theme/{target}/report.json")
+        for cell in themes[target]["cells"]:
+            image = REPO_ROOT / f"{proof_root}/ci-theme/{target}/{cell['screenshot']}"
+            if hashlib.sha256(image.read_bytes()).hexdigest() != cell["screenshotSha256"]:
+                raise ValueError(f"Measured theme screenshot hash mismatch: {image}")
+    proposal = load_json(REPO_ROOT / "packages/component-contracts/registry/component-reconciliation.proposed.v2.json")
+    if proposal.get("approvedRuntimeCensus") is not None or {row["id"] for row in proposal["rows"]} != set(result):
+        raise ValueError("Classification proposal must retain all obligations without approval")
+    proposed = {row["id"]: row for row in proposal["rows"]}
+    for component_id, capability in result.items():
+        capability["proposedClassification"] = proposed[component_id]["proposedClassification"]
+        surfaces = capability["surfaces"]
+        governed = all(component_id in rows for rows in targets.values())
+        for target, rows in targets.items():
+            row = rows.get(component_id)
+            if row:
+                complete = row.get("emissionEligible") is True and row.get("state") == "implemented-evidence-complete" and all(row.get("evidence", {}).get(kind, {}).get("status") == "passed" and row["evidence"][kind].get("refs") for kind in foundation_classes)
+                surfaces[target] = {"state": "implemented-evidence-complete" if complete else "unavailable", "evidence": [f"packages/components-{target}/evidence/{target}-readiness.v1.json#{component_id}"]}
+                if not complete:
+                    surfaces[target]["reason"] = "Current readiness does not satisfy all six emission evidence classes."
+            else:
+                surfaces[target] = {"state": "unavailable", "evidence": [f"packages/component-contracts/registry/component-reconciliation.proposed.v2.json#{component_id}"], "reason": "Named obligation retained; no governed implementation exists for this target."}
+        if governed:
+            surfaces["contract"] = {"state": "versioned-v1", "evidence": [f"packages/component-contracts/src/contracts.ts#{component_id}"]}
+        for surface, kind in (("accessibility", "accessibility"), ("interaction", "interaction"), ("theme", "visualThemes")):
+            if not governed:
+                surfaces[surface] = {"state": "unavailable", "evidence": [f"packages/component-contracts/registry/component-reconciliation.proposed.v2.json#{component_id}"], "reason": "No governed React/Vue implementation or corresponding measurements; implementation remains pending."}
+                continue
+            refs, classes, reasons = [], [], []
+            valid = all(surfaces[target]["state"] == "implemented-evidence-complete" for target in targets)
+            for target, rows in targets.items():
+                cell = rows[component_id].get("evidence", {}).get(kind, {})
+                classification = cell.get("classification")
+                classes.append(classification)
+                refs.extend(cell.get("refs", []))
+                refs.append(f"packages/components-{target}/evidence/{target}-readiness.v1.json#{component_id}")
+                valid = valid and cell.get("status") == "passed" and classification in ("verified", "not-applicable") and bool(cell.get("refs"))
+                if classification == "not-applicable":
+                    valid = valid and surface == "interaction" and bool(cell.get("reason"))
+                    reasons.append(cell.get("reason", ""))
+                if surface == "theme":
+                    report = themes[target]
+                    expected = {"A-light", "A-dark", "A-hc", "B-light", "B-dark", "B-hc"}
+                    valid = valid and report.get("status") == "passed" and report.get("failed") == 0 and report.get("skipped") == 0 and len(report["cells"]) == 6 and {c["cell"] for c in report["cells"]} == expected and all(c.get("status") == "passed" and sum(r["componentId"] == component_id for r in c["rows"]) == 1 for c in report["cells"])
+                    refs.append(f"{proof_root}/ci-theme/{target}/report.json#{component_id}")
+                else:
+                    report = measurements[target]
+                    filename = "accessibility.spec." if surface == "accessibility" else "scenario-interactions.spec."
+                    tests = [test for file in report["testResults"] if filename in file["name"] for test in file["assertionResults"] if (f"for the {component_id} shared scenario" in test["fullName"] if surface == "accessibility" else f" {component_id}:" in test["fullName"])]
+                    valid = valid and report.get("success") is True and report.get("numFailedTests") == 0 and report.get("numPendingTests") == 0 and bool(tests) and all(test["status"] == "passed" for test in tests)
+                    refs.append(f"{proof_root}/{target}-measured.json#{component_id}")
+            for ref in refs:
+                if not (REPO_ROOT / ref.split("#", 1)[0]).is_file():
+                    raise ValueError(f"Missing measured evidence reference: {ref}")
+            valid = valid and len(set(classes)) == 1
+            state = "not-applicable" if valid and all(value == "not-applicable" for value in classes) else "verified" if valid else "fail"
+            surfaces[surface] = {"state": state, "evidence": sorted(set(refs))}
+            if state == "not-applicable":
+                surfaces[surface]["reason"] = " ".join(dict.fromkeys(reasons))
+            elif state == "fail":
+                surfaces[surface]["reason"] = "Current readiness or retained measurement is missing, failed, skipped, or incomplete."
+    return result
+
+
 def generate_structured_payloads(
     *,
     generated_at: Optional[str] = None,
@@ -954,7 +1029,7 @@ def generate_structured_payloads(
         component_capabilities_path=component_capabilities_path,
     )
     if component_capabilities_path is None:
-        capabilities_by_id = project_trait_recipe_surfaces(project_foundation_surfaces(capabilities_by_id))
+        capabilities_by_id = project_measured_surfaces(project_trait_recipe_surfaces(project_foundation_surfaces(capabilities_by_id)))
     obligation_scope = load_json(COMPONENT_OBLIGATION_SCOPE_PATH)
     if obligation_scope["controllingObligationDenominator"] != len(canonical_ids):
         raise ValueError("Obligation scope must retain exact canonical intake membership")
@@ -1647,6 +1722,11 @@ def refresh_structured_data(
 
     old_components = load_json(resolved_baseline_components) if resolved_baseline_components.exists() else components_payload
     old_tokens = load_json(resolved_baseline_tokens) if resolved_baseline_tokens.exists() else tokens_payload
+
+    if component_capabilities_path is None and artifact_dir and Path(artifact_dir).resolve() == ARTIFACT_DIR.resolve():
+        # One in-memory projection feeds the package ledger and served export.
+        ledger = {"schemaVersion": "1.0.0", "kind": "component-capability-ledger", "generatedAt": components_payload["generatedAt"], "controllingObligationDenominator": len(components_payload["components"]), "approvedRuntimeCensus": None, "source": "cmos/scripts/refresh_structured_data.py#project_measured_surfaces", "rows": [{"id": row["id"], **{key: value for key, value in row["productReality"].items() if key != "schemaVersion"}} for row in components_payload["components"]]}
+        write_json(REPO_ROOT / "packages/component-contracts/registry/component-capability-ledger.v1.json", ledger)
 
     write_json(components_path, components_payload)
     write_json(tokens_path, tokens_payload)

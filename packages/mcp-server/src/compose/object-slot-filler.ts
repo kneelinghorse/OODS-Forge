@@ -551,8 +551,8 @@ function populateFormFieldBindings(el: UiElement, fieldNames: string[]): void {
   const walk = (node: UiElement): void => {
     // If this element has a `field` prop matching a known field, add onChange binding
     const fieldProp = node.props?.field;
-    // ClassificationEditor exposes presentational native controls, not a generic field edit.
-    if (node.component !== 'ClassificationEditor' && !node.bindings?.onUpdate && typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
+    // Display headers own no edit event; ClassificationEditor has no generic field writer.
+    if (!['ClassificationEditor', 'DetailHeader'].includes(node.component) && !node.bindings?.onUpdate && typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
       node.bindings = {
         ...node.bindings,
         onChange: `handleChange_${fieldProp}`,

@@ -49,7 +49,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   traits: 68,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
-  "artifacts/structured-data": 27,
+  // Sprint 192 retains the measured 2026-09-10 component/token refresh pair.
+  "artifacts/structured-data": 29,
 });
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([
@@ -541,6 +542,7 @@ function allowedCmosProvenance(relative) {
     relative === "packages/component-contracts/dist/index.js" ||
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
+    relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||
     /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
       relative,
     ) ||

@@ -1,0 +1,146 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+
+ ❯ |core| tests/tokens/mobile-output.test.ts (27 tests | 3 failed) 28ms
+   ✓ mobile output — census and shape > emits exactly 848 constants per file (916 − 54 easing − 14 font stacks), identical name sets 2ms
+   ✓ mobile output — census and shape > contains zero oklch( occurrences in either file 0ms
+   × mobile output — census and shape > every Swift value matches a compilable typed-literal shape (no bare identifiers) 5ms
+     → expected [ [ 'cmpShadowPanel', …(1) ], …(1) ] to deeply equal []
+   × mobile output — census and shape > every Kotlin value matches a compilable typed-literal shape (no bare identifiers) 1ms
+     → expected [ [ 'cmpShadowPanel', …(1) ], …(1) ] to deeply equal []
+   ✓ mobile output — census and shape > emits no constant for any deferred token (54 easing + 14 font stacks stay out of both files) 2ms
+   ✓ mobile output — census and shape > both headers disclose the deferral with exact counts 0ms
+   ✓ mobile output — the path manifest binding > pins the manifest class counts to the memo census 27/24/18/105 0ms
+   ✓ mobile output — the path manifest binding > pins one literal member per class, named OUTSIDE the manifest 0ms
+   ✓ mobile output — the path manifest binding > every manifest path resolves to an emitted constant in both files 4ms
+   ✓ mobile output — the path manifest binding > fontSize class emits Compose .sp and spacing class emits .dp (the split keys on the manifest) 1ms
+   ✓ mobile output — magnitude pins, one per value class > pins sysControlGap = CGFloat(8) (Swift) / 8.dp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins cmpBadgeGap = CGFloat(4) (Swift) / 4.dp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins refSpaceInsetCompact = CGFloat(8) (Swift) / 8.dp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins refBorderWidthHairline = CGFloat(1) (Swift) / 1.dp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins refBorderRadiusPill = CGFloat(999) (Swift) / 999.dp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins sysTextScaleBodyMdFontSize = CGFloat(16) (Swift) / 16.sp (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins sysTextScaleBodyMdLineHeight = 1.5 (Swift) / 1.5 (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins refTypographyLineHeightLoose = 1.6 (Swift) / 1.6 (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins refTypographyLetterSpacingWide = 0.08 (Swift) / 0.08.em (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > pins motionDurationBase = TimeInterval(0.18) (Swift) / 180 (Kotlin) 0ms
+   ✓ mobile output — magnitude pins, one per value class > no NONZERO emitted px dimension equals 16× its px source (the ×16 rem assumption is dead) 6ms
+   ✓ mobile output — anti-gaming, value-position anchored > emits ≥395 typed colour constants per file (UIColor( / Color(0x at the value position) 0ms
+   × mobile output — anti-gaming, value-position anchored > emits zero quoted-string values for colour-class or duration-class tokens 0ms
+     → expected 584 to be 503 // Object.is equality
+   ✓ mobile output — gamut mapping, not channel clipping (the m02 table assertion) > the committed table has 42 rows, each out of sRGB gamut, each mappedHex reproducible in-test 2ms
+   ✓ mobile output — gamut mapping, not channel clipping (the m02 table assertion) > has ≥10 divergent rows (clip vs toGamut ΔE00 > 1) including brand B’s interactive primary 0ms
+   ✓ mobile output — gamut mapping, not channel clipping (the m02 table assertion) > brand A’s interactive primary maps and clips to the SAME bytes — measured fact, so it cannot discriminate (memo expectation corrected s171-m04) 0ms
+   ✓ mobile output — gamut mapping, not channel clipping (the m02 table assertion) > for EVERY divergent row the emitted bytes equal toGamut and differ from clip — a clip implementation cannot green 2ms
+ ✓ |core| tests/tokens/bridged-slot-specificity-census.test.ts (5 tests) 99ms
+ ❯ |core| packages/mcp-server/test/product-reality/nucleus-pins.s185.spec.ts (5 tests | 1 failed) 342ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > the nucleus itself is a non-empty, unique, code-point-sorted id list 1ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no retired literal from the pin inventory is present in its file, and every derivation is 9ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no live test or script compares nucleus membership to a literal count 282ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > includes source and root tests and rejects indexed readiness counts while allowing derived membership 11ms
+   × Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > the hand-written 14-family list survives only in declared showcase fixtures and history scripts 38ms
+     → packages/components-react/test/visual-evidence.mjs is allowlisted but carries no list: expected false to be true // Object.is equality
+ ✓ |core| packages/mcp-server/test/product-reality/readiness-ref-enforcement.s184.spec.ts (21 tests) 275ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/mobile-output.test.ts > mobile output — census and shape > every Swift value matches a compilable typed-literal shape (no bare identifiers)
+AssertionError: expected [ [ 'cmpShadowPanel', …(1) ], …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   [
++     "cmpShadowPanel",
++     "0 0.25rem 1rem rgb(0 0 0 / 12%)",
++   ],
++   [
++     "sysShadowPanel",
++     "0 0.25rem 1rem rgb(0 0 0 / 12%)",
++   ],
++ ]
+
+ ❯ tests/tokens/mobile-output.test.ts:127:23
+    125|       /^(UIColor\(red: \d+\.\d{3}, green: \d+\.\d{3}, blue: \d+\.\d{3}…
+    126|     const offenders = [...swiftConstants.entries()].filter(([, value])…
+    127|     expect(offenders).toEqual([]);
+       |                       ^
+    128|   });
+    129| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |core| tests/tokens/mobile-output.test.ts > mobile output — census and shape > every Kotlin value matches a compilable typed-literal shape (no bare identifiers)
+AssertionError: expected [ [ 'cmpShadowPanel', …(1) ], …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   [
++     "cmpShadowPanel",
++     "0 0.25rem 1rem rgb(0 0 0 / 12%)",
++   ],
++   [
++     "sysShadowPanel",
++     "0 0.25rem 1rem rgb(0 0 0 / 12%)",
++   ],
++ ]
+
+ ❯ tests/tokens/mobile-output.test.ts:134:23
+    132|       /^(Color\(0x[0-9A-F]{8}\)|(\(-\d+(\.\d+)?\)|\d+(\.\d+)?)\.(dp|sp…
+    133|     const offenders = [...kotlinConstants.entries()].filter(([, value]…
+    134|     expect(offenders).toEqual([]);
+       |                       ^
+    135|   });
+    136| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |core| tests/tokens/mobile-output.test.ts > mobile output — anti-gaming, value-position anchored > emits zero quoted-string values for colour-class or duration-class tokens
+AssertionError: expected 584 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 584
+
+ ❯ tests/tokens/mobile-output.test.ts:266:28
+    264|   it('emits zero quoted-string values for colour-class or duration-cla…
+    265|     const guarded = [...(byClass.get('color') ?? []), ...(byClass.get(…
+    266|     expect(guarded.length).toBe(395 + 108);
+       |                            ^
+    267|     for (const entry of guarded) {
+    268|       const name = camelName(entry.path);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/nucleus-pins.s185.spec.ts > Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > the hand-written 14-family list survives only in declared showcase fixtures and history scripts
+AssertionError: packages/components-react/test/visual-evidence.mjs is allowlisted but carries no list: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ packages/mcp-server/test/product-reality/nucleus-pins.s185.spec.ts:164:104
+    162|     for (const [file, reason] of allowlist) {
+    163|       expect(reason.length, file).toBeGreaterThan(0);
+    164|       expect(HAND_WRITTEN_NUCLEUS_LIST.test(read(file)), `${file} is a…
+       |                                                                                                        ^
+    165|     }
+    166|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  4 failed | 54 passed (58)
+   Start at  13:49:15
+   Duration  1.89s (transform 678ms, setup 0ms, collect 1.91s, tests 744ms, environment 0ms, prepare 298ms)
+

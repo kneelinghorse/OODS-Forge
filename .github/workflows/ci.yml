@@ -438,6 +438,29 @@ jobs:
             diagnostics.json
           if-no-files-found: warn
 
+  component-packages:
+    name: component-packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Historical baseline-fold contracts use git show.
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @oods/tokens run build
+      # Historical component contracts import the built MCP readiness resolver.
+      - run: pnpm run build:packages
+      - run: pnpm exec playwright install chromium
+      - name: Four component package suites (includes shared styles browser proof)
+        run: node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue
+
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest
@@ -489,6 +512,25 @@ jobs:
         # libs; the cache above skips the browser download on a hit, and a genuine missing
         # lib now fails fast with a clear error instead of a 24-minute hang.
         run: pnpm exec playwright install chromium
+
+      - name: Build governed component packages
+        run: pnpm --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build
+
+      - name: React and Vue six-scope component proof
+        # Explicitly exercise all six cells, retaining new evidence separately from
+        # the frozen Sprint 182 raster receipts. Computed assertions are the gate.
+        run: |
+          pnpm --filter @oods/components-react run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/react
+          pnpm --filter @oods/components-vue run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/vue
+          pnpm --filter @oods/component-styles exec vitest run test/high-contrast.browser.spec.ts
+
+      - name: Upload governed component theme proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-theme-${{ github.run_id }}
+          path: artifacts/component-proof/
+          if-no-files-found: error
 
       - name: Brand cascade rendered-surface proof (sprint-168 m06)
         # Reuses the Chromium this job already installs. Paints every bridged --theme-*

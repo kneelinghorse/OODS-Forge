@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  COMPONENT_CONTRACT_VERSION,
   COMPONENT_CONTRACT_VERSION_1_1,
   NUCLEUS_COMPONENT_IDS,
   componentContracts,
@@ -9,20 +8,20 @@ import {
 } from '../src/index.js';
 
 describe('Sprint 184 nucleus contract amendments', () => {
-  it('versions the three original amendments and the static SVG extension', () => {
+  it('carries the original amendments into the governed v1.1 semantics contract', () => {
     const supportedVersions: readonly ComponentContract['version'][] = ['1.0.0', '1.1.0'];
     const version11Ids = Object.values(componentContracts)
       .filter((contract) => contract.version === COMPONENT_CONTRACT_VERSION_1_1)
       .map((contract) => contract.id)
       .sort();
     const version10Ids = Object.values(componentContracts)
-      .filter((contract) => contract.version === COMPONENT_CONTRACT_VERSION)
+      .filter((contract) => contract.version === '1.0.0')
       .map((contract) => contract.id)
       .sort();
 
     expect(supportedVersions).toEqual(['1.0.0', '1.1.0']);
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
-    expect(version11Ids).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
+    expect(version11Ids).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     expect(version10Ids).toEqual(
       [...NUCLEUS_COMPONENT_IDS].filter((id) => !version11Ids.includes(id)).sort(),
     );

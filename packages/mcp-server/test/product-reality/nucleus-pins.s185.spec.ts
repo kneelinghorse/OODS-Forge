@@ -124,6 +124,10 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
       // the compatibility alias; the historical inventory stays immutable.
       const currentDerivation = site.id === 'ported-contracts-union-22'
         ? 'expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(\n      NUCLEUS_COMPONENT_IDS.length,'
+        // s192-m03/m05 version every governed contract at 1.1; the original
+        // inventory remains historical, and current membership still derives.
+        : site.id === 'contract-resolution-entries-14'
+          ? 'expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());'
         : site.newSource;
       if (currentDerivation && !text.includes(currentDerivation.trim())) problems.push(`${site.id}: derivation missing`);
     }
@@ -152,7 +156,13 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
   });
 
   it('the hand-written 14-family list survives only in declared showcase fixtures and history scripts', () => {
-    const allowlist = new Map(inventory.literalListAllowlist.map((entry) => [entry.file, entry.reason]));
+    // s192 widens both live harnesses; retain the historical inventory verbatim.
+    const widenedHarnesses = ['packages/components-react/test/visual-evidence.mjs', 'packages/components-vue/test/visual-evidence.mjs'];
+    for (const file of widenedHarnesses) {
+      expect(read(file)).toContain('NUCLEUS_COMPONENT_IDS');
+      expect(HAND_WRITTEN_NUCLEUS_LIST.test(read(file))).toBe(false);
+    }
+    const allowlist = new Map(inventory.literalListAllowlist.filter(entry => !widenedHarnesses.includes(entry.file)).map((entry) => [entry.file, entry.reason]));
     const offenders: string[] = [];
     for (const file of liveScopeFiles()) {
       if (!HAND_WRITTEN_NUCLEUS_LIST.test(read(file))) continue;

@@ -212,6 +212,7 @@ const ADDRESS_RECORD: BindingSemanticSignature = {
  * domain callback.
  */
 export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[] = [
+  { id: 'component:SortIndicator.onChange', scope: 'component', component: 'SortIndicator', event: 'onChange', kind: 'domain', signature: { parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] } },
   { id: 'component:Banner.onDismiss', scope: 'component', component: 'Banner', event: 'onDismiss', kind: 'local', signature: NO_PARAMETERS },
   { id: 'component:Button.onActivate', scope: 'component', component: 'Button', event: 'onActivate', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'component:Checkbox.onChange', scope: 'component', component: 'Checkbox', event: 'onChange', kind: 'local', signature: BOOLEAN_CHECKED },
@@ -938,7 +939,7 @@ export function resolveFrameworkChildContent(
     return { strategy: 'value-prop', fieldName: snakeToCamel(sourceField), propName: 'description', isChildren: false };
   }
 
-  if (['LabelCell', 'InlineLabel'].includes(node.component)
+  if (['LabelCell', 'InlineLabel', 'TimelineEntryLabel'].includes(node.component)
     && typeof sourceField === 'string' && ownFieldSchemaEntry(objectSchema, sourceField)) {
     // Bound labels use the real value prop; authored children keep their HTML
     // override semantics and are not confused with text that needs truncation.
@@ -1001,6 +1002,8 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  AuditSummaryCard: { auditLogField: 'auditLog' },
+  SortIndicator: { sortFieldProp: 'sortField', sortDirectionProp: 'sortDirection' },
   BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
   BillingCardMeta: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
   CycleProgressCard: { progressField: 'progress', periodStartField: 'periodStart', periodEndField: 'periodEnd', intervalField: 'interval' },
@@ -1090,6 +1093,7 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
 };
 
 const RECIPE_PARAMETER_PROPS = new Set([
+  'sortableFieldsParameter', 'triStateSortParameter', 'defaultSortFieldParameter', 'defaultSortDirectionParameter',
   'intervalsParameter',
   'allowCustomParameter',
   'allowDynamicParameter',

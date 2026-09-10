@@ -39,7 +39,7 @@
         "classificationStatus": {
           "type": "string",
           "enum": [
-            "historical-proposals-unapproved"
+            "historical-proposals-unapproved", "proposed-awaiting-derek-approval"
           ]
         }
       },
@@ -247,6 +247,11 @@
           "items": { "type": "string", "minLength": 1 },
           "uniqueItems": true,
           "description": "Repo-relative evidence references supporting the state."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explicit explanation for an unavailable, failed, or not-applicable capability surface."
         }
       },
       "additionalProperties": false

@@ -70,6 +70,7 @@ const PAIR_FOR_CLAIM: Record<string, { foreground: string; background: string }>
     foreground: 'text.onInteractive',
     background: 'surface.interactive.primary.pressed',
   },
+  'focus.ring.outer': { foreground: 'focus.ring.outer', background: 'surface.canvas' },
   'text.primary': { foreground: 'text.primary', background: 'surface.canvas' },
   'text.muted': { foreground: 'text.muted', background: 'surface.subtle' },
   'text.accent': { foreground: 'text.accent', background: 'surface.canvas' },
@@ -164,6 +165,17 @@ describe('brand $description ratio claims are true (s168 m03)', () => {
     }
     expect(verified, 'no claims were verified — the parser stopped matching').toBeGreaterThan(0);
     expect(violations, `false ratio claims:\n  ${violations.join('\n  ')}`).toEqual([]);
+  });
+
+  it('also verifies the raised-surface part of the Sprint 192 focus-ring claim', () => {
+    // The existing claim map grades canvas. The authored sentence names both
+    // surfaces, so raised must be measured too rather than passed by accident.
+    for (const brand of BRANDS) {
+      for (const theme of ['base', 'dark']) {
+        const tokens = loadCell(brand, theme);
+        expect(measure(tokens, 'focus.ring.outer', 'surface.raised'), `${brand}/${theme} focus on raised`).toBeGreaterThanOrEqual(3);
+      }
+    }
   });
 
   it('hc cells carry no numeric ratio claims, because they cannot be graded', () => {

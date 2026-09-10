@@ -1,0 +1,35 @@
+............F.........F...                                [100%]
+=================================== FAILURES ===================================
+_______________ RefreshStructuredDataTest.test_etags_are_stable ________________
+
+self = <test_refresh_structured_data.RefreshStructuredDataTest testMethod=test_etags_are_stable>
+
+    def test_etags_are_stable(self) -> None:
+>       self.assertEqual(
+            compute_etag(self.components_payload),
+            "d022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3",
+        )
+E       AssertionError: '3148149776d59d7d8c4c7195818e644adf6bd76a8ccce25db5e0df9dd7bee13e' != 'd022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3'
+E       - 3148149776d59d7d8c4c7195818e644adf6bd76a8ccce25db5e0df9dd7bee13e
+E       + d022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3
+
+cmos/tests/test_refresh_structured_data.py:378: AssertionError
+______ RefreshStructuredDataTest.test_structured_payloads_match_snapshot _______
+
+self = <test_refresh_structured_data.RefreshStructuredDataTest testMethod=test_structured_payloads_match_snapshot>
+
+    def test_structured_payloads_match_snapshot(self) -> None:
+        # Preserve the frozen s182 target; a routine refresh replaces the live planning export.
+        frozen_dir = CMOS_ROOT.parent / "artifacts/structured-data"
+        expected_components = json.loads((frozen_dir / "oods-components-2026-09-04.json").read_text())
+        expected_tokens = json.loads((frozen_dir / "oods-tokens-2026-09-04.json").read_text())
+        historical_projection = {key: value for key, value in self.components_payload.items() if key != "obligationScope"}
+>       self.assertEqual(historical_projection, expected_components)
+E       AssertionError: {'$sc[297663 chars]': 'chart', 'type': 'object', 'required': Fals[148431 chars]]}]}} != {'$sc[297663 chars]': 'curve', 'type': 'string', 'required': Fals[147972 chars]]}]}}
+E       Diff is 1060352 characters long. Set self.maxDiff to None to see it.
+
+cmos/tests/test_refresh_structured_data.py:367: AssertionError
+=========================== short test summary info ============================
+FAILED cmos/tests/test_refresh_structured_data.py::RefreshStructuredDataTest::test_etags_are_stable
+FAILED cmos/tests/test_refresh_structured_data.py::RefreshStructuredDataTest::test_structured_payloads_match_snapshot
+2 failed, 24 passed, 15 subtests passed in 2.60s

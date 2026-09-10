@@ -21,7 +21,7 @@ const missionId = argument("--mission") ?? "s185-m01";
 const captureLabel = argument("--label") ?? "baseline";
 const runCount = Number.parseInt(argument("--runs") ?? "2", 10);
 // --suites <id,id>: a NAMED RETRY of a subset (recorded in the aggregate); the
-// default is all four suites.
+// default is all five suites; root-core's project set is unchanged.
 const suiteSelection = argument("--suites") ? argument("--suites").split(",") : null;
 
 if (!workspaceArgument || !outputArgument || !Number.isInteger(runCount) || runCount < 1) {
@@ -83,6 +83,12 @@ const allSuites = [
     literalCommand: "pnpm exec vitest run --project core",
     command: "pnpm",
     args: ["exec", "vitest", "run", "--project", "core"],
+  },
+  {
+    id: "component-packages",
+    literalCommand: "node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue",
+    command: "node",
+    args: ["scripts/product-reality/component-package-suite.mjs", "component-contracts", "component-styles", "components-react", "components-vue"],
   },
 ];
 
