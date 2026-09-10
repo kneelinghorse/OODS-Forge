@@ -22,15 +22,15 @@ import {
 type StableChartType = (typeof STABLE_CHART_TYPES)[number];
 
 const EXPECTED_NORMALIZED_HASHES: Readonly<Record<StableChartType, string>> = {
-  treemap: "b61714c82926e331f9eae00a17babaa8e2b54241994ffb2d192c355843242f5d",
-  sunburst: "20789b8d568b656c4e6b5c870277f2569f12bfd0beda586f8549ba0d04169c9f",
-  sankey: "c5e34d1e0fca1ab3d4711a8a5e6ca56e6f1df3033a80e09c6590ddcea89aca9a",
-  chord: "68ee777050c31706845a197166cac058484dcf16e102bbf6c2009d19316ed662",
+  treemap: "bfa0ee12dc03bfc2b373db650cfbaeba8febf36f5e45974cbcc8f579ffc39694",
+  sunburst: "9904c873c359129e58db2dcb745900f871ed0ac7a8bf12788682c2d539d0835a",
+  sankey: "ea82ad48dcb7b533020a7f736508f52f165169e3252f8ec82ada9b8fb1f9803d",
+  chord: "86db1949d8c7f39033d1da48a126609dd1c86cee7db8d749392726e514884594",
   choropleth:
-    "756b369388670679f3346dbd62c74f42c0780ee6f01ed06975e68139e48f671c",
+    "f10cbd6bcacaf64d7562b90ad6ad0619edd9a09a7fcf3674401d8b76feebc55f",
   bubble_map:
-    "68b19232a5c6f32770760065f21f706e94c3f609e211d0b04b454dcb4db0a75a",
-  flow_map: "58871d84288bc6d88add326b9793be9f5767b3675dcb675c7196e1941bbc202d",
+    "481fc41a1264b63d4596db1787c6380af7ad5536f78af36eed54db33bfa4f55c",
+  flow_map: "bab223b6a50ee581338bead62b54bd292be08a594b02ccca2c3b2ab1793b5e68",
 };
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

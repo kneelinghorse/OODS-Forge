@@ -1,0 +1,92 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge
+
+ ✓ |core| tests/tokens/brand-semantic-bridge.test.ts (14 tests) 7ms
+ ❯ |core| tests/tokens/scoped-js-export.test.ts (8 tests | 8 failed) 6ms
+   × scoped JavaScript token export matches shipped CSS > preserves the legacy flat export and exposes exactly six brand/theme cells 4ms
+     → Cannot convert undefined or null to object
+   × scoped JavaScript token export matches shipped CSS > A/light resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'A')
+   × scoped JavaScript token export matches shipped CSS > A/dark resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'A')
+   × scoped JavaScript token export matches shipped CSS > A/hc resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'A')
+   × scoped JavaScript token export matches shipped CSS > B/light resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'B')
+   × scoped JavaScript token export matches shipped CSS > B/dark resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'B')
+   × scoped JavaScript token export matches shipped CSS > B/hc resolves canvas, text and border through its own CSS semantic bridge 0ms
+     → Cannot read properties of undefined (reading 'B')
+   × scoped JavaScript token export matches shipped CSS > retains high-contrast system colors instead of inventing a server palette 0ms
+     → Cannot read properties of undefined (reading 'A')
+stdout | tests/tokens/brand-root-and-containment.test.ts > s168 m06 — :root value audit + the two discriminating brand-axis oracles > (d) every non-base cell genuinely differs from :root — the blocks are not no-ops
+A/base: 0/44 differ from :root
+A/dark: 43/44 differ from :root
+A/hc: 44/44 differ from :root
+B/base: 0/44 differ from :root
+B/dark: 44/44 differ from :root
+B/hc: 44/44 differ from :root
+
+ ✓ |core| tests/tokens/brand-theme-matrix.test.ts (10 tests) 11ms
+ ✓ |core| tests/tokens/brand-root-and-containment.test.ts (9 tests) 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > preserves the legacy flat export and exposes exactly six brand/theme cells
+TypeError: Cannot convert undefined or null to object
+ ❯ tests/tokens/scoped-js-export.test.ts:16:19
+     14|   it('preserves the legacy flat export and exposes exactly six brand/t…
+     15|     expect(bundle.cssVariables).toEqual(flat.cssVariables);
+     16|     expect(Object.keys(bundle.cssVariablesByScope)).toEqual(['A', 'B']…
+       |                   ^
+     17|     for (const themes of Object.values(bundle.cssVariablesByScope)) ex…
+     18|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > A/light resolves canvas, text and border through its own CSS semantic bridge
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > A/dark resolves canvas, text and border through its own CSS semantic bridge
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > A/hc resolves canvas, text and border through its own CSS semantic bridge
+TypeError: Cannot read properties of undefined (reading 'A')
+ ❯ tests/tokens/scoped-js-export.test.ts:25:28
+     23|       const blocks = css.split('}').filter(block => block.includes(sel…
+     24|       const declarations = blocks.map(block => block.slice(block.lastI…
+     25|       const scope = bundle.cssVariablesByScope[brand]![theme]!;
+       |                            ^
+     26|       for (const suffix of ['surface-canvas', 'text-primary', 'border-…
+     27|         const value = declarations.match(new RegExp(`--theme-${suffix}…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > B/light resolves canvas, text and border through its own CSS semantic bridge
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > B/dark resolves canvas, text and border through its own CSS semantic bridge
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > B/hc resolves canvas, text and border through its own CSS semantic bridge
+TypeError: Cannot read properties of undefined (reading 'B')
+ ❯ tests/tokens/scoped-js-export.test.ts:25:28
+     23|       const blocks = css.split('}').filter(block => block.includes(sel…
+     24|       const declarations = blocks.map(block => block.slice(block.lastI…
+     25|       const scope = bundle.cssVariablesByScope[brand]![theme]!;
+       |                            ^
+     26|       for (const suffix of ['surface-canvas', 'text-primary', 'border-…
+     27|         const value = declarations.match(new RegExp(`--theme-${suffix}…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > scoped JavaScript token export matches shipped CSS > retains high-contrast system colors instead of inventing a server palette
+TypeError: Cannot read properties of undefined (reading 'A')
+ ❯ tests/tokens/scoped-js-export.test.ts:41:21
+     39|   it('retains high-contrast system colors instead of inventing a serve…
+     40|     for (const brand of ['A', 'B']) {
+     41|       expect(bundle.cssVariablesByScope[brand]!.hc!['--oods-sys-surfac…
+       |                     ^
+     42|       expect(bundle.cssVariablesByScope[brand]!.hc!['--oods-sys-text-p…
+     43|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  8 failed | 33 passed (41)
+   Start at  15:31:53
+   Duration  325ms (transform 98ms, setup 0ms, collect 184ms, tests 51ms, environment 0ms, prepare 253ms)
+

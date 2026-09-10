@@ -50,3 +50,5 @@ export function getBaselineCapability(componentId: string) {
 export * from './billing-views.js';
 
 export * from './date-time.js';
+
+export * from './static-svg.js';

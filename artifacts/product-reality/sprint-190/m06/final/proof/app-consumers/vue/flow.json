@@ -1,0 +1,166 @@
+[
+  {
+    "name": "ten-sample-records",
+    "status": "passed",
+    "detail": {
+      "active": [
+        "subscription-001",
+        "subscription-002",
+        "subscription-003",
+        "subscription-004",
+        "subscription-005",
+        "subscription-006",
+        "subscription-007",
+        "subscription-008",
+        "subscription-009"
+      ],
+      "archived": [
+        "subscription-010"
+      ],
+      "archivePresentation": {
+        "opacity": "0.6",
+        "accessibleName": "Archived: Subscription 10",
+        "tabLabel": "Archived",
+        "keyboardNavigation": true
+      },
+      "mounts": [
+        {
+          "nodeId": "list-ve-items-13-0",
+          "component": "ArchivedRowOverlay",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "list-slot-toolbar-actions-3-0",
+          "component": "BillingSummaryBadge",
+          "present": true,
+          "passed": true
+        }
+      ],
+      "total": 10,
+      "disposition": "nine active and one in the generated Archived view"
+    }
+  },
+  {
+    "name": "detail-navigation",
+    "status": "passed",
+    "detail": {
+      "id": "subscription-003",
+      "heading": "Subscription 03",
+      "billingViews": {
+        "cycle": "Billing cycle\n\n23% complete · 22 days remaining\n\nmonthly",
+        "payments": "Payments\n\n$57.00 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+      },
+      "mounts": [
+        {
+          "nodeId": "detail-slot-tab-0-4",
+          "component": "CycleProgressCard",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-1-6",
+          "component": "PaymentTimeline",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-0-4",
+          "component": "CycleProgressCard",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-1-6",
+          "component": "PaymentTimeline",
+          "present": true,
+          "passed": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "edit-seeded-values",
+    "status": "passed",
+    "detail": {
+      "id": "subscription-003",
+      "plan": "Subscription 03"
+    }
+  },
+  {
+    "name": "billing-edit-values",
+    "status": "passed",
+    "detail": {
+      "options": [
+        "monthly",
+        "yearly"
+      ],
+      "amount": "19.99",
+      "interval": "yearly",
+      "invalidSaveStayedOnForm": true
+    }
+  },
+  {
+    "name": "save-plan-name",
+    "status": "passed",
+    "detail": {
+      "heading": "Team annual"
+    }
+  },
+  {
+    "name": "billing-save-persists",
+    "status": "passed",
+    "detail": {
+      "id": "subscription-003",
+      "storedMinorUnits": 1999,
+      "majorUnitEditorValue": "19.99",
+      "interval": "yearly"
+    }
+  },
+  {
+    "name": "cancel-detail",
+    "status": "passed",
+    "detail": {
+      "text": "SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nPayment amounts\nThu 03\nSat 05\nMon 07\nWed 09\nFri 11\nSep 13\nTue 15\nThu 17\nSat 19\nMon 21\nWed 23\nFri 25\nSep 27\nTue 29\nOctober\nDate\n0\n20\n40\n60\nAmount\nSample payments\n\nRecorded and scheduled sample payments in major currency units.\n\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 10, 2026, 12:05 AM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 10, 2026, 12:05 AM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 22 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 10, 2026, 12:05 AM\n\nactive\n\nReason: Budget changed for next year\n\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session.",
+      "id": "subscription-003",
+      "onDemand": true,
+      "readOnlyBeforeActivation": true
+    }
+  },
+  {
+    "name": "cancel-list-badge",
+    "status": "passed",
+    "detail": {
+      "text": "…\nPending Cancellation"
+    }
+  },
+  {
+    "name": "timeline-navigation-and-history",
+    "status": "passed",
+    "detail": {
+      "text": "active\nSep 1, 2026, 12:00 PM\n\nSample record created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$19.99 · yearly\n\npending cancellation\nSep 10, 2026, 12:05 AM\n\nBudget changed for next year\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$19.99 · yearly",
+      "id": "subscription-003",
+      "paymentEvents": "Last paymentSep 1, 2026, 12:00 PM$19.99 · yearly\nNext paymentOct 1, 2026, 12:00 PM$19.99 · yearly",
+      "mounts": [
+        {
+          "nodeId": "timeline-timeline-header-1-billing",
+          "component": "BillingSummaryBadge",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "timeline-slot-entry-0-4-1",
+          "component": "PaymentEventTimeline",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "timeline-slot-entry-0-4-3",
+          "component": "PaymentEventTimeline",
+          "present": true,
+          "passed": true
+        }
+      ]
+    }
+  }
+]

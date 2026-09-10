@@ -31,7 +31,9 @@ const outputSchema = JSON.parse(
 ) as Record<string, unknown>;
 const validateOutput = getAjv().compile(outputSchema);
 
-const certify = (spec: unknown) => handle({ spec });
+// Isolate Role A from the corrected light/A Role-C failure (#1852).
+const roleASpec = (spec: unknown) => ({ ...(spec as NormalizedVizSpec), config: { tokens: { '--oods-sys-surface-canvas': '#FCFCFD' } } });
+const certify = (spec: unknown) => handle({ spec: roleASpec(spec) });
 
 /** N distinct series, one row each — consumed categorical cardinality = N. */
 const seriesRows = (n: number) =>
@@ -94,7 +96,7 @@ describe('artifact.certify — the §0 ten-series palette-recycling collision (R
   it('contentHash is the untouched compile hash — the render feeds grading, never the hash (D7)', async () => {
     const spec = buildSeriesBar(10);
     const out = await certify(spec);
-    expect(out.determinism?.contentHash).toBe(sha256(canonicalize(toVegaLiteSpec(spec))));
+    expect(out.determinism?.contentHash).toBe(sha256(canonicalize(toVegaLiteSpec(roleASpec(spec)))));
     expect(out.determinism?.stable).toBe(true);
   });
 

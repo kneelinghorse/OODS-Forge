@@ -1,3 +1,4 @@
+import type { TokenScope } from '../echarts/token-resolver.js';
 // Flow-map (route/flow-line) ECharts adapter (sprint-119 m01).
 // The 6th explicit-only geo type: origin→destination ARC lines. Mirrors the bubble
 // adapter's structure — echarts is a TYPE-ONLY import, the series is built from the
@@ -75,14 +76,14 @@ function numericDomain(values: number[]): [number, number] {
   return [Math.min(...values), Math.max(...values)];
 }
 
-function buildGeoComponent(mapName: string, roam: boolean): GeoComponentOption {
+function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): GeoComponentOption {
   return pruneUndefined({
     map: mapName,
     roam,
     label: { show: false },
     itemStyle: {
-      areaColor: resolveColor(DEFAULT_AREA_COLOR),
-      borderColor: resolveColor(DEFAULT_BORDER_COLOR),
+      areaColor: resolveColor(DEFAULT_AREA_COLOR, scope),
+      borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
   });
 }
@@ -98,7 +99,8 @@ export function buildFlowLineSeries(
   spec: SpatialSpec,
   layer: RouteLayer,
   data: DataRecord[],
-  geoData: FeatureCollection | undefined
+  geoData: FeatureCollection | undefined,
+  scope: TokenScope = {}
 ): FlowLineBuildResult {
   const mapName = deriveMapName(spec);
   const startLng = requireEndpoint(layer.encoding.start.longitude, 'start longitude');
@@ -114,7 +116,7 @@ export function buildFlowLineSeries(
   const staticWidth = widthEncoding?.value ?? DEFAULT_LINE_WIDTH;
   const curveness = layer.encoding.curvature?.value ?? DEFAULT_CURVENESS;
   const opacity = layer.encoding.opacity?.value ?? DEFAULT_LINE_OPACITY;
-  const lineColor = resolveColor(layer.encoding.color?.value ?? DEFAULT_LINE_COLOR);
+  const lineColor = resolveColor(layer.encoding.color?.value ?? DEFAULT_LINE_COLOR, scope);
 
   const strengthValues = strengthField
     ? data.map((datum) => coerceNumber(datum[strengthField])).filter((value): value is number => value !== null)
@@ -168,8 +170,7 @@ export function buildFlowLineSeries(
 
   const geo = buildGeoComponent(
     mapName,
-    Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom'))
-  );
+    Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')), scope);
   const registration = geoData ? registerGeoJson(mapName, geoData) : undefined;
 
   let visualMap: VisualMapComponentOption | undefined;
@@ -193,7 +194,8 @@ export function adaptFlowLineToECharts(
   spec: SpatialSpec,
   geoData: FeatureCollection | undefined,
   data: DataRecord[],
-  dimensions: { readonly width: number; readonly height: number }
+  dimensions: { readonly width: number; readonly height: number },
+  scope: TokenScope = {}
 ): EChartsOption {
   if (!data || data.length === 0) {
     throw new Error('Flow map requires tabular data records (the origin→destination flows).');
@@ -204,8 +206,8 @@ export function adaptFlowLineToECharts(
     throw new Error('Spatial spec must include at least one route layer for flow map rendering.');
   }
 
-  const result = buildFlowLineSeries(spec, routeLayer, data, geoData);
-  const chrome = resolveOodsEchartsChrome(spec);
+  const result = buildFlowLineSeries(spec, routeLayer, data, geoData, scope);
+  const chrome = resolveOodsEchartsChrome(spec, scope);
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createFlowLineTooltipFields({
       originLongitudeField: requireEndpoint(routeLayer.encoding.start.longitude, 'start longitude'),

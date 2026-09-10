@@ -13,26 +13,25 @@
 // graded-invisible yet render-visible — a render/certify drift hole. The series
 // palette stays solely in the s138 scale.range / mark.color bake.
 //
-// Light-only (resolveTokenToColor is theme-blind; memo §8 defers the theme-aware
-// lift). Emits a stable, literal-ordered, ARRAY-FREE scalar object so canonicalize's
+// Resolves the requested CSS scope (light/A by default). Emits a stable, literal-ordered, ARRAY-FREE scalar object so canonicalize's
 // key-sort keeps the render↔certify contentHash deterministic (memo §6).
 
-import { resolveTokenToColor, resolveTokenValue } from '../adapters/echarts/token-resolver.js';
+import { resolveTokenToColor, resolveTokenValue, type TokenScope } from '../adapters/echarts/token-resolver.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import { overrideMap, toHex } from './categorical-palette.js';
 
 // The OODS chrome token map, verified live vs @oods/tokens (memo §3, Derek-locked §9).
 const CHROME_TOKENS = {
   // colors
-  background: '--oods-sys-surface-canvas', //     #FCFCFD — Derek-lock: fill
-  textPrimary: '--oods-sys-text-primary', //      #2D313A — 12.71:1 ✓ (title, axis/legend title)
-  textNeutral: '--oods-sys-text-neutral', //      #494E5A — 8.13:1  ✓ (axis/legend labels)
-  gridSubtle: '--oods-sys-border-subtle', //      #E9ECEF — H-only gridlines (non-text)
-  borderNeutral: '--oods-sys-border-neutral', //  #D5DAE4 — axis domain + ticks (non-text)
+  background: '--oods-sys-surface-canvas',
+  textPrimary: '--oods-sys-text-primary',
+  textNeutral: '--oods-sys-text-neutral',
+  gridSubtle: '--oods-sys-border-subtle',
+  borderNeutral: '--oods-sys-border-neutral',
   // type
-  fontFamily: '--oods-ref-typography-families-sans', //          DM Sans UI stack
-  titleSize: '--oods-sys-text-scale-heading-lg-font-size', //    "24px"
-  titleWeight: '--oods-sys-text-scale-heading-lg-font-weight', // "600"
+  fontFamily: '--oods-ref-typography-families-sans',
+  titleSize: '--oods-sys-text-scale-heading-lg-font-size',
+  titleWeight: '--oods-sys-text-scale-heading-lg-font-weight',
 } as const;
 
 /**
@@ -82,10 +81,10 @@ export interface OodsVegaConfig {
  * resolver). The five chrome tokens are static and always resolve, so a total
  * miss is a token-bundle breakage — surfaced loud rather than baked as junk.
  */
-function resolveChromeColor(token: string, overrides: Map<string, string>): string {
+function resolveChromeColor(token: string, overrides: Map<string, string>, scope: TokenScope): string {
   const override = overrides.get(token);
   const resolved =
-    (override !== undefined ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token) ?? '');
+    (override !== undefined ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token, scope) ?? '');
   if (resolved === undefined) {
     throw new Error(`OODS chrome color token did not resolve: ${token}`);
   }
@@ -97,8 +96,8 @@ function resolveChromeColor(token: string, overrides: Map<string, string>): stri
  * fontSize; the token carries the `px` unit. Deterministic (same string → same
  * number); a non-numeric value is a token-bundle breakage, surfaced loud.
  */
-function resolveFontSize(token: string, overrides: Map<string, string>): number {
-  const raw = overrides.get(token) ?? resolveTokenValue(token);
+function resolveFontSize(token: string, overrides: Map<string, string>, scope: TokenScope): number {
+  const raw = overrides.get(token) ?? resolveTokenValue(token, scope);
   const n = Number(String(raw ?? '').replace(/px$/i, '').trim());
   if (!Number.isFinite(n)) {
     throw new Error(`OODS chrome font-size token did not resolve to a number: ${token}`);
@@ -109,8 +108,8 @@ function resolveFontSize(token: string, overrides: Map<string, string>): number 
 /**
  * Type-token normalizer: font-weight `"600"` → number `600`.
  */
-function resolveFontWeight(token: string, overrides: Map<string, string>): number {
-  const raw = overrides.get(token) ?? resolveTokenValue(token);
+function resolveFontWeight(token: string, overrides: Map<string, string>, scope: TokenScope): number {
+  const raw = overrides.get(token) ?? resolveTokenValue(token, scope);
   const n = Number(String(raw ?? '').trim());
   if (!Number.isFinite(n)) {
     throw new Error(`OODS chrome font-weight token did not resolve to a number: ${token}`);
@@ -124,8 +123,8 @@ function resolveFontWeight(token: string, overrides: Map<string, string>): numbe
  * quotes). Collapse each `'"…"'` to a single-quoted `'…'` so the baked font string
  * is clean, valid CSS, and stable. Deterministic string→string transform.
  */
-function resolveFontFamily(token: string, overrides: Map<string, string>): string {
-  const raw = overrides.get(token) ?? resolveTokenValue(token) ?? '';
+function resolveFontFamily(token: string, overrides: Map<string, string>, scope: TokenScope): string {
+  const raw = overrides.get(token) ?? resolveTokenValue(token, scope) ?? '';
   return raw.replace(/'"([^"]*)"'/g, "'$1'").trim();
 }
 
@@ -135,7 +134,7 @@ function resolveFontFamily(token: string, overrides: Map<string, string>): strin
  * otherwise the OODS defaults from @oods/tokens. Merged (not overwritten) into the
  * compiled spec's top-level `config` at the toVegaLiteSpec seam — see the adapter.
  */
-export function resolveOodsVegaConfig(spec: NormalizedVizSpec): OodsVegaConfig {
+export function resolveOodsVegaConfig(spec: NormalizedVizSpec, scope: TokenScope = {}): OodsVegaConfig {
   const overrides = overrideMap(spec.config?.tokens);
 
   // s149 F6c: horizontal gridlines stripe through the cells of a MarkRect heatmap
@@ -148,14 +147,14 @@ export function resolveOodsVegaConfig(spec: NormalizedVizSpec): OodsVegaConfig {
   const rectOnly =
     Array.isArray(spec.marks) && spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
 
-  const background = resolveChromeColor(CHROME_TOKENS.background, overrides);
-  const textPrimary = resolveChromeColor(CHROME_TOKENS.textPrimary, overrides);
-  const textNeutral = resolveChromeColor(CHROME_TOKENS.textNeutral, overrides);
-  const gridSubtle = resolveChromeColor(CHROME_TOKENS.gridSubtle, overrides);
-  const borderNeutral = resolveChromeColor(CHROME_TOKENS.borderNeutral, overrides);
-  const font = resolveFontFamily(CHROME_TOKENS.fontFamily, overrides);
-  const titleSize = resolveFontSize(CHROME_TOKENS.titleSize, overrides);
-  const titleWeight = resolveFontWeight(CHROME_TOKENS.titleWeight, overrides);
+  const background = resolveChromeColor(CHROME_TOKENS.background, overrides, scope);
+  const textPrimary = resolveChromeColor(CHROME_TOKENS.textPrimary, overrides, scope);
+  const textNeutral = resolveChromeColor(CHROME_TOKENS.textNeutral, overrides, scope);
+  const gridSubtle = resolveChromeColor(CHROME_TOKENS.gridSubtle, overrides, scope);
+  const borderNeutral = resolveChromeColor(CHROME_TOKENS.borderNeutral, overrides, scope);
+  const font = resolveFontFamily(CHROME_TOKENS.fontFamily, overrides, scope);
+  const titleSize = resolveFontSize(CHROME_TOKENS.titleSize, overrides, scope);
+  const titleWeight = resolveFontWeight(CHROME_TOKENS.titleWeight, overrides, scope);
 
   return {
     background,

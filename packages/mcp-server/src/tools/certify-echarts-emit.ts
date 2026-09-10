@@ -33,6 +33,7 @@ import {
   type HierarchyInput,
   type NetworkInput,
   type NormalizedVizSpec,
+  type TokenScope,
   type SankeyInput,
 } from '@oods/viz-core';
 import type { EChartsPrimaryType } from './echarts-primary.js';
@@ -49,18 +50,19 @@ export function emitRawEChartsOption(
   spec: NormalizedVizSpec,
   chartType: EChartsPrimaryType,
   branchData: unknown,
+  scope: TokenScope = {},
 ): EChartsPrimaryOption {
   switch (chartType) {
     case 'treemap':
-      return adaptTreemapToECharts(spec, branchData as HierarchyInput);
+      return adaptTreemapToECharts(spec, branchData as HierarchyInput, scope);
     case 'sunburst':
-      return adaptSunburstToECharts(spec, branchData as HierarchyInput);
+      return adaptSunburstToECharts(spec, branchData as HierarchyInput, scope);
     case 'sankey':
-      return adaptSankeyToECharts(spec, branchData as SankeyInput);
+      return adaptSankeyToECharts(spec, branchData as SankeyInput, scope);
     case 'chord':
-      return adaptChordToECharts(spec, branchData as SankeyInput);
+      return adaptChordToECharts(spec, branchData as SankeyInput, scope);
     case 'force_graph':
-      return adaptGraphToECharts(spec, branchData as NetworkInput);
+      return adaptGraphToECharts(spec, branchData as NetworkInput, scope);
     default:
       // choropleth / bubble_map / flow_map, through the s172 m01-extracted shared builder —
       // the SAME identity resolution viz.render uses (spec.id already carries
@@ -76,6 +78,7 @@ export function emitRawEChartsOption(
         chartType as GeoChartType,
         branchData as GeoBranch,
         spec.a11y.description,
+        scope,
       ).option;
   }
 }
@@ -139,10 +142,11 @@ export function evaluateEChartsDeterminism(
   spec: NormalizedVizSpec,
   chartType: EChartsPrimaryType,
   branchData: unknown,
+  scope: TokenScope = {},
 ): EChartsDeterminismOutcome {
   try {
-    const firstProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData));
-    const secondProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData));
+    const firstProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData, scope));
+    const secondProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData, scope));
     const firstCanonical = canonicalize(firstProjected);
     const secondCanonical = canonicalize(secondProjected);
     return {

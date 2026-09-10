@@ -6,8 +6,7 @@
 // carries a render half: sha256(renderVegaLiteToSvg(compiled)) twice, equal, with the
 // contrast grade's own render reused as the first hash and the SECOND render being the
 // proof (the "KEEP the second call" discipline, render edition). The first hash is
-// reported as the OPTIONAL determinism.renderHash, present EXACTLY when the rendered-
-// grading path rendered (>= 1 series-classified unit). Operand-backed ECharts calls now
+// reported as the OPTIONAL determinism.renderHash, present when server rendering succeeds, including contrast-exempt charts. Operand-backed ECharts calls now
 // carry their sibling normalized-SVG proof; ECharts {spec}-only calls still do not render.
 //
 // What these tests pin: presence conditions on both sides, renderHash stability across
@@ -88,12 +87,11 @@ describe('artifact.certify — render-backed determinism (s176 m02)', () => {
     expect(a.determinism?.renderHash).toBe(b.determinism?.renderHash);
   });
 
-  it('a cartesian chart with NOTHING to render-grade (CASE-3 exempt only) has NO renderHash — no render happened', async () => {
+  it('a contrast-exempt cartesian chart still proves rendered determinism for its public pixels', async () => {
     const out = await certify({ spec: exemptSpec() });
     expect(out.status).toBe('ok');
     expect(out.pillars?.contrast).toBe('exempt');
-    expect(out.determinism && 'renderHash' in out.determinism).toBe(false);
-    // The compile half still proves what it always proved.
+    expect(out.determinism?.renderHash).toMatch(/^[0-9a-f]{64}$/);
     expect(out.determinism?.stable).toBe(true);
     expect(out.conformant).toBe(true);
     expect(validateOutput(out)).toBe(true);

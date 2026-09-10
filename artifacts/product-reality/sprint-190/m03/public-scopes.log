@@ -1,0 +1,74 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ❯ src/tools/viz.render.svg.test.ts (38 tests | 3 failed) 1782ms
+   ✓ public SVG contract > covers every chart admitted by the public input schema 1ms
+   ✓ public SVG contract > 'bar' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 248ms
+   ✓ public SVG contract > 'line' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 43ms
+   ✓ public SVG contract > 'area' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 35ms
+   ✓ public SVG contract > 'scatter' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 32ms
+   ✓ public SVG contract > 'heatmap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 24ms
+   ✓ public SVG contract > 'treemap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference  348ms
+   ✓ public SVG contract > 'sunburst' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 8ms
+   ✓ public SVG contract > 'sankey' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 10ms
+   ✓ public SVG contract > 'chord' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 9ms
+   ✓ public SVG contract > 'force_graph' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 20ms
+   ✓ public SVG contract > 'choropleth' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 17ms
+   ✓ public SVG contract > 'bubble_map' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 12ms
+   ✓ public SVG contract > 'flow_map' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 6ms
+   ✓ public SVG contract > SVG opt-in leaves the spec identity unchanged; explicit dimensions change only rendered identity 20ms
+   ✓ public SVG contract > a shared renderer mutation moves render and certify hashes together; a one-sided mutation breaks identity 22ms
+   ✓ public SVG contract > vega-lite renderer failure is a typed failure without a success payload 1ms
+   ✓ public SVG contract > echarts renderer failure is a typed failure without a success payload 0ms
+   ✓ public SVG contract > dashboard HTML draws all 11 admitted panel types; only failed panels use placeholders 103ms
+   ✓ public scoped SVG contract > 'bar' paints and repeats all four supported CSS scopes 35ms
+   ✓ public scoped SVG contract > 'line' paints and repeats all four supported CSS scopes 77ms
+   ✓ public scoped SVG contract > 'area' paints and repeats all four supported CSS scopes 40ms
+   ✓ public scoped SVG contract > 'scatter' paints and repeats all four supported CSS scopes 43ms
+   ✓ public scoped SVG contract > 'heatmap' paints and repeats all four supported CSS scopes 38ms
+   ✓ public scoped SVG contract > 'treemap' paints and repeats all four supported CSS scopes 26ms
+   ✓ public scoped SVG contract > 'sunburst' paints and repeats all four supported CSS scopes 20ms
+   ✓ public scoped SVG contract > 'sankey' paints and repeats all four supported CSS scopes 18ms
+   ✓ public scoped SVG contract > 'chord' paints and repeats all four supported CSS scopes 17ms
+   ✓ public scoped SVG contract > 'force_graph' paints and repeats all four supported CSS scopes 37ms
+   ✓ public scoped SVG contract > 'choropleth' paints and repeats all four supported CSS scopes 37ms
+   ✓ public scoped SVG contract > 'bubble_map' paints and repeats all four supported CSS scopes 36ms
+   ✓ public scoped SVG contract > 'flow_map' paints and repeats all four supported CSS scopes 23ms
+   ✓ public scoped SVG contract > rejects unsupported scope {"theme":"sepia"} at the public schema boundary 21ms
+   × public scoped SVG contract > rejects unsupported scope {"theme":"hc"} at the public schema boundary 4ms
+     → schema with key or id "https://designlab.local/schemas/dashboard.render.input.json" already exists
+   × public scoped SVG contract > rejects unsupported scope {"brand":"C"} at the public schema boundary 1ms
+     → schema with key or id "https://designlab.local/schemas/dashboard.render.input.json" already exists
+   × public scoped SVG contract > rejects unsupported scope {"brand":"a"} at the public schema boundary 1ms
+     → schema with key or id "https://designlab.local/schemas/dashboard.render.input.json" already exists
+   ✓ public scoped SVG contract > dashboard A draws 11 scoped charts with matching document attributes and stable hashes 190ms
+   ✓ public scoped SVG contract > dashboard B draws 11 scoped charts with matching document attributes and stable hashes 159ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/viz.render.svg.test.ts > public scoped SVG contract > rejects unsupported scope {"theme":"hc"} at the public schema boundary
+ FAIL  src/tools/viz.render.svg.test.ts > public scoped SVG contract > rejects unsupported scope {"brand":"C"} at the public schema boundary
+ FAIL  src/tools/viz.render.svg.test.ts > public scoped SVG contract > rejects unsupported scope {"brand":"a"} at the public schema boundary
+Error: schema with key or id "https://designlab.local/schemas/dashboard.render.input.json" already exists
+ ❯ Ajv2020._checkUnique ../../node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:731:13
+ ❯ Ajv2020._addSchema ../../node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:722:24
+ ❯ Ajv2020.compile ../../node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:388:22
+ ❯ src/tools/viz.render.svg.test.ts:137:37
+    135|     expect(validateInput({ ...svgInput(inputs[0]!), ...scope })).toBe(…
+    136|     expect(validateInput.errors?.some(error => error.keyword === 'enum…
+    137|     const checkDashboard = getAjv().compile(schema('dashboard.render.i…
+       |                                     ^
+    138|     expect(checkDashboard({ schemaVersion: 'v0.1', datasets: [], panel…
+    139|     expect(checkDashboard.errors?.some(error => error.keyword === 'enu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 35 passed (38)
+   Start at  16:48:50
+   Duration  2.96s (transform 651ms, setup 14ms, collect 979ms, tests 1.78s, environment 0ms, prepare 71ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/viz.render.svg.test.ts

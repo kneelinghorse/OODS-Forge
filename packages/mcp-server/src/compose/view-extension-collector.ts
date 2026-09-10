@@ -250,6 +250,8 @@ export function collectDashboardViewExtensions(
   for (const context of DASHBOARD_FALLBACK_CONTEXTS) {
     const ranked = collectRankedEntries(composed, context);
     for (const entry of ranked) {
+      // Data-bound detail charts do not imply a dashboard placement.
+      if (entry.plan.props.chart) continue;
       const targetSlot = inferDashboardTargetSlot(entry.plan, context);
       if (!targetSlot) {
         continue;

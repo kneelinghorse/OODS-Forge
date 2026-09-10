@@ -123,7 +123,7 @@ function chartHashes(out: DashboardRenderOutput): Record<string, string | undefi
 }
 
 describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
-  it('the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo placeholder + inlined tokens + narrative)', async () => {
+  it('the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative)', async () => {
     const out = await handle(METRIC_OVERVIEW_HTML);
     expect(out.status).toBe('ok');
     expect(typeof out.html).toBe('string');
@@ -153,7 +153,7 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     expect(out.outputHtmlHash).toBeUndefined();
   });
 
-  it('R-B: brand changes HTML identity while every chart contentHash remains brand-invariant', async () => {
+  it('R-B: brand changes HTML and chart identity because the CSS scope changes rendered chrome', async () => {
     const brandA = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'A' } as DashboardRenderInput);
     const brandB = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'B' } as DashboardRenderInput);
     const brandAWithHtmlHash = brandA as DashboardRenderOutput & { outputHtmlHash?: string };
@@ -165,7 +165,8 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     for (const hash of Object.values(brandAPanelHashes)) {
       expect(hash).toMatch(/^[a-f0-9]{64}$/);
     }
-    expect(brandAPanelHashes).toEqual(chartHashes(brandB));
+    expect(brandAPanelHashes).not.toEqual(chartHashes(brandB));
+    expect(chartHashes(await handle({ ...METRIC_OVERVIEW_HTML, brand: 'A' }))).toEqual(brandAPanelHashes);
   });
 
   it('R-B: a panel-data edit moves HTML identity', async () => {
@@ -182,9 +183,10 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     expect(changed.outputHtmlHash).not.toBe(baseline.outputHtmlHash);
   });
 
-  it('R-B: ECharts-primary HTML remains an a11y-described placeholder', async () => {
+  it('ECharts-primary HTML draws normalized SVG with an accessible figure', async () => {
     const out = await handle(METRIC_OVERVIEW_HTML);
-    expect(out.html).toContain('class="oods-panel oods-placeholder oods-placeholder-geo"');
+    expect(out.html).not.toContain('oods-placeholder-geo');
+    expect(out.html?.match(/<svg/g)).toHaveLength(3);
     expect(out.html).toContain('aria-label="Choropleth map of regional values."');
     expect(out.html).not.toContain('<canvas');
   });

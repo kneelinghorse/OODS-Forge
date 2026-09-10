@@ -1,0 +1,74 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ❯ src/tools/viz.render.svg.test.ts (19 tests | 2 failed) 959ms
+   ✓ public SVG contract > covers every chart admitted by the public input schema 1ms
+   ✓ public SVG contract > 'bar' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 253ms
+   ✓ public SVG contract > 'line' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 47ms
+   ✓ public SVG contract > 'area' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 44ms
+   ✓ public SVG contract > 'scatter' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 31ms
+   ✓ public SVG contract > 'heatmap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 23ms
+   ✓ public SVG contract > 'treemap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference  386ms
+   ✓ public SVG contract > 'sunburst' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 12ms
+   ✓ public SVG contract > 'sankey' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 11ms
+   ✓ public SVG contract > 'chord' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 8ms
+   ✓ public SVG contract > 'force_graph' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 26ms
+   ✓ public SVG contract > 'choropleth' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 17ms
+   ✓ public SVG contract > 'bubble_map' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 11ms
+   ✓ public SVG contract > 'flow_map' returns actual, repeatable SVG bytes and a resolvable byte-identity reference 6ms
+   × public SVG contract > SVG opt-in leaves the spec identity unchanged; explicit dimensions change only rendered identity 24ms
+     → expected undefined to be '0f1887380e087bbd5e15b9bc926ddb7a887ee…' // Object.is equality
+   ✓ public SVG contract > a shared renderer mutation moves render and certify hashes together; a one-sided mutation breaks identity 20ms
+   ✓ public SVG contract > vega-lite renderer failure is a typed failure without a success payload 1ms
+   ✓ public SVG contract > echarts renderer failure is a typed failure without a success payload 0ms
+   × public SVG contract > dashboard HTML draws all 11 admitted panel types; only failed panels use placeholders 36ms
+     → ECharts SSR uses the fixed 600x400 viewport.
+ ✓ test/tools/artifact.certify.render-determinism.spec.ts (5 tests) 465ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/viz.render.svg.test.ts > public SVG contract > SVG opt-in leaves the spec identity unchanged; explicit dimensions change only rendered identity
+AssertionError: expected undefined to be '0f1887380e087bbd5e15b9bc926ddb7a887ee…' // Object.is equality
+
+- Expected: 
+"0f1887380e087bbd5e15b9bc926ddb7a887eed5cddcca5f052895e4a291fa10a"
+
++ Received: 
+undefined
+
+ ❯ src/tools/viz.render.svg.test.ts:62:88
+     60|       const sized = await render({ ...svgInput(input), output: { svg: …
+     61|       expect(plain.svg).toBeUndefined(); expect(plain.render).toBeUnde…
+     62|       expect(intrinsic.contentHash).toBe(plain.contentHash); expect(si…
+       |                                                                                        ^
+     63|       expect(sized.svgHash).not.toBe(intrinsic.svgHash);
+     64|       // Vega's existing autosize behavior adds 5px padding on each ed…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/tools/viz.render.svg.test.ts > public SVG contract > dashboard HTML draws all 11 admitted panel types; only failed panels use placeholders
+EChartsRenderError: ECharts SSR uses the fixed 600x400 viewport.
+ ❯ prepareEChartsRenderInput ../viz-render/src/echarts-worker-protocol.ts:175:11
+ ❯ renderEChartsToSvg ../viz-render/src/echarts-renderer.ts:65:20
+ ❯ renderPanelCell src/tools/dashboard.render.html.ts:298:43
+    296|       ? { width: Math.round((placement.w / columns) * NOMINAL_DASHBOAR…
+    297|       : undefined;
+    298|     const svg = normalizeEChartsSvg(await renderEChartsToSvg(panel.ech…
+       |                                           ^
+    299|     return chartCell(panel.title, panel.a11yDescription, svg, style, t…
+    300|   }
+ ❯ composeDashboardHtml src/tools/dashboard.render.html.ts:222:22
+ ❯ handle src/tools/dashboard.render.ts:817:19
+ ❯ src/tools/viz.render.svg.test.ts:97:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 22 passed (24)
+   Start at  15:20:23
+   Duration  2.93s (transform 632ms, setup 17ms, collect 1.13s, tests 1.42s, environment 0ms, prepare 131ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/viz.render.svg.test.ts test/tools/artifact.certify.render-determinism.spec.ts

@@ -92,7 +92,7 @@ describe('artifact.certify — contrast engine fault degrades, never errors', ()
     expect(validateOutput(out)).toBe(true);
   });
 
-  it("disarmed control — both routes grade contrast:'pass' through the same import graph (the forced throw is the only difference)", async () => {
+  it("disarmed control — both routes produce measured verdicts through the same import graph", async () => {
     contrastFault.armed = false;
     try {
       const cartesian = await handle({ spec: buildSpec() });
@@ -101,7 +101,10 @@ describe('artifact.certify — contrast engine fault degrades, never errors', ()
       expect(validateOutput(cartesian)).toBe(true);
 
       const echarts = await handle({ spec: buildSankeySpec() });
-      expect(echarts.pillars?.contrast).toBe('pass');
+      // Light/A exposes slot 04's actual Role-C failure (#1850); this is a grade, not a fault.
+      expect(echarts.pillars?.contrast).toBe('fail');
+      expect(echarts.contrastNote).toContain('Role-C (WCAG 1.4.11) fail');
+      expect(echarts.contrastNote).not.toContain('synthetic contrast-engine fault');
       expect(validateOutput(echarts)).toBe(true);
     } finally {
       contrastFault.armed = true;

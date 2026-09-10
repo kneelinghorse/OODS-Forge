@@ -7,6 +7,7 @@ import { JSDOM } from 'jsdom';
 import { createElement, type ComponentType, type ReactNode } from 'react';
 import { renderToString as renderReact } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { renderMappedComponent } from '../../src/render/component-map.js';
 
 const requireVue = createRequire(new URL('../../../components-vue/package.json', import.meta.url));
 const { h } = requireVue('vue');
@@ -87,6 +88,22 @@ const CASES = COMPONENTS.map((component) => ({ component, omitSlot: false }))
   .concat([{ component: 'VizAreaPreview', omitSlot: true }]);
 
 describe('Sprint 185 computed React/Vue SSR parity', () => {
+  it('computes HTML/React/Vue parity for static area pixels, names and raw SVG without exceptions', async () => {
+    const svg = '<svg><defs><clipPath id="clip-1"><rect width="10" height="10"/></clipPath></defs><g role="graphics-object" aria-label="Amounts" clip-path="url(#clip-1)"><path d="M0,0L10,10"/></g></svg>';
+    const props = { svg, title: 'Payment amounts', description: 'Sample payments', 'aria-label': 'Sample payment chart' };
+    const react = renderReact(createElement(ReactComponents.VizAreaPreview, props));
+    const vue = await renderVue(h(VueComponents.VizAreaPreview, props));
+    const html = renderMappedComponent({ id: 'chart', component: 'VizAreaPreview', props });
+    const inspect = (source: string) => {
+      const figure = JSDOM.fragment(source).querySelector('figure')!;
+      return { role: figure.getAttribute('role'), name: figure.getAttribute('aria-label'), caption: figure.querySelector('figcaption')?.textContent, description: figure.querySelector('[data-viz-description]')?.textContent, svg: figure.querySelector('[data-viz-svg]')?.innerHTML };
+    };
+    expect(DECLARED_DIFFERENCES).toEqual([]);
+    expect(inspect(react)).toEqual(inspect(html));
+    expect(inspect(vue)).toEqual(inspect(html));
+    expect(inspect(html).name).toBe('Sample payment chart');
+    for (const source of [html, react, vue]) expect(source).toContain(svg);
+  });
   it('starts with an empty declared-difference allowlist', () => {
     expect(DECLARED_DIFFERENCES).toEqual([]);
   });

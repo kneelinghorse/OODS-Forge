@@ -108,6 +108,9 @@ export type ColorizedBadgeProps = {
 };
 
 export type VizAreaPreviewProps = {
+  svg?: string;
+  title?: string;
+  description?: string;
   width?: number;
   height?: number;
 };

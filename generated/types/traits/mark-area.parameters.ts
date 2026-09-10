@@ -17,4 +17,19 @@ export interface MarkAreaTraitParameters {
    * Curve tension applied when smoothing.
    */
   tension?: number;
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  chart?: {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
+  };
 }

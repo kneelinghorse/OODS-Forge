@@ -164,7 +164,7 @@ describe("ECharts rendered categorical contrast (s179 m04)", () => {
     expect(result.roleCPaints).toContain("#809DE5");
     expect(result.roleAAssignment).toEqual(["#416CD9", "#3E44BE"]);
     expect(result.roleC.verdict).toBe("fail");
-    expect(result.roleC.minimumRatio).toBeCloseTo(2.6018134537251476, 12);
+    expect(result.roleC.minimumRatio).toBeCloseTo(2.4201494556220835, 12);
     expect(result.roleC.failingPaints).toEqual(["#809DE5"]);
     expect(result.roleA.verdict).toBe("pass");
     expect(result.contrast).toBe("fail");

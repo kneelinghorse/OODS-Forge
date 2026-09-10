@@ -11,6 +11,12 @@ const MarkAreaTrait = {
 
   parameters: [
     {
+      name: 'chart',
+      type: 'object',
+      required: false,
+      description: 'Optional read-only payment chart declaration binding existing domain fields; restricts this trait to the detail view.',
+    },
+    {
       name: 'curve',
       type: 'string',
       required: false,

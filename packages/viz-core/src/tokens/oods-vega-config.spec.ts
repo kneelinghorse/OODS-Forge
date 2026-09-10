@@ -14,7 +14,7 @@ import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 // Self-contained WCAG contrast: the check is deliberately INDEPENDENT of certify's grader
 // (@oods/a11y-tools) because it enforces a surface certify does not grade. The standard
 // sRGB relative-luminance formula below reproduces the memo's verified ratios exactly
-// (text-primary 12.71, text-neutral 8.13, text-muted 4.56, text-disabled 1.85).
+// (text-primary 14.17, text-neutral 7.60, text-muted 4.56, text-disabled 1.85).
 
 function luminance(hex: string): number {
   const h = hex.replace('#', '');
@@ -35,7 +35,7 @@ function contrastRatio(fg: string, bg: string): number {
 const WCAG_AA_TEXT = 4.5;
 // Colors that must NEVER back chrome text: text-muted is on the razor's edge (4.56 — one
 // token tweak from failing) and text-disabled outright fails (1.85). The default axis labels
-// ship on text-neutral (8.13) precisely so the chrome is not parked on that edge (§4).
+// ship on text-neutral (7.60) precisely so the chrome is not parked on that edge (§4).
 const TEXT_MUTED = '#6F7482';
 const TEXT_DISABLED = '#B8BCC6';
 
@@ -56,8 +56,8 @@ describe('resolveOodsVegaConfig — a11y-of-chrome tripwire (s144 m03, memo §4)
     ['legend.labelColor', config.legend.labelColor],
   ];
 
-  it('the baked background is the OODS surface-canvas (#FCFCFD) contrast is graded against', () => {
-    expect(bg).toBe('#FCFCFD');
+  it('the baked background is the OODS surface-canvas (#FDF3DE) contrast is graded against', () => {
+    expect(bg).toBe('#FDF3DE');
   });
 
   it.each(textSurfaces)('%s clears WCAG AA (≥ 4.5:1) on the baked background', (_name, color) => {
@@ -71,13 +71,13 @@ describe('resolveOodsVegaConfig — a11y-of-chrome tripwire (s144 m03, memo §4)
     }
   });
 
-  it('reproduces the memo-verified ratios (text-primary 12.71, text-neutral 8.13)', () => {
+  it('reproduces the scoped light/A ratios (#1850) (text-primary 14.17, text-neutral 7.60)', () => {
     // Pins the specific Derek-locked token choices: titles on text-primary, labels on
     // text-neutral. A regression to a lower-contrast token trips both this and the ≥4.5 gate.
-    expect(config.title.color).toBe('#2D313A');
-    expect(config.axis.labelColor).toBe('#494E5A');
-    expect(contrastRatio('#2D313A', bg)).toBeCloseTo(12.71, 1);
-    expect(contrastRatio('#494E5A', bg)).toBeCloseTo(8.13, 1);
+    expect(config.title.color).toBe('#18233C');
+    expect(config.axis.labelColor).toBe('#4B4D5A');
+    expect(contrastRatio('#18233C', bg)).toBeCloseTo(14.17, 1);
+    expect(contrastRatio('#4B4D5A', bg)).toBeCloseTo(7.60, 1);
   });
 });
 

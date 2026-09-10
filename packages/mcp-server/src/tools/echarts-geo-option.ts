@@ -25,6 +25,7 @@ import {
   adaptFlowLineToECharts,
   registerGeoJson,
   type SpatialSpec,
+  type TokenScope,
 } from '@oods/viz-core';
 import type { VizRenderInput } from '../schemas/generated.js';
 
@@ -73,6 +74,7 @@ export function renderGeoOption(
   chartType: GeoChartType,
   geo: GeoBranch,
   description: string,
+  scope: TokenScope = {},
 ): { option: ReturnType<typeof adaptChoroplethToECharts>; count: number } {
   const rows = (geo.rows ?? []) as Array<Record<string, unknown>>;
   const id = identity.id ?? `viz:${chartType}`;
@@ -107,7 +109,7 @@ export function renderGeoOption(
       ],
       a11y: { description },
     };
-    const option = adaptChoroplethToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+    const option = adaptChoroplethToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS, scope);
     return { option, count: geoData.features.length };
   }
 
@@ -150,7 +152,7 @@ export function renderGeoOption(
       ],
       a11y: { description },
     };
-    const option = adaptFlowLineToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+    const option = adaptFlowLineToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS, scope);
     return { option, count: rows.length };
   }
 
@@ -182,6 +184,6 @@ export function renderGeoOption(
     ],
     a11y: { description },
   };
-  const option = adaptBubbleToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+  const option = adaptBubbleToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS, scope);
   return { option, count: rows.length };
 }

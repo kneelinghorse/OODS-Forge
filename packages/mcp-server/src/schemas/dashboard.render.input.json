@@ -13,6 +13,8 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "theme": { "type": "string", "enum": ["light", "dark"], "default": "light", "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported." },
+
     "schemaVersion": {
       "const": "v0.1",
       "description": "IR version discriminant (V01 convention). A future template/shape change bumps to v0.2."
@@ -93,7 +95,7 @@
     "brand": {
       "type": "string",
       "enum": ["A", "B"],
-      "description": "Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand."
+      "description": "CSS token brand for the dashboard document and chart pixels; defaults to A. The contrast scan grades the same scoped document tokens."
     },
     "selection": {
       "type": "object",
@@ -125,7 +127,7 @@
         "html": {
           "type": "boolean",
           "default": false,
-          "description": "Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary panels (geo), not a rendered ECharts chart. Absent/false leaves the output byte-identical to the compact/echarts payload."
+          "description": "Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent/false leaves the output byte-identical to the compact/echarts payload."
         },
         "dataTable": {
           "type": "boolean",

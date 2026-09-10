@@ -164,7 +164,7 @@ const WAVE_2_CONTRACTS = {
     loweredDirectives: ['availableRolesField'],
   },
   StatusSelector: {
-    props: ['label', 'title', 'options', 'states', 'value', 'status'],
+    props: ['help', 'label', 'title', 'options', 'states', 'value', 'status'],
     renderer: 'renderStatusSelector',
     scenario: 'status-selector-controlled',
     unboundDirectives: ['allowedTransitionsField', 'optionsParameter', 'initialParameter', 'requireReasonParameter'],

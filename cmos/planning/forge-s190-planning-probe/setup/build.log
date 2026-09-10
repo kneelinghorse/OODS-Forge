@@ -1,0 +1,45 @@
+c3a68d5f docs(roadmap): close Sprint 189 under its independent review; build component-contracts in pkg:compat
+    at runOnEndCallbacks (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:1307:45)
+    at buildResponseToResult (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:924:7)
+    at /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:951:16
+    at responseCallbacks.<computed> (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:603:9)
+    at handleIncomingPacket (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:658:12)
+    at Socket.readFromStdout (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+CJS Build failed
+src/adapters/echarts/token-resolver.ts(16,26): error TS2307: Cannot find module '@oods/tokens' or its corresponding type declarations.
+
+DTS Build error
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-core:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/viz-core@0.1.0 build: `rimraf dist && tsup --config tsup.config.ts "--silent"`
+Exit status 1
+
+[exited with code 0]
+=== rerun with @oods/tokens built first
+src/tools/echarts-role-a-assignment.ts(1,32): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/release.tag.ts(6,28): error TS2307: Cannot find module '@oods/release-utils' or its corresponding type declarations.
+src/tools/release.verify.ts(17,8): error TS2307: Cannot find module '@oods/release-utils' or its corresponding type declarations.
+src/tools/viz.render.ts(37,38): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/viz.render.ts(38,28): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/mcp-server@0.1.0 build: `rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && node ../../scripts/build-revision.mjs dist/build-revision.json "--silent"`
+Exit status 2
+
+[exited with code 0]
+=== build:packages + mcp-bridge + pkg:build
+pnpm --filter @oods/* run build
+apps/playground build: Failed
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/apps/playground:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/playground@0.1.0 build: `tsc -b && vite build "--silent"`
+Exit status 1
+packages/tw-variants build$ rimraf dist && tsup --config tsup.config.ts "--silent"
+packages/tokens build: ✔︎ collision guard: no non-exempt collisions across 6 scopes
+packages/tokens build: Building design tokens with Style Dictionary…
+ ELIFECYCLE  Command failed with exit code 1.
+
+[exited with code 0]
+=== clean pass: build:packages + mcp-bridge + pkg:build (no forwarded flags)
+BUILD_OK
+
+[exited with code 0]

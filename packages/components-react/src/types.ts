@@ -115,7 +115,9 @@ export interface ColorizedBadgeProps extends React.HTMLAttributes<HTMLSpanElemen
   readonly emphasis?: ComponentEmphasis;
 }
 
-export interface VizAreaPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface VizAreaPreviewProps extends React.HTMLAttributes<HTMLElement> {
+  readonly svg?: string;
+  readonly description?: string;
   readonly width?: number;
   readonly height?: number;
 }

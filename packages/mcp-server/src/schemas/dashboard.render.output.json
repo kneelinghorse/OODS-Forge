@@ -26,12 +26,12 @@
     },
     "a11y": { "$ref": "#/$defs/dashboardA11y" },
     "tokenCssRef": { "type": "string", "description": "Deferred token CSS reference when compact mode is on (use tokens.build)." },
-    "html": { "type": "string", "description": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary (geo) panels, not rendered ECharts charts. Absent leaves the rest of the payload byte-identical." },
+    "html": { "type": "string", "description": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical." },
     "specRef": { "type": "string", "description": "One dashboard-level reference to the composed payload for pipeline reuse." },
     "specRefCreatedAt": { "type": "string" },
     "specRefExpiresAt": { "type": "string" },
     "contentHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs (sprint-134 m02)." },
-    "outputHtmlHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; ECharts-primary panels remain placeholders. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim." },
+    "outputHtmlHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim." },
     "output": {
       "type": "object",
       "additionalProperties": false,
@@ -44,6 +44,7 @@
         "dataTable": { "type": "boolean" },
         "contrastScan": { "type": "boolean" },
         "includeA11y": { "type": "boolean" },
+        "theme": { "type": "string", "enum": ["light", "dark"], "description": "Echoes an explicitly requested CSS token theme." },
         "brand": { "type": "string", "enum": ["A", "B"], "description": "Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed." }
       }
     },

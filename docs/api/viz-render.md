@@ -2,12 +2,48 @@
 
 > Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns a compiled Vega-Lite spec (ECharts opt-in via output.echarts) with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. ["#1F6FEB","#D1242F"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).
 
+SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.
+
 **Registration:** auto
+
+## Measured visualization coverage
+
+Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.
+
+Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 5 certified / 8 uncertified; uncertified results keep conformant:null.
+
+Theme parameters: light (13/13) and dark (13/13); HC pixels (0/13) are deferred. Brand parameters: A, B. Default scope is light/A.
+
+Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.
+
+| Type | Engine | Dashboard | Certification | Contrast measured | Application |
+| --- | --- | --- | --- | --- | --- |
+| bar | vega-lite | true | certified | light, dark | not-placed |
+| line | vega-lite | true | certified | light, dark | not-placed |
+| area | vega-lite | true | certified | light, dark | placed |
+| scatter | vega-lite | true | certified | light, dark | not-placed |
+| heatmap | vega-lite | true | certified | none (exempt) | not-placed |
+| treemap | echarts | true | uncertified | light, dark | not-placed |
+| sunburst | echarts | true | uncertified | light, dark | not-placed |
+| sankey | echarts | true | uncertified | light, dark | not-placed |
+| chord | echarts | excluded (#881) | uncertified | light, dark | not-placed |
+| force_graph | echarts | true | uncertified | light, dark | not-placed |
+| choropleth | echarts | true | uncertified | none (exempt) | not-placed |
+| bubble_map | echarts | true | uncertified | none (exempt) | not-placed |
+| flow_map | echarts | excluded (#881) | uncertified | none (exempt) | not-placed |
+
+- HC pixels deferred (#1851); HC token scopes retained.
+- Light palette on dark canvas; no separate dark viz-scale token overrides.
+- Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
+- Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
+- Dashboard exclusion (#881): the public panel schema does not admit this type.
 
 ## Input Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
+| `theme` | `light` \| `dark` | No | `"light"` | CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported. |
+| `brand` | `A` \| `B` | No | `"A"` | CSS token brand for chart pixels. Omission resolves light/A. |
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `rows` | object[] | No |  | Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value. |
 | `datasetRef` | string | No |  | Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'. |
@@ -53,6 +89,9 @@
 | `strictFields` | boolean | No | `false` | Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`. |
 | `a11yEquivalence` | boolean | No | `true` | A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-A11Y-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-A11Y-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02), so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules). |
 | `output` | object | No |  | Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior. |
+| `output.svg` | boolean | No | `false` | Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output. |
+| `output.width` | integer | No |  | SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size. |
+| `output.height` | integer | No |  | SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size. |
 | `output.compact` | boolean | No | `true` | When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps. |
 | `output.echarts` | boolean | No | `false` | Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full. |
 | `output.includeNormalizedSpec` | boolean | No | `false` | When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip). |
@@ -71,13 +110,18 @@
 | `status` | `ok` \| `error` | Yes | Whether rendering succeeded. |
 | `chartType` | string | No | Resolved chart type (bar, line, area, scatter, heatmap; empty on error). |
 | `mode` | `explicit` \| `suggest` | No | Whether the chart type was supplied explicitly or chosen by the recommender. |
-| `spec` | object | Yes | The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. As of sprint-144 the cartesian family also carries a baked OODS `config` chrome theme (background, axes/gridlines, typography, legend, view box) alongside the sprint-138 series-color bake, so a generated chart reads as OODS-designed on the light theme; this moved the cartesian render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the ECharts-primary types byte-unchanged (separate adapter). |
-| `echartsSpec` | object | No | The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). As of sprint-145 the 8 ECharts-primary types (treemap/sunburst/sankey/chord/force_graph + geo choropleth/bubble_map/flow_map) also carry a baked OODS chrome theme (background, tile/node/arc borders, on-canvas + on-tile labels, breadcrumb/ring surfaces, geo visualMap labels, and the chart title) — the mirror of the sprint-144 cartesian chrome — so a generated chart reads as OODS-designed on the light theme; this moved the ECharts render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the cartesian family byte-unchanged. Series colors (categorical/sequential) are untouched — only chrome is themed. |
+| `spec` | object | Yes | Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes. |
+| `echartsSpec` | object | No | Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette. |
 | `normalizedSpec` | object | No | The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true. |
 | `a11yDescription` | string | No | The non-empty accessibility description carried by the spec (always synthesized when not provided). |
 | `a11y` | object | No | Structured two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from (Forge-Demos FD#10). Present only when output.includeA11y is true (additive; default-off keeps the wire byte-identical). An agent reads this to verify/iterate its own chart without re-deriving the data. |
 | `suggestion` | object | No | Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives. |
 | `lowConfidence` | boolean | No | Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced). |
+| `svg` | string | No | Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles. |
+| `svgHash` | string | No | SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash. |
+| `svgBytes` | integer | No | UTF-8 byte length of svg. |
+| `svgRef` | string | No | Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef. |
+| `render` | object | No | Actual SVG dimensions, primary engine and rendered scope. |
 | `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef). |
 | `specRefCreatedAt` | string | No | ISO timestamp when the specRef was created. |
 | `specRefExpiresAt` | string | No | ISO timestamp when the specRef expires. |
@@ -94,6 +138,7 @@
 |------|-------------|
 | `OODS-V001` | Input validation failed |
 | `OODS-S001` | Internal server error |
+| `OODS-V165` | SVG rendering failed; no SVG or spec-only success is returned |
 
 ## Example Request
 

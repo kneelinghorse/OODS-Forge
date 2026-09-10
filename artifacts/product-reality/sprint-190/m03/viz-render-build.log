@@ -1,0 +1,47 @@
+
+> @oods/viz-render@0.1.0 build /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render
+> rimraf dist && tsup --config tsup.config.ts
+
+CLI Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render/tsup.config.ts
+CLI Target: node20
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+CJS dist/emitter.cjs                   3.92 KB
+CJS dist/index.cjs                     21.51 KB
+CJS dist/echarts-render.worker.cjs     24.51 KB
+CJS dist/emitter.cjs.map               12.74 KB
+CJS dist/echarts-render.worker.cjs.map 59.80 KB
+CJS dist/index.cjs.map                 52.80 KB
+CJS ⚡️ Build success in 228ms
+ESM dist/emitter.js                   3.59 KB
+ESM dist/chunk-J3M4JW2D.js            456.00 B
+ESM dist/chunk-TEIMVO34.js            13.57 KB
+ESM dist/index.js                     7.61 KB
+ESM dist/echarts-render.worker.js     11.64 KB
+ESM dist/emitter.js.map               11.67 KB
+ESM dist/chunk-J3M4JW2D.js.map        1.11 KB
+ESM dist/echarts-render.worker.js.map 25.74 KB
+ESM dist/index.js.map                 18.69 KB
+ESM dist/chunk-TEIMVO34.js.map        33.43 KB
+ESM ⚡️ Build success in 228ms
+DTS Build start
+src/emitter.ts(109,5): error TS2322: Type '{ fontWeight?: number | ExprRef | SignalRef | "bold" | "normal" | "lighter" | "bolder" | undefined; fontSize?: number | ExprRef | SignalRef | undefined; ... 22 more ...; baseline?: TextBaseline | undefined; }' is not assignable to type 'TitleConfig<ExprRef | SignalRef>'.
+  Type '{ fontWeight?: number | ExprRef | SignalRef | "bold" | "normal" | "lighter" | "bolder" | undefined; fontSize?: number | ExprRef | SignalRef | undefined; ... 22 more ...; baseline?: TextBaseline | undefined; }' is not assignable to type 'MapExcludeAndKeepSignalAs<Omit<BaseTitle, "align" | "baseline">, SignalRef | { field: Field; } | { scale: Field; value: string | number | boolean | null; } | ... 15 more ... | { ...; }, ExprRef | SignalRef>'.
+    Types of property 'fontWeight' are incompatible.
+      Type 'number | ExprRef | SignalRef | "bold" | "normal" | "lighter" | "bolder" | undefined' is not assignable to type 'ExprRef | SignalRef | FontWeight | undefined'.
+        Type 'number' is not assignable to type 'ExprRef | SignalRef | FontWeight | undefined'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/viz-render@0.1.0 build: `rimraf dist && tsup --config tsup.config.ts`
+Exit status 1

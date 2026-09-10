@@ -22,12 +22,12 @@
     },
     "spec": {
       "type": "object",
-      "description": "The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. As of sprint-144 the cartesian family also carries a baked OODS `config` chrome theme (background, axes/gridlines, typography, legend, view box) alongside the sprint-138 series-color bake, so a generated chart reads as OODS-designed on the light theme; this moved the cartesian render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the ECharts-primary types byte-unchanged (separate adapter).",
+      "description": "Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes.",
       "additionalProperties": true
     },
     "echartsSpec": {
       "type": "object",
-      "description": "The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). As of sprint-145 the 8 ECharts-primary types (treemap/sunburst/sankey/chord/force_graph + geo choropleth/bubble_map/flow_map) also carry a baked OODS chrome theme (background, tile/node/arc borders, on-canvas + on-tile labels, breadcrumb/ring surfaces, geo visualMap labels, and the chart title) — the mirror of the sprint-144 cartesian chrome — so a generated chart reads as OODS-designed on the light theme; this moved the ECharts render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the cartesian family byte-unchanged. Series colors (categorical/sequential) are untouched — only chrome is themed.",
+      "description": "Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette.",
       "additionalProperties": true
     },
     "normalizedSpec": {
@@ -139,6 +139,11 @@
       "type": "boolean",
       "description": "Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced)."
     },
+    "svg": {"type": "string", "description": "Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles."},
+    "svgHash": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash."},
+    "svgBytes": {"type": "integer", "minimum": 1, "description": "UTF-8 byte length of svg."},
+    "svgRef": {"type": "string", "description": "Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef."},
+    "render": {"type": "object", "required": ["engine", "width", "height", "theme", "brand"], "properties": {"engine": {"enum": ["vega-lite", "echarts"]}, "width": {"type": "number", "exclusiveMinimum": 0}, "height": {"type": "number", "exclusiveMinimum": 0}, "theme": {"enum": ["light", "dark"]}, "brand": {"enum": ["A", "B"]}}, "additionalProperties": false, "description": "Actual SVG dimensions, primary engine and rendered scope."},
     "specRef": {
       "type": "string",
       "description": "Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef)."
@@ -164,6 +169,9 @@
       "description": "Echoes the normalized output controls used by the renderer.",
       "required": ["compact"],
       "properties": {
+        "svg": {"type": "boolean"},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
         "compact": { "type": "boolean" },
         "echarts": { "type": "boolean" },
         "includeNormalizedSpec": { "type": "boolean" },

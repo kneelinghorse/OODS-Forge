@@ -3,9 +3,8 @@
 // Composes the metric-overview dashboard into ONE self-contained HTML document:
 //   - Vega-Lite chart panels (trend/breakdown) -> inline SVG via @oods/viz-render;
 //   - KPI tiles rendered from the computed KPI values + their a11y string;
-//   - ECharts-primary panels (geo: empty `spec`, `echartsSpec` present) -> an
-//     a11y-described PLACEHOLDER (NOT rendered in v1, per the m01 seam (c));
-//   - failed panels -> the same a11y-described placeholder.
+//   - ECharts-primary panels -> normalized inline SVG through the shared worker;
+//   - failed panels -> an a11y-described error placeholder.
 //
 // Emitted ONLY when input output.html=true; the rest of the dashboard.render payload
 // is untouched (opt-in additive, seam (e)). Output is deterministic: no timestamps,
@@ -19,8 +18,8 @@
 // emits an on-brand-by-construction-ready structure with token-var defaults so m04
 // only injects the values.
 
-import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
-import { resolveTokenToColor } from '@oods/viz-core';
+import { renderVegaLiteToSvg, renderEChartsToSvg, normalizeEChartsSvg, type VegaLiteSpec } from '@oods/viz-render';
+import { resolveTokenToColor, type TokenScope } from '@oods/viz-core';
 import { contrastRatio } from '@oods/a11y-tools';
 import type { DashboardRenderOutput } from '../schemas/generated.js';
 
@@ -56,10 +55,11 @@ export function exportTokenMap(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Reado
   );
 }
 
-export function resolveBrandTokens(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Record<string, string> {
+export function resolveBrandTokens(brand: ExportBrand = DEFAULT_EXPORT_BRAND, theme: TokenScope['theme'] = 'light'): Record<string, string> {
   const resolved: Record<string, string> = {};
   for (const [cssVar, tokenName] of Object.entries(exportTokenMap(brand))) {
-    const value = resolveTokenToColor(tokenName);
+    const suffix = tokenName.replace(/^--oods-brand-[ab]-/, '');
+    const value = resolveTokenToColor(`--oods-theme-${suffix}`, { brand, theme });
     if (value) {
       resolved[cssVar] = value;
     }
@@ -183,6 +183,8 @@ export interface ChartTableData {
 }
 
 export interface ComposeHtmlArgs {
+  readonly brand?: ExportBrand;
+  readonly theme?: 'light' | 'dark';
   readonly title?: string;
   readonly panels: readonly PanelResult[];
   readonly layout: readonly Placement[];
@@ -190,8 +192,8 @@ export interface ComposeHtmlArgs {
   /** Grid column count (input.layout.columns, default 12). */
   readonly columns: number;
   /**
-   * Resolved brand tokens (CSS custom-property name -> value). Threaded to the SVG
-   * emitter and inlined into the document in m04; undefined in m03.
+   * Resolved document tokens (CSS custom-property name -> value). Chart specs
+   * already carry their own scoped chrome from viz.render.
    */
   readonly tokens?: Readonly<Record<string, string>>;
   /**
@@ -208,7 +210,7 @@ export interface ComposeHtmlArgs {
 export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<string> {
   const { title, panels, layout, a11y, columns, tokens, tableData, dataQualityField } = args;
   // m04: resolve the brand tokens once. Caller override wins; else the default brand.
-  const resolvedTokens = tokens ?? resolveBrandTokens();
+  const resolvedTokens = tokens ?? resolveBrandTokens(args.brand, args.theme);
 
   const placementById = new Map<string, Placement>(layout.map((p) => [p.id, p]));
   const byId = new Map<string, PanelResult>(panels.map((p) => [p.id, p]));
@@ -220,7 +222,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
     if (!panel) {
       continue;
     }
-    cells.push(await renderPanelCell(panel, placementById.get(id), columns, resolvedTokens, tableData?.get(id), dataQualityField));
+    cells.push(await renderPanelCell(panel, placementById.get(id), columns, tableData?.get(id), dataQualityField));
   }
 
   const docTitle = title ?? 'Dashboard';
@@ -228,7 +230,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
 
   const lines: string[] = [
     '<!DOCTYPE html>',
-    '<html lang="en">',
+    `<html lang="en" data-theme="${args.theme ?? 'light'}" data-brand="${args.brand ?? 'A'}">`,
     '<head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -266,7 +268,6 @@ async function renderPanelCell(
   panel: PanelResult,
   placement: Placement | undefined,
   columns: number,
-  tokens: Readonly<Record<string, string>> | undefined,
   table: ChartTableData | undefined,
   dataQualityField: string | undefined,
 ): Promise<string> {
@@ -289,11 +290,17 @@ async function renderPanelCell(
             height: placement.h * NOMINAL_ROW_HEIGHT_PX,
           }
         : {};
-    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens, ...dims });
+    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { ...dims });
     return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
   }
-  // ECharts-primary (geo): empty spec + echartsSpec -> a11y-described placeholder.
-  return placeholderCell(panel.title, panel.a11yDescription, style, 'geo');
+  if (panel.echartsSpec) {
+    const dims = placement && columns > 0
+      ? { width: Math.round((placement.w / columns) * NOMINAL_DASHBOARD_WIDTH_PX), height: placement.h * NOMINAL_ROW_HEIGHT_PX }
+      : undefined;
+    const svg = normalizeEChartsSvg(await renderEChartsToSvg(panel.echartsSpec, dims));
+    return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
+  }
+  throw new Error('Chart panel has no renderable spec.');
 }
 
 function kpiCell(panel: Extract<PanelResult, { kind: 'kpi' }>, style: string): string {
@@ -384,9 +391,9 @@ function placeholderCell(
   title: string | undefined,
   a11yDescription: string | undefined,
   style: string,
-  variant: 'geo' | 'error',
+  variant: 'error',
 ): string {
-  const note = a11yDescription ?? (variant === 'geo' ? 'Map panel (not rendered in this export).' : 'Panel could not be rendered.');
+  const note = a11yDescription ?? 'Panel could not be rendered.';
   const parts: string[] = [
     `<section class="oods-panel oods-placeholder oods-placeholder-${variant}" role="img"${style}${ariaLabelAttr(note)}>`,
   ];

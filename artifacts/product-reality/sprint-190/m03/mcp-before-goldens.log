@@ -1,0 +1,1393 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ✓ src/tools/viz.render.svg.test.ts (38 tests) 1763ms
+   ✓ public SVG contract > 'treemap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference  345ms
+ ✓ src/tools/dashboard.render.test.ts (58 tests) 661ms
+   ✓ dashboard.render — output.html export (sprint-115 m03) > composes a self-contained, AJV-valid HTML document when output.html=true  449ms
+ ❯ src/tools/dashboard.render.fidelity.test.ts (17 tests | 4 failed) 621ms
+   × dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 24ms
+     → Snapshot `dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 1` mismatched
+   ✓ dashboard.render render-fidelity goldens (sprint-113 m06) > same input -> byte-identical composed payload (determinism gate) 3ms
+   × dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 3ms
+     → Snapshot `dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 1` mismatched
+   ✓ dashboard.render render-fidelity goldens (sprint-113 m06) > period-axis: same input -> byte-identical composed payload (determinism gate) 1ms
+   × dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative) 421ms
+     → Snapshot `dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative) 1` mismatched
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > output.html=true -> byte-identical HTML run-to-run (rendered-output determinism gate) 42ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > R-B: outputHtmlHash identifies the exact HTML bytes and is stable across a no-op rerender 30ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > R-B: outputHtmlHash is absent without HTML output 1ms
+   × dashboard.render output.html export goldens (sprint-115 m05) > R-B: brand changes HTML identity while every chart contentHash remains brand-invariant 35ms
+     → expected { …(3) } to deeply equal { …(3) }
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > R-B: a panel-data edit moves HTML identity 37ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > ECharts-primary HTML draws normalized SVG with an accessible figure 15ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: output.html ABSENT is byte-identical to the s114 baseline (no leaked export surface) 1ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: an inert measureRef on the KPI panel leaves the composed payload byte-identical (sprint-116) 2ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: resolveMeasures=true + a KNOWN measureRef ("gm.revenue.total") leaves the composed payload byte-identical to the baseline (sprint-117) 2ms
+   ✓ dashboard.render a11yContrast output block (sprint-119 m03) > additivity: contrastScan ABSENT leaves a11yContrast undefined + output echo unchanged (byte-identical) 1ms
+   ✓ dashboard.render a11yContrast output block (sprint-119 m03) > contrastScan=true emits a structured block whose findings mirror the OODS-V135 warning pairs 1ms
+   ✓ dashboard.render a11yContrast output block (sprint-119 m03) > contrastScan=true -> byte-identical a11yContrast block run-to-run (determinism gate) 1ms
+ ✓ src/tools/dashboard.render.faostat-e2e.test.ts (11 tests) 468ms
+   ✓ FAOSTAT agent pipeline — viz.render + dashboard.render run end-to-end on a real slice > dashboard.render composes the KPI + geo source + HTML export pipeline on FAOSTAT rows  431ms
+ ❯ src/tools/viz.render.fidelity.test.ts (7 tests | 7 failed) 24ms
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 15ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 2ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 1ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 2ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 1ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1` mismatched
+   × viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 2ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1` mismatched
+ ✓ src/tools/viz.render.test.ts (113 tests) 48ms
+ ✓ src/tools/dashboard.render.measure-depth.test.ts (33 tests) 25ms
+ ✓ src/tools/viz.render.intent.test.ts (16 tests) 22ms
+ ✓ src/tools/dashboard.render.strict-fields.test.ts (9 tests) 15ms
+ ✓ src/tools/repl.render.brand.test.ts (6 tests) 11ms
+ ✓ src/tools/repl.render.skin-mapping.test.ts (8 tests) 12ms
+ ❯ src/tools/viz.render.network-fidelity.test.ts (10 tests | 5 failed) 19ms
+   × viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 10ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > treemap: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 2ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > sunburst: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > sankey: same input -> byte-identical echartsSpec (determinism gate) 0ms
+   × viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 2ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > force_graph: same input -> byte-identical echartsSpec (determinism gate) 0ms
+   × viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > chord: same input -> byte-identical echartsSpec (determinism gate) 0ms
+ ❯ src/tools/viz.render.geo-fidelity.test.ts (6 tests | 3 failed) 14ms
+   × viz.render geo render-fidelity goldens > choropleth: the produced echartsSpec matches the committed golden 10ms
+     → Snapshot `viz.render geo render-fidelity goldens > choropleth: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render geo render-fidelity goldens > choropleth: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render geo render-fidelity goldens > bubble_map: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render geo render-fidelity goldens > bubble_map: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render geo render-fidelity goldens > bubble_map: same input -> byte-identical echartsSpec (determinism gate) 0ms
+   × viz.render geo render-fidelity goldens > flow_map: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render geo render-fidelity goldens > flow_map: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render geo render-fidelity goldens > flow_map: same input -> byte-identical echartsSpec (determinism gate) 0ms
+ ✓ src/tools/ci-golden-list.guard.test.ts (2 tests) 7ms
+ ✓ src/tools/dashboard.render.kpi-types.test.ts (7 tests) 8ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 19 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden
+Error: Snapshot `dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+        "breakdown",
+        "geo",
+      ],
+      "readingOrder": "kpi-first",
+    },
+-   "contentHash": "7d3a5e5d55b92897991b33e2a25062769b58d7f69c67b0577be9c58411625ea9",
++   "contentHash": "4fc316e7a6b3f0657e92e58223b089653b9d24d8bf3584ff417207c2b3d11696",
+    "layout": [
+      {
+        "h": 1,
+        "id": "kpi-rev",
+        "w": 3,
+@@ -77,43 +77,43 @@
+        "value": 390,
+      },
+      {
+        "a11yDescription": "Line chart of sum of revenue by month.",
+        "chartType": "line",
+-       "contentHash": "d909af21a900e88b19c57aa1534a01e55a02c48298f79ce6f3284e4b42d760b4",
++       "contentHash": "7feef200b4e1ee36e50e227c8f10105bb481ab9ec90bed0e2161905da3b842d6",
+        "id": "trend",
+        "kind": "chart",
+        "renderer": "vega-lite",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "config": {
+            "axis": {
+-             "domainColor": "#D5DAE4",
++             "domainColor": "#D6DAE4",
+-             "gridColor": "#E9ECEF",
++             "gridColor": "#DAD0BA",
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "tickColor": "#D5DAE4",
++             "tickColor": "#D6DAE4",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "axisX": {
+              "grid": false,
+            },
+            "axisY": {
+              "grid": true,
+            },
+-           "background": "#FCFCFD",
++           "background": "#FDF3DE",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "legend": {
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "title": {
+              "anchor": "start",
+-             "color": "#2D313A",
++             "color": "#18233C",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+            },
+            "view": {
+@@ -183,43 +183,43 @@
+        },
+      },
+      {
+        "a11yDescription": "Bar chart of sum of revenue by region.",
+        "chartType": "bar",
+-       "contentHash": "67eca85a55bb7c293f72ac8d739d6e89cb09c8d8d556e6759146f23188512e6d",
++       "contentHash": "58f1ac75060430f385c48640f28c5e26ef6400d7cc7d67d4db56b16d3868e8e8",
+        "id": "breakdown",
+        "kind": "chart",
+        "renderer": "vega-lite",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "config": {
+            "axis": {
+-             "domainColor": "#D5DAE4",
++             "domainColor": "#D6DAE4",
+-             "gridColor": "#E9ECEF",
++             "gridColor": "#DAD0BA",
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "tickColor": "#D5DAE4",
++             "tickColor": "#D6DAE4",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "axisX": {
+              "grid": false,
+            },
+            "axisY": {
+              "grid": true,
+            },
+-           "background": "#FCFCFD",
++           "background": "#FDF3DE",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "legend": {
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "title": {
+              "anchor": "start",
+-             "color": "#2D313A",
++             "color": "#18233C",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+            },
+            "view": {
+@@ -289,11 +289,11 @@
+        },
+      },
+      {
+        "a11yDescription": "Choropleth map of regional values.",
+        "chartType": "choropleth",
+-       "contentHash": "940ece8bc57bd7dc26b08504a3c8026be59a75f551021631fa0a18b5da04c9fb",
++       "contentHash": "3df424b939be6577ba8e0c086cca8951975f2aae4f1b2510cc3644fa7aa5f1ce",
+        "echartsSpec": {
+          "__registration": {
+            "geoJson": {
+              "features": [
+                {
+@@ -373,20 +373,20 @@
+          },
+          "aria": {
+            "description": "Choropleth map of regional values.",
+            "enabled": true,
+          },
+-         "backgroundColor": "#FCFCFD",
++         "backgroundColor": "#FDF3DE",
+          "geo": {
+            "emphasis": {
+              "itemStyle": {
+-               "areaColor": "rgb(248, 249, 250)",
++               "areaColor": "rgb(245, 232, 206)",
+              },
+            },
+            "itemStyle": {
+              "areaColor": "#f2f2f2",
+-             "borderColor": "rgb(233, 236, 239)",
++             "borderColor": "rgb(218, 208, 186)",
+            },
+            "label": {
+              "show": false,
+            },
+            "map": "map-geo",
+@@ -449,11 +449,11 @@
+              ],
+            },
+            "max": 220,
+            "min": 170,
+            "textStyle": {
+-             "color": "#494E5A",
++             "color": "#4B4D5A",
+            },
+            "type": "continuous",
+          },
+        },
+        "id": "geo",
+
+ ❯ src/tools/dashboard.render.fidelity.test.ts:82:25
+     80|     const out = await handle(METRIC_OVERVIEW);
+     81|     expect(out.status).toBe('ok');
+     82|     expect(redact(out)).toMatchSnapshot();
+       |                         ^
+     83|   });
+     84| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/19]⎯
+
+ FAIL  src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2)
+Error: Snapshot `dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 1` mismatched
+
+- Expected
++ Received
+
+@@ -5,11 +5,11 @@
+        "kpi-rev",
+        "trend",
+      ],
+      "readingOrder": "kpi-first",
+    },
+-   "contentHash": "26b51b6e955f3ad30c64a51e0b981b77969e960b3ba061b8c80ee9a2af1aec0e",
++   "contentHash": "afcaeb4d13cf63ab1ed4a8a0939d1f4c84eb200eb9dbf4e92ff37a3c3d2514a6",
+    "layout": [
+      {
+        "h": 1,
+        "id": "kpi-rev",
+        "w": 3,
+@@ -52,43 +52,43 @@
+        "value": 120,
+      },
+      {
+        "a11yDescription": "Line chart of sum of revenue by month.",
+        "chartType": "line",
+-       "contentHash": "311115b5295ad123aeab487da6639e01e271c1d4a0206fccdd7bd36e89f03f00",
++       "contentHash": "c093b750871dd381a799b2768dcd4af41566d747e009624bb14b8a4f1c2a4478",
+        "id": "trend",
+        "kind": "chart",
+        "renderer": "vega-lite",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "config": {
+            "axis": {
+-             "domainColor": "#D5DAE4",
++             "domainColor": "#D6DAE4",
+-             "gridColor": "#E9ECEF",
++             "gridColor": "#DAD0BA",
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "tickColor": "#D5DAE4",
++             "tickColor": "#D6DAE4",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "axisX": {
+              "grid": false,
+            },
+            "axisY": {
+              "grid": true,
+            },
+-           "background": "#FCFCFD",
++           "background": "#FDF3DE",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "legend": {
+-             "labelColor": "#494E5A",
++             "labelColor": "#4B4D5A",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-             "titleColor": "#2D313A",
++             "titleColor": "#18233C",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            },
+            "title": {
+              "anchor": "start",
+-             "color": "#2D313A",
++             "color": "#18233C",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+            },
+            "view": {
+
+ ❯ src/tools/dashboard.render.fidelity.test.ts:98:25
+     96|     expect(kpi.delta).toBe(10); // vs prior period (2024-02 = 110)
+     97|     expect(kpi.a11yDescription).toBe('Latest Revenue: 120 (increasing,…
+     98|     expect(redact(out)).toMatchSnapshot();
+       |                         ^
+     99|   });
+    100| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/19]⎯
+
+ FAIL  src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative)
+Error: Snapshot `dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative) 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,7 +1,7 @@
+  "<!DOCTYPE html>
+- <html lang="en">
++ <html lang="en" data-theme="light" data-brand="A">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revenue Overview</title>
+  <style>:root{--oods-color-fg:rgb(24, 35, 60);--oods-color-muted:rgb(80, 88, 105);--oods-color-bg:rgb(253, 243, 222);--oods-color-panel-bg:rgb(245, 232, 206);--oods-color-panel-border:rgb(218, 208, 186);--oods-color-accent:rgb(24, 35, 60);--oods-color-positive:rgb(36, 93, 60);--oods-color-negative:rgb(155, 47, 26)}.oods-dashboard{font-family:var(--oods-font-sans,system-ui,-apple-system,sans-serif);color:var(--oods-color-fg,#1a1a1a);background:var(--oods-color-bg,#ffffff);margin:0;padding:16px}.oods-dashboard-title{font-size:18px;margin:0 0 4px}.oods-dashboard-summary{margin:0 0 12px;font-size:14px;color:var(--oods-color-muted,#555)}.oods-dashboard-narrative{margin:0 0 12px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-dashboard-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.oods-panel{background:var(--oods-color-panel-bg,#ffffff);border:1px solid var(--oods-color-panel-border,#e2e2e2);border-radius:8px;padding:12px;box-sizing:border-box}.oods-kpi-title{margin:0 0 4px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-kpi-value{margin:0;font-size:28px;font-weight:600;color:var(--oods-color-accent,#1a1a1a)}.oods-kpi-delta{margin:4px 0 0;font-size:13px}.oods-trend-increasing{color:var(--oods-color-positive,#1a7f37)}.oods-trend-decreasing{color:var(--oods-color-negative,#b42318)}.oods-trend-flat{color:var(--oods-color-muted,#555)}.oods-chart figcaption{font-size:13px;color:var(--oods-color-muted,#555);margin-bottom:8px}.oods-placeholder-title{margin:0 0 4px;font-size:13px}.oods-placeholder-note{margin:0;font-size:13px;color:var(--oods-color-muted,#555)}.oods-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+@@ -16,19 +16,19 @@
+  <li>Total Revenue: 390 (increasing, delta 90) — threshold breached</li>
+  </ul>
+  </section>
+  <div class="oods-dashboard-grid">
+  <section class="oods-panel oods-kpi" style="grid-column:1/span 3;grid-row:1/span 1" aria-label="Total Revenue"><h3 class="oods-kpi-title">Total Revenue</h3><p class="oods-kpi-value">390</p><p class="oods-kpi-delta oods-trend-increasing">+90 (increasing)</p><p class="oods-visually-hidden">Total Revenue: 390 (increasing, delta 90).</p></section>
+- <figure class="oods-panel oods-chart" role="figure" style="grid-column:4/span 6;grid-row:1/span 2" aria-label="Line chart of sum of revenue by month."><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="610" height="330" viewBox="0 0 610 330"><rect width="610" height="330" fill="#FCFCFD"/><g fill="none" stroke-miterlimit="10" transform="translate(51,38)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h554v241h-554Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,241)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,219)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,197)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,175)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,153)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,131)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,110)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,88)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,66)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,44)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,22)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Month' for a discrete scale with 2 values: Feb, Jan"><g transform="translate(0.5,241.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(139,0)" x2="0" y2="5" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(416,0)" x2="0" y2="5" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(138.5,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">Feb</text><text text-anchor="end" transform="translate(415.5,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">Jan</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="554" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(277,44)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#2D313A" opacity="1">Month</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,241)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,219)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,197)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,175)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,153)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,131)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,110)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,88)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,66)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,44)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,22)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,244)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">0</text><text text-anchor="end" transform="translate(-7,222.0909090909091)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">20</text><text text-anchor="end" transform="translate(-7,200.18181818181816)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">40</text><text text-anchor="end" transform="translate(-7,178.27272727272728)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">60</text><text text-anchor="end" transform="translate(-7,156.36363636363637)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">80</text><text text-anchor="end" transform="translate(-7,134.45454545454544)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">100</text><text text-anchor="end" transform="translate(-7,112.54545454545456)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">120</text><text text-anchor="end" transform="translate(-7,90.63636363636364)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">140</text><text text-anchor="end" transform="translate(-7,68.72727272727272)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">160</text><text text-anchor="end" transform="translate(-7,46.818181818181806)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">180</text><text text-anchor="end" transform="translate(-7,24.909090909090917)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">200</text><text text-anchor="end" transform="translate(-7,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">220</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,241)" x2="0" y2="-241" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,120.5) rotate(-90) translate(0,-2)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#2D313A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Month: Feb; Revenue: 210" role="graphics-symbol" aria-roledescription="line mark" d="M138.5,10.955L415.5,43.818" stroke="#416CD9" stroke-width="2"/></g><g class="mark-group role-title"><g transform="translate(-46,-33)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Line chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24px" font-weight="600" fill="#2D313A" opacity="1">Line chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
+- <figure class="oods-panel oods-chart" role="figure" style="grid-column:1/span 6;grid-row:3/span 2" aria-label="Bar chart of sum of revenue by region."><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="610" height="330" viewBox="0 0 610 330"><rect width="610" height="330" fill="#FCFCFD"/><g fill="none" stroke-miterlimit="10" transform="translate(51,38)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h554v233h-554Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,233)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,127)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,21)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,180)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/><line transform="translate(0,74)" x2="554" y2="0" stroke="#E9ECEF" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Region' for a discrete scale with 2 values: East, West"><g transform="translate(0.5,233.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(138,0)" x2="0" y2="5" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(415,0)" x2="0" y2="5" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(138.00000000000003,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">East</text><text text-anchor="end" transform="translate(415,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">West</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="554" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(277,52)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#2D313A" opacity="1">Region</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,233)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,127)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,21)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,180)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,74)" x2="-5" y2="0" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,236)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">0</text><text text-anchor="end" transform="translate(-7,130.09090909090907)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">100</text><text text-anchor="end" transform="translate(-7,24.18181818181819)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">200</text><text text-anchor="end" transform="translate(-7,183.04545454545453)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">50</text><text text-anchor="end" transform="translate(-7,77.13636363636365)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#494E5A" opacity="1">150</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,233)" x2="0" y2="-233" stroke="#D5DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,116.5) rotate(-90) translate(0,-2)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#2D313A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-rect role-mark marks" role="graphics-object" aria-roledescription="rect mark container"><path aria-label="Region: West; Revenue: 220" role="graphics-symbol" aria-roledescription="bar" d="M290.85,0h249.3v233h-249.3Z" fill="#416CD9"/><path aria-label="Region: East; Revenue: 170" role="graphics-symbol" aria-roledescription="bar" d="M13.850000000000023,52.95454545454546h249.3v180.04545454545453h-249.3Z" fill="#416CD9"/></g><g class="mark-group role-title"><g transform="translate(-46,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Bar chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24px" font-weight="600" fill="#2D313A" opacity="1">Bar chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
++ <figure class="oods-panel oods-chart" role="figure" style="grid-column:4/span 6;grid-row:1/span 2" aria-label="Line chart of sum of revenue by month."><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="610" height="330" viewBox="0 0 610 330"><rect width="610" height="330" fill="#FDF3DE"/><g fill="none" stroke-miterlimit="10" transform="translate(51,38)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h554v241h-554Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,241)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,219)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,197)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,175)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,153)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,131)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,110)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,88)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,66)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,44)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,22)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Month' for a discrete scale with 2 values: Feb, Jan"><g transform="translate(0.5,241.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(139,0)" x2="0" y2="5" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(416,0)" x2="0" y2="5" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(138.5,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">Feb</text><text text-anchor="end" transform="translate(415.5,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">Jan</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="554" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(277,44)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#18233C" opacity="1">Month</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,241)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,219)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,197)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,175)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,153)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,131)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,110)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,88)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,66)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,44)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,22)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,244)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">0</text><text text-anchor="end" transform="translate(-7,222.0909090909091)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">20</text><text text-anchor="end" transform="translate(-7,200.18181818181816)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">40</text><text text-anchor="end" transform="translate(-7,178.27272727272728)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">60</text><text text-anchor="end" transform="translate(-7,156.36363636363637)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">80</text><text text-anchor="end" transform="translate(-7,134.45454545454544)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">100</text><text text-anchor="end" transform="translate(-7,112.54545454545456)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">120</text><text text-anchor="end" transform="translate(-7,90.63636363636364)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">140</text><text text-anchor="end" transform="translate(-7,68.72727272727272)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">160</text><text text-anchor="end" transform="translate(-7,46.818181818181806)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">180</text><text text-anchor="end" transform="translate(-7,24.909090909090917)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">200</text><text text-anchor="end" transform="translate(-7,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">220</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,241)" x2="0" y2="-241" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,120.5) rotate(-90) translate(0,-2)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#18233C" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Month: Feb; Revenue: 210" role="graphics-symbol" aria-roledescription="line mark" d="M138.5,10.955L415.5,43.818" stroke="#416CD9" stroke-width="2"/></g><g class="mark-group role-title"><g transform="translate(-46,-33)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Line chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24px" font-weight="600" fill="#18233C" opacity="1">Line chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
++ <figure class="oods-panel oods-chart" role="figure" style="grid-column:1/span 6;grid-row:3/span 2" aria-label="Bar chart of sum of revenue by region."><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="610" height="330" viewBox="0 0 610 330"><rect width="610" height="330" fill="#FDF3DE"/><g fill="none" stroke-miterlimit="10" transform="translate(51,38)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h554v233h-554Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,233)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,127)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,21)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,180)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/><line transform="translate(0,74)" x2="554" y2="0" stroke="#DAD0BA" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Region' for a discrete scale with 2 values: East, West"><g transform="translate(0.5,233.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(138,0)" x2="0" y2="5" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(415,0)" x2="0" y2="5" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(138.00000000000003,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">East</text><text text-anchor="end" transform="translate(415,7) rotate(270) translate(0,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">West</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="554" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(277,52)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#18233C" opacity="1">Region</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,233)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,127)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,21)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,180)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/><line transform="translate(0,74)" x2="-5" y2="0" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,236)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">0</text><text text-anchor="end" transform="translate(-7,130.09090909090907)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">100</text><text text-anchor="end" transform="translate(-7,24.18181818181819)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">200</text><text text-anchor="end" transform="translate(-7,183.04545454545453)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">50</text><text text-anchor="end" transform="translate(-7,77.13636363636365)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="#4B4D5A" opacity="1">150</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,233)" x2="0" y2="-233" stroke="#D6DAE4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,116.5) rotate(-90) translate(0,-2)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="#18233C" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-rect role-mark marks" role="graphics-object" aria-roledescription="rect mark container"><path aria-label="Region: West; Revenue: 220" role="graphics-symbol" aria-roledescription="bar" d="M290.85,0h249.3v233h-249.3Z" fill="#416CD9"/><path aria-label="Region: East; Revenue: 170" role="graphics-symbol" aria-roledescription="bar" d="M13.850000000000023,52.95454545454546h249.3v180.04545454545453h-249.3Z" fill="#416CD9"/></g><g class="mark-group role-title"><g transform="translate(-46,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Bar chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24px" font-weight="600" fill="#18233C" opacity="1">Bar chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
+  <figure class="oods-panel oods-chart" role="figure" style="grid-column:7/span 6;grid-row:3/span 2" aria-label="Choropleth map of regional values."><svg width="600" height="320" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 600 320">
+- <rect width="600" height="320" x="0" y="0" fill="#FCFCFD"></rect>
+- <path d="M108 288L300 288L300 32L108 32L108 288Z" fill="rgb(0,55,119)" stroke="rgb(233, 236, 239)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="oods-zr-0"></path>
+- <path d="M300 288L492 288L492 32L300 32L300 288Z" fill="rgb(223,237,252)" stroke="rgb(233, 236, 239)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="oods-zr-0"></path>
++ <rect width="600" height="320" x="0" y="0" fill="#FDF3DE"></rect>
++ <path d="M108 288L300 288L300 32L108 32L108 288Z" fill="rgb(0,55,119)" stroke="rgb(218, 208, 186)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="oods-zr-0"></path>
++ <path d="M300 288L492 288L492 32L300 32L300 288Z" fill="rgb(223,237,252)" stroke="rgb(218, 208, 186)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="oods-zr-0"></path>
+  <path d="M-18 -161l87.2 0l0 182l-87.2 0Z" transform="translate(18 299)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#cfd2d7" stroke-width="0" class="oods-zr-1"></path>
+- <text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" transform="translate(18 299)" fill="#494E5A">170</text>
+- <text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" y="-140" transform="translate(18 299)" fill="#494E5A">220</text>
++ <text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" transform="translate(18 299)" fill="#4B4D5A">170</text>
++ <text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" y="-140" transform="translate(18 299)" fill="#4B4D5A">220</text>
+  <g clip-path="url(#oods-zr-2)">
+  <polygon points="0 0 20 0 20 140 0 140" transform="matrix(1,0,0,-1,18,299)" fill="url(#oods-zr-3)" class="oods-zr-4"></polygon>
+  <polygon points="0 0 20 0 20 140 0 140" transform="matrix(1,0,0,-1,18,299)" fill="url(#oods-zr-5)" class="oods-zr-6"></polygon>
+  </g>
+  <path d="M12 0A2.9 2.9 0 0 1 9.1 2.9L-9.1 2.9A2.9 2.9 0 0 1 -12 0L-12 0A2.9 2.9 0 0 1 -9.1 -2.9L9.1 -2.9A2.9 2.9 0 0 1 12 0Z" transform="matrix(1,0,0,-1,28,299)" fill="rgb(223,237,252)" stroke="#fff" stroke-width="2" paint-order="stroke" class="oods-zr-7"></path>
+@@ -245,11 +245,11 @@
+  </linearGradient>
+  </defs>
+  <style ><![CDATA[
+  .oods-zr-0:hover {
+  cursor:pointer;
+- fill:rgb(248, 249, 250);
++ fill:rgb(245, 232, 206);
+  }
+  .oods-zr-1:hover {
+  pointer-events:none;
+  }
+  .oods-zr-9:hover {
+
+ ❯ src/tools/dashboard.render.fidelity.test.ts:130:22
+    128|     expect(out.status).toBe('ok');
+    129|     expect(typeof out.html).toBe('string');
+    130|     expect(out.html).toMatchSnapshot();
+       |                      ^
+    131|   });
+    132| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/19]⎯
+
+ FAIL  src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > R-B: brand changes HTML identity while every chart contentHash remains brand-invariant
+AssertionError: expected { …(3) } to deeply equal { …(3) }
+
+- Expected
++ Received
+
+  {
+-   "breakdown": "56578d8fce7a5d23fa955875eeae7bfc6b3064d4dec4aa102b2124c97a03c118",
+-   "geo": "7794c0c4b12d5a40402756aee2f2276724a3e794db341627c7a14a6be398c16a",
+-   "trend": "8c99126967aac0885be57c9c1845006228220533156f770cab636bd5f11c6210",
++   "breakdown": "58f1ac75060430f385c48640f28c5e26ef6400d7cc7d67d4db56b16d3868e8e8",
++   "geo": "3df424b939be6577ba8e0c086cca8951975f2aae4f1b2510cc3644fa7aa5f1ce",
++   "trend": "7feef200b4e1ee36e50e227c8f10105bb481ab9ec90bed0e2161905da3b842d6",
+  }
+
+ ❯ src/tools/dashboard.render.fidelity.test.ts:168:31
+    166|       expect(hash).toMatch(/^[a-f0-9]{64}$/);
+    167|     }
+    168|     expect(brandAPanelHashes).toEqual(chartHashes(brandB));
+       |                               ^
+    169|   });
+    170| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": true,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": true,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": true,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": true,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": false,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "config": {
+      "axis": {
+-       "domainColor": "#D5DAE4",
++       "domainColor": "#D6DAE4",
+-       "gridColor": "#E9ECEF",
++       "gridColor": "#DAD0BA",
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "tickColor": "#D5DAE4",
++       "tickColor": "#D6DAE4",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "axisX": {
+        "grid": false,
+      },
+      "axisY": {
+        "grid": true,
+      },
+-     "background": "#FCFCFD",
++     "background": "#FDF3DE",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "legend": {
+-       "labelColor": "#494E5A",
++       "labelColor": "#4B4D5A",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-       "titleColor": "#2D313A",
++       "titleColor": "#18233C",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      },
+      "title": {
+        "anchor": "start",
+-       "color": "#2D313A",
++       "color": "#18233C",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+      },
+      "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:103:18
+    101| 
+    102|     // Golden: lock the pristine with-range payload.
+    103|     expect(spec).toMatchSnapshot();
+       |                  ^
+    104| 
+    105|     // Renderable: the overridden scale still compiles, parses, and dr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/19]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1` mismatched
+
+- Expected
++ Received
+
+@@ -3,35 +3,35 @@
+    "mark": "MarkLine",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "config": {
+        "axis": {
+-         "domainColor": "#D5DAE4",
++         "domainColor": "#D6DAE4",
+-         "gridColor": "#E9ECEF",
++         "gridColor": "#DAD0BA",
+-         "labelColor": "#494E5A",
++         "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-         "tickColor": "#D5DAE4",
++         "tickColor": "#D6DAE4",
+-         "titleColor": "#2D313A",
++         "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        },
+        "axisX": {
+          "grid": false,
+        },
+        "axisY": {
+          "grid": true,
+        },
+-       "background": "#FCFCFD",
++       "background": "#FDF3DE",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "legend": {
+-         "labelColor": "#494E5A",
++         "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+-         "titleColor": "#2D313A",
++         "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        },
+        "title": {
+          "anchor": "start",
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+        },
+        "view": {
+
+ ❯ src/tools/viz.render.fidelity.test.ts:123:70
+    121|     // change surfaces as a snapshot diff at the render boundary (the …
+    122|     // are all explicit chartType; this is the suggest-mode fidelity c…
+    123|     expect({ chartType: out.chartType, mark: out.meta?.mark, spec }).t…
+       |                                                                      ^
+    124| 
+    125|     // Renderable: the recommended chart compiles, parses, and draws r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/19]⎯
+
+ FAIL  src/tools/viz.render.geo-fidelity.test.ts > viz.render geo render-fidelity goldens > choropleth: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render geo render-fidelity goldens > choropleth: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -83,20 +83,20 @@
+    },
+    "aria": {
+      "description": "Choropleth map of State sales.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "geo": {
+      "emphasis": {
+        "itemStyle": {
+-         "areaColor": "rgb(248, 249, 250)",
++         "areaColor": "rgb(245, 232, 206)",
+        },
+      },
+      "itemStyle": {
+        "areaColor": "#f2f2f2",
+-       "borderColor": "rgb(233, 236, 239)",
++       "borderColor": "rgb(218, 208, 186)",
+      },
+      "label": {
+        "show": false,
+      },
+      "map": "map-viz:choropleth",
+@@ -165,10 +165,10 @@
+        ],
+      },
+      "max": 580,
+      "min": 96,
+      "textStyle": {
+-       "color": "#494E5A",
++       "color": "#4B4D5A",
+      },
+      "type": "continuous",
+    },
+  }
+
+ ❯ src/tools/viz.render.geo-fidelity.test.ts:108:31
+    106|       // The renderable payload is the ECharts option; pin it (the spe…
+    107|       // per-call unique, so snapshot only the payload).
+    108|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+    109|     });
+    110| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/19]⎯
+
+ FAIL  src/tools/viz.render.geo-fidelity.test.ts > viz.render geo render-fidelity goldens > bubble_map: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render geo render-fidelity goldens > bubble_map: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -79,15 +79,15 @@
+    },
+    "aria": {
+      "description": "Bubble map of City population.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "geo": {
+      "itemStyle": {
+        "areaColor": "#f2f2f2",
+-       "borderColor": "rgb(233, 236, 239)",
++       "borderColor": "rgb(218, 208, 186)",
+      },
+      "label": {
+        "show": false,
+      },
+      "map": "map-viz:bubble_map",
+@@ -171,10 +171,10 @@
+        ],
+      },
+      "max": 874,
+      "min": 646,
+      "textStyle": {
+-       "color": "#494E5A",
++       "color": "#4B4D5A",
+      },
+      "type": "continuous",
+    },
+  }
+
+ ❯ src/tools/viz.render.geo-fidelity.test.ts:108:31
+    106|       // The renderable payload is the ECharts option; pin it (the spe…
+    107|       // per-call unique, so snapshot only the payload).
+    108|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+    109|     });
+    110| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/19]⎯
+
+ FAIL  src/tools/viz.render.geo-fidelity.test.ts > viz.render geo render-fidelity goldens > flow_map: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render geo render-fidelity goldens > flow_map: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -79,15 +79,15 @@
+    },
+    "aria": {
+      "description": "Flow map of Trade flows.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "geo": {
+      "itemStyle": {
+        "areaColor": "#f2f2f2",
+-       "borderColor": "rgb(233, 236, 239)",
++       "borderColor": "rgb(218, 208, 186)",
+      },
+      "label": {
+        "show": false,
+      },
+      "map": "map-viz:flow_map",
+@@ -184,10 +184,10 @@
+      "max": 540,
+      "min": 210,
+      "seriesIndex": 0,
+      "show": false,
+      "textStyle": {
+-       "color": "#494E5A",
++       "color": "#4B4D5A",
+      },
+      "type": "continuous",
+    },
+  }
+
+ ❯ src/tools/viz.render.geo-fidelity.test.ts:108:31
+    106|       // The renderable payload is the ECharts option; pin it (the spe…
+    107|       // per-call unique, so snapshot only the payload).
+    108|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+    109|     });
+    110| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/19]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "aria": {
+      "description": "Treemap of hierarchical data.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(183, 136, 39)",
+@@ -14,16 +14,16 @@
+    ],
+    "series": [
+      {
+        "breadcrumb": {
+          "itemStyle": {
+-           "borderColor": "#D5DAE4",
++           "borderColor": "#D6DAE4",
+-           "color": "#FCFCFD",
++           "color": "#FDF3DE",
+          },
+          "show": true,
+          "textStyle": {
+-           "color": "#2D313A",
++           "color": "#18233C",
+          },
+        },
+        "data": [
+          {
+            "children": [
+@@ -60,26 +60,26 @@
+          },
+        ],
+        "emphasis": {
+          "focus": "ancestor",
+          "itemStyle": {
+-           "borderColor": "#494E5A",
++           "borderColor": "#4B4D5A",
+            "borderWidth": 2,
+            "shadowBlur": 2,
+            "shadowColor": "rgba(0, 0, 0, 0.05)",
+          },
+        },
+        "itemStyle": {
+-         "borderColor": "#D5DAE4",
++         "borderColor": "#D6DAE4",
+          "borderWidth": 1,
+          "gapWidth": 1,
+        },
+        "label": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "formatter": "{b}",
+          "show": true,
+-         "textBorderColor": "#FCFCFD",
++         "textBorderColor": "#FDF3DE",
+          "textBorderWidth": 2,
+        },
+        "levels": [
+          {
+            "itemStyle": {
+@@ -90,18 +90,18 @@
+              "show": false,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D5DAE4",
++             "borderColor": "#D6DAE4",
+              "borderWidth": 2,
+              "gapWidth": 2,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D5DAE4",
++             "borderColor": "#D6DAE4",
+              "borderWidth": 1,
+              "gapWidth": 1,
+            },
+          },
+        ],
+@@ -109,14 +109,14 @@
+        "nodeClick": "zoomToNode",
+        "roam": false,
+        "squareRatio": 1.618,
+        "type": "treemap",
+        "upperLabel": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "height": 28,
+          "show": true,
+-         "textBorderColor": "#FCFCFD",
++         "textBorderColor": "#FDF3DE",
+          "textBorderWidth": 2,
+        },
+      },
+    ],
+    "tooltip": {
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/19]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "aria": {
+      "description": "Sunburst of hierarchical data.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(183, 136, 39)",
+@@ -50,53 +50,53 @@
+          },
+        ],
+        "emphasis": {
+          "focus": "ancestor",
+          "itemStyle": {
+-           "borderColor": "#494E5A",
++           "borderColor": "#4B4D5A",
+            "borderWidth": 3,
+            "shadowBlur": 10,
+          },
+        },
+        "itemStyle": {
+-         "borderColor": "#FCFCFD",
++         "borderColor": "#FDF3DE",
+          "borderRadius": 4,
+          "borderWidth": 2,
+        },
+        "label": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "rotate": "radial",
+-         "textBorderColor": "#FCFCFD",
++         "textBorderColor": "#FDF3DE",
+          "textBorderWidth": 2,
+        },
+        "levels": [
+          {},
+          {
+            "itemStyle": {
+-             "borderColor": "#D5DAE4",
++             "borderColor": "#D6DAE4",
+              "borderWidth": 1,
+            },
+            "label": {
+              "rotate": "tangential",
+            },
+            "r": "32%",
+            "r0": "12%",
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D5DAE4",
++             "borderColor": "#D6DAE4",
+              "borderWidth": 1,
+            },
+            "label": {
+              "align": "right",
+            },
+            "r": "68%",
+            "r0": "32%",
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D5DAE4",
++             "borderColor": "#D6DAE4",
+              "borderWidth": 2,
+            },
+            "label": {
+              "show": false,
+            },
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/19]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "aria": {
+      "description": "Sankey diagram of flow data.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(183, 136, 39)",
+@@ -46,15 +46,15 @@
+        ],
+        "emphasis": {
+          "focus": "adjacency",
+        },
+        "itemStyle": {
+-         "borderColor": "#D5DAE4",
++         "borderColor": "#D6DAE4",
+          "borderWidth": 1,
+        },
+        "label": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "position": "right",
+          "show": true,
+        },
+        "layoutIterations": 32,
+        "lineStyle": {
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/19]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "aria": {
+      "description": "Force-directed graph of network data.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(183, 136, 39)",
+@@ -18,11 +18,11 @@
+        "data",
+        "frontend",
+      ],
+      "show": true,
+      "textStyle": {
+-       "color": "#494E5A",
++       "color": "#4B4D5A",
+      },
+    },
+    "series": [
+      {
+        "categories": [
+@@ -87,11 +87,11 @@
+          "gravity": 0.1,
+          "layoutAnimation": true,
+          "repulsion": 100,
+        },
+        "label": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "formatter": "{b}",
+          "position": "right",
+          "show": true,
+        },
+        "labelLayout": {
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/19]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,11 +1,11 @@
+  {
+    "aria": {
+      "description": "Chord diagram of category↔category weighted flows.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FCFCFD",
++   "backgroundColor": "#FDF3DE",
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(183, 136, 39)",
+@@ -18,15 +18,15 @@
+        "coordinateSystem": "none",
+        "emphasis": {
+          "focus": "adjacency",
+        },
+        "itemStyle": {
+-         "borderColor": "#D5DAE4",
++         "borderColor": "#D6DAE4",
+          "borderWidth": 1,
+        },
+        "label": {
+-         "color": "#2D313A",
++         "color": "#18233C",
+          "position": "outside",
+          "show": true,
+        },
+        "lineStyle": {
+          "color": "source",
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/19]⎯
+
+
+  Snapshots  18 failed
+ Test Files  4 failed | 11 passed (15)
+      Tests  19 failed | 322 passed (341)
+   Start at  16:49:17
+   Duration  9.64s (transform 841ms, setup 50ms, collect 3.98s, tests 3.72s, environment 1ms, prepare 493ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/viz.render.test.ts src/tools/viz.render.svg.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts

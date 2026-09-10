@@ -1,5 +1,6 @@
 import {
   componentContracts,
+  assertStaticSvg,
   type GovernedComponentId,
 } from '@oods/component-contracts';
 
@@ -122,6 +123,10 @@ function hasOnlyKeys(record: Record<string, unknown>, keys: readonly string[]): 
 }
 
 const STRING_VALUE = valueContract('a string', (value) => typeof value === 'string');
+const STATIC_SVG_VALUE = valueContract('a passive, self-contained SVG string', value => {
+  if (typeof value !== 'string') return false;
+  try { assertStaticSvg(value); return true; } catch { return false; }
+});
 const NON_EMPTY_STRING_ARRAY_VALUE = valueContract(
   'a non-empty array of strings',
   (value) => Array.isArray(value)
@@ -786,6 +791,9 @@ const PROP_VALUE_CONTRACTS: Readonly<
     validation: VALIDATION_VALUE,
   },
   VizAreaPreview: {
+    svg: STATIC_SVG_VALUE,
+    title: STRING_VALUE,
+    description: STRING_VALUE,
     width: NUMBER_VALUE,
     height: NUMBER_VALUE,
   },

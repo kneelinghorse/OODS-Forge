@@ -72,6 +72,21 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
       continue;
     }
 
+    // A bound chart projects existing domain fields. Mark controls belong only
+    // to unbound visualization objects, never to their host's form or schema.
+    if (traitDef.trait.name === 'MarkArea' && ref.parameters?.chart) {
+      traitDef = {
+        ...traitDef,
+        schema: {},
+        semantics: {},
+        view_extensions: {
+          detail: (traitDef.view_extensions?.detail ?? []).map(extension => ({
+            ...extension,
+            props: { chart: ref.parameters!.chart, title: 'Payment amounts', description: 'Recorded and scheduled sample payments in major currency units.' },
+          })),
+        },
+      };
+    }
     resolvedTraits.push({ ref, definition: traitDef });
 
     // Merge trait schema fields (collision = last-trait-wins with warning)

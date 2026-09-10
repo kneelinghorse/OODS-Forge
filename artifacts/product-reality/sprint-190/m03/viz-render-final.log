@@ -1,0 +1,75 @@
+
+> @oods/viz-render@0.1.0 test /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render
+> pnpm run build && vitest run
+
+
+> @oods/viz-render@0.1.0 build /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render
+> rimraf dist && tsup --config tsup.config.ts
+
+CLI Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render/tsup.config.ts
+CLI Target: node20
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+DTS Build start
+ESM dist/echarts-render.worker.js     11.64 KB
+ESM dist/chunk-J3M4JW2D.js            456.00 B
+ESM dist/emitter.js                   3.59 KB
+ESM dist/index.js                     7.61 KB
+ESM dist/chunk-TEIMVO34.js            13.57 KB
+ESM dist/chunk-J3M4JW2D.js.map        1.11 KB
+ESM dist/emitter.js.map               11.73 KB
+ESM dist/echarts-render.worker.js.map 25.74 KB
+ESM dist/chunk-TEIMVO34.js.map        33.43 KB
+ESM dist/index.js.map                 18.69 KB
+ESM ⚡️ Build success in 489ms
+CJS dist/echarts-render.worker.cjs     24.51 KB
+CJS dist/index.cjs                     21.51 KB
+CJS dist/emitter.cjs                   3.92 KB
+CJS dist/echarts-render.worker.cjs.map 59.80 KB
+CJS dist/index.cjs.map                 52.80 KB
+CJS dist/emitter.cjs.map               12.80 KB
+CJS ⚡️ Build success in 489ms
+DTS ⚡️ Build success in 5319ms
+DTS dist/echarts-render.worker.d.ts  13.00 B
+DTS dist/emitter.d.ts                1.45 KB
+DTS dist/index.d.ts                  5.51 KB
+DTS dist/echarts-render.worker.d.cts 13.00 B
+DTS dist/emitter.d.cts               1.45 KB
+DTS dist/index.d.cts                 5.51 KB
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/viz-render
+      Coverage enabled with v8
+
+ ✓ test/echarts-svg-normalizer.spec.ts (10 tests) 9ms
+ ✓ test/certified-runtime-matrix.spec.ts (4 tests) 17ms
+ ✓ test/echarts-worker-realm-restoration.s180.spec.ts (1 test) 1174ms
+   ✓ s180 ECharts worker realm restoration > restores the exact RNG and clock references after an in-process force job  1172ms
+ ✓ test/emitter.spec.ts (12 tests) 1970ms
+   ✓ renderVegaLiteToSvg > renders a Vega-Lite spec to an SVG string (headless, no DOM)  752ms
+   ✓ renderVegaLiteToSvg > s149 F6a: the width/height option is deterministic (byte-stable run-to-run)  701ms
+ ✓ test/echarts-normalized-hash-matrix.s179.spec.ts (11 tests) 580ms
+ ✓ test/echarts-render-worker.spec.ts (31 tests) 7295ms
+   ✓ ECharts render worker contract > closes the zrender timing branch under ambient poison and 101 uncached fonts  605ms
+   ✓ ECharts render worker contract > 'treemap' renders the exact s172 operand twice without mutation  308ms
+   ✓ ECharts render worker contract > admits exactly 250 force nodes and typed-rejects 251 without inventing other ceilings  310ms
+   ✓ ECharts render worker contract > registers each fresh geo family before setOption and types a skipped first registration as no-map  2166ms
+   ✓ ECharts render worker contract > keeps the registry bounded across 1,000 unique caller IDs and FeatureCollections  2882ms
+   ✓ ECharts render worker contract > resolves and renders through both built ESM and CJS public entries  619ms
+
+ Test Files  6 passed (6)
+      Tests  69 passed (69)
+   Start at  16:52:10
+   Duration  10.83s (transform 1.29s, setup 0ms, collect 6.69s, tests 11.04s, environment 1ms, prepare 1.47s)
+
+ % Coverage report from v8
+
+=============================== Coverage summary ===============================
+Statements   : 91.18% ( 776/851 )
+Branches     : 84.43% ( 217/257 )
+Functions    : 91.11% ( 41/45 )
+Lines        : 91.18% ( 776/851 )
+================================================================================

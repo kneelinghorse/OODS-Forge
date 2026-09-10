@@ -255,15 +255,15 @@ describe('dashboard.render — output.html export (sprint-115 m03)', () => {
 
     // Vega-Lite panels (trend + breakdown) rendered to INLINE SVG (the moat: pixels).
     const svgCount = (html.match(/<svg/g) ?? []).length;
-    expect(svgCount).toBeGreaterThanOrEqual(2);
+    expect(svgCount).toBe(3);
 
     // KPI tile carries the computed value + its a11y string.
     expect(html).toContain('Total Revenue');
     expect(html).toContain('390');
     expect(html).toContain('Total Revenue: 390 (increasing, delta 90).');
 
-    // ECharts-primary (geo) panel -> a11y-described placeholder, NOT rendered.
-    expect(html).toContain('oods-placeholder-geo');
+    // ECharts-primary geo draws a third SVG through the shared renderer.
+    expect(html).not.toContain('oods-placeholder-geo');
 
     // Layout + dashboard a11y are present by construction.
     expect(html).toContain('grid-template-columns:repeat(12,1fr)');
@@ -344,8 +344,8 @@ describe('dashboard.render — on-brand + accessible export (sprint-115 m04)', (
     expect(html).toContain('Revenue overview dashboard.'); // cross-panel summary
     expect(html).toMatch(/<section class="oods-panel oods-kpi"[^>]*aria-label=/); // KPI tile labelled
     expect(html).toMatch(/<figure class="oods-panel oods-chart" role="figure"[^>]*aria-label=/); // chart figure labelled
-    expect(html).toContain('oods-placeholder-geo'); // geo placeholder present
-    expect(html).toMatch(/role="img"[^>]*aria-label="Choropleth/); // geo placeholder a11y-described
+    expect(html).not.toContain('oods-placeholder-geo'); // no geo placeholder
+    expect(html).toMatch(/role="figure"[^>]*aria-label="Choropleth/); // geo chart a11y-described
   });
 });
 

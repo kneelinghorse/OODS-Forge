@@ -1,0 +1,386 @@
+{
+  "status": "ok",
+  "layout": "card",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-card-7",
+        "component": "Card",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "card-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-8",
+                    "component": "CardHeader",
+                    "props": {
+                      "titleField": "label",
+                      "supportingField": "description"
+                    }
+                  },
+                  {
+                    "id": "ve-header-9",
+                    "component": "StatusBadge",
+                    "props": {
+                      "field": "status",
+                      "variant": "subtle",
+                      "label": "Status"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-body-3",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-body-4",
+                "component": "Card",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-footer-5",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-footer-6",
+                "component": "Button",
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "article_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the article document.",
+        "semanticType": "content.article.id"
+      },
+      "slug": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical slug rendered in URLs and breadcrumb links.",
+        "semanticType": "content.article.slug"
+      },
+      "author_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Reference to the authoring user.",
+        "semanticType": "content.article.author"
+      },
+      "content_type": {
+        "type": "string",
+        "required": true,
+        "description": "Editorial template driving layout and governance workflows.",
+        "enum": [
+          "knowledge_base",
+          "announcement",
+          "release_notes",
+          "how_to"
+        ],
+        "semanticType": "content.article.type"
+      },
+      "excerpt": {
+        "type": "string",
+        "required": false,
+        "description": "Summary text used in list + SEO contexts."
+      },
+      "body_markdown": {
+        "type": "string",
+        "required": true,
+        "description": "Markdown content rendered in CMS detail views."
+      },
+      "hero_media_id": {
+        "type": "string",
+        "required": false,
+        "description": "Optional Media object identifier referenced in hero slots."
+      },
+      "reading_time_minutes": {
+        "type": "number",
+        "required": false,
+        "description": "Estimated reading time derived from body length.",
+        "semanticType": "content.article.read_time"
+      },
+      "locale": {
+        "type": "string",
+        "required": false,
+        "description": "Locale tag determining headline, copy, and SEO metadata.",
+        "semanticType": "content.article.locale"
+      },
+      "published_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the article was published live.",
+        "semanticType": "content.article.published_at"
+      }
+    }
+  },
+  "schemaRef": "compose-ae429c99",
+  "schemaRefCreatedAt": "2026-09-09T23:22:38.163Z",
+  "schemaRefExpiresAt": "2026-09-09T23:52:38.163Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "CardHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CardHeader was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "CardHeader",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StatusBadge",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "body",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"body\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "footer",
+      "intent": "action-button",
+      "selectedComponent": "Button",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Button was selected for slot \"footer\" because preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in footer. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Button",
+          "confidence": 1,
+          "reason": "preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in footer",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "CardHeader",
+          "confidence": 0.41,
+          "reason": "tag match (metadata); context match (card); 1 trait(s); name contains \"card\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "PriceCardMeta",
+          "confidence": 0.29,
+          "reason": "context match (card); 1 trait(s); name contains \"card\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [],
+  "objectUsed": {
+    "name": "Article",
+    "version": "1.0.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "core/Classifiable"
+    ],
+    "fieldsComposed": 27,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 4,
+      "form": 3,
+      "card": 2,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Article card view",
+    "layoutDetected": "context-inferred: card (from context=\"card\")",
+    "slotCount": 3,
+    "nodeCount": 9,
+    "intentSynthetic": true,
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.82
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { chartNodes } from './chart-declaration.js';
 import { emitCollectionNode, collectionProps, collectionParameters, collectionSources, wiredCollectionAction } from './collection-emitter.js';
 import { emitWorkflow } from './workflow-emitter.js';
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
@@ -514,6 +515,10 @@ function emitTemplateNodeBody(
     attrParts.push(`data-layout="${node.layout.type}"`);
   }
 
+  if (node.chart && typeof propsObject?.svg === 'string') {
+    attrParts.push(':svg="svg ?? defaultChartSvg"');
+    delete propsObject.svg;
+  }
   if (propsObject) {
     const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
@@ -1130,6 +1135,8 @@ function buildScriptSetup(
     lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-vue';`);
   }
   if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
+  const chart = chartNodes(screens)[0];
+  if (typeof chart?.props?.svg === 'string') lines.push(`const defaultChartSvg = ${JSON.stringify(chart.props.svg)};`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1201,6 +1208,7 @@ function buildScriptSetup(
     // Non-form: use defineProps for display components
     lines.push('');
     lines.push('interface Props {', ...collectionProps(screens, objectSchema ?? {}).map(field => '  ' + field));
+    if (chartNodes(screens).length) lines.push('  svg?: string;');
     if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
     if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
     for (const [fieldName, entry] of Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b))) {
@@ -1222,6 +1230,7 @@ function buildScriptSetup(
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
       ...collectionParameters(screens),
+      ...(chartNodes(screens).length ? ['svg'] : []),
     ];
     lines.push(`const { ${propNames.join(', ')} } = defineProps<Props>();`);
   } else if (options.typescript) {
@@ -1248,8 +1257,8 @@ function buildScriptSetup(
           '}>();');
       }
     }
-  } else if (hasObjectSchema && collectionSources(screens).size > 0) {
-    const names = [...(hasDomainActions ? ['actions'] : []), ...(hasStateBranches ? ['uiState'] : []), ...Object.keys(objectSchema!).map(snakeToCamel), ...collectionParameters(screens)];
+  } else if (hasObjectSchema && (collectionSources(screens).size > 0 || chartNodes(screens).length > 0)) {
+    const names = [...(hasDomainActions ? ['actions'] : []), ...(hasStateBranches ? ['uiState'] : []), ...Object.keys(objectSchema!).map(snakeToCamel), ...collectionParameters(screens), ...(chartNodes(screens).length ? ['svg'] : [])];
     const keys = names.map(name => javascriptSingleQuotedString(name.split('=')[0]!.trim()));
     lines.push(`const { ${names.join(', ')} } = defineProps([${keys.join(', ')}]);`);
   } else if (hasDomainActions || hasStateBranches) {

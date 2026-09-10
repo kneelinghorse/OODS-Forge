@@ -1,0 +1,48 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ❯ src/tools/artifact.certify.scope.test.ts (5 tests | 1 failed) 741ms
+   ✓ certification describes the pixels at the requested scope > default certification bytes equal explicit light/A, including after dark/B calls  390ms
+   × certification describes the pixels at the requested scope > an ECharts canvas override is graded against the rendered background, while spec-only evidence stays reconstructed 348ms
+     → expected { theme: 'light', brand: 'A', …(4) } to match object { verdict: 'fail', …(2) }
+(3 matching properties omitted from actual)
+   ✓ certification describes the pixels at the requested scope > rejects unsupported scope {"theme":"hc"} before creating measurement rows 2ms
+   ✓ certification describes the pixels at the requested scope > rejects unsupported scope {"theme":"sepia"} before creating measurement rows 0ms
+   ✓ certification describes the pixels at the requested scope > rejects unsupported scope {"brand":"C"} before creating measurement rows 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/artifact.certify.scope.test.ts > certification describes the pixels at the requested scope > an ECharts canvas override is graded against the rendered background, while spec-only evidence stays reconstructed
+AssertionError: expected { theme: 'light', brand: 'A', …(4) } to match object { verdict: 'fail', …(2) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "evidence": "render",
+-   "measured": true,
+-   "verdict": "fail",
++   "measured": false,
++   "verdict": "ungradeable",
+  }
+
+ ❯ src/tools/artifact.certify.scope.test.ts:36:41
+     34|     const spec = { ...rendered.normalizedSpec!, config: { tokens: { '-…
+     35|     const backed = await certify({ spec, data: { sankey: SANKEY_BRANCH…
+     36|     expect(backed.contrastResults?.[0]).toMatchObject({ verdict: 'fail…
+       |                                         ^
+     37|     expect(backed.contrastNote).toContain('#416CD9');
+     38|     expect(backed.coverage).toBe('uncertified'); expect(backed.conform…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  17:58:42
+   Duration  1.91s (transform 673ms, setup 15ms, collect 972ms, tests 741ms, environment 0ms, prepare 76ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/artifact.certify.scope.test.ts

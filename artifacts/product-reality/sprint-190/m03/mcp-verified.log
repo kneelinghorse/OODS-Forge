@@ -1,0 +1,248 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ✓ src/tools/viz.render.svg.test.ts (38 tests) 4520ms
+   ✓ public SVG contract > 'bar' returns actual, repeatable SVG bytes and a resolvable byte-identity reference  757ms
+   ✓ public SVG contract > 'treemap' returns actual, repeatable SVG bytes and a resolvable byte-identity reference  527ms
+   ✓ public scoped SVG contract > dashboard A draws 11 scoped charts with matching document attributes and stable hashes  512ms
+   ✓ public scoped SVG contract > dashboard B draws 11 scoped charts with matching document attributes and stable hashes  373ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts (17 tests) 858ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative)  638ms
+ ✓ src/tools/dashboard.render.test.ts (58 tests) 596ms
+   ✓ dashboard.render — output.html export (sprint-115 m03) > composes a self-contained, AJV-valid HTML document when output.html=true  404ms
+ ✓ src/tools/dashboard.render.faostat-e2e.test.ts (11 tests) 457ms
+   ✓ FAOSTAT agent pipeline — viz.render + dashboard.render run end-to-end on a real slice > dashboard.render composes the KPI + geo source + HTML export pipeline on FAOSTAT rows  419ms
+ ✓ test/tools/artifact.certify.render-determinism.spec.ts (5 tests) 456ms
+ ❯ test/tools/artifact.certify.spec-only-bytes.spec.ts (32 tests | 15 failed) 242ms
+   × artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkBar: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe 178ms
+     → expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkLine: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe 14ms
+     → expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkArea: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe 12ms
+     → expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkPoint: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe 11ms
+     → expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkRect: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe 8ms
+     → expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkTreemap: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 1ms
+     → expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSunburst: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+     → expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSankey: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+     → expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkGraph: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 1ms
+     → expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+     → expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChoropleth: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkBubble: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkFlow: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe 0ms
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkTreemap: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSunburst: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSankey: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkGraph: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+   × artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChoropleth: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkBubble: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkFlow: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement) 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkTreemap: notes[] moved by EXACTLY the declared set and nothing more 1ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSunburst: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSankey: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkGraph: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChoropleth: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkBubble: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkFlow: notes[] moved by EXACTLY the declared set and nothing more 0ms
+   ✓ artifact.certify — the control can discriminate > a single mutated byte in the baseline reds the cartesian comparison 8ms
+   ✓ artifact.certify — the control can discriminate > the ECharts rest-of-object comparison is over a non-trivial verdict 0ms
+   ✓ artifact.certify — the control can discriminate > the 85004fe recapture retains the post-s176 bytes, not retired 4f64bcf 0ms
+ ❯ test/tools/artifact.certify.contrast-fault.spec.ts (3 tests | 1 failed) 175ms
+   ✓ artifact.certify — contrast engine fault degrades, never errors > cartesian certified path: the catch degrades contrast to 'ungradeable' WITH a note naming the fault, and 'ungradeable' pulls conformant false; verdict stays ok/certified and AJV-valid 157ms
+   ✓ artifact.certify — contrast engine fault degrades, never errors > ECharts categorical path: the catch degrades contrast to 'ungradeable' with the fault note on the uncertified route; conformant stays null, AJV-valid 0ms
+   × artifact.certify — contrast engine fault degrades, never errors > disarmed control — both routes grade contrast:'pass' through the same import graph (the forced throw is the only difference) 17ms
+     → expected 'fail' to be 'pass' // Object.is equality
+stderr | src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary
+WARN Channel "color" does not work with "band" scale. We are using "ordinal" scale instead.
+
+ ✓ src/tools/viz.render.fidelity.test.ts (7 tests) 93ms
+ ✓ src/tools/viz.render.test.ts (113 tests) 47ms
+ ✓ src/tools/dashboard.render.measure-depth.test.ts (33 tests) 23ms
+ ❯ test/tools/certify-contrast.spec.ts (26 tests | 3 failed) 334ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > a single-series chart (no color encoding) -> pass on categorical-01 (baked mark.color, rendered) vs the canvas 142ms
+   × certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > the re-spaced OODS categorical palette (6 series) -> clean pass, at/above the >=10 target (s146 F1, memo §3a) 16ms
+     → expected 'fail' to be 'pass' // Object.is equality
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path) 5ms
+   ✓ certify-contrast — role-A (categorical distinguishability, min-over-CVD) > a chromatic-but-near-identical config.tokens override -> fail on role-A ΔE (<2), even though role-C + the F2 chroma floor pass 7ms
+   ✓ certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > a low-chroma (reads-as-gray) config.tokens override -> fail on the chroma floor, before the ΔE check 6ms
+   × certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip) 6ms
+     → expected 'fail' to be 'pass' // Object.is equality
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a chromatic 2-color agent range -> PASS (certify grades the supplied range, not the OODS palette) 5ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a GRAY 2-color agent range -> contrast FAIL on the chroma floor (Fork B: a gray "absent" slot reads as gray) 7ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a low-contrast-vs-canvas 2-color agent range -> role-C FAIL (a near-white "absent" slot is invisible on the panel) 5ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > under-cardinality caveat (critic amendment 4): 1 distinct value masks the gray-absent fail -> PASS on color[0] only 5ms
+   ✓ certify-contrast — role-B (no baked palette) is WCAG-exempt > a quantitative color encoding (baked NO range) -> exempt (gradient essential exception) 0ms
+   ✓ certify-contrast — role-B (no baked palette) is WCAG-exempt > a linear-scaled color encoding -> exempt 0ms
+   ✓ certify-contrast — role-B (no baked palette) is WCAG-exempt > a divergence binding (color trait EncodingDetail, compiled quantitative, no baked range) -> exempt, NEVER a false pass 0ms
+   ✓ certify-contrast — honesty + determinism > an unresolvable canvas (non-color override on the canvas token) -> 'ungradeable' (tried and failed), never 'unchecked' and never a silent pass 32ms
+   ✓ certify-contrast — honesty + determinism > a non-color override on a palette slot is IGNORED — the slot renders the OODS default, which certify grades (rendered-reality) 5ms
+   ✓ certify-contrast — honesty + determinism > is a pure function of the IR — identical verdict across repeated calls (the render is deterministic) 10ms
+   ✓ certify-contrast — s140 multi-mark union grading > C1 repro: a passing decorative mark.color on the first layer + a role-C-failing color palette on a later layer -> fail (was a false pass) 11ms
+   ✓ certify-contrast — s140 multi-mark union grading > companion regression: the color-bearing mark is NOT the first layer -> pass (was a false unchecked) 5ms
+   ✓ certify-contrast — s140 multi-mark union grading > a faint author annotation line + a passing color-encoded data layer -> pass (the decoration is skipped, not failed) 5ms
+   ✓ certify-contrast — s140 multi-mark union grading > a gradient (exempt) layer + a categorical (pass) layer -> pass — a graded categorical dominates a gradient 8ms
+   ✓ certify-contrast — s140 multi-mark union grading > facet-of-layer: the walker descends facet.spec.layer and grades every unit 11ms
+   ✓ certify-contrast — s140 multi-mark union grading > concat: the walker grades every section (both hconcat units), not just the first 9ms
+   × certify-contrast — s176 render-backed assignment grading > ten series over the six-slot default palette -> role-A ΔE00=0 fail (the recycled assignment reaches the grader) 17ms
+     → expected 'Role-C (WCAG 1.4.11) fail: --oods-viz…' to contain 'Role-A fail: min-pairwise CIEDE2000'
+   ✓ certify-contrast — s176 render-backed assignment grading > an agent range LONGER than 6 slots is fully graded — the dead slice no longer caps at 6 (D8 coverage expansion) 5ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an author decoration painted in a PALETTE hex cannot fake a ΔE00=0 collision (D2 — the rejected multiset reading) 5ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an empty sample renders no marks -> 'unchecked' (a series unit with nothing rendered is not graded, D6) 3ms
+ ✓ src/tools/viz.render.intent.test.ts (16 tests) 22ms
+ ✓ src/tools/dashboard.render.strict-fields.test.ts (9 tests) 15ms
+ ✓ src/tools/repl.render.skin-mapping.test.ts (8 tests) 13ms
+ ✓ src/tools/repl.render.brand.test.ts (6 tests) 9ms
+ ✓ src/tools/viz.render.network-fidelity.test.ts (10 tests) 10ms
+ ✓ src/tools/viz.render.geo-fidelity.test.ts (6 tests) 8ms
+ ✓ src/tools/dashboard.render.kpi-types.test.ts (7 tests) 7ms
+ ✓ src/tools/ci-golden-list.guard.test.ts (2 tests) 8ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 19 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/tools/artifact.certify.contrast-fault.spec.ts > artifact.certify — contrast engine fault degrades, never errors > disarmed control — both routes grade contrast:'pass' through the same import graph (the forced throw is the only difference)
+AssertionError: expected 'fail' to be 'pass' // Object.is equality
+
+Expected: "pass"
+Received: "fail"
+
+ ❯ test/tools/artifact.certify.contrast-fault.spec.ts:104:41
+    102| 
+    103|       const echarts = await handle({ spec: buildSankeySpec() });
+    104|       expect(echarts.pillars?.contrast).toBe('pass');
+       |                                         ^
+    105|       expect(validateOutput(echarts)).toBe(true);
+    106|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/19]⎯
+
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkBar: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkLine: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkArea: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkPoint: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkRect: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe
+AssertionError: expected '{"status":"ok","coverage":"certified"…' to be '{"status":"ok","coverage":"certified"…' // Object.is equality
+
+Expected: "{"status":"ok","coverage":"certified","conformant":true,"findings":[],"determinism":{"stable":true,"contentHash":"388d26916dd7ad657c1a7cf7a2d572bf4ee2f0d77bb4f4eeb487334216e43c86","renderHash":"865982eca195bc3fe8b1797a28c175aca6b67db54024b85a9fbe48063999fdca"},"pillars":{"a11yEquivalence":"pass","determinism":"pass","contrast":"pass","accuracy":"pass"},"accuracySummary":{"rulesEvaluated":4,"failing":0},"contrastNote":"certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified."}"
+Received: "{"status":"ok","coverage":"certified","conformant":true,"findings":[],"determinism":{"stable":true,"contentHash":"b6890fd2961f12c25560f9fc4bfc9661ac2684ef690c0c01dfa0a4a097cd2b03","renderHash":"fdc2165a08fdd1f89c4fdee6c584478d9678677e1dc83e56d170c07f9fae6041"},"pillars":{"a11yEquivalence":"pass","determinism":"pass","contrast":"pass","accuracy":"pass"},"accuracySummary":{"rulesEvaluated":4,"failing":0},"contrastNote":"certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified."}"
+
+ ❯ test/tools/artifact.certify.spec-only-bytes.spec.ts:119:37
+    117|       ) {
+    118|         // Nothing declared: the old absolute clause (i) — byte-identi…
+    119|         expect(JSON.stringify(out)).toBe(JSON.stringify(baseline[trait…
+       |                                     ^
+    120|         return;
+    121|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/19]⎯
+
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkTreemap: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSunburst: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSankey: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkGraph: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe
+AssertionError: expected '{"status":"ok","coverage":"uncertifie…' to be '{"status":"ok","coverage":"uncertifie…' // Object.is equality
+
+Expected: "{"status":"ok","coverage":"uncertified","conformant":null,"findings":[],"pillars":{"a11yEquivalence":"unchecked","determinism":"unchecked","contrast":"pass","accuracy":"unchecked"}}"
+Received: "{"status":"ok","coverage":"uncertified","conformant":null,"findings":[],"pillars":{"a11yEquivalence":"unchecked","determinism":"unchecked","contrast":"fail","accuracy":"unchecked"}}"
+
+ ❯ test/tools/artifact.certify.spec-only-bytes.spec.ts:165:39
+    163|       const { notes: _outNotes, contrastNote: _outContrast, ...outRest…
+    164|       const { notes: _baseNotes, contrastNote: _baseContrast, ...baseR…
+    165|       expect(JSON.stringify(outRest)).toBe(JSON.stringify(baseRest));
+       |                                       ^
+    166|     },
+    167|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/19]⎯
+
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkTreemap: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSunburst: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkSankey: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkGraph: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)
+ FAIL  test/tools/artifact.certify.spec-only-bytes.spec.ts > artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)
+AssertionError: expected 'Role-C (WCAG 1.4.11) fail: --viz-scal…' to be 'certify measures the categorical colo…' // Object.is equality
+
+Expected: "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+Received: "Role-C (WCAG 1.4.11) fail: --viz-scale-categorical-04 below 3:1 vs the canvas. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+
+ ❯ test/tools/artifact.certify.spec-only-bytes.spec.ts:176:34
+    174|       if (DECLARED_ECHARTS_CONTRAST_NOTE_REWORD === null) {
+    175|         // Nothing declared: byte-identity for all 8 — the D11 fork's …
+    176|         expect(out.contrastNote).toBe(base);
+       |                                  ^
+    177|         return;
+    178|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/19]⎯
+
+ FAIL  test/tools/certify-contrast.spec.ts > certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > the re-spaced OODS categorical palette (6 series) -> clean pass, at/above the >=10 target (s146 F1, memo §3a)
+AssertionError: expected 'fail' to be 'pass' // Object.is equality
+
+Expected: "pass"
+Received: "fail"
+
+ ❯ test/tools/certify-contrast.spec.ts:76:26
+     74|       mk({ color: { field: 'series', type: 'nominal' }, values: series…
+     75|     );
+     76|     expect(out.contrast).toBe('pass');
+       |                          ^
+     77|     expect(out.contrastNote).not.toContain('Distinguishability caution…
+     78|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/19]⎯
+
+ FAIL  test/tools/certify-contrast.spec.ts > certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip)
+AssertionError: expected 'fail' to be 'pass' // Object.is equality
+
+Expected: "pass"
+Received: "fail"
+
+ ❯ test/tools/certify-contrast.spec.ts:144:26
+    142|       mk({ color: { field: 'series', type: 'nominal' }, values: series…
+    143|     );
+    144|     expect(out.contrast).toBe('pass');
+       |                          ^
+    145|     expect(out.contrastNote).not.toContain('chroma-floor');
+    146|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/19]⎯
+
+ FAIL  test/tools/certify-contrast.spec.ts > certify-contrast — s176 render-backed assignment grading > ten series over the six-slot default palette -> role-A ΔE00=0 fail (the recycled assignment reaches the grader)
+AssertionError: expected 'Role-C (WCAG 1.4.11) fail: --oods-viz…' to contain 'Role-A fail: min-pairwise CIEDE2000'
+
+Expected: "Role-A fail: min-pairwise CIEDE2000"
+Received: "Role-C (WCAG 1.4.11) fail: --oods-viz-scale-categorical-04 below 3:1 vs the canvas. certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified."
+
+ ❯ test/tools/certify-contrast.spec.ts:428:30
+    426|     );
+    427|     expect(out.contrast).toBe('fail');
+    428|     expect(out.contrastNote).toContain('Role-A fail: min-pairwise CIED…
+       |                              ^
+    429|     expect(out.contrastNote).toContain('= 0.00 < 2');
+    430|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/19]⎯
+
+
+ Test Files  3 failed | 16 passed (19)
+      Tests  19 failed | 388 passed (407)
+   Start at  16:53:54
+   Duration  17.18s (transform 1.90s, setup 95ms, collect 6.49s, tests 7.89s, environment 1ms, prepare 687ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/viz.render.test.ts src/tools/viz.render.svg.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts test/tools/artifact.certify.spec-only-bytes.spec.ts test/tools/artifact.certify.render-determinism.spec.ts test/tools/artifact.certify.contrast-fault.spec.ts test/tools/certify-contrast.spec.ts

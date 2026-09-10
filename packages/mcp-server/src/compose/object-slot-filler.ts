@@ -1011,7 +1011,11 @@ function buildElement(
     component,
   };
   if (Object.keys(props).length > 0) {
-    el.props = props;
+    el.props = { ...props };
+    if (component === 'VizAreaPreview' && props.chart) {
+      el.chart = structuredClone(props.chart) as UiElement['chart'];
+      delete el.props.chart;
+    }
   }
   return el;
 }
@@ -1037,6 +1041,7 @@ function applyToSchema(
           // Single component: replace the slot element directly
           el.component = children[0].component;
           el.props = children[0].props;
+          if (children[0].chart) el.chart = children[0].chart;
           // Keep meta for traceability
         } else if (children.length > 1) {
           // Multiple components: wrap in a Stack

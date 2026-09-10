@@ -181,14 +181,14 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
     )).toBe('');
   });
 
-  it('versions exactly Select, Stack, and Text at 1.1.0 without moving the nucleus key set', () => {
+  it('versions Select, Stack, Text and VizAreaPreview at 1.1.0 without moving the nucleus key set', () => {
     const entries = Object.entries(componentContracts);
     const version11 = entries.filter(([, contract]) => contract.version === '1.1.0');
     const version10 = entries.filter(([, contract]) => contract.version === '1.0.0');
 
-    expect(version11.map(([id]) => id).sort()).toEqual(['Select', 'Stack', 'Text']);
+    expect(version11.map(([id]) => id).sort()).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
     expect(version10.map(([id]) => id).sort()).toEqual(
-      [...NUCLEUS_COMPONENT_IDS].filter((id) => !['Select', 'Stack', 'Text'].includes(id)).sort(),
+      [...NUCLEUS_COMPONENT_IDS].filter((id) => !['Select', 'Stack', 'Text', 'VizAreaPreview'].includes(id)).sort(),
     );
     expect(entries).toHaveLength(version11.length + version10.length);
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());

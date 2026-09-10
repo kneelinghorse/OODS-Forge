@@ -12,6 +12,7 @@ import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
+import { chartNodes } from '../../src/codegen/chart-declaration.js';
 import { preflightTargetCapabilities } from '../../src/codegen/target-readiness.js';
 
 type Framework = 'react' | 'vue';
@@ -83,7 +84,13 @@ async function expectTargetGenerated(
   ]));
   expect(result.imports).not.toContain(`@oods/components-${framework}/ported`);
   expect(result.imports).not.toContain('@oods/component-styles/css-ported');
-  expect(result.artifact?.files).toHaveLength(1);
+  const assets = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
+  expect(assets).toHaveLength(chartNodes(schema.screens).length);
+  expect(result.artifact?.files).toHaveLength(1 + assets.length);
+  for (const asset of assets) {
+    expect(asset.contents).toContain('role="graphics-object"');
+    expect(result.code).toContain(JSON.stringify(asset.contents).slice(1, -1));
+  }
   expect(result.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
   expect(result.validationReceipt.checks).toEqual(expect.arrayContaining([
     'target-readiness',

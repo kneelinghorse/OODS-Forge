@@ -13,7 +13,7 @@ import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
-import { resolveTokenToColor } from './token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 import { transformLinks, transformNodes, validateSankeyInput } from './sankey-utils.js';
 
 // Fallback colors if tokens aren't available (matches categorical scale)
@@ -66,14 +66,14 @@ type SankeyStorySpec = NormalizedVizSpec & SankeySpecExtensions;
  * We use ECharts defaults from R33.0 research - notably 32 layout iterations (vs D3's 6)
  * for significantly cleaner layouts with fewer link crossings.
  */
-export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput): EChartsOption {
+export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput, scope: TokenScope = {}): EChartsOption {
   const sankeySpec = spec as SankeyStorySpec;
 
   // Validate: Sankey requires values on all links
   validateSankeyInput(input);
 
-  const palette = buildPalette();
-  const chrome = resolveOodsEchartsChrome(sankeySpec);
+  const palette = buildPalette(scope);
+  const chrome = resolveOodsEchartsChrome(sankeySpec, scope);
   const dimensions = resolveDimensions(sankeySpec);
   const orientation = sankeySpec.layout?.orientation ?? 'horizontal';
 
@@ -197,9 +197,9 @@ function formatValue(value: number): string {
   return value.toLocaleString();
 }
 
-function buildPalette(): readonly string[] {
+function buildPalette(scope: TokenScope): readonly string[] {
   const tokens = getVizScaleTokens('categorical', { count: 9 });
-  const resolved = tokens.map(resolveTokenToColor);
+  const resolved = tokens.map((token) => resolveTokenToColor(token, scope));
 
   // If no tokens resolved, use fallback palette
   if (resolved.every((c) => c === undefined)) {

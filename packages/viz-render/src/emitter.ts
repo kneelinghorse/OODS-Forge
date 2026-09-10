@@ -1,3 +1,4 @@
+/// <reference path="./vega-textmetrics.d.ts" />
 // Deterministic Vega-Lite -> SVG emitter (sprint-115 m02).
 //
 // Compiles a Vega-Lite spec to a Vega spec, instantiates a HEADLESS Vega view
@@ -14,9 +15,7 @@
 //   - hover + animation are inert under a one-shot headless `runAsync()` + `toSVG()`.
 //
 // This module deliberately holds NO dashboard knowledge. It renders one VL spec to
-// one SVG. The dashboard.render wiring (composing panels into an HTML document) is
-// m03; brand-token APPLICATION is m04 (the `tokens` option is threaded here so the
-// emitter signature is stable, but is not yet applied — see `prepareSpecForBrand`).
+// one SVG. Dashboard documents are composed elsewhere. Resolved tokens affect chrome only, never series encodings.
 
 import { compile } from 'vega-lite';
 import type { TopLevelSpec } from 'vega-lite';
@@ -29,8 +28,8 @@ export type VegaLiteSpec = TopLevelSpec;
 export interface RenderVegaLiteToSvgOptions {
   /**
    * Resolved brand tokens (CSS custom-property name -> value) the export should be
-   * rendered on-brand with. THREADED in m02 so the emitter signature is final;
-   * token APPLICATION into the spec lands in m04 (`prepareSpecForBrand`).
+   * rendered on-brand with. Canonical --oods-* colors must already be resolved
+   * to concrete RGB/hex values. Only chrome is changed; series colors are preserved.
    */
   readonly tokens?: Readonly<Record<string, string>>;
   /**
@@ -82,34 +81,64 @@ function pinDeterministicTextMetrics(): void {
   textMetrics.canvas(false);
 }
 
-/**
- * SEAM for m04 (brand-token inlining) + the s149 F6a span-derived sizing. m02 threads
- * the resolved tokens through unchanged (m04 will apply them to the spec's
- * config/encodings here). s149 F6a applies caller-supplied width/height so a dashboard
- * panel fills its grid span. Both operate on a CLONE — the passed spec object (the
- * dashboard's panelResults[i].spec, which is canonicalized for contentHash/specRef) is
- * never mutated. With no tokens and no dims this is the identity transform.
- */
+/** Apply resolved chrome tokens and dimensions on a clone; never mutate the caller. */
 function prepareSpecForBrand(
   spec: VegaLiteSpec,
   options: RenderVegaLiteToSvgOptions,
 ): VegaLiteSpec {
-  const { width, height } = options;
-  // s149 F6a: size the SVG to a target box. autosize:'fit' makes the WHOLE chart —
-  // axes + legend included — fit width×height, so a 6/12 panel renders wide-and-short
-  // (filling its span) rather than at Vega's intrinsic narrow-tall step width. The
-  // spread is the emitter-side clone; the caller's spec stays untouched.
-  if (width !== undefined || height !== undefined) {
-    return {
-      ...(spec as unknown as Record<string, unknown>),
-      ...(width !== undefined ? { width } : {}),
-      ...(height !== undefined ? { height } : {}),
-      autosize: 'fit',
-    } as unknown as VegaLiteSpec;
+  const { width, height, tokens } = options;
+  if (!tokens && width === undefined && height === undefined) return spec;
+  const config = { ...spec.config };
+  if (tokens) {
+    const canvas = tokens['--oods-sys-surface-canvas'];
+    const primary = tokens['--oods-sys-text-primary'];
+    const neutral = tokens['--oods-sys-text-neutral'];
+    const grid = tokens['--oods-sys-border-subtle'];
+    const border = tokens['--oods-sys-border-neutral'];
+    const font = tokens['--oods-ref-typography-families-sans']?.replace(/'"([^"]*)"'/g, "'$1'").trim();
+    const size = tokens['--oods-sys-text-scale-heading-lg-font-size'];
+    const weight = tokens['--oods-sys-text-scale-heading-lg-font-weight'];
+    const labelSize = tokens['--oods-sys-text-scale-body-sm-font-size'];
+    const numeric = (value: string): number => {
+      const number = Number(value.replace(/px$/i, '').trim());
+      if (!Number.isFinite(number) || number <= 0) throw new Error(`Invalid numeric chrome token: ${value}`);
+      return number;
+    };
+    if (canvas !== undefined) config.background = canvas;
+    if (font !== undefined) config.font = font;
+    config.title = {
+      ...config.title,
+      ...(primary !== undefined ? { color: primary } : {}),
+      ...(font !== undefined ? { font } : {}),
+      ...(size !== undefined ? { fontSize: numeric(size) } : {}),
+      ...(weight !== undefined ? { fontWeight: numeric(weight) as 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 } : {}),
+    };
+    const labels = {
+      ...(primary !== undefined ? { titleColor: primary } : {}),
+      ...(neutral !== undefined ? { labelColor: neutral } : {}),
+      ...(font !== undefined ? { titleFont: font, labelFont: font } : {}),
+      ...(labelSize !== undefined ? { labelFontSize: numeric(labelSize) } : {}),
+    };
+    config.axis = {
+      ...config.axis, ...labels,
+      ...(grid !== undefined ? { gridColor: grid } : {}),
+      ...(border !== undefined ? { domainColor: border, tickColor: border } : {}),
+    };
+    config.legend = { ...config.legend, ...labels };
+    config.text = {
+      ...config.text,
+      ...(primary !== undefined ? { color: primary } : {}),
+      ...(font !== undefined ? { font } : {}),
+    };
   }
-  // m04: map resolved tokens onto the spec's config/encodings. Until then the
-  // tokens do not alter the rendered output.
-  return spec;
+  return {
+    ...spec,
+    config,
+    ...(tokens?.['--oods-sys-surface-canvas'] !== undefined ? { background: tokens['--oods-sys-surface-canvas'] } : {}),
+    ...(width !== undefined ? { width } : {}),
+    ...(height !== undefined ? { height } : {}),
+    ...(width !== undefined || height !== undefined ? { autosize: 'fit' } : {}),
+  } as VegaLiteSpec;
 }
 
 /**

@@ -10,7 +10,7 @@
 // owns that). The inline hex inside each `var(...)` expression is preserved as the
 // per-colour fallback, mirroring the s111 FALLBACK_PALETTE convention.
 
-import { resolveTokenToColor } from '../echarts/token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from '../echarts/token-resolver.js';
 
 const VAR_EXPR = /^var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)$/;
 
@@ -21,14 +21,14 @@ const VAR_EXPR = /^var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)$/;
  * more than once). Returns the inline fallback (or the original string) when the
  * token is absent from @oods/tokens.
  */
-export function resolveColor(value: string): string {
+export function resolveColor(value: string, scope: TokenScope = {}): string {
   const varMatch = value.match(VAR_EXPR);
   if (varMatch) {
     const [, token, fallback] = varMatch;
-    return resolveTokenToColor(token) ?? fallback?.trim() ?? value;
+    return resolveTokenToColor(token, scope) ?? fallback?.trim() ?? value;
   }
   if (value.startsWith('--')) {
-    return resolveTokenToColor(value) ?? value;
+    return resolveTokenToColor(value, scope) ?? value;
   }
   return value;
 }

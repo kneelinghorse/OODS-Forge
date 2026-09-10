@@ -29,7 +29,7 @@ type ProjectedOption = Record<string, unknown>;
 // fa27909961c5ab8acab6769e9ffb15a61227e47ce0b21ac754394b17cbf6a40c instead,
 // so this pin bites removal of convergence policy, not merely seeded equality.
 const CONVERGED_CANONICAL_FORCE_HASH =
-  "c14f3173e6e6af1c3633e31ebb9acb5d968bcbc89c6c45e77b6be449214ee6c8";
+  "b0fcf364daaf84abf4c3ab2839a75ec80ea2e85a8ff0ecdab592369cbe210590";
 
 const optionFor = (chartType: string): ProjectedOption => {
   const operand = ECHARTS_OPERAND_CASES.find(
@@ -365,11 +365,11 @@ describe.sequential("ECharts render worker contract", () => {
     });
   });
 
-  it("rejects noncanonical dimensions before worker creation", async () => {
+  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])("rejects invalid width %s before worker creation", async (width) => {
     await expectTypedError(
       () =>
         renderEChartsToSvg(optionFor("treemap"), {
-          width: 601,
+          width,
           height: 400,
         }),
       "ECHARTS_INVALID_DIMENSIONS",

@@ -23,24 +23,24 @@
 // graded-invisible yet render-visible drift. The series palette stays solely in the
 // adapters' buildPalette / geo range path.
 //
-// Light-only (resolveTokenToColor is theme-blind; memo §10 defers the theme-aware lift).
+// Resolves the requested CSS scope (light/A by default).
 // Every leaf is a scalar (string | number) — no arrays — so canonicalize's deep key-sort
 // keeps the render↔certify contentHash order-independent for the 8 ECharts types (memo §7).
 
-import { resolveTokenToColor } from '../adapters/echarts/token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from '../adapters/echarts/token-resolver.js';
 import { overrideMap, toHex } from './categorical-palette.js';
 
 // The OODS ECharts chrome token map, Derek-locked (memo §3). Every colour resolves via
 // the same chain the adapters + certify already use; the hexes are the s144-verified
 // @oods/tokens values (pinned by oods-echarts-chrome.spec.ts).
 const CHROME_TOKENS = {
-  background: '--oods-sys-surface-canvas', //     #FCFCFD — net-new top-level backgroundColor (all 8)
-  tileBorder: '--oods-sys-border-neutral', //     #D5DAE4 — group-A tile/node/arc/level separators (Derek-lock: neutral)
-  emphasisBorder: '--oods-sys-text-neutral', //   #494E5A — hover/emphasis border (interim; non-text, no gate)
-  labelOnCanvas: '--oods-sys-text-primary', //    #2D313A — 12.71:1 ✓ labels ON the canvas (sankey/chord/graph node, breadcrumb)
-  surfaceFill: '--oods-sys-surface-canvas', //    #FCFCFD — treemap breadcrumb fill + sunburst ring-separator (by-usage)
-  visualMapLabel: '--oods-sys-text-neutral', //   #494E5A — 8.13:1 ✓ geo visualMap ticks + graph legend (secondary chrome text)
-  title: '--oods-sys-text-primary', //            #2D313A — 12.71:1 ✓ chart title.textStyle.color (group-A)
+  background: '--oods-sys-surface-canvas',
+  tileBorder: '--oods-sys-border-neutral',
+  emphasisBorder: '--oods-sys-text-neutral',
+  labelOnCanvas: '--oods-sys-text-primary',
+  surfaceFill: '--oods-sys-surface-canvas',
+  visualMapLabel: '--oods-sys-text-neutral',
+  title: '--oods-sys-text-primary',
 } as const;
 
 // The on-tile label halo width (memo §5). A ~2px surface-canvas text-border around a
@@ -88,10 +88,10 @@ interface EchartsChromeSpecInput {
  * resolvers). The seven chrome tokens are static and always resolve, so a total miss is a
  * token-bundle breakage — surfaced loud rather than baked as junk.
  */
-function resolveChromeColor(token: string, overrides: Map<string, string>): string {
+function resolveChromeColor(token: string, overrides: Map<string, string>, scope: TokenScope): string {
   const override = overrides.get(token);
   const resolved =
-    (override !== undefined ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token) ?? '');
+    (override !== undefined ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token, scope) ?? '');
   if (resolved === undefined) {
     throw new Error(`OODS ECharts chrome colour token did not resolve: ${token}`);
   }
@@ -104,16 +104,16 @@ function resolveChromeColor(token: string, overrides: Map<string, string>): stri
  * bakes) and otherwise the OODS defaults from @oods/tokens. Threaded per-adapter by
  * direct assignment at the constant sites — see each ECharts adapter.
  */
-export function resolveOodsEchartsChrome(spec: EchartsChromeSpecInput): OodsEchartsChrome {
+export function resolveOodsEchartsChrome(spec: EchartsChromeSpecInput, scope: TokenScope = {}): OodsEchartsChrome {
   const overrides = overrideMap(spec.config?.tokens);
 
-  const background = resolveChromeColor(CHROME_TOKENS.background, overrides);
-  const tileBorder = resolveChromeColor(CHROME_TOKENS.tileBorder, overrides);
-  const emphasisBorder = resolveChromeColor(CHROME_TOKENS.emphasisBorder, overrides);
-  const labelOnCanvas = resolveChromeColor(CHROME_TOKENS.labelOnCanvas, overrides);
-  const surfaceFill = resolveChromeColor(CHROME_TOKENS.surfaceFill, overrides);
-  const visualMapLabel = resolveChromeColor(CHROME_TOKENS.visualMapLabel, overrides);
-  const title = resolveChromeColor(CHROME_TOKENS.title, overrides);
+  const background = resolveChromeColor(CHROME_TOKENS.background, overrides, scope);
+  const tileBorder = resolveChromeColor(CHROME_TOKENS.tileBorder, overrides, scope);
+  const emphasisBorder = resolveChromeColor(CHROME_TOKENS.emphasisBorder, overrides, scope);
+  const labelOnCanvas = resolveChromeColor(CHROME_TOKENS.labelOnCanvas, overrides, scope);
+  const surfaceFill = resolveChromeColor(CHROME_TOKENS.surfaceFill, overrides, scope);
+  const visualMapLabel = resolveChromeColor(CHROME_TOKENS.visualMapLabel, overrides, scope);
+  const title = resolveChromeColor(CHROME_TOKENS.title, overrides, scope);
 
   return {
     background,

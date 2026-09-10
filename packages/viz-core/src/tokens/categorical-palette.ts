@@ -14,7 +14,7 @@
 // returning, because resolveTokenToColor emits `rgb(...)` but the compiled spec's
 // scale.range / mark.color must carry hex (memo §4 "Color form").
 
-import { resolveTokenToColor } from '../adapters/echarts/token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from '../adapters/echarts/token-resolver.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import { getVizScaleTokens } from './scale-token-mapper.js';
 
@@ -88,7 +88,7 @@ export function toHex(color: string): string | undefined {
  * than baked as junk; in the default (no-override) path all six OODS tokens resolve,
  * so the palette is the full fixed 6-slot range. Pure function of the IR.
  */
-export function resolveCategoricalPalette(spec: NormalizedVizSpec): string[] {
+export function resolveCategoricalPalette(spec: NormalizedVizSpec, scope: TokenScope = {}): string[] {
   const overrides = overrideMap(spec.config?.tokens);
   const tokens = getVizScaleTokens('categorical', { count: 6 });
 
@@ -100,7 +100,7 @@ export function resolveCategoricalPalette(spec: NormalizedVizSpec): string[] {
     // default so the palette stays a clean, index-aligned, fixed-length array (a bad
     // override never shifts the next slot's color onto the wrong series). The six OODS
     // tokens always resolve, so the no-override path yields the full 6-slot range.
-    const hex = (override ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token) ?? '');
+    const hex = (override ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token, scope) ?? '');
     if (hex) palette.push(hex);
   }
   return palette;

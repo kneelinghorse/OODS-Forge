@@ -1,3 +1,4 @@
+import type { TokenScope } from '@oods/viz-core';
 import type { ContrastVerdict } from "./certify-contrast.js";
 import {
   evaluateCategoricalRoleA,
@@ -35,6 +36,7 @@ export interface EChartsRenderContrastResult {
 }
 
 export interface EChartsRenderContrastInput {
+  readonly scope?: TokenScope;
   readonly chartType: EChartsPrimaryType;
   /** Normalized SVG rendered from this exact projected option. */
   readonly normalizedSvg: string;
@@ -93,12 +95,12 @@ export function evaluateEChartsRenderContrast(
         `assignment (${assignment.reason}); contrast is ungradeable.`,
       roleCPaints: extraction.roleCPaints,
       roleAAssignment: [],
-      roleC: evaluateCategoricalRoleC(extraction.roleCPaints),
+      roleC: evaluateCategoricalRoleC(extraction.roleCPaints, input.scope, typeof input.projectedOption.backgroundColor === "string" ? input.projectedOption.backgroundColor : undefined),
       roleA: { verdict: "ungradeable", lowChromaPaints: [] },
     };
   }
 
-  const roleC = evaluateCategoricalRoleC(extraction.roleCPaints);
+  const roleC = evaluateCategoricalRoleC(extraction.roleCPaints, input.scope, typeof input.projectedOption.backgroundColor === "string" ? input.projectedOption.backgroundColor : undefined);
   const roleA = evaluateCategoricalRoleA(assignment.roleAAssignment);
   const contrast = worstCategoricalVerdict(roleC.verdict, roleA.verdict);
   return {

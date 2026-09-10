@@ -143,6 +143,7 @@ export namespace A11yScanInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -169,6 +170,21 @@ export namespace A11yScanInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -330,7 +346,7 @@ export namespace ArtifactCertifyInputSchema {
       };
 
   /**
-   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify, plus (s172) an OPTIONAL `data` operand for the 8 ECharts-primary types. The tool boundary is intentionally PERMISSIVE on `spec` ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — cartesian paints come from the compiled render, and data-backed ECharts paints come from the rendered projected option. Where categorical contrast is graded, those paints are compared against the light-theme :root canvas; geo render evidence remains exempt with no canvas ratio. A brand therefore could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing. DATA IS THE COUNTERPART CASE, NOT THE SAME CASE (s172 m01): `data` is NOT an affordance — it is the OPERAND. An ECharts-primary NormalizedVizSpec is METADATA-ONLY by ratified design (data:{values:[]}, encoding:{}); the chart's actual nodes/links/rows/geometry live in viz.render's data branch and never enter the IR. Without `data` there is nothing for the determinism and accuracy pillars to read, so they stay 'unchecked'; with it they carry real verdicts that genuinely change with the operand. That is exactly why it is offered and brand is not.
+   * Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.
    */
   export interface ArtifactCertifyInput {
     /**
@@ -349,6 +365,14 @@ export namespace ArtifactCertifyInputSchema {
       network?: NetworkBranch;
       geo?: GeoBranch;
     };
+    /**
+     * CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope.
+     */
+    theme?: 'light' | 'dark';
+    /**
+     * CSS brand scope, matching viz.render for the same normalized spec and data operand.
+     */
+    brand?: 'A' | 'B';
   }
   /**
    * A nested-hierarchy node: a name, an optional numeric value, and optional children (recursive). Extra fields are preserved for tooltips.
@@ -582,7 +606,7 @@ export namespace ArtifactCertifyOutputSchema {
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
+     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured at the requested theme and brand. null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
      */
     conformant?: boolean | null;
     /**
@@ -628,7 +652,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       contentHash: string;
       /**
-       * OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on render-graded cartesian charts and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry, and cartesian charts with nothing to render-grade. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json.
+       * OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json.
        */
       renderHash?: string;
     };
@@ -645,7 +669,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Rendered-reality contrast on the light theme. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
+       * Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
        */
       contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
@@ -654,7 +678,7 @@ export namespace ArtifactCertifyOutputSchema {
       accuracy: 'pass' | 'fail' | 'ungradeable' | 'unchecked';
     };
     /**
-     * Contrast rationale and scope. Cartesian and categorical data-backed ECharts notes state that the grade reads actual normalized render evidence on the light theme and that dark-theme contrast is not verified. Data-backed geo notes state that normalized render evidence was read while categorical contrast remains exempt and no canvas ratio is graded. ECharts spec-only notes retain the baked-bytes caveat because those calls have no render operand and still use the reconstructed default palette.
+     * Contrast rationale naming the exact theme/brand. Cartesian and data-backed categorical ECharts results grade rendered paints against that CSS scope canvas; geo and continuous heatmap results remain exempt. Spec-only ECharts calls reconstruct scoped baked colors and make no rendered-carrier measurement claim. For exempt results, no canvas ratio is graded.
      */
     contrastNote?: string;
     /**
@@ -665,6 +689,26 @@ export namespace ArtifactCertifyOutputSchema {
      * Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR).
      */
     errors?: Finding[];
+    /**
+     * The contrast row for this call's requested theme/brand. Collect rows from separate scope calls to compare themes. measured is true only for a successful render-backed categorical evaluation (pass or fail); exempt, unchecked, ungradeable and spec-only palette reconstruction do not claim a completed canvas ratio measurement.
+     *
+     * @minItems 1
+     * @maxItems 1
+     */
+    contrastResults?: [
+      {
+        theme: 'light' | 'dark';
+        brand: 'A' | 'B';
+        verdict: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
+        measured: boolean;
+        evidence: 'render' | 'baked-palette' | 'none';
+        note: string;
+      }
+    ];
+    /**
+     * Offered accuracy rule codes for this chart type. This closed set is distinct from accuracySummary.rulesEvaluated, which counts resolved operands; an empty array means no rule is offered.
+     */
+    accuracyRules?: string[];
   }
   export interface Finding {
     /**
@@ -1295,6 +1339,7 @@ export namespace CodeGenerateInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -1321,6 +1366,21 @@ export namespace CodeGenerateInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -2062,6 +2122,10 @@ export namespace DashboardRenderInputSchema {
    */
   export interface DashboardRenderInput {
     /**
+     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     */
+    theme?: 'light' | 'dark';
+    /**
      * IR version discriminant (V01 convention). A future template/shape change bumps to v0.2.
      */
     schemaVersion: 'v0.1';
@@ -2117,7 +2181,7 @@ export namespace DashboardRenderInputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand.
+     * CSS token brand for the dashboard document and chart pixels; defaults to A. The contrast scan grades the same scoped document tokens.
      */
     brand?: 'A' | 'B';
     /**
@@ -2143,7 +2207,7 @@ export namespace DashboardRenderInputSchema {
        */
       includeNormalizedSpec?: boolean;
       /**
-       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary panels (geo), not a rendered ECharts chart. Absent/false leaves the output byte-identical to the compact/echarts payload.
+       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent/false leaves the output byte-identical to the compact/echarts payload.
        */
       html?: boolean;
       /**
@@ -2546,7 +2610,7 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary (geo) panels, not rendered ECharts charts. Absent leaves the rest of the payload byte-identical.
+     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical.
      */
     html?: string;
     /**
@@ -2560,7 +2624,7 @@ export namespace DashboardRenderOutputSchema {
      */
     contentHash?: string;
     /**
-     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; ECharts-primary panels remain placeholders. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
+     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
      */
     outputHtmlHash?: string;
     /**
@@ -2577,6 +2641,10 @@ export namespace DashboardRenderOutputSchema {
       dataTable?: boolean;
       contrastScan?: boolean;
       includeA11y?: boolean;
+      /**
+       * Echoes an explicitly requested CSS token theme.
+       */
+      theme?: 'light' | 'dark';
       /**
        * Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed.
        */
@@ -2771,6 +2839,10 @@ export namespace DesignComposeInputSchema {
      */
     layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
     preferences?: {
+      /**
+       * Brand scope for data-bound charts; defaults to A.
+       */
+      brand?: 'A' | 'B';
       /**
        * Theme token (e.g., 'light', 'dark').
        */
@@ -3047,6 +3119,7 @@ export namespace DesignComposeOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -3073,6 +3146,21 @@ export namespace DesignComposeOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -5619,6 +5707,7 @@ export namespace ReplOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -5645,6 +5734,21 @@ export namespace ReplOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -5915,6 +6019,7 @@ export namespace ReplRenderInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -5941,6 +6046,21 @@ export namespace ReplRenderInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6165,6 +6285,7 @@ export namespace ReplRenderOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6191,6 +6312,21 @@ export namespace ReplRenderOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6332,6 +6468,7 @@ export namespace UiSchemaSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6358,6 +6495,21 @@ export namespace UiSchemaSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6519,6 +6671,7 @@ export namespace ReplValidateInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6545,6 +6698,21 @@ export namespace ReplValidateInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6749,6 +6917,7 @@ export namespace ReplValidateOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6775,6 +6944,21 @@ export namespace ReplValidateOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -8156,6 +8340,14 @@ export namespace VizRenderInputSchema {
 
   export interface VizRenderInput2 {
     /**
+     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     */
+    theme?: 'light' | 'dark';
+    /**
+     * CSS token brand for chart pixels. Omission resolves light/A.
+     */
+    brand?: 'A' | 'B';
+    /**
      * DSL version to use for this request. Defaults to the current version (1.0).
      */
     dslVersion?: string;
@@ -8467,6 +8659,18 @@ export namespace VizRenderInputSchema {
      */
     output?: {
       /**
+       * Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output.
+       */
+      svg?: boolean;
+      /**
+       * SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.
+       */
+      width?: number;
+      /**
+       * SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.
+       */
+      height?: number;
+      /**
        * When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps.
        */
       compact?: boolean;
@@ -8554,13 +8758,13 @@ export namespace VizRenderOutputSchema {
      */
     mode?: 'explicit' | 'suggest';
     /**
-     * The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. As of sprint-144 the cartesian family also carries a baked OODS `config` chrome theme (background, axes/gridlines, typography, legend, view box) alongside the sprint-138 series-color bake, so a generated chart reads as OODS-designed on the light theme; this moved the cartesian render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the ECharts-primary types byte-unchanged (separate adapter).
+     * Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes.
      */
     spec: {
       [k: string]: any;
     };
     /**
-     * The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). As of sprint-145 the 8 ECharts-primary types (treemap/sunburst/sankey/chord/force_graph + geo choropleth/bubble_map/flow_map) also carry a baked OODS chrome theme (background, tile/node/arc borders, on-canvas + on-tile labels, breadcrumb/ring surfaces, geo visualMap labels, and the chart title) — the mirror of the sprint-144 cartesian chrome — so a generated chart reads as OODS-designed on the light theme; this moved the ECharts render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the cartesian family byte-unchanged. Series colors (categorical/sequential) are untouched — only chrome is themed.
+     * Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette.
      */
     echartsSpec?: {
       [k: string]: any;
@@ -8632,6 +8836,32 @@ export namespace VizRenderOutputSchema {
      */
     lowConfidence?: boolean;
     /**
+     * Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles.
+     */
+    svg?: string;
+    /**
+     * SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash.
+     */
+    svgHash?: string;
+    /**
+     * UTF-8 byte length of svg.
+     */
+    svgBytes?: number;
+    /**
+     * Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef.
+     */
+    svgRef?: string;
+    /**
+     * Actual SVG dimensions, primary engine and rendered scope.
+     */
+    render?: {
+      engine: 'vega-lite' | 'echarts';
+      width: number;
+      height: number;
+      theme: 'light' | 'dark';
+      brand: 'A' | 'B';
+    };
+    /**
      * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).
      */
     specRef?: string;
@@ -8655,6 +8885,9 @@ export namespace VizRenderOutputSchema {
      * Echoes the normalized output controls used by the renderer.
      */
     output?: {
+      svg?: boolean;
+      width?: number;
+      height?: number;
       compact: boolean;
       echarts?: boolean;
       includeNormalizedSpec?: boolean;

@@ -1,0 +1,41 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge
+
+ ✓ |core| tests/registry/resolver.test.ts (6 tests) 26ms
+ ❯ |core| tests/registry/payment-chart.s190.test.ts (2 tests | 1 failed) 57ms
+   ✓ canonical payment-chart trait projection > projects existing fields and detail only, without requiring standalone encoding traits 50ms
+   × canonical payment-chart trait projection > validates the same chart declaration as the public compose schema 6ms
+     → expected [Function] to throw error including 'minorUnits' but got 'Failed to resolve trait "viz/MarkArea…'
+ ✓ |core| tests/integration/object-registry.test.ts (3 tests) 125ms
+ ✓ |core| tests/integration/universal-quintet-objects.integration.test.ts (6 tests) 112ms
+ ✓ |core| tests/integration/type-generation.test.ts (2 tests) 588ms
+   ✓ Object type generation integration > generates TypeScript definitions that are directly importable  564ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/registry/payment-chart.s190.test.ts > canonical payment-chart trait projection > validates the same chart declaration as the public compose schema
+AssertionError: expected [Function] to throw error including 'minorUnits' but got 'Failed to resolve trait "viz/MarkArea…'
+
+- Expected
++ Received
+
+- minorUnits
++ Failed to resolve trait "viz/MarkArea": Parameters for trait "MarkArea" failed validation:
++   - [error] TE-0203: must be > 0
+
+ ❯ tests/registry/payment-chart.s190.test.ts:28:5
+     26|     expect(read('schemas/traits/mark-area.parameters.schema.json').pro…
+     27|       .toEqual(read('packages/mcp-server/src/schemas/repl.ui.schema.js…
+     28|     await expect(resolver().resolveReferences([{ name: 'viz/MarkArea',…
+       |     ^
+     29|   });
+     30| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 18 passed (19)
+   Start at  18:52:41
+   Duration  1.34s (transform 506ms, setup 0ms, collect 1.62s, tests 908ms, environment 1ms, prepare 356ms)
+

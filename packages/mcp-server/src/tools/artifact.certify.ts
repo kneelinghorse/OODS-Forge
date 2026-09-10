@@ -58,8 +58,9 @@ import {
   validateVizEquivalenceRules,
   validateVizEquivalenceRulesForContext,
   type NormalizedVizSpec,
+  type TokenScope,
 } from '@oods/viz-core';
-import { isEChartsPrimaryMarkTrait } from './echarts-primary.js';
+import { isEChartsPrimaryMarkTrait, echartsPrimaryTypeForMarkTrait } from './echarts-primary.js';
 import { buildEChartsA11yContext } from './echarts-a11y-analysis.js';
 import {
   ECHARTS_GEO_EXEMPT_NOTE,
@@ -80,6 +81,8 @@ import {
 import { evaluateEChartsRenderContrast } from './certify-echarts-render-contrast.js';
 
 export interface ArtifactCertifyInput {
+  readonly theme?: 'light' | 'dark';
+  readonly brand?: 'A' | 'B';
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
   readonly spec: unknown;
   /**
@@ -173,12 +176,14 @@ export interface CertifyA11yNotApplicable {
 
 export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
+  /** Offered rule IDs; distinct from the number whose operands resolved. */
+  readonly accuracyRules?: readonly string[];
+  readonly contrastResults?: ReadonlyArray<{ theme: 'light' | 'dark'; brand: 'A' | 'B'; verdict: ContrastVerdict; measured: boolean; evidence: 'render' | 'baked-palette' | 'none'; note: string }>;
   readonly coverage?: 'certified' | 'uncertified';
   /**
    * The folded conformance gate (s140 [B], extended s170), CARTESIAN PATH ONLY: true iff
    * a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy
-   * is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast
-   * unverified). null on the uncertified path, and it STAYS null there even when an ECharts
+   * is not 'fail' AND determinism is stable — measured at the requested CSS scope. null on the uncertified path, and it STAYS null there even when an ECharts
    * accuracy rule fires (s172): that path makes no folded claim, so the failure is read from
    * pillars.accuracy and findings[]. Absent on error.
    */
@@ -342,6 +347,7 @@ function echartsContrastVerdict(
     status: 'ok',
     coverage: 'uncertified',
     conformant: null,
+    accuracyRules: echartsAccuracyRulesFor(echartsPrimaryTypeForMarkTrait(trait)!).map(rule => rule.code),
     // s172 m03: findings[] now carries a THIRD family on this path — the ECharts accuracy
     // codes OODS-V154..V159. conformant STAYS null: the uncertified path makes no folded
     // claim (s141 Design A), so an accuracy fail here is read from pillars.accuracy and
@@ -397,23 +403,19 @@ const ECHARTS_BUBBLE_NO_MAP_CONTRAST_NOTE =
 
 const ECHARTS_RENDERED_GRADED_CAVEAT =
   'certify grades actual carrier paints extracted from the normalized SVG rendered from ' +
-  'the retained projected ECharts option against the light-theme canvas; dark-theme ' +
-  'contrast is not verified.';
+  'the retained projected ECharts option against the requested CSS scope canvas.';
 
 const ECHARTS_RENDERED_EXEMPT_CAVEAT =
   'certify reads actual carrier paints from the normalized SVG rendered from the retained ' +
-  'projected ECharts option. Geo categorical contrast remains exempt, so no light-theme ' +
-  'canvas ratio is graded; dark-theme contrast is not verified.';
+  'projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded.';
 
 const ECHARTS_RENDERED_UNGRADEABLE_CAVEAT =
   'certify attempted to read carrier paints from the normalized SVG rendered from the ' +
-  'retained projected ECharts option, but no complete grade was available. No light-theme ' +
-  'canvas grade was completed; dark-theme contrast is not verified.';
+  'retained projected ECharts option, but no complete canvas grade was available for the requested scope.';
 
 const ECHARTS_NO_RENDER_CONTRAST_CAVEAT =
   'No normalized SVG carrier evidence was available for this call, so no canvas ' +
-  'measurement was made. Render-backed ECharts contrast uses the light-theme canvas; ' +
-  'dark-theme contrast is not verified.';
+  'measurement was made for the requested CSS scope.';
 
 interface EChartsRenderedOperandVerdict {
   readonly stable: boolean;
@@ -463,6 +465,7 @@ function withEChartsContrastCaveat(
 async function evaluateEChartsRenderedOperand(
   outcome: EChartsDeterminismResult,
   chartType: CertifyOperandResolved['chartType'],
+  scope: TokenScope,
 ): Promise<EChartsRenderedOperandVerdict> {
   // A geometry-free bubble is valid for clients that already own a registered base map,
   // but this server never fetches one. Keep its option proof and do not start the worker.
@@ -505,6 +508,7 @@ async function evaluateEChartsRenderedOperand(
       chartType,
       normalizedSvg: firstSvg,
       projectedOption: outcome.firstProjected,
+      scope,
     });
     contrast = grade.contrast;
     contrastNote = withEChartsContrastCaveat(
@@ -557,14 +561,14 @@ async function evaluateEChartsRenderedOperand(
 }
 
 /** Legacy no-operand grade: reconstruct the baked palette when no chart data can render. */
-function echartsCategoricalVerdict(trait: string, operand: EChartsOperandVerdict): ArtifactCertifyOutput {
+function echartsCategoricalVerdict(trait: string, operand: EChartsOperandVerdict, scope: TokenScope): ArtifactCertifyOutput {
   // Defensive: a contrast-engine fault degrades to 'ungradeable' WITH a note naming the
   // fault (s175 m04, closes decision #1446 (4)) — never status:error. Mirrors the cartesian
   // path's catch; conformant is null on this path regardless, so no gate moves.
   let contrast: ContrastVerdict = 'unchecked';
   let contrastNote: string | undefined;
   try {
-    const pillar = evaluateEChartsCategoricalContrast();
+    const pillar = evaluateEChartsCategoricalContrast(scope);
     contrast = pillar.contrast;
     contrastNote = pillar.contrastNote;
   } catch (err) {
@@ -596,6 +600,7 @@ async function evaluateEChartsOperand(
   spec: NormalizedVizSpec,
   trait: string,
   operand: CertifyOperandResolved | undefined,
+  scope: TokenScope,
 ): Promise<EChartsOperandVerdict | { failure: { code: string; message: string } }> {
   if (!operand) {
     return {
@@ -606,12 +611,12 @@ async function evaluateEChartsOperand(
     };
   }
 
-  const outcome = evaluateEChartsDeterminism(spec, operand.chartType, operand.branchData);
+  const outcome = evaluateEChartsDeterminism(spec, operand.chartType, operand.branchData, scope);
   if (!outcome.ok) {
     return { failure: { code: outcome.code, message: outcome.message } };
   }
 
-  const rendered = await evaluateEChartsRenderedOperand(outcome, operand.chartType);
+  const rendered = await evaluateEChartsRenderedOperand(outcome, operand.chartType, scope);
 
   let accuracyPillar: AccuracyVerdict = 'unchecked';
   let accuracySummary: CertifyAccuracySummary | undefined;
@@ -749,6 +754,20 @@ function uncertifiedVerdict(notes: string[]): ArtifactCertifyOutput {
 }
 
 export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCertifyOutput> {
+  const theme = input?.theme ?? 'light', brand = input?.brand ?? 'A';
+  if (!['light', 'dark'].includes(theme) || !['A', 'B'].includes(brand)) {
+    return { status: 'error', errors: [{ code: 'OODS-V126', message: 'Certification supports themes light/dark and brands A/B.' }] };
+  }
+  const result = await certifyAtScope(input, { theme, brand });
+  if (result.status !== 'ok') return result;
+  const verdict = result.pillars?.contrast ?? 'unchecked';
+  const graded = verdict === 'pass' || verdict === 'fail';
+  const rendered = result.determinism?.renderHash !== undefined;
+  const note = `${result.contrastNote ?? 'No contrast grade was available.'} Scope: ${theme}/${brand}.`;
+  return { ...result, contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: rendered && graded, evidence: rendered ? 'render' : graded ? 'baked-palette' : 'none', note }] };
+}
+
+async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): Promise<ArtifactCertifyOutput> {
   // INPUT — permissive boundary (§3b of the m01 memo): the tool schema only asserts
   // {spec:object}; assertNormalizedVizSpec (AJV vs the runtime schema) is the
   // authoritative validator. An invalid IR returns a structured error, never a throw.
@@ -787,7 +806,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   // present: certify re-emits the ECharts option twice through the same adapters
   // viz.render uses and hashes the same JSON projection.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
-    const operandVerdict = await evaluateEChartsOperand(spec, trait, operand);
+    const operandVerdict = await evaluateEChartsOperand(spec, trait, operand, scope);
     if ('failure' in operandVerdict) {
       return { status: 'error', errors: [operandVerdict.failure] };
     }
@@ -804,7 +823,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     }
     // No operand: preserve the legacy reconstructed categorical-palette bytes.
     if (ECHARTS_CATEGORICAL_TRAITS.has(trait)) {
-      return echartsCategoricalVerdict(trait, operandVerdict);
+      return echartsCategoricalVerdict(trait, operandVerdict, scope);
     }
     // No operand: preserve the legacy geo-exemption bytes.
     if (ECHARTS_GEO_EXEMPT_TRAITS.has(trait)) {
@@ -855,9 +874,9 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // redundant compile to optimize away. The render half of the pillar (s176 m02) is
     // computed after the contrast grade below, so it can reuse the grade's own render as
     // its first hash.
-    const compiled = toVegaLiteSpec(certifySpec);
+    const compiled = toVegaLiteSpec(certifySpec, scope);
     const first = canonicalize(compiled);
-    const second = canonicalize(toVegaLiteSpec(certifySpec));
+    const second = canonicalize(toVegaLiteSpec(certifySpec, scope));
     const compileStable = first === second;
     const contentHash = sha256(first);
 
@@ -879,7 +898,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     let contrastNote: string | undefined;
     let gradedSvg: string | undefined;
     try {
-      const pillar = await evaluateContrastPillar(certifySpec, compiled);
+      const pillar = await evaluateContrastPillar(certifySpec, compiled, scope);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
       gradedSvg = pillar.renderedSvg;
@@ -891,21 +910,20 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // DETERMINISM, render half (s176 m02) — double-render byte-equality:
     // sha256(renderVegaLiteToSvg(compiled)) twice, equal. The FIRST hash is the contrast
     // grade's own render (reused, never recomputed); the SECOND render call below IS the
-    // proof — the ":623-625 KEEP-the-second discipline", render edition. Runs exactly
-    // when the grade rendered (>= 1 series unit), so `renderHash` presence tracks this
-    // cartesian rendered-grading path. A second-render
-    // throw is a failed proof (the artifact could not be re-rendered), never a
-    // status:error — the catch keeps the fault inside the pillar.
+    // proof — the ":623-625 KEEP-the-second discipline", render edition. Rendering
+    // determinism also covers contrast-exempt charts (e.g. quantitative heatmaps):
+    // public SVG identity must not depend on whether contrast can grade the paint.
+    // Reuse the contrast render when available; otherwise render the same compiled
+    // spec here. A renderer throw remains a failed determinism proof.
     let renderHash: string | undefined;
     let renderStable = true;
-    if (gradedSvg !== undefined) {
-      renderHash = sha256(gradedSvg);
-      try {
-        renderStable =
-          renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
-      } catch {
-        renderStable = false;
-      }
+    try {
+      const firstSvg = gradedSvg ?? await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec);
+      renderHash = sha256(firstSvg);
+      renderStable =
+        renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
+    } catch {
+      renderStable = false;
     }
     // The folded stable: the compile proof AND (when a render happened) the render proof.
     const stable = compileStable && renderStable;
@@ -949,7 +967,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // nondeterministic render fails this clause and pulls conformant false.
     // A scoped, monotonic TIGHTENING (some inputs move true->false; none move false->true) —
     // the cause of a contrast- or accuracy-driven false is carried by pillars + contrastNote
-    // + notes[]. Measured on the light theme (dark-theme contrast OOS).
+    // + notes[]. The requested CSS scope is retained alongside the verdict.
     const conformant =
       a11yConformant &&
       contrast !== 'fail' &&
@@ -962,6 +980,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       status: 'ok',
       coverage: 'certified',
       conformant,
+      accuracyRules: ACCURACY_RULES.map(rule => rule.code),
       findings,
       // renderHash (s176 m02, OPTIONAL in the schema): present exactly when the contrast
       // grade rendered — the cartesian rendered-grading path — proving the double-render

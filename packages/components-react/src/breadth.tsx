@@ -1,3 +1,4 @@
+import { assertStaticSvg } from '@oods/component-contracts';
 import { formatDateTime, summaryValue } from '@oods/component-contracts';
 import * as React from 'react';
 
@@ -156,12 +157,22 @@ export const ColorizedBadge = React.forwardRef<HTMLSpanElement, ColorizedBadgePr
 );
 ColorizedBadge.displayName = 'OODS.ColorizedBadge';
 
-export const VizAreaPreview = React.forwardRef<HTMLDivElement, VizAreaPreviewProps>(
-  ({ width = 640, height = 360, children, className, style, ...rest }, ref) => {
+export const VizAreaPreview = React.forwardRef<HTMLElement, VizAreaPreviewProps>(
+  ({ width = 640, height = 360, svg, title, description, children, className, style, ...rest }, ref) => {
     const content = childContent(children);
+    if (svg !== undefined) {
+      return <figure ref={ref} className={classes('oods-viz-area-preview', className)}
+        data-oods-component="VizAreaPreview" data-viz-preview-type="area" data-viz-rendered="true"
+        data-viz-width={width} data-viz-height={height} role="img" aria-label={title ?? description ?? 'Payment amounts'}
+        style={style} {...rest}>
+        {title ? <figcaption>{title}</figcaption> : null}
+        <div data-viz-svg="true" dangerouslySetInnerHTML={{ __html: assertStaticSvg(svg) }} />
+        {description ? <p data-viz-description="true">{description}</p> : null}
+      </figure>;
+    }
     return (
       <div
-        ref={ref}
+        ref={ref as React.ForwardedRef<HTMLDivElement>}
         className={classes('oods-viz-area-preview', className)}
         data-oods-component="VizAreaPreview"
         data-viz-preview-type="area"

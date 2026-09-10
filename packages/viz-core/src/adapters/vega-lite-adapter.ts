@@ -6,7 +6,7 @@ import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import { resolveCategoricalPalette, toHex } from '../tokens/categorical-palette.js';
 import { resolveOodsVegaConfig } from '../tokens/oods-vega-config.js';
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
-import { resolveTokenToColor } from './echarts/token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from './echarts/token-resolver.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
@@ -18,8 +18,8 @@ const ORDINAL_SCALE_TYPES = new Set(['band', 'point']);
 // SAME token→color chain the categorical bake + certify use, so the diverging range that
 // renders is the diverging range that would be graded ("rendered == certified"). A diverging
 // color is a continuous gradient (role-B exempt), so this is a bake, not a graded palette.
-const OODS_DIVERGING_RANGE: readonly string[] = getVizScaleTokens('diverging')
-  .map((token) => toHex(resolveTokenToColor(token) ?? ''))
+const divergingRange = (scope: TokenScope): readonly string[] => getVizScaleTokens('diverging')
+  .map((token) => toHex(resolveTokenToColor(token, scope) ?? ''))
   .filter((color): color is string => Boolean(color));
 const MARK_TRAIT_MAP = {
   MarkBar: 'bar',
@@ -96,7 +96,7 @@ export class VegaLiteAdapterError extends Error {
   }
 }
 
-export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
+export function toVegaLiteSpec(spec: NormalizedVizSpec, scope: TokenScope = {}): VegaLiteAdapterSpec {
   if (spec.marks.length === 0) {
     throw new VegaLiteAdapterError('Normalized viz spec must contain at least one mark.');
   }
@@ -106,7 +106,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   // down into convertBinding (multi-series scale.range) and createMark (single-series
   // mark.color). convertBinding's (channel, binding) signature cannot reach the spec,
   // so the palette must be passed in — never re-resolved per binding (memo §6 blocker-2).
-  const categoricalPalette = resolveCategoricalPalette(spec);
+  const categoricalPalette = resolveCategoricalPalette(spec, scope);
   // A single-series chart carries NO color channel anywhere; it renders one mark color,
   // so bake categorical-01 as mark.color so the render matches the slot certify grades
   // (memo §6 — else the hollow survives silently for the common single-series case).
@@ -120,16 +120,16 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   // top-level below (merged with the caller's config.mark). Unlike the palette it
   // needs no per-binding threading: config is a top-level Vega-Lite block that
   // applies to every nested view. Chrome only — series color stays in the bake above.
-  const oodsConfig = resolveOodsVegaConfig(spec);
+  const oodsConfig = resolveOodsVegaConfig(spec, scope);
 
   const interactions = normalizeInteractions(spec.interactions);
   const data = convertData(spec);
   const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(interactions));
-  const baseEncoding = convertEncodingMap(spec.encoding, categoricalPalette);
+  const baseEncoding = convertEncodingMap(spec.encoding, categoricalPalette, scope);
   const interactionParams = convertInteractionParams(interactions);
   const interactionEncoding = convertInteractionBindings(interactions);
   const convertedLayers = spec.marks.map((mark) =>
-    createLayer(mark, baseEncoding, interactionEncoding, categoricalPalette, singleSeriesColor),
+    createLayer(mark, baseEncoding, interactionEncoding, categoricalPalette, singleSeriesColor, scope),
   );
   const orderedLayers = applyLayerOrdering(spec.layout, convertedLayers);
   const requiresLayer = orderedLayers.length > 1 || orderedLayers.some((layer) => layer.data !== undefined);
@@ -188,9 +188,10 @@ function createLayer(
   baseEncoding?: Record<string, unknown>,
   interactionEncoding?: Record<string, unknown>,
   palette?: readonly string[],
-  singleSeriesColor?: string
+  singleSeriesColor?: string,
+  scope: TokenScope = {}
 ): ConvertedLayer {
-  const markEncodings = convertEncodingMap(mark.encodings, palette);
+  const markEncodings = convertEncodingMap(mark.encodings, palette, scope);
   const encoding = mergeEncodings(mergeEncodings(baseEncoding, markEncodings), interactionEncoding);
 
   if (Object.keys(encoding).length === 0) {
@@ -411,7 +412,7 @@ function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<st
   return result;
 }
 
-function convertEncodingMap(map?: NormalizedEncoding, palette?: readonly string[]): Record<string, unknown> {
+function convertEncodingMap(map?: NormalizedEncoding, palette?: readonly string[], scope: TokenScope = {}): Record<string, unknown> {
   if (!map) {
     return {};
   }
@@ -425,7 +426,7 @@ function convertEncodingMap(map?: NormalizedEncoding, palette?: readonly string[
       continue;
     }
 
-    encoding[channel] = convertBinding(channel, binding, palette);
+    encoding[channel] = convertBinding(channel, binding, palette, scope);
   }
 
   return encoding;
@@ -459,7 +460,8 @@ function mergeEncodings(
 function convertBinding(
   channel: ChannelName,
   binding: EncodingBinding,
-  palette?: readonly string[]
+  palette?: readonly string[],
+  scope: TokenScope = {}
 ): Record<string, unknown> {
   const normalizedChannel = channel === 'x2' ? 'x' : channel === 'y2' ? 'y' : channel;
   const definition: Record<string, unknown> = {
@@ -530,7 +532,7 @@ function convertBinding(
   // forced quantitative above), so it is disjoint from the nominal/ordinal categorical bakes.
   if (channel === 'color' && binding.scale === 'diverging') {
     const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
-    definition.scale = { ...existingScale, range: [...OODS_DIVERGING_RANGE], domainMid: 0 };
+    definition.scale = { ...existingScale, range: [...divergingRange(scope)], domainMid: 0 };
   }
 
   if (binding.sort) {

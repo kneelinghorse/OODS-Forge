@@ -128,7 +128,8 @@ describe('artifact.certify input schema — the `data` wire contract (s172 m01)'
   });
 
   it('the TOP-LEVEL input is still closed (additionalProperties:false survived the edit)', () => {
-    expect(validateInput({ spec, brand: 'A' })).toBe(false);
+    expect(validateInput({ spec, inventedScope: 'A' })).toBe(false);
+    expect(validateInput({ spec, brand: 'A', theme: 'dark' })).toBe(true);
   });
 
   it('the mirrored branch shape really validates content, not just the key (a valueless sankey link is refused)', () => {
