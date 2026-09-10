@@ -18,6 +18,7 @@ import type { UiSchema } from '../../src/schemas/generated.js';
 import { getAjv } from '../../src/lib/ajv.js';
 import codeGenerateInputSchema from '../../src/schemas/code.generate.input.json' assert { type: 'json' };
 import pipelineInputSchema from '../../src/schemas/pipeline.input.json' assert { type: 'json' };
+import { componentRenderers } from '../../src/render/component-map.js';
 import { handle as generateCode } from '../../src/tools/code.generate.js';
 import { handle as runPipeline } from '../../src/tools/pipeline.js';
 import type { CodeGenerateInput } from '../../src/tools/types.js';
@@ -93,8 +94,8 @@ const HTML_FALLBACK_SCHEMA: UiSchema = {
   version: '1.0',
   screens: [{
     id: 'html-fallback',
-    // ArchivedRowOverlay became implemented in Sprint 188. Keep the fallback
-    // policy's negative operand on an explicitly unmapped retained registry row.
+    // Sprint 192 maps every catalog row. This negative control temporarily
+    // removes its real renderer, then restores it in a finally block.
     component: 'AuditSummaryCard',
     props: {},
   }],
@@ -311,31 +312,38 @@ describe('Sprint 183 M03 validation profiles', () => {
   );
 
   it('allows a disclosed HTML renderer fallback in draft but rejects an unmapped renderer before emission in build and release', async () => {
-    const draft = await generateCode({
-      framework: 'html',
-      schema: HTML_FALLBACK_SCHEMA,
-      profile: 'draft',
-    });
-
-    expect(draft.status, JSON.stringify(draft.errors ?? [])).toBe('ok');
-    expect(draft.code).toContain('data-oods-fallback="true"');
-    expect(draft.warnings.map(({ message }) => message).join('\n')).toMatch(/fallback/i);
-    expectDisclosure(draft.validationReceipt, 'draft', 'html', { requested: 'html' });
-
-    for (const profile of ['build', 'release'] as const) {
-      const blocked = await generateCode({
+    const renderer = componentRenderers.AuditSummaryCard;
+    expect(renderer).toBeTypeOf('function');
+    delete componentRenderers.AuditSummaryCard;
+    try {
+      const draft = await generateCode({
         framework: 'html',
         schema: HTML_FALLBACK_SCHEMA,
-        profile,
+        profile: 'draft',
       });
-      expect(blocked.status, profile).toBe('error');
-      expect(blocked.artifact, profile).toBeUndefined();
-      expect(blocked.errors?.map(({ message }) => message).join('\n'), profile).toMatch(
-        /no mapped HTML renderer/i,
-      );
-      expectDisclosure(blocked.validationReceipt, profile, 'html', { requested: 'html' });
-      expect(blocked.validationReceipt.checks, profile).toContain('target-readiness');
-      expect(blocked.validationReceipt.notChecked, profile).toContain('fallback-policy');
+
+      expect(draft.status, JSON.stringify(draft.errors ?? [])).toBe('ok');
+      expect(draft.code).toContain('data-oods-fallback="true"');
+      expect(draft.warnings.map(({ message }) => message).join('\n')).toMatch(/fallback/i);
+      expectDisclosure(draft.validationReceipt, 'draft', 'html', { requested: 'html' });
+
+      for (const profile of ['build', 'release'] as const) {
+        const blocked = await generateCode({
+          framework: 'html',
+          schema: HTML_FALLBACK_SCHEMA,
+          profile,
+        });
+        expect(blocked.status, profile).toBe('error');
+        expect(blocked.artifact, profile).toBeUndefined();
+        expect(blocked.errors?.map(({ message }) => message).join('\n'), profile).toMatch(
+          /no mapped HTML renderer/i,
+        );
+        expectDisclosure(blocked.validationReceipt, profile, 'html', { requested: 'html' });
+        expect(blocked.validationReceipt.checks, profile).toContain('target-readiness');
+        expect(blocked.validationReceipt.notChecked, profile).toContain('fallback-policy');
+      }
+    } finally {
+      componentRenderers.AuditSummaryCard = renderer;
     }
   });
 
