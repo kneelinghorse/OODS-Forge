@@ -55,7 +55,7 @@
 | `OODS-V163` | Release evidence artifact hash does not match generated artifact |
 | `OODS-N003` | SchemaRef was not found |
 | `OODS-N004` | SchemaRef has expired |
-| `OODS-N013` | HTML target has no mapped renderer or generated fallback output |
+| `OODS-N013` | HTML renderer unavailable; fallback output is forbidden at build or release confidence |
 | `OODS-N015` | Component is unavailable for the requested React or Vue target |
 | `OODS-N016` | Generated artifact dependency closure is invalid |
 | `OODS-S006` | HTML rendering failed |

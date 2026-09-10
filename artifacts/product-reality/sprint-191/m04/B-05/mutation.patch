@@ -1,0 +1,13 @@
+diff --git a/packages/mcp-server/src/lib/dtcg-intake/index.ts b/packages/mcp-server/src/lib/dtcg-intake/index.ts
+index 00d89176..115ff21b 100644
+--- a/packages/mcp-server/src/lib/dtcg-intake/index.ts
++++ b/packages/mcp-server/src/lib/dtcg-intake/index.ts
+@@ -767,7 +767,7 @@ export function validateDtcgIntake(input: unknown): DtcgIntakeReceipt {
+     not_accepted_token_instance_denominator: denominator(notAcceptedMembership),
+     submitted_minus_accepted_denominator: denominator(submittedMinusAccepted),
+     accepted_minus_submitted_denominator: denominator(acceptedMinusSubmitted),
+-    not_accepted_token_reason_denominator: denominator(reasonMembership),
++    not_accepted_token_reason_denominator: denominator(reasonMembership.map((reason, index) => index === 0 ? { ...reason, reason: "" } : reason)),
+     build_artifact_denominator: denominator<never>([]),
+     preview: {
+       classification: "PREVIEW-ONLY",

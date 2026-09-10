@@ -90,6 +90,8 @@ describe('API reference generator', () => {
     ]) {
       expect(codeGenerateDoc).toContain(`| \`${code}\` |`);
     }
+    expect(codeGenerateDoc).toContain('HTML renderer unavailable; fallback output is forbidden at build or release confidence');
+    expect(codeGenerateDoc).not.toContain('Registry fallback used');
     expect(codeGenerateDoc).not.toContain('| `OODS-N002` |');
     expect(codeGenerateDoc).not.toContain('| `OODS-V006` |');
 

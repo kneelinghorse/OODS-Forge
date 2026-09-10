@@ -11,19 +11,28 @@ describe("Sprint 177 standing-rule canon", () => {
   );
   const contents = readFileSync(documentPath, "utf8");
 
-  it("keeps one contiguous 26-rule numbering with an origin on every rule", () => {
+  it("keeps one contiguous 27-rule numbering with an origin on every rule", () => {
     const matches = [...contents.matchAll(/^### Rule (\d+) — .+$/gm)];
     const numbers = matches.map((match) => Number(match[1]));
 
     expect(numbers).toEqual(
-      Array.from({ length: 26 }, (_, index) => index + 1),
+      Array.from({ length: 27 }, (_, index) => index + 1),
     );
 
     const sections = contents.split(/^### Rule \d+ — .+$/gm).slice(1);
-    expect(sections).toHaveLength(26);
+    expect(sections).toHaveLength(27);
     for (const section of sections) {
       expect(section).toMatch(/^\n\n\*\*Origin:\*\* Sprint/m);
     }
+  });
+
+  it("requires declared movers to come from the actual closeout range", () => {
+    expect(contents).toContain("### Rule 27 — Regenerate declared movers from the closeout diff");
+    expect(contents).toContain("`git diff --name-only <base>..<head>`");
+    expect(contents).toContain("scripts/product-reality/s185-sprint-wide-movers.mjs");
+    expect(contents).toContain("`deriveRange`");
+    expect(contents).toContain("`deriveMovers`");
+    expect(contents).toContain("packages/mcp-server/test/product-reality/closeout.s190.spec.ts");
   });
 
   it("disambiguates the historical labels that collided", () => {

@@ -1,0 +1,89 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/dtcg-intake.s180.spec.ts (21 tests | 2 failed | 19 skipped) 67ms
+   ↓ s180 m03 DTCG intake fixture provenance > pins the delivered envelope, consumer revision, and all four vendored document byte identities
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > pins the 61-entry token guardrail baseline and excludes the 27-entry explorer literal-colour baseline
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > publishes the named scalar subset without applying the repository lint baseline
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > grammar description discloses the $type:"content" brace carve-out and its 18-of-1,359 dependence
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > accepts scalar CSS keyframe content with literal braces and preserves leaf identity separately from location
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > still resolves syntactically complete aliases carried by content tokens
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > reports scalar, structure, alias, cycle, name, and duplicate-leaf failures by exact rule and location
+   ↓ DTCG intake request schema boundary > requires the complete request level, including explicit apply:false
+   × s180 m03 dry-run intake reconciliation > reconciles all 1,812 submitted instances into 1,359 accepted and 453 explicitly unmapped 57ms
+     → expected { Object (count, membership) } to deeply equal { Object (count, membership) }
+   × s180 m03 dry-run intake reconciliation > B-04 catches a silently dropped submitted member through totals, identity, and difference sets 10ms
+     → expected [ 'submitted-membership', …(1) ] to deeply equal []
+   ↓ s180 m03 dry-run intake reconciliation > B-05 requires every not-accepted member to carry non-blank rule, location, and reason fields
+   ↓ s180 m03 dry-run intake reconciliation > keeps the reason denominator exactly one-to-one when one member violates multiple rules
+   ↓ s180 m03 typed rejection boundaries > rejects missing apply at the request level and fans the typed reason out to discoverable members
+   ↓ s180 m03 typed rejection boundaries > rejects apply:true without applying, creating a brand, or emitting artifacts
+   ↓ s180 m03 typed rejection boundaries > rejects an unknown profile without silently defaulting the requested value
+   ↓ s180 m03 typed rejection boundaries > rejects non-canonical source IDs without trimming two submitted identities into one
+   ↓ s180 m03 typed rejection boundaries > keeps fallback identities disjoint from submitted reserved-prefix IDs
+   ↓ s180 m03 typed rejection boundaries > accepts the content-reference shape but returns memberful unresolved-content-reference receipts
+   ↓ s180 m03 typed rejection boundaries > rejects a consumer-local filesystem path as non-portable at both schema and member receipt boundaries
+   ↓ s180 m03 typed rejection boundaries > does not accept members when a local path is smuggled beside an inline document
+   ↓ s180 m03 typed rejection boundaries > rejects compact-JSON integrity mutations per member while treating raw-source identity as provenance
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/dtcg-intake.s180.spec.ts > s180 m03 dry-run intake reconciliation > reconciles all 1,812 submitted instances into 1,359 accepted and 453 explicitly unmapped
+AssertionError: expected { Object (count, membership) } to deeply equal { Object (count, membership) }
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  {
+-   "count": 1812,
++   "count": 1811,
+    "membership": [
+-     "dark-experimental::border-radius-0",
+      "dark-experimental::border-radius-050",
+      "dark-experimental::border-radius-100",
+      "dark-experimental::border-radius-150",
+      "dark-experimental::border-radius-200",
+      "dark-experimental::border-radius-300",
+
+ ❯ test/contracts/dtcg-intake.s180.spec.ts:814:58
+    812|     ]);
+    813| 
+    814|     expect(receipt.submitted_token_instance_denominator).toEqual({
+       |                                                          ^
+    815|       count: 1_812,
+    816|       membership: expectedSubmitted,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/contracts/dtcg-intake.s180.spec.ts > s180 m03 dry-run intake reconciliation > B-04 catches a silently dropped submitted member through totals, identity, and difference sets
+AssertionError: expected [ 'submitted-membership', …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "submitted-membership",
++   "accepted-minus-submitted-relation",
++ ]
+
+ ❯ test/contracts/dtcg-intake.s180.spec.ts:873:45
+    871|   it("B-04 catches a silently dropped submitted member through totals,…
+    872|     const receipt = validateDtcgIntake(corpusRequest);
+    873|     expect(reconciliationFailures(receipt)).toEqual([]);
+       |                                             ^
+    874| 
+    875|     const mutant = structuredClone(receipt);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 19 skipped (21)
+   Start at  00:25:31
+   Duration  323ms (transform 69ms, setup 13ms, collect 97ms, tests 67ms, environment 0ms, prepare 41ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/dtcg-intake.s180.spec.ts -t reconciles all|B-04

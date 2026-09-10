@@ -1,0 +1,13 @@
+diff --git a/packages/mcp-server/src/lib/dtcg-intake/index.ts b/packages/mcp-server/src/lib/dtcg-intake/index.ts
+index 00d89176..897a3f83 100644
+--- a/packages/mcp-server/src/lib/dtcg-intake/index.ts
++++ b/packages/mcp-server/src/lib/dtcg-intake/index.ts
+@@ -762,7 +762,7 @@ export function validateDtcgIntake(input: unknown): DtcgIntakeReceipt {
+     brand_created: false,
+     request_issues: requestIssues,
+     theme_documents: documentReceipts,
+-    submitted_token_instance_denominator: denominator(submittedMembership),
++    submitted_token_instance_denominator: denominator(submittedMembership.slice(1)),
+     accepted_token_instance_denominator: denominator(acceptedMembership),
+     not_accepted_token_instance_denominator: denominator(notAcceptedMembership),
+     submitted_minus_accepted_denominator: denominator(submittedMinusAccepted),
