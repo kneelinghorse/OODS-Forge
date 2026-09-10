@@ -109,7 +109,7 @@ figures with a generated, membership-bearing ledger.
 | Vue | Source emitter exists; runtime component package has 0 implementations | Real `@oods/components-vue` package |
 | Code generation | React and Vue emit imports from nonexistent `@oods/components` | Target-aware imports, capability preflight, clean-consumer proof |
 | Saved schemas | 16 saved schemas; all depend on `Stack` | Make the common dependency nucleus real first |
-| Visualization | 13/13 public SVG in light/dark × A/B; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 190 BUILT, REVIEW PENDING; scoped certification keeps truthful failures; HC pixels deferred |
+| Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 BUILT, REVIEW PENDING; HC pixels deferred (#1851); registry/census is the capability source |
 | Dashboard HTML | 11/11 admitted types drawn through the shared SVG renderer; chord and flow_map excluded (#881) | Capability cells derive from viz-recipes.v1.json and its public-handler census |
 | Code Connect | No connected component records | Remain explicitly empty until real connections exist |
 
@@ -293,10 +293,9 @@ not renamed complete.
 
 ## Preserved obligations and explicit parks
 
-- Sprint-181 next steps `#1315`–`#1322` remain Forge-owned maintenance debt under decision `#1651`.
-  They stay in the maintenance queue, are reviewed at every planning/closeout session, and receive an
-  explicit disposition in Sprint 182 closeout. They are not hidden inside component missions and must
-  close before an integrated public release.
+- Sprint 191 m04 closes `#1318`–`#1322` with SR27, adapter-path checks, OODS-N013 descriptions,
+  retaken DTCG/schema bites and the A --final pin. `#1315` remains pending until Sprint 192 sends the
+  prepared final bundle re-pin notices after independent review. No delivery is inferred from assembly.
 - The schema-ingest walker and `schema.ingest` draft remain historically shelved by `#1649`; active
   program decision `#1652` retains that result while superseding `#1649`'s incorrect surface claim.
 - Public package publication remains gated on licensing and distribution decisions.
