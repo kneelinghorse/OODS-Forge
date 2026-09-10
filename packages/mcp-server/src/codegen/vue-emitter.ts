@@ -449,7 +449,7 @@ function emitTemplateNodeBody(
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? vueControlledProp(localBinding) : null;
-  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
+  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema, options.workflowCollections);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
     propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
   }

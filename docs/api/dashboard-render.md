@@ -39,7 +39,7 @@ Contrast measurement records actual categorical canvas grades, including failure
 | flow_map | echarts | excluded (#881) | uncertified | none (exempt) | not-placed |
 
 - HC pixels deferred (#1851); HC token scopes retained.
-- Light palette on dark canvas; no separate dark viz-scale token overrides.
+- Categorical contrast passes both brands in: light, dark.
 - Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
 - Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
 - Dashboard exclusion (#881): the public panel schema does not admit this type.

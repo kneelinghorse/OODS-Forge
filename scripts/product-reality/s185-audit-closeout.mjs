@@ -433,8 +433,10 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     if (browser) {
       const wide = parseFrozen(manifest.sources.wideCensus);
       assert.equal(wide.head, implementationHead); assert.equal(wide.rows.length, 77);
-      assert.equal(wide.rows.filter(row => row.green).length, 75);
-      assert.deepEqual(wide.rows.filter(row => !row.green).map(row => row.input.object + '/' + row.input.context).sort(), ['Organization/workflow', 'User/workflow']);
+      // s191 closes both gaps; retained historical captures may still contain the attributed pair.
+      const blocked = wide.rows.filter(row => !row.green).map(row => row.input.object + '/' + row.input.context).sort();
+      assert([JSON.stringify([]), JSON.stringify(['Organization/workflow', 'User/workflow'])].includes(JSON.stringify(blocked)));
+      assert.equal(wide.rows.filter(row => row.green).length, 77 - blocked.length);
       for (const row of wide.rows.filter(row => !row.green)) assert(row.cells.every(cell => cell.status === 'error' && cell.errors.some(error => error.code === 'OODS-N016')));
       const chain = parseFrozen(manifest.sources.censusDiff);
       assert.equal(chain.status, 'passed'); assert.equal(chain.head, implementationHead); assert.equal(chain.rows.length, 77);
@@ -918,7 +920,7 @@ export function auditSprint190Closeout({ executionHead, reviewHead, readOutput, 
   }
   const matrix=source('matrix'); assert.equal(matrix.head,manifest.implementationHead); assert.equal(matrix.table.length,52);
   for(const row of matrix.table) { assert.equal(row.svgHash,row.secondHash); verifyRef({path:`${path.posix.dirname(manifest.sources.matrix)}/${row.file}`,sha256:row.svgHash}); }
-  const census=source('componentCensus'); assert.equal(census.greenSchemas,66); assert.equal(census.greenCells,132); assert.equal(census.greenTotalSchemas,75); assert.equal(census.totalSchemas,77); assert(census.workflow.green);
+  const census=source('componentCensus'); assert.equal(census.greenSchemas,66); assert.equal(census.greenCells,132); assert([75,77].includes(census.greenTotalSchemas)); assert.equal(census.greenTotalSchemas,census.allRows.filter(row=>row.green).length); assert.equal(census.totalSchemas,77); assert(census.workflow.green);
   for(const row of census.allRows.filter(row=>!row.green)) assert(row.cells.every(cell=>cell.errors.some(error=>error.code==='OODS-N016')));
   assert.deepEqual(source('schemaMovement').changedSchemas,['Subscription/detail']);
   assert.equal(source('originalStore').reachable,15); assert.equal(source('successorStore').reachable,16);

@@ -23,9 +23,15 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const warnings: CodegenResult['warnings'] = [];
   const fieldByNodeId: Record<string, string> = {};
   const formFields = new Set<string>();
+  const collectionEditors = new Map<string, UiElement>();
   let archiveOverlay: UiElement | undefined;
   let cancellationForm: UiElement | undefined;
   const visit = (node: UiElement, context: string) => {
+    // These recipes still contain parameter directives. The assembled app owns
+    // their resolved lifecycle values; ordinary single-screen output is unchanged.
+    const states = schema.workflow!.data.lifecycleStates;
+    if (node.component === 'StatusSelector' && node.props?.optionsParameter === 'states' && node.props.options === undefined && !schema.objectSchema![String(node.props.field)]?.enum?.length) node.props.options = states;
+    if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: value.replaceAll('_', ' ') }))];
     if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
     if (context === 'form' && node.component === 'CancellationForm') cancellationForm = node;
     const field = node.props?.field
@@ -33,16 +39,20 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
       ?? (node.component === 'BillingIntervalSelector' ? node.props?.intervalField : undefined);
     if (typeof field === 'string') {
       fieldByNodeId[node.id] = field;
-      if (context === 'form') formFields.add(field);
+      if (context === 'form') {
+        formFields.add(field);
+        if (schema.objectSchema![field]?.type.endsWith('[]')) collectionEditors.set(field, node);
+      }
     }
     node.children?.forEach((child) => visit(child, context));
   };
   for (const declaration of schema.workflow.screens) {
-    const screen = schema.screens.find((node) => node.id === declaration.id);
-    if (!screen) return failure(`Workflow screen '${declaration.id}' is missing.`);
+    const source = schema.screens.find((node) => node.id === declaration.id);
+    if (!source) return failure(`Workflow screen '${declaration.id}' is missing.`);
+    const screen = structuredClone(source);
     visit(screen, declaration.context);
     const { workflow: _workflow, ...single } = schema;
-    const result = emitScreen({ ...single, screens: [screen] }, options);
+    const result = emitScreen({ ...single, screens: [screen] }, { ...options, workflowCollections: true });
     if (result.status !== 'ok') return result;
     result.imports.forEach((entry) => imports.add(entry));
     warnings.push(...result.warnings);
@@ -54,8 +64,12 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     }
     // One application-level declaration carries the union of screen provenance.
     // Executable forwarding/local handler markers remain in every screen file.
-    const code = result.code.replace(/^[ \t]*\/\* @oods-domain-(?:action|source) [^\n]+\*\/\n/gm, '')
+    let code = result.code.replace(/^[ \t]*\/\* @oods-domain-(?:action|source) [^\n]+\*\/\n/gm, '')
       .replace(/(data-oods-action="handleDelete"[^\n]+>)Delete(<\/button>)/g, '$1Archive$2');
+    if (/collectionAddress\(|collectionSummary\(/.test(code)) {
+      const helpers = "import { collectionAddress, collectionSummary } from '../store';\n";
+      code = framework === 'react' ? helpers + code : code.replace('<script setup lang="ts">', '<script setup lang="ts">\n' + helpers);
+    }
     files.push({ path: `src/screens/${nameOf(declaration.context)}${result.fileExtension}`, contents: code });
   }
   const actions = [...actionMap.values()].sort((a, b) => a.name.localeCompare(b.name));
@@ -71,14 +85,32 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     handleFilter: '(criteria) => { query = { ...query, search: String(criteria.search ?? ""), status: String(criteria.status ?? ""), archived: Boolean(criteria.archived ?? query.archived), page: 1 }; refreshList(); }',
     handlePageChange: '(page) => { query = { ...query, page }; refreshList(); }',
   };
-  for (const action of actions) if (!implementations[action.name]) return failure(`Workflow has no domain implementation for '${action.name}'.`);
+  for (const action of actions) {
+    if (implementations[action.name]) continue;
+    const field = action.name.startsWith('handleChange_') ? action.name.slice('handleChange_'.length) : '';
+    const editor = collectionEditors.get(field);
+    if (!editor || action.parameters.length !== 1 || action.parameters[0]!.type !== 'Record<string, unknown>') return failure(`Workflow has no domain implementation for '${action.name}'.`);
+    const parameter = action.parameters[0]!.name;
+    const defaultRoleField = typeof editor.props?.defaultRoleField === 'string' ? editor.props.defaultRoleField : '';
+    const fallbackRole = editor.props?.role ?? schema.workflow.data.defaultAddressRole ?? schema.workflow.data.addressRoles?.[0] ?? 'primary';
+    const addressable = schema.objectSchema[field]!.type === 'AddressableEntry[]';
+    implementations[action.name] = `(${parameter}) => {
+      const entries = state.draft[${JSON.stringify(field)}] ?? [];
+      const role = String(value(${JSON.stringify(defaultRoleField)}) || ${JSON.stringify(fallbackRole)});
+      const index = entries.findIndex(entry => !!entry && typeof entry === 'object' && 'role' in entry && entry.role === role);
+      const previous = index < 0 ? {} : entries[index] as Record<string, unknown>;
+      const entry = { ...previous, role, ${addressable ? `address: { ...((previous.address ?? {}) as Record<string, unknown>), countryCode: ((previous.address ?? {}) as Record<string, unknown>).countryCode ?? 'US', addressLines: [String(${parameter}.street ?? '')], locality: String(${parameter}.city ?? ''), administrativeArea: String(${parameter}.region ?? ''), postalCode: String(${parameter}.postalCode ?? '') }, isDefault: true, updatedAt: (options.now ?? (() => new Date().toISOString()))()` : `...${parameter}`} };
+      const next = [...entries]; if (index < 0) next.push(entry); else next[index] = entry;
+      publish({ draft: { ...state.draft, [${JSON.stringify(field)}]: next }, notice: 'Unsaved changes' });
+    }`;
+  }
   files.push({ path: 'src/actions.ts', contents: `export interface WorkflowActions {\n${actions.map((action) => [
     `  /* @oods-domain-action ${action.name} ${generatedActionContractDigest(action)} */`,
     ...action.sources.map((source) => `  /* @oods-domain-source ${generatedActionSourceDigest(action.name, source)} */`),
     `  ${generatedActionTypeSignature(action)};`,
   ].join('\n')).join('\n')}\n}\n` });
   files.push(...workflowDataFiles(schema));
-  const titleField = ['plan_name', 'name', 'title', 'display_name'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
   const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && field.required && field.type === 'string' && !field.enum);
   files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
 import { createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';
@@ -91,7 +123,7 @@ export const routes = ${JSON.stringify(Object.fromEntries(schema.workflow.screen
 export const cancellable = ${JSON.stringify(schema.workflow.data.traits.some((trait) => trait.split('/').pop() === 'Cancellable'))};
 export const statuses = ${JSON.stringify(schema.workflow.data.lifecycleStates)};
 export const archivePresentation = ${JSON.stringify({ archivedField: archiveOverlay?.props?.archivedField ?? 'is_archived', showBadge: archiveOverlay?.props?.showBadge ?? true, separateTab: archiveOverlay?.props?.separateTab ?? true, tabLabel: archiveOverlay?.props?.tabLabel ?? 'Archived' })};
-export const supplementalFields = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: field.description ?? '' })))};
+export const supplementalFields: Array<{ name: string; label: string; help: string }> = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: field.description ?? '' })))};
 export const cancellationFormProps = ${JSON.stringify({ allowedReasons: schema.workflow.data.cancellationReasonCodes, reasonHelp: cancellationForm?.props?.reasonHelp, codeHelp: cancellationForm?.props?.codeHelp })};
 const fieldByNodeId: Record<string, string> = ${JSON.stringify(fieldByNodeId)};
 export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number; cancelOpen: boolean }
@@ -142,6 +174,7 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
     while (!Object.hasOwn(fieldTypes, field) && element) { field = fieldByNodeId[element.id] ?? ''; element = element.parentElement; }
     if (!Object.hasOwn(fieldTypes, field)) return;
     const type = fieldTypes[field];
+${collectionEditors.size ? "    // Collection editors dispatch whole domain values; their native inputs are not scalar record fields.\n    if (type?.endsWith('[]')) return;" : ''}
     if (target instanceof HTMLInputElement && target.dataset.billingMinorUnits !== undefined) {
       const result = parseBillingAmount(target.value, Number(target.dataset.billingMinorUnits));
       if (result.valid) publish({ draft: { ...state.draft, [field]: result.value }, notice: 'Unsaved changes' });
@@ -167,7 +200,8 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
   };
 }
 ` });
-  const app = framework === 'react' ? reactApp(schema.workflow.object, titleField) : vueApp(schema.workflow.object, titleField);
+  const hasCollectionEditor = collectionEditors.size > 0;
+  const app = framework === 'react' ? reactApp(schema.workflow.object, titleField, hasCollectionEditor) : vueApp(schema.workflow.object, titleField, hasCollectionEditor);
   const extension = framework === 'react' ? '.tsx' : '.vue';
   files.push({ path: `src/App${extension}`, contents: app });
   if (framework === 'react') {
@@ -189,7 +223,7 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
   return { status: 'ok', framework, code: app, fileExtension: extension, files, imports: [...imports], actions, warnings };
 }
 
-function reactApp(object: string, titleField: string): string {
+function reactApp(object: string, titleField: string, hasCollectionEditor: boolean): string {
   return `import React from 'react';
 import { CancellationForm } from '@oods/components-react';
 ${CONTEXTS.map((context) => `import { GeneratedUI as ${nameOf(context)} } from './screens/${nameOf(context)}';`).join('\n')}
@@ -213,7 +247,7 @@ export default function App(options: StoreOptions) {
         <label className="workflow-checkbox"><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label>
         <button type="button" onClick={() => { void app.confirmCancellation(); }}>Confirm cancellation</button><button type="button" onClick={() => app.dismissCancellation()}>Keep subscription</button>
       </section>}
-      ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={${context === 'list' ? "'list'" : "state.revision + ':' + state.uiState"}} />}`).join('\n      ')}
+      ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <${hasCollectionEditor ? 'div onClick={(event) => { if ((event.target as HTMLElement).closest("button[type=submit]") && !event.currentTarget.querySelector(":invalid")) app.actions.handleSubmit(); }}' : 'form'} onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></${hasCollectionEditor ? 'div' : 'form'}>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={${context === 'list' ? "'list'" : "state.revision + ':' + state.uiState"}} />}`).join('\n      ')}
       {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}
     </section>
     <p className="workflow-notice" role="status">{state.notice}</p>
@@ -222,7 +256,7 @@ export default function App(options: StoreOptions) {
 `;
 }
 
-function vueApp(object: string, titleField: string): string {
+function vueApp(object: string, titleField: string, hasCollectionEditor: boolean): string {
   return `<script setup lang="ts">
 import { computed, onMounted, onUnmounted, shallowRef } from 'vue';
 import { CancellationForm } from '@oods/components-vue';
@@ -253,7 +287,7 @@ const values = computed(() => state.value.draft as Record<string, unknown>);
         <label class="workflow-checkbox"><input name="cancel_at_period_end" type="checkbox" :checked="Boolean(values.cancel_at_period_end)" />Cancel at period end</label>
         <button type="button" @click="app.confirmCancellation()">Confirm cancellation</button><button type="button" @click="app.dismissCancellation()">Keep subscription</button>
       </section>
-      <form v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></form><component v-else :is="view" :key="state.screen === 'list' ? 'list' : state.revision + ':' + state.uiState" v-bind="props" />
+      <${hasCollectionEditor ? 'div @click="(event: MouseEvent) => { if ((event.target as HTMLElement).closest(\'button[type=submit]\') && !(event.currentTarget as HTMLElement).querySelector(\':invalid\')) app.actions.handleSubmit(); }"' : 'form'} v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></${hasCollectionEditor ? 'div' : 'form'}><component v-else :is="view" :key="state.screen === 'list' ? 'list' : state.revision + ':' + state.uiState" v-bind="props" />
       <button v-if="state.uiState === 'success' && state.screen === 'detail' && values.is_archived" @click="app.restore()">Restore record</button>
     </section><p class="workflow-notice" role="status">{{ state.notice }}</p>
   </main>

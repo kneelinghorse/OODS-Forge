@@ -120,6 +120,8 @@ export namespace A11yScanInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -1324,6 +1326,8 @@ export namespace CodeGenerateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -3104,6 +3108,8 @@ export namespace DesignComposeOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -5692,6 +5698,8 @@ export namespace ReplOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6004,6 +6012,8 @@ export namespace ReplRenderInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6270,6 +6280,8 @@ export namespace ReplRenderOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6453,6 +6465,8 @@ export namespace UiSchemaSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6656,6 +6670,8 @@ export namespace ReplValidateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6902,6 +6918,8 @@ export namespace ReplValidateOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];

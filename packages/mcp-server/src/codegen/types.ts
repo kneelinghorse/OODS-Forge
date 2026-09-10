@@ -94,6 +94,8 @@ export type CodegenValidationReceipt = {
 };
 
 export type CodegenOptions = {
+  /** Internal lowering used only by assembled workflow screens. */
+  workflowCollections?: boolean;
   typescript: boolean;
   styling: CodegenStyling;
   theme?: 'light' | 'dark';

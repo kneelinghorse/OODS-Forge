@@ -778,7 +778,7 @@ export function deriveSprint190Closeout({ executionHead, reviewHead, manifest, r
   const shared = { missionId:'s190-m06', sprintStatus:'Active', builderSelfCertified:false, separateReviewRequired:true, implementationHead:manifest.implementationHead, executionHead, reviewHead };
   return {
     [`${base}/closeout/claim-ledger.json`]: { ...shared, claims, executions, headline:{total:37,proven:37,unproven:0}, references:[...references.values()] },
-    [`${base}/closeout/review-handoff.json`]: { ...shared, state:'BUILT, REVIEW PENDING', registry:manifest.sources.registry, matrix:manifest.sources.matrix, browserReceipts:manifest.sources.browserReceipts, claims:`${base}/closeout/claim-ledger.json`, suiteAccounting:`${base}/closeout/suite-accounting.json`, reconnect:notice, pullRequest:ci, limitations:['HC pixels deferred (#1851).','Dark categorical contrast failures remain failures.','Eight ECharts types remain uncertified with conformant:null.','Sample payment SVGs do not regenerate on form edits.','Organization/User workflow generation gaps remain OODS-N016.'] },
+    [`${base}/closeout/review-handoff.json`]: { ...shared, state:'BUILT, REVIEW PENDING', registry:manifest.sources.registry, matrix:manifest.sources.matrix, browserReceipts:manifest.sources.browserReceipts, claims:`${base}/closeout/claim-ledger.json`, suiteAccounting:`${base}/closeout/suite-accounting.json`, reconnect:notice, pullRequest:ci, limitations:['HC pixels deferred (#1851).','Dark categorical contrast failures remain failures.','Eight ECharts types remain uncertified with conformant:null.','Sample payment SVGs do not regenerate on form edits.'] },
     [`${base}/closeout/suite-accounting.json`]: suiteAccounting,
   };
 }

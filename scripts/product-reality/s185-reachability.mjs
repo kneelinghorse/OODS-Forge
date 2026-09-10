@@ -63,7 +63,8 @@ if (fresh) {
   if (fullPopulation) Object.assign(report, { totalSchemas: rows.length, greenTotalSchemas: rows.filter(row => row.green).length, totalCells: rows.length * 2, greenTotalCells: rows.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent && !cell.errors.length).length, allRows: rows });
   record('report.json', report);
   console.log(JSON.stringify({ schemaCount: report.schemaCount, greenSchemas: report.greenSchemas, greenCells: report.greenCells, workflowGreen: workflow.green }));
-  if (fullPopulation && (report.totalSchemas !== 77 || report.greenTotalSchemas !== 75 || report.greenTotalCells !== 150)) process.exitCode = 1;
+  // s191-m02 closes the two collection-handler gaps; every public workflow is now required.
+  if (fullPopulation && (report.totalSchemas !== 77 || report.greenTotalSchemas !== 77 || report.greenTotalCells !== 154)) process.exitCode = 1;
   if (report.schemaCount !== 66 || report.greenSchemas !== 66 || report.greenCells !== 132 || !workflow.green) process.exitCode = 1;
 } else {
 const files = fs.readdirSync(store).filter(name => name.endsWith('.json') && name !== '_index.json').sort();

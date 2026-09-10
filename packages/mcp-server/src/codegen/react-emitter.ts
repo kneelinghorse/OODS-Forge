@@ -434,7 +434,7 @@ function emitNode(
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
-  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
+  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema, options.workflowCollections);
   const finish = (code: string): string => wrapReactStateNode(
     wrapReactScreenActionSurface(code, node, bindingAnalysis, objectSchema),
     node.state,

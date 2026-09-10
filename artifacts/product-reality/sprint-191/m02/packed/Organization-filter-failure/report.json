@@ -1,0 +1,655 @@
+{
+  "mission": "s191-m02",
+  "object": "Organization",
+  "cellReports": [
+    {
+      "framework": "react",
+      "report": "react/receipt.json",
+      "sha256": "sha256:c464c3cc3724df2767fd76905e30010c517c89500c708b6554c310c3832b1827"
+    },
+    {
+      "framework": "vue",
+      "report": "vue/receipt.json",
+      "sha256": "sha256:6a4115e1627a6df3260ec8575f4093e90892353163f49e61f6b8b30e20905ae7"
+    }
+  ],
+  "sourceHead": "e7aa31e2cf6475b569f96c170ef4d4959acc02f3",
+  "builderSelfCertified": false,
+  "cells": [
+    {
+      "framework": "react",
+      "artifactHash": "sha256:fa10112b5dff5a0d8233b4026a250e521981bad9f08b34ff71513c315721145f",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:13d22ab0c43d75598f03a3df2ea581477107c1db9dc42096cd0dc5dba4a4ce5e",
+            "generatedEntry": "src/ssr.tsx"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-BIHuZ_sV.css"
+            ],
+            "bytes": 135768,
+            "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: 'Status', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select id=\"list-slot-filters-2\" data-oods-component=\"Select\" class=\"oods-field-control form-field__select\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    59 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-bonL2M",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "organization-001",
+              "organization-002",
+              "organization-003",
+              "organization-004",
+              "organization-005",
+              "organization-006",
+              "organization-007",
+              "organization-008",
+              "organization-009",
+              "organization-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "heading": "Organization 03",
+            "mounts": []
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "plan": "Organization 03"
+          }
+        },
+        {
+          "name": "save-record-title",
+          "status": "passed",
+          "detail": {
+            "heading": "Team annual"
+          }
+        },
+        {
+          "name": "address-save-persists",
+          "status": "passed",
+          "detail": {
+            "selectedId": "organization-003",
+            "seededStreet": "102 Main Street",
+            "savedStreet": "42 Lake Road",
+            "savedCity": "Madison",
+            "detail": "Addresses\nheadquarters, 42 Lake Road, Madison, IL, 62701"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "active\nSep 1, 2026, 12:00 PM\n\nSample record created",
+            "id": "organization-003",
+            "mounts": []
+          }
+        }
+      ],
+      "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: 'Status', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select id=\"list-slot-filters-2\" data-oods-component=\"Select\" class=\"oods-field-control form-field__select\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    59 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:273:71)\n    at observe (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:28:30)\n    at observeCollectionControls (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:272:9)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:444:38)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:418:9)"
+    },
+    {
+      "framework": "vue",
+      "artifactHash": "sha256:52e5aacd3ff8564143dd2d925d8a725f5df568be68016a6e7b346e6b6bdd4796",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:84ed401d098e1cb7f387a4427a83dd7157dc39a1dcc4dda60a8c3e7baab3d1cb",
+            "generatedEntry": "src/ssr.ts"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-BIHuZ_sV.css"
+            ],
+            "bytes": 135768,
+            "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: 'Status', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select value=\"\" id=\"list-slot-filters-2\" class=\"oods-field-control\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    59 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-vue-OTzHex",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "organization-001",
+              "organization-002",
+              "organization-003",
+              "organization-004",
+              "organization-005",
+              "organization-006",
+              "organization-007",
+              "organization-008",
+              "organization-009",
+              "organization-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "heading": "Organization 03",
+            "mounts": []
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "plan": "Organization 03"
+          }
+        },
+        {
+          "name": "save-record-title",
+          "status": "passed",
+          "detail": {
+            "heading": "Team annual"
+          }
+        },
+        {
+          "name": "address-save-persists",
+          "status": "passed",
+          "detail": {
+            "selectedId": "organization-003",
+            "seededStreet": "102 Main Street",
+            "savedStreet": "42 Lake Road",
+            "savedCity": "Madison",
+            "detail": "Addresses\nheadquarters, 42 Lake Road, Madison, IL, 62701"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "active\nSep 1, 2026, 12:00 PM\n\nSample record created",
+            "id": "organization-003",
+            "mounts": []
+          }
+        }
+      ],
+      "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: 'Status', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select value=\"\" id=\"list-slot-filters-2\" class=\"oods-field-control\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    59 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:273:71)\n    at observe (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:28:30)\n    at observeCollectionControls (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:272:9)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:444:38)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:418:9)"
+    }
+  ],
+  "stateObservations": [
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Search\nStatus\nAll states\nSort\nName A–Z\nName Z–A\norganization-001\nOrganization 01\nProspect\nOWNER-ID SAMPLE 1\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-002\nOrganization 02\nOnboarding\nOWNER-ID SAMPLE 2\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-003\nOrganization 03\n✔︎\nActive\nOWNER-ID SAMPLE 3\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-004\nOrganization 04\nChurned\nOWNER-ID SAMPLE 4\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-005\nOrganization 05\nProspect\nOWNER-ID SAMPLE 5\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-006\nOrganization 06\nOnboarding\nOWNER-ID SAMPLE 6\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-007\nOrganization 07\n✔︎\nActive\nOWNER-ID SAMPLE 7\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-008\nOrganization 08\nChurned\nOWNER-ID SAMPLE 8\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-009\nOrganization 09\nProspect\nOWNER-ID SAMPLE 9\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\norganization-010\nOrganization 10\nOnboarding\nOWNER-ID SAMPLE 10\nSep 1, 2026, 12:00 PM\nMESSAGE\nDEFAULT ADDRESS ROLE\nPREFERENCES\nRoles\n10 records\nShowing 1–10 of 10\n‹\n1\n›\nPage 1 of 1"
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Organization 01\nStatus Timeline\n\nCurrent status: Prospect\n\ncreated\n\nSep 1, 2026, 12:00 PM\n\nprospect\n\nReason: Sample record created\n\nOwnership Summary\nOwner ID\nowner-id sample 1\nOwner Type\nowner-type sample 1\nTag Manager\nAdd Tag\nDetails\nStatus Timeline\nprospect\nMembership\nAddresses\nheadquarters, 100 Main Street, Springfield, IL, 62701\nPreferences\nAudit Timeline\n\ncreated\n\nSep 1, 2026, 12:00 PM\n\nprospect\n\nReason: Sample record created"
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Organization 01\nStatus\ndraft\nactive\ninactive\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nSelect...\nPreference Document\nRole Assignment\nRole\nSelect...\nAssignee\nTemplate Picker\nTemplate\nSelect...\nChannel\nSelect...\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "organization-001\nprospect\nSep 1, 2026, 12:00 PM\n\nSample record created"
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Search\nStatus\nAll states\nSort\nName A–Z\nName Z–A\norganization-001\nOrganization 01\n•\nProspect\nowner-id sample 1\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-002\nOrganization 02\n•\nOnboarding\nowner-id sample 2\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-003\nOrganization 03\n✔︎\nActive\nowner-id sample 3\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-004\nOrganization 04\n•\nChurned\nowner-id sample 4\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-005\nOrganization 05\n•\nProspect\nowner-id sample 5\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-006\nOrganization 06\n•\nOnboarding\nowner-id sample 6\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-007\nOrganization 07\n✔︎\nActive\nowner-id sample 7\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-008\nOrganization 08\n•\nChurned\nowner-id sample 8\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-009\nOrganization 09\n•\nProspect\nowner-id sample 9\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\norganization-010\nOrganization 10\n•\nOnboarding\nowner-id sample 10\nSep 1, 2026, 12:00 PM\nMessage\nDefault address role\nPreferences\nRoles\n10 records\nShowing 1–10 of 10\n‹\n1\n›\nPage 1 of 1"
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Organization 01\nStatus Timeline\n\nCurrent status: Prospect\n\ncreated\n\nSep 1, 2026, 12:00 PM\n\nprospect\n\nReason: Sample record created\n\nOwnership Summary\nOwner ID\nowner-id sample 1\nOwner Type\nowner-type sample 1\nTag Manager\nAdd Tag\nDetails\nStatus Timeline\nprospect\nMembership\nAddresses\nheadquarters, 100 Main Street, Springfield, IL, 62701\nPreferences\nAudit Timeline\n\ncreated\n\nSep 1, 2026, 12:00 PM\n\nprospect\n\nReason: Sample record created"
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Organization 01\nStatus\ndraft\nactive\ninactive\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nSelect...\nPreference Document\nRole Assignment\nRole\nSelect...\nAssignee\nTemplate Picker\nTemplate\nSelect...\nChannel\nSelect...\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "organization-001\nprospect\nSep 1, 2026, 12:00 PM\n\nSample record created"
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    }
+  ],
+  "screenshots": []
+}

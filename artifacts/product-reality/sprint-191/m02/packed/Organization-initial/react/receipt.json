@@ -1,0 +1,165 @@
+{
+  "framework": "react",
+  "artifactHash": "sha256:c979bd2ad9165795e6be6dc510e0430eb05f79899f3eee8af2031511fcb2d794",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "detail": {
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/typecheck.log"
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/build.log"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "detail": {
+        "htmlHash": "sha256:13d22ab0c43d75598f03a3df2ea581477107c1db9dc42096cd0dc5dba4a4ce5e",
+        "generatedEntry": "src/ssr.tsx"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "detail": {
+        "screenCount": 1,
+        "errors": []
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "detail": {
+        "preservesSsrRoot": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "detail": {
+        "files": [
+          "index-BIHuZ_sV.css"
+        ],
+        "bytes": 135768,
+        "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+        "core": true,
+        "ported": true,
+        "requiresPorted": true,
+        "tokens": true
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n\n2 !== 6\n"
+    }
+  ],
+  "consumerAuthoredComponents": 0,
+  "consumerAuthoredActions": 0,
+  "generation": "current-in-run-public-output",
+  "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-eWNOfT",
+  "flow": [
+    {
+      "name": "ten-sample-records",
+      "status": "passed",
+      "detail": {
+        "active": [
+          "organization-001",
+          "organization-002",
+          "organization-003",
+          "organization-004",
+          "organization-005",
+          "organization-006",
+          "organization-007",
+          "organization-008",
+          "organization-009",
+          "organization-010"
+        ],
+        "archived": [],
+        "total": 10,
+        "disposition": "ten active records; object has no Archivable trait"
+      }
+    },
+    {
+      "name": "detail-navigation",
+      "status": "failed",
+      "error": "locator.innerText: Error: strict mode violation: locator('h1') resolved to 2 elements:\n    1) <h1>organization-003</h1> aka getByRole('heading', { name: 'organization-' })\n    2) <h1>Details</h1> aka getByRole('heading', { name: 'Details' })\n\nCall log:\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 6\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:437:18)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:415:9)"
+}
