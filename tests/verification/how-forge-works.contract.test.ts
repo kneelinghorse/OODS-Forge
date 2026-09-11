@@ -36,6 +36,20 @@ describe("how Forge works narrative truth", () => {
   const nearRoadmap = read("cmos/foundational-docs/roadmap/near.md");
   const normalizedNear = nearRoadmap.replace(/\s+/g, " ");
 
+  it("pins the source-writing brand seam and the explicitly bounded token consumers (s194)", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(html).toContain("writes canonical brand source and runs both token-build stages");
+    expect(html).toContain("leaves source writes in place");
+    expect(html).toContain("requested-scope JSON and CSS");
+    expect(html).toContain("legacy A/light TypeScript and Tailwind artifacts");
+    expect(html).toContain("using built A/B light tokens");
+    expect(descriptions["brand.apply"]).toContain("OODS-S019");
+    expect(descriptions["brand.intake"]).toContain("delta consumable by brand.apply");
+    expect(descriptions["tokens.build"]).not.toContain("inputs label");
+    expect(descriptions["fidelity.preview"]).toContain("Unknown brands return OODS-BM-002");
+    expect(read("packages/mcp-server/src/codegen/branded-mockup-emitter.ts")).not.toContain("const BRAND_TOKENS");
+  });
+
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
       read("packages/mcp-server/src/tools/registry.json"),

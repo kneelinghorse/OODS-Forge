@@ -2,10 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/brand.intake.output.json",
   "title": "Brand intake dry-run receipt",
-  "description": "A read-only DTCG validation receipt. The result is preview-only, applies no tokens, creates no brand, and persists no artifact.",
+  "description": "Read-only DTCG receipt with envelopeHash and an optional directly consumable brand.apply delta. No writes, token application or brand creation.",
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "envelopeHash",
     "mode",
     "preview_only",
     "grammar_profile",
@@ -25,6 +26,18 @@
     "preview"
   ],
   "properties": {
+    "envelopeHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA256 of source-order compact JSON of the complete intake envelope."
+    },
+    "delta": {
+      "type": "object",
+      "description": "Fully accepted inline brand-relative documents, wrapped for brand.apply alias strategy. Only existing A/B and unique mapped themes qualify."
+    },
+    "deltaUnavailableReason": {
+      "type": "string"
+    },
     "mode": { "const": "PREVIEW-ONLY" },
     "preview_only": {
       "const": true,

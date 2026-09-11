@@ -1,40 +1,34 @@
 {
   "tokens.build": [
     {
-      "kind": "inert-option",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/tokens.build.ts",
-      "anchor": "fs.copyFileSync(outputs.css, cssOut);",
-      "reason": "brand/theme label the returned context; copied compiled CSS includes all built scopes and is not filtered by those inputs."
+      "anchor": "recordArtifact(tsOut, 'tokens.ts'",
+      "reason": "Requested-scope JSON and CSS resolve brand/theme. Full CSS retains every built scope; TypeScript and Tailwind artifacts explicitly retain legacy A/light defaults."
     }
   ],
   "brand.apply": [
     {
-      "kind": "no-op",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/brand.apply.ts",
-      "anchor": "async function runTokensBuildSimulation()",
-      "reason": "The verification subprocess ignores stdio and resolves both close and error without checking success; build duration is not proof of a successful build."
-    },
-    {
-      "kind": "no-op",
-      "file": "packages/mcp-server/src/tools/brand.apply.ts",
-      "anchor": "const snapshotPath = path.join(runDir,",
-      "reason": "apply writes snapshots in the artifacts run directory, not canonical brand token source."
+      "anchor": "source writes remain in place.\\n${tail}",
+      "reason": "A failed real token build returns OODS-S019 with captured output and receipts. Source writes are deliberately left in place for inspection and repair; no automatic rollback is claimed."
     }
   ],
   "brand.intake": [
     {
-      "kind": "no-op",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/brand.intake.ts",
       "anchor": "readonly preview_only: true;",
-      "reason": "Explicit preview-only validation: no persistence, brand creation or token application. This is an accurately documented limit."
+      "reason": "Read-only intake emits an envelopeHash and a consumable delta only for fully accepted inline A/B documents with unique mapped themes. No brand creation, persistence or content-reference resolver is claimed."
     }
   ],
   "fidelity.preview": [
     {
-      "kind": "placeholder",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/codegen/branded-mockup-emitter.ts",
-      "anchor": "const BRAND_TOKENS:",
-      "reason": "The non-production branded mockup uses a hard-coded hex token table, not the canonical brand-token build."
+      "anchor": "const scope = { brand: canonicalBrand(brand), theme: 'light' as const };",
+      "reason": "Non-production branded mockups resolve canonical built A/B light tokens. brand-a/brand-b aliases are deprecated for one release; unknown brands fail explicitly."
     }
   ],
   "map": [

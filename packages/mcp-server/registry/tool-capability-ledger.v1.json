@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "head": "2030b4c9faefe78b74338e362907c672ec5b55f2",
+  "head": "a7b287a66d7fb90c8400ca17fa145e9e17fb0eaa",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -12,14 +12,14 @@
     "auto": 21,
     "onDemand": 6,
     "byTier": {
-      "product-reality": 7,
-      "contract": 12,
+      "product-reality": 11,
+      "contract": 8,
       "unit": 4,
       "none": 4
     },
     "autoByTier": {
-      "product-reality": 7,
-      "contract": 11,
+      "product-reality": 11,
+      "contract": 7,
       "unit": 3,
       "none": 0
     },
@@ -36,15 +36,21 @@
       "name": "tokens.build",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Run the design-token build and return the compiled CSS variables and token artifacts. The build emits every brand and theme; the brand and theme inputs label the returned payload, they do not filter it. Use apply=true to write output files (default: dry-run, returns preview only).",
+        "description": "Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:e1c68b226561497e8182c9c3d83c248d5b1fc3497bbb9fd05fd0f9f2a5c29ea6",
+      "claimHash": "sha256:95a24f2e585c07dcd44317ac657fc0628d716ff2021d9780aa0901b816402818",
       "inputSchemaPath": "packages/mcp-server/src/schemas/tokens.build.input.json",
-      "inputSchemaHash": "sha256:8a868b007d2893078366a86da9e76e3bd9e36b06c1d2490925a1b17b1b83fc96",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:d3824aa7ba54660a2c953bee5b830ef3c938b7ded14f71cdada8deaafeef7539",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/tokens.build.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/preview.compaction.spec.ts",
@@ -59,15 +65,22 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 28,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
       "portableE2E": false,
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "inert-option",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/tokens.build.ts",
-          "reason": "brand/theme label the returned context; copied compiled CSS includes all built scopes and is not filtered by those inputs.",
-          "line": 141
+          "reason": "Requested-scope JSON and CSS resolve brand/theme. Full CSS retains every built scope; TypeScript and Tailwind artifacts explicitly retain legacy A/light defaults.",
+          "line": 128
         }
       ]
     },
@@ -135,15 +148,21 @@
       "name": "brand.apply",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Apply brand token overlays using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. Use apply=true to write changes to disk (default: dry-run, returns preview only).",
+        "description": "Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:920900f7b975143f874c5e448fdc07005c6de914c20a713c31c154b99fb3380a",
+      "claimHash": "sha256:10706557c8dbc7f72cb6e80e6ecfc92b23efc71e3d9a018d0e9e848d5358811a",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.apply.input.json",
       "inputSchemaHash": "sha256:02124d32e9d408030323ccfa8058abef60c463f7b23e5954b2d5983822b5d99a",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/brand.apply.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/brand.apply.cross-brand-delta.spec.ts",
@@ -173,21 +192,22 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
       "portableE2E": false,
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "no-op",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.apply.ts",
-          "reason": "The verification subprocess ignores stdio and resolves both close and error without checking success; build duration is not proof of a successful build.",
-          "line": 461
-        },
-        {
-          "kind": "no-op",
-          "file": "packages/mcp-server/src/tools/brand.apply.ts",
-          "reason": "apply writes snapshots in the artifacts run directory, not canonical brand token source.",
-          "line": 622
+          "reason": "A failed real token build returns OODS-S019 with captured output and receipts. Source writes are deliberately left in place for inspection and repair; no automatic rollback is claimed.",
+          "line": 699
         }
       ]
     },
@@ -195,15 +215,21 @@
       "name": "brand.intake",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Validate a preview-only DTCG brand intake envelope in memory. Each theme document supplies one of two document_operand kinds: `inline-document` or `authorized-content-addressed-reference`. The latter is schema-valid but intentionally unresolved and returns a typed `unresolved-content-reference` not-accepted outcome. `apply` is forced false; the tool never writes files, applies tokens, creates a brand, or emits build artifacts.",
+        "description": "Validate a preview-only DTCG intake envelope in memory and return its envelopeHash. Fully accepted brand-relative inline documents for existing A/B with unique mapped target themes return a delta consumable by brand.apply alias strategy. authorized-content-addressed-reference is schema-valid but intentionally unresolved with typed unresolved-content-reference outcomes. apply is forced false; no writes, token application, brand creation or build artifacts.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:bf7732efed9f406ca57f3678fe127f5afc7931254bbfe40afc0006273e741044",
+      "claimHash": "sha256:515f89586cb50d969c2a7ff8e4bb9147bbb213e7c2c95b6b4680f17f3c848036",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.intake.input.json",
       "inputSchemaHash": "sha256:987e16449041abb797e17295517887cd01ca5babc8024bc4fcc7ebba9c26e472",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
@@ -213,15 +239,22 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
       "portableE2E": false,
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "no-op",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.intake.ts",
-          "reason": "Explicit preview-only validation: no persistence, brand creation or token application. This is an accurately documented limit.",
-          "line": 8
+          "reason": "Read-only intake emits an envelopeHash and a consumable delta only for fully accepted inline A/B documents with unique mapped themes. No brand creation, persistence or content-reference resolver is claimed.",
+          "line": 9
         }
       ]
     },
@@ -331,6 +364,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/billing.s188.spec.ts",
             "line": 11,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -602,6 +640,12 @@
           "line": 16,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 17,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": false,
@@ -641,6 +685,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/billing-placement.s188.spec.ts",
             "line": 3,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -1136,6 +1185,11 @@
       "testImports": {
         "product-reality": [
           {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts",
             "line": 7,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
@@ -1599,15 +1653,21 @@
       "name": "fidelity.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block.",
+        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back.",
         "inputSchemaDescription": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (resolved against a vetted allow-list — no caller-supplied paths), or an inline `manifest` object (data only — also never a path). The inline path lets an agent render a manifest it authored in its own repo without committing a fixture here."
       },
-      "claimHash": "sha256:9ad122b170620965960644a4cd357594736c26e4bef806a2f289e8fab5e3015b",
+      "claimHash": "sha256:6a0c1b3099e61f48ed93b0b5749e16017049f3499a04610343c8929700642e02",
       "inputSchemaPath": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
-      "inputSchemaHash": "sha256:5fabeb30a9fe753a13817422590f99efee9cba244ccaff3ec89616fc4a5818c4",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:0854e6d23973fc2ff14ccf73d683399c62189a97ccc557372a2976e00de293ae",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 12,
+            "handler": "packages/mcp-server/src/tools/fidelity.preview.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/pragmatic-role-ia.spec.ts",
@@ -1623,15 +1683,22 @@
           }
         ]
       },
-      "receiptRefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 30,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
       "portableE2E": false,
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "placeholder",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/branded-mockup-emitter.ts",
-          "reason": "The non-production branded mockup uses a hard-coded hex token table, not the canonical brand-token build.",
-          "line": 78
+          "reason": "Non-production branded mockups resolve canonical built A/B light tokens. brand-a/brand-b aliases are deprecated for one release; unknown brands fail explicitly.",
+          "line": 107
         }
       ]
     },

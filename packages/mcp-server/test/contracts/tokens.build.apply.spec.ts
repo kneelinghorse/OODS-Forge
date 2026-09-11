@@ -7,7 +7,7 @@ describe('tokens.build apply', () => {
   it('writes all token artifacts with compiled content', async () => {
     const result = await tokensBuildHandle({ brand: 'A', theme: 'light', apply: true });
 
-    expect(result.artifacts).toHaveLength(4);
+    expect(result.artifacts).toHaveLength(5);
 
     const artifactsByName = new Map(
       result.artifacts.map((filePath) => [path.basename(filePath), filePath]),
@@ -36,12 +36,17 @@ describe('tokens.build apply', () => {
     expect(themeSize).toBeGreaterThan(10000);
 
     const payload = JSON.parse(fs.readFileSync(themePath as string, 'utf8')) as Record<string, unknown>;
-    expect(payload.tokens).toBeTruthy();
-    expect(payload.flat).toBeTruthy();
+    // Scoped payloads must never mislabel legacy A/light flat tokens.
+    expect(payload).not.toHaveProperty('tokens');
+    expect(payload).not.toHaveProperty('flat');
     expect(payload.cssVariables).toBeTruthy();
 
     const meta = payload.meta as Record<string, unknown> | undefined;
     expect(meta?.brand).toBe('A');
     expect(meta?.theme).toBe('light');
+    expect(meta?.scope).toBe('requested');
+    const scopedCss = fs.readFileSync(artifactsByName.get('tokens.scope.css')!, 'utf8');
+    expect(scopedCss).toContain("[data-brand='A'][data-theme='light']");
+    expect(scopedCss).not.toContain("[data-brand='B']");
   });
 });

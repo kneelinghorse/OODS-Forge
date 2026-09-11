@@ -7,6 +7,7 @@
  * dispatch, and graceful handling of empty/missing oods.render.
  */
 
+import { resolveTokenToColor, resolveTokenValue } from '@oods/viz-core';
 import { describe, expect, it } from 'vitest';
 
 import userFixture from '../object-catalog/fixtures/user.json' with { type: 'json' };
@@ -40,7 +41,7 @@ describe('branded-mockup-emitter — top-level emit shape', () => {
 
   it('reports brandsApplied in meta and renders the same brand list in CSS', () => {
     const r = emit(user);
-    expect(r.meta.brandsApplied).toContain('brand-a');
+    expect(r.meta.brandsApplied).toContain('A');
     // brand-a tokens block should always be present (default).
     expect(r.code).toContain('--brand-primary');
   });
@@ -94,26 +95,26 @@ describe('branded-mockup-emitter — brand-overlay resolution', () => {
   it('uses the catalog brand_overlay verbatim when it is a known brand', () => {
     const r = emit(article);
     // article fixture sets brand_overlay: "brand-a" on render + every variant
-    expect(r.meta.brandsApplied).toEqual(['brand-a']);
-    expect(r.code).toContain('data-resolved-brand="brand-a"');
+    expect(r.meta.brandsApplied).toEqual(['A']);
+    expect(r.code).toContain('data-resolved-brand="A"');
     expect(r.warnings.filter((w) => w.code === 'OODS-BM-002')).toHaveLength(0);
   });
 
   it('options.brandOverlay overrides every entity\'s catalog brand_overlay', () => {
     const r = emit(article, { brandOverlay: 'brand-b' });
-    expect(r.meta.brandsApplied).toEqual(['brand-b']);
-    expect(r.code).toContain('data-resolved-brand="brand-b"');
-    expect(r.code).toContain('Iowan Old Style');
+    expect(r.meta.brandsApplied).toEqual(['B']);
+    expect(r.code).toContain('data-resolved-brand="B"');
+    expect(r.code).toContain(resolveTokenValue('--sys-text-scale-body-md-font-family', { brand: 'B', theme: 'light' })!);
   });
 
-  it('warns OODS-BM-002 and falls back to brand-a when overlay is unknown', () => {
+  it('rejects unknown brands with OODS-BM-002 when overlay is unknown', () => {
     const r = emit(article, { brandOverlay: 'brand-zzz' });
-    const warnings = r.warnings.filter((w) => w.code === 'OODS-BM-002');
-    expect(warnings.length).toBe(article.entities.length);
-    expect(r.meta.brandsApplied).toEqual(['brand-a']);
+    expect(r.status).toBe('error');
+    expect(r.errors?.filter((w) => w.code === 'OODS-BM-002')).toHaveLength(article.entities.length);
+    expect(r.meta.brandsApplied).toEqual([]);
   });
 
-  it('falls back to brand-a (without warning) when catalog brand_overlay is absent', () => {
+  it('defaults to canonical A when catalog brand_overlay is absent', () => {
     // Construct a manifest with the article entity but strip brand_overlay everywhere.
     const stripped: ObjectCatalogManifest = JSON.parse(JSON.stringify(article));
     const entity = stripped.entities[0];
@@ -122,7 +123,7 @@ describe('branded-mockup-emitter — brand-overlay resolution', () => {
       delete (v as { brand_overlay?: string }).brand_overlay;
     }
     const r = emit(stripped);
-    expect(r.meta.brandsApplied).toEqual(['brand-a']);
+    expect(r.meta.brandsApplied).toEqual(['A']);
     expect(r.warnings.filter((w) => w.code === 'OODS-BM-002')).toHaveLength(0);
   });
 
@@ -134,8 +135,8 @@ describe('branded-mockup-emitter — brand-overlay resolution', () => {
 
   it('applies CSS custom properties on a scoped selector for non-default brands when used', () => {
     const r = emit(article, { brandOverlay: 'brand-b' });
-    expect(r.code).toContain('[data-resolved-brand="brand-b"]');
-    expect(r.code).toContain('--brand-primary: #1e8f4a');
+    expect(r.code).toContain('[data-resolved-brand="B"]');
+    expect(r.code).toContain(`--brand-primary: ${resolveTokenToColor('--sys-surface-interactive-primary-default', { brand: 'B', theme: 'light' })}`);
   });
 });
 
@@ -232,6 +233,9 @@ describe('branded-mockup-emitter — edge cases', () => {
     const r = emit(empty);
     expect(r.status).toBe('ok');
     expect(r.meta.entitiesRendered).toBe(0);
-    expect(r.meta.brandsApplied).toEqual(['brand-a']);
+    expect(r.meta.brandsApplied).toEqual(['A']);
+    const invalid = emit(empty, { brandOverlay: 'unknown' });
+    expect(invalid.status).toBe('error');
+    expect(invalid.errors?.[0].code).toBe('OODS-BM-002');
   });
 });

@@ -814,6 +814,26 @@ export type BrandApplyInput = BrandApplyInputSchema.BrandApplyInput;
 // Source: brand.apply.output.json
 export namespace BrandApplyOutputSchema {
   export interface BrandApplyOutput {
+    receipt: {
+      sourceWritten: boolean;
+      sourceFiles: {
+        path: string;
+        sha256Before: string;
+        sha256After: string;
+        bytesBefore: number;
+        bytesAfter: number;
+      }[];
+      build: {
+        exitCode: number | null;
+        commands: {
+          command: string[];
+          exitCode: number | null;
+          stdout: string;
+          stderr: string;
+        }[];
+        durationMs: number;
+      } | null;
+    };
     artifacts: string[];
     diagnosticsPath?: string;
     transcriptPath: string;
@@ -909,9 +929,20 @@ export type BrandIntakeInput = BrandIntakeInputSchema.BrandIntakeInput;
 // Source: brand.intake.output.json
 export namespace BrandIntakeOutputSchema {
   /**
-   * A read-only DTCG validation receipt. The result is preview-only, applies no tokens, creates no brand, and persists no artifact.
+   * Read-only DTCG receipt with envelopeHash and an optional directly consumable brand.apply delta. No writes, token application or brand creation.
    */
   export interface BrandIntakeOutput {
+    /**
+     * SHA256 of source-order compact JSON of the complete intake envelope.
+     */
+    envelopeHash: string;
+    /**
+     * Fully accepted inline brand-relative documents, wrapped for brand.apply alias strategy. Only existing A/B and unique mapped themes qualify.
+     */
+    delta?: {
+      [k: string]: any;
+    };
+    deltaUnavailableReason?: string;
     mode: 'PREVIEW-ONLY';
     /**
      * Always true: brand.intake validates and receipts without persistence.
@@ -3402,7 +3433,7 @@ export namespace FidelityPreviewInputSchema {
        */
       variant?: string;
       /**
-       * Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02.
+       * Built A/B light-scope brand for branded-mockup fidelity. Ignored by other fidelities. brand-a/brand-b are deprecated one-release aliases; unknown names return OODS-BM-002.
        */
       brandOverlay?: string;
       /**
@@ -8136,7 +8167,7 @@ export type StructuredDataFetchOutput = StructuredDataFetchOutputSchema.Structur
 export namespace TokensBuildInputSchema {
   export interface TokensBuildInput {
     /**
-     * Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette.
+     * Selects resolved values in the requested-scope JSON and CSS. Full CSS also includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults.
      */
     brand?: 'A' | 'B';
     theme?: 'light' | 'dark' | 'hc';

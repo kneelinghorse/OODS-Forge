@@ -347,6 +347,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-S017', { code: 'OODS-S017', category: 'server_error', message: 'Artifact filename unsafe', retryable: false }],
   ['OODS-S018', { code: 'OODS-S018', category: 'server_error', message: 'Fixture provider mismatch', retryable: false }],
 
+  ['OODS-S019', { code: 'OODS-S019', category: 'server_error', message: 'Token build failed; source writes remain in place', retryable: true }],
+
   // ── Rate Limit ──────────────────────────────────────────────────────────
   ['OODS-R001', { code: 'OODS-R001', category: 'rate_limit', message: 'Rate limit exceeded', retryable: true }],
   ['OODS-R002', { code: 'OODS-R002', category: 'rate_limit', message: 'Concurrency limit exceeded', retryable: true }],

@@ -28,6 +28,7 @@ import type {
 } from '../object-catalog/types.js';
 import { dataAttr, escapeHtml } from './html-utils.js';
 import { runPreEmit, type CatalogAnnotations } from './pre-emit.js';
+import { resolveTokenToColor, resolveTokenValue } from '@oods/viz-core';
 
 export type BrandedMockupFramework = 'branded-mockup';
 
@@ -73,53 +74,44 @@ export interface BrandedMockupResult {
 // Brand-token map
 // ---------------------------------------------------------------------------
 
-const DEFAULT_BRAND = 'brand-a';
-
-const BRAND_TOKENS: Record<string, Record<string, string>> = {
-  'brand-a': {
-    '--brand-primary': '#1351c4',
-    '--brand-primary-contrast': '#ffffff',
-    '--brand-primary-bg': '#eef3fc',
-    '--brand-surface': '#ffffff',
-    '--brand-surface-alt': '#f6f7f9',
-    '--brand-text': '#1f2329',
-    '--brand-text-muted': '#5b6471',
-    '--brand-border': '#c8cdd4',
-    '--brand-border-strong': '#1f2329',
-    '--brand-accent': '#7b3aa5',
-    '--brand-danger': '#c4263b',
-    '--brand-success': '#1e8f4a',
-    '--brand-font-family': 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
-    '--brand-font-weight-heading': '700',
-    '--brand-font-weight-body': '400',
-    '--brand-radius': '0.5rem',
-    '--brand-radius-tight': '0.25rem',
-  },
-  'brand-b': {
-    '--brand-primary': '#1e8f4a',
-    '--brand-primary-contrast': '#fffdf8',
-    '--brand-primary-bg': '#e8f5ee',
-    '--brand-surface': '#fffdf8',
-    '--brand-surface-alt': '#faf3e3',
-    '--brand-text': '#2a2622',
-    '--brand-text-muted': '#6b6358',
-    '--brand-border': '#d4cab8',
-    '--brand-border-strong': '#5a4f3e',
-    '--brand-accent': '#c4263b',
-    '--brand-danger': '#c4263b',
-    '--brand-success': '#1e8f4a',
-    '--brand-font-family': '"Iowan Old Style", Georgia, "Times New Roman", serif',
-    '--brand-font-weight-heading': '600',
-    '--brand-font-weight-body': '400',
-    '--brand-radius': '0.25rem',
-    '--brand-radius-tight': '0.125rem',
-  },
+const DEFAULT_BRAND = 'A';
+const COLOR_TOKENS = {
+  '--brand-primary': '--sys-surface-interactive-primary-default',
+  '--brand-primary-contrast': '--sys-text-on-interactive',
+  '--brand-primary-bg': '--sys-status-info-surface',
+  '--brand-surface': '--sys-surface-canvas',
+  '--brand-surface-alt': '--sys-surface-raised',
+  '--brand-text': '--sys-text-primary',
+  '--brand-text-muted': '--sys-text-muted',
+  '--brand-border': '--sys-border-subtle',
+  '--brand-border-strong': '--sys-border-strong',
+  '--brand-accent': '--sys-text-accent',
+  '--brand-danger': '--sys-status-critical-text',
+  '--brand-success': '--sys-status-success-text',
+};
+const VALUE_TOKENS = {
+  '--brand-font-family': '--sys-text-scale-body-md-font-family',
+  '--brand-font-weight-heading': '--sys-text-scale-heading-lg-font-weight',
+  '--brand-font-weight-body': '--sys-text-scale-body-md-font-weight',
+  '--brand-radius': '--ref-border-radius-md',
+  '--brand-radius-tight': '--ref-border-radius-sm',
 };
 
-const KNOWN_BRANDS = new Set(Object.keys(BRAND_TOKENS));
+function canonicalBrand(brand: string): 'A' | 'B' | undefined {
+  if (brand === 'A' || brand === 'brand-a') return 'A';
+  if (brand === 'B' || brand === 'brand-b') return 'B';
+  return undefined;
+}
 
 function resolveBrandTokens(brand: string): Record<string, string> {
-  return BRAND_TOKENS[brand] ?? BRAND_TOKENS[DEFAULT_BRAND];
+  const scope = { brand: canonicalBrand(brand), theme: 'light' as const };
+  return Object.fromEntries([
+    ...Object.entries(COLOR_TOKENS).map(([name, token]) => [name, resolveTokenToColor(token, scope)]),
+    ...Object.entries(VALUE_TOKENS).map(([name, token]) => [name, resolveTokenValue(token, scope)]),
+  ].map(([name, value]) => {
+    if (value === undefined) throw new Error(`Built token for ${name} is missing in ${brand}/light`);
+    return [name, value];
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -355,8 +347,13 @@ export function emit(
   const entityBlocks: string[] = [];
   const brandsUsed = new Set<string>();
   let slotsRendered = 0;
+  const invalidOverride = options.brandOverlay !== undefined && !canonicalBrand(options.brandOverlay);
+  if (invalidOverride) {
+    errors.push({ code: 'OODS-BM-002', message: 'Unknown brand_overlay "' + options.brandOverlay + '". Supported brands are A and B.' });
+  }
 
   for (const entity of manifest.entities as SemanticEntity[]) {
+    if (invalidOverride) break;
     try {
       const ctx = runPreEmit(entity, { variant: options.variant });
       if (!ctx.catalog) {
@@ -368,15 +365,19 @@ export function emit(
         continue;
       }
       const declaredOverlay = options.brandOverlay ?? ctx.catalog.brandOverlay;
-      let resolved = declaredOverlay ?? DEFAULT_BRAND;
-      if (declaredOverlay && !KNOWN_BRANDS.has(declaredOverlay)) {
-        warnings.push({
+      const resolved = canonicalBrand(declaredOverlay ?? DEFAULT_BRAND);
+      if (!resolved) {
+        errors.push({
           code: 'OODS-BM-002',
-          message: `Unknown brand_overlay "${declaredOverlay}" — falling back to ${DEFAULT_BRAND}`,
+          message: `Unknown brand_overlay "${declaredOverlay}". Supported brands are A and B.`,
           entity: entity.urn,
         });
-        resolved = DEFAULT_BRAND;
+        continue;
       }
+      if (declaredOverlay?.startsWith('brand-')) {
+        warnings.push({ code: 'OODS-BM-004', message: `Deprecated brand alias "${declaredOverlay}"; use "${resolved}". Compatibility is limited to one release.`, entity: entity.urn });
+      }
+      resolveBrandTokens(resolved);
       brandsUsed.add(resolved);
       entityBlocks.push(renderEntity(ctx.catalog, resolved));
       slotsRendered += ctx.catalog.slots.length;
@@ -389,15 +390,13 @@ export function emit(
     }
   }
 
-  if (brandsUsed.size === 0) brandsUsed.add(DEFAULT_BRAND);
+  if (brandsUsed.size === 0 && errors.length === 0) brandsUsed.add(DEFAULT_BRAND);
 
   const sourceAgent = manifest.source?.agent;
   const catalogVersion = manifest.source?.oods_catalog_version;
   const capturedAt = manifest.source?.captured_at;
   const titleText = options.title ?? `OODS Branded Mockup — ${sourceAgent ?? 'Unknown source'}`;
-  const documentBrand = options.brandOverlay && KNOWN_BRANDS.has(options.brandOverlay)
-    ? options.brandOverlay
-    : DEFAULT_BRAND;
+  const documentBrand = canonicalBrand(options.brandOverlay ?? DEFAULT_BRAND);
 
   const docParts: string[] = [];
   docParts.push('<!DOCTYPE html>');
@@ -405,7 +404,7 @@ export function emit(
   docParts.push('<head>');
   docParts.push(`  <meta charset="utf-8">`);
   docParts.push(`  <title>${escapeHtml(titleText)}</title>`);
-  if (includeStyles) {
+  if (includeStyles && errors.length === 0) {
     docParts.push(`  <style>\n${renderStyle(brandsUsed)}\n  </style>`);
   }
   docParts.push('</head>');
@@ -415,7 +414,7 @@ export function emit(
   docParts.push('  <header class="catalog-header">');
   docParts.push(`    <h1>${escapeHtml(titleText)}</h1>`);
   docParts.push(
-    `    <p class="catalog-meta">Catalog v${escapeHtml(catalogVersion ?? '1.0.0')} · ${manifest.entities.length} entit${manifest.entities.length === 1 ? 'y' : 'ies'} · brand <strong>${escapeHtml(documentBrand)}</strong>${capturedAt ? ` · captured ${escapeHtml(capturedAt)}` : ''}</p>`,
+    `    <p class="catalog-meta">Catalog v${escapeHtml(catalogVersion ?? '1.0.0')} · ${manifest.entities.length} entit${manifest.entities.length === 1 ? 'y' : 'ies'} · brand <strong>${escapeHtml(documentBrand ?? 'unavailable')}</strong>${capturedAt ? ` · captured ${escapeHtml(capturedAt)}` : ''}</p>`,
   );
   docParts.push('  </header>');
   docParts.push('  <section class="entities" aria-label="Entities">');

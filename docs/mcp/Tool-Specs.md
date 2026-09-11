@@ -95,7 +95,7 @@ The 21 default entries come from `packages/mcp-server/src/tools/registry.json`. 
 - **Input schema**: `packages/mcp-server/src/schemas/tokens.build.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
 - **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 60s | rate 30/min | concurrency 1
-- **Purpose**: Produce token artifacts (and always emit a transcript + bundle index).
+- **Purpose**: Return requested-scope JSON and CSS for `brand`/`theme`, full compiled CSS, and explicitly labelled legacy A/light TypeScript and Tailwind artifacts. Missing build outputs trigger both real build stages; failures return `OODS-S019`. Always emit a transcript + bundle index on success.
 
 Example input:
 ```json
@@ -109,10 +109,11 @@ Example output:
   "transcriptPath": "artifacts/current-state/2026-02-24/tokens.build/transcript.json",
   "bundleIndexPath": "artifacts/current-state/2026-02-24/tokens.build/bundle.json",
   "preview": {
-    "summary": "Preview only: would build 4 token artifacts for brand A (dark theme).",
+    "summary": "Preview only: would return 5 token artifacts for brand A (dark theme).",
     "notes": [
       "artifact: tokens.dark.json",
       "artifact: tokens.css",
+      "artifact: tokens.scope.css",
       "artifact: tokens.ts",
       "artifact: tokens.tailwind.json"
     ]
@@ -425,12 +426,15 @@ Example output (preview-only):
   "artifacts": [],
   "transcriptPath": "artifacts/current-state/2026-02-24/review-kit/brand.apply/2026-02-24T05-00-00-000Z/transcript.json",
   "bundleIndexPath": "artifacts/current-state/2026-02-24/review-kit/brand.apply/2026-02-24T05-00-00-000Z/bundle.json",
-  "preview": { "summary": "Updated 1 token value for brand A.", "notes": ["base: 1 updated token"] }
+  "preview": { "summary": "Updated 1 token value for brand A.", "notes": ["base: 1 updated token"] },
+  "receipt": { "sourceWritten": false, "sourceFiles": [], "build": null }
 }
 ```
 
 Notes:
-- `apply=true` writes snapshots/diagnostics into the run directory; `apply=false` is non-destructive.
+- `apply=true` writes canonical A/B source, runs both real token-build stages, and returns `receipt.sourceFiles` with before/after SHA256 and byte counts plus captured stdout/stderr/exit. Snapshots and diagnostics remain in the run directory. `apply=false` changes no source and returns `{sourceWritten:false,sourceFiles:[],build:null}`.
+- Operator-only `MCP_BRAND_SOURCE_ROOT` selects a tokens package root containing `src/tokens/brands` and `scripts`; no caller path is accepted. Default: this repository’s `packages/tokens`.
+- Build failure returns `OODS-S019` with the last 40 output lines and the receipt; source writes remain in place for inspection and repair. There is no automatic rollback.
 - `preview.verbosity="compact"` omits full before/after payloads and specimens, returning summary + hunks only. Default is `full`.
 
 ---
