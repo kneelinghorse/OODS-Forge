@@ -3,6 +3,23 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 const shortName = (name: string) => name.replaceAll('_', ' ').replace(/^./, letter => letter.toUpperCase());
 
+/** Standalone lists expose the same public state operand as workflow screens. */
+export function populateListStates(schema: UiSchema): void {
+  for (const screen of schema.screens) {
+    if (!walk([screen]).some(node => node.collection?.source === 'rows') || walk([screen]).some(node => node.state)) continue;
+    screen.children = [
+      ...(['loading', 'empty', 'error'] as const).map(state => ({
+        id: `${screen.id}-${state}`, component: 'Banner', state,
+        props: {
+          title: state === 'loading' ? 'Loading' : state === 'empty' ? 'No records found' : 'Unable to load records',
+          message: state === 'error' ? 'Try again or choose another record.' : state === 'empty' ? 'Change the filters or add a record.' : 'Loading your records.',
+        },
+      })),
+      { id: `${screen.id}-success`, component: 'Stack', state: 'success', layout: screen.layout, children: screen.children },
+    ];
+  }
+}
+
 /** Collection data belongs to the screen; objectSchema still describes one record. */
 export function populateCollections(schema: UiSchema, context: string, objectName: string, minorUnits = 100): void {
   if (!schema.objectSchema || !['list', 'timeline'].includes(context)) return;

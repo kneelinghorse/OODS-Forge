@@ -461,6 +461,38 @@ jobs:
       - name: Four component package suites (includes shared styles browser proof)
         run: node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue
 
+  runtime-cells:
+    name: runtime-cells
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build:tokens
+      - run: pnpm run build:packages
+      - name: Measure the complete single-screen population from one tarball sweep
+        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-193/m02-ci
+      - name: Reject missing, failed, or historical cells
+        env:
+          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-193/m02-ci/runtime-cells.v1.json
+        run: pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-cells
+          path: artifacts/product-reality/sprint-193/m02-ci
+
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest
