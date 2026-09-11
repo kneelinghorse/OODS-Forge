@@ -129,6 +129,18 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(normalizedNear).toContain(
       "so the carry-forward pay-down is complete and Sprint 191 is closed",
     );
+
+    // Sprint 192 closes under its independent review (PS-2026-09-10-013);
+    // component truth is certified; residual carries are #1892.
+    expect(near).toContain(
+      "Sprint 192 independently certified and closed by `#1891`; residual carries `#1892`",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 192 is **Completed**, independently certified by review `PS-2026-09-10-013` and decision `#1891`.",
+    );
+    expect(normalizedNear).toContain(
+      "so component truth is certified and Sprint 192 is closed",
+    );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );

@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`; Sprint 192 (Increment 11) BUILT, REVIEW PENDING (`#1882`, `#1884`)
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`; Sprint 192 independently certified and closed by `#1891`; residual carries `#1892`
 
-**Updated:** 2026-09-10 — Sprint 192 build session `PS-2026-09-10-012`; current catalog/maturity rows derive from the m06 ledger; Increment 11 built for independent review, Increments 12–14 retained
+**Updated:** 2026-09-10 — Sprint 192 review session `PS-2026-09-10-013`; independently certified and closed: the four component packages run in CI and the fifth capture suite, zero unresolved colour roles and zero system-colour fallbacks in six scopes, accessibility/theme/interaction measured for 75/75 roots in both frameworks, the three disputed rows implemented, `catalog_list` serves the regenerated ledger with no `unverified` governed row; Increments 12–14 retained
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
@@ -11,6 +11,8 @@
 **Sprint 190:** CERTIFIED AND CLOSED. Build base `c3a68d5f`; Mission 1 delivered the merged Sprint 189 head `f19a654c` to the live bridge and sent the Sprint 189 reconnect. Missions 2–5 put the shared renderer on the public surface: `viz.render` returns SVG for all 13 types, dashboard HTML draws 11/11 admitted types, theme and brand resolve from the token scopes, `artifact.certify` grades the requested scope, VizAreaPreview renders a real chart on Subscription/detail, and one measured registry equals its public-handler census. Mission 6 froze the final proof and handed off. Review `PS-2026-09-10-001` (decision `#1859`) re-ran the registry contract test and the independent auditor at the frozen head and inspected the 52-cell matrix, contrast rows and browser receipts; the residual visualization carries are `#1860`. See [Increment 9](#increment-9--sprint-190-visualization-public-render--certified-and-closed).
 
 **Sprint 191:** CERTIFIED AND CLOSED. Build base `d3a99d39`; no delivery mission, because the bridge already served that head. Mission 1 put a measured dark categorical palette into the A/B token scopes, repaired light slot 04, added the registry `contrastPassed` cell and gave `code.generate` theme/brand options so the generated app takes its theme. Mission 2 closed OODS-N016 generically so the Organization and User workflows generate (77/77, 154/154) with six packed cells green. Mission 3 retired the seven `#1845`/chart craft items and `#1274` at the producer with BEFORE/AFTER receipts. Mission 4 closed maintenance `#1318`–`#1322` on receipts and rebuilt the `#1315` bundle clean. Mission 5 froze the final proof and handed off. Review `PS-2026-09-10-008` (decision `#1880`) recomputed all 24 palette cells from the built CSS, re-ran the independent auditor and the contract specs at the head and inspected the dark and AFTER screenshots in both frameworks; the residual carries are `#1881`. See [Increment 10](#increment-10--sprint-191-carry-forward-pay-down--certified-and-closed).
+
+**Sprint 192:** CERTIFIED AND CLOSED. Build base `5fdf8a18`; Mission 1 delivered that merged head to the live bridge and sent the six prepared notices, closing `#1315`. Mission 2 put the four component packages into CI and a fifth capture suite and repaired the token contract (zero unresolved colour roles, zero system-colour fallbacks in six scopes, 106 `cmp` semantic aliases). Missions 3–4 measured accessibility, interaction and six theme scopes for every governed root in React and Vue inside the CI job. Mission 5 implemented AuditSummaryCard, SortIndicator and TimelineEntryLabel on that proof and cleared the Invoice V007 warnings. Mission 6 regenerated the ledger from evidence, refreshed the served export and completed the 109-row classification proposal. Mission 7 froze the final proof and handed off. Review `PS-2026-09-10-013` (decision `#1891`) re-ran the token resolver, the composition census and the retained component verifier at the merged head, read the served export and the five capture receipts, and confirmed the hash-bound `#1890` derivation exception; the residual carries are `#1892`. See [Increment 11](#increment-11--sprint-192-component-truth--certified-and-closed).
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
@@ -36,16 +38,16 @@ through the existing public object/context inputs; saved-corpus success does not
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 192 m06 ledger, 2026-09-10; independent review pending
+## Current measured state — Sprint 192 m06 ledger, 2026-09-10; independently certified by `#1891`
 
 | Claim area | Current evidence | Remaining obligation |
 |---|---|---|
 | Component catalog | 109 obligations retained under #1788; React and Vue implement **75/109**, HTML maps **109/109**, versioned contracts **75/109**, generated-consumer evidence **61/109**. The `2026-09-10` catalog export equals the generated capability ledger | 34 implementations pending (25 `Viz*` control rows and 9 others); proposed classification is 24 native / 84 recipe / 1 alias. All 109 await Derek’s approval; `approvedRuntimeCensus` remains null |
-| Component maturity | Accessibility and theme **75 verified / 34 unavailable**; interaction **24 verified / 51 not-applicable (static) / 34 unavailable**, with reasons. Six scopes × 75 roots × two frameworks = **900 measured cells**. Four component packages run in CI and the fifth capture suite. The token resolver reports zero unresolved colour roles and zero reachable system-colour fallbacks outside forced-colors; all six formerly unguarded names are defined | Independent review pending. Baseline #1884 retains 191 referenced / 45 token-defined / 57 locally declared / 89 unresolved, 7 missing system names, and 61 names reaching a system-colour fallback through actual per-scope resolution; the former 26 was a syntactic estimate |
+| Component maturity | Accessibility and theme **75 verified / 34 unavailable**; interaction **24 verified / 51 not-applicable (static) / 34 unavailable**, with reasons. Six scopes × 75 roots × two frameworks = **900 measured cells**. Four component packages run in CI and the fifth capture suite. The token resolver reports zero unresolved colour roles and zero reachable system-colour fallbacks outside forced-colors; all six formerly unguarded names are defined | Certified by `#1891`. Baseline #1884 retains 191 referenced / 45 token-defined / 57 locally declared / 89 unresolved, 7 missing system names, and 61 names reaching a system-colour fallback through actual per-scope resolution; the former 26 was a syntactic estimate |
 | React and Vue | m05 proves 28 packed cells: 14 workflow cells across seven objects (including Subscription/Organization/User 6/6), 10 canonical timeline cells and four real-trait fixture cells; 214 passed gates and 10 explicit static N/A, zero failed/skipped. Historical Sprint 187 breadth remains separately retained | Sprint 193 must exercise the full 154-cell population at one head; no union of historical and current receipts is presented as that proof. Invoice and Plan still have no packed runtime cell |
 | Fresh composition | **77/77 schemas and 154/154 build generation cells**, including 66/66 single-screen schemas and 132/132 cells; zero OODS-V007 or N0 warnings in m05 final census | Generation counts do not assert runtime maturity; Invoice and Plan display-only header bindings were repaired at the producer |
 | Saved designs | The served store carries the adopted User-form successor (version 2, byte-identical to the Sprint 187 successor), so the live store is 16/16-capable; the retained original store's 15/16 is a historical negative | None on the served store; the original store is retained, not relabeled |
-| Delivery and discovery | The bridge serves reviewed `5fdf8a18`; m01 retained exact store hashes and six delivery/re-pin messages | Sprint 192 reconnect will be prepared unsent at m07; delivery of this build follows independent review |
+| Delivery and discovery | The bridge serves reviewed `5fdf8a18`; m01 retained exact store hashes and six delivery/re-pin messages | The Sprint 193 reconnect (cmos-dashboard, forge-demos, aquex-mcp) is prepared unsent in m07; Sprint 193 m01 delivers merged `c098237f` and sends it |
 | Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 certified and closed by `#1880`; the 8 ECharts types are uncertified by architecture (no compile leg); the 21 patterns all sit on the 5 certified types and no taxonomy or Core Analytics Profile artifact exists; HC pixels deferred (#1851); the Role-A caution and residue are carried by `#1881` (Sprint 194) |
 | Release proof | Portable runtime: 12 packages, deterministic, SBOM 245, double-assembled in CI; `docs/api` (28 files) generated with `--check` | The bridge is not in the bundle; only Subscription is a harness-driven reference app; `docs/components` (33 files) and the Tool-Specs counts are hand-written; mutation bites cover consumer gates only (Increment 14) |
 
@@ -76,9 +78,11 @@ Program sequence rows done: the direction reset; component foundation (Sprint 18
 
 The binding debt is therefore truth about the breadth already built, and the scalable answer is machinery: proof that runs in a gate and a ledger regenerated from it, so that each later wave is born measured.
 
+After Increment 11 (`#1891`): 75 of 109 rows resolve in React and Vue with measured accessibility, theme and interaction cells served by `catalog_list`; the breadth exit gate now waits only on the 34 unimplemented rows (Sprint 193) and Derek's classification decision.
+
 | Increment | Sprint | Outcome | Exit |
 |---|---|---|---|
-| 11 — Component truth | 192, BUILT, REVIEW PENDING | Proof in the gate; token-resolution contract; accessibility, interaction and theme measured 75/75 in both frameworks; the three disputed rows; the ledger regenerated and served; the 109-row classification proposal | Every governed root has measured cells from suites that run in CI; `catalog_list` serves them; Derek's approval is the only open step to a non-null runtime census |
+| 11 — Component truth | 192, CERTIFIED AND CLOSED (`#1891`) | Proof in the gate; token-resolution contract; accessibility, interaction and theme measured 75/75 in both frameworks; the three disputed rows; the ledger regenerated and served; the 109-row classification proposal | Every governed root has measured cells from suites that run in CI; `catalog_list` serves them; Derek's approval is the only open step to a non-null runtime census |
 | 12 — Runtime at scale and the visualization-controls wave | 193 | The generic single-screen harness over all 132 single-screen cells (one pack per sweep) and the workflow harness over all 11 workflows, so runtime-proven cells become a gated ratio moving from 34 toward 154 with typed gaps; the 9 remaining non-viz rows and the 25 `Viz*` control rows implemented on the Sprint 192 machinery; the design loop gains a mount/interaction/no-console-error tier | Runtime coverage is a gate, not prose; React and Vue implement 109/109 or carry a typed gap per row |
 | 13 — Visualization breadth and certification | 194 | A versioned taxonomy and Core Analytics Profile across the eight families; the 21 patterns promoted to recipe identities in the registry; extension gaps typed (financial, scientific); the ECharts certification architecture decision (a compile leg or a declared uncertified profile); the HC palette decision (`#1851`); the Role-A hue revision; viz mutation bites | 100% of the census classified; the core profile surface-complete; no untyped gap |
 | 14 — Integrated release proof | 195 | The bridge in the portable bundle; Subscription, Organization and User exercised from the bundle as reference apps; `docs/components` and the Tool-Specs counts generated from the ledger with `--check`; doc and viz mutation bites; the gate-2 decisions | Every published claim is generated from current executable evidence; no false green survives mutation |
@@ -314,6 +318,9 @@ The Sprint 191 review (`#1880`) certified the carry-forward pay-down and closed 
 are `#1881`. PR #94 merged into `OODS-pro` at `5fdf8a18`. Sprint 192 m01 delivers that merged head to the bridge,
 sends the prepared reconnect to cmos-dashboard, forge-demos and aquex-mcp, and sends the `#1315` re-pin notices to
 aquex-mcp, forge-demos and shopify-forge, which closes `#1315`.
+The Sprint 192 review (`#1891`) certified component truth and closed the sprint; the residual carries are `#1892`.
+PR #96 merged into `OODS-pro` at `c098237f`. Sprint 193 m01 delivers that merged head to the bridge and sends the
+prepared Sprint 193 reconnect to cmos-dashboard, forge-demos and aquex-mcp.
 
 
 ## Increment 8 — Sprint 189: Browser design loop — CERTIFIED AND CLOSED
@@ -423,9 +430,16 @@ truncating its Sort select at 390 and carrying no rows; raw lifecycle words on t
 amounts unrelated to the record price; Organization and User workflows generated and gate-green but below
 Subscription's craft bar.
 
-## Increment 11 — Sprint 192: Component truth — BUILT, REVIEW PENDING
+## Increment 11 — Sprint 192: Component truth — CERTIFIED AND CLOSED
 
-Authority #1882 and baseline correction #1884. Seven serial missions deliver the reviewed Sprint 191
+Sprint 192 is **Completed**, independently certified by review `PS-2026-09-10-013` and decision `#1891`. Build base
+`5fdf8a18`; authority `#1882` and baseline correction `#1884`; built under decisions #1883–#1890. The
+[handoff](../../../artifacts/product-reality/sprint-192/m07/closeout/review-handoff.json) binds the corrected
+implementation `c2f9c338`, execution `fb56910b` and review-input `b078ac6e` commits; PR #96 merged into `OODS-pro` at
+`c098237f`. Historical builder receipts retain `builderSelfCertified:false` and `separateReviewRequired:true`; they
+are not relabeled.
+
+Seven serial missions deliver the reviewed Sprint 191
 head and its six notices, put the four component packages in CI and a fifth capture suite, measure
 accessibility/interaction and six theme scopes, implement AuditSummaryCard, SortIndicator and
 TimelineEntryLabel, and regenerate the catalog from evidence. Current coverage is 75 React/Vue
@@ -438,5 +452,25 @@ and 61 reachable system-colour names under the real per-scope resolver. The repa
 has zero unresolved colour roles and zero reachable system-colour fallbacks outside forced-colors.
 The final packet is [Sprint 192 m07](../../../artifacts/product-reality/sprint-192/m07/README.md).
 Fresh generation (77 schemas / 154 cells), packed runtime observations and independent certification
-remain distinct claims. Sprint 192 stays Active, `builderSelfCertified:false`; independent review and
-Derek's classification decision remain open. Reconnect for Sprint 193 is prepared unsent.
+remain distinct claims. Derek's classification decision remains open and `approvedRuntimeCensus` stays null; the
+Sprint 193 reconnect is prepared unsent until Sprint 193 m01 delivers `c098237f`.
+
+**Review verdict (`PS-2026-09-10-013`, decision `#1891`):** re-measured at the merged head, the served `2026-09-10`
+export and the built `catalog_list` carry zero `unverified` cells (174 verified / 218 unavailable / 51 not-applicable)
+and zero HTML fallbacks; the retained verifier, re-run with the corrected implementation head pinned and writes
+disabled, proves built catalog = export = ledger for 109/109 rows, 75 passed axe scenarios and 450 passed theme
+root-cells per framework with matching screenshot hashes; the token resolver re-run live reports zero unresolved colour
+roles and zero reachable system-colour fallbacks in all six scopes with all six formerly unguarded names defined; the
+composition census re-run live is 77/77 and 154/154 with 14 attributed movements and 17 unchanged live-store hashes;
+the v2 proposal holds 109 rows (24 native / 84 recipe / 1 alias) with `approvedRuntimeCensus` null; `ci.yml` runs the
+four package suites and both six-cell visual harnesses; suite accounting passed with zero unattributed deltas; all
+five capture receipts exit zero (1397 / 69 / 6134 / 6322 / 1099 passed, 0 failed, the same 16 skips); the independent
+audit passed at `fb56910b`; the `#1890` derivation exception is hash-bound and only its three scripts changed after
+the execution head outside evidence paths; remote CI is green at the execution head, the final head and the merge
+commit. Every `#1882` exit criterion is met, so component truth is certified and Sprint 192 is closed. The truthful
+residue is ranked in `#1892` and none of it blocks closure: 34 rows unimplemented in React/Vue (Sprint 193); Derek's
+classification decision; runtime at scale (154 cells at one head, Invoice and Plan without a packed cell); the optional
+ECharts render soak red on the unchanged base control (learning #561); Auditable/Sortable placements proven on bounded
+real-trait fixtures; interaction claims for 51 static roots resting on declared reasons; the `#1881` visualization
+residue (Sprint 194); delivery of `c098237f` and the prepared reconnect by Sprint 193 m01; hand-written
+`docs/components` and Tool-Specs counts (Increment 14).
