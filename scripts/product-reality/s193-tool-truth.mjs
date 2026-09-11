@@ -70,6 +70,7 @@ export function deriveToolTruth({ root = ROOT, head, mode = 's194' } = {}) {
   const e2eSource = read(e2ePath);
   const e2eCalls = [...e2eSource.matchAll(/\.callTool\(\s*["']([^"']+)["']/g)].map(match => ({ name: match[1], path: e2ePath, line: e2eSource.slice(0, match.index).split('\n').length }));
   const caveats = JSON.parse(read('scripts/product-reality/s193-tool-caveats.json'));
+  const portableGaps = mode === 's194' ? JSON.parse(read('artifacts/product-reality/sprint-194/m06/portable-gaps.json')).gaps : [];
   const rows = names.map(name => {
     const spec = toolSpecs.get(name); assert(spec, `No ToolSpec for ${name}`); assert.equal(typeof descriptions[name], 'string');
     const inputSchemaPath = path.posix.join('packages/mcp-server/src', spec.schema);
@@ -89,8 +90,15 @@ export function deriveToolTruth({ root = ROOT, head, mode = 's194' } = {}) {
       return { ...rest, line: matches[0] };
     });
     const portableE2ERefs = e2eCalls.filter(call => call.name === name.replaceAll('.', '_')).map(({ name: _name, ...ref }) => ref);
-    return { name, registration: registry.auto.includes(name) ? 'auto' : 'on-demand', advertisedClaim, claimHash: hash(serialize(advertisedClaim)), inputSchemaPath, inputSchemaHash: hash(inputBytes), proofTier: TIERS.find(tier => tests[tier]?.length) ?? 'none', testImports: tests, receiptRefs, portableE2E: portableE2ERefs.length > 0, portableE2ERefs, caveats: structuredCaveats };
+    return { name, registration: registry.auto.includes(name) ? 'auto' : 'on-demand', advertisedClaim, claimHash: hash(serialize(advertisedClaim)), inputSchemaPath, inputSchemaHash: hash(inputBytes), proofTier: TIERS.find(tier => tests[tier]?.length) ?? 'none', testImports: tests, receiptRefs, portableE2E: portableE2ERefs.length > 0, portableE2ERefs, ...(mode === 's194' ? { portableLimits: portableGaps.filter(gap => gap.tool === name) } : {}), caveats: structuredCaveats };
   });
+  if (mode === 's194') for (const row of rows) {
+    assert(row.caveats.every(caveat => caveat.kind === 'documented-limit'), `${row.name}: unresolved claim`);
+    if (row.registration === 'auto') {
+      assert.equal(row.proofTier, 'product-reality', `${row.name}: missing boundary source proof`);
+      assert.equal(row.portableE2E, true, `${row.name}: missing extracted-bundle invocation`);
+    } else assert(['contract', 'product-reality'].includes(row.proofTier), `${row.name}: on-demand proof missing`);
+  }
   const byTier = population => Object.fromEntries(TIERS.map(tier => [tier, population.filter(row => row.proofTier === tier).length]));
   return { schemaVersion: '1.0.0', ...(mode === 's194' ? { mode, retired } : {}), head, builderSelfCertified: false, methodology: { proofTier: 'Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.', receiptRefs: 'README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.', portableE2E: 'Literal callTool names in scripts/runtime/e2e.mjs; source coverage only, not a claim this census executed the portable E2E.' }, summary: { entries: rows.length, auto: registry.auto.length, onDemand: registry.onDemand.length, byTier: byTier(rows), autoByTier: byTier(rows.filter(row => row.registration === 'auto')), onDemandByTier: byTier(rows.filter(row => row.registration === 'on-demand')), portableE2E: rows.filter(row => row.portableE2E).length }, rows };
 }

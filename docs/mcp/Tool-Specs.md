@@ -87,9 +87,11 @@ Response (error):
 
 ## Auto tool contracts (19 registry entries)
 
-The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. Every live entry has one grouped section below, with complete parameter tables linked under `docs/api/*`.
 
 ### `tokens.build`
+
+Portable calls support dry-run preview/transcript only: apply:true needs omitted legacy tokens.ts and host build inputs.
 
 - **Input schema**: `packages/mcp-server/src/schemas/tokens.build.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
@@ -125,6 +127,8 @@ Notes:
 - Preview responses include a summary of expected artifacts when `apply=false`.
 
 ---
+
+[Complete input/output reference](../api/tokens-build.md).
 
 ### `structuredData.fetch`
 
@@ -166,243 +170,11 @@ Notes:
 
 ---
 
-### `repl.validate`
-
-- **Input schema**: `packages/mcp-server/src/schemas/repl.validate.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/repl.validate.output.json`
-- **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Validate UiSchema trees structurally and optionally check WCAG accessibility.
-
-Example input (mode=`full`):
-```json
-{
-  "mode": "full",
-  "schema": {
-    "version": "2026.02",
-    "dsVersion": "2026-02-24",
-    "theme": "dark",
-    "screens": [
-      {
-        "id": "screen_home",
-        "component": "Stack",
-        "children": [{ "id": "title", "component": "Text", "props": { "content": "Hello" } }]
-      }
-    ]
-  }
-}
-```
-
-Example input (schemaRef shorthand):
-```json
-{
-  "mode": "full",
-  "schemaRef": "compose-abc123"
-}
-```
-
-Example input (mode=`patch`, node patch):
-```json
-{
-  "mode": "patch",
-  "baseTree": { "version": "2026.02", "screens": [ { "id": "screen_home", "component": "Stack", "children": [] } ] },
-  "patch": { "nodeId": "screen_home", "path": "component", "value": "Card" }
-}
-```
-
-Example input (mode=`patch`, JSON Patch array):
-```json
-{
-  "mode": "patch",
-  "baseTree": { "version": "2026.02", "screens": [ { "id": "screen_home", "component": "Stack", "children": [] } ] },
-  "patch": [
-    { "op": "replace", "path": "/screens/0/component", "value": "Card" }
-  ]
-}
-```
-
-With accessibility checks:
-```json
-{
-  "mode": "full",
-  "checkA11y": true,
-  "schema": { "..." : "..." }
-}
-```
-
-Example output:
-```json
-{
-  "status": "ok",
-  "mode": "full",
-  "dslVersion": "2026.02",
-  "registryVersion": "2026-02-24",
-  "errors": [],
-  "warnings": [],
-  "meta": { "screenCount": 1, "nodeCount": 2 }
-}
-```
-
-Notes:
-- `checkA11y: true` runs 18 WCAG contrast rules after structural validation passes. Failures appear as `A11Y_CONTRAST` warnings with contrast ratio, WCAG level, and fix hints.
-- `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
-- In `patch` mode, `baseTree` is required. Patch payloads accept JSON Patch arrays or node patch objects/arrays. Malformed patch requests return path-level errors with a valid patch example in `hint`.
-
----
-
-### `repl.render`
-
-- **Input schema**: `packages/mcp-server/src/schemas/repl.render.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/repl.render.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Render UiSchema trees to HTML. Supports document mode (self-contained page) and fragment mode (per-component HTML + CSS map).
-- **Preview note**: HTML/fragments payloads are returned only when `apply: true`; otherwise responses are metadata-only previews.
-
-Example input (mode=`patch`, node-targeted patch):
-```json
-{
-  "mode": "patch",
-  "baseTree": {
-    "version": "2026.02",
-    "screens": [{ "id": "screen_home", "component": "Stack", "children": [{ "id": "title", "component": "Text" }] }]
-  },
-  "patch": [{ "nodeId": "title", "path": "component", "value": "ArchiveEvent" }]
-}
-```
-
-Example input (schemaRef shorthand):
-```json
-{
-  "mode": "full",
-  "schemaRef": "compose-abc123",
-  "apply": true
-}
-```
-
-Fragment mode:
-```json
-{
-  "mode": "full",
-  "apply": true,
-  "output": { "format": "fragments" },
-  "schema": { "...": "..." }
-}
-```
-
-Example output:
-```json
-{
-  "status": "ok",
-  "mode": "patch",
-  "dslVersion": "2026.02",
-  "registryVersion": "2026-02-24",
-  "errors": [],
-  "warnings": [],
-  "appliedPatch": true,
-  "preview": {
-    "screens": ["screen_home"],
-    "routes": [],
-    "activeScreen": "screen_home",
-    "summary": "Render ready for 1 screen"
-  }
-}
-```
-
-Notes:
-- Document mode wraps output in a self-contained HTML page with inlined token CSS.
-- HTML and fragment payloads are returned only when `apply: true`; otherwise responses are metadata-only previews.
-- Fragment mode returns per-component HTML fragments with `cssRefs` for CSS extraction (requires `apply: true`).
-- Unknown components in non-strict fragment mode produce per-node errors without blocking sibling rendering; OODS-W002 explicitly reports this V006 reclassification.
-- Fragment mode reports ignored `brand`, `output.tokenOverlay`, and `output.skinOverlay` options together in OODS-W001. Use document mode to apply them.
-- Request `dslVersion` and `output.depth` were removed because they were not consumed. UiSchema `version` and response version metadata remain; validate `apply` remains an explicitly ignored bridge-parity key.
-- `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
-- Patch mode requires both `baseTree` and `patch`.
-
----
-
-### `viz.render`
-
-- **Input schema**: `packages/mcp-server/src/schemas/viz.render.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
-- **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Supports 13 chart types: 5 tabular (`bar`, `line`, `area`, `scatter`, `heatmap`) in both suggest and explicit mode, plus 8 explicit-only (`treemap`, `sunburst`, `sankey`, `force_graph`, `chord`, `choropleth`, `bubble_map`, `flow_map`).
-- **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
-
-Example input (explicit mode):
-```json
-{
-  "rows": [
-    { "region": "North", "quarter": "2024-01", "revenue": 120000 },
-    { "region": "South", "quarter": "2024-01", "revenue": 135000 }
-  ],
-  "chartType": "bar",
-  "encodings": { "x": "region", "y": { "field": "revenue", "aggregate": "sum" } }
-}
-```
-
-Example input (suggest mode — omit `chartType`, the recommender chooses):
-```json
-{
-  "rows": [
-    { "quarter": "2024-01", "revenue": 120000 },
-    { "quarter": "2024-02", "revenue": 128000 }
-  ]
-}
-```
-
-Example input (ECharts opt-in + inline token CSS):
-```json
-{
-  "rows": [{ "x": "A", "y": 1 }, { "x": "B", "y": 3 }],
-  "chartType": "line",
-  "encodings": { "x": "x", "y": "y" },
-  "output": { "echarts": true, "compact": false }
-}
-```
-
-Example input (cached `datasetRef` instead of inline rows):
-```json
-{
-  "datasetRef": "viz-render-dataset-abc123",
-  "chartType": "scatter",
-  "encodings": { "x": "revenue", "y": "units" }
-}
-```
-
-Example output (compact, explicit mode — abbreviated):
-```json
-{
-  "status": "ok",
-  "mode": "explicit",
-  "chartType": "bar",
-  "spec": {
-    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-    "data": { "values": [{ "region": "North", "quarter": "2024-01", "revenue": 120000 }] },
-    "mark": { "type": "bar" },
-    "encoding": {
-      "x": { "field": "region", "type": "ordinal" },
-      "y": { "field": "revenue", "type": "quantitative", "aggregate": "sum" }
-    }
-  },
-  "a11yDescription": "Bar chart of sum of revenue by region.",
-  "tokenCssRef": "tokens.build",
-  "specRef": "viz-render-9f1c…",
-  "warnings": [],
-  "output": { "compact": true },
-  "meta": { "renderer": "vega-lite", "mark": "MarkBar", "rowCount": 2, "fields": ["region", "quarter", "revenue"] }
-}
-```
-
-Notes:
-- **Data path**: provide exactly one of `rows` (primary; inline, a few hundred rows is the sweet spot) or `datasetRef` (a previously cached dataset on the schemaRef-style TTL cache). In Phase 0 there is no `datasetRef` producer beyond the value cache, so inline `rows` is the main path.
-- **Explicit vs suggest**: when `chartType` is set, `encodings` with at least `x` and `y` is required. Omit `chartType` to enter suggest mode, where field profiles are inferred and the recommender returns a `suggestion` (`{ patternId, score }`) alongside `inferredFields` in `meta`.
-- **Output controls**: `output.compact` (default `true`) returns `tokenCssRef` instead of inlining token CSS; `output.echarts` (default `false`) also returns `echartsSpec`; `output.includeNormalizedSpec` (default `false`) also returns the intermediate `NormalizedVizSpec` IR.
-- **Renderability**: the `spec` is a compiled Vega-Lite spec that passes `vl.compile` + `vega.parse` (locked by the render-fidelity goldens), with the input rows bound into `data.values` — a consumer (e.g. Workbench) renders it; the server does not SSR.
-- `specRef`/`specRefCreatedAt`/`specRefExpiresAt`: a TTL reference trio for pipeline reuse.
-- Full parameter/output tables: [viz.render](../api/viz-render.md).
-
----
+[Complete input/output reference](../api/structuredData-fetch.md).
 
 ### `brand.apply`
+
+Portable bundles omit canonical brand source; even apply:false returns a missing-source error.
 
 - **Input schema**: `packages/mcp-server/src/schemas/brand.apply.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/brand.apply.output.json`
@@ -438,6 +210,14 @@ Notes:
 - `preview.verbosity="compact"` omits full before/after payloads and specimens, returning summary + hunks only. Default is `full`.
 
 ---
+
+[Complete input/output reference](../api/brand-apply.md).
+
+### `brand.intake`
+
+Validates the FORGE-SCALAR-DTCG-1 envelope without persistence. Fully accepted inline A/B documents with uniquely mapped themes return a consumable `delta` and `envelopeHash`. Brand creation and content-reference resolution are unavailable; `apply` is ignored bridge parity. Pass an accepted delta to `brand.apply` in a host repository.
+
+[Complete input/output reference](../api/brand-intake.md).
 
 ### `catalog.list`
 
@@ -492,7 +272,11 @@ Example input (explicit full detail):
 
 ---
 
+[Complete input/output reference](../api/catalog-list.md).
+
 ### `code.generate`
+
+Portable React/Vue generation returns OODS-N015 because readiness source/test/declaration references are not shipped; host generation remains supported.
 
 Subscription detail declares a read-only `VizAreaPreview.chart` over
 `last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. This public
@@ -657,17 +441,7 @@ adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or de
 
 ---
 
-### Remaining option contracts
-
-`health.tokens` reports built brands, themes and scopes from the token build plus a labelled configured `defaultScope` (`source: env | default`); it does not observe a consumer. `dashboard.render` resolves governed `measureRef` by default; unknown refs yield OODS-V130, missing fields yield OODS-V137, and explicit `resolveMeasures:false` disables resolution. Unreferenced dashboards retain their rendered bytes.
-
-The five Cartesian `viz.render` families return Vega-Lite `spec` and opt-in `echartsSpec`; the eight ECharts-primary families omit `spec` and always return `echartsSpec`, `output.echarts:true`, and `output.reason: "echarts-primary-family"`.
-
-### `design.preview`
-
-Capture an object/context (including workflow) using the running local design loop. Optional framework is react, vue or both; widths default to 390/820/1440. Preferences are the public compose preferences. The tool invokes the same render command and returns validated receipts with screenshot paths, accessibility text, layout measurements, browser errors and schema/artifact hashes. It writes isolated receipt files and never saves a schema.
-
-Start the loop in this checkout with `pnpm design:loop serve`. An unavailable or starting server returns retryable `OODS-N019` before creating partial output. See [the generated API contract](../api/design-preview.md) and [the runnable instructions](../../scripts/design-loop/README.md).
+[Complete input/output reference](../api/code-generate.md).
 
 ### `design.compose`
 
@@ -791,7 +565,212 @@ Override guidance:
 
 ---
 
-### `map.create`
+[Complete input/output reference](../api/design-compose.md).
+
+### `design.preview`
+
+Capture an object/context (including workflow) using the running local design loop. Optional framework is react, vue or both; widths default to 390/820/1440. Preferences are the public compose preferences. The tool invokes the same render command and returns validated receipts with screenshot paths, accessibility text, layout measurements, browser errors and schema/artifact hashes. It writes isolated receipt files and never saves a schema.
+
+Start the loop in this checkout with `pnpm design:loop serve`. An unavailable or starting server returns retryable `OODS-N019` before creating partial output. See [the generated API contract](../api/design-preview.md) and [the runnable instructions](../../scripts/design-loop/README.md).
+
+[Complete input/output reference](../api/design-preview.md).
+
+### `pipeline`
+
+Portable React/Vue generation fails at codegen with OODS-N015 because readiness source/test/declaration references are not shipped; no artifact is claimed.
+
+Runs compose, validate, render and code generation, optionally saving by name. Fresh schema references are forwarded unchanged. Framework/profile/options follow the explicit/default precedence above. Release receipts say `evidenceVerification: "hash-bound-not-re-executed"`; supplied proof references are not independently executed.
+
+[Complete input/output reference](../api/pipeline.md).
+
+### `health`
+
+Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
+
+[Complete input/output reference](../api/health.md).
+
+### `registry.snapshot`
+
+- **Input schema**: `packages/mcp-server/src/schemas/registry.snapshot.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/registry.snapshot.output.json`
+- **Status**: Contract + implementation landed in Sprint 90 (`s90-m03`). Registration across every surface happens in `s90-m05`.
+- **Purpose**: Return the full OODS registry state in one call for reconciliation consumers that would otherwise need `map.list` plus N× `map.resolve`.
+
+Example input:
+```json
+{}
+```
+
+Example output:
+```json
+{
+  "maps": [
+    {
+      "id": "material-button",
+      "externalSystem": "material",
+      "externalComponent": "Button",
+      "oodsTraits": ["Stateful", "Labelled"],
+      "confidence": "manual"
+    }
+  ],
+  "traits": {
+    "Addressable": {
+      "name": "Addressable",
+      "version": "1.0.0",
+      "description": "Canonical multi-role address trait.",
+      "category": "core",
+      "tags": ["address"],
+      "contexts": ["detail", "form"],
+      "objects": ["Organization", "User"],
+      "source": "traits/core/Addressable.trait.yaml"
+    }
+  },
+  "objects": {
+    "User": {
+      "name": "User",
+      "version": "1.0.0",
+      "domain": "core.identity",
+      "description": "Canonical user object.",
+      "tags": ["identity"],
+      "traits": [
+        { "reference": "core/Identifiable", "alias": "UserIdentity", "parameters": {} }
+      ],
+      "fields": ["user_id", "email"],
+      "source": "objects/core/User.object.yaml"
+    }
+  },
+  "etag": "6d6224a2293e24fcefff2060dc60d8b3cf516af14f8d8f7344e3d5d726b7d0d6",
+  "generatedAt": "2026-04-16T00:00:00.000Z"
+}
+```
+
+Notes:
+- `maps` come from `artifacts/structured-data/component-mappings.json`.
+- `traits` and `objects` are keyed by name and sourced from the published structured-data components artifact (`artifacts/structured-data/oods-components-*.json` via the same resolution path used by `structuredData.fetch`).
+- `generatedAt` is the latest source timestamp across the mappings doc and components artifact, so it stays stable until one of the underlying sources changes.
+- `etag` is a stable SHA256 hash over the assembled snapshot payload (with `generatedAt` excluded from the hash calculation by the shared structured-data etag logic).
+
+Output fields:
+| Field | Type | Description |
+|-------|------|-------------|
+| `maps` | array | Full component mapping registry |
+| `traits` | object | Trait catalog keyed by trait name |
+| `objects` | object | Object catalog keyed by object name |
+| `etag` | string | Stable hash of the assembled snapshot payload |
+| `generatedAt` | string | Latest underlying source timestamp contributing to the snapshot |
+
+---
+
+[Complete input/output reference](../api/registry-snapshot.md).
+
+### `viz.render`
+
+- **Input schema**: `packages/mcp-server/src/schemas/viz.render.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
+- **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
+- **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Supports 13 chart types: 5 tabular (`bar`, `line`, `area`, `scatter`, `heatmap`) in both suggest and explicit mode, plus 8 explicit-only (`treemap`, `sunburst`, `sankey`, `force_graph`, `chord`, `choropleth`, `bubble_map`, `flow_map`).
+- **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
+
+Example input (explicit mode):
+```json
+{
+  "rows": [
+    { "region": "North", "quarter": "2024-01", "revenue": 120000 },
+    { "region": "South", "quarter": "2024-01", "revenue": 135000 }
+  ],
+  "chartType": "bar",
+  "encodings": { "x": "region", "y": { "field": "revenue", "aggregate": "sum" } }
+}
+```
+
+Example input (suggest mode — omit `chartType`, the recommender chooses):
+```json
+{
+  "rows": [
+    { "quarter": "2024-01", "revenue": 120000 },
+    { "quarter": "2024-02", "revenue": 128000 }
+  ]
+}
+```
+
+Example input (ECharts opt-in + inline token CSS):
+```json
+{
+  "rows": [{ "x": "A", "y": 1 }, { "x": "B", "y": 3 }],
+  "chartType": "line",
+  "encodings": { "x": "x", "y": "y" },
+  "output": { "echarts": true, "compact": false }
+}
+```
+
+Example input (cached `datasetRef` instead of inline rows):
+```json
+{
+  "datasetRef": "viz-render-dataset-abc123",
+  "chartType": "scatter",
+  "encodings": { "x": "revenue", "y": "units" }
+}
+```
+
+Example output (compact, explicit mode — abbreviated):
+```json
+{
+  "status": "ok",
+  "mode": "explicit",
+  "chartType": "bar",
+  "spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "data": { "values": [{ "region": "North", "quarter": "2024-01", "revenue": 120000 }] },
+    "mark": { "type": "bar" },
+    "encoding": {
+      "x": { "field": "region", "type": "ordinal" },
+      "y": { "field": "revenue", "type": "quantitative", "aggregate": "sum" }
+    }
+  },
+  "a11yDescription": "Bar chart of sum of revenue by region.",
+  "tokenCssRef": "tokens.build",
+  "specRef": "viz-render-9f1c…",
+  "warnings": [],
+  "output": { "compact": true },
+  "meta": { "renderer": "vega-lite", "mark": "MarkBar", "rowCount": 2, "fields": ["region", "quarter", "revenue"] }
+}
+```
+
+Notes:
+- **Data path**: provide exactly one of `rows` (primary; inline, a few hundred rows is the sweet spot) or `datasetRef` (a previously cached dataset on the schemaRef-style TTL cache). In Phase 0 there is no `datasetRef` producer beyond the value cache, so inline `rows` is the main path.
+- **Explicit vs suggest**: when `chartType` is set, `encodings` with at least `x` and `y` is required. Omit `chartType` to enter suggest mode, where field profiles are inferred and the recommender returns a `suggestion` (`{ patternId, score }`) alongside `inferredFields` in `meta`.
+- **Output controls**: `output.compact` (default `true`) returns `tokenCssRef` instead of inlining token CSS; `output.echarts` (default `false`) also returns `echartsSpec`; `output.includeNormalizedSpec` (default `false`) also returns the intermediate `NormalizedVizSpec` IR.
+- **Renderability**: the `spec` is a compiled Vega-Lite spec that passes `vl.compile` + `vega.parse` (locked by the render-fidelity goldens), with the input rows bound into `data.values` — a consumer (e.g. Workbench) renders it; the server does not SSR.
+- `specRef`/`specRefCreatedAt`/`specRefExpiresAt`: a TTL reference trio for pipeline reuse.
+- Full parameter/output tables: [viz.render](../api/viz-render.md).
+
+---
+
+[Complete input/output reference](../api/viz-render.md).
+
+### `dashboard.render`
+
+Renders shared datasets into KPI/chart panels and deterministic self-contained HTML. Governed measure refs resolve by default; unknown refs yield OODS-V130 and missing fields OODS-V137. Explicit `resolveMeasures:false` disables resolution. Failed panels remain visible. Public panel schemas admit eleven chart types; chord/flow_map remain excluded (#881).
+
+[Complete input/output reference](../api/dashboard-render.md).
+
+### `artifact.certify`
+
+Grades the normalized IR returned by `viz.render`, with the same data operand for ECharts-primary families. Returns per-check accessibility, determinism, contrast and accuracy evidence; five Cartesian families can be certified and eight advanced families remain explicitly uncertified. HTML is rejected with OODS-V126. Scope is A/B and light/dark; HC chart pixels are unsupported.
+
+[Complete input/output reference](../api/artifact-certify.md).
+
+### `fidelity.preview`
+
+Renders an inline Object Catalog manifest or a named host fixture at boxes-and-arrows, wireframe, review or branded-mockup fidelity. Branded mockups use built A/B light tokens. Deprecated brand-a/brand-b aliases warn for one release. Portable bundles require inline manifests because named fixtures are omitted. This is a preview, not production UI or independent review approval.
+
+[Complete input/output reference](../api/fidelity-preview.md).
+
+### `map`
+
+Grouped actions: apply, create, list, resolve, update, delete. Every request carries `action`. Records and resolves external mappings; no composer or generator consumes them. Draft preferred terms and disambiguation decisions are surfaced, not consumed.
+
+#### `map.create`
 
 - **Input schema**: `packages/mcp-server/src/schemas/map.create.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/map.create.output.json`
@@ -856,7 +835,7 @@ Input fields:
 
 ---
 
-### `map.apply`
+#### `map.apply`
 
 - **Input schema**: `packages/mcp-server/src/schemas/map.apply.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/map.apply.output.json`
@@ -1016,7 +995,7 @@ Output fields:
 
 ---
 
-### `map.list`
+#### `map.list`
 
 - **Input schema**: `packages/mcp-server/src/schemas/map.list.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/map.list.output.json`
@@ -1053,79 +1032,7 @@ Notes:
 
 ---
 
-### `registry.snapshot`
-
-- **Input schema**: `packages/mcp-server/src/schemas/registry.snapshot.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/registry.snapshot.output.json`
-- **Status**: Contract + implementation landed in Sprint 90 (`s90-m03`). Registration across every surface happens in `s90-m05`.
-- **Purpose**: Return the full OODS registry state in one call for reconciliation consumers that would otherwise need `map.list` plus N× `map.resolve`.
-
-Example input:
-```json
-{}
-```
-
-Example output:
-```json
-{
-  "maps": [
-    {
-      "id": "material-button",
-      "externalSystem": "material",
-      "externalComponent": "Button",
-      "oodsTraits": ["Stateful", "Labelled"],
-      "confidence": "manual"
-    }
-  ],
-  "traits": {
-    "Addressable": {
-      "name": "Addressable",
-      "version": "1.0.0",
-      "description": "Canonical multi-role address trait.",
-      "category": "core",
-      "tags": ["address"],
-      "contexts": ["detail", "form"],
-      "objects": ["Organization", "User"],
-      "source": "traits/core/Addressable.trait.yaml"
-    }
-  },
-  "objects": {
-    "User": {
-      "name": "User",
-      "version": "1.0.0",
-      "domain": "core.identity",
-      "description": "Canonical user object.",
-      "tags": ["identity"],
-      "traits": [
-        { "reference": "core/Identifiable", "alias": "UserIdentity", "parameters": {} }
-      ],
-      "fields": ["user_id", "email"],
-      "source": "objects/core/User.object.yaml"
-    }
-  },
-  "etag": "6d6224a2293e24fcefff2060dc60d8b3cf516af14f8d8f7344e3d5d726b7d0d6",
-  "generatedAt": "2026-04-16T00:00:00.000Z"
-}
-```
-
-Notes:
-- `maps` come from `artifacts/structured-data/component-mappings.json`.
-- `traits` and `objects` are keyed by name and sourced from the published structured-data components artifact (`artifacts/structured-data/oods-components-*.json` via the same resolution path used by `structuredData.fetch`).
-- `generatedAt` is the latest source timestamp across the mappings doc and components artifact, so it stays stable until one of the underlying sources changes.
-- `etag` is a stable SHA256 hash over the assembled snapshot payload (with `generatedAt` excluded from the hash calculation by the shared structured-data etag logic).
-
-Output fields:
-| Field | Type | Description |
-|-------|------|-------------|
-| `maps` | array | Full component mapping registry |
-| `traits` | object | Trait catalog keyed by trait name |
-| `objects` | object | Object catalog keyed by object name |
-| `etag` | string | Stable hash of the assembled snapshot payload |
-| `generatedAt` | string | Latest underlying source timestamp contributing to the snapshot |
-
----
-
-### `map.resolve`
+#### `map.resolve`
 
 - **Input schema**: `packages/mcp-server/src/schemas/map.resolve.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/map.resolve.output.json`
@@ -1163,7 +1070,7 @@ Notes:
 
 ---
 
-### `map.delete`
+#### `map.delete`
 
 - **Input schema**: `packages/mcp-server/src/schemas/map.delete.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/map.delete.output.json`
@@ -1198,28 +1105,247 @@ Example output (not found):
 
 ---
 
-### Additional auto tools available by default
+#### `map.update`
 
-These tools are part of the default auto-registered surface and have full parameter/output tables under `docs/api/*.md`.
+`{ "action": "update", "id": "mapping-id", "updates": { "notes": "Updated context" } }` updates an existing external mapping. Trait names remain canonical.
 
-| Tool | Purpose | Key semantics | API doc |
-|------|---------|---------------|---------|
-| `pipeline` | Compose → validate → render → code generation in one call | Returns `schemaRef`; compact render output is on by default; `save` persists schemas beyond the 30-minute TTL | [pipeline](../api/pipeline.md) |
-| `health` | Inspect live server readiness and registry/token/schema-store status | Useful for connection smoke checks and current inventory counts | [health](../api/health.md) |
-| `map.update` | Update an existing mapping by id | `updates.oodsTraits` uses canonical structured-data trait names | [map.update](../api/map.md) |
-| `map.delete` | Delete an existing mapping by id | Removes the mapping record from the shared mapping store | [map.delete](../api/map.md) |
-| `schema.save` | Persist a `schemaRef` under a stable name | Use before `schemaRef` expiry; supports tags and author metadata | [schema.save](../api/schema.md) |
-| `schema.load` | Load a saved schema into a fresh `schemaRef` | Returns a new 30-minute `schemaRef` plus schema metadata | [schema.load](../api/schema.md) |
-| `schema.list` | List saved schema metadata | Filter by object, context, or tags | [schema.list](../api/schema.md) |
-| `schema.delete` | Delete a saved schema | Removes the saved schema and index metadata entry | [schema.delete](../api/schema.md) |
-| `object.list` | Browse canonical OODS objects | Trait filter accepts `lifecycle/Stateful` or suffix form `Stateful` | [object.list](../api/object.md) |
-| `object.show` | Show a full object definition with composed traits and view extensions | Optional context filter narrows the view-extension surface | [object.show](../api/object.md) |
+[Complete input/output reference](../api/map.md).
+
+### `schema`
+
+Grouped actions: `save`, `load`, `list`, `delete`. Save a live `schemaRef` by name with author/tags; load returns a fresh reference. Re-saving increments a monotonic version and preserves createdAt. List filters object/context/tags. Delete removes the named record. These actions use versions/reference identity, not ETags or conditional requests. `apply` is accepted for bridge parity and ignored by each action: save/delete persist on invocation.
+
+[Complete input/output reference](../api/schema.md).
+
+### `object`
+
+Grouped actions: `list`, `show`. List the eleven real object definitions, optionally filtering domain or trait. Show composes schema/traits and view extensions, with an optional context filter. Unknown names return OODS-N005. This is registry inspection; it does not save or mutate an object.
+
+[Complete input/output reference](../api/object.md).
+
+### `repl`
+
+Grouped actions: render and validate. Every request carries `action`; per-action examples below show the remaining body. Validate `apply` is ignored bridge parity.
+
+#### `repl.validate`
+
+- **Input schema**: `packages/mcp-server/src/schemas/repl.validate.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/repl.validate.output.json`
+- **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4
+- **Purpose**: Validate UiSchema trees structurally and optionally check WCAG accessibility.
+
+Example input (mode=`full`):
+```json
+{
+  "mode": "full",
+  "schema": {
+    "version": "2026.02",
+    "dsVersion": "2026-02-24",
+    "theme": "dark",
+    "screens": [
+      {
+        "id": "screen_home",
+        "component": "Stack",
+        "children": [{ "id": "title", "component": "Text", "props": { "content": "Hello" } }]
+      }
+    ]
+  }
+}
+```
+
+Example input (schemaRef shorthand):
+```json
+{
+  "mode": "full",
+  "schemaRef": "compose-abc123"
+}
+```
+
+Example input (mode=`patch`, node patch):
+```json
+{
+  "mode": "patch",
+  "baseTree": { "version": "2026.02", "screens": [ { "id": "screen_home", "component": "Stack", "children": [] } ] },
+  "patch": { "nodeId": "screen_home", "path": "component", "value": "Card" }
+}
+```
+
+Example input (mode=`patch`, JSON Patch array):
+```json
+{
+  "mode": "patch",
+  "baseTree": { "version": "2026.02", "screens": [ { "id": "screen_home", "component": "Stack", "children": [] } ] },
+  "patch": [
+    { "op": "replace", "path": "/screens/0/component", "value": "Card" }
+  ]
+}
+```
+
+With accessibility checks:
+```json
+{
+  "mode": "full",
+  "checkA11y": true,
+  "schema": { "..." : "..." }
+}
+```
+
+Example output:
+```json
+{
+  "status": "ok",
+  "mode": "full",
+  "dslVersion": "2026.02",
+  "registryVersion": "2026-02-24",
+  "errors": [],
+  "warnings": [],
+  "meta": { "screenCount": 1, "nodeCount": 2 }
+}
+```
+
+Notes:
+- `checkA11y: true` runs 18 WCAG contrast rules after structural validation passes. Failures appear as `A11Y_CONTRAST` warnings with contrast ratio, WCAG level, and fix hints.
+- `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
+- In `patch` mode, `baseTree` is required. Patch payloads accept JSON Patch arrays or node patch objects/arrays. Malformed patch requests return path-level errors with a valid patch example in `hint`.
 
 ---
 
+#### `repl.render`
+
+- **Input schema**: `packages/mcp-server/src/schemas/repl.render.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/repl.render.output.json`
+- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 30s | rate 60/min | concurrency 4
+- **Purpose**: Render UiSchema trees to HTML. Supports document mode (self-contained page) and fragment mode (per-component HTML + CSS map).
+- **Preview note**: HTML/fragments payloads are returned only when `apply: true`; otherwise responses are metadata-only previews.
+
+Example input (mode=`patch`, node-targeted patch):
+```json
+{
+  "mode": "patch",
+  "baseTree": {
+    "version": "2026.02",
+    "screens": [{ "id": "screen_home", "component": "Stack", "children": [{ "id": "title", "component": "Text" }] }]
+  },
+  "patch": [{ "nodeId": "title", "path": "component", "value": "ArchiveEvent" }]
+}
+```
+
+Example input (schemaRef shorthand):
+```json
+{
+  "mode": "full",
+  "schemaRef": "compose-abc123",
+  "apply": true
+}
+```
+
+Fragment mode:
+```json
+{
+  "mode": "full",
+  "apply": true,
+  "output": { "format": "fragments" },
+  "schema": { "...": "..." }
+}
+```
+
+Example output:
+```json
+{
+  "status": "ok",
+  "mode": "patch",
+  "dslVersion": "2026.02",
+  "registryVersion": "2026-02-24",
+  "errors": [],
+  "warnings": [],
+  "appliedPatch": true,
+  "preview": {
+    "screens": ["screen_home"],
+    "routes": [],
+    "activeScreen": "screen_home",
+    "summary": "Render ready for 1 screen"
+  }
+}
+```
+
+Notes:
+- Document mode wraps output in a self-contained HTML page with inlined token CSS.
+- HTML and fragment payloads are returned only when `apply: true`; otherwise responses are metadata-only previews.
+- Fragment mode returns per-component HTML fragments with `cssRefs` for CSS extraction (requires `apply: true`).
+- Unknown components in non-strict fragment mode produce per-node errors without blocking sibling rendering; OODS-W002 explicitly reports this V006 reclassification.
+- Fragment mode reports ignored `brand`, `output.tokenOverlay`, and `output.skinOverlay` options together in OODS-W001. Use document mode to apply them.
+- Request `dslVersion` and `output.depth` were removed because they were not consumed. UiSchema `version` and response version metadata remain; validate `apply` remains an explicitly ignored bridge-parity key.
+- `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
+- Patch mode requires both `baseTree` and `patch`.
+
+---
+
+[Complete input/output reference](../api/repl.md).
+
 ## On-demand tool contracts (5 registry entries)
 
-The 5 on-demand entries come from `packages/mcp-server/src/tools/registry.json`. Enable them via `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`.
+The 5 on-demand entries come from `packages/mcp-server/src/tools/registry.json`.
+
+### `diag.snapshot`
+
+- **Input schema**: `packages/mcp-server/src/schemas/generic.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
+- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 12/min | concurrency 1
+- **Purpose**: Emit a diagnostics JSON artifact bundle for the current repo state.
+
+Example input:
+```json
+{ "apply": true }
+```
+
+---
+
+[Complete input/output reference](../api/diag-snapshot.md).
+
+### `billing.reviewKit`
+
+- **Input schema**: `packages/mcp-server/src/schemas/billing.reviewKit.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
+- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 20/min | concurrency 1
+- **Purpose**: Compare billing provider fixtures and produce a review kit with diffs and specimens.
+
+Example input:
+```json
+{ "object": "Subscription", "fixtures": ["stripe", "chargebee"], "apply": true }
+```
+
+Input fields:
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `object` | `"Subscription"` \| `"Invoice"` \| `"Plan"` \| `"Usage"` | Yes | Billing object to compare |
+| `fixtures` | string[] | No (default `["stripe", "chargebee"]`) | Provider fixtures to include |
+| `apply` | boolean | No (default `false`) | Write artifacts to disk |
+
+---
+
+[Complete input/output reference](../api/billing-reviewKit.md).
+
+### `billing.switchFixtures`
+
+- **Input schema**: `packages/mcp-server/src/schemas/billing.switchFixtures.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
+- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 90s | rate 20/min | concurrency 1
+- **Purpose**: Switch billing provider fixtures and record diffs for Storybook scenarios.
+
+Example input:
+```json
+{ "provider": "chargebee", "apply": true }
+```
+
+Input fields:
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `provider` | `"stripe"` \| `"chargebee"` | Yes | Target billing provider |
+| `apply` | boolean | No (default `false`) | Record switch artifacts |
+
+---
+
+[Complete input/output reference](../api/billing-switchFixtures.md).
 
 ### `a11y.scan`
 
@@ -1246,60 +1372,7 @@ Notes:
 
 ---
 
-### `diag.snapshot`
-
-- **Input schema**: `packages/mcp-server/src/schemas/generic.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 12/min | concurrency 1
-- **Purpose**: Emit a diagnostics JSON artifact bundle for the current repo state.
-
-Example input:
-```json
-{ "apply": true }
-```
-
----
-
-### `billing.reviewKit`
-
-- **Input schema**: `packages/mcp-server/src/schemas/billing.reviewKit.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 20/min | concurrency 1
-- **Purpose**: Compare billing provider fixtures and produce a review kit with diffs and specimens.
-
-Example input:
-```json
-{ "object": "Subscription", "fixtures": ["stripe", "chargebee"], "apply": true }
-```
-
-Input fields:
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `object` | `"Subscription"` \| `"Invoice"` \| `"Plan"` \| `"Usage"` | Yes | Billing object to compare |
-| `fixtures` | string[] | No (default `["stripe", "chargebee"]`) | Provider fixtures to include |
-| `apply` | boolean | No (default `false`) | Write artifacts to disk |
-
----
-
-### `billing.switchFixtures`
-
-- **Input schema**: `packages/mcp-server/src/schemas/billing.switchFixtures.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 90s | rate 20/min | concurrency 1
-- **Purpose**: Switch billing provider fixtures and record diffs for Storybook scenarios.
-
-Example input:
-```json
-{ "provider": "chargebee", "apply": true }
-```
-
-Input fields:
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `provider` | `"stripe"` \| `"chargebee"` | Yes | Target billing provider |
-| `apply` | boolean | No (default `false`) | Record switch artifacts |
-
----
+[Complete input/output reference](../api/a11y-scan.md).
 
 ### `release.tag`
 
@@ -1328,6 +1401,8 @@ Output fields:
 | `warnings` | string[] | Issues (e.g., existing tag, uncommitted changes) |
 
 ---
+
+[Complete input/output reference](../api/release-tag.md).
 
 ## UiSchema DSL (Design Lab)
 

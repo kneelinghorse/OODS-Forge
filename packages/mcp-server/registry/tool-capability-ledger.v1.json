@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "6ad68b33975b04430baa1ee6e657acb8d1c22560",
+  "head": "973e52601d4a93597ac8d1fe59e157f7056b64b6",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -39,15 +39,15 @@
     "auto": 19,
     "onDemand": 5,
     "byTier": {
-      "product-reality": 18,
+      "product-reality": 19,
       "contract": 5,
-      "unit": 1,
+      "unit": 0,
       "none": 0
     },
     "autoByTier": {
-      "product-reality": 18,
+      "product-reality": 19,
       "contract": 0,
-      "unit": 1,
+      "unit": 0,
       "none": 0
     },
     "onDemandByTier": {
@@ -56,17 +56,17 @@
       "unit": 0,
       "none": 0
     },
-    "portableE2E": 4
+    "portableE2E": 19
   },
   "rows": [
     {
       "name": "tokens.build",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only.",
+        "description": "Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only. Portable bundle limitation: apply:false returns a preview only. apply:true requires the omitted legacy TypeScript output and host build inputs, so token artifact export remains host-only.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:95a24f2e585c07dcd44317ac657fc0628d716ff2021d9780aa0901b816402818",
+      "claimHash": "sha256:d43ae83ea2a99ba7d58df2edb3c27b82c85a3e26f7abacffc6cad7e5715b810b",
       "inputSchemaPath": "packages/mcp-server/src/schemas/tokens.build.input.json",
       "inputSchemaHash": "sha256:d3824aa7ba54660a2c953bee5b830ef3c938b7ded14f71cdada8deaafeef7539",
       "proofTier": "product-reality",
@@ -98,16 +98,44 @@
           "line": 28,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 782
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-token-export-source-dependency",
+          "tool": "tokens.build",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Assembler strips dist/ts/tokens.ts, so apply:true treats outputs as missing and attempts an unavailable host build script.",
+          "transportOutcome": "apply:false returns preview and transcript only; no token artifact export is claimed. apply:true failed with native S019 build error, whose code is stripped by adapter.",
+          "resolution": "A follow-on publish/export contract must decouple source-only legacy TS output or admit it to the bundle."
+        }
+      ],
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/tokens.build.ts",
           "reason": "Requested-scope JSON and CSS resolve brand/theme. Full CSS retains every built scope; TypeScript and Tailwind artifacts explicitly retain legacy A/light defaults.",
           "line": 128
+        },
+        {
+          "kind": "documented-limit",
+          "file": "scripts/runtime/assemble.mjs",
+          "reason": "Bundle omits legacy tokens.ts; tokens.build apply:true consequently tries unavailable source build inputs. Portable proof calls apply:false and claims only preview/transcript, not export.",
+          "line": 502
         }
       ]
     },
@@ -185,18 +213,24 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 789
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "brand.apply",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source.",
+        "description": "Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns a missing-source error; source writes/builds require the host repository.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:10706557c8dbc7f72cb6e80e6ecfc92b23efc71e3d9a018d0e9e848d5358811a",
+      "claimHash": "sha256:62fabdc1b311037fde1a51fec4e5aa0ac47e4285617fe132e58fd2564e1e69b7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.apply.input.json",
       "inputSchemaHash": "sha256:02124d32e9d408030323ccfa8058abef60c463f7b23e5954b2d5983822b5d99a",
       "proofTier": "product-reality",
@@ -243,16 +277,44 @@
           "line": 8,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 791
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-brand-source-absent",
+          "tool": "brand.apply",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Gate1 deliberately excludes canonical brand source and build inputs. Even dry-run requires reading that source.",
+          "transportOutcome": "adapter isError with missing-source ENOENT message; no native dependency-specific OODS code",
+          "resolution": "Requires a separately scoped publish-boundary decision or dependency-specific failure behavior."
+        }
+      ],
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.apply.ts",
           "reason": "A failed real token build returns OODS-S019 with captured output and receipts. Source writes are deliberately left in place for inspection and repair; no automatic rollback is claimed.",
           "line": 699
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "reason": "Portable bundle omits canonical brand source; even dry-run needs that source and returns a missing-source error. Host mutation remains separately proven.",
+          "line": 55
         }
       ]
     },
@@ -292,8 +354,14 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 792
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -316,6 +384,11 @@
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/catalog.list.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/catalog.list.ts"
+          },
           {
             "path": "packages/mcp-server/test/product-reality/workflow-runtime.s193.spec.ts",
             "line": 7,
@@ -364,18 +437,24 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 794
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "code.generate",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch).",
+        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable bundle limitation: React/Vue readiness requires omitted source/test/declaration files; generated targets return OODS-N015 without an artifact until that packaging contract is reconciled. Host repository generation remains supported.",
         "inputSchemaDescription": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:69c162c463cdc95046cac390e01b0b6509c88ecd7471a1cc7ea0aa0b2e400cf0",
+      "claimHash": "sha256:29c7dd73a795d36e74f306a1a02cb9a88e96bdfde7a6bf54d685e8591f01a7a7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
       "inputSchemaHash": "sha256:3b9f8ac91e4d6c2d3c7a0c05f633cfb1e4d5d5a43a9f4ae04ed5fb54123e6149",
       "proofTier": "product-reality",
@@ -696,16 +775,44 @@
           "line": 17,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 800
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "code.generate",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ],
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof.",
           "line": 299
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/codegen/target-readiness.ts",
+          "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven.",
+          "line": 177
         }
       ]
     },
@@ -827,6 +934,11 @@
           {
             "path": "packages/mcp-server/test/contracts/layout-single-source.spec.ts",
             "line": 22,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/portable-fixtures.s194.spec.ts",
+            "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -957,18 +1069,24 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 796
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "design.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied.",
+        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied. The native server retains OODS-N019; the current adapter forwards message text only and drops native error codes.",
         "inputSchemaDescription": "Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve."
       },
-      "claimHash": "sha256:5accbe2d1c085c05a9cb251651e332f21d683ace92371fe0cb42ad07ba97643d",
+      "claimHash": "sha256:e8f26f207c257d6087df1985b3bed0e25b6983899e07ca2f3459f294175bedfa",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
       "inputSchemaHash": "sha256:bbad1535c7d66c9b8a17f5d450849deb9a25f4f3a07742da2a8a212f5c33720e",
       "proofTier": "product-reality",
@@ -1001,16 +1119,44 @@
           "line": 3,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 799
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "adapter-native-error-code-erasure",
+          "tool": "design.preview",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "NativeOodsClient turns structured native errors into Error(message), dropping OODS-N019 and retry metadata.",
+          "transportOutcome": "adapter isError with pnpm design:loop serve guidance; native N019 remains proven directly",
+          "resolution": "Preserve structured native errors through the adapter in a follow-on transport contract mission."
+        }
+      ],
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.preview.ts",
           "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019.",
           "line": 12
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-adapter/index.js",
+          "reason": "The adapter strips native error codes and forwards message text. Native OODS-N019 remains available directly; portable transport code preservation is carried under #1927.",
+          "line": 169
         }
       ]
     },
@@ -1018,10 +1164,10 @@
       "name": "pipeline",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch).",
+        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable bundle limitation: React/Vue readiness requires omitted source/test/declaration files; generated targets return OODS-N015 without an artifact until that packaging contract is reconciled. Host repository generation remains supported.",
         "inputSchemaDescription": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:21214fbeab2444921746d5776739910a954be2e372945bcc2122cb4e084c8cee",
+      "claimHash": "sha256:12634ab0b2f6394ae07029c6b872ce2579c0eadc343feb3310086c28bf867369",
       "inputSchemaPath": "packages/mcp-server/src/schemas/pipeline.input.json",
       "inputSchemaHash": "sha256:e0eeb8d65a6decf167f743cae1651be1d6873c7db11a0781cb60b658e80cd6d3",
       "proofTier": "product-reality",
@@ -1094,14 +1240,36 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 803
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "pipeline",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ],
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof.",
           "line": 299
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/codegen/target-readiness.ts",
+          "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven.",
+          "line": 177
         }
       ]
     },
@@ -1154,13 +1322,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 547
+          "line": 701
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 682
+          "line": 901
         }
       ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -1217,8 +1386,14 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 805
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -1242,6 +1417,11 @@
       "testImports": {
         "product-reality": [
           {
+            "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
             "line": 13,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
@@ -1262,7 +1442,13 @@
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           }
         ],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/portable-fixtures.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          }
+        ],
         "unit": [
           {
             "path": "packages/mcp-server/test/tools/artifact.certify.data-operand.spec.ts",
@@ -1437,9 +1623,10 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 618
+          "line": 775
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -1544,21 +1731,22 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 572
+          "line": 729
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 576
+          "line": 733
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 580
+          "line": 737
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 584
+          "line": 741
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -1571,9 +1759,15 @@
       "claimHash": "sha256:b8f2b91d6689e109db46846b7ee4ba0cbe44db032f3aba764d36ed9a74a35689",
       "inputSchemaPath": "packages/mcp-server/src/schemas/artifact.certify.input.json",
       "inputSchemaHash": "sha256:0297eeb1f60bdb060f0cfe2af93aaec5f5e5c6aefa015397226924af8344b340",
-      "proofTier": "unit",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+            "line": 3,
+            "handler": "packages/mcp-server/src/tools/artifact.certify.ts"
+          }
+        ],
         "contract": [],
         "unit": [
           {
@@ -1714,23 +1908,24 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 619
+          "line": 777
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 622
+          "line": 778
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "fidelity.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back.",
+        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back. Portable callers must provide inline manifest data because named fixtures are not shipped.",
         "inputSchemaDescription": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (resolved against a vetted allow-list — no caller-supplied paths), or an inline `manifest` object (data only — also never a path). The inline path lets an agent render a manifest it authored in its own repo without committing a fixture here."
       },
-      "claimHash": "sha256:6a0c1b3099e61f48ed93b0b5749e16017049f3499a04610343c8929700642e02",
+      "claimHash": "sha256:5c84243f779e6deb86407964f4f2973b259c744bcc17ece1f6d418f43995a356",
       "inputSchemaPath": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
       "inputSchemaHash": "sha256:0854e6d23973fc2ff14ccf73d683399c62189a97ccc557372a2976e00de293ae",
       "proofTier": "product-reality",
@@ -1765,8 +1960,14 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 807
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -1906,8 +2107,22 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 809
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 811
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 813
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -2022,8 +2237,22 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 815
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 817
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 819
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2119,8 +2348,14 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 821
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2325,8 +2560,14 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 823
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
           "kind": "documented-limit",
@@ -2366,6 +2607,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2393,6 +2635,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2420,6 +2663,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2453,6 +2697,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2480,6 +2725,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     }
   ]

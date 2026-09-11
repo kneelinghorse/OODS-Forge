@@ -1,0 +1,13 @@
+# s194-m06 — every advertised tool exercised
+
+All 19 advertised tools have literal real-handler product-reality specs with JSON/AJV input/output checks or native typed-error assertions. The five retained on-demand tools have dry-run contracts. Three public tools retired in m04 remain recorded with decision IDs. Source tiers and literal portable calls are discovery evidence; the execution receipts establish the observed outcomes.
+
+The extended extracted adapter E2E makes 27 primary calls over all 19 tools and one restart health call (28 total). Nineteen hashed request recipes bind ephemeral schema/spec operands directly from prior tool output. Map and schema lifecycles use extraction-local state. Token preview writes only transcript/index. Owned state is removed and the complete extraction digest is restored. The four historical dashboard HTML outputs remain unchanged.
+
+Portable result: 14 exercised tool outcomes pass; five tools expose four underlying limits. brand.apply cannot read omitted source even in dry-run. tokens.build apply:true tries a missing host build because legacy tokens.ts is stripped; its portable probe is explicitly apply:false. design.preview's native N019 is reduced to message text by the adapter. React/Vue code.generate and pipeline return typed N015 without an artifact because source/test/declaration readiness references are omitted. These are carried under CMOS #1927–1929 and repeated in descriptors, docs and ledger portableLimits. No dependency was injected into the bundle to disguise a gap. Host brand writes/builds/pixels and React/Vue generation remain proven by m02/m05 and the required fresh m07 runtime census.
+
+First portable attempt failed at real token export; second failed at real React generation. The third preflight passes the explicitly narrowed assertions. It uses the retained dirty development assembly; final source-bound assembly and CI receipts are recorded separately. No five-suite capture occurred in m06. No tool handler behavior changed; the required ledger validator now rejects coverage/caveat regressions.
+
+Tool-Specs has exactly one grouped section per live registry entry; API pages regenerate from the 24-entry registry. The per-tool proof index links each advertised tool to its source boundary proof and retained evidence. Builder self-certification remains false.
+
+Targeted validation: 29 wire/ledger tests (nine files), 23 final fixture/API/retirement/ledger contracts (four files), and 17 narrative/link tests (two files); all final runs have zero skips. The earlier fixture-plus-ledger run caught a stale source inventory after the new fixture test was added; re-derivation resolves it.

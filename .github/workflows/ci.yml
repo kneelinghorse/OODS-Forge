@@ -1015,12 +1015,21 @@ jobs:
 
       - name: Extract outside the checkout and run the adapter E2E
         run: |
+          set -o pipefail
           extract_dir="$RUNNER_TEMP/forge-e2e-$RANDOM"
           mkdir -p "$extract_dir"
           tar -xzf "$RUNNER_TEMP/forge-runtime-out-1/forge-runtime.tar.gz" -C "$extract_dir"
           node scripts/runtime/e2e.mjs \
             --extract-dir "$extract_dir" \
-            --repo-root "$GITHUB_WORKSPACE"
+            --repo-root "$GITHUB_WORKSPACE" | tee "$RUNNER_TEMP/portable-runtime-e2e.json"
+
+      - name: Retain per-tool portable runtime receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable-runtime-e2e
+          path: ${{ runner.temp }}/portable-runtime-e2e.json
+          if-no-files-found: warn
 
       - name: Verify source lockfile is unchanged
         if: always()

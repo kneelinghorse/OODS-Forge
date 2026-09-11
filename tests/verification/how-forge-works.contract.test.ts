@@ -127,6 +127,17 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("Light theme only.");
   });
 
+  it("Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes", () => {
+    const registry = JSON.parse(read("packages/mcp-server/src/tools/registry.json"));
+    const sections = [...read("docs/mcp/Tool-Specs.md").matchAll(/^### `([^`]+)`$/gm)].map(match => match[1]);
+    expect(sections).toEqual([...registry.auto, ...registry.onDemand]);
+    const portable = read("docs/runtime/portable-runtime.md");
+    expect(portable).toContain("27 calls across all 19 advertised tools");
+    expect(portable).toContain("28 calls across two processes");
+    expect(portable).toContain("adapter drops native error codes");
+    expect(portable).toContain("even its dry-run returns a missing-source error");
+  });
+
   it("Tool-Specs links resolve to existing grouped API pages", () => {
     const specs = read("docs/mcp/Tool-Specs.md");
     const links = [...specs.matchAll(/\]\((\.\.\/api\/[^)]+)\)/g)].map(match => match[1]);

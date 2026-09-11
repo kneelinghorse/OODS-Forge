@@ -1,6 +1,6 @@
 # fidelity.preview
 
-> Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back.
+> Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back. Portable callers must provide inline manifest data because named fixtures are not shipped.
 
 **Registration:** auto
 

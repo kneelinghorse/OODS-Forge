@@ -45,6 +45,122 @@ const FIXTURE_PINS = Object.freeze([
     bytes: 588,
   },
 ]);
+const TOOL_FIXTURE_PINS = Object.freeze([
+  {
+    "tool": "health",
+    "fixture": "s194-health.json",
+    "sha256": "edae244bb0ec90acec8538028f5735e1591d1e9aa3bb6ee0f4cfcd3364f5ac59",
+    "bytes": 60
+  },
+  {
+    "tool": "tokens.build",
+    "fixture": "s194-tokens-build.json",
+    "sha256": "262634f01345c74f9fe4d09dded5fe7b85cda4ffe417161cb20d7b067ac7fb46",
+    "bytes": 127
+  },
+  {
+    "tool": "structuredData.fetch",
+    "fixture": "s194-structuredData-fetch.json",
+    "sha256": "25cb7457d33291a4cee539358c3673cfc305c1ba11c3eff71fd9e31efe35b437",
+    "bytes": 105
+  },
+  {
+    "tool": "brand.apply",
+    "fixture": "s194-brand-apply.json",
+    "sha256": "7bd21cd811cb7e11a171be6ba10383ac3c90ffc574bbe890c8174d02c7d68b47",
+    "bytes": 122
+  },
+  {
+    "tool": "brand.intake",
+    "fixture": "s194-brand-intake.json",
+    "sha256": "2c0d689f7e933a18cc48ebfb549b60b0112ffd7a41c61058c7359f2f445a4109",
+    "bytes": 908
+  },
+  {
+    "tool": "catalog.list",
+    "fixture": "s194-catalog-list.json",
+    "sha256": "1fe037984ba4864821d3545a1d2d4d828570bb25a2839d88af7dc0fc6f87428d",
+    "bytes": 111
+  },
+  {
+    "tool": "design.compose",
+    "fixture": "s194-design-compose.json",
+    "sha256": "0224a94436ee2a8e13a7a1b28a89aff6fcd4ff0548cc00d3bbf321e038ddee00",
+    "bytes": 123
+  },
+  {
+    "tool": "design.preview",
+    "fixture": "s194-design-preview.json",
+    "sha256": "b0d35ed84035b22aa164e4e26821fb4b30e7f4be2e81947dc78d0055f76c790c",
+    "bytes": 123
+  },
+  {
+    "tool": "pipeline",
+    "fixture": "s194-pipeline.json",
+    "sha256": "04022a6046c39f0bec88c42cf71a59afa8ed5dd39ec7909b392faa7a2b0b47cb",
+    "bytes": 143
+  },
+  {
+    "tool": "registry.snapshot",
+    "fixture": "s194-registry-snapshot.json",
+    "sha256": "1979a3750c28176cbcbdb56b73f2add4c650b3cde4b6ce3f3841fbff5795e3ed",
+    "bytes": 71
+  },
+  {
+    "tool": "viz.render",
+    "fixture": "s194-viz-render.json",
+    "sha256": "2a850687881667f403f5a554ce2baa462bcefc4dc88e4d7f3e67d8873b7b8286",
+    "bytes": 809
+  },
+  {
+    "tool": "dashboard.render",
+    "fixture": "s194-dashboard-render.json",
+    "sha256": "1e66463fa39c7da75b9a017dcf0d7a357b6f3a0a184f2231d64118b3e639a854",
+    "bytes": 1482
+  },
+  {
+    "tool": "artifact.certify",
+    "fixture": "s194-artifact-certify.json",
+    "sha256": "de6959711792d74b068724bd860effaabe73d96b29f5fd64bc2105f2a6253a91",
+    "bytes": 106
+  },
+  {
+    "tool": "code.generate",
+    "fixture": "s194-code-generate.json",
+    "sha256": "7257a1995526a8aaeeed8002ce592b052e6e6c417b34f918bb9fb4d992921a9a",
+    "bytes": 159
+  },
+  {
+    "tool": "fidelity.preview",
+    "fixture": "s194-fidelity-preview.json",
+    "sha256": "79a38181c6b593d3e14adc9bc9462493f27045167d2934ae616c87bfe8ab05dc",
+    "bytes": 3777
+  },
+  {
+    "tool": "map",
+    "fixture": "s194-map.json",
+    "sha256": "8d3350cc21ddf3ad1fa1658850b0e4918ba584cabe108ad5dd0b54d3c548a6c0",
+    "bytes": 458
+  },
+  {
+    "tool": "schema",
+    "fixture": "s194-schema.json",
+    "sha256": "0d4c4b37fbae4e653a4492cf7a1fe47905bc2c5821a188cd3c10b605afb2277f",
+    "bytes": 393
+  },
+  {
+    "tool": "object",
+    "fixture": "s194-object.json",
+    "sha256": "0cdd899351e9bd9a6fa3ee7a21d5a33dce16c9d2c2c44c9a482f2022e3df9e9c",
+    "bytes": 135
+  },
+  {
+    "tool": "repl",
+    "fixture": "s194-repl.json",
+    "sha256": "73dbeaafc7be460a95e3d63bfdb18d17a25ab373af44416a84e5e14ca5ba2fe1",
+    "bytes": 193
+  }
+]);
 const EPHEMERAL_DASHBOARD_FIELDS = [
   "specRef",
   "specRefCreatedAt",
@@ -175,6 +291,7 @@ class McpClient {
     this.stdoutBuffer = "";
     this.stderrBuffer = "";
     this.callCount = 0;
+    this.calledTools = new Set();
     this.exitInfo = null;
     this.child = spawn(process.execPath, [adapterPath], {
       cwd,
@@ -286,9 +403,16 @@ class McpClient {
     );
   }
 
-  async callTool(name, args) {
+  async callTool(name, args, expectedError) {
     this.callCount += 1;
+    this.calledTools.add(name);
     const result = await this.request("tools/call", { name, arguments: args });
+    if (expectedError) {
+      assert.equal(result?.isError, true, `${name} must disclose the expected portable limit`);
+      const message = result.content?.[0]?.text;
+      assert.match(message, expectedError);
+      return { isError: true, message };
+    }
     if (result?.isError) {
       throw new Error(
         `MCP tool failed: ${name}: ${result.content?.[0]?.text ?? "unknown error"}`,
@@ -384,6 +508,14 @@ async function loadFixtures(repoRoot) {
       `fixture sha256 drifted: ${entry.fixture}`,
     );
     fixtures[entry.id] = JSON.parse(bytes.toString("utf8"));
+  }
+  assert.deepEqual(provenance.s194_tool_fixtures.fixtures, TOOL_FIXTURE_PINS);
+  fixtures.tools = {};
+  for (const pin of TOOL_FIXTURE_PINS) {
+    const bytes = await fsp.readFile(path.join(fixturesRoot, pin.fixture));
+    assert.equal(bytes.length, pin.bytes, pin.fixture);
+    assert.equal(sha256(bytes), pin.sha256, pin.fixture);
+    fixtures.tools[pin.tool] = JSON.parse(bytes.toString('utf8'));
   }
   return fixtures;
 }
@@ -532,6 +664,28 @@ async function main() {
   const fullTreeBefore = await treeDigest(runtimeRoot);
   const healthCanaryPort = await reserveClosedPort();
   const childEnvironment = sanitizedRuntimeEnvironment(healthCanaryPort);
+  const scratch = path.join(runtimeRoot, '.oods/s194-e2e');
+  const artifactsRoot = path.join(runtimeRoot, 'artifacts/current-state');
+  assert(!fs.existsSync(scratch));
+  assert(!fs.existsSync(artifactsRoot), 'E2E cleanup owns only a newly created artifact tree');
+  const oodsExisted = fs.existsSync(path.join(runtimeRoot, '.oods'));
+  await fsp.mkdir(scratch, { recursive: true });
+  await fsp.copyFile(path.join(runtimeRoot, 'artifacts/structured-data/component-mappings.json'), path.join(scratch, 'mappings.json'));
+  childEnvironment.MCP_MAPPINGS_PATH = path.join(scratch, 'mappings.json');
+  childEnvironment.MCP_SCHEMA_STORE_ROOT = scratch;
+  childEnvironment.MCP_SCHEMA_STORE_DIR = 'schemas';
+  const state = {};
+  const operand = (tool) => {
+    const recipe = fixtures.tools[tool];
+    const args = structuredClone(recipe.arguments);
+    for (const [key, binding] of Object.entries(recipe.bindings)) {
+      const [producer, field] = binding.split('.');
+      assert(state[producer]?.[field] !== undefined, `Unresolved fixture binding ${binding}`);
+      args[key] = state[producer][field];
+    }
+    return args;
+  };
+  assert.deepEqual(Object.keys(fixtures.tools).sort(), [...registry.auto].sort());
   const adapterPath = path.join(runtimeRoot, "packages/mcp-adapter/index.js");
   const adapterCwd = path.join(runtimeRoot, "packages/mcp-adapter");
   const primary = new McpClient({
@@ -544,7 +698,7 @@ async function main() {
   let calls;
   try {
     await initializeAndList(primary, adapterPackage.version, expectedToolNames);
-    const health = await primary.callTool("health", {}); // 1
+    const health = await primary.callTool("health", operand("health")); // 1
     assert.equal(health.status, "ok");
     assert.deepEqual(
       {
@@ -555,6 +709,9 @@ async function main() {
       { components: 109, traits: 45, objects: 11 },
     );
     assert.deepEqual(health.warnings ?? [], []);
+    const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));
+    assert.deepEqual(health.tokens.scopes, Object.fromEntries(Object.entries(builtScopes).map(([brand, themes]) => [brand, Object.keys(themes).sort()])));
+    assert.deepEqual(health.tokens.defaultScope, { brand: 'A', theme: 'light', source: 'default' });
     assert.deepEqual(health.productReality.runtime, {
       cells: 154, pass: 154, typedGap: 0, fail: 0,
       head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
@@ -569,7 +726,7 @@ async function main() {
     );
 
     const two = assertDashboard(
-      await primary.callTool("dashboard_render", fixtures.twoPanel),
+      await primary.callTool("dashboard_render", operand("dashboard.render")),
       "two-panel",
     ); // 2
     const four = assertDashboard(
@@ -615,22 +772,84 @@ async function main() {
       "four-panel repeat unexpectedly reused ephemeral specRef",
     );
 
-    const viz = await primary.callTool("viz_render", fixtures.viz); // 6
-    const positive = await primary.callTool("artifact_certify", {
-      spec: viz.normalizedSpec,
-    }); // 7
+    const viz = await primary.callTool("viz_render", operand("viz.render")); // 6
+    state.viz = viz;
+    const positive = await primary.callTool("artifact_certify", operand("artifact.certify")); // 7
     const negative = await primary.callTool("artifact_certify", {
       spec: { html: four.html },
     }); // 8
     assertCertification(viz, positive, negative);
-    assert.equal(
-      primary.callCount,
-      8,
-      "portable runtime E2E must execute the explicit eight tools/call sequence",
-    );
+    const tokens = await primary.callTool("tokens_build", operand("tokens.build"));
+    assert.equal(tokens.artifacts.length, 0);
+    assert.match(tokens.preview.summary, /brand B \(dark theme\)/);
+    for (const file of [...tokens.artifacts, tokens.transcriptPath, tokens.bundleIndexPath]) {
+      assert(isInside(artifactsRoot, file), `Token receipt escaped extraction artifacts: ${file}`);
+      assert(fs.existsSync(file));
+    }
+    const data = await primary.callTool("structuredData_fetch", operand("structuredData.fetch"));
+    assert.equal(data.dataset, 'components'); assert(data.etag);
+    const brand = await primary.callTool("brand_apply", operand("brand.apply"), /ENOENT.*src\/tokens\/brands/s);
+    const intake = await primary.callTool("brand_intake", operand("brand.intake"));
+    assert.equal(intake.validated, true); assert.equal(intake.preview_only, true); assert(intake.delta.dark);
+    const catalog = await primary.callTool("catalog_list", operand("catalog.list"));
+    assert.equal(catalog.totalCount, 109); assert.equal(catalog.returnedCount, 109);
+    const composed = await primary.callTool("design_compose", operand("design.compose"));
+    assert.equal(composed.status, 'ok'); assert(composed.schemaRef); state.compose = composed;
+    await assertLoopbackPortClosed(4477);
+    const preview = await primary.callTool("design_preview", operand("design.preview"), /pnpm design:loop serve/);
+    const generated = await primary.callTool("code_generate", operand("code.generate"));
+    assert.equal(generated.status, 'error'); assert.equal(generated.artifact, undefined);
+    assert(generated.errors.length > 0 && generated.errors.every(error => error.code === 'OODS-N015'));
+    const run = await primary.callTool("pipeline", operand("pipeline"));
+    assert.deepEqual({ step: run.error?.step, code: run.error?.code }, { step: 'codegen', code: 'OODS-N015' }); assert.equal(run.code, undefined);
+    const snapshot = await primary.callTool("registry_snapshot", operand("registry.snapshot"));
+    assert(snapshot.objects.Subscription); assert(snapshot.traits.Stateful); assert.match(snapshot.etag, /^[a-f0-9]{64}$/);
+    const fidelity = await primary.callTool("fidelity_preview", operand("fidelity.preview"));
+    assert.equal(fidelity.status, 'ok'); assert.equal(fidelity.fixture, '(inline)'); assert(fidelity.html.includes('Subscription'));
+    const mapped = await primary.callTool("map", operand("map"));
+    assert.equal(mapped.applied, true); assert(mapped.mapping.id);
+    const resolved = await primary.callTool("map", fixtures.tools.map.followups[0]);
+    assert.equal(resolved.mapping.id, mapped.mapping.id);
+    const removedMap = await primary.callTool("map", { ...fixtures.tools.map.followups[1], id: mapped.mapping.id });
+    assert.equal(removedMap.deleted.id, mapped.mapping.id);
+    const saved = await primary.callTool("schema", operand("schema"));
+    assert.equal(saved.version, 1);
+    const loaded = await primary.callTool("schema", fixtures.tools.schema.followups[0]);
+    assert.equal(loaded.version, 1); assert(loaded.schemaRef);
+    const removedSchema = await primary.callTool("schema", fixtures.tools.schema.followups[1]);
+    assert.equal(removedSchema.deleted, true);
+    const object = await primary.callTool("object", operand("object"));
+    assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
+    const rendered = await primary.callTool("repl", operand("repl"));
+    assert.equal(rendered.status, 'ok'); assert(rendered.html.startsWith('<!DOCTYPE html>'));
+    assert.equal(primary.callCount, 27, '19 advertised tools plus retained repeats, negative certification and store lifecycles');
+    assert.deepEqual([...primary.calledTools].sort(), [...expectedToolNames].sort());
+    const outcomes = {
+      'tokens.build': { outcome: 'documented-limit', gap: 'portable-token-export-source-dependency', apply: false, artifacts: 0, preview: tokens.preview.summary },
+      'structuredData.fetch': { outcome: 'pass', etag: data.etag },
+      'brand.apply': { outcome: 'documented-limit', gap: 'portable-brand-source-absent', apply: false, ...brand },
+      'brand.intake': { outcome: 'pass', envelopeHash: intake.envelopeHash },
+      'catalog.list': { outcome: 'pass', count: catalog.totalCount },
+      'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
+      'design.preview': { outcome: 'documented-limit', gap: 'adapter-native-error-code-erasure', nativeCode: 'OODS-N019', adapterCodePreserved: false, ...preview },
+      'code.generate': { outcome: 'documented-limit', gap: 'portable-generation-readiness-evidence-absent', errors: generated.errors, artifactAbsent: true },
+      pipeline: { outcome: 'documented-limit', gap: 'portable-generation-readiness-evidence-absent', error: run.error, codeAbsent: true },
+      'registry.snapshot': { outcome: 'pass', etag: snapshot.etag },
+      'fidelity.preview': { outcome: 'pass', htmlHash: sha256(fidelity.html) },
+      map: { outcome: 'pass', createdResolvedDeleted: true },
+      schema: { outcome: 'pass', savedLoadedDeleted: true },
+      object: { outcome: 'pass', name: object.name },
+      repl: { outcome: 'pass', htmlHash: sha256(rendered.html) },
+      health: { outcome: 'pass', tokens: health.tokens },
+      'dashboard.render': { outcome: 'pass', repeated: true },
+      'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
+      'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
+    };
     await assertLoopbackPortClosed(healthCanaryPort);
     calls = {
       primarySequenceCount: primary.callCount,
+      outcomes,
+      fixturePins: TOOL_FIXTURE_PINS,
       health: {
         status: health.status,
         registry: health.registry,
@@ -710,22 +929,25 @@ async function main() {
     throw error;
   }
 
+  await fsp.rm(scratch, { recursive: true });
+  if (!oodsExisted) await fsp.rmdir(path.join(runtimeRoot, '.oods'));
+  await fsp.rm(artifactsRoot, { recursive: true });
   const fullTreeAfter = await treeDigest(runtimeRoot);
   assert.equal(
     primary.callCount + restarted.callCount,
-    9,
-    "portable runtime E2E must make nine tools/call operations across both processes",
+    28,
+    "portable runtime E2E must make 28 tools/call operations across both processes",
   );
   calls.totalAcrossProcesses = primary.callCount + restarted.callCount;
   assert.equal(
     fullTreeAfter.sha256,
     fullTreeBefore.sha256,
-    "extracted runtime tree mutated during E2E",
+    "extracted runtime tree was not restored after scoped E2E writes",
   );
   assert.equal(
     fullTreeAfter.entryCount,
     fullTreeBefore.entryCount,
-    "extracted runtime entry count mutated during E2E",
+    "extracted runtime entry count was not restored",
   );
   process.stdout.write(
     canonicalJson({
@@ -748,6 +970,7 @@ async function main() {
         before: fullTreeBefore.sha256,
         after: fullTreeAfter.sha256,
         unchanged: true,
+        restoredAfterScopedWrites: true,
       },
       lifecycle: { stdinClose, primaryTermination, restart },
     }),

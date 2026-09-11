@@ -1,6 +1,6 @@
 # design.preview
 
-> Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied.
+> Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied. The native server retains OODS-N019; the current adapter forwards message text only and drops native error codes.
 
 **Registration:** auto
 
