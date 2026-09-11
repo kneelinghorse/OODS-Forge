@@ -311,7 +311,9 @@ Notes:
 - Document mode wraps output in a self-contained HTML page with inlined token CSS.
 - HTML and fragment payloads are returned only when `apply: true`; otherwise responses are metadata-only previews.
 - Fragment mode returns per-component HTML fragments with `cssRefs` for CSS extraction (requires `apply: true`).
-- Unknown components in non-strict fragment mode produce per-node errors without blocking sibling rendering.
+- Unknown components in non-strict fragment mode produce per-node errors without blocking sibling rendering; OODS-W002 explicitly reports this V006 reclassification.
+- Fragment mode reports ignored `brand`, `output.tokenOverlay`, and `output.skinOverlay` options together in OODS-W001. Use document mode to apply them.
+- Request `dslVersion` and `output.depth` were removed because they were not consumed. UiSchema `version` and response version metadata remain; validate `apply` remains an explicitly ignored bridge-parity key.
 - `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
 - Patch mode requires both `baseTree` and `patch`.
 
@@ -649,12 +651,17 @@ claim runnable confidence. After artifact construction,
 `validationReceipt.evidence.artifactContentHash` names that exact artifact; successful responses
 also expose the same value as `artifact.contentHash`. Release receipts retain each caller-supplied
 evidence envelope in canonical class order under `evidence.accepted` (class, status, artifact hash,
-and reference). These are accepted hash bindings for auditability; M03 does not claim to execute or
-resolve the external reports. Pipeline
+and reference). Release receipts carry `evidenceVerification: "hash-bound-not-re-executed"`: references are format-checked and hash-bound, not re-executed or resolved. OODS-V162/V163 repeat this limit. Pipeline
 forwards `profile` and `releaseEvidence` unchanged, retains the code-generation receipt, and
 adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or default).
 
 ---
+
+### Remaining option contracts
+
+`health.tokens` reports built brands, themes and scopes from the token build plus a labelled configured `defaultScope` (`source: env | default`); it does not observe a consumer. `dashboard.render` resolves governed `measureRef` by default; unknown refs yield OODS-V130, missing fields yield OODS-V137, and explicit `resolveMeasures:false` disables resolution. Unreferenced dashboards retain their rendered bytes.
+
+The five Cartesian `viz.render` families return Vega-Lite `spec` and opt-in `echartsSpec`; the eight ECharts-primary families omit `spec` and always return `echartsSpec`, `output.echarts:true`, and `output.reason: "echarts-primary-family"`.
 
 ### `design.preview`
 

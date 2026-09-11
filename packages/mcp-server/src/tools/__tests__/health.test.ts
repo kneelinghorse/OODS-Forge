@@ -82,6 +82,8 @@ describe('health tool', () => {
     expect(validateOutput(output)).toBe(true);
     expect(output.status).toBe('degraded');
     expect(output.warnings?.length).toBeGreaterThan(0);
-    expect(output.tokens.built).toBe(false);
+    // Built token scopes are independent of the structured-data manifest (s194-m05).
+    expect(output.tokens.built).toBe(true);
+    expect(output.tokens.brands).toEqual(['A', 'B']);
   });
 });

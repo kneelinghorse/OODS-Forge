@@ -41,15 +41,15 @@
   ],
   "health": [
     {
-      "kind": "inert-option",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/health.ts",
-      "anchor": "const theme = process.env.MCP_THEME ?? 'light';",
-      "reason": "Token theme/brand fields report environment defaults, not an observed active consumer scope."
+      "anchor": "// This is configured default metadata, never an observed consumer scope.",
+      "reason": "Health lists built token scopes and labels configured defaults; it does not observe a consumer scope."
     }
   ],
   "design.preview": [
     {
-      "kind": "external-dependency",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/design.preview.ts",
       "anchor": "const unavailable = () => new ToolError('OODS-N019'",
       "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019."
@@ -57,7 +57,7 @@
   ],
   "code.generate": [
     {
-      "kind": "trusts-caller",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/codegen/validation-profile.ts",
       "anchor": "const accepted = Array.isArray(evidence.accepted)",
       "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof."
@@ -65,7 +65,7 @@
   ],
   "pipeline": [
     {
-      "kind": "trusts-caller",
+      "kind": "documented-limit",
       "file": "packages/mcp-server/src/codegen/validation-profile.ts",
       "anchor": "const accepted = Array.isArray(evidence.accepted)",
       "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof."
@@ -77,6 +77,14 @@
       "file": "packages/mcp-server/src/tools/registry.snapshot.ts",
       "anchor": "// v1.4.0 stub round-trip",
       "reason": "Draft preferred terms, review decisions and capabilities are surfaced losslessly, not consumed by mapping resolution or generation."
+    }
+  ],
+  "repl": [
+    {
+      "kind": "documented-limit",
+      "file": "packages/mcp-server/src/tools/repl.render.ts",
+      "anchor": "if (ignored.length) warnings.push({ code: 'OODS-W001'",
+      "reason": "Fragment output emits typed warnings for ignored document scope controls. Non-strict unknown-component errors remain visible per node with OODS-W002; validate.apply is bridge parity."
     }
   ]
 }

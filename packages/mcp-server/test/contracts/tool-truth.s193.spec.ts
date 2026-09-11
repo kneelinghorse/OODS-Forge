@@ -15,8 +15,8 @@ describe('tool truth derives claims without upgrading source references to runti
   it('reproduces every byte from current source using the recorded census head', () => {
     const ledger = read();
     expect(serialize(deriveToolTruth({ root, head: ledger.head }))).toBe(fs.readFileSync(file, 'utf8'));
-    // s194-m04 retires two auto tools; five on-demand tools now have real dry-run contracts.
-    expect(ledger.summary).toEqual({ entries: 24, auto: 19, onDemand: 5, byTier: { 'product-reality': 16, contract: 6, unit: 2, none: 0 }, autoByTier: { 'product-reality': 16, contract: 1, unit: 2, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 5, unit: 0, none: 0 }, portableE2E: 4 });
+    // s194-m05 adds wire evidence for the remaining option corrections.
+    expect(ledger.summary).toEqual({ entries: 24, auto: 19, onDemand: 5, byTier: { 'product-reality': 18, contract: 5, unit: 1, none: 0 }, autoByTier: { 'product-reality': 18, contract: 0, unit: 1, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 5, unit: 0, none: 0 }, portableE2E: 4 });
     expect(ledger.rows.filter((row: any) => row.portableE2E).map((row: any) => row.name).sort()).toEqual(['artifact.certify', 'dashboard.render', 'health', 'viz.render']);
     for (const row of ledger.rows) {
       expect(row.claimHash).toMatch(/^sha256:[0-9a-f]{64}$/); expect(row.inputSchemaHash).toMatch(/^sha256:[0-9a-f]{64}$/);

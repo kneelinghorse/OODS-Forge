@@ -7,6 +7,7 @@ import { CURRENT_VERSION, getChangelogSince, type ChangelogEntry } from '../vers
 import { listObjects } from '../objects/object-loader.js';
 import { readRuntimeSummary, type RuntimeSummary } from '../lib/runtime-ledger.js';
 import { readToolSummary, type ToolSummary } from '../lib/tool-ledger.js';
+import { readTokenScopes } from '../lib/token-build.js';
 
 type ManifestArtifact = {
   name?: string;
@@ -28,7 +29,7 @@ type HealthOutput = {
   status: 'ok' | 'degraded';
   server: { version: string; uptime: number };
   registry: { components: number; traits: number; objects: number; lastSync: string };
-  tokens: { built: boolean; theme: string; brand: string };
+  tokens: TokenInfo;
   schemas: { savedCount: number; storeDir: string };
   latency: number;
   productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null };
@@ -129,16 +130,29 @@ function readRegistryInfo(structuredDataDir: string): {
   };
 }
 
-function readTokenInfo(structuredDataDir: string, manifest: ManifestDoc): { built: boolean; theme: string; brand: string } {
-  const theme = process.env.MCP_THEME ?? 'light';
-  const brand = process.env.MCP_BRAND ?? 'A';
+type TokenInfo = {
+  built: boolean;
+  brands: string[];
+  themes: string[];
+  scopes: Record<string, string[]>;
+  defaultScope: { brand: string; theme: string; source: 'env' | 'default' } | null;
+};
 
-  try {
-    resolveArtifactPath(structuredDataDir, manifest, 'tokens');
-    return { built: true, theme, brand };
-  } catch {
-    return { built: false, theme, brand };
-  }
+function readTokenInfo(): TokenInfo {
+  const built = readTokenScopes();
+  const brands = Object.keys(built).sort();
+  const scopes = Object.fromEntries(brands.map(brand => [brand, Object.keys(built[brand as keyof typeof built]).sort()]));
+  const themes = [...new Set(Object.values(scopes).flat())].sort();
+  const brand = process.env.MCP_BRAND ?? 'A';
+  const theme = process.env.MCP_THEME ?? 'light';
+  // This is configured default metadata, never an observed consumer scope.
+  const requestedBuilt = scopes[brand]?.includes(theme);
+  const fallbackBrand = scopes.A?.includes('light') ? 'A' : brands[0];
+  const fallbackTheme = fallbackBrand === 'A' && scopes.A.includes('light') ? 'light' : scopes[fallbackBrand]?.[0];
+  const defaultScope = requestedBuilt
+    ? { brand, theme, source: process.env.MCP_BRAND || process.env.MCP_THEME ? 'env' as const : 'default' as const }
+    : fallbackBrand && fallbackTheme ? { brand: fallbackBrand, theme: fallbackTheme, source: 'default' as const } : null;
+  return { built: brands.length > 0 && themes.length > 0, brands, themes, scopes, defaultScope };
 }
 
 async function readSchemaInfo(): Promise<{ savedCount: number; storeDir: string }> {
@@ -159,7 +173,9 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
   const structuredDataDir = resolveStructuredDataDir();
 
   let registry = { components: 0, traits: 0, objects: 0, lastSync: EPOCH_ISO };
-  let tokenInfo = { built: false, theme: process.env.MCP_THEME ?? 'light', brand: process.env.MCP_BRAND ?? 'A' };
+  let tokenInfo: TokenInfo = { built: false, brands: [], themes: [], scopes: {}, defaultScope: null };
+  try { tokenInfo = readTokenInfo(); }
+  catch (error) { warnings.push(`tokens subsystem unavailable: ${(error as Error).message}`); }
   try {
     const registryInfo = readRegistryInfo(structuredDataDir);
     let objectCount = registryInfo.objects;
@@ -174,13 +190,8 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
       objects: objectCount,
       lastSync: registryInfo.lastSync,
     };
-    tokenInfo = readTokenInfo(structuredDataDir, registryInfo.manifest);
-    if (!tokenInfo.built) {
-      warnings.push('tokens subsystem unavailable: tokens artifact not found');
-    }
   } catch (error) {
     warnings.push(`registry subsystem unavailable: ${(error as Error).message}`);
-    warnings.push('tokens subsystem unavailable: manifest/components unavailable');
   }
 
   let schemaInfo = { savedCount: 0, storeDir: path.resolve(process.cwd(), '.oods/schemas') };

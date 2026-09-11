@@ -1256,10 +1256,6 @@ export namespace CodeGenerateInputSchema {
   };
 
   export interface CodeGenerateInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     schema?: AgenticREPLUISchema;
     /**
      * Reference to a cached UiSchema returned by design.compose.
@@ -1496,7 +1492,14 @@ export namespace CodeGenerateOutputSchema {
   /**
    * Mandatory disclosure of the applied profile, independent policy axes, checks performed, and checks not reached. When generation reaches an artifact, the receipt names its content hash; release receipts retain accepted caller-supplied evidence envelopes for auditability.
    */
-  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+  export type ValidationReceipt = ({
+    [k: string]: any;
+  } & ValidationReceiptPartition &
+    ValidationProfilePolicy) & {
+    /**
+     * Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed.
+     */
+    evidenceVerification?: 'hash-bound-not-re-executed';
     profile: 'draft' | 'build' | 'release';
     /**
      * True only when the caller omitted profile and the build default was applied.
@@ -2211,7 +2214,7 @@ export namespace DashboardRenderInputSchema {
      */
     onPanelError?: 'placeholder' | 'omit';
     /**
-     * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT false keeps measureRef fully inert and the output byte-identical to s116. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
+     * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
      */
     resolveMeasures?: boolean;
     /**
@@ -2869,10 +2872,6 @@ export namespace DesignComposeInputSchema {
   };
 
   export interface DesignComposeInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0). Controls feature availability and deprecation behavior.
-     */
-    dslVersion?: string;
     /**
      * Natural-language description of the desired UI (e.g., 'dashboard with metrics and sidebar', 'user registration form').
      */
@@ -3614,8 +3613,19 @@ export namespace HealthOutputSchema {
     };
     tokens: {
       built: boolean;
-      theme: string;
-      brand: string;
+      brands: string[];
+      themes: string[];
+      scopes: {
+        [k: string]: string[];
+      };
+      /**
+       * Configured default chosen from built scopes; never an observed active consumer scope. Null when no scopes are built.
+       */
+      defaultScope: {
+        brand: string;
+        theme: string;
+        source: 'env' | 'default';
+      } | null;
     };
     schemas: {
       savedCount: number;
@@ -5009,10 +5019,6 @@ export namespace PipelineInputSchema {
    */
   export interface PipelineInput {
     /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
-    /**
      * Object name from the OODS registry (e.g., Subscription, User).
      */
     object?: string;
@@ -5165,7 +5171,14 @@ export namespace PipelineOutputSchema {
   /**
    * Mandatory generation-profile disclosure. Pipeline preserves code.generate checks and accepted caller-supplied evidence envelopes, verifies the child receipt against the requested profile and artifact, and records target resolution provenance.
    */
-  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+  export type ValidationReceipt = ({
+    [k: string]: any;
+  } & ValidationReceiptPartition &
+    ValidationProfilePolicy) & {
+    /**
+     * Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed.
+     */
+    evidenceVerification?: 'hash-bound-not-re-executed';
     profile: 'draft' | 'build' | 'release';
     defaulted: boolean;
     rationale: string;
@@ -5915,10 +5928,6 @@ export namespace ReplRenderInputSchema {
   export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
 
   export interface ReplRenderInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     mode?: 'full' | 'patch';
     schema?: AgenticREPLUISchema;
     /**
@@ -5934,7 +5943,7 @@ export namespace ReplRenderInputSchema {
       [k: string]: any;
     };
     /**
-     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand="default". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so a brand supplied alongside fragments is ignored.
+     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand="default". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so fragments diagnose an ignored brand with OODS-W001.
      */
     brand?: 'A' | 'B';
     options?: {
@@ -5952,10 +5961,6 @@ export namespace ReplRenderInputSchema {
        */
       compact?: boolean;
       /**
-       * Reserved for v2 fragment-depth controls; currently ignored.
-       */
-      depth?: number;
-      /**
        * When true, emit data-oods-confidence and data-confidence-level attributes on rendered components that carry composition confidence metadata. Low-confidence components (below confidenceThreshold) also receive an oods-low-confidence CSS class. Default false.
        */
       showConfidence?: boolean;
@@ -5964,7 +5969,7 @@ export namespace ReplRenderInputSchema {
        */
       confidenceThreshold?: number;
       /**
-       * Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), ignored for fragments; distinct from the FS-resolved named brandOverlay on fidelity.preview.
+       * Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity.preview.
        */
       tokenOverlay?: {
         [k: string]: any;
@@ -6615,10 +6620,6 @@ export namespace ReplValidateInputSchema {
   export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
 
   export interface ReplValidateInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     mode?: 'full' | 'patch';
     schema?: AgenticREPLUISchema;
     /**
@@ -7832,10 +7833,6 @@ export namespace VizRenderInputSchema {
      */
     opacity?: number;
     /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
-    /**
      * Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.
      *
      * @minItems 1
@@ -8226,15 +8223,20 @@ export type VizRenderInput = VizRenderInputSchema.VizRenderInput;
 // Source: viz.render.output.json
 export namespace VizRenderOutputSchema {
   /**
-   * A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The Vega-Lite spec is always present; the ECharts option is opt-in (output.echarts).
+   * A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The five Cartesian families return spec (Vega-Lite) and optional echartsSpec; the eight ECharts-primary families omit spec and always return echartsSpec with output.echarts true and reason echarts-primary-family.
    */
-  export interface VizRenderOutput {
+  export type VizRenderOutput = VizRenderOutput1 & VizRenderOutput2;
+  export type VizRenderOutput1 = {
+    [k: string]: any;
+  };
+
+  export interface VizRenderOutput2 {
     /**
      * Whether rendering succeeded.
      */
     status: 'ok' | 'error';
     /**
-     * Resolved chart type (bar, line, area, scatter, heatmap; empty on error).
+     * Resolved registered chart type; omitted on error.
      */
     chartType?: string;
     /**
@@ -8244,7 +8246,7 @@ export namespace VizRenderOutputSchema {
     /**
      * Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes.
      */
-    spec: {
+    spec?: {
       [k: string]: any;
     };
     /**
@@ -8374,6 +8376,10 @@ export namespace VizRenderOutputSchema {
       height?: number;
       compact: boolean;
       echarts?: boolean;
+      /**
+       * This chart family requires ECharts, so output.echarts is forced true even when omitted or false.
+       */
+      reason?: 'echarts-primary-family';
       includeNormalizedSpec?: boolean;
       includeA11y?: boolean;
     };
@@ -8387,7 +8393,7 @@ export namespace VizRenderOutputSchema {
     warnings: Issue[];
     meta?: {
       /**
-       * Primary renderer for the spec payload (always vega-lite in Phase 0).
+       * Primary renderer for the returned payload.
        */
       renderer?: 'vega-lite' | 'echarts';
       /**

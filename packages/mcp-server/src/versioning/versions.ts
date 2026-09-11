@@ -2,7 +2,7 @@
  * DSL Version Registry — maps version strings to feature flags and behavior toggles.
  *
  * Current version: 1.0
- * All tools accept an optional `dslVersion` parameter. When omitted, CURRENT_VERSION is used.
+ * The server reports CURRENT_VERSION through health; request-level version selection is not supported.
  *
  * Adding a new version:
  *   1. Add entry to VERSION_REGISTRY with appropriate feature flags
@@ -59,7 +59,7 @@ export const CHANGELOG: ReadonlyArray<ChangelogEntry> = [
     version: '1.0',
     date: '2026-03-05',
     changes: [
-      'Initial DSL version. All tools accept optional dslVersion parameter.',
+      'Initial DSL version. Health reports the current version.',
       'deprecated_since field supported in component catalog and trait definitions.',
       'Version registry and changelog infrastructure established.',
     ],

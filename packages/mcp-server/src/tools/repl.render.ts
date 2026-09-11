@@ -174,6 +174,10 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
   const format = normalizeOutputFormat(input);
   const strict = normalizeStrict(input);
   const compact = normalizeCompact(input);
+  if (format === 'fragments') {
+    const ignored = [input.brand !== undefined ? 'brand' : '', input.output?.tokenOverlay !== undefined ? 'output.tokenOverlay' : '', input.output?.skinOverlay !== undefined ? 'output.skinOverlay' : ''].filter(Boolean);
+    if (ignored.length) warnings.push({ code: 'OODS-W001', message: `Fragment output ignores ${ignored.join(', ')}; use document format to apply these options.` });
+  }
 
   // In non-strict fragment mode, UNKNOWN_COMPONENT errors should not block the
   // entire render. They are deferred and reported as per-node errors after
@@ -185,6 +189,7 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
       const remaining = errors.filter((e) => e.code !== 'OODS-V006');
       errors.length = 0;
       errors.push(...remaining);
+      warnings.push({ code: 'OODS-W002', message: `Non-strict fragment output reclassifies ${deferredUnknownErrors.length} OODS-V006 issue(s) as per-node errors; known fragments may still render.` });
     }
   }
 

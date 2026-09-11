@@ -2,12 +2,23 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "additionalProperties": false,
-  "required": ["status", "server", "registry", "tokens", "schemas", "latency", "productReality"],
+  "required": [
+    "status",
+    "server",
+    "registry",
+    "tokens",
+    "schemas",
+    "latency",
+    "productReality"
+  ],
   "properties": {
     "productReality": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["runtime", "tools"],
+      "required": [
+        "runtime",
+        "tools"
+      ],
       "properties": {
         "tools": {
           "description": "Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.",
@@ -62,60 +73,176 @@
         },
         "runtime": {
           "description": "Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.",
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
-          "required": ["cells", "pass", "typedGap", "fail", "head"],
+          "required": [
+            "cells",
+            "pass",
+            "typedGap",
+            "fail",
+            "head"
+          ],
           "properties": {
-            "cells": { "type": "integer", "const": 154 },
-            "pass": { "type": "integer", "minimum": 0 },
-            "typedGap": { "type": "integer", "minimum": 0 },
-            "fail": { "type": "integer", "minimum": 0 },
-            "head": { "type": "string", "minLength": 1 }
+            "cells": {
+              "type": "integer",
+              "const": 154
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "typedGap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fail": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "head": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }
     },
     "status": {
       "type": "string",
-      "enum": ["ok", "degraded"]
+      "enum": [
+        "ok",
+        "degraded"
+      ]
     },
     "server": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["version", "uptime"],
+      "required": [
+        "version",
+        "uptime"
+      ],
       "properties": {
-        "version": { "type": "string", "minLength": 1 },
-        "uptime": { "type": "integer", "minimum": 0 }
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uptime": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "registry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["components", "traits", "objects", "lastSync"],
+      "required": [
+        "components",
+        "traits",
+        "objects",
+        "lastSync"
+      ],
       "properties": {
-        "components": { "type": "integer", "minimum": 0 },
-        "traits": { "type": "integer", "minimum": 0 },
-        "objects": { "type": "integer", "minimum": 0 },
-        "lastSync": { "type": "string", "minLength": 1 }
+        "components": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "objects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lastSync": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "tokens": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["built", "theme", "brand"],
+      "required": [
+        "built",
+        "brands",
+        "themes",
+        "scopes",
+        "defaultScope"
+      ],
       "properties": {
-        "built": { "type": "boolean" },
-        "theme": { "type": "string", "minLength": 1 },
-        "brand": { "type": "string", "minLength": 1 }
+        "built": {
+          "type": "boolean"
+        },
+        "brands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "defaultScope": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "brand",
+            "theme",
+            "source"
+          ],
+          "properties": {
+            "brand": {
+              "type": "string"
+            },
+            "theme": {
+              "type": "string"
+            },
+            "source": {
+              "enum": [
+                "env",
+                "default"
+              ]
+            }
+          },
+          "description": "Configured default chosen from built scopes; never an observed active consumer scope. Null when no scopes are built."
+        }
       }
     },
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["savedCount", "storeDir"],
+      "required": [
+        "savedCount",
+        "storeDir"
+      ],
       "properties": {
-        "savedCount": { "type": "integer", "minimum": 0 },
-        "storeDir": { "type": "string", "minLength": 1 }
+        "savedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "storeDir": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "latency": {
@@ -124,7 +251,10 @@
     },
     "warnings": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "dslVersion": {
       "type": "string",
@@ -135,12 +265,28 @@
       "description": "DSL version changelog entries, included when requested via includeChangelog input.",
       "items": {
         "type": "object",
-        "required": ["version", "date", "changes", "breaking"],
+        "required": [
+          "version",
+          "date",
+          "changes",
+          "breaking"
+        ],
         "properties": {
-          "version": { "type": "string" },
-          "date": { "type": "string" },
-          "changes": { "type": "array", "items": { "type": "string" } },
-          "breaking": { "type": "boolean" }
+          "version": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "breaking": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       }

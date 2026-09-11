@@ -759,16 +759,14 @@ function renderEChartsPrimary(
       status: 'ok',
       chartType,
       mode: 'explicit',
-      // No Vega-Lite equivalent: `spec` (Vega-Lite) is the empty placeholder and
-      // the ECharts option is auto-promoted as the primary renderable payload —
-      // returned WITHOUT the caller opting into output.echarts.
-      spec: {},
+      // ECharts is the only renderable payload for this family; omit Vega-Lite spec.
       echartsSpec: echartsOption as unknown as VizRenderOutput['echartsSpec'],
       a11yDescription: spec.a11y.description,
       warnings: [...geoWarnings, ...cycleWarnings, ...duplicateLinkWarnings],
       output: {
         compact,
         echarts: true,
+        reason: 'echarts-primary-family',
         ...(includeNormalized ? { includeNormalizedSpec: true } : {}),
         ...(includeA11y ? { includeA11y: true } : {}),
       },

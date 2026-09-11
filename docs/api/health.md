@@ -1,6 +1,6 @@
 # health
 
-> Check MCP server readiness and subsystem status, including registry counts, token artifact availability, and schema store state.
+> Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported.
 
 **Registration:** auto
 

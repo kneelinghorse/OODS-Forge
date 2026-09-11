@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "b7367cfd3ac947c93946c2e596fa724d4d258a13",
+  "head": "6ad68b33975b04430baa1ee6e657acb8d1c22560",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -39,15 +39,15 @@
     "auto": 19,
     "onDemand": 5,
     "byTier": {
-      "product-reality": 16,
-      "contract": 6,
-      "unit": 2,
+      "product-reality": 18,
+      "contract": 5,
+      "unit": 1,
       "none": 0
     },
     "autoByTier": {
-      "product-reality": 16,
-      "contract": 1,
-      "unit": 2,
+      "product-reality": 18,
+      "contract": 0,
+      "unit": 1,
       "none": 0
     },
     "onDemandByTier": {
@@ -372,12 +372,12 @@
       "name": "code.generate",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires.",
+        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch).",
         "inputSchemaDescription": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:96af7fff5199e4ee71ddff12a38122c489e598003e842723d63864ddefd2990d",
+      "claimHash": "sha256:69c162c463cdc95046cac390e01b0b6509c88ecd7471a1cc7ea0aa0b2e400cf0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
-      "inputSchemaHash": "sha256:6763c8aa9e71e7f9ed1897ece41208e8d53b92352f71e9f162fcacb07ab8fd40",
+      "inputSchemaHash": "sha256:3b9f8ac91e4d6c2d3c7a0c05f633cfb1e4d5d5a43a9f4ae04ed5fb54123e6149",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -488,6 +488,11 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/local-behavior-guards.s185.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
             "line": 11,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
@@ -697,10 +702,10 @@
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "trusts-caller",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof.",
-          "line": 297
+          "line": 299
         }
       ]
     },
@@ -713,7 +718,7 @@
       },
       "claimHash": "sha256:9daeb71fb6c86c13fb1c43b68991a59f154edfe0ece31555ecf230e4dbeb0cce",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.compose.input.json",
-      "inputSchemaHash": "sha256:8a8604c76ae7408203594144707ddf1b9184bf723d00f570e30d2adaf96fbfc5",
+      "inputSchemaHash": "sha256:e25e8b5e43d5271105f0486112410c651140c1c01d30317c0b36fdc757fb39c0",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -760,6 +765,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/list-states.s193.spec.ts",
             "line": 2,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 10,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -955,15 +965,21 @@
       "name": "design.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification.",
+        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied.",
         "inputSchemaDescription": "Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve."
       },
-      "claimHash": "sha256:02d440eae49b1d0a9b07b0c16c7759e4ec017b79c60da7a8f807c976ccec6654",
+      "claimHash": "sha256:5accbe2d1c085c05a9cb251651e332f21d683ace92371fe0cb42ad07ba97643d",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
       "inputSchemaHash": "sha256:bbad1535c7d66c9b8a17f5d450849deb9a25f4f3a07742da2a8a212f5c33720e",
-      "proofTier": "unit",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/design.preview.ts"
+          }
+        ],
         "contract": [],
         "unit": [
           {
@@ -979,13 +995,19 @@
           "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m05/README.md",
+          "line": 3,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": false,
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "external-dependency",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.preview.ts",
           "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019.",
           "line": 12
@@ -996,18 +1018,23 @@
       "name": "pipeline",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema.",
+        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch).",
         "inputSchemaDescription": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:e85ae74b80d42ff2edab1dd3e917542a92dd0ad98cc1eced0c4e6da8a52ef828",
+      "claimHash": "sha256:21214fbeab2444921746d5776739910a954be2e372945bcc2122cb4e084c8cee",
       "inputSchemaPath": "packages/mcp-server/src/schemas/pipeline.input.json",
-      "inputSchemaHash": "sha256:92b4ebb8815bd472769abe2a7817522cc429039f0b382bdf9b9710fb4c7a8100",
+      "inputSchemaHash": "sha256:e0eeb8d65a6decf167f743cae1651be1d6873c7db11a0781cb60b658e80cd6d3",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
           {
             "path": "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -1071,10 +1098,10 @@
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "trusts-caller",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof.",
-          "line": 297
+          "line": 299
         }
       ]
     },
@@ -1082,15 +1109,20 @@
       "name": "health",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Check MCP server readiness and subsystem status, including registry counts, token artifact availability, and schema store state.",
+        "description": "Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:cb9bafd661f67f5d3b445f4cbe5e3c1578d7ce455d1e5cd05680a3c64509fcc9",
+      "claimHash": "sha256:63f8098e7a731d63112d95a35c45a5fb1b31c3ae197a266784e0cfcafc1d4e50",
       "inputSchemaPath": "packages/mcp-server/src/schemas/health.input.json",
       "inputSchemaHash": "sha256:5f9681a9aea550f2e7a162c36b75f262c82c9e39a85257f101af3256bae6fe07",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/health.ts"
+          },
           {
             "path": "packages/mcp-server/test/product-reality/workflow-runtime.s193.spec.ts",
             "line": 6,
@@ -1131,10 +1163,10 @@
       ],
       "caveats": [
         {
-          "kind": "inert-option",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/health.ts",
-          "reason": "Token theme/brand fields report environment defaults, not an observed active consumer scope.",
-          "line": 133
+          "reason": "Health lists built token scopes and labels configured defaults; it does not observe a consumer scope.",
+          "line": 148
         }
       ]
     },
@@ -1200,18 +1232,23 @@
       "name": "viz.render",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns a compiled Vega-Lite spec (ECharts opt-in via output.echarts) with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.",
+        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.",
         "inputSchemaDescription": "Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option."
       },
-      "claimHash": "sha256:be93edde5cd7b35f2c8d836303477cdd61fb52b4651b4c93998589dd35e0843a",
+      "claimHash": "sha256:39c262bd1e338af36802a2af6a3cc078dbc71652a261857e715dede4cbd5a8d7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/viz.render.input.json",
-      "inputSchemaHash": "sha256:227ca301124c92eec88804620f83d4d0a55f00f40ac04837ceee13e91bf0e0b6",
+      "inputSchemaHash": "sha256:6457540f97f0e54c1c4b8fd157a13583477a66ebcb1912940b01dbfd2746d18d",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
           {
             "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
             "line": 13,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           },
           {
@@ -1388,6 +1425,12 @@
           "line": 9,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m05/README.md",
+          "line": 3,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
@@ -1403,15 +1446,21 @@
       "name": "dashboard.render",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo map) from a declarative DashboardSpec of shared datasets + panels. Composes each panel through the in-process viz engine with deterministic auto-layout, headless KPI compute, and cross-filter linking. Returns the resolved layout, per-panel compiled specs (Vega-Lite or ECharts, geo registration preserved), KPI values, a dashboard-level a11y block, and one specRef for pipeline reuse.\n\nPANEL IDENTITY. Every successful chart panel returns the contentHash produced by its in-process viz.render call; it therefore matches a standalone viz.render call with the identical spec and data. Set the call-level output.includeNormalizedSpec flag to also return each successful chart panel's NormalizedVizSpec. That IR can be passed to artifact.certify as {spec} alone for a cartesian chart, or as {spec,data} with exactly the matching hierarchy, sankey, chord, network, or geo branch for an ECharts-primary chart. These per-panel identity fields are attached after the dashboard's canonical {panels,layout} projection is cached and hashed, so they do not feed the dashboard contentHash.\n\nHTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG; placeholders are reserved for error panels. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.\n\nBRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document.",
+        "description": "Render a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo map) from a declarative DashboardSpec of shared datasets + panels. Composes each panel through the in-process viz engine with deterministic auto-layout, headless KPI compute, and cross-filter linking. Returns the resolved layout, per-panel compiled specs (Vega-Lite or ECharts, geo registration preserved), KPI values, a dashboard-level a11y block, and one specRef for pipeline reuse.\n\nPANEL IDENTITY. Every successful chart panel returns the contentHash produced by its in-process viz.render call; it therefore matches a standalone viz.render call with the identical spec and data. Set the call-level output.includeNormalizedSpec flag to also return each successful chart panel's NormalizedVizSpec. That IR can be passed to artifact.certify as {spec} alone for a cartesian chart, or as {spec,data} with exactly the matching hierarchy, sankey, chord, network, or geo branch for an ECharts-primary chart. These per-panel identity fields are attached after the dashboard's canonical {panels,layout} projection is cached and hashed, so they do not feed the dashboard contentHash.\n\nHTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG; placeholders are reserved for error panels. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.\n\nBRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document. Governed measureRef resolution defaults to true: KPI refs bind field/aggregate, chart refs decorate narrative only. Unknown refs produce OODS-V130; missing resolved fields produce OODS-V137 through the panel error policy. Explicit resolveMeasures:false opts out of ref resolution; inputs without refs retain their rendered bytes.",
         "inputSchemaDescription": "Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only, decision #881), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout (m02), computes KPIs (m03), and applies any active cross-filter selection (m03/m04). Option C: per-chart specs are unchanged; this IR sits above them."
       },
-      "claimHash": "sha256:26d4c67be536fe2c11435c63a5cb0c0047d4ed253faa22b7d0d7614bf359aa96",
+      "claimHash": "sha256:a2ff3fd55460a730dad4b2d2a566dacdb364e9f0ce9683bcb932e15a4193f245",
       "inputSchemaPath": "packages/mcp-server/src/schemas/dashboard.render.input.json",
-      "inputSchemaHash": "sha256:c65380aa472d8b91c087fcc1c06d72eb86a61aea52591e9f9885f39fc50ca777",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:a46bf263eca396aa57230a97bae6aa9bd6b83bd63385fa550a904ecaecb44415",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/dashboard.render.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/dashboard.render.duplicate-panel-id.s181.spec.ts",
@@ -2078,12 +2127,12 @@
       "name": "repl",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand.",
+        "description": "Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported.",
         "inputSchemaDescription": "Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on."
       },
-      "claimHash": "sha256:ceeb99ada3f30110fdf2d3c00370e36c5d4a04eed2fc90d83dbcfe403d7acf6d",
+      "claimHash": "sha256:697e9bc768efec1d2204f053a5db34cec34b5cdfe3a114fa1269b00b311414a6",
       "inputSchemaPath": "packages/mcp-server/src/schemas/repl.input.json",
-      "inputSchemaHash": "sha256:214462f0a3beb934599cefbfd41e4e8e62f3f77c20d3b22131a59eb7c60a6ce6",
+      "inputSchemaHash": "sha256:5f7898d84de425889f54f77dfd77a603e7dbef8f76266247ec4c31f4f3e7e279",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -2091,6 +2140,11 @@
             "path": "packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts",
             "line": 27,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/repl.ts"
           }
         ],
         "contract": [
@@ -2273,7 +2327,14 @@
       ],
       "portableE2E": false,
       "portableE2ERefs": [],
-      "caveats": []
+      "caveats": [
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "reason": "Fragment output emits typed warnings for ignored document scope controls. Non-strict unknown-component errors remain visible per node with OODS-W002; validate.apply is bridge parity.",
+          "line": 179
+        }
+      ]
     },
     {
       "name": "diag.snapshot",

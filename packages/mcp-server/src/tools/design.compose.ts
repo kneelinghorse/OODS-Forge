@@ -144,7 +144,6 @@ export interface ActionInstance {
 }
 
 export interface DesignComposeInput {
-  dslVersion?: string;
   intent?: string;
   object?: string;
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';

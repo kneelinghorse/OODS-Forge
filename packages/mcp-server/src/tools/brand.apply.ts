@@ -656,7 +656,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput & { 
 
     receipt.build = await runTokenBuild();
     if (receipt.build.exitCode === 0) {
-      refreshTokenBundle();
+      await refreshTokenBundle();
       resetTokensCssCache();
     }
     const diagnostics = {

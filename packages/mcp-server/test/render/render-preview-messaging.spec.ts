@@ -35,6 +35,17 @@ describe('repl.render preview messaging', () => {
     expect(result.preview?.summary).toBe('Render ready for 1 screen');
   });
 
+  it('reports non-strict V006 reclassification explicitly using the existing invalid fixture', async () => {
+    const result = await handle({ schema: INVALID_SCHEMA, apply: true, output: { format: 'fragments', strict: false } });
+    expect(result.warnings.some(issue => issue.code === 'OODS-W002' && issue.message.includes('1 OODS-V006'))).toBe(true);
+    // With no known siblings this existing fixture still has no renderable fragments.
+    expect(result.status).toBe('error');
+    expect(result.errors.find(issue => issue.code === 'OODS-V006')?.path).toBe('/fragments/unknown-node');
+    const strict = await handle({ schema: INVALID_SCHEMA, apply: true, output: { format: 'fragments', strict: true } });
+    expect(strict.status).toBe('error');
+    expect(strict.warnings.some(issue => issue.code === 'OODS-W002')).toBe(false);
+  });
+
   it('uses a blocked summary for invalid schemas', async () => {
     const result = await handle({ schema: INVALID_SCHEMA });
 

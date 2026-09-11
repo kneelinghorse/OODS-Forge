@@ -61,6 +61,22 @@ describe("how Forge works narrative truth", () => {
     expect(descriptions.schema).toContain("not ETags or conditional requests");
   });
 
+  it("pins the observable option limits in narrative, descriptors and generated API pages (s194)", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const pins: Record<string, string[]> = {
+      health: ["defaultScope"], "dashboard.render": ["OODS-V130", "OODS-V137"],
+      "viz.render": ["echarts-primary-family"], repl: ["OODS-W001", "OODS-W002"],
+      "code.generate": ["hash-bound-not-re-executed"], pipeline: ["hash-bound-not-re-executed"],
+      "design.preview": ["127.0.0.1:4477", "OODS-N019"],
+    };
+    for (const [tool, phrases] of Object.entries(pins)) for (const phrase of phrases) {
+      expect(html).toContain(phrase);
+      expect(descriptions[tool]).toContain(phrase);
+      expect(read(`docs/api/${tool.replaceAll(".", "-")}.md`)).toContain(phrase);
+    }
+    expect(html).toContain("Request dslVersion and repl.output.depth were removed");
+  });
+
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
       read("packages/mcp-server/src/tools/registry.json"),

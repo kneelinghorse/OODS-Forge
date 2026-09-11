@@ -59,10 +59,10 @@ beforeAll(() => {
   fs.symlinkSync(path.join(root, 'node_modules'), path.join(tokenRoot, 'node_modules'), 'dir');
   process.env.MCP_BRAND_SOURCE_ROOT = tokenRoot;
 });
-afterAll(() => {
+afterAll(async () => {
   if (originalRoot === undefined) delete process.env.MCP_BRAND_SOURCE_ROOT;
   else process.env.MCP_BRAND_SOURCE_ROOT = originalRoot;
-  refreshTokenBundle();
+  await refreshTokenBundle();
   resetTokensCssCache();
   expect(read(path.join(root, 'packages/tokens/src/tokens/brands/B/dark.json'))).toBe(canonicalBefore);
   fs.rmSync(temp, { recursive: true, force: true });

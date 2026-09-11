@@ -451,11 +451,11 @@ describe('viz.render handler — treemap (hierarchy) path', () => {
     expect(series[0].data[0].name).toBe('Portfolio');
   });
 
-  it('ECharts-primary: echartsSpec is auto-promoted WITHOUT opting into output.echarts; Vega-Lite spec is the empty placeholder', async () => {
+  it('ECharts-primary: echartsSpec is auto-promoted WITHOUT opting into output.echarts; Vega-Lite spec is omitted with a forced-output reason', async () => {
     const out = await render({ chartType: 'treemap', hierarchy: ORG_TREE });
     expect(out.echartsSpec).toBeTruthy();
-    expect(out.spec).toEqual({});
-    expect(out.output?.echarts).toBe(true);
+    expect(out).not.toHaveProperty('spec');
+    expect(out.output).toMatchObject({ echarts: true, reason: 'echarts-primary-family' });
     expect(validateOutput(out)).toBe(true);
   });
 
@@ -821,11 +821,11 @@ describe('viz.render handler — choropleth (geo) path', () => {
     expect(registration.geoJson.features[0].properties.region).toBe('CA');
   });
 
-  it('ECharts-primary: echartsSpec auto-promoted without output.echarts; Vega-Lite spec is the empty placeholder', async () => {
+  it('ECharts-primary: echartsSpec auto-promoted without output.echarts; Vega-Lite spec is omitted with a forced-output reason', async () => {
     const out = await render(CHORO_INPUT);
     expect(out.echartsSpec).toBeTruthy();
-    expect(out.spec).toEqual({});
-    expect(out.output?.echarts).toBe(true);
+    expect(out).not.toHaveProperty('spec');
+    expect(out.output).toMatchObject({ echarts: true, reason: 'echarts-primary-family' });
   });
 
   it('input schema couples choropleth with a valued geo branch (rejects rows-only / missing valueField / missing geometry)', () => {

@@ -1,0 +1,189 @@
+{
+  "input": {
+    "schemaVersion": "v0.1",
+    "datasets": [
+      {
+        "id": "sales",
+        "rows": [
+          {
+            "revenue": 100
+          },
+          {
+            "revenue": 80
+          }
+        ]
+      }
+    ],
+    "panels": [
+      {
+        "id": "revenue",
+        "kind": "kpi",
+        "datasetId": "sales",
+        "measureRef": "gm.revenue.total",
+        "aggregate": "sum"
+      }
+    ],
+    "a11y": {
+      "description": "Governed revenue",
+      "readingOrder": "kpi-first"
+    },
+    "theme": "light",
+    "onPanelError": "placeholder",
+    "resolveMeasures": true,
+    "strictFields": false,
+    "strictDatasets": false,
+    "a11yEquivalence": true
+  },
+  "good": {
+    "status": "ok",
+    "schemaVersion": "v0.1",
+    "panels": [
+      {
+        "id": "revenue",
+        "kind": "kpi",
+        "value": 180,
+        "formatted": "180",
+        "delta": -120,
+        "deltaPct": -0.4,
+        "trendDirection": "decreasing",
+        "sparkline": [
+          100,
+          80
+        ],
+        "thresholdBreached": false,
+        "a11yDescription": "revenue: 180 (decreasing, delta -120)."
+      }
+    ],
+    "layout": [
+      {
+        "id": "revenue",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 1
+      }
+    ],
+    "links": [],
+    "a11y": {
+      "description": "Governed revenue",
+      "readingOrder": "kpi-first",
+      "panelOrder": [
+        "revenue"
+      ]
+    },
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "theme": "light"
+    },
+    "meta": {
+      "panelCount": 1,
+      "datasetCount": 1,
+      "crossFiltered": false,
+      "errorPanelCount": 0
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "dashboard.render-51f53631",
+    "specRefCreatedAt": "2026-09-11T16:28:10.370Z",
+    "specRefExpiresAt": "2026-09-11T16:58:10.370Z",
+    "contentHash": "05be4b9891a4fd8632f25821b7bb65d1dd36fe7d753976a4d729cf9372a1b0c2"
+  },
+  "unknown": {
+    "status": "ok",
+    "schemaVersion": "v0.1",
+    "panels": [
+      {
+        "id": "revenue",
+        "kind": "error",
+        "error": {
+          "code": "OODS-V130",
+          "message": "KPI panel \"revenue\" references unknown governed measure \"gm.no-such-measure\".",
+          "severity": "error"
+        },
+        "a11yDescription": "Panel \"revenue\" could not be rendered: unknown governed measure \"gm.no-such-measure\"."
+      }
+    ],
+    "layout": [
+      {
+        "id": "revenue",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 1
+      }
+    ],
+    "links": [],
+    "a11y": {
+      "description": "Governed revenue",
+      "readingOrder": "kpi-first",
+      "panelOrder": [
+        "revenue"
+      ]
+    },
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "theme": "light"
+    },
+    "meta": {
+      "panelCount": 1,
+      "datasetCount": 1,
+      "crossFiltered": false,
+      "errorPanelCount": 1
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "dashboard.render-459b7c32",
+    "specRefCreatedAt": "2026-09-11T16:28:10.381Z",
+    "specRefExpiresAt": "2026-09-11T16:58:10.381Z",
+    "contentHash": "153124e86651adb78eb1294f6da59f246aded2bf9b88fccc63bf2b9ad95ea319"
+  },
+  "disabled": {
+    "status": "ok",
+    "schemaVersion": "v0.1",
+    "panels": [
+      {
+        "id": "revenue",
+        "kind": "error",
+        "error": {
+          "code": "OODS-V137",
+          "message": "KPI panel \"revenue\" has no resolvable field: a measureRef-only panel requires resolveMeasures and a known governed measure.",
+          "severity": "error"
+        },
+        "a11yDescription": "Panel \"revenue\" could not be rendered: no resolvable field (measureRef unresolved)."
+      }
+    ],
+    "layout": [
+      {
+        "id": "revenue",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 1
+      }
+    ],
+    "links": [],
+    "a11y": {
+      "description": "Governed revenue",
+      "readingOrder": "kpi-first",
+      "panelOrder": [
+        "revenue"
+      ]
+    },
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "theme": "light"
+    },
+    "meta": {
+      "panelCount": 1,
+      "datasetCount": 1,
+      "crossFiltered": false,
+      "errorPanelCount": 1
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "dashboard.render-b4321a3e",
+    "specRefCreatedAt": "2026-09-11T16:28:10.381Z",
+    "specRefExpiresAt": "2026-09-11T16:58:10.381Z",
+    "contentHash": "c7c628075df077ead0e659f1349dc92080e8a3a87c0f52dd205b84376dab2011"
+  }
+}

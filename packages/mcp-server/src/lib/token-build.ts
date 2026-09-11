@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
-import tokensBundle from '@oods/tokens';
+import type tokensBundle from '@oods/tokens';
 
 const REPO_ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
@@ -44,7 +44,8 @@ export function readTokenScopes(): typeof tokensBundle.cssVariablesByScope {
 }
 
 /** Refresh existing references held by long-lived MCP renderers after a successful build. */
-export function refreshTokenBundle(): void {
+export async function refreshTokenBundle(): Promise<void> {
+  const { default: tokensBundle } = await import('@oods/tokens');
   Object.assign(tokensBundle.cssVariablesByScope, readTokenScopes());
   const defaults = JSON.parse(fs.readFileSync(path.join(tokenPackageRoot(), 'dist/tailwind/tokens.json'), 'utf8'));
   for (const [target, source] of [[tokensBundle.tokens, defaults.tokens], [tokensBundle.flatTokens, defaults.flat], [tokensBundle.cssVariables, defaults.cssVariables]]) {
