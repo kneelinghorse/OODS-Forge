@@ -7,6 +7,7 @@ import { CURRENT_VERSION, getChangelogSince, type ChangelogEntry } from '../vers
 import { listObjects } from '../objects/object-loader.js';
 import { readRuntimeSummary, type RuntimeSummary } from '../lib/runtime-ledger.js';
 import { readToolSummary, type ToolSummary } from '../lib/tool-ledger.js';
+import { readVizSummary, type VizSummary } from '../lib/viz-taxonomy.js';
 import { readTokenScopes } from '../lib/token-build.js';
 
 type ManifestArtifact = {
@@ -32,7 +33,7 @@ type HealthOutput = {
   tokens: TokenInfo;
   schemas: { savedCount: number; storeDir: string };
   latency: number;
-  productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null };
+  productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null; viz: VizSummary | null };
   dslVersion?: string;
   warnings?: string[];
   changelog?: ChangelogEntry[];
@@ -209,6 +210,10 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
   try { tools = readToolSummary(); }
   catch (error) { warnings.push(`tool proof unavailable: ${(error as Error).message}`); }
 
+  let viz: VizSummary | null = null;
+  try { viz = readVizSummary(); }
+  catch (error) { warnings.push(`viz taxonomy unavailable: ${(error as Error).message}`); }
+
   const latency = Math.max(0, nowMs() - started);
   const status: HealthOutput['status'] = warnings.length > 0 ? 'degraded' : 'ok';
 
@@ -222,7 +227,7 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
     tokens: tokenInfo,
     schemas: schemaInfo,
     latency,
-    productReality: { runtime, tools },
+    productReality: { runtime, tools, viz },
     dslVersion: CURRENT_VERSION,
     ...(warnings.length > 0 ? { warnings } : {}),
   };

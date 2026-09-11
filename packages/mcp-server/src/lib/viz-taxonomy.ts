@@ -1,0 +1,97 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { chartPatterns, VIZ_RECIPES } from '@oods/viz-core';
+
+type Assignment = { id: string; family: string; role: 'core' | 'extension'; coreCell: string | null };
+type CellDefinition = { cell: string; definition: string; gapReason: string };
+type Classification = { schemaVersion: 1; families: Array<{ id: string; definition: string; coreCells: CellDefinition[] }>; assignments: Assignment[] };
+type VizIdentity = Assignment & { kind: 'type' | 'pattern'; publicSvg: boolean; specPath?: string; specSha256?: string };
+type CoreCell = { family: string; cell: string; definition: string; status: 'surface-complete' | 'typed-gap'; identities: string[]; reason?: string };
+export type VizSummary = { types: number; patterns: number; families: number; classified: number; coreCells: number; coreSurfaceComplete: number; typedGaps: number };
+export type VizTaxonomy = { schemaVersion: 1; families: Array<{ id: string; definition: string }>; identities: VizIdentity[]; coreCells: CoreCell[]; summary: VizSummary };
+
+const directory = path.dirname(fileURLToPath(import.meta.url));
+const cellKey = (family: string, cell: string) => `${family}/${cell}`;
+const same = (left: string[], right: string[]) => JSON.stringify([...left].sort()) === JSON.stringify([...right].sort());
+const text = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
+const reject = (reason: string): never => { throw new Error(`Viz taxonomy rejected: ${reason}`); };
+
+function readRegistry(name: string, override?: string): unknown {
+  const bundled = path.resolve(directory, '../registry', name);
+  const source = path.resolve(directory, '../../../viz-core/src/registry', name);
+  return JSON.parse(fs.readFileSync(override ?? (fs.existsSync(bundled) ? bundled : source), 'utf8'));
+}
+
+/** Reconcile the complete declared profile and measured type population before serving counts. */
+export function projectVizSummary(value: unknown, classificationValue: unknown): VizSummary {
+  const taxonomy = value as VizTaxonomy;
+  const classification = classificationValue as Classification;
+  if (!taxonomy || taxonomy.schemaVersion !== 1 || !Array.isArray(taxonomy.families) || !Array.isArray(taxonomy.identities) || !Array.isArray(taxonomy.coreCells)) reject('invalid version or population');
+  if (!classification || classification.schemaVersion !== 1 || !Array.isArray(classification.families) || !classification.families.length || !Array.isArray(classification.assignments)) reject('invalid classification authority');
+
+  const recipes = new Map(VIZ_RECIPES.map(recipe => [recipe.chartType, recipe]));
+  // A recommender alias need not equal the disk spec identity (cohort-scatter is
+  // linked-brush-scatter). Published spec paths identify the authoring population.
+  const patterns = new Map<string, string>(chartPatterns.flatMap(pattern => {
+    const match = /^examples\/viz\/patterns-v2\/([a-z0-9-]+)\.spec\.json$/.exec(pattern.specPath);
+    return match ? [[`pattern:viz:${match[1]}`, pattern.specPath] as const] : [];
+  }));
+  const expectedIds = [...recipes.keys(), ...patterns.keys()];
+  if (!same(classification.assignments.map(row => row?.id), expectedIds)) reject('classification differs from registered identities');
+  if (!same(taxonomy.identities.map(row => row?.id), expectedIds)) reject('exact distinct registered identities required');
+  const families = new Map(classification.families.map(family => [family.id, family]));
+  if (families.size !== classification.families.length || !same(taxonomy.families.map(family => family?.id), [...families.keys()])) reject('exact distinct declared families required');
+  for (const family of taxonomy.families) {
+    const authored = families.get(family.id)!;
+    if (!text(authored.definition) || !Array.isArray(authored.coreCells) || !authored.coreCells.length || family.definition !== authored.definition) reject(`${family.id}: invalid family definition`);
+  }
+
+  const assignments = new Map(classification.assignments.map(row => [row.id, row]));
+  const declaredCells = new Map(classification.families.flatMap(family => family.coreCells.map(cell => [cellKey(family.id, cell.cell), cell] as const)));
+  if (declaredCells.size !== classification.families.reduce((count, family) => count + family.coreCells.length, 0)) reject('duplicate declared core cell');
+  for (const identity of taxonomy.identities) {
+    const assignment = assignments.get(identity.id)!;
+    const recipe = recipes.get(identity.id);
+    if (!families.has(identity.family) || identity.family !== assignment.family || identity.role !== assignment.role || identity.coreCell !== assignment.coreCell) reject(`${identity.id}: classification mismatch`);
+    if (!['core', 'extension'].includes(identity.role) || (identity.role === 'core' && identity.coreCell === null) || (identity.coreCell !== null && !declaredCells.has(cellKey(identity.family, identity.coreCell)))) reject(`${identity.id}: invalid core assignment`);
+    if (identity.kind !== (recipe ? 'type' : 'pattern') || typeof identity.publicSvg !== 'boolean') reject(`${identity.id}: invalid identity kind or public SVG proof`);
+    if (recipe) {
+      if (identity.publicSvg !== recipe.publicSvg) reject(`${identity.id}: public SVG differs from measured recipe`);
+    } else {
+      if (identity.specPath !== patterns.get(identity.id) || !/^[0-9a-f]{64}$/.test(identity.specSha256 ?? '')) reject(`${identity.id}: invalid pattern provenance`);
+      // Authoring patterns have no public pixel proof until the measured sibling
+      // pattern registry is introduced; a base chart's proof cannot promote them.
+      if (identity.publicSvg) reject(`${identity.id}: authoring pattern has no public SVG proof`);
+    }
+  }
+
+  if (!same(taxonomy.coreCells.map(cell => cellKey(cell?.family, cell?.cell)), [...declaredCells.keys()])) reject('exact distinct declared core cells required');
+  for (const cell of taxonomy.coreCells) {
+    const declared = declaredCells.get(cellKey(cell.family, cell.cell))!;
+    const backing = taxonomy.identities.filter(identity => identity.family === cell.family && identity.coreCell === cell.cell);
+    if (!text(declared.definition) || cell.definition !== declared.definition || !Array.isArray(cell.identities) || !same(cell.identities, backing.map(identity => identity.id))) reject(`${cell.family}/${cell.cell}: invalid cell definition or backing`);
+    const complete = backing.some(identity => identity.publicSvg);
+    if (cell.status !== (complete ? 'surface-complete' : 'typed-gap')) reject(`${cell.family}/${cell.cell}: status differs from public SVG backing`);
+    if (!complete && (!text(declared.gapReason) || cell.reason !== declared.gapReason)) reject(`${cell.family}/${cell.cell}: gap requires its declared reason`);
+    if (complete && cell.reason !== undefined) reject(`${cell.family}/${cell.cell}: complete cell cannot retain a gap reason`);
+  }
+  const summary: VizSummary = {
+    types: taxonomy.identities.filter(identity => identity.kind === 'type').length,
+    patterns: taxonomy.identities.filter(identity => identity.kind === 'pattern').length,
+    families: taxonomy.families.length,
+    classified: taxonomy.identities.length,
+    coreCells: taxonomy.coreCells.length,
+    coreSurfaceComplete: taxonomy.coreCells.filter(cell => cell.status === 'surface-complete').length,
+    typedGaps: taxonomy.coreCells.filter(cell => cell.status === 'typed-gap').length,
+  };
+  if (!taxonomy.summary || !same(Object.keys(taxonomy.summary), Object.keys(summary)) || (Object.keys(summary) as Array<keyof VizSummary>).some(key => taxonomy.summary[key] !== summary[key])) reject('summary differs from classified identities and core cells');
+  return summary;
+}
+
+export function readVizSummary(): VizSummary {
+  return projectVizSummary(
+    readRegistry('viz-taxonomy.v1.json', process.env.MCP_VIZ_TAXONOMY_PATH),
+    readRegistry('viz-classification.v1.json', process.env.MCP_VIZ_CLASSIFICATION_PATH),
+  );
+}

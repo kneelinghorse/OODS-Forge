@@ -720,6 +720,11 @@ async function main() {
     const toolLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/tool-capability-ledger.v1.json"));
     assert.deepEqual(health.productReality.tools.byTier, toolLedger.summary.byTier);
     assert.equal(health.productReality.tools.entries, registry.auto.length + registry.onDemand.length);
+    // s195-m02: the extracted runtime carries the authored classification and
+    // generated taxonomy; health must expose their reconciled Core Profile.
+    const vizTaxonomy = await loadJson(path.join(runtimeRoot, 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json'));
+    assert.deepEqual(health.productReality.viz, vizTaxonomy.summary);
+    assert.deepEqual(health.productReality.viz, { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 });
     assert(
       isInside(runtimeRoot, path.resolve(health.schemas.storeDir)),
       "health schema store escaped extraction root",
@@ -840,7 +845,7 @@ async function main() {
       schema: { outcome: 'pass', savedLoadedDeleted: true },
       object: { outcome: 'pass', name: object.name },
       repl: { outcome: 'pass', htmlHash: sha256(rendered.html) },
-      health: { outcome: 'pass', tokens: health.tokens },
+      health: { outcome: 'pass', tokens: health.tokens, viz: health.productReality.viz },
       'dashboard.render': { outcome: 'pass', repeated: true },
       'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
       'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
@@ -853,6 +858,7 @@ async function main() {
       health: {
         status: health.status,
         registry: health.registry,
+        viz: health.productReality.viz,
         warnings: health.warnings ?? [],
       },
       dashboards: {

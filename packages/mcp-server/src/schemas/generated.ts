@@ -3599,6 +3599,18 @@ export namespace HealthOutputSchema {
         fail: number;
         head: string;
       } | null;
+      /**
+       * Generated visualization taxonomy and Core Analytics Profile census. Surface-complete cells have public SVG backing; typed gaps retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.
+       */
+      viz: {
+        types: number;
+        patterns: number;
+        families: number;
+        classified: number;
+        coreCells: number;
+        coreSurfaceComplete: number;
+        typedGaps: number;
+      } | null;
     };
     status: 'ok' | 'degraded';
     server: {

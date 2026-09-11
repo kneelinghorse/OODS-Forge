@@ -127,6 +127,18 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("Light theme only.");
   });
 
+  it("pins the taxonomy sentence to classified identities without claiming every pattern has public pixels", () => {
+    const taxonomy = JSON.parse(read("packages/viz-core/src/registry/viz-taxonomy.v1.json"));
+    expect(taxonomy.summary).toMatchObject({ types: 13, patterns: 21, families: 8, classified: 34 });
+    expect(html).toContain("classifies 34 chart identities (13 types and 21 patterns) across eight families");
+    expect(html).toContain("each Core Analytics Profile cell as surface-complete or a typed gap");
+    expect(html).toContain('href="viz/taxonomy.md"');
+    expect(read("docs/viz/taxonomy.md")).toContain("Core Analytics Profile");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(descriptions.health).toContain("productReality.viz");
+    expect(read("docs/api/health.md")).toContain("productReality.viz");
+  });
+
   it("Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes", () => {
     const registry = JSON.parse(read("packages/mcp-server/src/tools/registry.json"));
     const sections = [...read("docs/mcp/Tool-Specs.md").matchAll(/^### `([^`]+)`$/gm)].map(match => match[1]);

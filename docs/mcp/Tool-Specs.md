@@ -585,7 +585,7 @@ Runs compose, validate, render and code generation, optionally saving by name. F
 
 ### `health`
 
-Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
+Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `productReality.viz` reports the generated taxonomy's type, pattern, family, classification and Core Analytics Profile counts; surface-complete cells require public pixels from an identity assigned to that cell, while gaps have explicit reasons. Missing or invalid taxonomy returns null and degrades health. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
 
 [Complete input/output reference](../api/health.md).
 
