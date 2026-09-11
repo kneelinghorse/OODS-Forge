@@ -15,7 +15,7 @@ const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const freshRoot = () => {
   const root = mkdtempSync(join(tmpdir(), 'oods-viz-taxonomy-'));
   roots.push(root);
-  for (const file of [CLASSIFICATION_PATH, 'packages/viz-core/src/registry/viz-recipes.v1.json', 'examples/viz/patterns-v2']) {
+  for (const file of [CLASSIFICATION_PATH, 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/registry/viz-patterns.v1.json', 'examples/viz/patterns-v2']) {
     mkdirSync(dirname(join(root, file)), { recursive: true });
     cpSync(join(ROOT, file), join(root, file), { recursive: true });
   }
@@ -30,7 +30,7 @@ describe('generated visualization taxonomy preserves the exact census and primar
     expect(taxonomy.identities.map(row => row.id).sort()).toEqual(population);
     expect(new Set(taxonomy.identities.map(row => row.id)).size).toBe(34);
     expect(taxonomy.families.map(row => row.id)).toEqual(['statistical', 'temporal', 'financial', 'hierarchy', 'network', 'flow', 'geo', 'scientific']);
-    expect(taxonomy.summary).toEqual({ types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 });
+    expect(taxonomy.summary).toEqual({ types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 });
     for (const row of taxonomy.identities) {
       expect(['core', 'extension']).toContain(row.role);
       expect(taxonomy.families.some(family => family.id === row.family)).toBe(true);
@@ -69,19 +69,24 @@ describe('generated visualization taxonomy preserves the exact census and primar
       if (cell.status === 'typed-gap') expect(cell.reason).toMatch(/\S/);
       else expect(cell.reason).toBeUndefined();
     }
-    expect(taxonomy.identities.filter(row => row.kind === 'pattern').every(row => !row.publicSvg)).toBe(true);
+    const measured = readTaxonomyInputs().patternRegistry as Array<{ id: string; publicSvg: boolean }>;
+    for (const pattern of taxonomy.identities.filter(row => row.kind === 'pattern')) expect(pattern.publicSvg).toBe(measured.find(row => row.id === pattern.id)!.publicSvg);
+    expect(taxonomy.identities.find(row => row.id === 'pattern:viz:multi-series-line')!.publicSvg).toBe(false);
     expect(taxonomy.coreCells.find(row => row.family === 'temporal' && row.cell === 'multi-series')?.status).toBe('typed-gap');
     expect(taxonomy.identities.find(row => row.id === 'line')).toMatchObject({ publicSvg: true, coreCell: 'trend' });
     expect(taxonomy.identities.find(row => row.id === 'heatmap')).toMatchObject({ publicSvg: true, role: 'extension', coreCell: null });
-    expect(taxonomy.coreCells.find(row => row.family === 'statistical' && row.cell === 'distribution')?.status).toBe('typed-gap');
+    const distribution = taxonomy.coreCells.find(row => row.family === 'statistical' && row.cell === 'distribution')!;
+    expect(distribution.status).toBe('surface-complete');
+    expect(distribution.identities).not.toContain('heatmap');
+    expect(taxonomy.identities.find(row => row.id === 'pattern:viz:time-grid-heatmap')!.publicSvg).toBe(true);
   });
 
   it('removes completion when its only public registry proof disappears, despite unproved same-cell patterns', () => {
     const inputs = readTaxonomyInputs();
-    inputs.registry.find(row => row.chartType === 'bar')!.publicSvg = false;
+    inputs.registry.find(row => row.chartType === 'line')!.publicSvg = false;
     const taxonomy = deriveVizTaxonomy(inputs);
-    expect(taxonomy.coreCells.find(row => row.family === 'statistical' && row.cell === 'comparison')).toMatchObject({ status: 'typed-gap', reason: expect.stringMatching(/\S/) });
-    expect(taxonomy.summary).toMatchObject({ classified: 34, coreSurfaceComplete: 10, typedGaps: 10 });
+    expect(taxonomy.coreCells.find(row => row.family === 'temporal' && row.cell === 'trend')).toMatchObject({ status: 'typed-gap', reason: expect.stringMatching(/\S/) });
+    expect(taxonomy.summary).toMatchObject({ classified: 34, coreSurfaceComplete: 12, typedGaps: 8 });
   });
 
   it('names every deferred financial and scientific cell with a concrete reason', () => {
@@ -101,9 +106,8 @@ describe('generated visualization taxonomy preserves the exact census and primar
     expect(taxonomy.identities.some(row => row.id === 'pattern:viz:linked-brush-scatter')).toBe(true);
     expect(taxonomy.identities.some(row => row.id === 'pattern:viz:cohort-scatter')).toBe(false);
     const source = inputs.patterns[0]!;
-    const original = taxonomy.identities.find(row => row.specPath === source.path)!.specSha256;
     source.bytes += '\n';
-    expect(deriveVizTaxonomy(inputs).identities.find(row => row.specPath === source.path)!.specSha256).not.toBe(original);
+    expect(() => deriveVizTaxonomy(inputs)).toThrow('source provenance mismatch');
   });
 
   it.each(['duplicate-type', 'duplicate-pattern', 'pattern-id-path-mismatch'])('rejects %s in identity sources instead of hiding it through assignment lookup', mutation => {
@@ -129,13 +133,12 @@ describe('generated visualization taxonomy preserves the exact census and primar
     expect(() => generateTaxonomy({ root, check: true })).toThrow(`Generated taxonomy output is stale: ${file}`);
   });
 
-  it('fails --check when a pattern source changes until the retained source pin is regenerated', () => {
+  it('rejects a changed pattern source until its measured sibling registry proof is refreshed', () => {
     const root = freshRoot();
     generateTaxonomy({ root });
     const source = join(root, readTaxonomyInputs(root).patterns[0]!.path);
     writeFileSync(source, readFileSync(source, 'utf8') + '\n');
-    expect(() => generateTaxonomy({ root, check: true })).toThrow(`Generated taxonomy output is stale: ${TAXONOMY_PATH}`);
-    generateTaxonomy({ root });
-    expect(() => generateTaxonomy({ root, check: true })).not.toThrow();
+    expect(() => generateTaxonomy({ root, check: true })).toThrow('source provenance mismatch');
+    expect(() => generateTaxonomy({ root })).toThrow('source provenance mismatch');
   });
 });

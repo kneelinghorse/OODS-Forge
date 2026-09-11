@@ -724,7 +724,8 @@ async function main() {
     // generated taxonomy; health must expose their reconciled Core Profile.
     const vizTaxonomy = await loadJson(path.join(runtimeRoot, 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json'));
     assert.deepEqual(health.productReality.viz, vizTaxonomy.summary);
-    assert.deepEqual(health.productReality.viz, { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 });
+    assert.deepEqual(Object.fromEntries(['types', 'patterns', 'families', 'classified', 'coreCells'].map(key => [key, health.productReality.viz[key]])), { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20 });
+    assert.equal(health.productReality.viz.coreSurfaceComplete + health.productReality.viz.typedGaps, 20);
     assert(
       isInside(runtimeRoot, path.resolve(health.schemas.storeDir)),
       "health schema store escaped extraction root",

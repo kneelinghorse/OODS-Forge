@@ -139,6 +139,20 @@ describe("how Forge works narrative truth", () => {
     expect(read("docs/api/health.md")).toContain("productReality.viz");
   });
 
+  it("describes pattern rendering and typed authoring limits using the public source identities", () => {
+    const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
+    const patterns = JSON.parse(read("packages/viz-core/src/registry/viz-patterns.v1.json"));
+    expect(render.properties.pattern.enum).toEqual(patterns.map((row: { id: string }) => row.id));
+    expect(patterns).toHaveLength(21);
+    expect(html).toContain("Four input modes: a catalog pattern identity");
+    expect(html).toContain("typed authoring-only result (OODS-V167)");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    for (const code of ["OODS-V166", "OODS-V167"]) {
+      expect(descriptions["viz.render"]).toContain(code);
+      expect(read("docs/api/viz-render.md")).toContain(code);
+    }
+  });
+
   it("Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes", () => {
     const registry = JSON.parse(read("packages/mcp-server/src/tools/registry.json"));
     const sections = [...read("docs/mcp/Tool-Specs.md").matchAll(/^### `([^`]+)`$/gm)].map(match => match[1]);

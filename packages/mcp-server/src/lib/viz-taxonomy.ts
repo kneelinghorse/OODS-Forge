@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chartPatterns, VIZ_RECIPES } from '@oods/viz-core';
+import { VIZ_PATTERN_SOURCES, VIZ_RECIPES, validateVizPatternRegistry } from '@oods/viz-core';
 
 type Assignment = { id: string; family: string; role: 'core' | 'extension'; coreCell: string | null };
 type CellDefinition = { cell: string; definition: string; gapReason: string };
@@ -24,22 +24,21 @@ function readRegistry(name: string, override?: string): unknown {
 }
 
 /** Reconcile the complete declared profile and measured type population before serving counts. */
-export function projectVizSummary(value: unknown, classificationValue: unknown): VizSummary {
+export function projectVizSummary(value: unknown, classificationValue: unknown, patternRegistryValue: unknown): VizSummary {
   const taxonomy = value as VizTaxonomy;
   const classification = classificationValue as Classification;
   if (!taxonomy || taxonomy.schemaVersion !== 1 || !Array.isArray(taxonomy.families) || !Array.isArray(taxonomy.identities) || !Array.isArray(taxonomy.coreCells)) reject('invalid version or population');
   if (!classification || classification.schemaVersion !== 1 || !Array.isArray(classification.families) || !classification.families.length || !Array.isArray(classification.assignments)) reject('invalid classification authority');
 
   const recipes = new Map(VIZ_RECIPES.map(recipe => [recipe.chartType, recipe]));
-  // A recommender alias need not equal the disk spec identity (cohort-scatter is
-  // linked-brush-scatter). Published spec paths identify the authoring population.
-  const patterns = new Map<string, string>(chartPatterns.flatMap(pattern => {
-    const match = /^examples\/viz\/patterns-v2\/([a-z0-9-]+)\.spec\.json$/.exec(pattern.specPath);
-    return match ? [[`pattern:viz:${match[1]}`, pattern.specPath] as const] : [];
-  }));
+  const patterns = new Map(VIZ_PATTERN_SOURCES.map(source => [source.id, source]));
   const expectedIds = [...recipes.keys(), ...patterns.keys()];
   if (!same(classification.assignments.map(row => row?.id), expectedIds)) reject('classification differs from registered identities');
   if (!same(taxonomy.identities.map(row => row?.id), expectedIds)) reject('exact distinct registered identities required');
+  let measuredPatterns;
+  try { measuredPatterns = validateVizPatternRegistry(patternRegistryValue, VIZ_PATTERN_SOURCES, classification.assignments, [...recipes.keys()]); }
+  catch (error) { reject((error as Error).message); }
+  const patternProof = new Map(measuredPatterns!.map(pattern => [pattern.id, pattern]));
   const families = new Map(classification.families.map(family => [family.id, family]));
   if (families.size !== classification.families.length || !same(taxonomy.families.map(family => family?.id), [...families.keys()])) reject('exact distinct declared families required');
   for (const family of taxonomy.families) {
@@ -59,10 +58,9 @@ export function projectVizSummary(value: unknown, classificationValue: unknown):
     if (recipe) {
       if (identity.publicSvg !== recipe.publicSvg) reject(`${identity.id}: public SVG differs from measured recipe`);
     } else {
-      if (identity.specPath !== patterns.get(identity.id) || !/^[0-9a-f]{64}$/.test(identity.specSha256 ?? '')) reject(`${identity.id}: invalid pattern provenance`);
-      // Authoring patterns have no public pixel proof until the measured sibling
-      // pattern registry is introduced; a base chart's proof cannot promote them.
-      if (identity.publicSvg) reject(`${identity.id}: authoring pattern has no public SVG proof`);
+      const source = patterns.get(identity.id)!;
+      if (identity.specPath !== source.specPath || identity.specSha256 !== source.specSha256) reject(`${identity.id}: invalid pattern provenance`);
+      if (identity.publicSvg !== patternProof.get(identity.id)!.publicSvg) reject(`${identity.id}: public SVG differs from exact measured pattern`);
     }
   }
 
@@ -93,5 +91,6 @@ export function readVizSummary(): VizSummary {
   return projectVizSummary(
     readRegistry('viz-taxonomy.v1.json', process.env.MCP_VIZ_TAXONOMY_PATH),
     readRegistry('viz-classification.v1.json', process.env.MCP_VIZ_CLASSIFICATION_PATH),
+    readRegistry('viz-patterns.v1.json', process.env.MCP_VIZ_PATTERN_REGISTRY_PATH),
   );
 }

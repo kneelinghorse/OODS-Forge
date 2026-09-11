@@ -84,6 +84,19 @@ describe('Error Registry', () => {
     });
   });
 
+  it('distinguishes fixable viz.render pattern conflicts from authoring-only structural limits', () => {
+    expect(getDefinition('OODS-V166')).toEqual({
+      code: 'OODS-V166', category: 'validation',
+      message: 'viz.render pattern conflicts with explicit data or source identity/presentation overrides',
+      retryable: true,
+    });
+    expect(getDefinition('OODS-V167')).toEqual({
+      code: 'OODS-V167', category: 'validation',
+      message: 'viz.render pattern is authoring-only because its source structure is not supported by the public renderer',
+      retryable: false,
+    });
+  });
+
   it('describes OODS-N013 as the unavailable HTML target, preserving the N-code category', () => {
     expect(getDefinition('OODS-N013')).toEqual({
       code: 'OODS-N013', category: 'not_found',

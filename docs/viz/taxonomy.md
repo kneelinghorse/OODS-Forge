@@ -3,7 +3,7 @@
 
 Version 1 classifies 34 identities: 13 registered chart types and 21 pattern specifications in 8 families.
 
-The Core Analytics Profile has 20 named cells: 11 surface-complete and 9 typed gaps.
+The Core Analytics Profile has 20 named cells: 13 surface-complete and 7 typed gaps.
 
 Each identity has one primary family and at most one primary core cell. Core identities cover the basic profile; extensions add authoring, composition, interaction, or geographic capabilities. An extension may retain the core cell it elaborates.
 
@@ -26,9 +26,9 @@ A cell is surface-complete only when an identity assigned to that exact family a
 
 | Family / cell | Definition | State | Assigned identities | Gap reason |
 | --- | --- | --- | --- | --- |
-| statistical / distribution | Show the spread or concentration of observations or frequencies. | typed-gap | `pattern:viz:bubble-distribution`, `pattern:viz:time-grid-heatmap` | Distribution patterns are classified but have no public pixel proof. The generic heatmap census measures revenue intensity, not a distribution. |
+| statistical / distribution | Show the spread or concentration of observations or frequencies. | surface-complete | `pattern:viz:bubble-distribution`, `pattern:viz:time-grid-heatmap` | — |
 | statistical / comparison | Compare quantitative values across categories. | surface-complete | `bar`, `pattern:viz:detail-overview-bar`, `pattern:viz:diverging-bar`, `pattern:viz:grouped-bar`, `pattern:viz:simple-bar` | — |
-| statistical / part-to-whole | Show how components contribute to a total. | typed-gap | `pattern:viz:drilldown-stacked-bar`, `pattern:viz:stacked-100-bar`, `pattern:viz:stacked-bar` | Stacked and normalized stacked patterns are classified but have no public pixel proof. |
+| statistical / part-to-whole | Show how components contribute to a total. | surface-complete | `pattern:viz:drilldown-stacked-bar`, `pattern:viz:stacked-100-bar`, `pattern:viz:stacked-bar` | — |
 | statistical / correlation | Show relationships between quantitative measures. | surface-complete | `scatter`, `pattern:viz:correlation-matrix`, `pattern:viz:correlation-scatter`, `pattern:viz:linked-brush-scatter` | — |
 | temporal / trend | Show the trajectory of a measure over an ordered time axis. | surface-complete | `line`, `pattern:viz:focus-context-line`, `pattern:viz:sparkline-grid` | — |
 | temporal / multi-series | Compare multiple named trajectories on a common time axis. | typed-gap | `pattern:viz:facet-small-multiples-line`, `pattern:viz:multi-series-line` | The multi-series pattern is classified but has no public pixel proof; the line type has trend as its primary core cell. |
@@ -65,10 +65,10 @@ A cell is surface-complete only when an identity assigned to that exact family a
 | `bubble_map` | type | geo | core | proportional-symbol | yes |
 | `flow_map` | type | geo | extension | — | yes |
 | `pattern:viz:bubble-distribution` | pattern | statistical | core | distribution | no |
-| `pattern:viz:correlation-matrix` | pattern | statistical | core | correlation | no |
-| `pattern:viz:correlation-scatter` | pattern | statistical | core | correlation | no |
+| `pattern:viz:correlation-matrix` | pattern | statistical | core | correlation | yes |
+| `pattern:viz:correlation-scatter` | pattern | statistical | core | correlation | yes |
 | `pattern:viz:detail-overview-bar` | pattern | statistical | extension | comparison | no |
-| `pattern:viz:diverging-bar` | pattern | statistical | core | comparison | no |
+| `pattern:viz:diverging-bar` | pattern | statistical | core | comparison | yes |
 | `pattern:viz:drilldown-stacked-bar` | pattern | statistical | extension | part-to-whole | no |
 | `pattern:viz:facet-small-multiples-line` | pattern | temporal | extension | multi-series | no |
 | `pattern:viz:facet-target-band` | pattern | temporal | extension | target | no |
@@ -77,18 +77,18 @@ A cell is surface-complete only when an identity assigned to that exact family a
 | `pattern:viz:layered-line-area` | pattern | temporal | extension | target | no |
 | `pattern:viz:linked-brush-scatter` | pattern | statistical | extension | correlation | no |
 | `pattern:viz:multi-series-line` | pattern | temporal | core | multi-series | no |
-| `pattern:viz:running-total-area` | pattern | temporal | core | cumulative | no |
-| `pattern:viz:simple-bar` | pattern | statistical | core | comparison | no |
+| `pattern:viz:running-total-area` | pattern | temporal | core | cumulative | yes |
+| `pattern:viz:simple-bar` | pattern | statistical | core | comparison | yes |
 | `pattern:viz:sparkline-grid` | pattern | temporal | extension | trend | no |
-| `pattern:viz:stacked-100-bar` | pattern | statistical | core | part-to-whole | no |
+| `pattern:viz:stacked-100-bar` | pattern | statistical | core | part-to-whole | yes |
 | `pattern:viz:stacked-area-projection` | pattern | temporal | extension | cumulative | no |
-| `pattern:viz:stacked-bar` | pattern | statistical | core | part-to-whole | no |
+| `pattern:viz:stacked-bar` | pattern | statistical | core | part-to-whole | yes |
 | `pattern:viz:target-band-line` | pattern | temporal | core | target | no |
-| `pattern:viz:time-grid-heatmap` | pattern | statistical | core | distribution | no |
+| `pattern:viz:time-grid-heatmap` | pattern | statistical | core | distribution | yes |
 
 ## Pattern source pins
 
-These hashes identify the exact authoring specifications included in the census; they are not public render receipts.
+These hashes identify the exact authoring specifications included in the census. Public pattern flags require matching identity, source hash, and four measured SVG scopes in the sibling pattern registry.
 
 | Identity | Specification | SHA-256 |
 | --- | --- | --- |
@@ -116,7 +116,7 @@ These hashes identify the exact authoring specifications included in the census;
 
 ## Regeneration
 
-Edit only `packages/viz-core/src/registry/viz-classification.v1.json` for family, role, primary-cell, definition, and typed-gap decisions. The type population and public SVG flags come from `packages/viz-core/src/registry/viz-recipes.v1.json`; pattern IDs and hashes come from the specification files.
+Edit only `packages/viz-core/src/registry/viz-classification.v1.json` for family, role, primary-cell, definition, and typed-gap decisions. The type population and public SVG flags come from `packages/viz-core/src/registry/viz-recipes.v1.json`; pattern IDs and hashes come from the specification files, and their public proof comes from `packages/viz-core/src/registry/viz-patterns.v1.json`.
 
 ```sh
 pnpm exec tsx scripts/product-reality/s195-viz-taxonomy.ts

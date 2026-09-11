@@ -7771,9 +7771,9 @@ export type TokensBuildInput = TokensBuildInputSchema.TokensBuildInput;
 // Source: viz.render.input.json
 export namespace VizRenderInputSchema {
   /**
-   * Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option.
+   * Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Authoring-only patterns return OODS-V167 with their structural limits; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.
    */
-  export type VizRenderInput = VizRenderInput1 & VizRenderInput2 & VizRenderInput3;
+  export type VizRenderInput = VizRenderInput1 & VizRenderInput2;
   export type VizRenderInput1 = {
     [k: string]: any;
   };
@@ -7827,9 +7827,6 @@ export namespace VizRenderInputSchema {
          */
         range?: [string, string, ...string[]];
       };
-  export type VizRenderInput3 = {
-    [k: string]: any;
-  };
 
   export interface VizRenderInput2 {
     /**
@@ -8219,6 +8216,31 @@ export namespace VizRenderInputSchema {
        */
       measureRef?: string;
     };
+    /**
+     * Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Authoring-only identities return OODS-V167 with reasons. Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166).
+     */
+    pattern?:
+      | 'pattern:viz:bubble-distribution'
+      | 'pattern:viz:correlation-matrix'
+      | 'pattern:viz:correlation-scatter'
+      | 'pattern:viz:detail-overview-bar'
+      | 'pattern:viz:diverging-bar'
+      | 'pattern:viz:drilldown-stacked-bar'
+      | 'pattern:viz:facet-small-multiples-line'
+      | 'pattern:viz:facet-target-band'
+      | 'pattern:viz:focus-context-line'
+      | 'pattern:viz:grouped-bar'
+      | 'pattern:viz:layered-line-area'
+      | 'pattern:viz:linked-brush-scatter'
+      | 'pattern:viz:multi-series-line'
+      | 'pattern:viz:running-total-area'
+      | 'pattern:viz:simple-bar'
+      | 'pattern:viz:sparkline-grid'
+      | 'pattern:viz:stacked-100-bar'
+      | 'pattern:viz:stacked-area-projection'
+      | 'pattern:viz:stacked-bar'
+      | 'pattern:viz:target-band-line'
+      | 'pattern:viz:time-grid-heatmap';
   }
   /**
    * A nested-hierarchy node: a name, an optional numeric value, and optional children (recursive). Extra fields are preserved for tooltips.

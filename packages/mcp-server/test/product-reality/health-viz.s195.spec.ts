@@ -9,9 +9,10 @@ import { repositoryRoot, wire } from '../helpers/wire-boundary.js';
 
 const source = path.join(repositoryRoot, 'packages/viz-core/src/registry');
 const read = (name: string) => JSON.parse(fs.readFileSync(path.join(source, name), 'utf8'));
-const expected = { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 };
+const expected = { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 };
 const classification = () => read('viz-classification.v1.json');
 const taxonomy = (): VizTaxonomy => read('viz-taxonomy.v1.json');
+const patterns = () => read('viz-patterns.v1.json');
 const mutate: Array<[string, (value: VizTaxonomy) => void]> = [
   ['unsupported version', value => { (value as any).schemaVersion = 2; }],
   ['duplicate identity', value => { value.identities[0] = structuredClone(value.identities[1]); }],
@@ -29,7 +30,7 @@ const mutate: Array<[string, (value: VizTaxonomy) => void]> = [
   ['gap without reason', value => { delete value.coreCells.find(cell => cell.status === 'typed-gap')!.reason; }],
   ['fabricated gap reason', value => { value.coreCells.find(cell => cell.status === 'typed-gap')!.reason = 'Unrecorded excuse.'; }],
   ['unsupported complete cell with recomputed summary', value => { const gap = value.coreCells.find(cell => cell.status === 'typed-gap')!; gap.status = 'surface-complete'; delete gap.reason; value.summary.coreSurfaceComplete += 1; value.summary.typedGaps -= 1; }],
-  ['authoring pattern promoted to pixels', value => { value.identities.find(identity => identity.kind === 'pattern')!.publicSvg = true; }],
+  ['authoring pattern promoted to pixels', value => { value.identities.find(identity => identity.kind === 'pattern' && !identity.publicSvg)!.publicSvg = true; }],
   ['false measured type proof', value => { value.identities.find(identity => identity.kind === 'type')!.publicSvg = false; }],
   ['invented summary', value => { value.summary.classified = 99; }],
 ];
@@ -44,6 +45,7 @@ describe('health visualization taxonomy wire boundary (s195-m02)', () => {
     vi.stubEnv('MCP_SCHEMA_STORE_ROOT', temporary);
     vi.stubEnv('MCP_VIZ_TAXONOMY_PATH', operand);
     vi.stubEnv('MCP_VIZ_CLASSIFICATION_PATH', path.join(source, 'viz-classification.v1.json'));
+    vi.stubEnv('MCP_VIZ_PATTERN_REGISTRY_PATH', path.join(source, 'viz-patterns.v1.json'));
   });
   afterEach(() => {
     vi.unstubAllEnvs();
@@ -53,7 +55,7 @@ describe('health visualization taxonomy wire boundary (s195-m02)', () => {
   it('serves the classified population and measured Core Profile through the real health handler', async () => {
     const result = wire('health', 'output', await health(wire('health', 'input', {})));
     expect(result.productReality.viz).toEqual(expected);
-    expect(result.productReality.viz).toEqual(projectVizSummary(taxonomy(), classification()));
+    expect(result.productReality.viz).toEqual(projectVizSummary(taxonomy(), classification(), patterns()));
     expect(result.productReality.viz).toEqual(readVizSummary());
     expect(result.warnings ?? []).not.toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
   });
@@ -61,7 +63,7 @@ describe('health visualization taxonomy wire boundary (s195-m02)', () => {
   it.each(mutate)('does not advertise a count for %s', async (_name, change) => {
     const invalid = taxonomy();
     change(invalid);
-    expect(() => projectVizSummary(invalid, classification())).toThrow('Viz taxonomy rejected:');
+    expect(() => projectVizSummary(invalid, classification(), patterns())).toThrow('Viz taxonomy rejected:');
     fs.writeFileSync(operand, JSON.stringify(invalid));
     const result = wire('health', 'output', await health(wire('health', 'input', {})));
     expect(result.status).toBe('degraded');
@@ -69,10 +71,26 @@ describe('health visualization taxonomy wire boundary (s195-m02)', () => {
     expect(result.warnings).toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
   });
 
-  it.each(['missing taxonomy', 'malformed taxonomy', 'missing classification'])('reports %s as unavailable without inventing zero counts', async scenario => {
+  it.each(['missing taxonomy', 'malformed taxonomy', 'missing classification', 'missing pattern registry'])('reports %s as unavailable without inventing zero counts', async scenario => {
     if (scenario === 'missing taxonomy') fs.rmSync(operand);
     else if (scenario === 'malformed taxonomy') fs.writeFileSync(operand, '{not json');
-    else vi.stubEnv('MCP_VIZ_CLASSIFICATION_PATH', path.join(temporary, 'absent-classification.json'));
+    else if (scenario === 'missing classification') vi.stubEnv('MCP_VIZ_CLASSIFICATION_PATH', path.join(temporary, 'absent-classification.json'));
+    else vi.stubEnv('MCP_VIZ_PATTERN_REGISTRY_PATH', path.join(temporary, 'absent-pattern-registry.json'));
+    const result = wire('health', 'output', await health(wire('health', 'input', {})));
+    expect(result.status).toBe('degraded');
+    expect(result.productReality.viz).toBeNull();
+    expect(result.warnings).toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
+  });
+
+  it.each(['known-but-wrong base type', 'stale source hash', 'missing scope'])('does not advertise pattern counts from %s in the measured sibling registry', async mutation => {
+    const invalid = patterns();
+    if (mutation === 'known-but-wrong base type') invalid[0].baseChartType = invalid[0].baseChartType === 'bar' ? 'line' : 'bar';
+    if (mutation === 'stale source hash') invalid[0].specSha256 = '0'.repeat(64);
+    if (mutation === 'missing scope') invalid[0].scopes.pop();
+    expect(() => projectVizSummary(taxonomy(), classification(), invalid)).toThrow('Viz taxonomy rejected:');
+    const corrupted = path.join(temporary, 'corrupt-patterns.json');
+    fs.writeFileSync(corrupted, JSON.stringify(invalid));
+    vi.stubEnv('MCP_VIZ_PATTERN_REGISTRY_PATH', corrupted);
     const result = wire('health', 'output', await health(wire('health', 'input', {})));
     expect(result.status).toBe('degraded');
     expect(result.productReality.viz).toBeNull();

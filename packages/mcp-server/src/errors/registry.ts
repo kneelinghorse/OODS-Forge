@@ -298,6 +298,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V163', { code: 'OODS-V163', category: 'validation', message: 'Release evidence artifact hash mismatch; references are not re-executed', retryable: true }],
   ['OODS-V164', { code: 'OODS-V164', category: 'validation', message: 'Unknown UI workflow state', retryable: true }],
   ['OODS-V165', { code: 'OODS-V165', category: 'validation', message: 'SVG rendering failed', retryable: true }],
+  ['OODS-V166', { code: 'OODS-V166', category: 'validation', message: 'viz.render pattern conflicts with explicit data or source identity/presentation overrides', retryable: true }],
+  ['OODS-V167', { code: 'OODS-V167', category: 'validation', message: 'viz.render pattern is authoring-only because its source structure is not supported by the public renderer', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

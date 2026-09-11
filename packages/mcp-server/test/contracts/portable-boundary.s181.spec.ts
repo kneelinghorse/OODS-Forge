@@ -222,7 +222,8 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(fs.readdirSync(stagedServer).sort()).toEqual(['dist', 'node_modules', 'package.json']);
     // s195-m02 adds a generated taxonomy plus its classification authority to
     // dist: the Core Profile stays available even without host planning data.
-    for (const name of ['viz-taxonomy.v1.json', 'viz-classification.v1.json']) {
+    // s195-m03 adds exact-source pattern proof; core coverage follows those measured scopes.
+    for (const name of ['viz-taxonomy.v1.json', 'viz-classification.v1.json', 'viz-patterns.v1.json']) {
       expect(fs.readFileSync(path.join(stagedServer, 'dist/registry', name)).equals(
         fs.readFileSync(path.join(REPO_ROOT, 'packages/viz-core/src/registry', name)),
       )).toBe(true);
@@ -236,7 +237,7 @@ describe('s181 portable-runtime publish boundary', () => {
       status: 'degraded',
       registry: { components: 0, traits: 0, objects: 0 },
       tokens: { built: false, brands: [], themes: [], scopes: {}, defaultScope: null },
-      productReality: { viz: { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 } },
+      productReality: { viz: JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary },
       warnings: expect.arrayContaining([
         expect.stringContaining('registry subsystem unavailable'),
         expect.stringContaining('tokens subsystem unavailable'),
@@ -244,7 +245,7 @@ describe('s181 portable-runtime publish boundary', () => {
     });
   }, 30_000);
 
-  it.each(['viz-taxonomy.v1.json', 'viz-classification.v1.json'])('s195 serves null viz with a warning when shipped %s is absent', async name => {
+  it.each(['viz-taxonomy.v1.json', 'viz-classification.v1.json', 'viz-patterns.v1.json'])('s195 serves null viz with a warning when shipped %s is absent', async name => {
     const stagedServer = stageDistOnlyServer();
     fs.rmSync(path.join(stagedServer, 'dist/registry', name));
     const { response, aliveAtResponse, stderr } = await requestHealth(stagedServer);
@@ -269,7 +270,7 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(response.error).toBeUndefined();
     expect(response.result?.isError).not.toBe(true);
     const health = JSON.parse(response.result!.content!.find(block => block.type === 'text')!.text);
-    expect(health.productReality.viz).toEqual({ types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 11, typedGaps: 9 });
+    expect(health.productReality.viz).toEqual(JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary);
     expect(health.warnings ?? []).not.toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
   }, 30_000);
 

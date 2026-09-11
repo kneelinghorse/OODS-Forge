@@ -6,12 +6,15 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Ajv2020 } from 'ajv/dist/2020.js';
+import { validateVizPatternRegistry } from '../../packages/viz-core/src/registry/viz-patterns.js';
+import { derivePatternSources } from './s195-pattern-sources.js';
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const CLASSIFICATION_PATH = 'packages/viz-core/src/registry/viz-classification.v1.json';
 export const TAXONOMY_PATH = 'packages/viz-core/src/registry/viz-taxonomy.v1.json';
 export const DOC_PATH = 'docs/viz/taxonomy.md';
 const REGISTRY_PATH = 'packages/viz-core/src/registry/viz-recipes.v1.json';
+const PATTERN_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-patterns.v1.json';
 const PATTERN_DIRECTORY = 'examples/viz/patterns-v2';
 const SCHEMA_PATH = 'packages/viz-core/src/registry/viz-classification.v1.schema.json';
 
@@ -46,7 +49,7 @@ export type VizTaxonomy = {
 };
 type PatternSource = { path: string; bytes: string };
 type RegistryRow = { chartType: string; publicSvg: boolean };
-export type TaxonomyInputs = { classification: Classification; registry: RegistryRow[]; patterns: PatternSource[] };
+export type TaxonomyInputs = { classification: Classification; registry: RegistryRow[]; patterns: PatternSource[]; patternRegistry: unknown };
 export const serialize = (value: unknown): string => JSON.stringify(value, null, 2) + '\n';
 const read = (root: string, path: string): string => readFileSync(resolve(root, path), 'utf8');
 const schema = JSON.parse(read(ROOT, SCHEMA_PATH));
@@ -56,6 +59,7 @@ export function readTaxonomyInputs(root = ROOT): TaxonomyInputs {
   return {
     classification: JSON.parse(read(root, CLASSIFICATION_PATH)),
     registry: JSON.parse(read(root, REGISTRY_PATH)),
+    patternRegistry: JSON.parse(read(root, PATTERN_REGISTRY_PATH)),
     patterns: readdirSync(resolve(root, PATTERN_DIRECTORY)).filter(name => name.endsWith('.spec.json')).sort()
       .map(name => ({ path: `${PATTERN_DIRECTORY}/${name}`, bytes: read(root, `${PATTERN_DIRECTORY}/${name}`) })),
   };
@@ -84,7 +88,7 @@ export function deriveVizTaxonomy(inputs: TaxonomyInputs): VizTaxonomy {
     assert(typeof spec.id === 'string' && /^pattern:viz:[a-z0-9-]+$/.test(spec.id), `Invalid pattern identity: ${pattern.path}`);
     assert.equal(pattern.path, `${PATTERN_DIRECTORY}/${spec.id.slice('pattern:viz:'.length)}.spec.json`, `Pattern path differs from identity: ${spec.id}`);
     assert(!population.has(spec.id), `Duplicate registry identity: ${spec.id}`);
-    // s195-m02: authoring specs have no public pattern registry or retained pixel proof.
+    // Start unproved; only an exact-source sibling registry row may promote it below.
     population.set(spec.id, { kind: 'pattern', publicSvg: false, specPath: pattern.path,
       specSha256: createHash('sha256').update(pattern.bytes).digest('hex') });
   }
@@ -100,6 +104,10 @@ export function deriveVizTaxonomy(inputs: TaxonomyInputs): VizTaxonomy {
   }
   const missing = [...population.keys()].filter(id => !assignments.has(id));
   assert.equal(missing.length, 0, `Missing assignments: ${missing.join(', ')}`);
+  const measuredPatterns = validateVizPatternRegistry(inputs.patternRegistry,
+    derivePatternSources(patterns.map(pattern => ({ specPath: pattern.path, bytes: pattern.bytes }))),
+    classification.assignments, registry.map(row => row.chartType));
+  for (const row of measuredPatterns) population.get(row.id)!.publicSvg = row.publicSvg;
   const identities = [...population].map(([id, source]) => ({ ...assignments.get(id)!, ...source }));
   const families = classification.families.map(({ id, definition }) => ({ id, definition }));
   const coreCells = classification.families.flatMap(family => family.coreCells.map(cell => {
@@ -134,11 +142,11 @@ export function renderTaxonomyDocs(taxonomy: VizTaxonomy): string {
     '## Identity census', '', '| Identity | Kind | Family | Role | Primary core cell | Public SVG |', '| --- | --- | --- | --- | --- | --- |',
     ...taxonomy.identities.map(row => `| \`${row.id}\` | ${row.kind} | ${row.family} | ${row.role} | ${row.coreCell ?? '—'} | ${row.publicSvg ? 'yes' : 'no'} |`), '',
     '## Pattern source pins', '',
-    'These hashes identify the exact authoring specifications included in the census; they are not public render receipts.', '',
+    'These hashes identify the exact authoring specifications included in the census. Public pattern flags require matching identity, source hash, and four measured SVG scopes in the sibling pattern registry.', '',
     '| Identity | Specification | SHA-256 |', '| --- | --- | --- |',
     ...taxonomy.identities.filter(row => row.kind === 'pattern').map(row => `| \`${row.id}\` | \`${row.specPath}\` | \`${row.specSha256}\` |`), '',
     '## Regeneration', '',
-    `Edit only \`${CLASSIFICATION_PATH}\` for family, role, primary-cell, definition, and typed-gap decisions. The type population and public SVG flags come from \`${REGISTRY_PATH}\`; pattern IDs and hashes come from the specification files.`, '',
+    `Edit only \`${CLASSIFICATION_PATH}\` for family, role, primary-cell, definition, and typed-gap decisions. The type population and public SVG flags come from \`${REGISTRY_PATH}\`; pattern IDs and hashes come from the specification files, and their public proof comes from \`${PATTERN_REGISTRY_PATH}\`.`, '',
     '```sh', 'pnpm exec tsx scripts/product-reality/s195-viz-taxonomy.ts', 'pnpm exec tsx scripts/product-reality/s195-viz-taxonomy.ts --check', '```', '',
     'The generator rejects unknown, duplicated, missing, or cross-family assignments. `--check` checks both the canonical JSON artifact and this document byte for byte. `OODS_VIZ_TAXONOMY_ROOT` or `--root <path>` selects another repository root.', '',
   ];

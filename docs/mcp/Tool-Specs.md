@@ -665,11 +665,22 @@ Output fields:
 
 ### `viz.render`
 
+- **Pattern mode**: supply an exact source identity such as `pattern:viz:simple-bar`. Bundled rows, bindings and authored presentation drive the same public renderer. The generated [pattern catalog](../viz/pattern-library-v2.md) records each identity's pixel proof or authoring-only reasons. Unsupported interactions and structural layouts return `OODS-V167`; pattern with explicit data, encodings, intent or identity/presentation overrides returns `OODS-V166`. Brand, theme, strict-field checks and output controls remain available.
 - **Input schema**: `packages/mcp-server/src/schemas/viz.render.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
 - **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
 - **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Supports 13 chart types: 5 tabular (`bar`, `line`, `area`, `scatter`, `heatmap`) in both suggest and explicit mode, plus 8 explicit-only (`treemap`, `sunburst`, `sankey`, `force_graph`, `chord`, `choropleth`, `bubble_map`, `flow_map`).
 - **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
+
+Example input (pattern mode):
+```json
+{
+  "pattern": "pattern:viz:simple-bar",
+  "brand": "A",
+  "theme": "dark",
+  "output": { "svg": true, "includeNormalizedSpec": true }
+}
+```
 
 Example input (explicit mode):
 ```json
