@@ -63,11 +63,14 @@ export function workflowEditProbe(schema: UiSchema) {
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? schema.workflow!.data.idField;
   const editable = schemaNodes(schema).filter(node => ['Input', 'Textarea'].includes(node.component) && node.bindings?.onChange)
     .map(node => String(node.props?.field)).filter(field => fields[field]?.type === 'string' && !fields[field]?.enum?.length);
-  const field = editable.includes(titleField) ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0];
+  // The application also emits required string fields omitted by its form screen.
+  const supplementalTitle = titleField !== schema.workflow!.data.idField && fields[titleField]!.required && fields[titleField]!.type === 'string' && !fields[titleField]!.enum?.length;
+  const field = editable.includes(titleField) || supplementalTitle ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0];
   assert(field, 'Workflow must declare a writable text field for persistence proof');
   const nodes = schemaNodes(schema);
   const timelineEmpty = !nodes.some(node => node.collection?.historyField || node.component === 'PaymentEventTimeline');
-  return { field, titleField, seeded: String(workflowSampleRecords(schema)[2]![field] ?? ''), saved: 'Team annual', timelineEmpty };
+  const samples = workflowSampleRecords(schema);
+  return { field, titleField, seeded: String(samples[2]![field] ?? ''), saved: field === 'currency' ? 'EUR' : 'Team annual', timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
 }
 
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
@@ -116,7 +119,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         assert.equal(await overlay.count(), 1);
         assert.equal(await overlay.getAttribute('role'), 'group');
         assert.equal(await overlay.getAttribute('aria-hidden'), 'false');
-        assert.ok((await overlay.getAttribute('aria-label') ?? '').startsWith(`Archived: ${object}`));
+        if (editProbe) assert.equal(await overlay.getAttribute('aria-label'), editProbe.archivedLabel);
+        else assert.ok((await overlay.getAttribute('aria-label') ?? '').startsWith(`Archived: ${object}`));
         assert.equal(await overlay.locator('.oods-archive-badge').innerText(), 'Archived');
         const opacity = await overlay.evaluate((node) => getComputedStyle(node).opacity);
         assert.equal(opacity, '0.7'); // s192-m04 measured contrast correction (#1887)
@@ -312,7 +316,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
   const selectedStatus = options.includes('active') ? 'active' : options.find(value => value !== '');
   if (schema) {
     const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter');
-    assert.deepEqual(options, (filter?.props?.options as Array<{ value: string }>).map(option => option.value), 'Filter choices must match the public declaration');
+    const declaredOptions = (filter?.props?.options as Array<{ value: string }>).map(option => option.value);
+    const states = schema.workflow!.data.lifecycleStates;
+    const expectedOptions = declaredOptions.length === 1 && states.length ? ['', ...states] : declaredOptions;
+    assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum or workflow lifecycle states');
   } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
   const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record.status === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
     : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
@@ -487,6 +494,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           const errors: string[] = [];
           page.on('pageerror', (error) => errors.push(error.message));
           page.on('console', (message) => { if (message.type() === 'error' || /hydrat/i.test(message.text())) errors.push(message.text()); });
+          cell.browserErrors = errors;
           activeGate = 'mount';
           await page.goto(url, { waitUntil: 'domcontentloaded' }); await ready(page, 'list');
           assert.equal(await screen(page).count(), 1); assert.deepEqual(errors, []);
@@ -507,6 +515,13 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           await fs.writeFile(index, original);
           activeGate = 'interaction-evidence';
           const flow = await observeFlow(page, url, requireBillingViews, object, titleField, editProbe); cell.flow = flow;
+          if (flow.some(row => row.status !== 'passed')) {
+            await fs.writeFile(path.join(cellRoot, 'failure-accessibility-tree.txt'), await page.locator('#app').ariaSnapshot());
+            await json(path.join(cellRoot, 'failure-fields.json'), await page.locator('input,textarea,select').evaluateAll(elements => elements.map(element => {
+              const field = element as HTMLInputElement;
+              return { id: field.id, name: field.name, value: field.value, required: field.required, valid: field.checkValidity() };
+            })));
+          }
           assert.equal(flow.some(row => row.name === 'address-save-persists' && row.status === 'passed'), requireAddressViews, 'Declared address editor must pass save and detail readback');
           await json(path.join(cellRoot, 'flow.json'), flow);
           assertWorkflowFlow(flow, requiredFlow);

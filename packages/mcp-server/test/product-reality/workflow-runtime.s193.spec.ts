@@ -8,6 +8,7 @@ import { handle as catalog } from '../../src/tools/catalog.list.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, readRuntimeSummary, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../src/lib/runtime-ledger.js';
 import { workflowEditProbe, expectedWorkflowFlow } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
+import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';
 
 const root = path.resolve(import.meta.dirname, '../../../..');
 const temporary: string[] = [];
@@ -67,7 +68,12 @@ describe('current workflow runtime accountability', () => {
       expect(probe.field).toBe('invoice_number');
       expect(expectedWorkflowFlow(result.schema)).toContain('save-record-field');
     }
-    if (object === 'Plan') expect(probe.field).toBe('plan_name');
+    if (object === 'Plan' || object === 'Subscription') expect(probe.field).toBe('plan_name');
+    if (object === 'Transaction') {
+      expect(probe.archivedLabel).toBe('Archived: transaction-010');
+      expect(probe.field).toBe('currency'); expect(probe.saved).toBe('EUR');
+      expect(workflowSampleRecords(result.schema)[2]!.user_id).toBe('00000000-0000-4000-8000-000000000003');
+    }
   });
   it('the retained complete population proves every workflow state and retains design-loop inspection images', async () => {
     const file = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'artifacts/product-reality/sprint-193/m03/runtime-cells.v1.json');
