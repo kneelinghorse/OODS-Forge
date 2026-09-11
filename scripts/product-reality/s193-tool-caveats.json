@@ -1,0 +1,102 @@
+{
+  "tokens.build": [
+    {
+      "kind": "inert-option",
+      "file": "packages/mcp-server/src/tools/tokens.build.ts",
+      "anchor": "fs.copyFileSync(outputs.css, cssOut);",
+      "reason": "brand/theme label the returned context; copied compiled CSS includes all built scopes and is not filtered by those inputs."
+    }
+  ],
+  "brand.apply": [
+    {
+      "kind": "no-op",
+      "file": "packages/mcp-server/src/tools/brand.apply.ts",
+      "anchor": "async function runTokensBuildSimulation()",
+      "reason": "The verification subprocess ignores stdio and resolves both close and error without checking success; build duration is not proof of a successful build."
+    },
+    {
+      "kind": "no-op",
+      "file": "packages/mcp-server/src/tools/brand.apply.ts",
+      "anchor": "const snapshotPath = path.join(runDir,",
+      "reason": "apply writes snapshots in the artifacts run directory, not canonical brand token source."
+    }
+  ],
+  "brand.intake": [
+    {
+      "kind": "no-op",
+      "file": "packages/mcp-server/src/tools/brand.intake.ts",
+      "anchor": "readonly preview_only: true;",
+      "reason": "Explicit preview-only validation: no persistence, brand creation or token application. This is an accurately documented limit."
+    }
+  ],
+  "fidelity.preview": [
+    {
+      "kind": "placeholder",
+      "file": "packages/mcp-server/src/codegen/branded-mockup-emitter.ts",
+      "anchor": "const BRAND_TOKENS:",
+      "reason": "The non-production branded mockup uses a hard-coded hex token table, not the canonical brand-token build."
+    }
+  ],
+  "map": [
+    {
+      "kind": "no-op",
+      "file": "docs/how-forge-works.html",
+      "anchor": "the composer and code generator do not yet target external libraries",
+      "reason": "Mappings resolve an external vocabulary to traits; no composer/codegen consumer targets the mapped external library."
+    }
+  ],
+  "health": [
+    {
+      "kind": "inert-option",
+      "file": "packages/mcp-server/src/tools/health.ts",
+      "anchor": "const theme = process.env.MCP_THEME ?? 'light';",
+      "reason": "Token theme/brand fields report environment defaults, not an observed active consumer scope."
+    }
+  ],
+  "design.preview": [
+    {
+      "kind": "external-dependency",
+      "file": "packages/mcp-server/src/tools/design.preview.ts",
+      "anchor": "const unavailable = () => new ToolError('OODS-N019'",
+      "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019."
+    }
+  ],
+  "viz.compose": [
+    {
+      "kind": "placeholder",
+      "file": "packages/mcp-server/src/tools/viz.render.ts",
+      "anchor": "// the field-names-only viz.compose placeholder:",
+      "reason": "Deprecated field-name scaffold; it is not the real data-bound renderer or a certifiable artifact."
+    }
+  ],
+  "review": [
+    {
+      "kind": "placeholder",
+      "file": "packages/mcp-server/src/tools/review.chain.ts",
+      "anchor": "* Input: { fixture, policies, options? }",
+      "reason": "The chain accepts only server-resident allow-listed fixtures."
+    },
+    {
+      "kind": "no-op",
+      "file": "packages/mcp-server/src/codegen/review-policy.ts",
+      "anchor": "export type PolicyDecision = 'accept' | 'patch'",
+      "reason": "patch is a policy decision label; this label alone is not evidence of applying a patch to canonical source."
+    }
+  ],
+  "code.generate": [
+    {
+      "kind": "trusts-caller",
+      "file": "packages/mcp-server/src/codegen/validation-profile.ts",
+      "anchor": "const accepted = Array.isArray(evidence.accepted)",
+      "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof."
+    }
+  ],
+  "pipeline": [
+    {
+      "kind": "trusts-caller",
+      "file": "packages/mcp-server/src/codegen/validation-profile.ts",
+      "anchor": "const accepted = Array.isArray(evidence.accepted)",
+      "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof."
+    }
+  ]
+}

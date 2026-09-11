@@ -3547,6 +3547,19 @@ export namespace HealthOutputSchema {
   export interface HealthOutput {
     productReality: {
       /**
+       * Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.
+       */
+      tools: {
+        entries: 27;
+        byTier: {
+          'product-reality': number;
+          contract: number;
+          unit: number;
+          none: number;
+        };
+        head: string;
+      } | null;
+      /**
        * Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.
        */
       runtime: {
