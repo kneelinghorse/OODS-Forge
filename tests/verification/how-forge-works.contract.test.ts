@@ -376,6 +376,10 @@ describe("how Forge works narrative truth", () => {
     );
     expect(nearRoadmap).not.toContain("Runtime at scale — BUILT, REVIEW PENDING");
     expect(normalizedNear).toContain(
+      "## Increment 13 — Sprint 194: Tools truthful — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Tools truthful — BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
     // Sprint 191 closes the maintenance implementation; delivery must stay pending.
