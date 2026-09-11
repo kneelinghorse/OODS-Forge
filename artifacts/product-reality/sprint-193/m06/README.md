@@ -1,6 +1,6 @@
 # s193-m06 — tool-truth census
 
-Status: implementation complete; final frozen-head verification pending. Builder self-certified: **false**. Sprint 193 remains Active pending independent review. Census head: `24d6db32e7249a1d78dbaa73dd1b8307a12bc54f`.
+Status: all mission criteria verified at implementation head `993dc8a1d9974c8dadb2a17cf1c66ad3de3185fa`. Builder self-certified: **false**. Sprint 193 remains Active pending independent review. Census head: `993dc8a1d9974c8dadb2a17cf1c66ad3de3185fa`.
 
 ## Measured scope
 
@@ -24,7 +24,7 @@ The named chart/certification sentences now state all 13 SVG families and A/B + 
 
 ## Reproduce and inspect
 
-- `node scripts/product-reality/s193-tool-truth.mjs --head 24d6db32e7249a1d78dbaa73dd1b8307a12bc54f --check` reproduces the canonical bytes from current source at the recorded census head; it does not equate that head to live HEAD.
+- `node scripts/product-reality/s193-tool-truth.mjs --head 993dc8a1d9974c8dadb2a17cf1c66ad3de3185fa --check` reproduces the canonical bytes from current source at the recorded census head; it does not equate that head to live HEAD.
 - `census.json` is the exact canonical ledger. `health-dist.json` retains the built-handler output; its runtime axis still names the m03 154-cell proof until m07 creates the final sweep.
 - `scope-diff.json` enumerates the mission delta from m05 evidence commit 24d6db32e7249a1d78dbaa73dd1b8307a12bc54f.
 - Contract tests reject a removed row, hand-edited tier/count/claim, and missing ledger. They prove fresh byte derivation, literal-import filtering, E2E source membership, and health output-schema validity. Existing health and narrative/link tests are also run.
@@ -63,3 +63,5 @@ Choices are generated from the ledger: placeholders suggest narrowing/retirement
 | `a11y.scan` | unit | make real / narrow | Source-test tier alone does not establish the full advertised behavior in a consumer; choose targeted behavior proof or a narrower claim. |
 | `release.verify` | none | make real / narrow / retire | No literal handler import in the scanned test sources; establish real behavior and proof before broadening claims. |
 | `release.tag` | none | make real / narrow / retire | No literal handler import in the scanned test sources; establish real behavior and proof before broadening claims. |
+
+Final verification: 26 targeted server tests and 8 narrative/link tests passed, with zero failures or skips in those selections. MCP build passed. Fresh derivation matched every byte at the recorded head; built health returned 27 entries and the expected 7/12/4/4 tier counts. An isolated three-file copy of the built projection loaded the bundled ledger without repository source imports. These checks do not execute portable E2E or certify tool behavior.
