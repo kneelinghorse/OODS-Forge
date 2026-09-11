@@ -1,0 +1,924 @@
+﻿2026-09-11T05:50:58.2208308Z Current runner version: '2.337.0'
+2026-09-11T05:50:58.2244923Z ##[group]Runner Image Provisioner
+2026-09-11T05:50:58.2246622Z Hosted Compute Agent
+2026-09-11T05:50:58.2247636Z Version: 20260828.587
+2026-09-11T05:50:58.2248888Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-11T05:50:58.2250267Z Build Date: 2026-08-28T16:44:25Z
+2026-09-11T05:50:58.2251559Z Worker ID: {393bf204-4b97-47a7-af0c-e51ab7f1827b}
+2026-09-11T05:50:58.2253436Z Azure Region: westus
+2026-09-11T05:50:58.2254503Z ##[endgroup]
+2026-09-11T05:50:58.2256867Z ##[group]Operating System
+2026-09-11T05:50:58.2258219Z Ubuntu
+2026-09-11T05:50:58.2259102Z 24.04.5
+2026-09-11T05:50:58.2260048Z LTS
+2026-09-11T05:50:58.2260969Z ##[endgroup]
+2026-09-11T05:50:58.2261976Z ##[group]Runner Image
+2026-09-11T05:50:58.2263659Z Image: ubuntu-24.04
+2026-09-11T05:50:58.2264656Z Version: 20260907.300.1
+2026-09-11T05:50:58.2266947Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-11T05:50:58.2269811Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-11T05:50:58.2271792Z ##[endgroup]
+2026-09-11T05:50:58.2274325Z ##[group]GITHUB_TOKEN Permissions
+2026-09-11T05:50:58.2277267Z Contents: read
+2026-09-11T05:50:58.2278309Z Metadata: read
+2026-09-11T05:50:58.2279507Z PullRequests: write
+2026-09-11T05:50:58.2280582Z ##[endgroup]
+2026-09-11T05:50:58.2284025Z Secret source: Actions
+2026-09-11T05:50:58.2285717Z Cache mode: write
+2026-09-11T05:50:58.2286903Z Prepare workflow directory
+2026-09-11T05:50:58.2980354Z Prepare all required actions
+2026-09-11T05:50:58.3054503Z Getting action download info
+2026-09-11T05:50:58.7366567Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-11T05:50:58.8526614Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-11T05:50:59.2919165Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-11T05:50:59.4846207Z Complete job name: build
+2026-09-11T05:50:59.5664762Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:50:59.5673691Z ##[group]Run actions/checkout@v4
+2026-09-11T05:50:59.5674505Z with:
+2026-09-11T05:50:59.5675023Z   repository: kneelinghorse/OODS-Forge
+2026-09-11T05:50:59.5679236Z   token: ***
+2026-09-11T05:50:59.5679719Z   ssh-strict: true
+2026-09-11T05:50:59.5680194Z   ssh-user: git
+2026-09-11T05:50:59.5680687Z   persist-credentials: true
+2026-09-11T05:50:59.5681225Z   clean: true
+2026-09-11T05:50:59.5681710Z   sparse-checkout-cone-mode: true
+2026-09-11T05:50:59.5682271Z   fetch-depth: 1
+2026-09-11T05:50:59.5682930Z   fetch-tags: false
+2026-09-11T05:50:59.5683428Z   show-progress: true
+2026-09-11T05:50:59.5683967Z   lfs: false
+2026-09-11T05:50:59.5684462Z   submodules: false
+2026-09-11T05:50:59.5684967Z   set-safe-directory: true
+2026-09-11T05:50:59.5685527Z   allow-unsafe-pr-checkout: false
+2026-09-11T05:50:59.5686720Z env:
+2026-09-11T05:50:59.5687212Z   NODE_VERSION: 24
+2026-09-11T05:50:59.5687700Z ##[endgroup]
+2026-09-11T05:50:59.6930743Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-11T05:50:59.6941097Z ##[group]Getting Git version info
+2026-09-11T05:50:59.6943974Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-11T05:50:59.6954833Z [command]/usr/bin/git version
+2026-09-11T05:50:59.7037180Z git version 2.55.0
+2026-09-11T05:50:59.7114594Z ##[endgroup]
+2026-09-11T05:50:59.7124018Z Temporarily overriding HOME='/home/runner/work/_temp/c3df56ec-696c-4818-8d7b-976bdae1237a' before making global git config changes
+2026-09-11T05:50:59.7126954Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-11T05:50:59.7129385Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:50:59.7213993Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-11T05:50:59.7216713Z ##[group]Initializing the repository
+2026-09-11T05:50:59.7218606Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:50:59.7337853Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-11T05:50:59.7343998Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-11T05:50:59.7364989Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-11T05:50:59.7375465Z hint: call:
+2026-09-11T05:50:59.7383587Z hint:
+2026-09-11T05:50:59.7384954Z hint: 	git config --global init.defaultBranch <name>
+2026-09-11T05:50:59.7386557Z hint:
+2026-09-11T05:50:59.7387916Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-11T05:50:59.7390035Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-11T05:50:59.7391823Z hint:
+2026-09-11T05:50:59.7393234Z hint: 	git branch -m <name>
+2026-09-11T05:50:59.7394694Z hint:
+2026-09-11T05:50:59.7396180Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-11T05:50:59.7398684Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-11T05:50:59.7406516Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-11T05:50:59.7458515Z ##[endgroup]
+2026-09-11T05:50:59.7460658Z ##[group]Disabling automatic garbage collection
+2026-09-11T05:50:59.7462305Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-11T05:50:59.7499403Z ##[endgroup]
+2026-09-11T05:50:59.7501750Z ##[group]Setting up auth
+2026-09-11T05:50:59.7509431Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-11T05:50:59.7571561Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-11T05:50:59.8114934Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-11T05:50:59.8210713Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-11T05:50:59.8449611Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-11T05:50:59.8492896Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-11T05:50:59.8801074Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-11T05:50:59.8881975Z ##[endgroup]
+2026-09-11T05:50:59.8884793Z ##[group]Fetching the repository
+2026-09-11T05:50:59.8888024Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +008e10933c6804a35d4078b8c5e8367f33192475:refs/remotes/pull/98/merge
+2026-09-11T05:51:18.1012298Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-11T05:51:18.1034151Z  * [new ref]           008e10933c6804a35d4078b8c5e8367f33192475 -> pull/98/merge
+2026-09-11T05:51:18.1080253Z ##[endgroup]
+2026-09-11T05:51:18.1084844Z ##[group]Determining the checkout info
+2026-09-11T05:51:18.1086628Z ##[endgroup]
+2026-09-11T05:51:18.1088074Z [command]/usr/bin/git sparse-checkout disable
+2026-09-11T05:51:18.1143578Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-11T05:51:18.1215297Z ##[group]Checking out the ref
+2026-09-11T05:51:18.1216272Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/98/merge
+2026-09-11T05:51:19.1846652Z Updating files:  20% (9539/46009)
+2026-09-11T05:51:19.2255696Z Updating files:  21% (9662/46009)
+2026-09-11T05:51:19.2844167Z Updating files:  22% (10122/46009)
+2026-09-11T05:51:19.3216133Z Updating files:  23% (10583/46009)
+2026-09-11T05:51:19.3687544Z Updating files:  24% (11043/46009)
+2026-09-11T05:51:19.4095191Z Updating files:  25% (11503/46009)
+2026-09-11T05:51:19.4794414Z Updating files:  26% (11963/46009)
+2026-09-11T05:51:19.5506304Z Updating files:  27% (12423/46009)
+2026-09-11T05:51:19.6307893Z Updating files:  28% (12883/46009)
+2026-09-11T05:51:19.7009449Z Updating files:  29% (13343/46009)
+2026-09-11T05:51:19.7571599Z Updating files:  30% (13803/46009)
+2026-09-11T05:51:19.8114860Z Updating files:  31% (14263/46009)
+2026-09-11T05:51:19.8817497Z Updating files:  32% (14723/46009)
+2026-09-11T05:51:19.9594851Z Updating files:  33% (15183/46009)
+2026-09-11T05:51:20.0101753Z Updating files:  34% (15644/46009)
+2026-09-11T05:51:20.0603135Z Updating files:  35% (16104/46009)
+2026-09-11T05:51:20.1206838Z Updating files:  36% (16564/46009)
+2026-09-11T05:51:20.1717406Z Updating files:  37% (17024/46009)
+2026-09-11T05:51:20.1719017Z Updating files:  38% (17484/46009)
+2026-09-11T05:51:20.2263800Z Updating files:  38% (17505/46009)
+2026-09-11T05:51:20.2709612Z Updating files:  39% (17944/46009)
+2026-09-11T05:51:20.3499423Z Updating files:  40% (18404/46009)
+2026-09-11T05:51:20.4108949Z Updating files:  41% (18864/46009)
+2026-09-11T05:51:20.4649804Z Updating files:  42% (19324/46009)
+2026-09-11T05:51:20.5466463Z Updating files:  43% (19784/46009)
+2026-09-11T05:51:20.6258859Z Updating files:  44% (20244/46009)
+2026-09-11T05:51:20.7262712Z Updating files:  45% (20705/46009)
+2026-09-11T05:51:20.7846845Z Updating files:  46% (21165/46009)
+2026-09-11T05:51:20.8544606Z Updating files:  47% (21625/46009)
+2026-09-11T05:51:21.1182048Z Updating files:  48% (22085/46009)
+2026-09-11T05:51:21.1581015Z Updating files:  49% (22545/46009)
+2026-09-11T05:51:21.1736611Z Updating files:  50% (23005/46009)
+2026-09-11T05:51:21.1917270Z Updating files:  50% (23155/46009)
+2026-09-11T05:51:21.2184351Z Updating files:  51% (23465/46009)
+2026-09-11T05:51:21.3077097Z Updating files:  52% (23925/46009)
+2026-09-11T05:51:21.3859109Z Updating files:  53% (24385/46009)
+2026-09-11T05:51:21.4865072Z Updating files:  54% (24845/46009)
+2026-09-11T05:51:21.5803564Z Updating files:  55% (25305/46009)
+2026-09-11T05:51:21.6185058Z Updating files:  56% (25766/46009)
+2026-09-11T05:51:21.6659002Z Updating files:  57% (26226/46009)
+2026-09-11T05:51:21.7021944Z Updating files:  58% (26686/46009)
+2026-09-11T05:51:21.7428501Z Updating files:  59% (27146/46009)
+2026-09-11T05:51:21.7878524Z Updating files:  60% (27606/46009)
+2026-09-11T05:51:21.8211827Z Updating files:  61% (28066/46009)
+2026-09-11T05:51:21.9343321Z Updating files:  62% (28526/46009)
+2026-09-11T05:51:21.9913338Z Updating files:  63% (28986/46009)
+2026-09-11T05:51:22.0348709Z Updating files:  64% (29446/46009)
+2026-09-11T05:51:22.0716160Z Updating files:  65% (29906/46009)
+2026-09-11T05:51:22.1077379Z Updating files:  66% (30366/46009)
+2026-09-11T05:51:22.1545009Z Updating files:  67% (30827/46009)
+2026-09-11T05:51:22.1706164Z Updating files:  68% (31287/46009)
+2026-09-11T05:51:22.2207818Z Updating files:  68% (31383/46009)
+2026-09-11T05:51:22.2857262Z Updating files:  69% (31747/46009)
+2026-09-11T05:51:22.3278755Z Updating files:  70% (32207/46009)
+2026-09-11T05:51:22.3987336Z Updating files:  71% (32667/46009)
+2026-09-11T05:51:22.4597237Z Updating files:  72% (33127/46009)
+2026-09-11T05:51:22.5250842Z Updating files:  73% (33587/46009)
+2026-09-11T05:51:22.5976983Z Updating files:  74% (34047/46009)
+2026-09-11T05:51:22.6902973Z Updating files:  75% (34507/46009)
+2026-09-11T05:51:22.7419594Z Updating files:  76% (34967/46009)
+2026-09-11T05:51:22.7949990Z Updating files:  77% (35427/46009)
+2026-09-11T05:51:22.8407703Z Updating files:  78% (35888/46009)
+2026-09-11T05:51:22.8858149Z Updating files:  79% (36348/46009)
+2026-09-11T05:51:22.9224500Z Updating files:  80% (36808/46009)
+2026-09-11T05:51:22.9592912Z Updating files:  81% (37268/46009)
+2026-09-11T05:51:22.9996538Z Updating files:  82% (37728/46009)
+2026-09-11T05:51:23.1259654Z Updating files:  83% (38188/46009)
+2026-09-11T05:51:23.1725683Z Updating files:  84% (38648/46009)
+2026-09-11T05:51:23.1969406Z Updating files:  84% (38938/46009)
+2026-09-11T05:51:23.2595554Z Updating files:  85% (39108/46009)
+2026-09-11T05:51:23.2975521Z Updating files:  86% (39568/46009)
+2026-09-11T05:51:23.3386107Z Updating files:  87% (40028/46009)
+2026-09-11T05:51:23.3847932Z Updating files:  88% (40488/46009)
+2026-09-11T05:51:23.5261437Z Updating files:  89% (40949/46009)
+2026-09-11T05:51:23.5886066Z Updating files:  90% (41409/46009)
+2026-09-11T05:51:23.7987241Z Updating files:  91% (41869/46009)
+2026-09-11T05:51:23.8461813Z Updating files:  92% (42329/46009)
+2026-09-11T05:51:23.8766894Z Updating files:  93% (42789/46009)
+2026-09-11T05:51:23.9121215Z Updating files:  94% (43249/46009)
+2026-09-11T05:51:23.9431881Z Updating files:  95% (43709/46009)
+2026-09-11T05:51:23.9780699Z Updating files:  96% (44169/46009)
+2026-09-11T05:51:24.0167841Z Updating files:  97% (44629/46009)
+2026-09-11T05:51:24.0520355Z Updating files:  98% (45089/46009)
+2026-09-11T05:51:24.0848982Z Updating files:  99% (45549/46009)
+2026-09-11T05:51:24.0850037Z Updating files: 100% (46009/46009)
+2026-09-11T05:51:24.0850973Z Updating files: 100% (46009/46009), done.
+2026-09-11T05:51:24.1598755Z Note: switching to 'refs/remotes/pull/98/merge'.
+2026-09-11T05:51:24.1602987Z 
+2026-09-11T05:51:24.1614783Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-11T05:51:24.1624190Z changes and commit them, and you can discard any commits you make in this
+2026-09-11T05:51:24.1643949Z state without impacting any branches by switching back to a branch.
+2026-09-11T05:51:24.1663005Z 
+2026-09-11T05:51:24.1667270Z If you want to create a new branch to retain commits you create, you may
+2026-09-11T05:51:24.1668244Z do so (now or later) by using -c with the switch command. Example:
+2026-09-11T05:51:24.1668999Z 
+2026-09-11T05:51:24.1669392Z   git switch -c <new-branch-name>
+2026-09-11T05:51:24.1669867Z 
+2026-09-11T05:51:24.1670208Z Or undo this operation with:
+2026-09-11T05:51:24.1670937Z 
+2026-09-11T05:51:24.1671536Z   git switch -
+2026-09-11T05:51:24.1672007Z 
+2026-09-11T05:51:24.1672752Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-11T05:51:24.1673534Z 
+2026-09-11T05:51:24.1674337Z HEAD is now at 008e1093 Merge 0dde152832cc63c6c768e5932ec995e2d8c48219 into c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d
+2026-09-11T05:51:24.1737581Z ##[endgroup]
+2026-09-11T05:51:24.2819214Z [command]/usr/bin/git log -1 --format=%H
+2026-09-11T05:51:24.2847965Z 008e10933c6804a35d4078b8c5e8367f33192475
+2026-09-11T05:51:24.3134236Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:51:24.3136326Z ##[group]Run pnpm/action-setup@v4
+2026-09-11T05:51:24.3136606Z with:
+2026-09-11T05:51:24.3136799Z   run_install: false
+2026-09-11T05:51:24.3137016Z   dest: ~/setup-pnpm
+2026-09-11T05:51:24.3137230Z   cache: false
+2026-09-11T05:51:24.3137459Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-11T05:51:24.3137749Z   package_json_file: package.json
+2026-09-11T05:51:24.3138002Z   standalone: false
+2026-09-11T05:51:24.3138203Z env:
+2026-09-11T05:51:24.3138388Z   NODE_VERSION: 24
+2026-09-11T05:51:24.3138587Z ##[endgroup]
+2026-09-11T05:51:24.4947718Z ##[group]Running self-installer...
+2026-09-11T05:51:25.0975727Z (node:2037) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-11T05:51:25.0977680Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-11T05:51:25.2993541Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-11T05:51:25.3238132Z Packages: +1
+2026-09-11T05:51:25.3254315Z +
+2026-09-11T05:51:25.8531630Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-11T05:51:25.9285069Z 
+2026-09-11T05:51:25.9290384Z dependencies:
+2026-09-11T05:51:25.9293421Z + pnpm 9.12.2 (12.3.4 is available)
+2026-09-11T05:51:25.9293975Z 
+2026-09-11T05:51:25.9338969Z Done in 1.1s
+2026-09-11T05:51:25.9514660Z ##[endgroup]
+2026-09-11T05:51:25.9533545Z Installation Completed!
+2026-09-11T05:51:25.9742211Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:51:25.9745062Z ##[group]Run actions/setup-node@v4
+2026-09-11T05:51:25.9745518Z with:
+2026-09-11T05:51:25.9745961Z   node-version: 24
+2026-09-11T05:51:25.9746315Z   cache: pnpm
+2026-09-11T05:51:25.9746714Z   always-auth: false
+2026-09-11T05:51:25.9747101Z   check-latest: false
+2026-09-11T05:51:25.9754019Z   token: ***
+2026-09-11T05:51:25.9754362Z env:
+2026-09-11T05:51:25.9754680Z   NODE_VERSION: 24
+2026-09-11T05:51:25.9755146Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:25.9755693Z ##[endgroup]
+2026-09-11T05:51:26.1730494Z (node:2051) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-11T05:51:26.1733714Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-11T05:51:26.1734843Z ##[group]Environment details
+2026-09-11T05:51:26.1746703Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-11T05:51:27.1504965Z node: v24.20.0
+2026-09-11T05:51:27.1505516Z npm: 11.19.0
+2026-09-11T05:51:27.1513699Z yarn: 1.22.22
+2026-09-11T05:51:27.1516380Z ##[endgroup]
+2026-09-11T05:51:27.1536576Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-11T05:51:27.5944062Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-11T05:51:27.8673345Z Cache hit for: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-11T05:51:27.8852118Z (node:2051) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-11T05:51:29.1463665Z Received 4194304 of 125411059 (3.3%), 4.0 MBs/sec
+2026-09-11T05:51:30.1469059Z Received 121216755 of 125411059 (96.7%), 57.7 MBs/sec
+2026-09-11T05:51:30.2158539Z Received 125411059 of 125411059 (100.0%), 57.7 MBs/sec
+2026-09-11T05:51:30.2159538Z Cache Size: ~120 MB (125411059 B)
+2026-09-11T05:51:30.2202386Z [command]/usr/bin/tar -xf /home/runner/work/_temp/c4180dc8-a50e-4be5-a59f-b550382ae506/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-11T05:51:32.9288828Z Cache restored successfully
+2026-09-11T05:51:33.0701613Z Cache restored from key: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-11T05:51:33.0881508Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-11T05:51:33.0881954Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-11T05:51:33.0931264Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:33.0931571Z env:
+2026-09-11T05:51:33.0931807Z   NODE_VERSION: 24
+2026-09-11T05:51:33.0932133Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:33.0932910Z ##[endgroup]
+2026-09-11T05:51:33.6433565Z Scope: all 22 workspace projects
+2026-09-11T05:51:33.7883700Z Lockfile is up to date, resolution step is skipped
+2026-09-11T05:51:33.8887075Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-11T05:51:34.0461559Z Packages: +946
+2026-09-11T05:51:34.0463071Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-11T05:51:34.8913851Z Progress: resolved 946, reused 565, downloaded 0, added 0
+2026-09-11T05:51:35.8927824Z Progress: resolved 946, reused 945, downloaded 0, added 240
+2026-09-11T05:51:36.8917616Z Progress: resolved 946, reused 945, downloaded 0, added 604
+2026-09-11T05:51:37.5364621Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-11T05:51:39.3508274Z 
+2026-09-11T05:51:39.3513677Z dependencies:
+2026-09-11T05:51:39.3533113Z + @radix-ui/react-slot 1.2.3
+2026-09-11T05:51:39.3553192Z + @rjsf/core 5.24.13
+2026-09-11T05:51:39.3553942Z + @rjsf/utils 5.24.13
+2026-09-11T05:51:39.3573476Z + @rjsf/validator-ajv8 5.24.13
+2026-09-11T05:51:39.3593018Z + @types/geojson 7946.0.16
+2026-09-11T05:51:39.3610104Z + @types/topojson-client 3.1.5
+2026-09-11T05:51:39.3612987Z + @types/topojson-specification 1.0.5
+2026-09-11T05:51:39.3633165Z + ajv 8.17.1
+2026-09-11T05:51:39.3653197Z + ajv-formats 3.0.1
+2026-09-11T05:51:39.3673851Z + d3-geo 3.1.1
+2026-09-11T05:51:39.3692955Z + d3-scale 4.0.2
+2026-09-11T05:51:39.3693535Z + echarts 6.0.0
+2026-09-11T05:51:39.3713116Z + js-yaml 4.1.0
+2026-09-11T05:51:39.3733081Z + luxon 3.7.2
+2026-09-11T05:51:39.3753031Z + pg 8.16.3
+2026-09-11T05:51:39.3753669Z + react 19.2.0
+2026-09-11T05:51:39.3773501Z + react-dom 19.2.0
+2026-09-11T05:51:39.3813104Z + react-window 1.8.11
+2026-09-11T05:51:39.3833173Z + topojson-client 3.1.0
+2026-09-11T05:51:39.3877163Z + vega 6.2.0
+2026-09-11T05:51:39.3877940Z + vega-embed 7.1.0
+2026-09-11T05:51:39.3886670Z + zod 4.1.12
+2026-09-11T05:51:39.3887143Z 
+2026-09-11T05:51:39.3893555Z devDependencies:
+2026-09-11T05:51:39.3896045Z + @chromatic-com/storybook 4.1.1
+2026-09-11T05:51:39.3896906Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-11T05:51:39.3897925Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-11T05:51:39.3898854Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-11T05:51:39.3899612Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-11T05:51:39.3900310Z + @playwright/test 1.56.1
+2026-09-11T05:51:39.3900971Z + @storybook/addon-a11y 9.1.10
+2026-09-11T05:51:39.3901641Z + @storybook/addon-docs 9.1.10
+2026-09-11T05:51:39.3902341Z + @storybook/addon-onboarding 9.1.10
+2026-09-11T05:51:39.3903293Z + @storybook/mdx2-csf 1.1.0
+2026-09-11T05:51:39.3903921Z + @storybook/react 9.1.10
+2026-09-11T05:51:39.3904563Z + @storybook/react-vite 9.1.10
+2026-09-11T05:51:39.3905191Z + @testing-library/dom 10.4.1
+2026-09-11T05:51:39.3905872Z + @testing-library/jest-dom 6.9.1
+2026-09-11T05:51:39.3906561Z + @testing-library/react 16.3.0
+2026-09-11T05:51:39.3907260Z + @testing-library/user-event 14.6.1
+2026-09-11T05:51:39.3907985Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-11T05:51:39.3908625Z + @types/d3-geo 3.1.0
+2026-09-11T05:51:39.3909187Z + @types/d3-scale 4.0.9
+2026-09-11T05:51:39.3909754Z + @types/js-yaml 4.0.9
+2026-09-11T05:51:39.3910310Z + @types/luxon 3.7.1
+2026-09-11T05:51:39.3910855Z + @types/node 20.19.21
+2026-09-11T05:51:39.3911403Z + @types/pg 8.15.6
+2026-09-11T05:51:39.3912047Z + @types/react 19.2.2
+2026-09-11T05:51:39.3912907Z + @types/react-dom 19.2.2
+2026-09-11T05:51:39.3922030Z + @types/react-window 1.8.8
+2026-09-11T05:51:39.3923058Z + @types/semver 7.7.1
+2026-09-11T05:51:39.3941808Z + @types/sql.js 1.4.9
+2026-09-11T05:51:39.3958391Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-11T05:51:39.3959364Z + @typescript-eslint/parser 6.21.0
+2026-09-11T05:51:39.3990392Z + @vitejs/plugin-react 5.0.4
+2026-09-11T05:51:39.4006667Z + @vitest/browser 3.2.4
+2026-09-11T05:51:39.4007151Z + @vitest/coverage-v8 3.2.4
+2026-09-11T05:51:39.4007602Z + axe-core 4.11.0
+2026-09-11T05:51:39.4008005Z + colorjs.io 0.5.2
+2026-09-11T05:51:39.4008363Z + dotenv 17.4.2
+2026-09-11T05:51:39.4008707Z + eslint 8.57.1
+2026-09-11T05:51:39.4009169Z + eslint-plugin-storybook 9.1.10
+2026-09-11T05:51:39.4009632Z + globals 17.6.0
+2026-09-11T05:51:39.4009981Z + jsdom 24.1.3
+2026-09-11T05:51:39.4010441Z + json-schema-to-typescript 13.1.2
+2026-09-11T05:51:39.4011071Z + markdown-to-jsx 7.7.15
+2026-09-11T05:51:39.4011508Z + pg-mem 3.0.5
+2026-09-11T05:51:39.4011885Z + playwright 1.56.1
+2026-09-11T05:51:39.4012269Z + postcss 8.5.28
+2026-09-11T05:51:39.4061522Z + prettier 3.6.2
+2026-09-11T05:51:39.4062303Z + rimraf 5.0.10
+2026-09-11T05:51:39.4063297Z + semver 7.7.3
+2026-09-11T05:51:39.4063668Z + sql.js 1.13.0
+2026-09-11T05:51:39.4064049Z + storybook 9.1.10
+2026-09-11T05:51:39.4064476Z + style-dictionary 4.4.0
+2026-09-11T05:51:39.4064920Z + tailwindcss 3.4.18
+2026-09-11T05:51:39.4065302Z + tsup 8.5.0
+2026-09-11T05:51:39.4065650Z + tsx 4.20.6
+2026-09-11T05:51:39.4066014Z + typescript 5.3.3
+2026-09-11T05:51:39.4066400Z + vega-lite 6.4.1
+2026-09-11T05:51:39.4072863Z + vite-tsconfig-paths 5.1.4
+2026-09-11T05:51:39.4073323Z + vitest 3.2.4
+2026-09-11T05:51:39.4073701Z + vitest-axe 0.1.0
+2026-09-11T05:51:39.4073933Z 
+2026-09-11T05:51:39.5563689Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-11T05:51:39.6124702Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-11T05:51:39.6143004Z . prepare: Done
+2026-09-11T05:51:39.6323909Z Done in 6.4s
+2026-09-11T05:51:39.6766639Z ##[group]Run pnpm run build:tokens
+2026-09-11T05:51:39.6767179Z [36;1mpnpm run build:tokens[0m
+2026-09-11T05:51:39.6816317Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:39.6816735Z env:
+2026-09-11T05:51:39.6817056Z   NODE_VERSION: 24
+2026-09-11T05:51:39.6817519Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:39.6818068Z ##[endgroup]
+2026-09-11T05:51:40.3528543Z 
+2026-09-11T05:51:40.3529218Z > @oods/foundry-mcp@0.1.0 build:tokens /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:51:40.3530139Z > node packages/tokens/scripts/build.mjs
+2026-09-11T05:51:40.3530512Z 
+2026-09-11T05:51:40.7086629Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-11T05:51:40.7093527Z Building design tokens with Style Dictionary…
+2026-09-11T05:51:40.7799232Z 
+2026-09-11T05:51:40.7818704Z Token collisions detected (2):
+2026-09-11T05:51:40.7820324Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:40.7821803Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:41.3463057Z 
+2026-09-11T05:51:41.3484373Z ios-swift
+2026-09-11T05:51:41.3485468Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-11T05:51:41.3500772Z 
+2026-09-11T05:51:41.3563326Z compose
+2026-09-11T05:51:41.3587838Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-11T05:51:41.5283740Z 
+2026-09-11T05:51:41.5285189Z ts
+2026-09-11T05:51:41.5286062Z ! dist/ts/tokens.ts, does not exist
+2026-09-11T05:51:41.5294919Z 
+2026-09-11T05:51:41.5295306Z tailwind
+2026-09-11T05:51:41.5296089Z ! dist/tailwind/tokens.json, does not exist
+2026-09-11T05:51:42.4223174Z 
+2026-09-11T05:51:42.4235513Z ios-swift
+2026-09-11T05:51:42.4237044Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-11T05:51:42.4237743Z 
+2026-09-11T05:51:42.4238449Z compose
+2026-09-11T05:51:42.4239268Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-11T05:51:42.4909869Z 
+2026-09-11T05:51:42.4911166Z ts
+2026-09-11T05:51:42.4912346Z ✔︎ dist/ts/tokens.ts
+2026-09-11T05:51:42.4913385Z 
+2026-09-11T05:51:42.4913875Z tailwind
+2026-09-11T05:51:42.4914677Z ✔︎ dist/tailwind/tokens.json
+2026-09-11T05:51:42.5769736Z 
+2026-09-11T05:51:42.5770644Z Token collisions detected (2):
+2026-09-11T05:51:42.5772091Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:42.5773654Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:42.7937988Z 
+2026-09-11T05:51:42.7938803Z css
+2026-09-11T05:51:42.7940099Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:42.8382739Z 
+2026-09-11T05:51:42.8383626Z Token collisions detected (2):
+2026-09-11T05:51:42.8384851Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:42.8386141Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:43.0045648Z 
+2026-09-11T05:51:43.0046394Z css
+2026-09-11T05:51:43.0047506Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:43.1753239Z 
+2026-09-11T05:51:43.1773790Z Token collisions detected (252):
+2026-09-11T05:51:43.1817592Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:43.1826609Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:43.3278224Z 
+2026-09-11T05:51:43.3278980Z css
+2026-09-11T05:51:43.3280102Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:43.4695293Z 
+2026-09-11T05:51:43.4696175Z Token collisions detected (227):
+2026-09-11T05:51:43.4697437Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:43.4698702Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:43.6208627Z 
+2026-09-11T05:51:43.6209484Z css
+2026-09-11T05:51:43.6210538Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:43.7776212Z 
+2026-09-11T05:51:43.7777714Z Token collisions detected (2):
+2026-09-11T05:51:43.7779008Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:43.7780212Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:43.9284241Z 
+2026-09-11T05:51:43.9286520Z css
+2026-09-11T05:51:43.9288193Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:44.0659689Z 
+2026-09-11T05:51:44.0660600Z Token collisions detected (252):
+2026-09-11T05:51:44.0661854Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:44.0663480Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:44.2123924Z 
+2026-09-11T05:51:44.2124697Z css
+2026-09-11T05:51:44.2125772Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:44.3406309Z 
+2026-09-11T05:51:44.3407259Z Token collisions detected (227):
+2026-09-11T05:51:44.3408496Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:44.3409728Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:44.4908595Z 
+2026-09-11T05:51:44.4909333Z css
+2026-09-11T05:51:44.4910432Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:44.6238752Z 
+2026-09-11T05:51:44.6273936Z Token collisions detected (2):
+2026-09-11T05:51:44.6314010Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:44.6333951Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:44.7811070Z ✔︎ tokens built successfully in 4.10s
+2026-09-11T05:51:44.7812364Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-11T05:51:44.7813667Z    types:    dist/ts/tokens.ts
+2026-09-11T05:51:44.7814403Z    tailwind: dist/tailwind/tokens.json
+2026-09-11T05:51:44.7815148Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-11T05:51:44.7815920Z    compose:  dist/compose/OodsTokens.kt
+2026-09-11T05:51:44.8230959Z ##[group]Run pnpm run build:packages
+2026-09-11T05:51:44.8231314Z [36;1mpnpm run build:packages[0m
+2026-09-11T05:51:44.8268532Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:44.8268799Z env:
+2026-09-11T05:51:44.8268997Z   NODE_VERSION: 24
+2026-09-11T05:51:44.8269282Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:44.8269619Z ##[endgroup]
+2026-09-11T05:51:45.2823312Z 
+2026-09-11T05:51:45.2827287Z > @oods/foundry-mcp@0.1.0 build:packages /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:51:45.2828822Z > pnpm --filter @oods/* run build
+2026-09-11T05:51:45.2829345Z 
+2026-09-11T05:51:45.7966236Z Scope: 21 of 22 workspace projects
+2026-09-11T05:51:45.8022374Z apps/playground build$ tsc -b && vite build
+2026-09-11T05:51:45.8047698Z packages/a11y-tools build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:51:45.8064629Z packages/artifacts build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true
+2026-09-11T05:51:45.8067893Z packages/component-contracts build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:51:47.4238793Z packages/a11y-tools build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:51:47.4313858Z packages/a11y-tools build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:51:47.4403777Z packages/a11y-tools build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:51:47.4523312Z packages/a11y-tools build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/a11y-tools/tsup.config.ts
+2026-09-11T05:51:47.4599600Z packages/a11y-tools build: [34mCLI[39m Target: node20
+2026-09-11T05:51:47.4627803Z packages/a11y-tools build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:51:47.4684433Z packages/a11y-tools build: [34mESM[39m Build start
+2026-09-11T05:51:47.4783533Z packages/a11y-tools build: [34mCJS[39m Build start
+2026-09-11T05:51:47.6190790Z packages/component-contracts build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:51:47.6264067Z packages/component-contracts build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:51:47.7372332Z packages/component-contracts build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:51:47.7375661Z packages/component-contracts build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+2026-09-11T05:51:47.8234485Z packages/component-contracts build: [34mCLI[39m Target: es2022
+2026-09-11T05:51:47.8268471Z packages/component-contracts build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:51:47.9239564Z packages/component-contracts build: [34mESM[39m Build start
+2026-09-11T05:51:47.9269019Z packages/component-contracts build: [34mCJS[39m Build start
+2026-09-11T05:51:48.6865659Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js     [22m[32m14.75 KB[39m
+2026-09-11T05:51:48.6894058Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js.map [22m[32m35.22 KB[39m
+2026-09-11T05:51:48.7555356Z packages/a11y-tools build: [32mESM[39m ⚡️ Build success in 1176ms
+2026-09-11T05:51:48.7624209Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs     [22m[32m15.34 KB[39m
+2026-09-11T05:51:48.8404574Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m35.23 KB[39m
+2026-09-11T05:51:48.8434516Z packages/a11y-tools build: [32mCJS[39m ⚡️ Build success in 1176ms
+2026-09-11T05:51:49.9249404Z packages/a11y-tools build: [34mDTS[39m Build start
+2026-09-11T05:51:50.2674414Z packages/component-contracts build: [34mDTS[39m Build start
+2026-09-11T05:51:51.7677010Z packages/component-contracts build: [32mESM[39m [1mdist/index.js [22m[32m894.48 KB[39m
+2026-09-11T05:51:51.7715470Z packages/component-contracts build: [32mESM[39m ⚡️ Build success in 4184ms
+2026-09-11T05:51:51.7775444Z packages/component-contracts build: [32mCJS[39m [1mdist/index.cjs [22m[32m896.25 KB[39m
+2026-09-11T05:51:51.7834249Z packages/component-contracts build: [32mCJS[39m ⚡️ Build success in 4187ms
+2026-09-11T05:51:52.4817614Z packages/artifacts build: Done
+2026-09-11T05:51:52.4884062Z packages/mcp-bridge build$ rimraf dist && tsc -p tsconfig.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-11T05:51:58.1154386Z packages/a11y-tools build: [32mDTS[39m ⚡️ Build success in 8198ms
+2026-09-11T05:51:58.1196693Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m9.01 KB[39m
+2026-09-11T05:51:58.1243927Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.cts [22m[32m9.01 KB[39m
+2026-09-11T05:51:58.2993541Z packages/a11y-tools build: Done
+2026-09-11T05:51:58.3028772Z packages/release-utils build$ rimraf dist && tsc -p tsconfig.json
+2026-09-11T05:51:58.6334603Z apps/playground build: [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+2026-09-11T05:52:00.5465424Z apps/playground build: transforming...
+2026-09-11T05:52:00.6349307Z apps/playground build: Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-09-11T05:52:00.6499209Z apps/playground build:   npx update-browserslist-db@latest
+2026-09-11T05:52:00.6520341Z apps/playground build:   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-09-11T05:52:01.6672360Z packages/component-contracts build: [32mDTS[39m ⚡️ Build success in 12066ms
+2026-09-11T05:52:01.6694512Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m107.62 KB[39m
+2026-09-11T05:52:01.6723974Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.cts [22m[32m107.62 KB[39m
+2026-09-11T05:52:01.9944129Z packages/component-contracts build: Done
+2026-09-11T05:52:02.0407296Z packages/tokens build$ rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-11T05:52:02.0925212Z packages/mcp-bridge build: Done
+2026-09-11T05:52:02.1024084Z packages/tw-variants build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:03.3354648Z packages/tw-variants build: [34mCLI[39m Building entry: src/context-matrix.ts, src/index.ts
+2026-09-11T05:52:03.3429521Z packages/tw-variants build: [34mCLI[39m Using tsconfig: ../../tsconfig.json
+2026-09-11T05:52:03.3508125Z packages/tw-variants build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:03.3666109Z packages/tw-variants build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+2026-09-11T05:52:03.3743589Z packages/tw-variants build: [34mCLI[39m Target: node20
+2026-09-11T05:52:03.3913992Z packages/tw-variants build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:03.4085836Z packages/tw-variants build: [34mESM[39m Build start
+2026-09-11T05:52:03.4197324Z packages/tw-variants build: [34mCJS[39m Build start
+2026-09-11T05:52:03.5441360Z packages/tokens build: ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-11T05:52:03.6185469Z packages/tokens build: Building design tokens with Style Dictionary…
+2026-09-11T05:52:04.1161278Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:04.1233637Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:04.1884295Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:04.5634401Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs     [22m[32m6.42 KB[39m
+2026-09-11T05:52:04.5664011Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs              [22m[32m14.54 KB[39m
+2026-09-11T05:52:04.6177594Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs.map [22m[32m13.51 KB[39m
+2026-09-11T05:52:04.6253994Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs.map          [22m[32m32.63 KB[39m
+2026-09-11T05:52:04.6646543Z packages/tw-variants build: [32mCJS[39m ⚡️ Build success in 1163ms
+2026-09-11T05:52:04.6648119Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js     [22m[32m139.00 B[39m
+2026-09-11T05:52:04.7065737Z packages/tw-variants build: [32mESM[39m [1mdist/index.js              [22m[32m8.03 KB[39m
+2026-09-11T05:52:04.7438077Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js     [22m[32m6.39 KB[39m
+2026-09-11T05:52:04.7477335Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js.map [22m[32m78.00 B[39m
+2026-09-11T05:52:04.7592173Z packages/tw-variants build: [32mESM[39m [1mdist/index.js.map          [22m[32m19.16 KB[39m
+2026-09-11T05:52:04.7594682Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js.map [22m[32m13.51 KB[39m
+2026-09-11T05:52:04.7596350Z packages/tw-variants build: [32mESM[39m ⚡️ Build success in 1167ms
+2026-09-11T05:52:04.7597348Z packages/release-utils build: Done
+2026-09-11T05:52:04.7598377Z packages/viz-render build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:05.0229008Z packages/tw-variants build: [34mDTS[39m Build start
+2026-09-11T05:52:05.5175362Z packages/viz-render build: [34mCLI[39m Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+2026-09-11T05:52:05.5294044Z packages/viz-render build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:05.5368331Z packages/viz-render build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:05.5458954Z packages/viz-render build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-render/tsup.config.ts
+2026-09-11T05:52:05.5633487Z packages/viz-render build: [34mCLI[39m Target: node20
+2026-09-11T05:52:05.6293809Z packages/viz-render build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:05.6404072Z packages/viz-render build: [34mESM[39m Build start
+2026-09-11T05:52:05.6453668Z packages/viz-render build: [34mCJS[39m Build start
+2026-09-11T05:52:06.8274339Z packages/tokens build: ios-swift
+2026-09-11T05:52:06.8343808Z packages/tokens build: ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-11T05:52:06.8375938Z packages/tokens build: compose
+2026-09-11T05:52:06.8413364Z packages/tokens build: ! dist/compose/OodsTokens.kt, does not exist
+2026-09-11T05:52:07.3778155Z apps/playground build: [32m✓[39m 48 modules transformed.
+2026-09-11T05:52:07.5069923Z packages/tokens build: ts
+2026-09-11T05:52:07.5134619Z packages/tokens build: ! dist/ts/tokens.ts, does not exist
+2026-09-11T05:52:07.5203129Z packages/tokens build: tailwind
+2026-09-11T05:52:07.5250360Z packages/tokens build: ! dist/tailwind/tokens.json, does not exist
+2026-09-11T05:52:07.8345562Z packages/viz-render build: [34mDTS[39m Build start
+2026-09-11T05:52:07.8881034Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js                   [22m[32m3.59 KB[39m
+2026-09-11T05:52:07.8920158Z packages/viz-render build: [32mESM[39m [1mdist/index.js                     [22m[32m7.61 KB[39m
+2026-09-11T05:52:07.8954120Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js     [22m[32m11.64 KB[39m
+2026-09-11T05:52:07.8973979Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js            [22m[32m13.57 KB[39m
+2026-09-11T05:52:07.9012720Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js            [22m[32m456.00 B[39m
+2026-09-11T05:52:07.9033884Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js.map               [22m[32m11.73 KB[39m
+2026-09-11T05:52:07.9063918Z packages/viz-render build: [32mESM[39m [1mdist/index.js.map                 [22m[32m18.69 KB[39m
+2026-09-11T05:52:07.9102174Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js.map [22m[32m25.74 KB[39m
+2026-09-11T05:52:07.9113375Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js.map        [22m[32m33.43 KB[39m
+2026-09-11T05:52:07.9150541Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js.map        [22m[32m1.11 KB[39m
+2026-09-11T05:52:07.9194844Z packages/viz-render build: [32mESM[39m ⚡️ Build success in 2255ms
+2026-09-11T05:52:07.9214177Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs                     [22m[32m21.51 KB[39m
+2026-09-11T05:52:07.9233939Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs                   [22m[32m3.92 KB[39m
+2026-09-11T05:52:07.9262817Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs     [22m[32m24.51 KB[39m
+2026-09-11T05:52:07.9309793Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs.map                 [22m[32m52.80 KB[39m
+2026-09-11T05:52:07.9323925Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs.map               [22m[32m12.80 KB[39m
+2026-09-11T05:52:07.9374000Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs.map [22m[32m59.80 KB[39m
+2026-09-11T05:52:07.9393700Z packages/viz-render build: [32mCJS[39m ⚡️ Build success in 2255ms
+2026-09-11T05:52:08.4351423Z apps/playground build: rendering chunks...
+2026-09-11T05:52:08.4693766Z apps/playground build: computing gzip size...
+2026-09-11T05:52:08.5265707Z apps/playground build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.69 kB[22m[1m[22m[2m │ gzip:  0.39 kB[22m
+2026-09-11T05:52:08.5358559Z apps/playground build: [2mdist/[22m[2massets/[22m[35mindex-DBhKWpVX.css  [39m[1m[2m 25.90 kB[22m[1m[22m[2m │ gzip:  5.53 kB[22m
+2026-09-11T05:52:08.5395277Z apps/playground build: [2mdist/[22m[2massets/[22m[36mindex-CjtZwImZ.js   [39m[1m[2m394.49 kB[22m[1m[22m[2m │ gzip: 88.73 kB[22m
+2026-09-11T05:52:08.5458289Z apps/playground build: [32m✓ built in 9.67s[39m
+2026-09-11T05:52:08.6544139Z apps/playground build: Done
+2026-09-11T05:52:10.7677469Z packages/tokens build: ios-swift
+2026-09-11T05:52:10.7784064Z packages/tokens build: ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-11T05:52:10.7867500Z packages/tokens build: compose
+2026-09-11T05:52:10.7933661Z packages/tokens build: ✔︎ dist/compose/OodsTokens.kt
+2026-09-11T05:52:11.0089919Z packages/tokens build: ts
+2026-09-11T05:52:11.0203874Z packages/tokens build: ✔︎ dist/ts/tokens.ts
+2026-09-11T05:52:11.0293354Z packages/tokens build: tailwind
+2026-09-11T05:52:11.0353421Z packages/tokens build: ✔︎ dist/tailwind/tokens.json
+2026-09-11T05:52:11.2483976Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:11.2543567Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:11.2544823Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:11.9683703Z packages/tokens build: css
+2026-09-11T05:52:11.9685560Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:12.1163976Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:12.1193688Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:12.1213534Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:12.5518979Z packages/tokens build: css
+2026-09-11T05:52:12.5553552Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:12.8927565Z packages/tokens build: Token collisions detected (252):
+2026-09-11T05:52:12.8963786Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:12.9013495Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:13.3667105Z packages/tokens build: css
+2026-09-11T05:52:13.3684088Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:13.9123916Z packages/tokens build: Token collisions detected (227):
+2026-09-11T05:52:13.9143644Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:13.9163041Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:14.2803904Z packages/tokens build: css
+2026-09-11T05:52:14.2807328Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:14.5554908Z packages/tw-variants build: [32mDTS[39m ⚡️ Build success in 9543ms
+2026-09-11T05:52:14.5574064Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.ts           [22m[32m685.00 B[39m
+2026-09-11T05:52:14.5603933Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.ts  [22m[32m573.00 B[39m
+2026-09-11T05:52:14.5623786Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.cts          [22m[32m685.00 B[39m
+2026-09-11T05:52:14.5670512Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.cts [22m[32m573.00 B[39m
+2026-09-11T05:52:14.7266789Z packages/tw-variants build: Done
+2026-09-11T05:52:14.7373610Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:14.7393739Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:14.7395191Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:15.0423738Z packages/tokens build: css
+2026-09-11T05:52:15.0483639Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:15.3613154Z packages/tokens build: Token collisions detected (252):
+2026-09-11T05:52:15.3693805Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:15.3710868Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:15.6900117Z packages/tokens build: css
+2026-09-11T05:52:15.6923477Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:16.0057973Z packages/tokens build: Token collisions detected (227):
+2026-09-11T05:52:16.0200015Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:16.0201429Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:16.3533454Z packages/tokens build: css
+2026-09-11T05:52:16.3536961Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:16.6356585Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:16.6364165Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:16.6614026Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:16.9695379Z packages/tokens build: ✔︎ tokens built successfully in 13.39s
+2026-09-11T05:52:16.9703735Z packages/tokens build:    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-11T05:52:16.9974116Z packages/tokens build:    types:    dist/ts/tokens.ts
+2026-09-11T05:52:16.9975698Z packages/tokens build:    tailwind: dist/tailwind/tokens.json
+2026-09-11T05:52:16.9977475Z packages/tokens build:    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-11T05:52:16.9978832Z packages/tokens build:    compose:  dist/compose/OodsTokens.kt
+2026-09-11T05:52:17.1805745Z packages/tokens build: Done
+2026-09-11T05:52:17.3463768Z packages/viz-render build: [32mDTS[39m ⚡️ Build success in 9683ms
+2026-09-11T05:52:17.3474787Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.ts  [22m[32m13.00 B[39m
+2026-09-11T05:52:17.3476432Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.ts                [22m[32m1.45 KB[39m
+2026-09-11T05:52:17.3478414Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.ts                  [22m[32m5.51 KB[39m
+2026-09-11T05:52:17.3480059Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.cts [22m[32m13.00 B[39m
+2026-09-11T05:52:17.3481892Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.cts               [22m[32m1.45 KB[39m
+2026-09-11T05:52:17.3483811Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.cts                 [22m[32m5.51 KB[39m
+2026-09-11T05:52:17.4161805Z packages/viz-render build: Done
+2026-09-11T05:52:17.4167941Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+2026-09-11T05:52:17.4185214Z packages/viz-core build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:17.9769237Z packages/viz-core build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:52:17.9783643Z packages/viz-core build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:17.9805746Z packages/viz-core build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:17.9821840Z packages/viz-core build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-core/tsup.config.ts
+2026-09-11T05:52:17.9863844Z packages/component-styles build: [34mCLI[39m Building entry: src/index.ts, src/ported.ts
+2026-09-11T05:52:17.9923720Z packages/component-styles build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:17.9974420Z packages/component-styles build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:18.0010323Z packages/component-styles build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+2026-09-11T05:52:18.0054786Z packages/viz-core build: [34mCLI[39m Target: node20
+2026-09-11T05:52:18.0094017Z packages/component-styles build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:18.0095571Z packages/viz-core build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:18.0130540Z packages/component-styles build: [34mESM[39m Build start
+2026-09-11T05:52:18.0166603Z packages/viz-core build: [34mESM[39m Build start
+2026-09-11T05:52:18.0202858Z packages/viz-core build: [34mCJS[39m Build start
+2026-09-11T05:52:18.0260334Z packages/component-styles build: [34mCJS[39m Build start
+2026-09-11T05:52:18.2868113Z packages/component-styles build: [32mCJS[39m [1mdist/index.cjs  [22m[32m2.04 KB[39m
+2026-09-11T05:52:18.2969334Z packages/component-styles build: [32mCJS[39m [1mdist/ported.cjs [22m[32m2.00 KB[39m
+2026-09-11T05:52:18.3054509Z packages/component-styles build: [32mCJS[39m ⚡️ Build success in 284ms
+2026-09-11T05:52:18.3077865Z packages/component-styles build: [32mESM[39m [1mdist/index.js          [22m[32m143.00 B[39m
+2026-09-11T05:52:18.3125343Z packages/component-styles build: [32mESM[39m [1mdist/ported.js         [22m[32m513.00 B[39m
+2026-09-11T05:52:18.3193737Z packages/component-styles build: [32mESM[39m [1mdist/chunk-MQ5ST6PB.js [22m[32m1.90 KB[39m
+2026-09-11T05:52:18.3218587Z packages/component-styles build: [32mESM[39m ⚡️ Build success in 287ms
+2026-09-11T05:52:19.0036423Z packages/component-styles build: [34mDTS[39m Build start
+2026-09-11T05:52:19.0484066Z packages/viz-core build: [34mDTS[39m Build start
+2026-09-11T05:52:27.4589937Z packages/component-styles build: [32mDTS[39m ⚡️ Build success in 8458ms
+2026-09-11T05:52:27.4596161Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m1.93 KB[39m
+2026-09-11T05:52:27.4627678Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m500.00 B[39m
+2026-09-11T05:52:27.4673733Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m1.93 KB[39m
+2026-09-11T05:52:27.4683254Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m500.00 B[39m
+2026-09-11T05:52:27.6735694Z packages/component-styles build: Done
+2026-09-11T05:52:28.3467348Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs     [22m[32m2.04 MB[39m
+2026-09-11T05:52:28.3534233Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m3.69 MB[39m
+2026-09-11T05:52:28.3573843Z packages/viz-core build: [32mCJS[39m ⚡️ Build success in 10350ms
+2026-09-11T05:52:28.3587309Z packages/viz-core build: [32mESM[39m [1mdist/index.js     [22m[32m2.03 MB[39m
+2026-09-11T05:52:28.3612208Z packages/viz-core build: [32mESM[39m [1mdist/index.js.map [22m[32m3.69 MB[39m
+2026-09-11T05:52:28.3633684Z packages/viz-core build: [32mESM[39m ⚡️ Build success in 10352ms
+2026-09-11T05:52:29.4769394Z packages/viz-core build: [32mDTS[39m ⚡️ Build success in 10431ms
+2026-09-11T05:52:29.4774022Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m301.30 KB[39m
+2026-09-11T05:52:29.4775695Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.cts [22m[32m301.30 KB[39m
+2026-09-11T05:52:29.5927677Z packages/viz-core build: Done
+2026-09-11T05:52:29.5937941Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+2026-09-11T05:52:29.5946488Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:30.2030723Z packages/components-react build: [34mCLI[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+2026-09-11T05:52:30.2051072Z packages/components-react build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:30.2052697Z packages/components-react build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:30.2054915Z packages/components-react build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+2026-09-11T05:52:30.2183327Z packages/components-react build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:30.2200520Z packages/components-react build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:30.2257017Z packages/components-react build: [34mESM[39m Build start
+2026-09-11T05:52:30.2266117Z packages/components-react build: [34mCJS[39m Build start
+2026-09-11T05:52:30.2424254Z packages/components-vue build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:52:30.2436252Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:30.2463472Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:30.2465926Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+2026-09-11T05:52:30.2515250Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:30.2566261Z packages/components-vue build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:30.2988841Z packages/components-vue build: [34mESM[39m Build start
+2026-09-11T05:52:30.2990058Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-11T05:52:30.8716092Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-11T05:52:31.3181287Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-11T05:52:31.7524831Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-11T05:52:32.5879906Z packages/components-vue build: [32mESM[39m [1mdist/index.js [22m[32m128.10 KB[39m
+2026-09-11T05:52:32.5923852Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 2313ms
+2026-09-11T05:52:32.6013829Z packages/components-vue build: [32mCJS[39m [1mdist/index.cjs [22m[32m133.19 KB[39m
+2026-09-11T05:52:32.6044687Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 2317ms
+2026-09-11T05:52:32.7757266Z packages/components-react build: [34mDTS[39m Build start
+2026-09-11T05:52:32.8058955Z packages/components-react build: [32mESM[39m [1mdist/ported.js         [22m[32m192.00 B[39m
+2026-09-11T05:52:32.8123864Z packages/components-react build: [32mESM[39m [1mdist/status.js         [22m[32m171.00 B[39m
+2026-09-11T05:52:32.8163856Z packages/components-react build: [32mESM[39m [1mdist/table.js          [22m[32m149.00 B[39m
+2026-09-11T05:52:32.8183902Z packages/components-react build: [32mESM[39m [1mdist/chunk-YCI5AEWL.js [22m[32m6.37 KB[39m
+2026-09-11T05:52:32.8240746Z packages/components-react build: [32mESM[39m [1mdist/chunk-G74PKSW3.js [22m[32m10.89 KB[39m
+2026-09-11T05:52:32.8273703Z packages/components-react build: [32mESM[39m [1mdist/types.js          [22m[32m1.00 B[39m
+2026-09-11T05:52:32.8333734Z packages/components-react build: [32mESM[39m [1mdist/chunk-XMIP5ZGO.js [22m[32m40.39 KB[39m
+2026-09-11T05:52:32.8393970Z packages/components-react build: [32mESM[39m [1mdist/index.js          [22m[32m87.14 KB[39m
+2026-09-11T05:52:32.8433756Z packages/components-react build: [32mESM[39m ⚡️ Build success in 2577ms
+2026-09-11T05:52:32.8483642Z packages/components-react build: [32mCJS[39m [1mdist/status.cjs [22m[32m11.08 KB[39m
+2026-09-11T05:52:32.8514149Z packages/components-react build: [32mCJS[39m [1mdist/table.cjs  [22m[32m17.07 KB[39m
+2026-09-11T05:52:32.8553914Z packages/components-react build: [32mCJS[39m [1mdist/types.cjs  [22m[32m15.00 B[39m
+2026-09-11T05:52:32.8573915Z packages/components-react build: [32mCJS[39m [1mdist/ported.cjs [22m[32m52.76 KB[39m
+2026-09-11T05:52:32.8594216Z packages/components-react build: [32mCJS[39m [1mdist/index.cjs  [22m[32m153.12 KB[39m
+2026-09-11T05:52:32.8613660Z packages/components-react build: [32mCJS[39m ⚡️ Build success in 2581ms
+2026-09-11T05:52:42.6295287Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 10976ms
+2026-09-11T05:52:42.6325089Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m141.56 KB[39m
+2026-09-11T05:52:42.6343883Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.cts [22m[32m141.56 KB[39m
+2026-09-11T05:52:43.2483556Z packages/components-react build: [32mDTS[39m ⚡️ Build success in 11601ms
+2026-09-11T05:52:43.2507080Z packages/components-react build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m21.31 KB[39m
+2026-09-11T05:52:43.2529337Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m7.12 KB[39m
+2026-09-11T05:52:43.2543676Z packages/components-react build: [32mDTS[39m [1mdist/status.d.ts  [22m[32m1.39 KB[39m
+2026-09-11T05:52:43.2565896Z packages/components-react build: [32mDTS[39m [1mdist/table.d.ts   [22m[32m1.06 KB[39m
+2026-09-11T05:52:43.2583989Z packages/components-react build: [32mDTS[39m [1mdist/types.d.ts   [22m[32m23.79 KB[39m
+2026-09-11T05:52:43.2603697Z packages/components-react build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m21.31 KB[39m
+2026-09-11T05:52:43.2605278Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m7.12 KB[39m
+2026-09-11T05:52:43.2623758Z packages/components-react build: [32mDTS[39m [1mdist/status.d.cts [22m[32m1.39 KB[39m
+2026-09-11T05:52:43.2643774Z packages/components-react build: [32mDTS[39m [1mdist/table.d.cts  [22m[32m1.07 KB[39m
+2026-09-11T05:52:43.2663631Z packages/components-react build: [32mDTS[39m [1mdist/types.d.cts  [22m[32m23.79 KB[39m
+2026-09-11T05:52:43.3580679Z packages/components-vue build: [34mCLI[39m Building entry: src/ported.ts
+2026-09-11T05:52:43.3604899Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:43.3608074Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:43.3634415Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+2026-09-11T05:52:43.3653587Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:43.3693584Z packages/components-vue build: [34mESM[39m Build start
+2026-09-11T05:52:43.3724964Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-11T05:52:43.3883905Z packages/components-react build: Done
+2026-09-11T05:52:43.7459706Z packages/components-vue build: [32mCJS[39m [1mdist/ported.cjs [22m[32m46.73 KB[39m
+2026-09-11T05:52:43.7564569Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 374ms
+2026-09-11T05:52:43.9078383Z packages/components-vue build: [32mESM[39m [1mdist/ported.js [22m[32m46.06 KB[39m
+2026-09-11T05:52:43.9080288Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 539ms
+2026-09-11T05:52:43.9526802Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-11T05:52:47.7669712Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 3815ms
+2026-09-11T05:52:47.7680306Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m20.67 KB[39m
+2026-09-11T05:52:47.7682251Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m20.67 KB[39m
+2026-09-11T05:52:47.8376170Z packages/components-vue build: Done
+2026-09-11T05:52:47.8384945Z packages/mcp-server build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../../artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json dist/registry/runtime-cells.v1.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-11T05:52:54.8148223Z packages/mcp-server build: Done
+2026-09-11T05:52:54.8153681Z packages/sdk build$ rimraf dist && tsc -p tsconfig.json
+2026-09-11T05:52:56.3464127Z packages/sdk build: Done
+2026-09-11T05:52:56.3710700Z ##[group]Run pnpm --filter @oods/schemas-tools run generate:check
+2026-09-11T05:52:56.3711576Z [36;1mpnpm --filter @oods/schemas-tools run generate:check[0m
+2026-09-11T05:52:56.3792792Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:52:56.3793065Z env:
+2026-09-11T05:52:56.3793261Z   NODE_VERSION: 24
+2026-09-11T05:52:56.3793541Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:52:56.3793870Z ##[endgroup]
+2026-09-11T05:52:56.8805144Z 
+2026-09-11T05:52:56.8808187Z > @oods/schemas-tools@0.1.0 generate:check /home/runner/work/OODS-Forge/OODS-Forge/packages/schemas-tools
+2026-09-11T05:52:56.8826110Z > tsx src/generate-types.ts --check
+2026-09-11T05:52:56.8838828Z 
+2026-09-11T05:52:58.7058109Z ##[group]Run pnpm run generate:schema-types -- --check
+2026-09-11T05:52:58.7058860Z [36;1mpnpm run generate:schema-types -- --check[0m
+2026-09-11T05:52:58.7111963Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:52:58.7112644Z env:
+2026-09-11T05:52:58.7112996Z   NODE_VERSION: 24
+2026-09-11T05:52:58.7113485Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:52:58.7114064Z ##[endgroup]
+2026-09-11T05:52:59.1658846Z 
+2026-09-11T05:52:59.1660464Z > @oods/foundry-mcp@0.1.0 generate:schema-types /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:52:59.1662090Z > tsx scripts/types/generate.ts "--" "--check"
+2026-09-11T05:52:59.1663084Z 
+2026-09-11T05:52:59.9875596Z • classification/category-node.ts — unchanged
+2026-09-11T05:53:00.0067000Z • classification/classification-metadata.ts — unchanged
+2026-09-11T05:53:00.0278965Z • classification/tag.ts — unchanged
+2026-09-11T05:53:00.0383822Z • preferences/notification-preferences.ts — unchanged
+2026-09-11T05:53:00.0543588Z • token-mapping.ts — unchanged
+2026-09-11T05:53:00.0733198Z • traits/addressable.parameters.ts — unchanged
+2026-09-11T05:53:00.0803469Z • traits/archivable.parameters.ts — unchanged
+2026-09-11T05:53:00.0843102Z • traits/auditable.parameters.ts — unchanged
+2026-09-11T05:53:00.0892170Z • traits/authable.parameters.ts — unchanged
+2026-09-11T05:53:00.0975056Z • traits/billable.parameters.ts — unchanged
+2026-09-11T05:53:00.1036427Z • traits/cancellable.parameters.ts — unchanged
+2026-09-11T05:53:00.1090384Z • traits/classifiable.parameters.ts — unchanged
+2026-09-11T05:53:00.1343943Z • traits/colorized.parameters.ts — unchanged
+2026-09-11T05:53:00.1405149Z • traits/communicable.parameters.ts — unchanged
+2026-09-11T05:53:00.1454189Z • traits/encoding-color.parameters.ts — unchanged
+2026-09-11T05:53:00.1500483Z • traits/encoding-position-x.parameters.ts — unchanged
+2026-09-11T05:53:00.1538373Z • traits/encoding-position-y.parameters.ts — unchanged
+2026-09-11T05:53:00.1568329Z • traits/encoding-size.parameters.ts — unchanged
+2026-09-11T05:53:00.1609282Z • traits/filterable.parameters.ts — unchanged
+2026-09-11T05:53:00.1647651Z • traits/interaction-highlight.parameters.ts — unchanged
+2026-09-11T05:53:00.1696482Z • traits/interaction-tooltip.parameters.ts — unchanged
+2026-09-11T05:53:00.1730820Z • traits/labelled.parameters.ts — unchanged
+2026-09-11T05:53:00.1785110Z • traits/layout-concat.parameters.ts — unchanged
+2026-09-11T05:53:00.1859217Z • traits/layout-facet.parameters.ts — unchanged
+2026-09-11T05:53:00.1909696Z • traits/layout-layer.parameters.ts — unchanged
+2026-09-11T05:53:00.1961370Z • traits/mark-area.parameters.ts — unchanged
+2026-09-11T05:53:00.2014282Z • traits/mark-bar.parameters.ts — unchanged
+2026-09-11T05:53:00.2043575Z • traits/mark-line.parameters.ts — unchanged
+2026-09-11T05:53:00.2089899Z • traits/mark-point.parameters.ts — unchanged
+2026-09-11T05:53:00.2120374Z • traits/ownerable.parameters.ts — unchanged
+2026-09-11T05:53:00.2154047Z • traits/pageable.parameters.ts — unchanged
+2026-09-11T05:53:00.2210736Z • traits/preferenceable.parameters.ts — unchanged
+2026-09-11T05:53:00.2303464Z • traits/priceable.parameters.ts — unchanged
+2026-09-11T05:53:00.2360645Z • traits/scale-linear.parameters.ts — unchanged
+2026-09-11T05:53:00.2395081Z • traits/scale-temporal.parameters.ts — unchanged
+2026-09-11T05:53:00.2427257Z • traits/searchable.parameters.ts — unchanged
+2026-09-11T05:53:00.2452613Z • traits/sortable.parameters.ts — unchanged
+2026-09-11T05:53:00.2536800Z • traits/stateful.parameters.ts — unchanged
+2026-09-11T05:53:00.2627733Z • traits/statusable.parameters.ts — unchanged
+2026-09-11T05:53:00.2673071Z • traits/taggable.parameters.ts — unchanged
+2026-09-11T05:53:00.2708111Z • traits/timestampable.parameters.ts — unchanged
+2026-09-11T05:53:00.2782076Z • ui/status-map.ts — unchanged
+2026-09-11T05:53:00.3239180Z • packages/viz-core/src/spec/dashboard.types.ts — unchanged
+2026-09-11T05:53:00.3240653Z • viz/force-output.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3243255Z • viz/hierarchy-input.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3244703Z • viz/network-input.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3637844Z • packages/viz-core/src/spec/normalized-viz-spec.types.ts — unchanged
+2026-09-11T05:53:00.3669883Z • viz/sankey-input.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3682756Z • viz/sankey-output.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3693987Z • viz/spatial-spec.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3695697Z • viz/sunburst-output.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3697314Z • viz/treemap-output.schema.json — skipped (#681: hand-authored in @oods/viz-core)
+2026-09-11T05:53:00.3698419Z • index.ts — unchanged
+2026-09-11T05:53:00.4192244Z ##[group]Run pnpm -w run docs:api -- --check
+2026-09-11T05:53:00.4193175Z [36;1mpnpm -w run docs:api -- --check[0m
+2026-09-11T05:53:00.4239529Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:53:00.4239814Z env:
+2026-09-11T05:53:00.4240010Z   NODE_VERSION: 24
+2026-09-11T05:53:00.4240285Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:53:00.4240599Z ##[endgroup]
+2026-09-11T05:53:00.8766313Z 
+2026-09-11T05:53:00.8767553Z > @oods/foundry-mcp@0.1.0 docs:api /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:53:00.8769045Z > tsx scripts/docs/generate-api-reference.ts "--" "--check"
+2026-09-11T05:53:00.8769882Z 
+2026-09-11T05:53:01.1564218Z ✔ docs/api is fresh (28 files checked, no orphans).
+2026-09-11T05:53:01.2085813Z ##[group]Run pnpm run build
+2026-09-11T05:53:01.2086141Z [36;1mpnpm run build[0m
+2026-09-11T05:53:01.2123073Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:53:01.2123333Z env:
+2026-09-11T05:53:01.2123525Z   NODE_VERSION: 24
+2026-09-11T05:53:01.2123807Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:53:01.2124135Z ##[endgroup]
+2026-09-11T05:53:01.6523064Z 
+2026-09-11T05:53:01.6528052Z > @oods/foundry-mcp@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:53:01.6553395Z > pnpm run clean && tsc
+2026-09-11T05:53:01.6556478Z 
+2026-09-11T05:53:02.0883168Z 
+2026-09-11T05:53:02.0893998Z > @oods/foundry-mcp@0.1.0 clean /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:53:02.0896086Z > rimraf dist/.storybook dist/apps dist/configs dist/data dist/examples dist/generated dist/packages dist/schemas dist/scripts dist/src dist/tokens dist/tools dist/traits
+2026-09-11T05:53:02.0897480Z 
+2026-09-11T05:53:22.4804509Z ##[error]scripts/product-reality/s193-runtime-cells.ts(22,163): error TS6133: 'Gate' is declared but its value is never read.
+2026-09-11T05:53:22.4817153Z ##[error]scripts/product-reality/trait-recipe-assertions.ts(8,18): error TS2488: Type 'NodeListOf<HTMLTimeElement>' must have a '[Symbol.iterator]()' method that returns an iterator.
+2026-09-11T05:53:22.4821245Z ##[error]scripts/product-reality/trait-recipe-assertions.ts(19,18): error TS2488: Type 'NodeListOf<HTMLOptionElement>' must have a '[Symbol.iterator]()' method that returns an iterator.
+2026-09-11T05:53:22.4825583Z ##[error]scripts/product-reality/trait-recipe-assertions.ts(26,18): error TS2488: Type 'NodeListOf<HTMLInputElement>' must have a '[Symbol.iterator]()' method that returns an iterator.
+2026-09-11T05:53:22.4829381Z ##[error]scripts/product-reality/trait-recipe-assertions.ts(29,42): error TS2488: Type 'NodeListOf<HTMLElement>' must have a '[Symbol.iterator]()' method that returns an iterator.
+2026-09-11T05:53:22.4833603Z ##[error]scripts/product-reality/viz-recipe-assertions.ts(24,23): error TS2488: Type 'NodeListOf<HTMLInputElement>' must have a '[Symbol.iterator]()' method that returns an iterator.
+2026-09-11T05:53:22.5660260Z  ELIFECYCLE  Command failed with exit code 2.
+2026-09-11T05:53:22.6087815Z ##[error]Process completed with exit code 2.
+2026-09-11T05:53:22.6188498Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:53:22.6189882Z Post job cleanup.
+2026-09-11T05:53:22.7808041Z Pruning is unnecessary.
+2026-09-11T05:53:22.8091003Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:53:22.8093651Z Post job cleanup.
+2026-09-11T05:53:22.9433487Z [command]/usr/bin/git version
+2026-09-11T05:53:22.9566971Z git version 2.55.0
+2026-09-11T05:53:22.9722222Z Temporarily overriding HOME='/home/runner/work/_temp/9f4212f5-4947-4c1b-b914-4f7e1af1c9d4' before making global git config changes
+2026-09-11T05:53:22.9743575Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-11T05:53:22.9763547Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:53:22.9873473Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-11T05:53:22.9924580Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-11T05:53:23.0381388Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-11T05:53:23.0403410Z http.https://github.com/.extraheader
+2026-09-11T05:53:23.0452048Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-11T05:53:23.0456156Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-11T05:53:23.0913964Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-11T05:53:23.0994851Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-11T05:53:23.1524319Z Cleaning up orphan processes
+2026-09-11T05:53:23.1810319Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

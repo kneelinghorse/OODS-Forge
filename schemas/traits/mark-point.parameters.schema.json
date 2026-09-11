@@ -7,7 +7,12 @@
     "shape": {
       "type": "string",
       "description": "Glyph shape rendered for each data point.",
-      "enum": ["circle", "square", "diamond", "triangle"],
+      "enum": [
+        "circle",
+        "square",
+        "diamond",
+        "triangle"
+      ],
       "default": "circle"
     },
     "size": {
@@ -20,7 +25,10 @@
     "fill": {
       "type": "string",
       "description": "Fill strategy for glyph interior.",
-      "enum": ["solid", "hollow"],
+      "enum": [
+        "solid",
+        "hollow"
+      ],
       "default": "solid"
     },
     "strokeWidth": {
@@ -36,6 +44,15 @@
       "minimum": 0.1,
       "maximum": 1,
       "default": 0.85
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
+    },
+    "previewSvg": {
+      "type": "string",
+      "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
     }
   },
   "required": [],

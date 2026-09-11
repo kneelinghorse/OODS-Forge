@@ -1,4 +1,4 @@
-import type { ComponentContract, NucleusComponentId } from './types.js';
+import { NUCLEUS_COMPONENT_IDS, type ComponentContract, type NucleusComponentId } from './types.js';
 import { componentBehaviors } from './behaviors.js';
 
 export const COMPONENT_CONTRACT_VERSION = '1.1.0' as const;
@@ -591,7 +591,8 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
 };
 
 // Preserve the established prose and add executable semantics at v1.1.
-export const componentContracts = Object.fromEntries(Object.entries(authoredContracts).map(([id, contract]) => {
+export const componentContracts = Object.fromEntries(NUCLEUS_COMPONENT_IDS.map(id => {
+  const contract = authoredContracts[id];
   const { role, name, keyboard } = componentBehaviors[id as NucleusComponentId];
   return [id, { ...contract, version: COMPONENT_CONTRACT_VERSION_1_1, role, name, keyboard }];
 })) as Readonly<Record<NucleusComponentId, ComponentContract>>;

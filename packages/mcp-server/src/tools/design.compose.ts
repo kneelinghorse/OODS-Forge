@@ -573,8 +573,9 @@ function fillSlots(
       }
     }
 
-    // Trait recipes remain available to explicit view-extension placement.
-    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => !isTraitRecipe(component.name)), {
+    // New trait recipes require explicit placement. The established generic
+    // preview remains eligible for intent-only dashboards as before Sprint193.
+    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => component.name === 'VizAreaPreview' || !isTraitRecipe(component.name)), {
       topN,
       intentContext: contextForSlot(slot),
       preferKeywordMatches: useKeywordMatches,

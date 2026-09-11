@@ -21,7 +21,7 @@ export function assertVizRecipeScenario(scenario: SharedScenario, root: Element)
   expect(root.tagName).toBe('FIELDSET');
   expect(root.querySelector('legend')?.textContent?.trim().length).toBeGreaterThan(0);
   expect(root.querySelectorAll('input,select').length).toBeGreaterThan(0);
-  for (const field of root.querySelectorAll<HTMLInputElement>('input,select')) {
+  for (const field of Array.from(root.querySelectorAll<HTMLInputElement>('input,select'))) {
     expect(field.labels?.length).toBe(1);
     expect(field.value.length).toBeGreaterThan(0);
   }

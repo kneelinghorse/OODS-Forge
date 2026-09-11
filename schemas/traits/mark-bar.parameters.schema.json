@@ -7,7 +7,10 @@
     "orientation": {
       "type": "string",
       "description": "Axis orientation used for laying out bar rectangles.",
-      "enum": ["vertical", "horizontal"],
+      "enum": [
+        "vertical",
+        "horizontal"
+      ],
       "default": "vertical"
     },
     "bandPadding": {
@@ -27,11 +30,26 @@
     "stacking": {
       "type": "string",
       "description": "Aggregation strategy when multiple series share the mark.",
-      "enum": ["auto", "normalize", "none"],
+      "enum": [
+        "auto",
+        "normalize",
+        "none"
+      ],
       "default": "auto"
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
+    },
+    "previewSvg": {
+      "type": "string",
+      "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
     }
   },
-  "required": ["orientation"],
+  "required": [
+    "orientation"
+  ],
   "additionalProperties": false,
   "examples": [
     {

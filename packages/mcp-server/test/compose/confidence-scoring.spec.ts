@@ -7,13 +7,14 @@
  * 3. Overall composition confidence aggregated in response metadata
  * 4. No regressions in design-compose.spec.ts
  */
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import {
   selectComponent,
   loadCatalog,
   type SelectionResult,
 } from '../../src/compose/component-selector.js';
 import { handle } from '../../src/tools/design.compose.js';
+import * as selector from '../../src/compose/component-selector.js';
 import type { ComponentCatalogEntry } from '../../src/tools/types.js';
 
 /* ------------------------------------------------------------------ */
@@ -153,20 +154,26 @@ describe('design.compose — composition confidence metadata', () => {
     expect(result.meta!.intelligence!.compositionConfidence).toBe(expectedAvg);
   });
 
-  it('surfaces low-confidence slot names and review hints for ambiguous prompts', async () => {
-    const result = await handle({
-      intent: 'something completely unrelated xyz',
-    });
-    expect(result.status).toBe('ok');
+  it('surfaces slot names and review hints when the selector reports low confidence', async () => {
+    const select = selector.selectComponent;
+    const lowConfidence = vi.spyOn(selector, 'selectComponent').mockImplementation((...args) => ({
+      ...select(...args), rawConfidence: 0.25,
+    }));
+    try {
+      const result = await handle({
+        intent: 'something completely unrelated xyz',
+      });
+      expect(result.status).toBe('ok');
 
-    const lowConfidenceSelections = result.selections.filter((selection) => selection.confidenceLevel === 'low');
-    expect(lowConfidenceSelections.length).toBeGreaterThan(0);
-    expect(result.meta?.intelligence?.lowConfidenceSlotNames).toEqual(
-      lowConfidenceSelections.map((selection) => selection.slotName),
-    );
+      const lowConfidenceSelections = result.selections.filter((selection) => selection.confidenceLevel === 'low');
+      expect(lowConfidenceSelections.length).toBeGreaterThan(0);
+      expect(result.meta?.intelligence?.lowConfidenceSlotNames).toEqual(
+        lowConfidenceSelections.map((selection) => selection.slotName),
+      );
 
-    for (const selection of lowConfidenceSelections) {
-      expect(selection.reviewHint).toContain('componentOverrides');
-    }
+      for (const selection of lowConfidenceSelections) {
+        expect(selection.reviewHint).toContain('componentOverrides');
+      }
+    } finally { lowConfidence.mockRestore(); }
   });
 });

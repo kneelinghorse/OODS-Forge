@@ -1,0 +1,1519 @@
+﻿2026-09-11T05:51:00.1157672Z Current runner version: '2.337.0'
+2026-09-11T05:51:00.1193042Z ##[group]Runner Image Provisioner
+2026-09-11T05:51:00.1194589Z Hosted Compute Agent
+2026-09-11T05:51:00.1195701Z Version: 20260828.587
+2026-09-11T05:51:00.1197154Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-11T05:51:00.1198658Z Build Date: 2026-08-28T16:44:25Z
+2026-09-11T05:51:00.1199929Z Worker ID: {bdace184-9e3f-4b68-918c-4f8f663ae860}
+2026-09-11T05:51:00.1201286Z Azure Region: westus2
+2026-09-11T05:51:00.1202346Z ##[endgroup]
+2026-09-11T05:51:00.1204833Z ##[group]Operating System
+2026-09-11T05:51:00.1206443Z Ubuntu
+2026-09-11T05:51:00.1207437Z 24.04.5
+2026-09-11T05:51:00.1208446Z LTS
+2026-09-11T05:51:00.1209387Z ##[endgroup]
+2026-09-11T05:51:00.1210387Z ##[group]Runner Image
+2026-09-11T05:51:00.1211511Z Image: ubuntu-24.04
+2026-09-11T05:51:00.1212516Z Version: 20260907.300.1
+2026-09-11T05:51:00.1214873Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-11T05:51:00.1218090Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-11T05:51:00.1220006Z ##[endgroup]
+2026-09-11T05:51:00.1222200Z ##[group]GITHUB_TOKEN Permissions
+2026-09-11T05:51:00.1225022Z Contents: read
+2026-09-11T05:51:00.1225966Z Metadata: read
+2026-09-11T05:51:00.1227274Z PullRequests: write
+2026-09-11T05:51:00.1228327Z ##[endgroup]
+2026-09-11T05:51:00.1231241Z Secret source: Actions
+2026-09-11T05:51:00.1232903Z Cache mode: write
+2026-09-11T05:51:00.1234020Z Prepare workflow directory
+2026-09-11T05:51:00.2003429Z Prepare all required actions
+2026-09-11T05:51:00.2076985Z Getting action download info
+2026-09-11T05:51:00.6641311Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-11T05:51:00.7882386Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-11T05:51:01.0951297Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-11T05:51:01.2939521Z Complete job name: component-packages
+2026-09-11T05:51:01.3833525Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:51:01.3842884Z ##[group]Run actions/checkout@v4
+2026-09-11T05:51:01.3843627Z with:
+2026-09-11T05:51:01.3844049Z   fetch-depth: 0
+2026-09-11T05:51:01.3844526Z   repository: kneelinghorse/OODS-Forge
+2026-09-11T05:51:01.3849856Z   token: ***
+2026-09-11T05:51:01.3850672Z   ssh-strict: true
+2026-09-11T05:51:01.3851443Z   ssh-user: git
+2026-09-11T05:51:01.3852234Z   persist-credentials: true
+2026-09-11T05:51:01.3853097Z   clean: true
+2026-09-11T05:51:01.3853903Z   sparse-checkout-cone-mode: true
+2026-09-11T05:51:01.3854586Z   fetch-tags: false
+2026-09-11T05:51:01.3855216Z   show-progress: true
+2026-09-11T05:51:01.3855669Z   lfs: false
+2026-09-11T05:51:01.3856341Z   submodules: false
+2026-09-11T05:51:01.3856902Z   set-safe-directory: true
+2026-09-11T05:51:01.3857414Z   allow-unsafe-pr-checkout: false
+2026-09-11T05:51:01.3858323Z env:
+2026-09-11T05:51:01.3858732Z   NODE_VERSION: 24
+2026-09-11T05:51:01.3859216Z ##[endgroup]
+2026-09-11T05:51:01.5072730Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-11T05:51:01.5077089Z ##[group]Getting Git version info
+2026-09-11T05:51:01.5081072Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-11T05:51:01.5127553Z [command]/usr/bin/git version
+2026-09-11T05:51:01.5318832Z git version 2.55.0
+2026-09-11T05:51:01.5326642Z ##[endgroup]
+2026-09-11T05:51:01.5352668Z Temporarily overriding HOME='/home/runner/work/_temp/235ab016-a195-4fc6-9833-f3726a93ba23' before making global git config changes
+2026-09-11T05:51:01.5364652Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-11T05:51:01.5375045Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:51:01.5380497Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-11T05:51:01.5384462Z ##[group]Initializing the repository
+2026-09-11T05:51:01.5386801Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:51:01.5564553Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-11T05:51:01.5583233Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-11T05:51:01.5592979Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-11T05:51:01.5597507Z hint: call:
+2026-09-11T05:51:01.5603277Z hint:
+2026-09-11T05:51:01.5604579Z hint: 	git config --global init.defaultBranch <name>
+2026-09-11T05:51:01.5605894Z hint:
+2026-09-11T05:51:01.5607657Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-11T05:51:01.5609530Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-11T05:51:01.5611209Z hint:
+2026-09-11T05:51:01.5612214Z hint: 	git branch -m <name>
+2026-09-11T05:51:01.5613219Z hint:
+2026-09-11T05:51:01.5614553Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-11T05:51:01.5617198Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-11T05:51:01.5621236Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-11T05:51:01.5625270Z ##[endgroup]
+2026-09-11T05:51:01.5627461Z ##[group]Disabling automatic garbage collection
+2026-09-11T05:51:01.5629574Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-11T05:51:01.5661736Z ##[endgroup]
+2026-09-11T05:51:01.5663371Z ##[group]Setting up auth
+2026-09-11T05:51:01.5665053Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-11T05:51:01.5700174Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-11T05:51:01.6324635Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-11T05:51:01.6355282Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-11T05:51:01.6619848Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-11T05:51:01.6629957Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-11T05:51:01.6875431Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-11T05:51:01.6918623Z ##[endgroup]
+2026-09-11T05:51:01.6920686Z ##[group]Fetching the repository
+2026-09-11T05:51:01.6931931Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +008e10933c6804a35d4078b8c5e8367f33192475:refs/remotes/pull/98/merge
+2026-09-11T05:51:15.9823846Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-11T05:51:15.9837498Z  * [new branch]        Forge-expansion                          -> origin/Forge-expansion
+2026-09-11T05:51:15.9847449Z  * [new branch]        OODS-pro                                 -> origin/OODS-pro
+2026-09-11T05:51:15.9849581Z  * [new branch]        codex/sprint-189-browser-design-loop     -> origin/codex/sprint-189-browser-design-loop
+2026-09-11T05:51:15.9851820Z  * [new branch]        codex/sprint-190-viz-public-render       -> origin/codex/sprint-190-viz-public-render
+2026-09-11T05:51:15.9853596Z  * [new branch]        codex/sprint-191-paydown                 -> origin/codex/sprint-191-paydown
+2026-09-11T05:51:15.9855434Z  * [new branch]        codex/sprint-192-component-truth         -> origin/codex/sprint-192-component-truth
+2026-09-11T05:51:15.9858070Z  * [new branch]        codex/sprint-193-runtime-at-scale        -> origin/codex/sprint-193-runtime-at-scale
+2026-09-11T05:51:15.9859562Z  * [new branch]        main                                     -> origin/main
+2026-09-11T05:51:15.9861183Z  * [new ref]           008e10933c6804a35d4078b8c5e8367f33192475 -> pull/98/merge
+2026-09-11T05:51:15.9865800Z ##[endgroup]
+2026-09-11T05:51:15.9867736Z ##[group]Determining the checkout info
+2026-09-11T05:51:15.9869248Z ##[endgroup]
+2026-09-11T05:51:15.9870375Z [command]/usr/bin/git sparse-checkout disable
+2026-09-11T05:51:15.9918938Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-11T05:51:15.9958820Z ##[group]Checking out the ref
+2026-09-11T05:51:15.9960389Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/98/merge
+2026-09-11T05:51:17.0736437Z Updating files:  22% (10330/46009)
+2026-09-11T05:51:17.1078788Z Updating files:  23% (10583/46009)
+2026-09-11T05:51:17.1517426Z Updating files:  24% (11043/46009)
+2026-09-11T05:51:17.1911799Z Updating files:  25% (11503/46009)
+2026-09-11T05:51:17.2595489Z Updating files:  26% (11963/46009)
+2026-09-11T05:51:17.3309313Z Updating files:  27% (12423/46009)
+2026-09-11T05:51:17.4092378Z Updating files:  28% (12883/46009)
+2026-09-11T05:51:17.4816855Z Updating files:  29% (13343/46009)
+2026-09-11T05:51:17.5388921Z Updating files:  30% (13803/46009)
+2026-09-11T05:51:17.6023203Z Updating files:  31% (14263/46009)
+2026-09-11T05:51:17.6713538Z Updating files:  32% (14723/46009)
+2026-09-11T05:51:17.7415652Z Updating files:  33% (15183/46009)
+2026-09-11T05:51:17.7918110Z Updating files:  34% (15644/46009)
+2026-09-11T05:51:17.8385307Z Updating files:  35% (16104/46009)
+2026-09-11T05:51:17.8941046Z Updating files:  36% (16564/46009)
+2026-09-11T05:51:17.9413364Z Updating files:  37% (17024/46009)
+2026-09-11T05:51:18.0149452Z Updating files:  38% (17484/46009)
+2026-09-11T05:51:18.0414953Z Updating files:  39% (17944/46009)
+2026-09-11T05:51:18.0657590Z Updating files:  39% (18162/46009)
+2026-09-11T05:51:18.1419649Z Updating files:  40% (18404/46009)
+2026-09-11T05:51:18.1949320Z Updating files:  41% (18864/46009)
+2026-09-11T05:51:18.2591458Z Updating files:  42% (19324/46009)
+2026-09-11T05:51:18.3273452Z Updating files:  43% (19784/46009)
+2026-09-11T05:51:18.4011449Z Updating files:  44% (20244/46009)
+2026-09-11T05:51:18.4657568Z Updating files:  45% (20705/46009)
+2026-09-11T05:51:18.5257432Z Updating files:  46% (21165/46009)
+2026-09-11T05:51:18.5896833Z Updating files:  47% (21625/46009)
+2026-09-11T05:51:18.8520797Z Updating files:  48% (22085/46009)
+2026-09-11T05:51:18.8898850Z Updating files:  49% (22545/46009)
+2026-09-11T05:51:18.9186441Z Updating files:  50% (23005/46009)
+2026-09-11T05:51:18.9451646Z Updating files:  51% (23465/46009)
+2026-09-11T05:51:19.0403730Z Updating files:  52% (23925/46009)
+2026-09-11T05:51:19.0412369Z Updating files:  53% (24385/46009)
+2026-09-11T05:51:19.1288370Z Updating files:  53% (24398/46009)
+2026-09-11T05:51:19.2064537Z Updating files:  54% (24845/46009)
+2026-09-11T05:51:19.3134411Z Updating files:  55% (25305/46009)
+2026-09-11T05:51:19.3508384Z Updating files:  56% (25766/46009)
+2026-09-11T05:51:19.5700537Z Updating files:  57% (26226/46009)
+2026-09-11T05:51:19.6052673Z Updating files:  58% (26686/46009)
+2026-09-11T05:51:19.6449587Z Updating files:  59% (27146/46009)
+2026-09-11T05:51:19.6912407Z Updating files:  60% (27606/46009)
+2026-09-11T05:51:19.7254223Z Updating files:  61% (28066/46009)
+2026-09-11T05:51:19.7578579Z Updating files:  62% (28526/46009)
+2026-09-11T05:51:19.8171467Z Updating files:  63% (28986/46009)
+2026-09-11T05:51:19.8582953Z Updating files:  64% (29446/46009)
+2026-09-11T05:51:19.8961511Z Updating files:  65% (29906/46009)
+2026-09-11T05:51:19.9371002Z Updating files:  66% (30366/46009)
+2026-09-11T05:51:19.9811428Z Updating files:  67% (30827/46009)
+2026-09-11T05:51:20.0417229Z Updating files:  68% (31287/46009)
+2026-09-11T05:51:20.0462874Z Updating files:  68% (31670/46009)
+2026-09-11T05:51:20.1117142Z Updating files:  69% (31747/46009)
+2026-09-11T05:51:20.1523897Z Updating files:  70% (32207/46009)
+2026-09-11T05:51:20.2239971Z Updating files:  71% (32667/46009)
+2026-09-11T05:51:20.2869504Z Updating files:  72% (33127/46009)
+2026-09-11T05:51:20.3481685Z Updating files:  73% (33587/46009)
+2026-09-11T05:51:20.4237119Z Updating files:  74% (34047/46009)
+2026-09-11T05:51:20.5144244Z Updating files:  75% (34507/46009)
+2026-09-11T05:51:20.5644469Z Updating files:  76% (34967/46009)
+2026-09-11T05:51:20.7889048Z Updating files:  77% (35427/46009)
+2026-09-11T05:51:20.8351020Z Updating files:  78% (35888/46009)
+2026-09-11T05:51:20.8803068Z Updating files:  79% (36348/46009)
+2026-09-11T05:51:20.9165908Z Updating files:  80% (36808/46009)
+2026-09-11T05:51:20.9549384Z Updating files:  81% (37268/46009)
+2026-09-11T05:51:20.9915831Z Updating files:  82% (37728/46009)
+2026-09-11T05:51:21.0413895Z Updating files:  83% (38188/46009)
+2026-09-11T05:51:21.0446658Z Updating files:  83% (38584/46009)
+2026-09-11T05:51:21.1178724Z Updating files:  84% (38648/46009)
+2026-09-11T05:51:21.1774765Z Updating files:  85% (39108/46009)
+2026-09-11T05:51:21.2150395Z Updating files:  86% (39568/46009)
+2026-09-11T05:51:21.2540490Z Updating files:  87% (40028/46009)
+2026-09-11T05:51:21.3047394Z Updating files:  88% (40488/46009)
+2026-09-11T05:51:21.4227430Z Updating files:  89% (40949/46009)
+2026-09-11T05:51:21.4849235Z Updating files:  90% (41409/46009)
+2026-09-11T05:51:21.7907872Z Updating files:  91% (41869/46009)
+2026-09-11T05:51:21.8423983Z Updating files:  92% (42329/46009)
+2026-09-11T05:51:21.8724659Z Updating files:  93% (42789/46009)
+2026-09-11T05:51:21.9078371Z Updating files:  94% (43249/46009)
+2026-09-11T05:51:21.9428688Z Updating files:  95% (43709/46009)
+2026-09-11T05:51:21.9776606Z Updating files:  96% (44169/46009)
+2026-09-11T05:51:22.0200063Z Updating files:  97% (44629/46009)
+2026-09-11T05:51:22.0413243Z Updating files:  98% (45089/46009)
+2026-09-11T05:51:22.0528656Z Updating files:  98% (45424/46009)
+2026-09-11T05:51:22.0836569Z Updating files:  99% (45549/46009)
+2026-09-11T05:51:22.0839038Z Updating files: 100% (46009/46009)
+2026-09-11T05:51:22.0839945Z Updating files: 100% (46009/46009), done.
+2026-09-11T05:51:22.2479332Z Note: switching to 'refs/remotes/pull/98/merge'.
+2026-09-11T05:51:22.2483707Z 
+2026-09-11T05:51:22.2520079Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-11T05:51:22.2521086Z changes and commit them, and you can discard any commits you make in this
+2026-09-11T05:51:22.2523858Z state without impacting any branches by switching back to a branch.
+2026-09-11T05:51:22.2524930Z 
+2026-09-11T05:51:22.2526386Z If you want to create a new branch to retain commits you create, you may
+2026-09-11T05:51:22.2528681Z do so (now or later) by using -c with the switch command. Example:
+2026-09-11T05:51:22.2529358Z 
+2026-09-11T05:51:22.2529727Z   git switch -c <new-branch-name>
+2026-09-11T05:51:22.2530213Z 
+2026-09-11T05:51:22.2530571Z Or undo this operation with:
+2026-09-11T05:51:22.2531409Z 
+2026-09-11T05:51:22.2540955Z   git switch -
+2026-09-11T05:51:22.2541447Z 
+2026-09-11T05:51:22.2542042Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-11T05:51:22.2542826Z 
+2026-09-11T05:51:22.2543712Z HEAD is now at 008e1093 Merge 0dde152832cc63c6c768e5932ec995e2d8c48219 into c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d
+2026-09-11T05:51:22.2657965Z ##[endgroup]
+2026-09-11T05:51:22.3153458Z [command]/usr/bin/git log -1 --format=%H
+2026-09-11T05:51:22.3197545Z 008e10933c6804a35d4078b8c5e8367f33192475
+2026-09-11T05:51:22.3448552Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:51:22.3450520Z ##[group]Run pnpm/action-setup@v4
+2026-09-11T05:51:22.3450794Z with:
+2026-09-11T05:51:22.3451186Z   run_install: false
+2026-09-11T05:51:22.3451420Z   dest: ~/setup-pnpm
+2026-09-11T05:51:22.3451640Z   cache: false
+2026-09-11T05:51:22.3451879Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-11T05:51:22.3452186Z   package_json_file: package.json
+2026-09-11T05:51:22.3452450Z   standalone: false
+2026-09-11T05:51:22.3452667Z env:
+2026-09-11T05:51:22.3452863Z   NODE_VERSION: 24
+2026-09-11T05:51:22.3453085Z ##[endgroup]
+2026-09-11T05:51:22.5112518Z ##[group]Running self-installer...
+2026-09-11T05:51:23.1203218Z (node:2040) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-11T05:51:23.1205300Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-11T05:51:23.2951477Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-11T05:51:23.3137237Z Packages: +1
+2026-09-11T05:51:23.3137676Z +
+2026-09-11T05:51:23.8441700Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-11T05:51:23.9588228Z 
+2026-09-11T05:51:23.9589537Z dependencies:
+2026-09-11T05:51:23.9591221Z + pnpm 9.12.2 (12.3.4 is available)
+2026-09-11T05:51:23.9599054Z 
+2026-09-11T05:51:24.0079879Z Done in 1.1s
+2026-09-11T05:51:24.0242473Z ##[endgroup]
+2026-09-11T05:51:24.0243401Z Installation Completed!
+2026-09-11T05:51:24.0453386Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:51:24.0454716Z ##[group]Run actions/setup-node@v4
+2026-09-11T05:51:24.0454993Z with:
+2026-09-11T05:51:24.0455204Z   node-version: 24
+2026-09-11T05:51:24.0455430Z   cache: pnpm
+2026-09-11T05:51:24.0455648Z   always-auth: false
+2026-09-11T05:51:24.0455885Z   check-latest: false
+2026-09-11T05:51:24.0458614Z   token: ***
+2026-09-11T05:51:24.0458840Z env:
+2026-09-11T05:51:24.0459048Z   NODE_VERSION: 24
+2026-09-11T05:51:24.0459359Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:24.0459695Z ##[endgroup]
+2026-09-11T05:51:24.2707092Z (node:2054) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-11T05:51:24.2708695Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-11T05:51:24.2709574Z ##[group]Environment details
+2026-09-11T05:51:24.2734435Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-11T05:51:25.0629783Z node: v24.20.0
+2026-09-11T05:51:25.0630676Z npm: 11.19.0
+2026-09-11T05:51:25.0631848Z yarn: 1.22.22
+2026-09-11T05:51:25.0633812Z ##[endgroup]
+2026-09-11T05:51:25.0662471Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-11T05:51:25.5018302Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-11T05:51:25.7751279Z Cache hit for: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-11T05:51:25.7895082Z (node:2054) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-11T05:51:27.0768996Z Received 4194304 of 125411059 (3.3%), 4.0 MBs/sec
+2026-09-11T05:51:28.0817304Z Received 109051904 of 125411059 (87.0%), 51.9 MBs/sec
+2026-09-11T05:51:28.2297687Z Received 125411059 of 125411059 (100.0%), 55.5 MBs/sec
+2026-09-11T05:51:28.2299195Z Cache Size: ~120 MB (125411059 B)
+2026-09-11T05:51:28.2459909Z [command]/usr/bin/tar -xf /home/runner/work/_temp/138120b2-4441-4821-ac9c-d0b0a513ded0/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-11T05:51:30.8923953Z Cache restored successfully
+2026-09-11T05:51:31.1147823Z Cache restored from key: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-11T05:51:31.1320679Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-11T05:51:31.1321190Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-11T05:51:31.1369060Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:31.1369355Z env:
+2026-09-11T05:51:31.1369586Z   NODE_VERSION: 24
+2026-09-11T05:51:31.1369895Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:31.1370244Z ##[endgroup]
+2026-09-11T05:51:31.6704899Z Scope: all 22 workspace projects
+2026-09-11T05:51:31.7455544Z Lockfile is up to date, resolution step is skipped
+2026-09-11T05:51:31.8363719Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-11T05:51:31.9914555Z Packages: +946
+2026-09-11T05:51:31.9915412Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-11T05:51:32.8368016Z Progress: resolved 946, reused 733, downloaded 0, added 0
+2026-09-11T05:51:33.8365726Z Progress: resolved 946, reused 945, downloaded 0, added 466
+2026-09-11T05:51:34.6191456Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-11T05:51:36.4072647Z 
+2026-09-11T05:51:36.4082421Z dependencies:
+2026-09-11T05:51:36.4095238Z + @radix-ui/react-slot 1.2.3
+2026-09-11T05:51:36.4126955Z + @rjsf/core 5.24.13
+2026-09-11T05:51:36.4127686Z + @rjsf/utils 5.24.13
+2026-09-11T05:51:36.4157569Z + @rjsf/validator-ajv8 5.24.13
+2026-09-11T05:51:36.4163298Z + @types/geojson 7946.0.16
+2026-09-11T05:51:36.4187163Z + @types/topojson-client 3.1.5
+2026-09-11T05:51:36.4205693Z + @types/topojson-specification 1.0.5
+2026-09-11T05:51:36.4224836Z + ajv 8.17.1
+2026-09-11T05:51:36.4264968Z + ajv-formats 3.0.1
+2026-09-11T05:51:36.4283001Z + d3-geo 3.1.1
+2026-09-11T05:51:36.4301898Z + d3-scale 4.0.2
+2026-09-11T05:51:36.4322957Z + echarts 6.0.0
+2026-09-11T05:51:36.4347017Z + js-yaml 4.1.0
+2026-09-11T05:51:36.4365571Z + luxon 3.7.2
+2026-09-11T05:51:36.4396869Z + pg 8.16.3
+2026-09-11T05:51:36.4401209Z + react 19.2.0
+2026-09-11T05:51:36.4431279Z + react-dom 19.2.0
+2026-09-11T05:51:36.4450491Z + react-window 1.8.11
+2026-09-11T05:51:36.4465982Z + topojson-client 3.1.0
+2026-09-11T05:51:36.4489816Z + vega 6.2.0
+2026-09-11T05:51:36.4534918Z + vega-embed 7.1.0
+2026-09-11T05:51:36.4535613Z + zod 4.1.12
+2026-09-11T05:51:36.4565179Z 
+2026-09-11T05:51:36.4565678Z devDependencies:
+2026-09-11T05:51:36.4605952Z + @chromatic-com/storybook 4.1.1
+2026-09-11T05:51:36.4627110Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-11T05:51:36.4628270Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-11T05:51:36.4646937Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-11T05:51:36.4666914Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-11T05:51:36.4686754Z + @playwright/test 1.56.1
+2026-09-11T05:51:36.4687613Z + @storybook/addon-a11y 9.1.10
+2026-09-11T05:51:36.4706813Z + @storybook/addon-docs 9.1.10
+2026-09-11T05:51:36.4726798Z + @storybook/addon-onboarding 9.1.10
+2026-09-11T05:51:36.4727551Z + @storybook/mdx2-csf 1.1.0
+2026-09-11T05:51:36.4766699Z + @storybook/react 9.1.10
+2026-09-11T05:51:36.4784675Z + @storybook/react-vite 9.1.10
+2026-09-11T05:51:36.4806827Z + @testing-library/dom 10.4.1
+2026-09-11T05:51:36.4830684Z + @testing-library/jest-dom 6.9.1
+2026-09-11T05:51:36.4846835Z + @testing-library/react 16.3.0
+2026-09-11T05:51:36.4891214Z + @testing-library/user-event 14.6.1
+2026-09-11T05:51:36.4896803Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-11T05:51:36.4916782Z + @types/d3-geo 3.1.0
+2026-09-11T05:51:36.4917318Z + @types/d3-scale 4.0.9
+2026-09-11T05:51:36.4917827Z + @types/js-yaml 4.0.9
+2026-09-11T05:51:36.4918311Z + @types/luxon 3.7.1
+2026-09-11T05:51:36.4918791Z + @types/node 20.19.21
+2026-09-11T05:51:36.4919269Z + @types/pg 8.15.6
+2026-09-11T05:51:36.4919728Z + @types/react 19.2.2
+2026-09-11T05:51:36.4920227Z + @types/react-dom 19.2.2
+2026-09-11T05:51:36.4920811Z + @types/react-window 1.8.8
+2026-09-11T05:51:36.4921300Z + @types/semver 7.7.1
+2026-09-11T05:51:36.4921769Z + @types/sql.js 1.4.9
+2026-09-11T05:51:36.4922357Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-11T05:51:36.4923732Z + @typescript-eslint/parser 6.21.0
+2026-09-11T05:51:36.4924407Z + @vitejs/plugin-react 5.0.4
+2026-09-11T05:51:36.4924934Z + @vitest/browser 3.2.4
+2026-09-11T05:51:36.4925408Z + @vitest/coverage-v8 3.2.4
+2026-09-11T05:51:36.4925905Z + axe-core 4.11.0
+2026-09-11T05:51:36.4926607Z + colorjs.io 0.5.2
+2026-09-11T05:51:36.4927048Z + dotenv 17.4.2
+2026-09-11T05:51:36.4927473Z + eslint 8.57.1
+2026-09-11T05:51:36.4928019Z + eslint-plugin-storybook 9.1.10
+2026-09-11T05:51:36.4928517Z + globals 17.6.0
+2026-09-11T05:51:36.4928932Z + jsdom 24.1.3
+2026-09-11T05:51:36.4929431Z + json-schema-to-typescript 13.1.2
+2026-09-11T05:51:36.4930017Z + markdown-to-jsx 7.7.15
+2026-09-11T05:51:36.4930538Z + pg-mem 3.0.5
+2026-09-11T05:51:36.4930962Z + playwright 1.56.1
+2026-09-11T05:51:36.4931365Z + postcss 8.5.28
+2026-09-11T05:51:36.4931808Z + prettier 3.6.2
+2026-09-11T05:51:36.4932235Z + rimraf 5.0.10
+2026-09-11T05:51:36.4932633Z + semver 7.7.3
+2026-09-11T05:51:36.4933059Z + sql.js 1.13.0
+2026-09-11T05:51:36.4933507Z + storybook 9.1.10
+2026-09-11T05:51:36.4934012Z + style-dictionary 4.4.0
+2026-09-11T05:51:36.4934539Z + tailwindcss 3.4.18
+2026-09-11T05:51:36.4934946Z + tsup 8.5.0
+2026-09-11T05:51:36.4935338Z + tsx 4.20.6
+2026-09-11T05:51:36.4935751Z + typescript 5.3.3
+2026-09-11T05:51:36.4976858Z + vega-lite 6.4.1
+2026-09-11T05:51:36.4977642Z + vite-tsconfig-paths 5.1.4
+2026-09-11T05:51:36.5046912Z + vitest 3.2.4
+2026-09-11T05:51:36.5047369Z + vitest-axe 0.1.0
+2026-09-11T05:51:36.5047628Z 
+2026-09-11T05:51:36.5048049Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-11T05:51:36.5448281Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-11T05:51:36.5508466Z . prepare: Done
+2026-09-11T05:51:36.5634012Z Done in 5.3s
+2026-09-11T05:51:36.6250585Z ##[group]Run pnpm --filter @oods/tokens run build
+2026-09-11T05:51:36.6251288Z [36;1mpnpm --filter @oods/tokens run build[0m
+2026-09-11T05:51:36.6301306Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:36.6301755Z env:
+2026-09-11T05:51:36.6302116Z   NODE_VERSION: 24
+2026-09-11T05:51:36.6302601Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:36.6303177Z ##[endgroup]
+2026-09-11T05:51:37.3283252Z 
+2026-09-11T05:51:37.3426566Z > @oods/tokens@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens
+2026-09-11T05:51:37.3429334Z > rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-11T05:51:37.3430587Z 
+2026-09-11T05:51:37.9648659Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-11T05:51:37.9656860Z Building design tokens with Style Dictionary…
+2026-09-11T05:51:38.0794970Z 
+2026-09-11T05:51:38.0816693Z Token collisions detected (2):
+2026-09-11T05:51:38.0979055Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:38.0980139Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:39.1106820Z 
+2026-09-11T05:51:39.1117172Z ios-swift
+2026-09-11T05:51:39.1134383Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-11T05:51:39.1160954Z 
+2026-09-11T05:51:39.1161789Z compose
+2026-09-11T05:51:39.1177363Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-11T05:51:39.3110377Z 
+2026-09-11T05:51:39.3129683Z ts
+2026-09-11T05:51:39.3146896Z ! dist/ts/tokens.ts, does not exist
+2026-09-11T05:51:39.3166369Z 
+2026-09-11T05:51:39.3176564Z tailwind
+2026-09-11T05:51:39.3186715Z ! dist/tailwind/tokens.json, does not exist
+2026-09-11T05:51:40.6647024Z 
+2026-09-11T05:51:40.6671131Z ios-swift
+2026-09-11T05:51:40.6697268Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-11T05:51:40.6716346Z 
+2026-09-11T05:51:40.6736621Z compose
+2026-09-11T05:51:40.6756895Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-11T05:51:40.7678405Z 
+2026-09-11T05:51:40.7692484Z ts
+2026-09-11T05:51:40.7767337Z ✔︎ dist/ts/tokens.ts
+2026-09-11T05:51:40.7767656Z 
+2026-09-11T05:51:40.7767822Z tailwind
+2026-09-11T05:51:40.7768295Z ✔︎ dist/tailwind/tokens.json
+2026-09-11T05:51:40.8836582Z 
+2026-09-11T05:51:40.8837243Z Token collisions detected (2):
+2026-09-11T05:51:40.8838635Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:40.8839698Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:41.1972798Z 
+2026-09-11T05:51:41.1984345Z css
+2026-09-11T05:51:41.2013230Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:41.2626565Z 
+2026-09-11T05:51:41.2647149Z Token collisions detected (2):
+2026-09-11T05:51:41.2666937Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:41.2667953Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:41.4848996Z 
+2026-09-11T05:51:41.4857974Z css
+2026-09-11T05:51:41.4858974Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:41.6416763Z 
+2026-09-11T05:51:41.6423688Z Token collisions detected (252):
+2026-09-11T05:51:41.6424833Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:41.6426000Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:41.7894036Z 
+2026-09-11T05:51:41.7894846Z css
+2026-09-11T05:51:41.7896351Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:41.9299912Z 
+2026-09-11T05:51:41.9300798Z Token collisions detected (227):
+2026-09-11T05:51:41.9302047Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:41.9303328Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:42.0749730Z 
+2026-09-11T05:51:42.0750590Z css
+2026-09-11T05:51:42.0751642Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:42.2245432Z 
+2026-09-11T05:51:42.2247060Z Token collisions detected (2):
+2026-09-11T05:51:42.2248308Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:42.2249547Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:42.3678079Z 
+2026-09-11T05:51:42.3680771Z css
+2026-09-11T05:51:42.3686007Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:42.4962720Z 
+2026-09-11T05:51:42.4963624Z Token collisions detected (252):
+2026-09-11T05:51:42.4964929Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:42.4966391Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:42.6427003Z 
+2026-09-11T05:51:42.6427782Z css
+2026-09-11T05:51:42.6428932Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:42.7721543Z 
+2026-09-11T05:51:42.7722404Z Token collisions detected (227):
+2026-09-11T05:51:42.7723643Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:42.7724914Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:42.9212921Z 
+2026-09-11T05:51:42.9213802Z css
+2026-09-11T05:51:42.9214852Z ✔︎ dist/css/tokens.css
+2026-09-11T05:51:43.0508234Z 
+2026-09-11T05:51:43.0510069Z Token collisions detected (2):
+2026-09-11T05:51:43.0511332Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:51:43.0512562Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:51:43.2000488Z ✔︎ tokens built successfully in 5.27s
+2026-09-11T05:51:43.2001569Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-11T05:51:43.2002485Z    types:    dist/ts/tokens.ts
+2026-09-11T05:51:43.2003238Z    tailwind: dist/tailwind/tokens.json
+2026-09-11T05:51:43.2004011Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-11T05:51:43.2004813Z    compose:  dist/compose/OodsTokens.kt
+2026-09-11T05:51:43.3127715Z ##[group]Run pnpm run build:packages
+2026-09-11T05:51:43.3128105Z [36;1mpnpm run build:packages[0m
+2026-09-11T05:51:43.3165417Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:51:43.3165695Z env:
+2026-09-11T05:51:43.3165912Z   NODE_VERSION: 24
+2026-09-11T05:51:43.3166481Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:51:43.3166844Z ##[endgroup]
+2026-09-11T05:51:43.7777789Z 
+2026-09-11T05:51:43.7779040Z > @oods/foundry-mcp@0.1.0 build:packages /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:51:43.7780251Z > pnpm --filter @oods/* run build
+2026-09-11T05:51:43.7780897Z 
+2026-09-11T05:51:44.2947797Z Scope: 21 of 22 workspace projects
+2026-09-11T05:51:44.2980994Z apps/playground build$ tsc -b && vite build
+2026-09-11T05:51:44.2988579Z packages/a11y-tools build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:51:44.2993265Z packages/artifacts build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true
+2026-09-11T05:51:44.2998400Z packages/component-contracts build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:51:45.6748883Z packages/component-contracts build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:51:45.6787571Z packages/component-contracts build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:51:45.6866469Z packages/component-contracts build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:51:45.6887721Z packages/component-contracts build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+2026-09-11T05:51:45.6946515Z packages/a11y-tools build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:51:45.7002142Z packages/a11y-tools build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:51:45.7064054Z packages/a11y-tools build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:51:45.7098749Z packages/a11y-tools build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/a11y-tools/tsup.config.ts
+2026-09-11T05:51:45.7137255Z packages/component-contracts build: [34mCLI[39m Target: es2022
+2026-09-11T05:51:45.7221677Z packages/component-contracts build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:51:45.7327831Z packages/a11y-tools build: [34mCLI[39m Target: node20
+2026-09-11T05:51:45.7434362Z packages/component-contracts build: [34mESM[39m Build start
+2026-09-11T05:51:45.7447202Z packages/component-contracts build: [34mCJS[39m Build start
+2026-09-11T05:51:45.7557850Z packages/a11y-tools build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:51:45.7644635Z packages/a11y-tools build: [34mESM[39m Build start
+2026-09-11T05:51:45.7708630Z packages/a11y-tools build: [34mCJS[39m Build start
+2026-09-11T05:51:46.9798273Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js     [22m[32m14.75 KB[39m
+2026-09-11T05:51:47.0828506Z packages/a11y-tools build: [32mESM[39m [1mdist/index.js.map [22m[32m35.22 KB[39m
+2026-09-11T05:51:47.0887365Z packages/a11y-tools build: [32mESM[39m ⚡️ Build success in 1237ms
+2026-09-11T05:51:47.1958471Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs     [22m[32m15.34 KB[39m
+2026-09-11T05:51:47.1996913Z packages/a11y-tools build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m35.23 KB[39m
+2026-09-11T05:51:47.2858381Z packages/a11y-tools build: [32mCJS[39m ⚡️ Build success in 1241ms
+2026-09-11T05:51:47.9437766Z packages/a11y-tools build: [34mDTS[39m Build start
+2026-09-11T05:51:48.0649033Z packages/component-contracts build: [34mDTS[39m Build start
+2026-09-11T05:51:49.4321524Z packages/component-contracts build: [32mCJS[39m [1mdist/index.cjs [22m[32m896.25 KB[39m
+2026-09-11T05:51:49.4397890Z packages/component-contracts build: [32mCJS[39m ⚡️ Build success in 3721ms
+2026-09-11T05:51:49.4477640Z packages/component-contracts build: [32mESM[39m [1mdist/index.js [22m[32m894.48 KB[39m
+2026-09-11T05:51:49.4504484Z packages/component-contracts build: [32mESM[39m ⚡️ Build success in 3724ms
+2026-09-11T05:51:51.5789533Z packages/artifacts build: Done
+2026-09-11T05:51:51.5837669Z packages/mcp-bridge build$ rimraf dist && tsc -p tsconfig.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-11T05:51:56.9095542Z packages/a11y-tools build: [32mDTS[39m ⚡️ Build success in 8978ms
+2026-09-11T05:51:56.9102883Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m9.01 KB[39m
+2026-09-11T05:51:56.9157412Z packages/a11y-tools build: [32mDTS[39m [1mdist/index.d.cts [22m[32m9.01 KB[39m
+2026-09-11T05:51:57.0468456Z apps/playground build: [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+2026-09-11T05:51:57.1929786Z packages/a11y-tools build: Done
+2026-09-11T05:51:57.2031010Z packages/release-utils build$ rimraf dist && tsc -p tsconfig.json
+2026-09-11T05:51:58.3987406Z apps/playground build: transforming...
+2026-09-11T05:51:58.5281047Z apps/playground build: Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+2026-09-11T05:51:58.5334111Z apps/playground build:   npx update-browserslist-db@latest
+2026-09-11T05:51:58.5364249Z apps/playground build:   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-09-11T05:52:00.1795688Z packages/component-contracts build: [32mDTS[39m ⚡️ Build success in 12120ms
+2026-09-11T05:52:00.1847455Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m107.62 KB[39m
+2026-09-11T05:52:00.1863539Z packages/component-contracts build: [32mDTS[39m [1mdist/index.d.cts [22m[32m107.62 KB[39m
+2026-09-11T05:52:00.4330367Z packages/component-contracts build: Done
+2026-09-11T05:52:00.4397267Z packages/tokens build$ rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-11T05:52:00.7177414Z packages/mcp-bridge build: Done
+2026-09-11T05:52:00.7237541Z packages/tw-variants build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:02.0388329Z packages/tokens build: ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-11T05:52:02.0395806Z packages/tokens build: Building design tokens with Style Dictionary…
+2026-09-11T05:52:02.2498197Z packages/tw-variants build: [34mCLI[39m Building entry: src/context-matrix.ts, src/index.ts
+2026-09-11T05:52:02.2526962Z packages/tw-variants build: [34mCLI[39m Using tsconfig: ../../tsconfig.json
+2026-09-11T05:52:02.2532372Z packages/tw-variants build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:02.2637850Z packages/tw-variants build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+2026-09-11T05:52:02.2697286Z packages/tw-variants build: [34mCLI[39m Target: node20
+2026-09-11T05:52:02.2731641Z packages/tw-variants build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:02.2777150Z packages/tw-variants build: [34mESM[39m Build start
+2026-09-11T05:52:02.2797200Z packages/tw-variants build: [34mCJS[39m Build start
+2026-09-11T05:52:02.3839677Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:02.3877547Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:02.3964287Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:02.8014906Z packages/release-utils build: Done
+2026-09-11T05:52:02.8029202Z packages/viz-render build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:03.4084748Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js     [22m[32m139.00 B[39m
+2026-09-11T05:52:03.4117506Z packages/tw-variants build: [32mESM[39m [1mdist/index.js              [22m[32m8.03 KB[39m
+2026-09-11T05:52:03.4261955Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js     [22m[32m6.39 KB[39m
+2026-09-11T05:52:03.4298159Z packages/tw-variants build: [32mESM[39m [1mdist/context-matrix.js.map [22m[32m78.00 B[39m
+2026-09-11T05:52:03.4367673Z packages/tw-variants build: [32mESM[39m [1mdist/index.js.map          [22m[32m19.16 KB[39m
+2026-09-11T05:52:03.4398020Z packages/tw-variants build: [32mESM[39m [1mdist/chunk-IHQKAR2X.js.map [22m[32m13.51 KB[39m
+2026-09-11T05:52:03.4440334Z packages/tw-variants build: [32mESM[39m ⚡️ Build success in 1132ms
+2026-09-11T05:52:03.4490364Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs     [22m[32m6.42 KB[39m
+2026-09-11T05:52:03.4519983Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs              [22m[32m14.54 KB[39m
+2026-09-11T05:52:03.4587449Z packages/tw-variants build: [32mCJS[39m [1mdist/context-matrix.cjs.map [22m[32m13.51 KB[39m
+2026-09-11T05:52:03.4676779Z packages/tw-variants build: [32mCJS[39m [1mdist/index.cjs.map          [22m[32m32.63 KB[39m
+2026-09-11T05:52:03.4743932Z packages/tw-variants build: [32mCJS[39m ⚡️ Build success in 1139ms
+2026-09-11T05:52:03.6237854Z packages/tw-variants build: [34mDTS[39m Build start
+2026-09-11T05:52:04.5666854Z packages/viz-render build: [34mCLI[39m Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+2026-09-11T05:52:04.5718528Z packages/viz-render build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:04.6398423Z packages/viz-render build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:04.6478633Z packages/viz-render build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-render/tsup.config.ts
+2026-09-11T05:52:04.7148421Z packages/viz-render build: [34mCLI[39m Target: node20
+2026-09-11T05:52:04.7168008Z packages/viz-render build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:04.8046823Z packages/viz-render build: [34mESM[39m Build start
+2026-09-11T05:52:04.8107203Z packages/viz-render build: [34mCJS[39m Build start
+2026-09-11T05:52:04.8757158Z packages/tokens build: ios-swift
+2026-09-11T05:52:04.9728130Z packages/tokens build: ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-11T05:52:04.9746889Z packages/tokens build: compose
+2026-09-11T05:52:05.1374407Z packages/tokens build: ! dist/compose/OodsTokens.kt, does not exist
+2026-09-11T05:52:05.1377009Z apps/playground build: [32m✓[39m 48 modules transformed.
+2026-09-11T05:52:05.6380974Z packages/tokens build: ts
+2026-09-11T05:52:05.6396894Z packages/tokens build: ! dist/ts/tokens.ts, does not exist
+2026-09-11T05:52:05.6870241Z packages/tokens build: tailwind
+2026-09-11T05:52:05.6907473Z packages/tokens build: ! dist/tailwind/tokens.json, does not exist
+2026-09-11T05:52:06.0748277Z apps/playground build: rendering chunks...
+2026-09-11T05:52:06.1471514Z apps/playground build: computing gzip size...
+2026-09-11T05:52:06.1998445Z apps/playground build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.69 kB[22m[1m[22m[2m │ gzip:  0.39 kB[22m
+2026-09-11T05:52:06.2047540Z apps/playground build: [2mdist/[22m[2massets/[22m[35mindex-DBhKWpVX.css  [39m[1m[2m 25.90 kB[22m[1m[22m[2m │ gzip:  5.53 kB[22m
+2026-09-11T05:52:06.2509841Z apps/playground build: [2mdist/[22m[2massets/[22m[36mindex-CjtZwImZ.js   [39m[1m[2m394.49 kB[22m[1m[22m[2m │ gzip: 88.73 kB[22m
+2026-09-11T05:52:06.2511780Z apps/playground build: [32m✓ built in 9.01s[39m
+2026-09-11T05:52:06.6232093Z apps/playground build: Done
+2026-09-11T05:52:06.7328150Z packages/viz-render build: [34mDTS[39m Build start
+2026-09-11T05:52:06.7350239Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js                   [22m[32m3.59 KB[39m
+2026-09-11T05:52:06.7965132Z packages/viz-render build: [32mESM[39m [1mdist/index.js                     [22m[32m7.61 KB[39m
+2026-09-11T05:52:06.7977058Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js     [22m[32m11.64 KB[39m
+2026-09-11T05:52:06.8000628Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js            [22m[32m13.57 KB[39m
+2026-09-11T05:52:06.8027414Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js            [22m[32m456.00 B[39m
+2026-09-11T05:52:06.8051977Z packages/viz-render build: [32mESM[39m [1mdist/emitter.js.map               [22m[32m11.73 KB[39m
+2026-09-11T05:52:06.8077428Z packages/viz-render build: [32mESM[39m [1mdist/index.js.map                 [22m[32m18.69 KB[39m
+2026-09-11T05:52:06.8109810Z packages/viz-render build: [32mESM[39m [1mdist/echarts-render.worker.js.map [22m[32m25.74 KB[39m
+2026-09-11T05:52:06.8141740Z packages/viz-render build: [32mESM[39m [1mdist/chunk-TEIMVO34.js.map        [22m[32m33.43 KB[39m
+2026-09-11T05:52:06.8190601Z packages/viz-render build: [32mESM[39m [1mdist/chunk-J3M4JW2D.js.map        [22m[32m1.11 KB[39m
+2026-09-11T05:52:06.8207205Z packages/viz-render build: [32mESM[39m ⚡️ Build success in 2170ms
+2026-09-11T05:52:06.8234464Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs                     [22m[32m21.51 KB[39m
+2026-09-11T05:52:06.8278338Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs                   [22m[32m3.92 KB[39m
+2026-09-11T05:52:06.8307706Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs     [22m[32m24.51 KB[39m
+2026-09-11T05:52:06.8328279Z packages/viz-render build: [32mCJS[39m [1mdist/index.cjs.map                 [22m[32m52.80 KB[39m
+2026-09-11T05:52:06.8336034Z packages/viz-render build: [32mCJS[39m [1mdist/emitter.cjs.map               [22m[32m12.80 KB[39m
+2026-09-11T05:52:06.8338256Z packages/viz-render build: [32mCJS[39m [1mdist/echarts-render.worker.cjs.map [22m[32m59.80 KB[39m
+2026-09-11T05:52:06.8339941Z packages/viz-render build: [32mCJS[39m ⚡️ Build success in 2170ms
+2026-09-11T05:52:08.9125574Z packages/tokens build: ios-swift
+2026-09-11T05:52:08.9170663Z packages/tokens build: ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-11T05:52:08.9189862Z packages/tokens build: compose
+2026-09-11T05:52:08.9232249Z packages/tokens build: ✔︎ dist/compose/OodsTokens.kt
+2026-09-11T05:52:09.2134549Z packages/tokens build: ts
+2026-09-11T05:52:09.2177234Z packages/tokens build: ✔︎ dist/ts/tokens.ts
+2026-09-11T05:52:09.2216834Z packages/tokens build: tailwind
+2026-09-11T05:52:09.2287346Z packages/tokens build: ✔︎ dist/tailwind/tokens.json
+2026-09-11T05:52:09.4067552Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:09.4127347Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:09.4167255Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:10.1957385Z packages/tokens build: css
+2026-09-11T05:52:10.1991595Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:10.3829940Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:10.3867415Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:10.3877740Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:10.8603706Z packages/tokens build: css
+2026-09-11T05:52:10.8627569Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:11.3047623Z packages/tokens build: Token collisions detected (252):
+2026-09-11T05:52:11.3107342Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:11.3127337Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:11.8956704Z packages/tokens build: css
+2026-09-11T05:52:11.8977573Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:12.3827602Z packages/tokens build: Token collisions detected (227):
+2026-09-11T05:52:12.3847478Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:12.3877303Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:12.8737377Z packages/tokens build: css
+2026-09-11T05:52:12.8807482Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:13.1318191Z packages/tw-variants build: [32mDTS[39m ⚡️ Build success in 9508ms
+2026-09-11T05:52:13.1338233Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.ts           [22m[32m685.00 B[39m
+2026-09-11T05:52:13.1357550Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.ts  [22m[32m573.00 B[39m
+2026-09-11T05:52:13.1359236Z packages/tw-variants build: [32mDTS[39m [1mdist/index.d.cts          [22m[32m685.00 B[39m
+2026-09-11T05:52:13.1388327Z packages/tw-variants build: [32mDTS[39m [1mdist/context-matrix.d.cts [22m[32m573.00 B[39m
+2026-09-11T05:52:13.2877449Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:13.2927334Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:13.2957916Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:13.2996772Z packages/tw-variants build: Done
+2026-09-11T05:52:13.7195769Z packages/tokens build: css
+2026-09-11T05:52:13.7221327Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:14.1111384Z packages/tokens build: Token collisions detected (252):
+2026-09-11T05:52:14.1127720Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:14.1147234Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:14.5617604Z packages/tokens build: css
+2026-09-11T05:52:14.5652495Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:14.8637668Z packages/tokens build: Token collisions detected (227):
+2026-09-11T05:52:14.8677271Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:14.8717089Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:15.2777979Z packages/tokens build: css
+2026-09-11T05:52:15.2807391Z packages/tokens build: ✔︎ dist/css/tokens.css
+2026-09-11T05:52:15.5544077Z packages/tokens build: Token collisions detected (2):
+2026-09-11T05:52:15.5545903Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-11T05:52:15.5547801Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+2026-09-11T05:52:15.6549989Z packages/viz-render build: [32mDTS[39m ⚡️ Build success in 9102ms
+2026-09-11T05:52:15.6569117Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.ts  [22m[32m13.00 B[39m
+2026-09-11T05:52:15.6607541Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.ts                [22m[32m1.45 KB[39m
+2026-09-11T05:52:15.6627513Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.ts                  [22m[32m5.51 KB[39m
+2026-09-11T05:52:15.6641230Z packages/viz-render build: [32mDTS[39m [1mdist/echarts-render.worker.d.cts [22m[32m13.00 B[39m
+2026-09-11T05:52:15.6668684Z packages/viz-render build: [32mDTS[39m [1mdist/emitter.d.cts               [22m[32m1.45 KB[39m
+2026-09-11T05:52:15.6702199Z packages/viz-render build: [32mDTS[39m [1mdist/index.d.cts                 [22m[32m5.51 KB[39m
+2026-09-11T05:52:15.7751245Z packages/viz-render build: Done
+2026-09-11T05:52:15.8321649Z packages/tokens build: ✔︎ tokens built successfully in 13.80s
+2026-09-11T05:52:15.8333839Z packages/tokens build:    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-11T05:52:15.8335131Z packages/tokens build:    types:    dist/ts/tokens.ts
+2026-09-11T05:52:15.8336607Z packages/tokens build:    tailwind: dist/tailwind/tokens.json
+2026-09-11T05:52:15.8338016Z packages/tokens build:    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-11T05:52:15.8339419Z packages/tokens build:    compose:  dist/compose/OodsTokens.kt
+2026-09-11T05:52:15.9363718Z packages/tokens build: Done
+2026-09-11T05:52:15.9372936Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+2026-09-11T05:52:15.9374788Z packages/viz-core build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:16.5102713Z packages/component-styles build: [34mCLI[39m Building entry: src/index.ts, src/ported.ts
+2026-09-11T05:52:16.5132611Z packages/component-styles build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:16.5157228Z packages/component-styles build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:16.5169906Z packages/component-styles build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+2026-09-11T05:52:16.5217145Z packages/component-styles build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:16.5240303Z packages/component-styles build: [34mESM[39m Build start
+2026-09-11T05:52:16.5279076Z packages/component-styles build: [34mCJS[39m Build start
+2026-09-11T05:52:16.5431597Z packages/viz-core build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:52:16.5459806Z packages/viz-core build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:16.5489344Z packages/viz-core build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:16.5507961Z packages/viz-core build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/viz-core/tsup.config.ts
+2026-09-11T05:52:16.5617856Z packages/viz-core build: [34mCLI[39m Target: node20
+2026-09-11T05:52:16.5737709Z packages/viz-core build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:16.5777132Z packages/viz-core build: [34mESM[39m Build start
+2026-09-11T05:52:16.5802050Z packages/viz-core build: [34mCJS[39m Build start
+2026-09-11T05:52:16.7303703Z packages/component-styles build: [32mESM[39m [1mdist/index.js          [22m[32m143.00 B[39m
+2026-09-11T05:52:16.7354312Z packages/component-styles build: [32mESM[39m [1mdist/ported.js         [22m[32m513.00 B[39m
+2026-09-11T05:52:16.7403866Z packages/component-styles build: [32mESM[39m [1mdist/chunk-MQ5ST6PB.js [22m[32m1.90 KB[39m
+2026-09-11T05:52:16.7445661Z packages/component-styles build: [32mESM[39m ⚡️ Build success in 207ms
+2026-09-11T05:52:16.7511920Z packages/component-styles build: [32mCJS[39m [1mdist/index.cjs  [22m[32m2.04 KB[39m
+2026-09-11T05:52:16.7528642Z packages/component-styles build: [32mCJS[39m [1mdist/ported.cjs [22m[32m2.00 KB[39m
+2026-09-11T05:52:16.7550589Z packages/component-styles build: [32mCJS[39m ⚡️ Build success in 224ms
+2026-09-11T05:52:17.5021373Z packages/component-styles build: [34mDTS[39m Build start
+2026-09-11T05:52:22.6450301Z packages/viz-core build: [34mDTS[39m Build start
+2026-09-11T05:52:25.9971521Z packages/component-styles build: [32mDTS[39m ⚡️ Build success in 8499ms
+2026-09-11T05:52:26.0025810Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m1.93 KB[39m
+2026-09-11T05:52:26.0042824Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m500.00 B[39m
+2026-09-11T05:52:26.0044548Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m1.93 KB[39m
+2026-09-11T05:52:26.0046454Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m500.00 B[39m
+2026-09-11T05:52:26.2429960Z packages/component-styles build: Done
+2026-09-11T05:52:26.9213650Z packages/viz-core build: [32mESM[39m [1mdist/index.js     [22m[32m2.03 MB[39m
+2026-09-11T05:52:26.9215088Z packages/viz-core build: [32mESM[39m [1mdist/index.js.map [22m[32m3.69 MB[39m
+2026-09-11T05:52:26.9216468Z packages/viz-core build: [32mESM[39m ⚡️ Build success in 10343ms
+2026-09-11T05:52:26.9277635Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs     [22m[32m2.04 MB[39m
+2026-09-11T05:52:26.9296535Z packages/viz-core build: [32mCJS[39m [1mdist/index.cjs.map [22m[32m3.69 MB[39m
+2026-09-11T05:52:26.9297921Z packages/viz-core build: [32mCJS[39m ⚡️ Build success in 10347ms
+2026-09-11T05:52:28.1321251Z packages/viz-core build: [32mDTS[39m ⚡️ Build success in 10435ms
+2026-09-11T05:52:28.1347951Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m301.30 KB[39m
+2026-09-11T05:52:28.1349685Z packages/viz-core build: [32mDTS[39m [1mdist/index.d.cts [22m[32m301.30 KB[39m
+2026-09-11T05:52:28.2426693Z packages/viz-core build: Done
+2026-09-11T05:52:28.2431983Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-11T05:52:28.2434994Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+2026-09-11T05:52:28.8210387Z packages/components-react build: [34mCLI[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+2026-09-11T05:52:28.8233122Z packages/components-react build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:28.8239813Z packages/components-react build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:28.8268259Z packages/components-react build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+2026-09-11T05:52:28.8329600Z packages/components-react build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:28.8347477Z packages/components-vue build: [34mCLI[39m Building entry: src/index.ts
+2026-09-11T05:52:28.8379293Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:28.8401169Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:28.8433062Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+2026-09-11T05:52:28.8456704Z packages/components-react build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:28.8483626Z packages/components-react build: [34mESM[39m Build start
+2026-09-11T05:52:28.8521237Z packages/components-react build: [34mCJS[39m Build start
+2026-09-11T05:52:28.8541113Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:28.8575180Z packages/components-vue build: [34mCLI[39m Cleaning output folder
+2026-09-11T05:52:28.8613290Z packages/components-vue build: [34mESM[39m Build start
+2026-09-11T05:52:28.8653024Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-11T05:52:29.3847007Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-11T05:52:29.9557678Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-11T05:52:30.2687893Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-11T05:52:31.1434252Z packages/components-react build: [34mDTS[39m Build start
+2026-09-11T05:52:31.1568193Z packages/components-react build: [32mCJS[39m [1mdist/status.cjs [22m[32m11.08 KB[39m
+2026-09-11T05:52:31.1597710Z packages/components-react build: [32mCJS[39m [1mdist/table.cjs  [22m[32m17.07 KB[39m
+2026-09-11T05:52:31.1617648Z packages/components-react build: [32mCJS[39m [1mdist/types.cjs  [22m[32m15.00 B[39m
+2026-09-11T05:52:31.1654622Z packages/components-react build: [32mCJS[39m [1mdist/ported.cjs [22m[32m52.76 KB[39m
+2026-09-11T05:52:31.1670984Z packages/components-react build: [32mCJS[39m [1mdist/index.cjs  [22m[32m153.12 KB[39m
+2026-09-11T05:52:31.1672807Z packages/components-react build: [32mCJS[39m ⚡️ Build success in 2315ms
+2026-09-11T05:52:31.1674560Z packages/components-react build: [32mESM[39m [1mdist/ported.js         [22m[32m192.00 B[39m
+2026-09-11T05:52:31.1676743Z packages/components-react build: [32mESM[39m [1mdist/chunk-XMIP5ZGO.js [22m[32m40.39 KB[39m
+2026-09-11T05:52:31.1678601Z packages/components-react build: [32mESM[39m [1mdist/status.js         [22m[32m171.00 B[39m
+2026-09-11T05:52:31.1680526Z packages/components-react build: [32mESM[39m [1mdist/chunk-YCI5AEWL.js [22m[32m6.37 KB[39m
+2026-09-11T05:52:31.1682395Z packages/components-react build: [32mESM[39m [1mdist/chunk-G74PKSW3.js [22m[32m10.89 KB[39m
+2026-09-11T05:52:31.1684215Z packages/components-react build: [32mESM[39m [1mdist/types.js          [22m[32m1.00 B[39m
+2026-09-11T05:52:31.1685997Z packages/components-react build: [32mESM[39m [1mdist/table.js          [22m[32m149.00 B[39m
+2026-09-11T05:52:31.1688070Z packages/components-react build: [32mESM[39m [1mdist/index.js          [22m[32m87.14 KB[39m
+2026-09-11T05:52:31.1690004Z packages/components-react build: [32mESM[39m ⚡️ Build success in 2316ms
+2026-09-11T05:52:31.2009529Z packages/components-vue build: [32mCJS[39m [1mdist/index.cjs [22m[32m133.19 KB[39m
+2026-09-11T05:52:31.2027341Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 2344ms
+2026-09-11T05:52:31.2065320Z packages/components-vue build: [32mESM[39m [1mdist/index.js [22m[32m128.10 KB[39m
+2026-09-11T05:52:31.2091724Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 2350ms
+2026-09-11T05:52:41.6103664Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 11361ms
+2026-09-11T05:52:41.6137902Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m141.56 KB[39m
+2026-09-11T05:52:41.6147798Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.cts [22m[32m141.56 KB[39m
+2026-09-11T05:52:41.6878260Z packages/components-react build: [32mDTS[39m ⚡️ Build success in 11415ms
+2026-09-11T05:52:41.6900306Z packages/components-react build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m21.31 KB[39m
+2026-09-11T05:52:41.6902013Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m7.12 KB[39m
+2026-09-11T05:52:41.6937539Z packages/components-react build: [32mDTS[39m [1mdist/status.d.ts  [22m[32m1.39 KB[39m
+2026-09-11T05:52:41.6967523Z packages/components-react build: [32mDTS[39m [1mdist/table.d.ts   [22m[32m1.06 KB[39m
+2026-09-11T05:52:41.6969522Z packages/components-react build: [32mDTS[39m [1mdist/types.d.ts   [22m[32m23.79 KB[39m
+2026-09-11T05:52:41.6971343Z packages/components-react build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m21.31 KB[39m
+2026-09-11T05:52:41.6997474Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m7.12 KB[39m
+2026-09-11T05:52:41.7017280Z packages/components-react build: [32mDTS[39m [1mdist/status.d.cts [22m[32m1.39 KB[39m
+2026-09-11T05:52:41.7038214Z packages/components-react build: [32mDTS[39m [1mdist/table.d.cts  [22m[32m1.07 KB[39m
+2026-09-11T05:52:41.7107792Z packages/components-react build: [32mDTS[39m [1mdist/types.d.cts  [22m[32m23.79 KB[39m
+2026-09-11T05:52:41.8127841Z packages/components-react build: Done
+2026-09-11T05:52:42.0786483Z packages/components-vue build: [34mCLI[39m Building entry: src/ported.ts
+2026-09-11T05:52:42.0788486Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-11T05:52:42.0789994Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-11T05:52:42.0792070Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+2026-09-11T05:52:42.0859862Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-11T05:52:42.0887406Z packages/components-vue build: [34mESM[39m Build start
+2026-09-11T05:52:42.0888925Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-11T05:52:42.6248147Z packages/components-vue build: [32mESM[39m [1mdist/ported.js [22m[32m46.06 KB[39m
+2026-09-11T05:52:42.6263247Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 536ms
+2026-09-11T05:52:42.6278137Z packages/components-vue build: [32mCJS[39m [1mdist/ported.cjs [22m[32m46.73 KB[39m
+2026-09-11T05:52:42.6297250Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 536ms
+2026-09-11T05:52:42.6741398Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-11T05:52:46.5534903Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 3881ms
+2026-09-11T05:52:46.5542595Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m20.67 KB[39m
+2026-09-11T05:52:46.5544254Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m20.67 KB[39m
+2026-09-11T05:52:46.6254302Z packages/components-vue build: Done
+2026-09-11T05:52:46.6262021Z packages/mcp-server build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../../artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json dist/registry/runtime-cells.v1.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+2026-09-11T05:52:53.7154037Z packages/mcp-server build: Done
+2026-09-11T05:52:53.7158147Z packages/sdk build$ rimraf dist && tsc -p tsconfig.json
+2026-09-11T05:52:55.3040700Z packages/sdk build: Done
+2026-09-11T05:52:55.3324698Z ##[group]Run pnpm exec playwright install chromium
+2026-09-11T05:52:55.3325444Z [36;1mpnpm exec playwright install chromium[0m
+2026-09-11T05:52:55.3380488Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:52:55.3381187Z env:
+2026-09-11T05:52:55.3381540Z   NODE_VERSION: 24
+2026-09-11T05:52:55.3382048Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:52:55.3382655Z ##[endgroup]
+2026-09-11T05:52:56.4339115Z Downloading Chromium 141.0.7390.37 (playwright build v1194) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1194/chromium-linux.zip
+2026-09-11T05:52:56.6793474Z |                                                                                |   0% of 173.9 MiB
+2026-09-11T05:52:57.0227734Z |■■■■■■■■                                                                        |  10% of 173.9 MiB
+2026-09-11T05:52:57.1550238Z |■■■■■■■■■■■■■■■■                                                                |  20% of 173.9 MiB
+2026-09-11T05:52:57.2888321Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 173.9 MiB
+2026-09-11T05:52:57.4132754Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 173.9 MiB
+2026-09-11T05:52:57.5474221Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 173.9 MiB
+2026-09-11T05:52:57.6878629Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 173.9 MiB
+2026-09-11T05:52:57.8070501Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 173.9 MiB
+2026-09-11T05:52:57.9561497Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 173.9 MiB
+2026-09-11T05:52:58.1067829Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 173.9 MiB
+2026-09-11T05:52:58.2983440Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 173.9 MiB
+2026-09-11T05:53:02.8725401Z Chromium 141.0.7390.37 (playwright build v1194) downloaded to /home/runner/.cache/ms-playwright/chromium-1194
+2026-09-11T05:53:02.8735721Z Downloading FFMPEG playwright build v1011 from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-09-11T05:53:03.1106723Z |                                                                                |   0% of 2.3 MiB
+2026-09-11T05:53:03.1588943Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-09-11T05:53:03.1966419Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-09-11T05:53:03.2673212Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-09-11T05:53:03.3063239Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-09-11T05:53:03.3178507Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-09-11T05:53:03.3285372Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-09-11T05:53:03.3403914Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-09-11T05:53:03.3457452Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-09-11T05:53:03.3539339Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-09-11T05:53:03.3616000Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-09-11T05:53:03.4397982Z FFMPEG playwright build v1011 downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-09-11T05:53:03.4402010Z Downloading Chromium Headless Shell 141.0.7390.37 (playwright build v1194) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1194/chromium-headless-shell-linux.zip
+2026-09-11T05:53:03.6623419Z |                                                                                |   0% of 104.3 MiB
+2026-09-11T05:53:03.9467814Z |■■■■■■■■                                                                        |  10% of 104.3 MiB
+2026-09-11T05:53:04.0465322Z |■■■■■■■■■■■■■■■■                                                                |  20% of 104.3 MiB
+2026-09-11T05:53:04.1415403Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 104.3 MiB
+2026-09-11T05:53:04.2362836Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 104.3 MiB
+2026-09-11T05:53:04.4314511Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 104.3 MiB
+2026-09-11T05:53:04.5681963Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 104.3 MiB
+2026-09-11T05:53:04.6897524Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 104.3 MiB
+2026-09-11T05:53:04.8628009Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 104.3 MiB
+2026-09-11T05:53:04.9467919Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 104.3 MiB
+2026-09-11T05:53:05.0376843Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 104.3 MiB
+2026-09-11T05:53:07.5922048Z Chromium Headless Shell 141.0.7390.37 (playwright build v1194) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1194
+2026-09-11T05:53:07.7344650Z ##[group]Run node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue
+2026-09-11T05:53:07.7347144Z [36;1mnode scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue[0m
+2026-09-11T05:53:07.7402215Z shell: /usr/bin/bash -e {0}
+2026-09-11T05:53:07.7402518Z env:
+2026-09-11T05:53:07.7402745Z   NODE_VERSION: 24
+2026-09-11T05:53:07.7403060Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-11T05:53:07.7403428Z ##[endgroup]
+2026-09-11T05:53:07.7787963Z $ pnpm --filter @oods/component-contracts exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/component-contracts.json
+2026-09-11T05:53:08.6367616Z 
+2026-09-11T05:53:08.6378295Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts[39m
+2026-09-11T05:53:08.6406576Z 
+2026-09-11T05:53:09.3874217Z  [31m❯[39m test/breadth-contracts.s186.spec.ts [2m([22m[2m48 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 45[2mms[22m[39m
+2026-09-11T05:53:09.3877531Z [31m   [31m×[31m Sprint 186 m01 component breadth contracts[2m > [22mregisters every wave-2 component ported so far in the nucleus with one shared scenario each[39m[32m 16[2mms[22m[39m
+2026-09-11T05:53:09.3879739Z [31m     → expected [ 'VizAreaControls', …(108) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:09.3881953Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mClassificationPanel governs its measured props, mirrors renderClassificationPanel, and names every directive it consumes[32m 3[2mms[22m[39m
+2026-09-11T05:53:09.3885001Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mClassificationPanel has a named render scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3887979Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mFilterPanel governs its measured props, mirrors renderFilterPanel, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3890663Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mFilterPanel has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3901600Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPriceSummary governs its measured props, mirrors renderPriceSummary, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3909004Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPriceSummary has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3911256Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressCollectionPanel governs its measured props, mirrors renderAddressCollectionPanel, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3914453Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressCollectionPanel has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3917734Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMembershipPanel governs its measured props, mirrors renderMembershipPanel, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3919540Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMembershipPanel has a named render scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3921047Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferencePanel governs its measured props, mirrors renderPreferencePanel, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3922917Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferencePanel has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3924354Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagManager governs its measured props, mirrors renderTagManager, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3925708Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagManager has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3938641Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressSummaryBadge governs its measured props, mirrors renderAddressSummaryBadge, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3941586Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressSummaryBadge has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3944171Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMessageStatusBadge governs its measured props, mirrors renderMessageStatusBadge, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3946890Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMessageStatusBadge has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3949540Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceSummaryBadge governs its measured props, mirrors renderPreferenceSummaryBadge, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3952155Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceSummaryBadge has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3954782Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mRoleBadgeList governs its measured props, mirrors renderRoleBadgeList, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3957490Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mRoleBadgeList has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3959901Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagPills governs its measured props, mirrors renderTagPills, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3962850Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagPills has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3965750Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressValidationTimeline governs its measured props, mirrors renderAddressValidationTimeline, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3973406Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressValidationTimeline has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3975838Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAuditEvent governs its measured props, mirrors renderAuditEvent, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3978870Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAuditEvent has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3981879Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMembershipAuditTimeline governs its measured props, mirrors renderMembershipAuditTimeline, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.3984956Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMembershipAuditTimeline has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3988780Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMessageEventTimeline governs its measured props, mirrors renderMessageEventTimeline, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3991872Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mMessageEventTimeline has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3994886Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceTimeline governs its measured props, mirrors renderPreferenceTimeline, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.3997968Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceTimeline has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4000829Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressEditor governs its measured props, mirrors renderAddressEditor, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4003257Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mAddressEditor has a named render scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4006019Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceEditor governs its measured props, mirrors renderPreferenceEditor, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4008835Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mPreferenceEditor has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4011278Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mRoleAssignmentForm governs its measured props, mirrors renderRoleAssignmentForm, and names every directive it consumes[32m 2[2mms[22m[39m
+2026-09-11T05:53:09.4012803Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mRoleAssignmentForm has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4014300Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mStatusSelector governs its measured props, mirrors renderStatusSelector, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4015742Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mStatusSelector has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4018522Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagInput governs its measured props, mirrors renderTagInput, and names every directive it consumes[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4021139Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTagInput has a named render scenario using only its governed interface[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4023957Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTemplatePicker governs its measured props, mirrors renderTemplatePicker, and names every directive it consumes[32m 0[2mms[22m[39m
+2026-09-11T05:53:09.4027010Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mTemplatePicker has a named render scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:09.4029593Z    [32m✓[39m Sprint 186 m01 component breadth contracts[2m > [22mstates that the filter controls stay unwired and that amounts are unformatted text[32m 2[2mms[22m[39m
+2026-09-11T05:53:11.7568192Z  [32m✓[39m test/baseline-fold.s185.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 833[2mms[22m[39m
+2026-09-11T05:53:11.7570253Z    [33m[2m✓[22m[39m Sprint 185 baseline surface evidence preserves the identity denominator[2m > [22mderives the fold from the actual target readiness and resolves every underlying reference occurrence [33m 464[2mms[22m[39m
+2026-09-11T05:53:12.0547034Z  [31m❯[39m test/breadth-contracts.s185.spec.ts [2m([22m[2m15 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+2026-09-11T05:53:12.0549853Z [31m   [31m×[31m Sprint 185 component breadth contracts[2m > [22mregisters the measured additions in the nucleus with exactly one shared scenario per member[39m[32m 15[2mms[22m[39m
+2026-09-11T05:53:12.0552100Z [31m     → expected [ 'VizAreaControls', …(108) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:12.0553979Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mCardHeader governs its measured props and mirrors the named HTML renderer[32m 2[2mms[22m[39m
+2026-09-11T05:53:12.0555319Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mCardHeader has a named behavioral scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0557196Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mColorSwatch governs its measured props and mirrors the named HTML renderer[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0558492Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mColorSwatch has a named behavioral scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0559790Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mColorizedBadge governs its measured props and mirrors the named HTML renderer[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0561074Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mColorizedBadge has a named behavioral scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0562340Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mDetailHeader governs its measured props and mirrors the named HTML renderer[32m 0[2mms[22m[39m
+2026-09-11T05:53:12.0563594Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mDetailHeader has a named behavioral scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0565852Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mVizAreaPreview governs its measured props and mirrors the named HTML renderer[32m 0[2mms[22m[39m
+2026-09-11T05:53:12.0568562Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mVizAreaPreview has a named behavioral scenario using only its governed interface[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0571128Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mretains the static SVG and prior amendments when all governed contracts reach v1.1[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0573768Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mrequires real headings with measured defaults and visible supporting information[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0576448Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mkeeps color supplementary to visible text and preserves Badge status semantics[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.0578759Z    [32m✓[39m Sprint 185 component breadth contracts[2m > [22mmakes the preview frame limitation and placeholder-versus-slot behavior explicit[32m 1[2mms[22m[39m
+2026-09-11T05:53:12.3331530Z  [32m✓[39m test/contracts.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+2026-09-11T05:53:13.6270632Z  [32m✓[39m test/measured-ledger.s192.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1038[2mms[22m[39m
+2026-09-11T05:53:13.6273080Z    [33m[2m✓[22m[39m Sprint 192 evidence-derived ledger and pending classification[2m > [22mretains historical bytes while exposing the new, still-unapproved proposal [33m 991[2mms[22m[39m
+2026-09-11T05:53:13.9028293Z  [31m❯[39m test/ported-contracts.s184.spec.ts [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+2026-09-11T05:53:13.9033489Z    [32m✓[39m Sprint 184 historical port compatibility within the canonical nucleus[2m > [22mkeys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS[32m 3[2mms[22m[39m
+2026-09-11T05:53:13.9036513Z    [32m✓[39m Sprint 184 historical port compatibility within the canonical nucleus[2m > [22mderives the historical eight-component compatibility views from the canonical nucleus[32m 3[2mms[22m[39m
+2026-09-11T05:53:13.9038400Z [31m   [31m×[31m Sprint 184 historical port compatibility within the canonical nucleus[2m > [22mpreserves the historical cohort surface evidence on its existing baseline identities[39m[32m 7[2mms[22m[39m
+2026-09-11T05:53:13.9039476Z [31m     → expected false to be true // Object.is equality[39m
+2026-09-11T05:53:13.9040528Z    [32m✓[39m Sprint 184 historical port compatibility within the canonical nucleus[2m > [22mleaves the historical foundation-v1 projection byte-identical[32m 1[2mms[22m[39m
+2026-09-11T05:53:14.1197048Z  [32m✓[39m test/viz-controls.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-09-11T05:53:16.1818210Z  [32m✓[39m test/readiness-measurements.s192.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1797[2mms[22m[39m
+2026-09-11T05:53:16.1820222Z    [33m[2m✓[22m[39m readiness publishes measured semantics[2m > [22mreact: theme claims require measured roots in all six cells [33m 836[2mms[22m[39m
+2026-09-11T05:53:16.1821821Z    [33m[2m✓[22m[39m readiness publishes measured semantics[2m > [22mvue: theme claims require measured roots in all six cells [33m 918[2mms[22m[39m
+2026-09-11T05:53:16.4468495Z  [32m✓[39m test/measured-contracts.s192.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-09-11T05:53:16.7030045Z  [32m✓[39m test/breadth-contracts.s187.spec.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-09-11T05:53:16.9607540Z  [32m✓[39m test/disputed.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+2026-09-11T05:53:17.1962264Z  [32m✓[39m test/trait-recipes.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+2026-09-11T05:53:17.4490204Z  [32m✓[39m test/contract-amendments.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-09-11T05:53:17.6725231Z  [32m✓[39m test/static-svg.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-09-11T05:53:17.9231878Z  [32m✓[39m test/workflow-states.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-09-11T05:53:17.9373729Z 
+2026-09-11T05:53:17.9397579Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-09-11T05:53:17.9398118Z 
+2026-09-11T05:53:17.9400035Z [41m[1m FAIL [22m[49m test/breadth-contracts.s185.spec.ts[2m > [22mSprint 185 component breadth contracts[2m > [22mregisters the measured additions in the nucleus with exactly one shared scenario per member
+2026-09-11T05:53:17.9427147Z [31m[1mAssertionError[22m: expected [ 'VizAreaControls', …(108) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:17.9428629Z 
+2026-09-11T05:53:17.9429126Z [32m- Expected[39m
+2026-09-11T05:53:17.9429889Z [31m+ Received[39m
+2026-09-11T05:53:17.9430353Z 
+2026-09-11T05:53:17.9430777Z [33m@@ -1,11 +1,44 @@[39m
+2026-09-11T05:53:17.9431451Z [2m  [[22m
+2026-09-11T05:53:17.9432195Z [31m+   "VizAreaControls",[39m
+2026-09-11T05:53:17.9433000Z [31m+   "VizAxisControls",[39m
+2026-09-11T05:53:17.9433915Z [31m+   "VizAxisSummary",[39m
+2026-09-11T05:53:17.9434809Z [31m+   "VizColorControls",[39m
+2026-09-11T05:53:17.9435794Z [31m+   "VizColorLegendConfig",[39m
+2026-09-11T05:53:17.9437025Z [31m+   "VizEncodingBadge",[39m
+2026-09-11T05:53:17.9437936Z [31m+   "VizHeatmapControls",[39m
+2026-09-11T05:53:17.9438905Z [31m+   "VizHeatmapPreview",[39m
+2026-09-11T05:53:17.9439787Z [31m+   "VizLineControls",[39m
+2026-09-11T05:53:17.9440600Z [31m+   "VizLinePreview",[39m
+2026-09-11T05:53:17.9441771Z [31m+   "VizMarkControls",[39m
+2026-09-11T05:53:17.9442543Z [31m+   "VizMarkPreview",[39m
+2026-09-11T05:53:17.9443368Z [31m+   "VizOpacityControls",[39m
+2026-09-11T05:53:17.9444145Z [31m+   "VizOpacitySummary",[39m
+2026-09-11T05:53:17.9444958Z [31m+   "VizPointControls",[39m
+2026-09-11T05:53:17.9445939Z [31m+   "VizPointPreview",[39m
+2026-09-11T05:53:17.9447012Z [31m+   "VizRoleBadge",[39m
+2026-09-11T05:53:17.9447750Z [31m+   "VizScaleControls",[39m
+2026-09-11T05:53:17.9448564Z [31m+   "VizScaleSummary",[39m
+2026-09-11T05:53:17.9449374Z [31m+   "VizScatterControls",[39m
+2026-09-11T05:53:17.9450261Z [31m+   "VizScatterPreview",[39m
+2026-09-11T05:53:17.9451019Z [31m+   "VizShapeControls",[39m
+2026-09-11T05:53:17.9451793Z [31m+   "VizShapeLegend",[39m
+2026-09-11T05:53:17.9452520Z [31m+   "VizSizeControls",[39m
+2026-09-11T05:53:17.9453248Z [31m+   "VizSizeSummary",[39m
+2026-09-11T05:53:17.9453882Z [31m+   "ArchiveEvent",[39m
+2026-09-11T05:53:17.9454633Z [31m+   "CancellationEvent",[39m
+2026-09-11T05:53:17.9455423Z [31m+   "StateTransitionEvent",[39m
+2026-09-11T05:53:17.9456588Z [31m+   "ColorStatePicker",[39m
+2026-09-11T05:53:17.9457297Z [31m+   "StatusColorLegend",[39m
+2026-09-11T05:53:17.9458141Z [31m+   "CommunicationDetailPanel",[39m
+2026-09-11T05:53:17.9459020Z [31m+   "GeoFieldMappingForm",[39m
+2026-09-11T05:53:17.9459854Z [31m+   "GeoResolutionBadge",[39m
+2026-09-11T05:53:17.9460737Z [31m+   "GeocodablePreview",[39m
+2026-09-11T05:53:17.9461552Z [2m    "AddressCollectionPanel",[22m
+2026-09-11T05:53:17.9462386Z [2m    "AddressEditor",[22m
+2026-09-11T05:53:17.9463232Z [2m    "AddressSummaryBadge",[22m
+2026-09-11T05:53:17.9464256Z [2m    "AddressValidationTimeline",[22m
+2026-09-11T05:53:17.9465164Z [32m-   "ArchiveEvent",[39m
+2026-09-11T05:53:17.9465975Z [2m    "ArchivePill",[22m
+2026-09-11T05:53:17.9467785Z [2m    "ArchiveSummary",[22m
+2026-09-11T05:53:17.9468683Z [2m    "ArchivedRowOverlay",[22m
+2026-09-11T05:53:17.9471669Z [2m    "AuditEvent",[22m
+2026-09-11T05:53:17.9472323Z [2m    "AuditSummaryCard",[22m
+2026-09-11T05:53:17.9472925Z [33m@@ -16,31 +49,25 @@[39m
+2026-09-11T05:53:17.9480282Z [2m    "BillingCardMeta",[22m
+2026-09-11T05:53:17.9481041Z [2m    "BillingIntervalSelector",[22m
+2026-09-11T05:53:17.9481736Z [2m    "BillingSummaryBadge",[22m
+2026-09-11T05:53:17.9482302Z [2m    "Button",[22m
+2026-09-11T05:53:17.9482860Z [2m    "CancellationBadge",[22m
+2026-09-11T05:53:17.9483493Z [32m-   "CancellationEvent",[39m
+2026-09-11T05:53:17.9484106Z [2m    "CancellationForm",[22m
+2026-09-11T05:53:17.9484722Z [2m    "CancellationSummary",[22m
+2026-09-11T05:53:17.9485266Z [2m    "Card",[22m
+2026-09-11T05:53:17.9485743Z [2m    "CardHeader",[22m
+2026-09-11T05:53:17.9486489Z [2m    "Checkbox",[22m
+2026-09-11T05:53:17.9487082Z [2m    "ClassificationBadge",[22m
+2026-09-11T05:53:17.9487727Z [2m    "ClassificationEditor",[22m
+2026-09-11T05:53:17.9488371Z [2m    "ClassificationPanel",[22m
+2026-09-11T05:53:17.9489000Z [32m-   "ColorStatePicker",[39m
+2026-09-11T05:53:17.9489564Z [2m    "ColorSwatch",[22m
+2026-09-11T05:53:17.9490126Z [2m    "ColorizedBadge",[22m
+2026-09-11T05:53:17.9490769Z [32m-   "CommunicationDetailPanel",[39m
+2026-09-11T05:53:17.9491499Z [2m    "CycleProgressCard",[22m
+2026-09-11T05:53:17.9492055Z [2m    "DatePicker",[22m
+2026-09-11T05:53:17.9492580Z [2m    "DetailHeader",[22m
+2026-09-11T05:53:17.9493136Z [2m    "FilterPanel",[22m
+2026-09-11T05:53:17.9493708Z [2m    "FormLabelGroup",[22m
+2026-09-11T05:53:17.9494322Z [32m-   "GeoFieldMappingForm",[39m
+2026-09-11T05:53:17.9494958Z [32m-   "GeoResolutionBadge",[39m
+2026-09-11T05:53:17.9495579Z [32m-   "GeocodablePreview",[39m
+2026-09-11T05:53:17.9496389Z [2m    "Grid",[22m
+2026-09-11T05:53:17.9496923Z [2m    "InlineLabel",[22m
+2026-09-11T05:53:17.9497401Z [2m    "Input",[22m
+2026-09-11T05:53:17.9497953Z [2m    "LabelCell",[22m
+2026-09-11T05:53:17.9498622Z [2m    "MembershipAuditTimeline",[22m
+2026-09-11T05:53:17.9499560Z [33m@@ -65,13 +92,11 @@[39m
+2026-09-11T05:53:17.9500138Z [2m    "RoleBadgeList",[22m
+2026-09-11T05:53:17.9500737Z [2m    "SearchInput",[22m
+2026-09-11T05:53:17.9501322Z [2m    "Select",[22m
+2026-09-11T05:53:17.9501869Z [2m    "SortIndicator",[22m
+2026-09-11T05:53:17.9502436Z [2m    "Stack",[22m
+2026-09-11T05:53:17.9503264Z [32m-   "StateTransitionEvent",[39m
+2026-09-11T05:53:17.9503927Z [2m    "StatusBadge",[22m
+2026-09-11T05:53:17.9504572Z [32m-   "StatusColorLegend",[39m
+2026-09-11T05:53:17.9505230Z [2m    "StatusSelector",[22m
+2026-09-11T05:53:17.9505850Z [2m    "StatusTimeline",[22m
+2026-09-11T05:53:17.9506662Z [2m    "Table",[22m
+2026-09-11T05:53:17.9507168Z [2m    "Tabs",[22m
+2026-09-11T05:53:17.9507670Z [2m    "TagInput",[22m
+2026-09-11T05:53:17.9508207Z [33m@@ -80,32 +105,7 @@[39m
+2026-09-11T05:53:17.9509731Z [2m    "TagSummary",[22m
+2026-09-11T05:53:17.9511385Z [2m    "TemplatePicker",[22m
+2026-09-11T05:53:17.9511930Z [2m    "Text",[22m
+2026-09-11T05:53:17.9512422Z [2m    "Textarea",[22m
+2026-09-11T05:53:17.9513004Z [2m    "TimelineEntryLabel",[22m
+2026-09-11T05:53:17.9513625Z [32m-   "VizAreaControls",[39m
+2026-09-11T05:53:17.9514225Z [2m    "VizAreaPreview",[22m
+2026-09-11T05:53:17.9514822Z [32m-   "VizAxisControls",[39m
+2026-09-11T05:53:17.9515416Z [32m-   "VizAxisSummary",[39m
+2026-09-11T05:53:17.9516024Z [32m-   "VizColorControls",[39m
+2026-09-11T05:53:17.9516913Z [32m-   "VizColorLegendConfig",[39m
+2026-09-11T05:53:17.9517550Z [32m-   "VizEncodingBadge",[39m
+2026-09-11T05:53:17.9518171Z [32m-   "VizHeatmapControls",[39m
+2026-09-11T05:53:17.9518797Z [32m-   "VizHeatmapPreview",[39m
+2026-09-11T05:53:17.9519482Z [32m-   "VizLineControls",[39m
+2026-09-11T05:53:17.9520124Z [32m-   "VizLinePreview",[39m
+2026-09-11T05:53:17.9520742Z [32m-   "VizMarkControls",[39m
+2026-09-11T05:53:17.9521363Z [32m-   "VizMarkPreview",[39m
+2026-09-11T05:53:17.9521988Z [32m-   "VizOpacityControls",[39m
+2026-09-11T05:53:17.9522629Z [32m-   "VizOpacitySummary",[39m
+2026-09-11T05:53:17.9523277Z [32m-   "VizPointControls",[39m
+2026-09-11T05:53:17.9523884Z [32m-   "VizPointPreview",[39m
+2026-09-11T05:53:17.9524442Z [32m-   "VizRoleBadge",[39m
+2026-09-11T05:53:17.9525036Z [32m-   "VizScaleControls",[39m
+2026-09-11T05:53:17.9525651Z [32m-   "VizScaleSummary",[39m
+2026-09-11T05:53:17.9526841Z [32m-   "VizScatterControls",[39m
+2026-09-11T05:53:17.9547053Z [32m-   "VizScatterPreview",[39m
+2026-09-11T05:53:17.9547739Z [32m-   "VizShapeControls",[39m
+2026-09-11T05:53:17.9548372Z [32m-   "VizShapeLegend",[39m
+2026-09-11T05:53:17.9548982Z [32m-   "VizSizeControls",[39m
+2026-09-11T05:53:17.9549702Z [32m-   "VizSizeSummary",[39m
+2026-09-11T05:53:17.9550173Z [2m  ][22m
+2026-09-11T05:53:17.9550382Z 
+2026-09-11T05:53:17.9550998Z [36m [2m❯[22m test/breadth-contracts.s185.spec.ts:[2m43:45[22m[39m
+2026-09-11T05:53:17.9586326Z     [90m 41| [39m  it('registers the measured additions in the nucleus with exactly one…
+2026-09-11T05:53:17.9587993Z     [90m 42| [39m    expect(NUCLEUS_COMPONENT_IDS).toEqual([...NUCLEUS_COMPONENT_IDS].s…
+2026-09-11T05:53:17.9589847Z     [90m 43| [39m    expect(Object.keys(componentContracts)).toEqual(NUCLEUS_COMPONENT_…
+2026-09-11T05:53:17.9591264Z     [90m   | [39m                                            [31m^[39m
+2026-09-11T05:53:17.9593121Z     [90m 44| [39m    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentI…
+2026-09-11T05:53:17.9597076Z     [90m 45| [39m    expect(new Set(sharedScenarios.map(({ id }) => id)).size).toBe(NUC…
+2026-09-11T05:53:17.9597688Z 
+2026-09-11T05:53:17.9598159Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+2026-09-11T05:53:17.9598556Z 
+2026-09-11T05:53:17.9600489Z [41m[1m FAIL [22m[49m test/breadth-contracts.s186.spec.ts[2m > [22mSprint 186 m01 component breadth contracts[2m > [22mregisters every wave-2 component ported so far in the nucleus with one shared scenario each
+2026-09-11T05:53:17.9603014Z [31m[1mAssertionError[22m: expected [ 'VizAreaControls', …(108) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:17.9604144Z 
+2026-09-11T05:53:17.9604398Z [32m- Expected[39m
+2026-09-11T05:53:17.9604898Z [31m+ Received[39m
+2026-09-11T05:53:17.9605144Z 
+2026-09-11T05:53:17.9605400Z [33m@@ -1,11 +1,44 @@[39m
+2026-09-11T05:53:17.9605858Z [2m  [[22m
+2026-09-11T05:53:17.9606918Z [31m+   "VizAreaControls",[39m
+2026-09-11T05:53:17.9607601Z [31m+   "VizAxisControls",[39m
+2026-09-11T05:53:17.9608233Z [31m+   "VizAxisSummary",[39m
+2026-09-11T05:53:17.9608865Z [31m+   "VizColorControls",[39m
+2026-09-11T05:53:17.9609551Z [31m+   "VizColorLegendConfig",[39m
+2026-09-11T05:53:17.9610220Z [31m+   "VizEncodingBadge",[39m
+2026-09-11T05:53:17.9610869Z [31m+   "VizHeatmapControls",[39m
+2026-09-11T05:53:17.9611544Z [31m+   "VizHeatmapPreview",[39m
+2026-09-11T05:53:17.9612187Z [31m+   "VizLineControls",[39m
+2026-09-11T05:53:17.9612800Z [31m+   "VizLinePreview",[39m
+2026-09-11T05:53:17.9637059Z [31m+   "VizMarkControls",[39m
+2026-09-11T05:53:17.9637779Z [31m+   "VizMarkPreview",[39m
+2026-09-11T05:53:17.9638420Z [31m+   "VizOpacityControls",[39m
+2026-09-11T05:53:17.9639069Z [31m+   "VizOpacitySummary",[39m
+2026-09-11T05:53:17.9639712Z [31m+   "VizPointControls",[39m
+2026-09-11T05:53:17.9640336Z [31m+   "VizPointPreview",[39m
+2026-09-11T05:53:17.9640907Z [31m+   "VizRoleBadge",[39m
+2026-09-11T05:53:17.9641547Z [31m+   "VizScaleControls",[39m
+2026-09-11T05:53:17.9642172Z [31m+   "VizScaleSummary",[39m
+2026-09-11T05:53:17.9642804Z [31m+   "VizScatterControls",[39m
+2026-09-11T05:53:17.9643457Z [31m+   "VizScatterPreview",[39m
+2026-09-11T05:53:17.9644103Z [31m+   "VizShapeControls",[39m
+2026-09-11T05:53:17.9644738Z [31m+   "VizShapeLegend",[39m
+2026-09-11T05:53:17.9645340Z [31m+   "VizSizeControls",[39m
+2026-09-11T05:53:17.9645943Z [31m+   "VizSizeSummary",[39m
+2026-09-11T05:53:17.9646792Z [31m+   "ArchiveEvent",[39m
+2026-09-11T05:53:17.9647424Z [31m+   "CancellationEvent",[39m
+2026-09-11T05:53:17.9648133Z [31m+   "StateTransitionEvent",[39m
+2026-09-11T05:53:17.9648810Z [31m+   "ColorStatePicker",[39m
+2026-09-11T05:53:17.9649463Z [31m+   "StatusColorLegend",[39m
+2026-09-11T05:53:17.9650167Z [31m+   "CommunicationDetailPanel",[39m
+2026-09-11T05:53:17.9650881Z [31m+   "GeoFieldMappingForm",[39m
+2026-09-11T05:53:17.9651566Z [31m+   "GeoResolutionBadge",[39m
+2026-09-11T05:53:17.9652230Z [31m+   "GeocodablePreview",[39m
+2026-09-11T05:53:17.9652901Z [2m    "AddressCollectionPanel",[22m
+2026-09-11T05:53:17.9653519Z [2m    "AddressEditor",[22m
+2026-09-11T05:53:17.9654146Z [2m    "AddressSummaryBadge",[22m
+2026-09-11T05:53:17.9654856Z [2m    "AddressValidationTimeline",[22m
+2026-09-11T05:53:17.9655492Z [32m-   "ArchiveEvent",[39m
+2026-09-11T05:53:17.9656050Z [2m    "ArchivePill",[22m
+2026-09-11T05:53:17.9677245Z [2m    "ArchiveSummary",[22m
+2026-09-11T05:53:17.9677965Z [2m    "ArchivedRowOverlay",[22m
+2026-09-11T05:53:17.9678547Z [2m    "AuditEvent",[22m
+2026-09-11T05:53:17.9679141Z [2m    "AuditSummaryCard",[22m
+2026-09-11T05:53:17.9679684Z [33m@@ -16,31 +49,25 @@[39m
+2026-09-11T05:53:17.9680246Z [2m    "BillingCardMeta",[22m
+2026-09-11T05:53:17.9680854Z [2m    "BillingIntervalSelector",[22m
+2026-09-11T05:53:17.9681470Z [2m    "BillingSummaryBadge",[22m
+2026-09-11T05:53:17.9681987Z [2m    "Button",[22m
+2026-09-11T05:53:17.9682498Z [2m    "CancellationBadge",[22m
+2026-09-11T05:53:17.9683085Z [32m-   "CancellationEvent",[39m
+2026-09-11T05:53:17.9683663Z [2m    "CancellationForm",[22m
+2026-09-11T05:53:17.9684266Z [2m    "CancellationSummary",[22m
+2026-09-11T05:53:17.9684797Z [2m    "Card",[22m
+2026-09-11T05:53:17.9685257Z [2m    "CardHeader",[22m
+2026-09-11T05:53:17.9685743Z [2m    "Checkbox",[22m
+2026-09-11T05:53:17.9686541Z [2m    "ClassificationBadge",[22m
+2026-09-11T05:53:17.9687217Z [2m    "ClassificationEditor",[22m
+2026-09-11T05:53:17.9687905Z [2m    "ClassificationPanel",[22m
+2026-09-11T05:53:17.9688537Z [32m-   "ColorStatePicker",[39m
+2026-09-11T05:53:17.9689618Z [2m    "ColorSwatch",[22m
+2026-09-11T05:53:17.9690250Z [2m    "ColorizedBadge",[22m
+2026-09-11T05:53:17.9690963Z [32m-   "CommunicationDetailPanel",[39m
+2026-09-11T05:53:17.9691800Z [2m    "CycleProgressCard",[22m
+2026-09-11T05:53:17.9692443Z [2m    "DatePicker",[22m
+2026-09-11T05:53:17.9693007Z [2m    "DetailHeader",[22m
+2026-09-11T05:53:17.9693809Z [2m    "FilterPanel",[22m
+2026-09-11T05:53:17.9694469Z [2m    "FormLabelGroup",[22m
+2026-09-11T05:53:17.9695138Z [32m-   "GeoFieldMappingForm",[39m
+2026-09-11T05:53:17.9695868Z [32m-   "GeoResolutionBadge",[39m
+2026-09-11T05:53:17.9726995Z [32m-   "GeocodablePreview",[39m
+2026-09-11T05:53:17.9727586Z [2m    "Grid",[22m
+2026-09-11T05:53:17.9728090Z [2m    "InlineLabel",[22m
+2026-09-11T05:53:17.9728594Z [2m    "Input",[22m
+2026-09-11T05:53:17.9729105Z [2m    "LabelCell",[22m
+2026-09-11T05:53:17.9729746Z [2m    "MembershipAuditTimeline",[22m
+2026-09-11T05:53:17.9730367Z [33m@@ -65,13 +92,11 @@[39m
+2026-09-11T05:53:17.9730939Z [2m    "RoleBadgeList",[22m
+2026-09-11T05:53:17.9731480Z [2m    "SearchInput",[22m
+2026-09-11T05:53:17.9731989Z [2m    "Select",[22m
+2026-09-11T05:53:17.9732503Z [2m    "SortIndicator",[22m
+2026-09-11T05:53:17.9733017Z [2m    "Stack",[22m
+2026-09-11T05:53:17.9733626Z [32m-   "StateTransitionEvent",[39m
+2026-09-11T05:53:17.9734242Z [2m    "StatusBadge",[22m
+2026-09-11T05:53:17.9734862Z [32m-   "StatusColorLegend",[39m
+2026-09-11T05:53:17.9735494Z [2m    "StatusSelector",[22m
+2026-09-11T05:53:17.9736304Z [2m    "StatusTimeline",[22m
+2026-09-11T05:53:17.9736877Z [2m    "Table",[22m
+2026-09-11T05:53:17.9737358Z [2m    "Tabs",[22m
+2026-09-11T05:53:17.9737844Z [2m    "TagInput",[22m
+2026-09-11T05:53:17.9738809Z [33m@@ -80,32 +105,7 @@[39m
+2026-09-11T05:53:17.9739490Z [2m    "TagSummary",[22m
+2026-09-11T05:53:17.9776901Z [2m    "TemplatePicker",[22m
+2026-09-11T05:53:17.9777495Z [2m    "Text",[22m
+2026-09-11T05:53:17.9778003Z [2m    "Textarea",[22m
+2026-09-11T05:53:17.9778629Z [2m    "TimelineEntryLabel",[22m
+2026-09-11T05:53:17.9779288Z [32m-   "VizAreaControls",[39m
+2026-09-11T05:53:17.9779901Z [2m    "VizAreaPreview",[22m
+2026-09-11T05:53:17.9780518Z [32m-   "VizAxisControls",[39m
+2026-09-11T05:53:17.9781140Z [32m-   "VizAxisSummary",[39m
+2026-09-11T05:53:17.9781759Z [32m-   "VizColorControls",[39m
+2026-09-11T05:53:17.9782424Z [32m-   "VizColorLegendConfig",[39m
+2026-09-11T05:53:17.9783076Z [32m-   "VizEncodingBadge",[39m
+2026-09-11T05:53:17.9783721Z [32m-   "VizHeatmapControls",[39m
+2026-09-11T05:53:17.9784362Z [32m-   "VizHeatmapPreview",[39m
+2026-09-11T05:53:17.9785050Z [32m-   "VizLineControls",[39m
+2026-09-11T05:53:17.9785687Z [32m-   "VizLinePreview",[39m
+2026-09-11T05:53:17.9806685Z [32m-   "VizMarkControls",[39m
+2026-09-11T05:53:17.9807434Z [32m-   "VizMarkPreview",[39m
+2026-09-11T05:53:17.9808124Z [32m-   "VizOpacityControls",[39m
+2026-09-11T05:53:17.9808826Z [32m-   "VizOpacitySummary",[39m
+2026-09-11T05:53:17.9809531Z [32m-   "VizPointControls",[39m
+2026-09-11T05:53:17.9810243Z [32m-   "VizPointPreview",[39m
+2026-09-11T05:53:17.9810888Z [32m-   "VizRoleBadge",[39m
+2026-09-11T05:53:17.9811560Z [32m-   "VizScaleControls",[39m
+2026-09-11T05:53:17.9812266Z [32m-   "VizScaleSummary",[39m
+2026-09-11T05:53:17.9812967Z [32m-   "VizScatterControls",[39m
+2026-09-11T05:53:17.9813652Z [32m-   "VizScatterPreview",[39m
+2026-09-11T05:53:17.9814331Z [32m-   "VizShapeControls",[39m
+2026-09-11T05:53:17.9814982Z [32m-   "VizShapeLegend",[39m
+2026-09-11T05:53:17.9815612Z [32m-   "VizSizeControls",[39m
+2026-09-11T05:53:17.9819964Z [32m-   "VizSizeSummary",[39m
+2026-09-11T05:53:17.9820593Z [2m  ][22m
+2026-09-11T05:53:17.9820830Z 
+2026-09-11T05:53:17.9821486Z [36m [2m❯[22m test/breadth-contracts.s186.spec.ts:[2m192:45[22m[39m
+2026-09-11T05:53:17.9856014Z     [90m190| [39m  it('registers every wave-2 component ported so far in the nucleus wi…
+2026-09-11T05:53:17.9856915Z 
+2026-09-11T05:53:17.9857991Z     [90m191| [39m    expect(NUCLEUS_COMPONENT_IDS).toEqual([...NUCLEUS_COMPONENT_IDS].s…
+2026-09-11T05:53:17.9859781Z [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m12 passed[39m[22m[90m (15)[39m
+2026-09-11T05:53:17.9862372Z     [90m192| [39m    expect(Object.keys(componentContracts)).toEqual(NUCLEUS_COMPONENT_…
+2026-09-11T05:53:17.9864023Z [2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m139 passed[39m[22m[90m (142)[39m
+2026-09-11T05:53:17.9865468Z     [90m   | [39m                                            [31m^[39m
+2026-09-11T05:53:17.9866563Z [2m   Start at [22m 05:53:08
+2026-09-11T05:53:17.9868791Z     [90m193| [39m    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentI…
+2026-09-11T05:53:17.9870455Z [2m   Duration [22m 9.30s[2m (transform 548ms, setup 0ms, collect 2.27s, tests 3.88s, environment 3ms, prepare 953ms)[22m
+2026-09-11T05:53:17.9872528Z     [90m194| [39m    [35mfor[39m ([35mconst[39m id [35mof[39m [33mObject[39m[33m.[39m[34mkeys[39m([33mWAVE_2_CONTRACTS[39m)) {
+2026-09-11T05:53:17.9874386Z 
+2026-09-11T05:53:17.9874415Z 
+2026-09-11T05:53:17.9876954Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+2026-09-11T05:53:17.9877364Z 
+2026-09-11T05:53:17.9879558Z [41m[1m FAIL [22m[49m test/ported-contracts.s184.spec.ts[2m > [22mSprint 184 historical port compatibility within the canonical nucleus[2m > [22mpreserves the historical cohort surface evidence on its existing baseline identities
+2026-09-11T05:53:17.9881911Z [31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+2026-09-11T05:53:17.9882543Z 
+2026-09-11T05:53:17.9882804Z [32m- Expected[39m
+2026-09-11T05:53:17.9883296Z [31m+ Received[39m
+2026-09-11T05:53:17.9883553Z 
+2026-09-11T05:53:17.9883775Z [32m- true[39m
+2026-09-11T05:53:17.9884230Z [31m+ false[39m
+2026-09-11T05:53:17.9884479Z 
+2026-09-11T05:53:17.9885124Z [36m [2m❯[22m test/ported-contracts.s184.spec.ts:[2m84:11[22m[39m
+2026-09-11T05:53:17.9886546Z     [90m 82| [39m      expect(surfaces.map(surface => row.surfaces[surface]).every(({ s…
+2026-09-11T05:53:17.9887794Z     [90m 83| [39m        state [33m===[39m [32m'implemented-evidence-complete'[39m
+2026-09-11T05:53:17.9888902Z     [90m 84| [39m      )))[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+2026-09-11T05:53:17.9889710Z     [90m   | [39m          [31m^[39m
+2026-09-11T05:53:17.9890288Z     [90m 85| [39m    }
+2026-09-11T05:53:17.9890827Z     [90m 86| [39m  })[33m;[39m
+2026-09-11T05:53:17.9891150Z 
+2026-09-11T05:53:17.9891659Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+2026-09-11T05:53:17.9892051Z 
+2026-09-11T05:53:17.9898548Z JSON report written to /tmp/oods-component-suite-nLylAl/component-contracts.json
+2026-09-11T05:53:18.1225212Z undefined
+2026-09-11T05:53:18.1246537Z /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts:
+2026-09-11T05:53:18.1249717Z  ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/component-contracts.json
+2026-09-11T05:53:18.1459148Z $ pnpm --filter @oods/component-styles exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/component-styles.json
+2026-09-11T05:53:18.9426866Z 
+2026-09-11T05:53:18.9442594Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles[39m
+2026-09-11T05:53:18.9466670Z 
+2026-09-11T05:53:22.9705798Z  [32m✓[39m test/high-contrast.browser.spec.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 3321[2mms[22m[39m
+2026-09-11T05:53:23.6668440Z  [31m❯[39m test/styles.spec.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 163[2mms[22m[39m
+2026-09-11T05:53:23.6671029Z [31m   [31m×[31m Sprint 182 shared component style contract[2m > [22mcovers every nucleus component with token-driven CSS[39m[32m 13[2mms[22m[39m
+2026-09-11T05:53:23.6673307Z [31m     → expected [ 'AddressCollectionPanel', …(74) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:23.6674871Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22mbinds the six declared brand/theme cells to real token sources[32m 145[2mms[22m[39m
+2026-09-11T05:53:23.6676524Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22ms185-m02 keeps color labels visible beside decorative markers in hc and forced colors[32m 1[2mms[22m[39m
+2026-09-11T05:53:23.6677947Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22ms185-m02 exposes styled heading, supporting copy and a dimensioned empty preview frame[32m 0[2mms[22m[39m
+2026-09-11T05:53:23.6679268Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22ms182-m01a keeps shared high-contrast controls on matching system colors[32m 1[2mms[22m[39m
+2026-09-11T05:53:23.6680571Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22ms182-m01b binds the measured Brand B light action foreground to pure white[32m 0[2mms[22m[39m
+2026-09-11T05:53:23.6681878Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22mencodes the locked visual state vocabulary without consumer utility scanning[32m 1[2mms[22m[39m
+2026-09-11T05:53:23.6684054Z    [32m✓[39m Sprint 182 shared component style contract[2m > [22mstyles field controls without treating framework wrappers as native controls[32m 0[2mms[22m[39m
+2026-09-11T05:53:23.6686450Z    [32m✓[39m gives archived collection cards one outer border while retaining their button[32m 0[2mms[22m[39m
+2026-09-11T05:53:24.0730368Z  [32m✓[39m test/token-resolution.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 138[2mms[22m[39m
+2026-09-11T05:53:24.3084325Z  [32m✓[39m test/ported-styles.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-09-11T05:53:24.3236756Z 
+2026-09-11T05:53:24.3247784Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-09-11T05:53:24.3253366Z 
+2026-09-11T05:53:24.3276994Z [41m[1m FAIL [22m[49m test/styles.spec.ts[2m > [22mSprint 182 shared component style contract[2m > [22mcovers every nucleus component with token-driven CSS
+2026-09-11T05:53:24.3298888Z [31m[1mAssertionError[22m: expected [ 'AddressCollectionPanel', …(74) ] to deeply equal [ 'AddressCollectionPanel', …(108) ][39m
+2026-09-11T05:53:24.3323368Z 
+2026-09-11T05:53:24.3337981Z [32m- Expected[39m
+2026-09-11T05:53:24.3365406Z [31m+ Received[39m
+2026-09-11T05:53:24.3409704Z 
+2026-09-11T05:53:24.3409935Z 
+2026-09-11T05:53:24.3438044Z [33m@@ -1,11 +1,10 @@[39m
+2026-09-11T05:53:24.3439215Z [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+2026-09-11T05:53:24.3455674Z [2m  [[22m
+2026-09-11T05:53:24.3456971Z [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m44 passed[39m[22m[90m (45)[39m
+2026-09-11T05:53:24.3471964Z [2m    "AddressCollectionPanel",[22m
+2026-09-11T05:53:24.3475948Z [2m    "AddressEditor",[22m
+2026-09-11T05:53:24.3476882Z [2m   Start at [22m 05:53:18
+2026-09-11T05:53:24.3487885Z [2m   Duration [22m 5.38s[2m (transform 379ms, setup 0ms, collect 781ms, tests 3.63s, environment 1ms, prepare 267ms)[22m
+2026-09-11T05:53:24.3500383Z [2m    "AddressSummaryBadge",[22m
+2026-09-11T05:53:24.3510971Z 
+2026-09-11T05:53:24.3514462Z JSON report written to /tmp/oods-component-suite-nLylAl/component-styles.json
+2026-09-11T05:53:24.3516944Z [2m    "AddressValidationTimeline",[22m
+2026-09-11T05:53:24.3523589Z [32m-   "ArchiveEvent",[39m
+2026-09-11T05:53:24.3524588Z [2m    "ArchivePill",[22m
+2026-09-11T05:53:24.3525549Z [2m    "ArchiveSummary",[22m
+2026-09-11T05:53:24.3526877Z [2m    "ArchivedRowOverlay",[22m
+2026-09-11T05:53:24.3527791Z [2m    "AuditEvent",[22m
+2026-09-11T05:53:24.3528702Z [2m    "AuditSummaryCard",[22m
+2026-09-11T05:53:24.3529531Z [33m@@ -16,31 +15,25 @@[39m
+2026-09-11T05:53:24.3530373Z [2m    "BillingCardMeta",[22m
+2026-09-11T05:53:24.3531368Z [2m    "BillingIntervalSelector",[22m
+2026-09-11T05:53:24.3532781Z [2m    "BillingSummaryBadge",[22m
+2026-09-11T05:53:24.3533694Z [2m    "Button",[22m
+2026-09-11T05:53:24.3534636Z [2m    "CancellationBadge",[22m
+2026-09-11T05:53:24.3535660Z [32m-   "CancellationEvent",[39m
+2026-09-11T05:53:24.3537035Z [2m    "CancellationForm",[22m
+2026-09-11T05:53:24.3538002Z [2m    "CancellationSummary",[22m
+2026-09-11T05:53:24.3539179Z [2m    "Card",[22m
+2026-09-11T05:53:24.3540085Z [2m    "CardHeader",[22m
+2026-09-11T05:53:24.3540951Z [2m    "Checkbox",[22m
+2026-09-11T05:53:24.3541904Z [2m    "ClassificationBadge",[22m
+2026-09-11T05:53:24.3544361Z [2m    "ClassificationEditor",[22m
+2026-09-11T05:53:24.3545278Z [2m    "ClassificationPanel",[22m
+2026-09-11T05:53:24.3549217Z [32m-   "ColorStatePicker",[39m
+2026-09-11T05:53:24.3550147Z [2m    "ColorSwatch",[22m
+2026-09-11T05:53:24.3551023Z [2m    "ColorizedBadge",[22m
+2026-09-11T05:53:24.3551947Z [32m-   "CommunicationDetailPanel",[39m
+2026-09-11T05:53:24.3552930Z [2m    "CycleProgressCard",[22m
+2026-09-11T05:53:24.3553842Z [2m    "DatePicker",[22m
+2026-09-11T05:53:24.3554703Z [2m    "DetailHeader",[22m
+2026-09-11T05:53:24.3555518Z [2m    "FilterPanel",[22m
+2026-09-11T05:53:24.3556839Z [2m    "FormLabelGroup",[22m
+2026-09-11T05:53:24.3557795Z [32m-   "GeoFieldMappingForm",[39m
+2026-09-11T05:53:24.3558766Z [32m-   "GeoResolutionBadge",[39m
+2026-09-11T05:53:24.3559918Z [32m-   "GeocodablePreview",[39m
+2026-09-11T05:53:24.3561505Z [2m    "Grid",[22m
+2026-09-11T05:53:24.3562337Z [2m    "InlineLabel",[22m
+2026-09-11T05:53:24.3563148Z [2m    "Input",[22m
+2026-09-11T05:53:24.3563966Z [2m    "LabelCell",[22m
+2026-09-11T05:53:24.3564930Z [2m    "MembershipAuditTimeline",[22m
+2026-09-11T05:53:24.3565906Z [33m@@ -65,13 +58,11 @@[39m
+2026-09-11T05:53:24.3567136Z [2m    "RoleBadgeList",[22m
+2026-09-11T05:53:24.3568030Z [2m    "SearchInput",[22m
+2026-09-11T05:53:24.3568875Z [2m    "Select",[22m
+2026-09-11T05:53:24.3569749Z [2m    "SortIndicator",[22m
+2026-09-11T05:53:24.3571488Z [2m    "Stack",[22m
+2026-09-11T05:53:24.3572441Z [32m-   "StateTransitionEvent",[39m
+2026-09-11T05:53:24.3573424Z [2m    "StatusBadge",[22m
+2026-09-11T05:53:24.3574410Z [32m-   "StatusColorLegend",[39m
+2026-09-11T05:53:24.3575415Z [2m    "StatusSelector",[22m
+2026-09-11T05:53:24.3576620Z [2m    "StatusTimeline",[22m
+2026-09-11T05:53:24.3577530Z [2m    "Table",[22m
+2026-09-11T05:53:24.3578368Z [2m    "Tabs",[22m
+2026-09-11T05:53:24.3579231Z [2m    "TagInput",[22m
+2026-09-11T05:53:24.3580107Z [33m@@ -80,32 +71,7 @@[39m
+2026-09-11T05:53:24.3581013Z [2m    "TagSummary",[22m
+2026-09-11T05:53:24.3581949Z [2m    "TemplatePicker",[22m
+2026-09-11T05:53:24.3582826Z [2m    "Text",[22m
+2026-09-11T05:53:24.3583632Z [2m    "Textarea",[22m
+2026-09-11T05:53:24.3584611Z [2m    "TimelineEntryLabel",[22m
+2026-09-11T05:53:24.3585585Z [32m-   "VizAreaControls",[39m
+2026-09-11T05:53:24.3586910Z [2m    "VizAreaPreview",[22m
+2026-09-11T05:53:24.3587911Z [32m-   "VizAxisControls",[39m
+2026-09-11T05:53:24.3588923Z [32m-   "VizAxisSummary",[39m
+2026-09-11T05:53:24.3589930Z [32m-   "VizColorControls",[39m
+2026-09-11T05:53:24.3590976Z [32m-   "VizColorLegendConfig",[39m
+2026-09-11T05:53:24.3592014Z [32m-   "VizEncodingBadge",[39m
+2026-09-11T05:53:24.3593000Z [32m-   "VizHeatmapControls",[39m
+2026-09-11T05:53:24.3594193Z [32m-   "VizHeatmapPreview",[39m
+2026-09-11T05:53:24.3595190Z [32m-   "VizLineControls",[39m
+2026-09-11T05:53:24.3596409Z [32m-   "VizLinePreview",[39m
+2026-09-11T05:53:24.3597398Z [32m-   "VizMarkControls",[39m
+2026-09-11T05:53:24.3598345Z [32m-   "VizMarkPreview",[39m
+2026-09-11T05:53:24.3599295Z [32m-   "VizOpacityControls",[39m
+2026-09-11T05:53:24.3600601Z [32m-   "VizOpacitySummary",[39m
+2026-09-11T05:53:24.3601584Z [32m-   "VizPointControls",[39m
+2026-09-11T05:53:24.3602490Z [32m-   "VizPointPreview",[39m
+2026-09-11T05:53:24.3603377Z [32m-   "VizRoleBadge",[39m
+2026-09-11T05:53:24.3604330Z [32m-   "VizScaleControls",[39m
+2026-09-11T05:53:24.3605636Z [32m-   "VizScaleSummary",[39m
+2026-09-11T05:53:24.3606856Z [32m-   "VizScatterControls",[39m
+2026-09-11T05:53:24.3607863Z [32m-   "VizScatterPreview",[39m
+2026-09-11T05:53:24.3608852Z [32m-   "VizShapeControls",[39m
+2026-09-11T05:53:24.3609824Z [32m-   "VizShapeLegend",[39m
+2026-09-11T05:53:24.3610773Z [32m-   "VizSizeControls",[39m
+2026-09-11T05:53:24.3611987Z [32m-   "VizSizeSummary",[39m
+2026-09-11T05:53:24.3612821Z [2m  ][22m
+2026-09-11T05:53:24.3613245Z 
+2026-09-11T05:53:24.3613958Z [36m [2m❯[22m test/styles.spec.ts:[2m50:45[22m[39m
+2026-09-11T05:53:24.3615541Z     [90m 48| [39m[34mdescribe[39m([32m'Sprint 182 shared component style contract'[39m[33m,[39m () [33m=>[39m {
+2026-09-11T05:53:24.3617822Z     [90m 49| [39m  [34mit[39m([32m'covers every nucleus component with token-driven CSS'[39m[33m,[39m () [33m=>[39m {
+2026-09-11T05:53:24.3619429Z     [90m 50| [39m    expect([...COMPONENT_STYLE_IDS].sort()).toEqual([...NUCLEUS_COMPON…
+2026-09-11T05:53:24.3620649Z     [90m   | [39m                                            [31m^[39m
+2026-09-11T05:53:24.3621948Z     [90m 51| [39m    [35mfor[39m ([35mconst[39m id [35mof[39m [33mCOMPONENT_STYLE_IDS[39m) {
+2026-09-11T05:53:24.3624170Z     [90m 52| [39m      [34mexpect[39m(css[33m,[39m id)[33m.[39m[34mtoContain[39m([32m`[data-oods-component='[39m[36m${[39mid[36m}[39m[32m']`[39m)[33m;[39m
+2026-09-11T05:53:24.3625521Z 
+2026-09-11T05:53:24.3626529Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+2026-09-11T05:53:24.3627205Z 
+2026-09-11T05:53:24.4770561Z undefined
+2026-09-11T05:53:24.4794856Z /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles:
+2026-09-11T05:53:24.4797574Z  ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/component-styles.json
+2026-09-11T05:53:24.5002945Z $ pnpm --filter @oods/components-react exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/components-react.json
+2026-09-11T05:53:25.3046679Z 
+2026-09-11T05:53:25.3071096Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/components-react[39m
+2026-09-11T05:53:25.3080730Z 
+2026-09-11T05:53:27.7166789Z  [32m✓[39m test/scenarios.spec.tsx [2m([22m[2m110 tests[22m[2m)[22m[33m 882[2mms[22m[39m
+2026-09-11T05:53:28.9400661Z  [32m✓[39m test/breadth.s186.spec.tsx [2m([22m[2m25 tests[22m[2m)[22m[33m 372[2mms[22m[39m
+2026-09-11T05:53:29.9284181Z  [32m✓[39m test/breadth.s187.spec.tsx [2m([22m[2m19 tests[22m[2m)[22m[32m 199[2mms[22m[39m
+2026-09-11T05:53:30.9550816Z  [32m✓[39m test/breadth.s185.spec.tsx [2m([22m[2m35 tests[22m[2m)[22m[32m 220[2mms[22m[39m
+2026-09-11T05:53:32.0938743Z  [32m✓[39m test/interactions.spec.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 306[2mms[22m[39m
+2026-09-11T05:53:35.3887363Z  [32m✓[39m test/accessibility.spec.tsx [2m([22m[2m114 tests[22m[2m)[22m[33m 2240[2mms[22m[39m
+2026-09-11T05:53:36.5021578Z  [32m✓[39m test/ported-scenarios.spec.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 285[2mms[22m[39m
+2026-09-11T05:53:37.2491940Z  [32m✓[39m test/package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+2026-09-11T05:53:37.9259025Z  [32m✓[39m test/ported-package-contract.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-09-11T05:53:38.9255595Z  [32m✓[39m test/disputed.spec.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 197[2mms[22m[39m
+2026-09-11T05:53:39.8926594Z  [32m✓[39m test/viz-recipes.spec.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 164[2mms[22m[39m
+2026-09-11T05:53:40.7997352Z  [32m✓[39m test/billing-views.spec.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 139[2mms[22m[39m
+2026-09-11T05:53:41.7106351Z  [32m✓[39m test/billing.spec.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+2026-09-11T05:53:42.9816625Z  [32m✓[39m test/ported-accessibility.spec.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 234[2mms[22m[39m
+2026-09-11T05:53:43.8132214Z  [32m✓[39m test/badge-tone.s185.spec.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+2026-09-11T05:53:47.3433803Z  [32m✓[39m test/scenario-interactions.spec.tsx [2m([22m[2m265 tests[22m[2m)[22m[33m 2686[2mms[22m[39m
+2026-09-11T05:53:48.2255032Z  [32m✓[39m test/contract-amendments.s184.spec.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+2026-09-11T05:53:48.9464523Z  [32m✓[39m test/viz-area-svg.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-09-11T05:53:49.7599167Z  [32m✓[39m test/table-empty.s184.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 31[2mms[22m[39m
+2026-09-11T05:53:50.3446019Z  [32m✓[39m test/ported-ssr.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 34[2mms[22m[39m
+2026-09-11T05:53:50.9097090Z  [32m✓[39m test/ssr.spec.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 117[2mms[22m[39m
+2026-09-11T05:53:50.9286873Z 
+2026-09-11T05:53:50.9297914Z [2m Test Files [22m [1m[32m21 passed[39m[22m[90m (21)[39m
+2026-09-11T05:53:50.9317323Z [2m      Tests [22m [1m[32m628 passed[39m[22m[90m (628)[39m
+2026-09-11T05:53:50.9336961Z [2m   Start at [22m 05:53:25
+2026-09-11T05:53:50.9340864Z [2m   Duration [22m 25.62s[2m (transform 996ms, setup 0ms, collect 5.34s, tests 8.47s, environment 7.29s, prepare 1.35s)[22m
+2026-09-11T05:53:50.9361295Z 
+2026-09-11T05:53:50.9365612Z JSON report written to /tmp/oods-component-suite-nLylAl/components-react.json
+2026-09-11T05:53:51.0998989Z $ pnpm --filter @oods/components-vue exec vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/components-vue.json
+2026-09-11T05:53:51.9266638Z 
+2026-09-11T05:53:51.9268248Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue[39m
+2026-09-11T05:53:51.9286578Z 
+2026-09-11T05:53:53.9554090Z  [32m✓[39m test/scenarios.spec.ts [2m([22m[2m110 tests[22m[2m)[22m[33m 574[2mms[22m[39m
+2026-09-11T05:53:54.9269519Z  [32m✓[39m test/breadth.s186.spec.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 200[2mms[22m[39m
+2026-09-11T05:53:55.9129013Z  [32m✓[39m test/breadth.s187.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 231[2mms[22m[39m
+2026-09-11T05:53:56.7872039Z  [32m✓[39m test/breadth.s185.spec.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 134[2mms[22m[39m
+2026-09-11T05:53:57.6321805Z  [32m✓[39m test/interactions.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+2026-09-11T05:53:58.4132189Z  [31m❯[39m test/ssr.spec.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 66[2mms[22m[39m
+2026-09-11T05:53:58.4136499Z [31m   [31m×[31m @oods/components-vue server rendering[2m > [22mSSR-renders every nucleus component family with semantic markup[39m[32m 64[2mms[22m[39m
+2026-09-11T05:53:58.4138200Z [31m     → ArchiveEvent: expected '<main><span class="oods-badge oods-ar…' to contain 'data-oods-component="ArchiveEvent"'[39m
+2026-09-11T05:54:01.5934257Z  [32m✓[39m test/accessibility.spec.ts [2m([22m[2m114 tests[22m[2m)[22m[33m 2163[2mms[22m[39m
+2026-09-11T05:54:02.4147630Z  [32m✓[39m test/ported-scenarios.spec.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+2026-09-11T05:54:03.6385114Z  [32m✓[39m test/package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 129[2mms[22m[39m
+2026-09-11T05:54:04.6394453Z  [32m✓[39m test/ported-package-contract.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+2026-09-11T05:54:05.6439233Z  [32m✓[39m test/disputed.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 166[2mms[22m[39m
+2026-09-11T05:54:06.6185100Z  [32m✓[39m test/viz-recipes.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 152[2mms[22m[39m
+2026-09-11T05:54:07.8786178Z  [32m✓[39m test/ported-accessibility.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 257[2mms[22m[39m
+2026-09-11T05:54:08.6861568Z  [32m✓[39m test/billing-views.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+2026-09-11T05:54:09.4935184Z  [32m✓[39m test/billing.spec.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+2026-09-11T05:54:10.2991250Z  [32m✓[39m test/craft.s191.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+2026-09-11T05:54:13.4362604Z  [32m✓[39m test/scenario-interactions.spec.ts [2m([22m[2m265 tests[22m[2m)[22m[33m 2300[2mms[22m[39m
+2026-09-11T05:54:14.1825645Z  [32m✓[39m test/ported-ssr.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 34[2mms[22m[39m
+2026-09-11T05:54:14.9469785Z  [32m✓[39m test/contract-amendments.s184.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+2026-09-11T05:54:15.6834506Z [90mstderr[2m | test/viz-area-svg.spec.ts[2m > [22m[2membeds a labelled static figure without altering renderer IDs or ARIA
+2026-09-11T05:54:15.6841293Z [22m[39m[Vue warn]: Unhandled error during execution of render function 
+2026-09-11T05:54:15.6842647Z   at <OodsVizAreaPreview svg="<svg><script>bad()</script></svg>" > 
+2026-09-11T05:54:15.6843757Z   at <App>
+2026-09-11T05:54:15.6844376Z 
+2026-09-11T05:54:15.6857766Z  [32m✓[39m test/viz-area-svg.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-09-11T05:54:16.4655709Z  [32m✓[39m test/table-empty.s184.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 39[2mms[22m[39m
+2026-09-11T05:54:16.4911398Z 
+2026-09-11T05:54:16.4928601Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-09-11T05:54:16.4937547Z 
+2026-09-11T05:54:16.4939596Z [41m[1m FAIL [22m[49m test/ssr.spec.ts[2m > [22m@oods/components-vue server rendering[2m > [22mSSR-renders every nucleus component family with semantic markup
+2026-09-11T05:54:16.4963600Z [31m[1mAssertionError[22m: ArchiveEvent: expected '<main><span class="oods-badge oods-ar…' to contain 'data-oods-component="ArchiveEvent"'[39m
+2026-09-11T05:54:16.4976800Z 
+2026-09-11T05:54:16.4997115Z [32m- Expected[39m
+2026-09-11T05:54:16.5011928Z [31m+ Received[39m
+2026-09-11T05:54:16.5028646Z 
+2026-09-11T05:54:16.5046447Z [32m- data-oods-component="ArchiveEvent"[39m
+2026-09-11T05:54:16.5480846Z [31m+ <main><span class="oods-badge oods-archive-pill" data-oods-component="ArchivePill" data-status="false" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="false" data-badge-variant="archive"><!----><!--[--><span data-oods-badge-label="true">false</span><!--]--></span><section class="oods-archive-summary" data-oods-component="ArchiveSummary" data-summary-type="archive"><h3 data-summary-title="true">Archive Summary</h3><dl><div data-summary-item="true"><dt>Archived</dt><dd>No</dd></div><div data-summary-item="true"><dt>Reason</dt><dd>Retention</dd></div></dl></section><span class="oods-badge oods-cancellation-badge" data-oods-component="CancellationBadge" data-status="false" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="false" data-badge-variant="cancellation"><!----><!--[--><span data-oods-badge-label="true">false</span><!--]--></span><form class="oods-cancellation-form" data-oods-component="CancellationForm" data-form-type="cancellation"><header data-form-header="true"><h3>Cancellation Form</h3><!----></header><div data-form-content="true"><label data-form-control="select"><span>Reason Code</span><select name="reasonCode" value="budget"><option value="no_longer_needed">no_longer_needed</option><option value="budget" selected>budget</option><option value="duplicate">duplicate</option></select></label><!----><label data-form-control="textarea"><span>Reason</span><textarea name="reason">Cost</textarea></label><!----></div></form><div class="oods-price-card-meta" data-oods-component="PriceCardMeta" data-meta-type="price"><span data-meta-title="true">Price</span><span data-meta-item="true"><strong>Interval:</strong> monthly</span></div><span class="oods-badge oods-owner-badge" data-oods-component="OwnerBadge" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-variant="owner"><!----><!--[--><span data-oods-badge-label="true">user-7</span><!--]--></span><section class="oods-ownership-summary" data-oods-component="OwnershipSummary" data-summary-type="ownership"><h3 data-summary-title="true">Ownership Summary</h3><dl><div data-summary-item="true"><dt>Owner ID</dt><dd>user-7</dd></div><div data-summary-item="true"><dt>Role</dt><dd>administrator</dd></div></dl></section><div class="oods-ownership-meta" data-oods-component="OwnershipMeta" data-meta-type="ownership"><span data-meta-title="true">Ownership</span><span data-meta-item="true"><strong>Owner Type:</strong> organization</span><span data-meta-item="true"><strong>Role:</strong> custodian</span></div><section class="oods-tags-summary" data-oods-component="TagSummary" data-summary-type="tags"><h3 data-summary-title="true">Tag Summary</h3><dl><div data-summary-item="true"><dt>Tag Count</dt><dd>0</dd></div><div data-summary-item="true"><dt>Tags</dt><dd>alpha</dd></div></dl></section><span class="oods-label-cell" data-oods-component="LabelCell"><span data-oods-label-cell-primary="true">Product name</span><span data-oods-label-cell-description="true">Supporting text</span></span><span class="oods-inline-label" data-oods-component="InlineLabel">Product name</span><label class="oods-form-label-group" data-oods-component="FormLabelGroup" for="product-label"><span data-oods-form-label="true">Product name</span><!----></label><span class="oods-badge oods-classification-badge" data-oods-component="ClassificationBadge" data-status="strict" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="strict" data-badge-variant="classification"><!----><!--[--><span data-oods-badge-label="true">Electronics</span><!--]--></span><form class="oods-classification-editor" data-oods-component="ClassificationEditor" data-form-type="classification-editor"><header data-form-header="true"><h3>Classification Editor</h3><!----></header><div data-form-content="true"><label data-form-control="input"><span>Category</span><input type="text" name="category" value="Electronics"></label><label data-form-control="input"><span>Tags</span><input type="text" name="tags" placeholder="tag-1, tag-2" value="[&quot;alpha&quot;]"></label><label data-form-control="select"><span>Mode</span><select name="mode"><option value="strict">strict</option><option value="flexible">flexible</option></select></label></div></form><div class="oods-timeline" role="log" aria-label="Audit Timeline" data-oods-component="AuditTimeline" data-timeline-type="audit"><h3 data-timeline-title="true">Audit Timeline</h3><!----><!----><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">Subscription created</p><time data-timeline-time="true" datetime="2026-09-05T12:00:00Z">Sep 5, 2026, 12:00 PM</time><!----><!----><!----></article></li></ol></div><section class="oods-cancellation-summary" data-oods-component="CancellationSummary" data-summary-type="cancellation" data-cancellation-state="true"><h3 data-summary-title="true">Cancellation Summary</h3><dl><div data-summary-item="true"><dt>Cancel at period end</dt><dd>Yes</dd></div></dl></section><nav class="oods-pagination-bar" aria-label="Pagination" data-oods-component="PaginationBar" data-behavioral="pagination"><span data-pagination-count="true">80 records</span><span data-pagination-range="true">Showing 26–50 of 80</span><ul class="oods-pagination-bar__pages"><li><button type="button" data-pagination-prev="true" aria-label="Previous page">‹</button></li><li><button type="button" data-pagination-page="1" aria-label="Page 1">1</button></li><li><button type="button" data-pagination-page="2" aria-label="Page 2" aria-current="page">2</button></li><li><button type="button" data-pagination-page="3" aria-label="Page 3">3</button></li><li><button type="button" data-pagination-page="4" aria-label="Page 4">4</button></li><li><button type="button" data-pagination-next="true" aria-label="Next page">›</button></li></ul><span data-pagination-current="true">Page 2 of 4</span><!----><!----></nav><span class="oods-badge oods-price-badge" data-oods-component="PriceBadge" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-price="true" data-badge-variant="price" data-currency="USD"><!---->$25.00</span><time class="oods-relative-timestamp" datetime="2026-09-05T12:00:00Z" title="Sep 5, 2026, 12:00 PM" data-oods-component="RelativeTimestamp">2 hours ago</time><form class="oods-search-input" role="search" aria-label="Search…" data-oods-component="SearchInput" data-behavioral="search"><div class="oods-field" data-oods-component="Input" style="" aria-label="Search…"><!----><input id="oods-search-v-1" class="oods-field-control" type="search" value="past due" placeholder="Search…"><!----><!----></div><button type="button" data-search-clear="true" aria-label="Clear search">×</button></form><span class="oods-badge oods-status-badge" data-oods-component="StatusBadge" data-status="past_due" data-domain="subscription" data-tone="critical" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text);" title="Renewal payment failed; smart retries ongoing and access retained during the grace window." aria-label="Status: Past Due"><span class="oods-badge-icon" aria-hidden="true">⚠︎</span>Past Due</span><div class="oods-timeline" role="log" aria-label="Status Timeline" data-oods-component="StatusTimeline" data-timeline-type="status"><h3 data-timeline-title="true">Status Timeline</h3><p data-timeline-current="true">Current status: Active</p><p data-timeline-transitions="true">Allowed transitions: past_due, cancelled</p><ol data-timeline-events="true"><li data-timeline-empty="true">No events</li></ol></div><span class="oods-badge" data-oods-component="Badge" data-domain="subscription" data-tone="critical" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text);"><!---->Past due</span><section class="oods-banner" data-oods-component="Banner" data-domain="subscription" data-tone="critical" data-emphasis="subtle" role="alert" aria-live="assertive" style="--cmp-banner-background:var(--sys-status-critical-surface);--cmp-banner-border:var(--sys-status-critical-border);--cmp-banner-text:var(--sys-status-critical-text);"><div class="oods-banner-content"><strong class="oods-banner-title">Payment failed</strong><!----><!----><!----></div><!----></section><button type="button" class="oods-button inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white h-10 px-4 text-sm" data-oods-component="Button" data-intent="neutral" data-size="md" style="--cmp-button-background:var(--sys-surface-interactive-primary-default);--cmp-button-background-hover:var(--sys-surface-interactive-primary-hover);--cmp-button-background-disabled:var(--sys-surface-disabled);--cmp-button-border:var(--sys-border-subtle);--cmp-button-text:var(--sys-text-on-interactive);--cmp-button-text-disabled:var(--sys-text-disabled);--cmp-button-focus-width:var(--sys-focus-width, 2px);--cmp-button-focus-outer:var(--sys-focus-ring-outer, Highlight);">Save changes</button><div class="oods-card" data-oods-component="Card" data-elevated="false">Account summary</div><header class="oods-card-header" data-oods-component="CardHeader"><h3>Account summary</h3><span data-oods-supporting="true">Current subscription</span></header><span class="oods-color-swatch" data-oods-component="ColorSwatch" data-summary-type="color-swatch" data-swatch-color="#2563eb" style="--oods-swatch-color:#2563eb;"><span data-oods-swatch-chip="true" aria-hidden="true"></span><span data-oods-swatch-label="true">Ocean blue</span></span><span class="oods-badge" data-oods-component="ColorizedBadge" data-status="active" data-domain="subscription" data-tone="success" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-success-surface);--cmp-badge-border:var(--sys-status-success-border);--cmp-badge-text:var(--sys-status-success-text);--oods-badge-color:#15803d;" data-badge-status="active" data-badge-color="#15803d" data-badge-variant="colorized"><span class="oods-badge-icon" aria-hidden="true"><!--[--><span data-oods-badge-marker="true" aria-hidden="true"></span><!--]--></span><!--[--><span data-oods-badge-label="true">Active</span><!--]--></span><header class="oods-detail-header" data-oods-component="DetailHeader"><h1>Subscription details</h1><span data-oods-subtitle="true">Pro plan</span><!----></header><div class="oods-viz-area-preview" data-oods-component="VizAreaPreview" data-viz-preview-type="area" data-viz-width="320" data-viz-height="180" style="--oods-viz-width:320px;--oods-viz-height:180px;"><div data-viz-preview-placeholder="true">Area preview (320 x 180)</div></div><section class="oods-classification-panel" data-oods-component="ClassificationPanel" data-panel-type="classification"><header data-panel-header="true"><h3>Classification</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">Electronics &gt; Mobile</span></div></section><aside class="oods-filter-panel" data-oods-component="FilterPanel" data-behavioral="filter" data-filter-mode="batch" role="region" aria-label="Filters"><!----><fieldset data-filter-section="true" data-collapsible="true"><legend>Status</legend></fieldset><button type="button" data-filter-apply="true">Apply</button></aside><section class="oods-price-summary" data-oods-component="PriceSummary" data-summary-type="price"><h3 data-summary-title="true">Price Summary</h3><dl><div data-summary-item="true"><dt>Amount</dt><dd>2500</dd></div><div data-summary-item="true"><dt>Currency</dt><dd>USD</dd></div></dl></section><section class="oods-address-collection-panel" data-oods-component="AddressCollectionPanel" data-panel-type="address"><header data-panel-header="true"><h3>Addresses</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">2 addresses on file</span></div></section><section class="oods-membership-panel" data-oods-component="MembershipPanel" data-panel-type="membership"><header data-panel-header="true"><h3>Membership</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">Owner of 2 workspaces</span></div></section><section class="oods-preference-panel" data-oods-component="PreferencePanel" data-panel-type="preference"><header data-panel-header="true"><h3>Preferences</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">No preferences saved</span></div></section><form class="oods-tag-manager" data-oods-component="TagManager" data-form-type="tag-manager"><header data-form-header="true"><h3>Tag Manager</h3><!----></header><div data-form-content="true"><div data-tag-list="true"><span data-tag-item="true">alpha</span></div><label data-form-control="input"><span>Add Tag</span><input type="text" name="newTag" placeholder="Type a tag"></label></div></form><span class="oods-badge oods-address-summary-badge" data-oods-component="AddressSummaryBadge" data-status="billing" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="billing" data-badge-variant="address"><!----><!--[--><span data-oods-badge-label="true">Billing address</span><!--]--></span><span class="oods-badge oods-message-status-badge" data-oods-component="MessageStatusBadge" data-status="delivered" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="delivered" data-badge-variant="message"><!----><!--[--><span data-oods-badge-label="true">delivered</span><!--]--></span><span class="oods-badge oods-preference-summary-badge" data-oods-component="PreferenceSummaryBadge" data-status="v3" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="v3" data-badge-variant="preference"><!----><!--[--><span data-oods-badge-label="true">notifications</span><!--]--></span><span class="oods-role-badge-list" data-oods-component="RoleBadgeList" data-badge-variant="roles"><span data-role-badge="true">owner</span></span><div class="oods-tag-pills" data-oods-component="TagPills" data-summary-type="tag-pills"><span data-tag-pill="true">alpha</span><span data-tag-overflow="true">+2</span></div><div class="oods-address-validation-timeline" data-oods-component="AddressValidationTimeline" data-timeline-type="address-validation" role="log" aria-label="Address Validation Timeline"><h3 data-timeline-title="true">Address Validation Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">Geocoded</p><!----><!----></article></li></ol></div><article class="oods-audit-event" data-oods-component="AuditEvent" data-event-type="audit"><!----><p data-event-label="true">user.updated</p><!----></article><div class="oods-membership-audit-timeline" data-oods-component="MembershipAuditTimeline" data-timeline-type="membership" role="log" aria-label="Membership Timeline"><h3 data-timeline-title="true">Membership Timeline</h3><ol data-timeline-events="true"><li data-timeline-empty="true">No events</li></ol></div><div class="oods-message-event-timeline" data-oods-component="MessageEventTimeline" data-timeline-type="message" role="log" aria-label="Message Timeline"><h3 data-timeline-title="true">Message Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">delivered</p><!----><!----></article></li></ol></div><div class="oods-preference-timeline" data-oods-component="PreferenceTimeline" data-timeline-type="preference" role="log" aria-label="Preference Timeline"><h3 data-timeline-title="true">Preference Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">notifications.email</p><!----><!----></article></li></ol></div><form class="oods-address-editor" data-oods-component="AddressEditor" data-form-type="address-editor"><header data-form-header="true"><h3>Address Editor</h3><!----></header><div data-form-content="true"><label data-form-control="input"><span>Street</span><input type="text" name="street" value="1 Main St"></label><label data-form-control="input"><span>City</span><input type="text" name="city" value="Springfield"></label><label data-form-control="input"><span>Region</span><input type="text" name="region"></label><label data-form-control="input"><span>Postal Code</span><input type="text" name="postalCode"></label></div></form><form class="oods-preference-editor" data-oods-component="PreferenceEditor" data-form-type="preference-editor"><header data-form-header="true"><h3>Preference Editor</h3><!----></header><div data-form-content="true"><label data-form-control="select"><span>Namespace</span><select name="namespace"><option value="default">default</option></select></label><label data-form-control="textarea"><span>Preference Document</span><textarea name="preferenceDocument">{}</textarea></label></div></form><form class="oods-role-assignment-form" data-oods-component="RoleAssignmentForm" data-form-type="role-assignment"><header data-form-header="true"><h3>Role Assignment</h3><!----></header><div data-form-content="true"><label data-form-control="select"><span>Role</span><select name="role" value="owner"><option value="owner" selected>owner</option></select></label><label data-form-control="input"><span>Assignee</span><input type="text" name="assignee"></label></div></form><div class="oods-status-selector" data-oods-component="StatusSelector" data-summary-type="status-selector"><label data-form-control="select"><span>Status</span><select name="status" value="active"><option value="draft">draft</option><option value="active" selected>active</option><option value="inactive">inactive</option></select></label><!----></div><fieldset class="oods-tag-input" data-oods-component="TagInput" data-form-type="tag-input"><legend>Tag Input</legend><!----><div data-form-content="true"><label data-form-control="input"><span>Tag</span><input type="text" name="tag" placeholder="Add a tag"></label><div data-tag-list="true"><span data-tag-item="true">alpha</span></div></div></fieldset><fieldset class="oods-template-picker" data-oods-component="TemplatePicker" data-form-type="template-picker"><legend>Template Picker</legend><!----><div data-form-content="true"><label data-form-control="select"><span>Template</span><select name="template" value="welcome"><option value="welcome" selected>welcome</option></select></label><label data-form-control="select"><span>Channel</span><select name="channel"><option value="email">email</option><option value="sms">sms</option><option value="in_app">in_app</option></select></label></div></fieldset><div class="oods-field" data-oods-component="Checkbox" style=""><label class="oods-checkbox" for="marketing"><input id="marketing" type="checkbox"><span class="oods-field-label">Product updates<!----></span></label><!----><!----></div><div class="oods-date-picker" data-oods-component="DatePicker"><div class="oods-field" data-oods-component="Input" style=""><label class="oods-field-label" for="renewal">Renewal date<!----></label><input id="renewal" class="oods-field-control" type="date" value="2026-09-30"><!----><!----></div></div><div class="oods-grid" data-oods-component="Grid" style="--oods-grid-columns:auto-fit;--oods-grid-min-column:16rem;--oods-layout-gap:var(--cmp-spacing-stack-default, 1rem);--oods-layout-align:stretch;--oods-layout-justify:normal;"><span>First</span><span>Second</span></div><div class="oods-field" data-oods-component="Input" style=""><label class="oods-field-label" for="email">Email<!----></label><input id="email" class="oods-field-control" type="text" value="owner@example.com"><!----><!----></div><div class="oods-field" data-oods-component="Select" style=""><label class="oods-field-label" for="plan">Plan<!----></label><select id="plan" class="oods-field-control" value="pro"><!----><option value="basic">Basic</option><option value="pro" selected>Pro</option></select><!----><!----></div><div class="oods-stack" data-oods-component="Stack" style="--oods-stack-direction:column;--oods-stack-wrap:nowrap;--oods-layout-gap:var(--cmp-spacing-stack-default, 1rem);--oods-layout-align:stretch;--oods-layout-justify:flex-start;">Stack content</div><table class="oods-table" data-oods-component="Table" data-density="default"><caption>Subscriptions</caption><thead><tr><th scope="col">Name</th></tr></thead><tbody><tr><td>Acme</td></tr></tbody></table><div class="oods-tabs" data-oods-component="Tabs" data-size="md"><div class="oods-tab-list" role="tablist" aria-label="Account sections"><button id="oods-v-7-tab-overview" class="oods-tab" type="button" role="tab" tabindex="0" aria-selected="true" aria-controls="oods-v-7-panel-overview" data-tab-id="overview">Overview</button><!----></div><div id="oods-v-7-panel-overview" class="oods-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="oods-v-7-tab-overview">Summary</div></div><strong class="oods-text" data-oods-component="Text" data-size="md" data-weight="normal">Account owner</strong><div class="oods-field" data-oods-component="Textarea" style=""><label class="oods-field-label" for="notes">Notes<!----></label><textarea id="notes" class="oods-field-control" rows="3">Call before renewal</textarea><!----><!----></div><section class="oods-audit-summary" data-oods-component="AuditSummaryCard" aria-label="Audit summary"><h3>Audit summary</h3><dl><dt>Transitions</dt><dd>0</dd><dt>Last actor</dt><dd>Not recorded</dd><dt>Last transition</dt><dd>Not recorded</dd></dl><!----></section><table class="oods-sort-indicator" data-oods-component="SortIndicator" aria-label="Sort"><thead><tr><th scope="col" aria-sort="none"><button type="button" aria-label="Sort name">name: none</button></th></tr></thead></table><span class="oods-inline-label" data-oods-component="TimelineEntryLabel" data-timeline-label="true" data-compact="true">Timeline label</span><span class="oods-archived-row" data-oods-component="ArchivedRowOverlay" data-archived="true" data-archive-tab="Archived" role="group" aria-hidden="false" aria-label="Archived: Retained subscription"><!--[-->Archived record<!--]--><span class="oods-archive-badge">Archived</span></span><span class="oods-billing-summary" data-oods-component="BillingSummaryBadge">$19.00 · monthly</span><div class="oods-billing-field" data-oods-component="BillingAmountInput" data-state="editing"><label for="billing-amount-v-9">Billing amount</label><span id="billing-amount-v-9-currency">USD</span><input id="billing-amount-v-9" type="text" inputmode="decimal" value="19" data-billing-minor-units="100" aria-describedby="billing-amount-v-9-currency"><!----><!----></div><div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="editing"><label for="billing-interval-v-10">Billing interval</label><select id="billing-interval-v-10" value="monthly"><!----><option value="monthly" selected>monthly</option><option value="quarterly">quarterly</option><option value="annual">annual</option></select><!----><!----></div><section class="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label="Billing cycle"><h3>Billing cycle</h3><p>47% complete · 16 days remaining</p><progress max="100" value="47" aria-label="47% complete · 16 days remaining"></progress><!----></section><section class="oods-payment-timeline" data-oods-component="PaymentTimeline" role="log" aria-label="Payments"><h3>Payments</h3><p>No amount USD · pending</p><p class="oods-billing-muted">Payment method: Not provided</p><ol><li data-payment-kind="last"><strong>Last payment</strong><time datetime="2026-09-01T00:00:00Z">Sep 1, 2026</time></li><li data-payment-kind="next"><strong>Next payment</strong><time datetime="2026-10-01T00:00:00Z">Oct 1, 2026</time></li></ol></section><section class="oods-payment-timeline" data-oods-component="PaymentEventTimeline" role="log" aria-label="Payment events"><h3>Payment events</h3><p>No amount USD · pending</p><!----><ol><li data-payment-kind="last"><strong>Last payment</strong><time datetime="2026-09-01T00:00:00Z">Sep 1, 2026</time></li><li data-payment-kind="next"><strong>Next payment</strong><time datetime="2026-10-01T00:00:00Z">Oct 1, 2026</time></li></ol></section><span class="oods-billing-card-meta" data-oods-component="BillingCardMeta">$19.00 · No interval</span></main>[39m
+2026-09-11T05:54:16.5644397Z 
+2026-09-11T05:54:16.5645307Z [36m [2m❯[22m test/ssr.spec.ts:[2m167:33[22m[39m
+2026-09-11T05:54:16.5647283Z     [90m165| [39m    [35mconst[39m html [33m=[39m [35mawait[39m [34mrenderToString[39m([34mh[39m([33mServerShowcase[39m))[33m;[39m
+2026-09-11T05:54:16.5649097Z     [90m166| [39m    [35mfor[39m ([35mconst[39m componentId [35mof[39m [33mNUCLEUS_COMPONENT_IDS[39m) {
+2026-09-11T05:54:16.5650975Z     [90m167| [39m      expect(html, componentId).toContain(`data-oods-component="${comp…
+2026-09-11T05:54:16.5652055Z     [90m   | [39m                                [31m^[39m
+2026-09-11T05:54:16.5652772Z     [90m168| [39m    }
+2026-09-11T05:54:16.5654138Z     [90m169| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m'<table'[39m)[33m;[39m
+2026-09-11T05:54:16.5654884Z 
+2026-09-11T05:54:16.5655428Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+2026-09-11T05:54:16.5655823Z 
+2026-09-11T05:54:16.5655860Z 
+2026-09-11T05:54:16.5656981Z [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m20 passed[39m[22m[90m (21)[39m
+2026-09-11T05:54:16.5658493Z [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m610 passed[39m[22m[90m (611)[39m
+2026-09-11T05:54:16.5659537Z [2m   Start at [22m 05:53:51
+2026-09-11T05:54:16.5660967Z [2m   Duration [22m 24.56s[2m (transform 687ms, setup 0ms, collect 5.00s, tests 6.95s, environment 8.08s, prepare 1.35s)[22m
+2026-09-11T05:54:16.5661845Z 
+2026-09-11T05:54:16.5662431Z JSON report written to /tmp/oods-component-suite-nLylAl/components-vue.json
+2026-09-11T05:54:16.6747410Z undefined
+2026-09-11T05:54:16.6760457Z /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue:
+2026-09-11T05:54:16.6763256Z  ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --reporter=default --reporter=json --outputFile=/tmp/oods-component-suite-nLylAl/components-vue.json
+2026-09-11T05:54:16.6998354Z {"packages":4,"passed":1421,"failed":5,"skipped":0,"success":false}
+2026-09-11T05:54:16.7051791Z ##[error]Process completed with exit code 1.
+2026-09-11T05:54:16.7147620Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:54:16.7148937Z Post job cleanup.
+2026-09-11T05:54:16.8979065Z Pruning is unnecessary.
+2026-09-11T05:54:16.9242779Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-11T05:54:16.9245093Z Post job cleanup.
+2026-09-11T05:54:17.0427127Z [command]/usr/bin/git version
+2026-09-11T05:54:17.0487566Z git version 2.55.0
+2026-09-11T05:54:17.0548618Z Temporarily overriding HOME='/home/runner/work/_temp/85bc489b-2644-4f4d-86bc-24a2181182f9' before making global git config changes
+2026-09-11T05:54:17.0569782Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-11T05:54:17.0571689Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-11T05:54:17.0634177Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-11T05:54:17.0768468Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-11T05:54:17.1134718Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-11T05:54:17.1181652Z http.https://github.com/.extraheader
+2026-09-11T05:54:17.1207782Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-11T05:54:17.1273342Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-11T05:54:17.1727676Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-11T05:54:17.1780690Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-11T05:54:17.2324503Z Cleaning up orphan processes
+2026-09-11T05:54:17.2761838Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

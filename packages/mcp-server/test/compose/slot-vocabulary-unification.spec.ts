@@ -35,9 +35,8 @@ describe('slot vocabulary unification', () => {
     expect(components).toContain('RoleBadgeList');
     expect(components).toContain('SearchInput');
     // The one row action is bound to its collection; surplus toolbar actions stay absent.
-    const row = result.schema.screens[0].children?.flatMap(node => node.children ?? []).find(node => node.collection?.source === 'rows')
-      ?? result.schema.screens[0].children?.find(node => node.collection?.source === 'rows');
     const visit = (node: UiElement): UiElement[] => [node, ...(node.children ?? []).flatMap(visit)];
+    const row = result.schema.screens.flatMap(visit).find(node => node.collection?.source === 'rows');
     const buttons = result.schema.screens.flatMap(visit).filter(node => node.component === 'Button');
     expect(row).toBeDefined();
     expect(buttons).toHaveLength(1);
@@ -63,9 +62,8 @@ describe('slot vocabulary unification', () => {
 
     const components = collectComponents(result.schema);
     // The one row action is bound to its collection; surplus toolbar actions stay absent.
-    const row = result.schema.screens[0].children?.flatMap(node => node.children ?? []).find(node => node.collection?.source === 'rows')
-      ?? result.schema.screens[0].children?.find(node => node.collection?.source === 'rows');
     const visit = (node: UiElement): UiElement[] => [node, ...(node.children ?? []).flatMap(visit)];
+    const row = result.schema.screens.flatMap(visit).find(node => node.collection?.source === 'rows');
     const buttons = result.schema.screens.flatMap(visit).filter(node => node.component === 'Button');
     expect(row).toBeDefined();
     expect(buttons).toHaveLength(1);

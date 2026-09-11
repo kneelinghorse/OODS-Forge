@@ -1,0 +1,47 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/closeout.s191.spec.ts (3 tests) 409ms
+   ✓ Sprint 191 bounded closeout > the advertised diff includes the maintenance executable boundary and component repairs  398ms
+ ❯ test/e2e/object-codegen-pipeline.spec.ts (5 tests | 1 failed) 411ms
+   ✓ E2E object codegen target readiness > builds the original Subscription detail now that ArchiveSummary is governed  336ms
+   ✓ E2E object codegen target readiness > builds the fully ported Subscription list for both framework targets 19ms
+   ✓ E2E object codegen target readiness > keeps the original User detail tree and builds it after the StatusTimeline binding repair 16ms
+   ✓ E2E object codegen target readiness > keeps objectSchema field metadata through successful framework emission 23ms
+   × E2E object codegen target readiness > builds the unchanged intent-only dashboard through both root component packages 16ms
+     → expected false to be true // Object.is equality
+ ✓ test/compose/confidence-scoring.spec.ts (12 tests) 137ms
+ ✓ test/compose/slot-vocabulary-unification.spec.ts (2 tests) 71ms
+ ✓ src/tools/__tests__/code.generate.test.ts (15 tests) 44ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/e2e/object-codegen-pipeline.spec.ts > E2E object codegen target readiness > builds the unchanged intent-only dashboard through both root component packages
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/e2e/object-codegen-pipeline.spec.ts:191:81
+    189|     const dashboardNodes = compose.schema.screens.flatMap(visit);
+    190|     expect(dashboardNodes.map(([, component]) => component)).toContain…
+    191|     expect(dashboardNodes.some(([, component]) => component.startsWith…
+       |                                                                                 ^
+    192|     for (const framework of ['react', 'vue'] as const) {
+    193|       const result = await codegenHandle({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 36 passed (37)
+   Start at  01:09:44
+   Duration  3.73s (transform 899ms, setup 28ms, collect 1.99s, tests 1.07s, environment 0ms, prepare 159ms)
+
+JSON report written to /tmp/forge-s193-corrective-server-targeted.json
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/compose/confidence-scoring.spec.ts test/compose/slot-vocabulary-unification.spec.ts test/e2e/object-codegen-pipeline.spec.ts test/product-reality/closeout.s191.spec.ts src/tools/__tests__/code.generate.test.ts --reporter=default --reporter=json --outputFile=/tmp/forge-s193-corrective-server-targeted.json

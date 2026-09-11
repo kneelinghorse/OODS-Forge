@@ -1,0 +1,40 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/saved-schema-compiler.s183.spec.ts (4 tests | 1 failed) 236ms
+   ✓ Sprint 183 M04 saved-schema compiler > keeps the immutable Sprint 183 baseline at its genuine 2 compiled and 30 typed-gap cells 3ms
+   ✓ Sprint 183 M04 saved-schema compiler > measures current live readiness separately from the frozen Sprint 183 baseline 4ms
+   ✓ Sprint 183 M04 saved-schema compiler > retains the archived complete artifacts and keeps the live exit-gate result deterministic 8ms
+   × Sprint 183 M04 saved-schema compiler > turns a fallback-for-an-unready-component mutation red without changing the saved corpus 92ms
+     → expected [Function] to throw error matching /returned a generated artifact for un…/i but got 'react generation failed: [{"code":"OO…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/saved-schema-compiler.s183.spec.ts > Sprint 183 M04 saved-schema compiler > turns a fallback-for-an-unready-component mutation red without changing the saved corpus
+AssertionError: expected [Function] to throw error matching /returned a generated artifact for un…/i but got 'react generation failed: [{"code":"OO…'
+
+- Expected: 
+/returned a generated artifact for unsupported ArchiveEvent; typed gap required/i
+
++ Received: 
+"react generation failed: [{\"code\":\"OODS-V007\",\"message\":\"Field \\\"address_roles\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-3-13\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"preference_document\\\" has unknown data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-5-17\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"state_history\\\" has array data, which cannot bind to DatePicker.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-6-19\",\"component\":\"DatePicker\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"tags\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-8-23\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"tag_metadata\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-9-25\",\"component\":\"Input\"}]"
+
+ ❯ test/product-reality/saved-schema-compiler.s183.spec.ts:223:7
+    221|       expect(sha256(path.join(mutationCorpus, 'tier1-acceptance-sub-de…
+    222| 
+    223|       await expect(buildSavedSchemaCorpusEvidence({
+       |       ^
+    224|         corpusDirectory: mutationCorpus,
+    225|         generator: async (input) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  00:42:13
+   Duration  2.79s (transform 1.42s, setup 16ms, collect 2.30s, tests 236ms, environment 0ms, prepare 73ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/saved-schema-compiler.s183.spec.ts

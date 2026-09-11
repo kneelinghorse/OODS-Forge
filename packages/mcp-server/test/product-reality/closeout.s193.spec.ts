@@ -16,6 +16,10 @@ const options = { sprintId: 'sprint-193', missionId: 's193-m07', base };
 
 describe('Sprint 193 bounded closeout', () => {
   it('independently enumerates the catalog, contracts, styles, tokens and export boundary', () => {
+    expect(S193_PUBLIC_RUNTIME_SCOPE).toEqual(expect.arrayContaining([
+      'schemas/traits', 'generated/types/traits', 'generated/types/index.ts',
+      'cmos/foundational-docs/closeout-checklist.md',
+    ]));
     const audit = auditSprintRange({ root, base, head: measured, sprintId: 'sprint-193' });
     expect(range.canonicalPaths).toEqual(audit.canonicalPaths);
     expect(range.publicPaths).toEqual(audit.publicPaths);

@@ -4,8 +4,21 @@ import { createRequire } from 'node:module';
 import { getAjv } from '../../lib/ajv.js';
 import type { UiSchema } from '../../schemas/generated.js';
 import inputSchema from '../../schemas/code.generate.input.json' assert { type: 'json' };
-import { isKnownComponentForCodegen } from '../../codegen/target-readiness.js';
-import { handle } from '../code.generate.js';
+import { isKnownComponentForCodegen, preflightTargetCapabilities } from '../../codegen/target-readiness.js';
+import { handle, type CodeGenerateDependencies } from '../code.generate.js';
+
+// A known component can lose target evidence independently of emitted syntax.
+// All production roots are governed, so make the unavailable operand explicit.
+const unavailableArchiveEvent: CodeGenerateDependencies = {
+  targetCapabilityPreflight: (screens, framework) => {
+    const visit = (node: UiSchema['screens'][number]): UiSchema['screens'] => [node, ...(node.children ?? []).flatMap(visit)];
+    return [...preflightTargetCapabilities(screens, framework), ...screens.flatMap(visit)
+      .filter(node => node.component === 'ArchiveEvent').map(node => ({
+        code: 'OODS-N015', nodeId: node.id, component: node.component,
+        message: `Component ArchiveEvent is not emission-eligible for ${framework}; evidence state: unavailable.`,
+      }))];
+  },
+};
 
 const ajv = getAjv();
 const validateInput = ajv.compile(inputSchema);
@@ -546,7 +559,7 @@ describe('code.generate tool', () => {
           props: { 'data-x.y': 'would fail syntax preflight' },
         }],
       },
-    });
+    }, unavailableArchiveEvent);
 
     expect(result).toEqual({
       status: 'error',
@@ -587,7 +600,7 @@ describe('code.generate tool', () => {
           },
         ],
       },
-    });
+    }, unavailableArchiveEvent);
 
     expect(result).toEqual({
       status: 'error',

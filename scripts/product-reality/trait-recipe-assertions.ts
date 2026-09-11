@@ -5,7 +5,7 @@ export function assertTraitRecipeScenario(id: string, root: Element) {
   const text = root.textContent;
   switch (id) {
     case 'ArchiveEvent':
-      expect([...root.querySelectorAll('time')].map(node => node.getAttribute('datetime'))).toEqual(['2026-09-01T12:00:00Z', '2026-09-02T12:00:00Z']);
+      expect(Array.from(root.querySelectorAll('time')).map(node => node.getAttribute('datetime'))).toEqual(['2026-09-01T12:00:00Z', '2026-09-02T12:00:00Z']);
       expect(text).toContain('Actor: operator-1'); expect(text).toContain('Reason: Duplicate record'); break;
     case 'CancellationEvent':
       expect(text).toContain('Cancellation requested'); expect(text).toContain('Reason: Customer request'); expect(text).toContain('Code: customer_request'); break;
@@ -16,17 +16,17 @@ export function assertTraitRecipeScenario(id: string, root: Element) {
       expect(root.querySelector('[role="status"]')?.getAttribute('aria-live')).toBe('polite'); break;
     case 'ColorStatePicker':
       expect(root.tagName).toBe('FIELDSET');
-      expect([...root.querySelectorAll('option')].map(node => node.value)).toEqual(['neutral', 'success']);
+      expect(Array.from(root.querySelectorAll('option')).map(node => node.value)).toEqual(['neutral', 'success']);
       expect(root.querySelector('select')?.value).toBe('neutral'); break;
     case 'StatusColorLegend':
       expect(text).toContain('success (current)'); expect(text).toContain('--sys-status-success-surface');
       expect(root.querySelectorAll('[data-oods-swatch-chip]')).toHaveLength(2); break;
     case 'GeoFieldMappingForm':
       expect(root.tagName).toBe('FORM');
-      expect([...root.querySelectorAll<HTMLInputElement>('input[type="text"]')].map(node => node.value)).toEqual(['lat', 'lon', 'country']);
+      expect(Array.from(root.querySelectorAll<HTMLInputElement>('input[type="text"]')).map(node => node.value)).toEqual(['lat', 'lon', 'country']);
       expect(root.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false); break;
     case 'GeoResolutionBadge': expect(text).toBe('Resolution: point'); break;
-    case 'GeocodablePreview': expect([...root.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['point', 'No', 'lat, lon']); break;
+    case 'GeocodablePreview': expect(Array.from(root.querySelectorAll('dd')).map(node => node.textContent)).toEqual(['point', 'No', 'lat, lon']); break;
     default: throw new Error(`No authored trait recipe assertion for ${id}`);
   }
 }

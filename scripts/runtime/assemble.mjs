@@ -45,7 +45,7 @@ const ADAPTER_RUNTIME_FILES = [
 const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   domains: 14,
   objects: 8,
-  schemas: 52,
+  schemas: 56,
   traits: 76,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).

@@ -8,7 +8,6 @@ import { describe, expect, it } from 'vitest';
 import {
   NUCLEUS_COMPONENT_IDS,
   PORTED_COMPONENT_IDS,
-  componentCapabilityBaseline,
   componentContracts,
   portedComponentContracts,
   portedScenarios,
@@ -70,7 +69,13 @@ describe('Sprint 184 historical port compatibility within the canonical nucleus'
   });
 
   it('preserves the historical cohort surface evidence on its existing baseline identities', () => {
-    // Decision 1726: surface evidence belongs to existing identities, not a second overlay.
+    // Decision 1726: preserve this historical cohort on existing identities.
+    // Current generatedConsumer evidence comes only from the fresh public runtime ledger.
+    const componentCapabilityBaseline = JSON.parse(readFileSync(path.resolve(TEST_DIRECTORY,
+      '../../../artifacts/product-reality/sprint-192/m07/component-ledger.json'), 'utf8')) as {
+      rows: { id: string; surfaces: Record<string, { state: string }> }[];
+      controllingObligationDenominator: number;
+    };
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(componentCapabilityBaseline.controllingObligationDenominator).toBe(109);
     const portedRows = componentCapabilityBaseline.rows.filter(({ id }) => EXPECTED_PORTED_IDS.includes(id as typeof EXPECTED_PORTED_IDS[number]));

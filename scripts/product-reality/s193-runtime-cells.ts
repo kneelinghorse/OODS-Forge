@@ -19,7 +19,7 @@ import {
   launchProofBrowser, type PackedPackageRecord,
 } from './s184-m06-live-consumers.js';
 
-import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework, type Gate } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 import { VIZ_CONTROL_IDS, vizControlFields, type VizControlId } from '../../packages/component-contracts/src/viz-controls.js';
 export { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 

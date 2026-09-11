@@ -32,4 +32,12 @@ export interface MarkAreaTraitParameters {
     currencyField: string;
     brand?: 'A' | 'B';
   };
+  /**
+   * Static SVG returned by viz.render for the authored sample.
+   */
+  previewSvg?: string;
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }
