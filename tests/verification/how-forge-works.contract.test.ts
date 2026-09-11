@@ -159,7 +159,7 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("verified for 40 and explicitly not applicable for 69 static rows");
     expect(html).toContain("24 native, 84 recipe and 1 alias");
     expect(nearRoadmap).toContain("40 verified / 69 not-applicable");
-    expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — BUILT, REVIEW PENDING");
+    expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED");
     expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
     expect(counts("generatedConsumer", "unavailable")).toBe(43);
     expect(nearRoadmap).toContain("66/109");
@@ -319,6 +319,10 @@ describe("how Forge works narrative truth", () => {
       "## Increment 11 — Sprint 192: Component truth — CERTIFIED AND CLOSED",
     );
     expect(nearRoadmap).not.toContain("Component truth — BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
+      "## Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Runtime at scale — BUILT, REVIEW PENDING");
     expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
