@@ -1,0 +1,148 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts (13 tests | 7 failed) 475ms
+   × Viz recipes are declared by real traits, without editing composed schemas > MarkArea places and generates its declared input/preview recipes 124ms
+     → [{"code":"OODS-V007","message":"Prop \"baselineField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"},{"code":"OODS-V007","message":"Prop \"curveField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"},{"code":"OODS-V007","message":"Prop \"opacityField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"}]: expected 'error' to be 'ok' // Object.is equality
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > MarkBar places and generates its declared input/preview recipes 53ms
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > MarkLine places and generates its declared input/preview recipes 42ms
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > MarkPoint places and generates its declared input/preview recipes 45ms
+   × Viz recipes are declared by real traits, without editing composed schemas > MarkRect places and generates its declared input/preview recipes 16ms
+     → [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizHeatmapControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizHeatmapControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizHeatmapControls contract.","nodeId":"ve-title-29","component":"VizHeatmapControls"}]: expected 'error' to be 'ok' // Object.is equality
+   × Viz recipes are declared by real traits, without editing composed schemas > ScatterPlot places and generates its declared input/preview recipes 11ms
+     → [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizScatterControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizScatterControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizScatterControls contract.","nodeId":"ve-title-29","component":"VizScatterControls"}]: expected 'error' to be 'ok' // Object.is equality
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > EncodingPositionX places and generates its declared input/preview recipes 40ms
+   × Viz recipes are declared by real traits, without editing composed schemas > EncodingColor places and generates its declared input/preview recipes 29ms
+     → [{"code":"OODS-V007","message":"Field \"inventory_status\" cannot be represented by VizEncodingBadge on the react target; generation would discard the binding.","nodeId":"ve-metadata-30","component":"VizEncodingBadge"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizEncodingBadge contract.","nodeId":"ve-metadata-30","component":"VizEncodingBadge"}]: expected 'error' to be 'ok' // Object.is equality
+   × Viz recipes are declared by real traits, without editing composed schemas > EncodingSize places and generates its declared input/preview recipes 30ms
+     → [{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizSizeSummary contract.","nodeId":"ve-metadata-30","component":"VizSizeSummary"}]: expected 'error' to be 'ok' // Object.is equality
+   × Viz recipes are declared by real traits, without editing composed schemas > EncodingShape places and generates its declared input/preview recipes 11ms
+     → [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizShapeControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizShapeControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizShapeControls contract.","nodeId":"ve-title-29","component":"VizShapeControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizShapeLegend contract.","nodeId":"ve-title-30","component":"VizShapeLegend"}]: expected 'error' to be 'ok' // Object.is equality
+   × Viz recipes are declared by real traits, without editing composed schemas > EncodingOpacity places and generates its declared input/preview recipes 11ms
+     → [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizOpacityControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizOpacityControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizOpacityControls contract.","nodeId":"ve-title-29","component":"VizOpacityControls"}]: expected 'error' to be 'ok' // Object.is equality
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > ScaleLinear places and generates its declared input/preview recipes 39ms
+   ✓ Viz recipes are declared by real traits, without editing composed schemas > the bounded fixtures collectively place all 25 new identities; the bound public payment chart stays unchanged 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > MarkArea places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Prop \"baselineField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"},{"code":"OODS-V007","message":"Prop \"curveField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"},{"code":"OODS-V007","message":"Prop \"opacityField\" is not in the canonical VizAreaPreview contract.","nodeId":"ve-header-25","component":"VizAreaPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > MarkRect places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizHeatmapControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizHeatmapControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizHeatmapControls contract.","nodeId":"ve-title-29","component":"VizHeatmapControls"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > ScatterPlot places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizScatterControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizScatterControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizScatterControls contract.","nodeId":"ve-title-29","component":"VizScatterControls"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > EncodingColor places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Field \"inventory_status\" cannot be represented by VizEncodingBadge on the react target; generation would discard the binding.","nodeId":"ve-metadata-30","component":"VizEncodingBadge"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizEncodingBadge contract.","nodeId":"ve-metadata-30","component":"VizEncodingBadge"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > EncodingSize places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizSizeSummary contract.","nodeId":"ve-metadata-30","component":"VizSizeSummary"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > EncodingShape places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizShapeControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizShapeControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizShapeControls contract.","nodeId":"ve-title-29","component":"VizShapeControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizShapeLegend contract.","nodeId":"ve-title-30","component":"VizShapeLegend"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  test/product-reality/viz-placement.s193.spec.ts > Viz recipes are declared by real traits, without editing composed schemas > EncodingOpacity places and generates its declared input/preview recipes
+AssertionError: [{"code":"OODS-V007","message":"Field \"page\" cannot be represented by VizOpacityControls on the react target; generation would discard the binding.","nodeId":"ve-title-29","component":"VizOpacityControls"},{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical VizOpacityControls contract.","nodeId":"ve-title-29","component":"VizOpacityControls"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/viz-placement.s193.spec.ts:58:68
+     56|       for (const framework of ['react', 'vue'] as const) {
+     57|         const generated = await generate({ schema: result.schema, fram…
+     58|         expect(generated.status, JSON.stringify(generated.errors)).toB…
+       |                                                                    ^
+     59|         expect(generated.artifact?.files.length).toBeGreaterThan(0);
+     60|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 6 passed (13)
+   Start at  23:17:07
+   Duration  2.01s (transform 889ms, setup 12ms, collect 1.37s, tests 475ms, environment 0ms, prepare 43ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/viz-placement.s193.spec.ts

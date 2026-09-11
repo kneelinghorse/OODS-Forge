@@ -1,6 +1,7 @@
 import recipeParameters from './trait-recipes.json' with { type: 'json' };
 import type { ResolvedTrait } from '../objects/trait-composer.js';
 import type { ViewExtension } from '../objects/types.js';
+import { isVizIntentFragment } from '@oods/component-contracts';
 
 /** These recipes require trait field mappings, not generic single-field selection. */
 export const TRAIT_RECIPE_PARAMETERS: Readonly<Record<string, Readonly<Record<string, string>>>> = recipeParameters;
@@ -18,7 +19,14 @@ export function resolveTraitRecipeProps(resolved: ResolvedTrait, extension: View
     if (typeof name !== 'string' || props[runtimeProp] !== undefined) continue;
     const value = resolved.ref.parameters?.[name]
       ?? resolved.definition.parameters.find((parameter) => parameter.name === name)?.default;
-    if (value !== undefined) props[runtimeProp] = structuredClone(value);
+    if (directive === 'intentParameter' && value !== undefined) {
+      // Trait parameters currently support scalars, so the authored JSON string
+      // crosses into a typed component value here, once, before generation.
+      if (typeof value !== 'string') throw new Error(`${extension.component}.${name} must be a JSON-encoded viz.render input fragment.`);
+      const fragment: unknown = JSON.parse(value);
+      if (!isVizIntentFragment(fragment)) throw new Error(`${extension.component}.${name} is not a supported Cartesian viz.render input fragment.`);
+      props[runtimeProp] = fragment;
+    } else if (value !== undefined) props[runtimeProp] = structuredClone(value);
   }
   return props;
 }

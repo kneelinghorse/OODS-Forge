@@ -10,6 +10,8 @@ const ScaleTemporalTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'domainStart',
       type: 'string',
@@ -155,6 +157,7 @@ const ScaleTemporalTrait = {
         component: 'VizScaleSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
           type: 'temporal',
           domainMinField: 'viz_scale_temporal_domain_start',
           domainMaxField: 'viz_scale_temporal_domain_end',
@@ -168,6 +171,7 @@ const ScaleTemporalTrait = {
         component: 'VizScaleControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           type: 'temporal',
           domainMinField: 'viz_scale_temporal_domain_start',
           domainMaxField: 'viz_scale_temporal_domain_end',

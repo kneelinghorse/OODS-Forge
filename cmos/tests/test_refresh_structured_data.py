@@ -55,10 +55,10 @@ class RefreshStructuredDataTest(unittest.TestCase):
         projected = project_measured_surfaces(baseline)
         self.assertEqual(set(projected), set(baseline))
         for surface in ("accessibility", "theme"):
-            self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 84)
-            self.assertEqual(sum(row["surfaces"][surface]["state"] == "unavailable" for row in projected.values()), 25)
-        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "verified" for row in projected.values()), 26)
-        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "not-applicable" for row in projected.values()), 58)
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 109)
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "unavailable" for row in projected.values()), 0)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "verified" for row in projected.values()), 40)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "not-applicable" for row in projected.values()), 69)
         for row in projected.values():
             self.assertEqual(row["reconciliationState"], "proposed-awaiting-derek-approval")
             for surface in ("accessibility", "theme", "interaction"):
@@ -77,7 +77,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
             def incomplete(path):
                 document = original(path)
                 name = str(path)
-                if mutation == "axe" and name.endswith("m04/react-measured.json"):
+                if mutation == "axe" and name.endswith("m05/react-measured.json"):
                     for file in document["testResults"]:
                         file["assertionResults"] = [test for test in file["assertionResults"] if "for the Button shared scenario" not in test["fullName"]]
                 if mutation == "theme" and name.endswith("react-theme/report.json"):
@@ -153,7 +153,8 @@ class RefreshStructuredDataTest(unittest.TestCase):
                 self.assertIn(f"#{component}", surface["evidence"][0])
             self.assertEqual(projected[component]["surfaces"]["html"]["state"], "mapped")
         self.assertEqual(projected["Button"], baseline["Button"])
-        self.assertEqual(projected["VizLinePreview"], baseline["VizLinePreview"])
+        self.assertEqual(projected["VizLinePreview"]["surfaces"]["react"]["state"], "implemented-evidence-complete")
+        self.assertEqual(projected["VizLinePreview"]["surfaces"]["generatedConsumer"], baseline["VizLinePreview"]["surfaces"]["generatedConsumer"])
 
     def test_recipe_projection_does_not_promote_incomplete_readiness(self) -> None:
         from scripts import refresh_structured_data as refresh
@@ -389,6 +390,36 @@ class RefreshStructuredDataTest(unittest.TestCase):
             frozen = next(row for row in expected_components["components"] if row["id"] == component_id)
             for field in fields:
                 current[field] = frozen[field]
+        # s193 adds four authoring traits and typed input/SVG directives to the
+        # existing Viz traits. Assert that exact new population before restoring
+        # only the declared metadata fields for the immutable s182 comparison.
+        added = {"EncodingOpacity", "EncodingShape", "MarkRect", "ScatterPlot"}
+        frozen_traits = {row["name"]: row for row in expected_components["traits"]}
+        current_traits = {row["name"]: row for row in historical_projection["traits"]}
+        self.assertEqual(set(current_traits) - set(frozen_traits), added)
+        viz_traits = {"EncodingColor", "EncodingPositionX", "EncodingPositionY", "EncodingSize", "MarkArea", "MarkBar", "MarkLine", "MarkPoint", "ScaleLinear", "ScaleTemporal"}
+        for name in viz_traits | added:
+            intent = next(parameter for parameter in current_traits[name]["parameters"] if parameter["name"] == "renderIntent")
+            self.assertEqual(intent["type"], "string")
+            if name in viz_traits:
+                for field in ("parameters", "viewExtensions"):
+                    current_traits[name][field] = copy.deepcopy(frozen_traits[name][field])
+        historical_projection["traits"] = [row for row in historical_projection["traits"] if row["name"] not in added]
+        historical_projection["stats"]["traitCount"] -= len(added)
+        for row in historical_projection["components"]:
+            if not row["id"].startswith("Viz"):
+                continue
+            frozen = next(component for component in expected_components["components"] if component["id"] == row["id"])
+            for field in ("traitUsages", "contexts", "regions", "sourceFiles", "tags", "renderComplexity", "categories"):
+                if field in frozen:
+                    row[field] = copy.deepcopy(frozen[field])
+                else:
+                    row.pop(field, None)
+        current_forms = historical_projection["sampleQueries"]["formComponents"]
+        frozen_forms = expected_components["sampleQueries"]["formComponents"]
+        added_forms = {row["id"] for row in current_forms} - {row["id"] for row in frozen_forms}
+        self.assertEqual(added_forms, {"VizColorLegendConfig", "VizHeatmapControls", "VizOpacityControls", "VizScatterControls", "VizShapeControls", "VizShapeLegend"})
+        historical_projection["sampleQueries"]["formComponents"] = [row for row in current_forms if row["id"] not in added_forms]
         self.assertEqual(historical_projection, expected_components)
         self.assertEqual(self.tokens_payload, expected_tokens)
 
@@ -402,7 +433,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "a362fcacd769c545459946f8f34824b233396094a17f9b0390d6db0aab1f725a",
+            "94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),

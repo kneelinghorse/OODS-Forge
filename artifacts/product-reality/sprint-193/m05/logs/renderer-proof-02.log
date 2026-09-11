@@ -1,0 +1,103 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+Boolean type for boundaryGap is only allowed for ordinal axis. Please use string in percentage instead, e.g., "20%". Currently, boundaryGap is set to be 0.
+Boolean type for boundaryGap is only allowed for ordinal axis. Please use string in percentage instead, e.g., "20%". Currently, boundaryGap is set to be 0.
+ ❯ test/product-reality/viz-recipes.s193.spec.ts (25 tests | 5 failed) 970ms
+   ✓ visualization recipes use the public renderer input and pixels > VizHeatmapPreview preserves the deterministic public SVG in both governed recipes  318ms
+   ✓ visualization recipes use the public renderer input and pixels > VizLinePreview preserves the deterministic public SVG in both governed recipes 19ms
+   ✓ visualization recipes use the public renderer input and pixels > VizMarkPreview preserves the deterministic public SVG in both governed recipes 14ms
+   ✓ visualization recipes use the public renderer input and pixels > VizPointPreview preserves the deterministic public SVG in both governed recipes 22ms
+   ✓ visualization recipes use the public renderer input and pixels > VizScatterPreview preserves the deterministic public SVG in both governed recipes 13ms
+   ✓ visualization recipes use the public renderer input and pixels > VizAreaControls emits a fragment that the actual renderer accepts after a consumer adds data 7ms
+   ✓ visualization recipes use the public renderer input and pixels > VizAxisControls emits a fragment that the actual renderer accepts after a consumer adds data 5ms
+   ✓ visualization recipes use the public renderer input and pixels > VizColorControls emits a fragment that the actual renderer accepts after a consumer adds data 9ms
+   ✓ visualization recipes use the public renderer input and pixels > VizHeatmapControls emits a fragment that the actual renderer accepts after a consumer adds data 7ms
+   ✓ visualization recipes use the public renderer input and pixels > VizLineControls emits a fragment that the actual renderer accepts after a consumer adds data 6ms
+   ✓ visualization recipes use the public renderer input and pixels > VizMarkControls emits a fragment that the actual renderer accepts after a consumer adds data 6ms
+   ✓ visualization recipes use the public renderer input and pixels > VizOpacityControls emits a fragment that the actual renderer accepts after a consumer adds data 5ms
+   ✓ visualization recipes use the public renderer input and pixels > VizPointControls emits a fragment that the actual renderer accepts after a consumer adds data 8ms
+   ✓ visualization recipes use the public renderer input and pixels > VizScaleControls emits a fragment that the actual renderer accepts after a consumer adds data 11ms
+   ✓ visualization recipes use the public renderer input and pixels > VizScatterControls emits a fragment that the actual renderer accepts after a consumer adds data 9ms
+   ✓ visualization recipes use the public renderer input and pixels > VizShapeControls emits a fragment that the actual renderer accepts after a consumer adds data 7ms
+   ✓ visualization recipes use the public renderer input and pixels > VizSizeControls emits a fragment that the actual renderer accepts after a consumer adds data 8ms
+   ✓ visualization recipes use the public renderer input and pixels > VizColorLegendConfig emits a fragment that the actual renderer accepts after a consumer adds data 7ms
+   ✓ visualization recipes use the public renderer input and pixels > VizShapeLegend emits a fragment that the actual renderer accepts after a consumer adds data 7ms
+   × visualization recipes use the public renderer input and pixels > bar opacity changes both renderer outputs and retains normalized intent 14ms
+     → Unsupported ECharts SSR series type: "bar".
+   × visualization recipes use the public renderer input and pixels > line opacity changes both renderer outputs and retains normalized intent 10ms
+     → Unsupported ECharts SSR series type: "line".
+   × visualization recipes use the public renderer input and pixels > area opacity changes both renderer outputs and retains normalized intent 16ms
+     → Unsupported ECharts SSR series type: "line".
+   × visualization recipes use the public renderer input and pixels > scatter opacity changes both renderer outputs and retains normalized intent 426ms
+     → expected '<svg width="360" height="200" xmlns="…' not to be '<svg width="360" height="200" xmlns="…' // Object.is equality
+   × visualization recipes use the public renderer input and pixels > heatmap opacity changes both renderer outputs and retains normalized intent 12ms
+     → Unsupported ECharts SSR series type: "heatmap".
+   ✓ visualization recipes use the public renderer input and pixels > rejects invalid opacity and unsupported primary families rather than accepting an inert control 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/viz-recipes.s193.spec.ts > visualization recipes use the public renderer input and pixels > bar opacity changes both renderer outputs and retains normalized intent
+EChartsRenderError: Unsupported ECharts SSR series type: "bar".
+ ❯ prepareEChartsRenderInput ../viz-render/src/echarts-worker-protocol.ts:222:11
+ ❯ renderEChartsToSvg ../viz-render/src/echarts-renderer.ts:65:20
+ ❯ test/product-reality/viz-recipes.s193.spec.ts:64:53
+     62|     // Public Cartesian SVG is Vega-Lite; independently execute the re…
+     63|     // ECharts option through the shared renderer rather than inventin…
+     64|     const echartsOpaque = normalizeEChartsSvg(await renderEChartsToSvg…
+       |                                                     ^
+     65|     const echartsFaint = normalizeEChartsSvg(await renderEChartsToSvg(…
+     66|     expect(echartsFaint).not.toBe(echartsOpaque);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  test/product-reality/viz-recipes.s193.spec.ts > visualization recipes use the public renderer input and pixels > line opacity changes both renderer outputs and retains normalized intent
+ FAIL  test/product-reality/viz-recipes.s193.spec.ts > visualization recipes use the public renderer input and pixels > area opacity changes both renderer outputs and retains normalized intent
+EChartsRenderError: Unsupported ECharts SSR series type: "line".
+ ❯ prepareEChartsRenderInput ../viz-render/src/echarts-worker-protocol.ts:222:11
+ ❯ renderEChartsToSvg ../viz-render/src/echarts-renderer.ts:65:20
+ ❯ test/product-reality/viz-recipes.s193.spec.ts:64:53
+     62|     // Public Cartesian SVG is Vega-Lite; independently execute the re…
+     63|     // ECharts option through the shared renderer rather than inventin…
+     64|     const echartsOpaque = normalizeEChartsSvg(await renderEChartsToSvg…
+       |                                                     ^
+     65|     const echartsFaint = normalizeEChartsSvg(await renderEChartsToSvg(…
+     66|     expect(echartsFaint).not.toBe(echartsOpaque);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  test/product-reality/viz-recipes.s193.spec.ts > visualization recipes use the public renderer input and pixels > scatter opacity changes both renderer outputs and retains normalized intent
+AssertionError: expected '<svg width="360" height="200" xmlns="…' not to be '<svg width="360" height="200" xmlns="…' // Object.is equality
+ ❯ test/product-reality/viz-recipes.s193.spec.ts:66:30
+     64|     const echartsOpaque = normalizeEChartsSvg(await renderEChartsToSvg…
+     65|     const echartsFaint = normalizeEChartsSvg(await renderEChartsToSvg(…
+     66|     expect(echartsFaint).not.toBe(echartsOpaque);
+       |                              ^
+     67| 
+     68|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  test/product-reality/viz-recipes.s193.spec.ts > visualization recipes use the public renderer input and pixels > heatmap opacity changes both renderer outputs and retains normalized intent
+EChartsRenderError: Unsupported ECharts SSR series type: "heatmap".
+ ❯ prepareEChartsRenderInput ../viz-render/src/echarts-worker-protocol.ts:222:11
+ ❯ renderEChartsToSvg ../viz-render/src/echarts-renderer.ts:65:20
+ ❯ test/product-reality/viz-recipes.s193.spec.ts:64:53
+     62|     // Public Cartesian SVG is Vega-Lite; independently execute the re…
+     63|     // ECharts option through the shared renderer rather than inventin…
+     64|     const echartsOpaque = normalizeEChartsSvg(await renderEChartsToSvg…
+       |                                                     ^
+     65|     const echartsFaint = normalizeEChartsSvg(await renderEChartsToSvg(…
+     66|     expect(echartsFaint).not.toBe(echartsOpaque);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 20 passed (25)
+   Start at  23:11:03
+   Duration  2.25s (transform 735ms, setup 13ms, collect 1.06s, tests 970ms, environment 0ms, prepare 68ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/viz-recipes.s193.spec.ts

@@ -947,7 +947,7 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
 def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
     """Current measurements can establish a surface, never approve a classification."""
     result = copy.deepcopy(capabilities)
-    proof_root = "artifacts/product-reality/sprint-193/m04"
+    proof_root = "artifacts/product-reality/sprint-193/m05"
     foundation_classes = ("versionedContract", "targetImplementation", "packageExport", "publicDeclaration", "dependencyClosure", "frameworkScenario")
     targets, measurements, themes = {}, {}, {}
     for target in ("react", "vue"):

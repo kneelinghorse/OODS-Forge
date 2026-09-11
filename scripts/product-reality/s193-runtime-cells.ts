@@ -20,6 +20,7 @@ import {
 } from './s184-m06-live-consumers.js';
 
 import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework, type Gate } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+import { VIZ_CONTROL_IDS, vizControlFields, type VizControlId } from '../../packages/component-contracts/src/viz-controls.js';
 export { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 
 const hash = (value: string | Buffer) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
@@ -68,6 +69,27 @@ async function contextProof(page: Page, url: string, context: Context, schema: U
     assert.equal(await required.evaluate((element: HTMLInputElement) => element.checkValidity()), false, 'Empty required value must fail native validation');
     await required.fill(before);
     const recipeChanges: Record<string, unknown> = {};
+    for (const node of nodes.filter(node => (VIZ_CONTROL_IDS as readonly string[]).includes(node.component))) {
+      const field = vizControlFields(node.component as VizControlId, node.props?.channel === 'y' ? 'y' : 'x')[0]!;
+      const editor = page.locator(`[id=${JSON.stringify(node.id)}] [name=${JSON.stringify(field.key)}]`);
+      const before = await editor.inputValue();
+      const next = field.type === 'select' ? field.options!.find(value => value !== before)! : `${before}x`;
+      const expected = structuredClone(node.props?.value ?? {}) as Record<string, any>;
+      if (field.key === 'opacity') expected.opacity = Number(next);
+      else if (field.key === 'chartType') expected.chartType = next;
+      else {
+        const [channel, property] = field.key.split('.');
+        expected.encodings ??= {}; expected.encodings[channel!] ??= {};
+        expected.encodings[channel!][property!] = next;
+      }
+      if (field.type === 'select') await editor.selectOption(next); else await editor.fill(next);
+      assert.equal(await editor.inputValue(), next, `${node.component} edit must remain visible`);
+      const handler = node.bindings?.onChange;
+      assert(handler, `${node.component} has no declared change action`);
+      const calls = await page.evaluate(name => (window as any).__OODS_ACTION_ARGS__[name], handler);
+      assert.deepEqual(calls, [[expected]], `${node.component} must emit one correctly typed renderer fragment through the generated action`);
+      recipeChanges[node.component] = { field: field.key, before, after: next, calls };
+    }
     if (nodes.some(node => node.component === 'ColorStatePicker')) {
       const picker = page.locator('[data-oods-component="ColorStatePicker"] select');
       const previous = await picker.inputValue();

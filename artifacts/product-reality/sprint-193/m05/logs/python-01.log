@@ -1,0 +1,53 @@
+........F...F...F.....F...
+======================================================================
+FAIL: test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows (test_refresh_structured_data.RefreshStructuredDataTest.test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 156, in test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows
+    self.assertEqual(projected["VizLinePreview"], baseline["VizLinePreview"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'id'[146 chars]e': 'versioned-v1', 'evidence': ['packages/com[783 chars][]}}} != {'id'[146 chars]e': 'metadata-only', 'evidence': ['traits/viz/[573 chars][]}}}
+Diff is 1632 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_etags_are_stable (test_refresh_structured_data.RefreshStructuredDataTest.test_etags_are_stable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 403, in test_etags_are_stable
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        compute_etag(self.components_payload),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "a362fcacd769c545459946f8f34824b233396094a17f9b0390d6db0aab1f725a",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: '94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b' != 'a362fcacd769c545459946f8f34824b233396094a17f9b0390d6db0aab1f725a'
+- 94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b
++ a362fcacd769c545459946f8f34824b233396094a17f9b0390d6db0aab1f725a
+
+
+======================================================================
+FAIL: test_live_refresh_matches_current_capabilities_and_recorded_timestamp (test_refresh_structured_data.RefreshStructuredDataTest.test_live_refresh_matches_current_capabilities_and_recorded_timestamp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 399, in test_live_refresh_matches_current_capabilities_and_recorded_timestamp
+    self.assertEqual(current_components, expected_components)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'$sc[273102 chars]y', 'svgParameter': 'previewSvg', 'baselineFie[352302 chars]]}]}} != {'$sc[273102 chars]y', 'baselineField': 'viz_area_baseline'}, 'so[352104 chars]]}]}}
+Diff is 1445611 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_structured_payloads_match_snapshot (test_refresh_structured_data.RefreshStructuredDataTest.test_structured_payloads_match_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 392, in test_structured_payloads_match_snapshot
+    self.assertEqual(historical_projection, expected_components)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'$sc[116 chars]t': 45, 'objectCount': 12, 'domainCount': 1, '[455949 chars]]}]}} != {'$sc[116 chars]t': 41, 'objectCount': 12, 'domainCount': 1, '[445519 chars]]}]}}
+Diff is 1094425 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 26 tests in 5.368s
+
+FAILED (failures=4)

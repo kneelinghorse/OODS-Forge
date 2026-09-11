@@ -7,6 +7,7 @@
   "properties": {
     "theme": { "type": "string", "enum": ["light", "dark"], "default": "light", "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported." },
     "brand": { "type": "string", "enum": ["A", "B"], "default": "A", "description": "CSS token brand for chart pixels. Omission resolves light/A." },
+    "opacity": { "type": "number", "minimum": 0, "maximum": 1, "description": "Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families." },
 
     "dslVersion": {
       "type": "string",

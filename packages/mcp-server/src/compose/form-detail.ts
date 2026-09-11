@@ -1,6 +1,7 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { fieldLabel } from './label-generator.js';
+import { VIZ_CONTROL_IDS } from '@oods/component-contracts';
 
 const controls = new Set(['Input', 'Select', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector', 'CancellationForm', 'BillingAmountInput', 'BillingIntervalSelector']);
 const owners: Record<string, string[]> = {
@@ -45,6 +46,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (node.component === 'GeoFieldMappingForm') {
         node.props = { ...node.props, embedded: true };
         node.bindings = { ...node.bindings, onChange: 'handleGeoMappingChange' };
+      }
+      if ((VIZ_CONTROL_IDS as readonly string[]).includes(node.component)) {
+        node.bindings = { ...node.bindings, onChange: `handle${node.component}Change` };
       }
     });
     // The native Save owns submit; field controls own edits. Cancellation belongs to detail.

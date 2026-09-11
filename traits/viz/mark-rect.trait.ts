@@ -1,0 +1,54 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const MarkRectTrait = {
+  "trait": {
+    "name": "MarkRect",
+    "version": "0.1.0",
+    "description": "Heatmap authoring over the existing MarkRect renderer",
+    "category": "viz.mark",
+    "tags": [
+      "viz",
+      "authoring"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "renderIntent",
+      "type": "string",
+      "required": false,
+      "default": "{}",
+      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+    },
+    {
+      "name": "previewSvg",
+      "type": "string",
+      "required": false,
+      "description": "Static SVG returned by viz.render for the authored sample."
+    }
+  ],
+  "schema": {},
+  "semantics": {},
+  "view_extensions": {
+    "form": [
+      {
+        "component": "VizHeatmapControls",
+        "position": "top",
+        "props": {
+          "intentParameter": "renderIntent"
+        }
+      }
+    ],
+    "detail": [
+      {
+        "component": "VizHeatmapPreview",
+        "position": "top",
+        "props": {
+          "svgParameter": "previewSvg"
+        }
+      }
+    ]
+  },
+  "tokens": {}
+} as const satisfies TraitDefinition;
+
+export default MarkRectTrait;

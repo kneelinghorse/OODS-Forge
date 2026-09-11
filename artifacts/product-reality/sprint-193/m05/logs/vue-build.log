@@ -1,0 +1,59 @@
+
+> @oods/components-vue@0.1.0 build /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/components-vue
+> rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/components-vue/tsup.config.ts
+CLI Target: es2022
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+✘ [ERROR] Could not resolve "./presentational.js"
+
+    src/viz-recipes.ts:4:28:
+      4 │ import { Badge, Text } from './presentational.js';
+        ╵                             ~~~~~~~~~~~~~~~~~~~~~
+
+✘ [ERROR] Could not resolve "./presentational.js"
+
+    src/viz-recipes.ts:4:28:
+      4 │ import { Badge, Text } from './presentational.js';
+        ╵                             ~~~~~~~~~~~~~~~~~~~~~
+
+ESM Build failed
+Error: Build failed with 1 error:
+src/viz-recipes.ts:4:28: ERROR: Could not resolve "./presentational.js"
+    at failureErrorWithLog (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:1467:15)
+    at /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:926:25
+    at runOnEndCallbacks (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:1307:45)
+    at buildResponseToResult (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:924:7)
+    at /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:951:16
+    at responseCallbacks.<computed> (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:603:9)
+    at handleIncomingPacket (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:658:12)
+    at Socket.readFromStdout (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/node_modules/.pnpm/esbuild@0.25.10/node_modules/esbuild/lib/main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+CJS Build failed
+DTS Build start
+src/viz-recipes.ts(4,29): error TS2307: Cannot find module './presentational.js' or its corresponding type declarations.
+src/viz-recipes.ts(19,50): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '{ options: ({ value: string; label: string; } | { value: string; label: string; disabled: boolean; })[]; key: string; id: string; name: string; label: string; modelValue: string; validation: { state: string; message: string | undefined; } | undefined; 'onUpdate:modelValue': (value: string) => void; }' is not assignable to parameter of type 'VNodeProps & { __v_isVNode?: undefined; [Symbol.iterator]?: undefined; } & Record<string, any> & { $: ComponentInternalInstance; $data: {}; ... 12 more ...; $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (args_0: R, args_1: R, args_2: OnCleanup) => any : (args...'.
+      Type '{ options: ({ value: string; label: string; } | { value: string; label: string; disabled: boolean; })[]; key: string; id: string; name: string; label: string; modelValue: string; validation: { state: string; message: string | undefined; } | undefined; 'onUpdate:modelValue': (value: string) => void; }' is missing the following properties from type '{ $: ComponentInternalInstance; $data: {}; $props: Partial<{ disabled: boolean; options: readonly SelectOption[]; defaultValue: string; required: boolean; }> & Omit<...>; ... 11 more ...; $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (args_0: R, args_1: R, ar...': $, $data, $props, $attrs, and 11 more.
+src/viz-recipes.ts(19,320): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'number | undefined' is not assignable to type 'string | undefined'.
+      Type 'number' is not assignable to type 'string'.
+        Type 'number | undefined' is not assignable to type 'string | undefined'.
+src/viz-recipes.ts(19,336): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'number | undefined' is not assignable to type 'string | undefined'.
+      Type 'number' is not assignable to type 'string'.
+        Type 'number | undefined' is not assignable to type 'string | undefined'.
+
+DTS Build error
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/components-vue:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-vue@0.1.0 build: `rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts`
+Exit status 1

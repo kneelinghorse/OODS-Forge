@@ -733,6 +733,9 @@ function isFieldCompatibleWithNode(
   fieldName: string,
   fieldEntry: FieldSchemaEntry,
 ): boolean {
+  // A typed chart fragment or SVG is authored as a whole; a spare domain field
+  // must not replace it or turn its declared recipe into a generic field reader.
+  if (node.props?.intentParameter !== undefined || node.props?.svgParameter !== undefined) return false;
   if (AUTO_BIND_COMPONENT_BLACKLIST.has(node.component)) {
     return false;
   }
@@ -766,6 +769,7 @@ function applyBoundFieldProps(
   fieldName: string,
   fieldEntry: FieldSchemaEntry,
 ): void {
+  if (node.props?.intentParameter !== undefined || node.props?.svgParameter !== undefined) return;
   // A continuous quantity has no finite choices. Preserve the selected field
   // with a numeric editor instead of an empty Select that cannot display it.
   if (node.component === 'Select' && !fieldEntry.enum?.length

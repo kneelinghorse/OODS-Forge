@@ -8394,6 +8394,10 @@ export namespace VizRenderInputSchema {
      */
     brand?: 'A' | 'B';
     /**
+     * Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families.
+     */
+    opacity?: number;
+    /**
      * DSL version to use for this request. Defaults to the current version (1.0).
      */
     dslVersion?: string;

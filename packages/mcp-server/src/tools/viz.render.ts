@@ -268,6 +268,10 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
   const includeA11y = input.output?.includeA11y ?? false;
 
+  if (input.opacity !== undefined && (!Number.isFinite(input.opacity) || input.opacity < 0 || input.opacity > 1 || isEChartsPrimaryType(input.chartType))) {
+    return errorOut('OODS-V123', 'opacity must be a finite number between 0 and 1 and is supported only for Cartesian charts.', compact, wantEcharts);
+  }
+
   // intent ⊕ chartType (sprint-131 m03): a structured intent carries its own
   // `chartFamily`, not the explicit-render `chartType`; the two are mutually
   // exclusive dispatch modes. Fail loud (Rule 12) rather than silently letting the
@@ -392,6 +396,17 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
           description: input.description,
         });
 
+    if (input.opacity !== undefined) {
+      for (const mark of built.spec.marks) {
+        mark.options = {
+          ...mark.options,
+          opacity: input.opacity,
+          itemStyle: { ...mark.options?.itemStyle as Record<string, unknown>, opacity: input.opacity },
+          ...(mark.trait === 'MarkLine' || mark.trait === 'MarkArea' ? { lineStyle: { ...mark.options?.lineStyle as Record<string, unknown>, opacity: input.opacity } } : {}),
+          ...(mark.trait === 'MarkArea' ? { areaStyle: { ...mark.options?.areaStyle as Record<string, unknown>, opacity: input.opacity } } : {}),
+        };
+      }
+    }
     const spec = toVegaLiteSpec(built.spec, input) as unknown as VizRenderOutput['spec'];
 
     // F5 explicit color range warnings (sprint-147 m03): all WARN, never blocking.
