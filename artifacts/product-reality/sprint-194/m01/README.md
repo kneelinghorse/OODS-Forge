@@ -42,10 +42,18 @@ The corresponding pins are corrected without dropping their assertions; the
 17 targeted tests now pass (pin-corrections-final.log). The initial local correction
 attempt used an earlier, non-descendant negative control and failed the ancestry
 guard; the final control uses the real later db8d24d2 changes and verifies their
-detection. First-run logs and job metadata are retained; corrected CI is pending.
+detection. First-run logs and job metadata are retained. Corrected run
+https://github.com/kneelinghorse/OODS-Forge/actions/runs/34613172617 completed its required split-job checks at `1763a1da5d7449b8a87ce48bc02e40ffc00b6ecd`. Both required jobs
+passed under 20 minutes: coverage 14m20s (job 103308772348; 6515 passed, 16 existing skips),
+product-reality-consumers 18m33s (job 103308772623). `ci-results.json` validates both
+complete job durations including setup and build. The first run was not green;
+its three missed pins were corrected and the failed attempts remain retained.
 The dispatch also enabled the unchanged, opt-in ECharts resource soak: job
 103302260594 failed its plateau lower-confidence-bound assertion (2101.844966 > 0,
 s179 spec line 283). Its raw failure log is retained in ci-soak-failure.log; this
 is separate from the split-job result and is not silently counted as passing.
+The second dispatch reproduced the same failure at +1778.847992 B/window
+(job 103308772170, ci-soak-attempt-2.log). The carrier remains unchanged and
+parked per the standing checklist/decision #1606; no threshold was relaxed.
 
 No five-suite capture was run. Build session: PS-2026-09-11-005.
