@@ -1,0 +1,145 @@
+{
+  "framework": "react",
+  "artifactHash": "sha256:beceba2720cdd4c506597b9872bcc50a88a5603fdd5c0d2534aebf31777655b5",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "detail": {
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/typecheck.log"
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/build.log"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "detail": {
+        "htmlHash": "sha256:1e71ba0c4ccd1f9bcc9b22a88ddb13c2c9da6a40c7df7ad99e255dc2d24f0f42",
+        "generatedEntry": "src/ssr.tsx"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "detail": {
+        "screenCount": 1,
+        "errors": []
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "detail": {
+        "preservesSsrRoot": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "detail": {
+        "files": [
+          "index-BpSDIFGS.css"
+        ],
+        "bytes": 143935,
+        "sha256": "sha256:ebe70d671e8e6d27faf1032e39f5066e23724542e8ecb20c0a5da1f7e451fead",
+        "core": true,
+        "ported": true,
+        "requiresPorted": true,
+        "tokens": true
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "failed",
+      "error": "Every declared flow obligation must execute in order\n+ actual - expected\n\n  [\n    'ten-sample-records',\n-   'detail-navigation',\n-   'edit-seeded-values',\n-   'save-record-field',\n-   'cancel-detail',\n-   'cancel-list-badge',\n-   'timeline-navigation-and-history'\n  ]\n"
+    }
+  ],
+  "consumerAuthoredComponents": 0,
+  "consumerAuthoredActions": 0,
+  "generation": "current-in-run-public-output",
+  "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-AgihOL",
+  "accessibilityTree": "react/accessibility-tree.txt",
+  "flow": [
+    {
+      "name": "ten-sample-records",
+      "status": "failed",
+      "error": "The expression evaluated to a falsy value:\n\n  archiveTabs.getByRole('tab', { name: 'Active', exact: true })\n"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Every declared flow obligation must execute in order\n+ actual - expected\n\n  [\n    'ten-sample-records',\n-   'detail-navigation',\n-   'edit-seeded-values',\n-   'save-record-field',\n-   'cancel-detail',\n-   'cancel-list-badge',\n-   'timeline-navigation-and-history'\n  ]\n\n    at assertWorkflowFlow (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:86:10)\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:512:11)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1105:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:485:9)\n    at async runWorkflowCells (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s193-workflow-cells.ts:16:18)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/scripts/product-reality/s193-runtime-cells.ts:290:5)"
+}

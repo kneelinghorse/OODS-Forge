@@ -1,0 +1,190 @@
+{
+  "object": "Invoice",
+  "context": "workflow",
+  "framework": "vue",
+  "head": "b88b07d5",
+  "runId": "s193-m03-probe-03",
+  "status": "fail",
+  "artifactHash": "sha256:fd8395f1af4ce257d74b65d9a959c1746abef8714e4fdba89d98b3d8b377280b",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text",
+    "Textarea"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:fd8395f1af4ce257d74b65d9a959c1746abef8714e4fdba89d98b3d8b377280b",
+        "response": "workflows/Invoice/vue-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-vue",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-vue"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-vue",
+              "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+            },
+            {
+              "specifier": "@vitejs/plugin-vue",
+              "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+            },
+            {
+              "specifier": "@vue/server-renderer",
+              "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+            },
+            {
+              "specifier": "vue",
+              "consumerRelative": "node_modules/vue/index.mjs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/typecheck.log"
+        }
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/build.log"
+        }
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "htmlHash": "sha256:a950558e01e19fca607adf40571bfedb355b47849aaca9c9188237c6ef21cdd0",
+          "generatedEntry": "src/ssr.ts"
+        }
+      }
+    },
+    {
+      "name": "mount",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "screenCount": 1,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "preservesSsrRoot": true,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json",
+        "observation": {
+          "files": [
+            "index-BpSDIFGS.css"
+          ],
+          "bytes": 143935,
+          "sha256": "sha256:ebe70d671e8e6d27faf1032e39f5066e23724542e8ecb20c0a5da1f7e451fead",
+          "core": true,
+          "ported": true,
+          "requiresPorted": true,
+          "tokens": true
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Invoice/vue/receipt.json"
+      },
+      "reason": "The declared status filter must offer an actual lifecycle state"
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/Invoice/workflow/vue/receipt.json"
+}
