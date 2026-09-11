@@ -1,0 +1,65 @@
+- text: Status
+- combobox "Status":
+  - option "draft"
+  - option "active"
+  - option "inactive"
+- paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+- group:
+  - banner:
+    - heading "Cancellation Form" [level=3]
+  - text: Reason Code
+  - combobox "Reason Code":
+    - option "Consumer cancellation reason code" [selected]
+    - option "customer_request"
+    - option "suspected_fraud"
+    - option "duplicate_charge"
+    - option "payment_method_error"
+  - paragraph: Structured reason code chosen from the allowedReasons parameter.
+  - text: Reason
+  - textbox "Reason": Consumer cancellation reason
+  - paragraph: Free-form detail describing why cancellation occurred.
+- text: Created at
+- textbox "Created at":
+  - /placeholder: Timestamp recording when the entity was first created.
+  - text: 2026-09-05T12:00
+- paragraph: Timestamp recording when the entity was first created.
+- text: Currency
+- textbox "Currency":
+  - /placeholder: Enter currency
+  - text: Consumer currency
+- paragraph: ISO currency code for the unit amount.
+- text: Tax behavior
+- combobox "Tax behavior":
+  - option "Enter tax behavior" [disabled]
+  - option "exclusive" [selected]
+  - option "inclusive"
+- paragraph: Defines whether taxes are included in the displayed price.
+- text: Last event
+- textbox "Last event":
+  - /placeholder: Enter last event
+  - text: Consumer last event
+- paragraph: Lifecycle event associated with the most recent timestamp mutation.
+- text: Unit amount cents
+- spinbutton "Unit amount cents": "0"
+- paragraph: Base unit price expressed in the smallest currency denomination.
+- text: Pricing model
+- textbox "Pricing model":
+  - /placeholder: Enter pricing model
+  - text: Consumer pricing model
+- paragraph: Monetization model applied to the entity.
+- text: Billing interval
+- textbox "Billing interval":
+  - /placeholder: Enter billing interval
+  - text: Consumer billing interval
+- paragraph: Billing cadence when pricing_model indicates recurring revenue.
+- text: Transaction id
+- textbox "Transaction id":
+  - /placeholder: Enter transaction id
+  - text: consumer-transaction-id
+- paragraph: Unique identifier for the transaction record.
+- text: User id
+- textbox "User id":
+  - /placeholder: Enter user id
+  - text: consumer-user-id
+- paragraph: Identifier of the user associated with the transaction.
+- button "Save"
