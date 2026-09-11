@@ -196,7 +196,7 @@ async function submittedPackages(output: string): Promise<PackedPackageRecord[]>
   });
 }
 
-async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string): Promise<RuntimeCell> {
+export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string): Promise<RuntimeCell> {
   const args = ['--import', 'tsx', fileURLToPath(import.meta.url), context === 'workflow' ? '--workflow' : '--cell', output, packages, object, context, framework, head, runId];
   const relative = `cells/${object}/${context}/${framework}`;
   const log: string[] = [];

@@ -23,6 +23,9 @@ describe('Sprint 183 binding analysis', () => {
       kind: definition.kind,
       parameters: definition.signature.parameters,
     }))).toEqual([
+      // s193-m04 adds the declared color editor and structured geo mapping callback.
+      { id: 'component:ColorStatePicker.onChange', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
+      { id: 'component:GeoFieldMappingForm.onChange', kind: 'domain', parameters: [{ name: 'mapping', type: '{ latitude: string; longitude: string; identifier: string; autoDetect: boolean }' }] },
       // s192-m05 adds the native sort control's structured domain callback.
       { id: 'component:SortIndicator.onChange', kind: 'domain', parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] },
       { id: 'component:Banner.onDismiss', kind: 'local', parameters: [] },

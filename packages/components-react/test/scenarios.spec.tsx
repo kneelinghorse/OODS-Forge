@@ -1,3 +1,4 @@
+import { assertTraitRecipeScenario } from '../../../scripts/product-reality/trait-recipe-assertions.js';
 /* @vitest-environment jsdom */
 
 import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
@@ -30,6 +31,17 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
+        case 'ArchiveEvent':
+        case 'CancellationEvent':
+        case 'StateTransitionEvent':
+        case 'ColorStatePicker':
+        case 'StatusColorLegend':
+        case 'CommunicationDetailPanel':
+        case 'GeoFieldMappingForm':
+        case 'GeoResolutionBadge':
+        case 'GeocodablePreview':
+          assertTraitRecipeScenario(scenario.id, component!); break;
+
         case 'AuditSummaryCard':
             expect([...component!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
             break;

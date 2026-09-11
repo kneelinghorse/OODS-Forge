@@ -21,6 +21,15 @@ const GENERIC_PROPS = new Set(['field', 'id']);
 const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   Partial<Record<GovernedComponentId, ReadonlySet<string>>>
 > = {
+  ArchiveEvent: new Set(["archivedAtField", "restoredAtField", "reasonField", "archivedByField", "metadataField", "restorationMetadataField"]),
+  CancellationEvent: new Set(["timestampField", "labelField", "codeField"]),
+  StateTransitionEvent: new Set(["historyField", "labelField"]),
+  CommunicationDetailPanel: new Set(["channelsField", "templatesField", "policiesField", "conversationsField"]),
+  ColorStatePicker: new Set(["parameter"]),
+  StatusColorLegend: new Set(["badgeField", "parameter"]),
+  GeoFieldMappingForm: new Set(["latitudeField", "longitudeField", "identifierField", "autoDetectField"]),
+  GeoResolutionBadge: new Set(["resolutionField"]),
+  GeocodablePreview: new Set(["resolutionField", "requiresLookupField", "detectedFieldsField"]),
   AuditSummaryCard: new Set(['auditLogField']),
   SortIndicator: new Set(['sortFieldProp', 'sortDirectionProp', 'sortableFieldsParameter', 'triStateSortParameter', 'defaultSortFieldParameter', 'defaultSortDirectionParameter']),
   // Labelled trait recipe directives lower into title/supporting; they are
@@ -444,6 +453,15 @@ const PROP_VALUE_CONTRACTS: Readonly<
     tags: TAG_ITEMS_VALUE,
     value: TAG_ITEMS_VALUE,
   },
+  ArchiveEvent: { title: STRING_VALUE, archivedAt: STRING_VALUE, restoredAt: STRING_VALUE, archivedBy: STRING_VALUE, reason: STRING_VALUE, showActor: BOOLEAN_VALUE, showReason: BOOLEAN_VALUE },
+  CancellationEvent: { title: STRING_VALUE, timestamp: STRING_VALUE, reason: STRING_VALUE, code: STRING_VALUE, showReason: BOOLEAN_VALUE },
+  StateTransitionEvent: { title: STRING_VALUE, history: valueContract('an array of trait records', Array.isArray), status: STRING_VALUE, showActor: BOOLEAN_VALUE, showReason: BOOLEAN_VALUE },
+  ColorStatePicker: { title: STRING_VALUE, colorStates: STRING_ARRAY_VALUE, value: STRING_VALUE, disabled: BOOLEAN_VALUE },
+  StatusColorLegend: { title: STRING_VALUE, colorStates: STRING_ARRAY_VALUE, value: STRING_VALUE, showTokenReferences: BOOLEAN_VALUE },
+  CommunicationDetailPanel: { title: STRING_VALUE, channels: valueContract('an array of trait records', Array.isArray), templates: valueContract('an array of trait records', Array.isArray), policies: valueContract('an array of trait records', Array.isArray), conversations: valueContract('an array of trait records', Array.isArray) },
+  GeoFieldMappingForm: { title: STRING_VALUE, latitude: STRING_VALUE, longitude: STRING_VALUE, identifier: STRING_VALUE, autoDetect: BOOLEAN_VALUE, embedded: BOOLEAN_VALUE, disabled: BOOLEAN_VALUE },
+  GeoResolutionBadge: { resolution: STRING_VALUE },
+  GeocodablePreview: { title: STRING_VALUE, resolution: STRING_VALUE, requiresLookup: BOOLEAN_VALUE, detectedFields: valueContract('an array of trait records', Array.isArray) },
   AuditSummaryCard: { title: STRING_VALUE, auditLog: RECORD_ARRAY_VALUE, lastN: NUMBER_VALUE, showTransitionCount: BOOLEAN_VALUE, showLastTransitionTime: BOOLEAN_VALUE, showLastActor: BOOLEAN_VALUE },
   SortIndicator: { label: STRING_VALUE, sortField: STRING_VALUE, sortDirection: STRING_VALUE, sortActive: BOOLEAN_VALUE, triStateSort: BOOLEAN_VALUE, sortableFields: STRING_ARRAY_VALUE, defaultSortField: STRING_VALUE, defaultSortDirection: STRING_VALUE },
   TimelineEntryLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE, compact: BOOLEAN_VALUE },

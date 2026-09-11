@@ -105,3 +105,6 @@ export type { CycleProgressCardProps, PaymentTimelineProps, PaymentEventTimeline
 
 export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';
 export type { AuditSummaryCardProps, SortIndicatorProps, TimelineEntryLabelProps } from './disputed.js';
+
+export { ArchiveEvent, CancellationEvent, ColorStatePicker, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview, StateTransitionEvent, StatusColorLegend } from './trait-recipes.js';
+export type { TraitEventProps, CommunicationDetailPanelProps, ColorStatePickerProps, StatusColorLegendProps, GeoFieldMappingFormProps, GeoResolutionBadgeProps, GeocodablePreviewProps } from './trait-recipes.js';

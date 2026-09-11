@@ -947,15 +947,15 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
 def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
     """Current measurements can establish a surface, never approve a classification."""
     result = copy.deepcopy(capabilities)
-    proof_root = "artifacts/product-reality/sprint-192/m05"
+    proof_root = "artifacts/product-reality/sprint-193/m04"
     foundation_classes = ("versionedContract", "targetImplementation", "packageExport", "publicDeclaration", "dependencyClosure", "frameworkScenario")
     targets, measurements, themes = {}, {}, {}
     for target in ("react", "vue"):
         targets[target] = {row["componentId"]: row for row in load_json(REPO_ROOT / f"packages/components-{target}/evidence/{target}-readiness.v1.json")["rows"]}
         measurements[target] = load_json(REPO_ROOT / f"{proof_root}/{target}-measured.json")
-        themes[target] = load_json(REPO_ROOT / f"{proof_root}/ci-theme/{target}/report.json")
+        themes[target] = load_json(REPO_ROOT / f"{proof_root}/{target}-theme/report.json")
         for cell in themes[target]["cells"]:
-            image = REPO_ROOT / f"{proof_root}/ci-theme/{target}/{cell['screenshot']}"
+            image = REPO_ROOT / f"{proof_root}/{target}-theme/{cell['screenshot']}"
             if hashlib.sha256(image.read_bytes()).hexdigest() != cell["screenshotSha256"]:
                 raise ValueError(f"Measured theme screenshot hash mismatch: {image}")
     proposal = load_json(REPO_ROOT / "packages/component-contracts/registry/component-reconciliation.proposed.v2.json")
@@ -997,7 +997,7 @@ def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
                     report = themes[target]
                     expected = {"A-light", "A-dark", "A-hc", "B-light", "B-dark", "B-hc"}
                     valid = valid and report.get("status") == "passed" and report.get("failed") == 0 and report.get("skipped") == 0 and len(report["cells"]) == 6 and {c["cell"] for c in report["cells"]} == expected and all(c.get("status") == "passed" and sum(r["componentId"] == component_id for r in c["rows"]) == 1 for c in report["cells"])
-                    refs.append(f"{proof_root}/ci-theme/{target}/report.json#{component_id}")
+                    refs.append(f"{proof_root}/{target}-theme/report.json#{component_id}")
                 else:
                     report = measurements[target]
                     filename = "accessibility.spec." if surface == "accessibility" else "scenario-interactions.spec."

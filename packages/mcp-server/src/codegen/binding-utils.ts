@@ -212,6 +212,8 @@ const ADDRESS_RECORD: BindingSemanticSignature = {
  * domain callback.
  */
 export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[] = [
+  { id: 'component:ColorStatePicker.onChange', scope: 'component', component: 'ColorStatePicker', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  {"id": "component:GeoFieldMappingForm.onChange", "scope": "component", "component": "GeoFieldMappingForm", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "mapping", "type": "{ latitude: string; longitude: string; identifier: string; autoDetect: boolean }"}]}},
   { id: 'component:SortIndicator.onChange', scope: 'component', component: 'SortIndicator', event: 'onChange', kind: 'domain', signature: { parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] } },
   { id: 'component:Banner.onDismiss', scope: 'component', component: 'Banner', event: 'onDismiss', kind: 'local', signature: NO_PARAMETERS },
   { id: 'component:Button.onActivate', scope: 'component', component: 'Button', event: 'onActivate', kind: 'domain', signature: NO_PARAMETERS },
@@ -1002,6 +1004,15 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  ArchiveEvent: {"archivedAtField": "archivedAt", "restoredAtField": "restoredAt", "reasonField": "reason", "archivedByField": "archivedBy"},
+  CancellationEvent: {"timestampField": "timestamp", "labelField": "reason", "codeField": "code"},
+  StateTransitionEvent: {"historyField": "history", "labelField": "status"},
+  CommunicationDetailPanel: {"channelsField": "channels", "templatesField": "templates", "policiesField": "policies", "conversationsField": "conversations"},
+  ColorStatePicker: {},
+  StatusColorLegend: {"badgeField": "value"},
+  GeoFieldMappingForm: {"latitudeField": "latitude", "longitudeField": "longitude", "identifierField": "identifier", "autoDetectField": "autoDetect"},
+  GeoResolutionBadge: {"resolutionField": "resolution"},
+  GeocodablePreview: {"resolutionField": "resolution", "requiresLookupField": "requiresLookup", "detectedFieldsField": "detectedFields"},
   AuditSummaryCard: { auditLogField: 'auditLog' },
   SortIndicator: { sortFieldProp: 'sortField', sortDirectionProp: 'sortDirection' },
   BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
@@ -1143,6 +1154,9 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  ArchiveEvent: ['metadataField', 'restorationMetadataField'],
+  ColorStatePicker: ['parameter'],
+  StatusColorLegend: ['parameter'],
   ArchivedRowOverlay: ['style'],
   ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
   ArchivePill: ['archivedAtField'],

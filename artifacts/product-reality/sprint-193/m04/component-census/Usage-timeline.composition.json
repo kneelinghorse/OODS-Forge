@@ -1,0 +1,443 @@
+{
+  "status": "ok",
+  "layout": "timeline",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-timeline-14",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "timeline-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "timeline-header-1-title",
+                "component": "Text",
+                "props": {
+                  "field": "usage_id"
+                }
+              }
+            ]
+          },
+          {
+            "id": "timeline-entries-13",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "timeline-entries-13-entry",
+                "component": "Card",
+                "collectionControl": "event",
+                "children": []
+              },
+              {
+                "id": "timeline-entries-13-empty",
+                "component": "Banner",
+                "props": {
+                  "message": "No events yet."
+                },
+                "collectionControl": "empty"
+              }
+            ],
+            "collection": {
+              "source": "events",
+              "keyField": "id",
+              "labelField": "title"
+            }
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "meter_name": {
+        "type": "string",
+        "required": true,
+        "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+        "semanticType": "billing.usage.meter_name"
+      },
+      "included_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Quantity included in base plan before overages.",
+        "semanticType": "billing.usage.included_quantity"
+      },
+      "consumed_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Actual quantity consumed in the active period.",
+        "semanticType": "billing.usage.consumed_quantity"
+      },
+      "unit_label": {
+        "type": "string",
+        "required": true,
+        "description": "Label for display, defaults to the unit parameter.",
+        "semanticType": "billing.usage.unit_label"
+      },
+      "period_start": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window began.",
+        "semanticType": "billing.usage.period_start"
+      },
+      "period_end": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window ends.",
+        "semanticType": "billing.usage.period_end"
+      },
+      "rollover_strategy": {
+        "type": "string",
+        "required": false,
+        "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+        "semanticType": "billing.usage.rollover_strategy"
+      },
+      "overage_rate_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cost per additional unit expressed in minor currency units.",
+        "semanticType": "billing.usage.overage_rate_minor"
+      },
+      "projected_overage_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Forecasted overage spend derived from consumption trends.",
+        "semanticType": "billing.usage.projected_overage_minor"
+      },
+      "samples": {
+        "type": "UsageSample[]",
+        "required": false,
+        "description": "Rolling usage measurements for charts or anomaly detection.",
+        "semanticType": "billing.usage.samples"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "usage_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier for this usage record.",
+        "semanticType": "billing.usage.id"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Subscription the usage belongs to.",
+        "semanticType": "billing.usage.subscription_id"
+      },
+      "meter_id": {
+        "type": "string",
+        "required": true,
+        "description": "Provider specific meter identifier.",
+        "semanticType": "billing.usage.meter_id"
+      },
+      "provider": {
+        "type": "string",
+        "required": true,
+        "description": "Source provider for usage data.",
+        "semanticType": "billing.usage.provider"
+      },
+      "status": {
+        "type": "string",
+        "required": false,
+        "description": "Health of the usage feed (ok, delayed, investigating).",
+        "enum": [
+          "ok",
+          "delayed",
+          "investigating"
+        ],
+        "semanticType": "billing.usage.status"
+      },
+      "trend_percent": {
+        "type": "number",
+        "required": false,
+        "description": "Percent delta compared to previous window.",
+        "semanticType": "billing.usage.trend_percent"
+      },
+      "variance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Currency impact of usage variance calculated with overage rate.",
+        "semanticType": "billing.usage.variance_minor"
+      },
+      "last_reported_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp of the most recent provider usage payload.",
+        "semanticType": "billing.usage.last_reported_at"
+      },
+      "anomalies": {
+        "type": "UsageAnomaly[]",
+        "required": false,
+        "description": "Detected anomalies with context for investigation.",
+        "semanticType": "billing.usage.anomalies"
+      }
+    }
+  },
+  "schemaRef": "compose-effd9c23",
+  "schemaRefCreatedAt": "2026-09-11T03:26:23.222Z",
+  "schemaRefExpiresAt": "2026-09-11T03:56:23.222Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "Text",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"header\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "entry-0",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "entry-1",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-2",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-3",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-4",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Usage' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    }
+  ],
+  "objectUsed": {
+    "name": "Usage",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingMetered",
+      "lifecycle/Timestampable"
+    ],
+    "fieldsComposed": 23,
+    "viewExtensionsApplied": {
+      "detail": 1,
+      "timeline": 1,
+      "list": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Usage timeline view",
+    "layoutDetected": "context-inferred: timeline (from context=\"timeline\")",
+    "slotCount": 6,
+    "nodeCount": 6,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Usage' has maturity 'beta' — composed output may change.",
+      "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.66
+    }
+  }
+}

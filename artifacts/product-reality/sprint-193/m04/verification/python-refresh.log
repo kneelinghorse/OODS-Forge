@@ -1,0 +1,57 @@
+.......FF........FF.....F..
+======================================================================
+FAIL: test_current_measurements_preserve_every_obligation_and_do_not_approve_classes (test_refresh_structured_data.RefreshStructuredDataTest.test_current_measurements_preserve_every_obligation_and_do_not_approve_classes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 58, in test_current_measurements_preserve_every_obligation_and_do_not_approve_classes
+    self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 75)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 84 != 75
+
+======================================================================
+FAIL: test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows (test_refresh_structured_data.RefreshStructuredDataTest.test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 156, in test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows
+    self.assertEqual(projected["ColorStatePicker"], baseline["ColorStatePicker"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'id'[148 chars]e': 'versioned-v1', 'evidence': ['packages/com[791 chars][]}}} != {'id'[148 chars]e': 'metadata-only', 'evidence': ['traits/visu[578 chars][]}}}
+Diff is 1645 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness (test_refresh_structured_data.RefreshStructuredDataTest.test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness) (mutation='axe')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 94, in test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness
+    self.assertEqual(project_measured_surfaces(baseline)["Button"]["surfaces"][surface]["state"], "fail")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'verified' != 'fail'
+- verified
++ fail
+
+
+======================================================================
+FAIL: test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness (test_refresh_structured_data.RefreshStructuredDataTest.test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness) (mutation='theme')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 94, in test_measurement_flags_cannot_mask_missing_assertions_scopes_or_readiness
+    self.assertEqual(project_measured_surfaces(baseline)["Button"]["surfaces"][surface]["state"], "fail")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'verified' != 'fail'
+- verified
++ fail
+
+
+======================================================================
+FAIL: test_theme_receipts_and_pending_approval_are_integrity_boundaries (test_refresh_structured_data.RefreshStructuredDataTest.test_theme_receipts_and_pending_approval_are_integrity_boundaries) (mutation='hash')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 112, in test_theme_receipts_and_pending_approval_are_integrity_boundaries
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 26 tests in 3.734s
+
+FAILED (failures=5)

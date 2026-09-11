@@ -55,10 +55,10 @@ class RefreshStructuredDataTest(unittest.TestCase):
         projected = project_measured_surfaces(baseline)
         self.assertEqual(set(projected), set(baseline))
         for surface in ("accessibility", "theme"):
-            self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 75)
-            self.assertEqual(sum(row["surfaces"][surface]["state"] == "unavailable" for row in projected.values()), 34)
-        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "verified" for row in projected.values()), 24)
-        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "not-applicable" for row in projected.values()), 51)
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "verified" for row in projected.values()), 84)
+            self.assertEqual(sum(row["surfaces"][surface]["state"] == "unavailable" for row in projected.values()), 25)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "verified" for row in projected.values()), 26)
+        self.assertEqual(sum(row["surfaces"]["interaction"]["state"] == "not-applicable" for row in projected.values()), 58)
         for row in projected.values():
             self.assertEqual(row["reconciliationState"], "proposed-awaiting-derek-approval")
             for surface in ("accessibility", "theme", "interaction"):
@@ -77,10 +77,10 @@ class RefreshStructuredDataTest(unittest.TestCase):
             def incomplete(path):
                 document = original(path)
                 name = str(path)
-                if mutation == "axe" and name.endswith("m05/react-measured.json"):
+                if mutation == "axe" and name.endswith("m04/react-measured.json"):
                     for file in document["testResults"]:
                         file["assertionResults"] = [test for test in file["assertionResults"] if "for the Button shared scenario" not in test["fullName"]]
-                if mutation == "theme" and name.endswith("ci-theme/react/report.json"):
+                if mutation == "theme" and name.endswith("react-theme/report.json"):
                     document["cells"][0]["rows"] = [row for row in document["cells"][0]["rows"] if row["componentId"] != "Button"]
                 if name.endswith("components-react/evidence/react-readiness.v1.json"):
                     row = next(row for row in document["rows"] if row["componentId"] == "Button")
@@ -100,7 +100,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
         for mutation, message in (("hash", "hash mismatch"), ("approval", "without approval"), ("membership", "all obligations")):
             def corrupt(path):
                 document = original(path)
-                if mutation == "hash" and str(path).endswith("ci-theme/react/report.json"):
+                if mutation == "hash" and str(path).endswith("react-theme/report.json"):
                     document["cells"][0]["screenshotSha256"] = "0" * 64
                 if str(path).endswith("component-reconciliation.proposed.v2.json"):
                     if mutation == "approval":
@@ -153,7 +153,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
                 self.assertIn(f"#{component}", surface["evidence"][0])
             self.assertEqual(projected[component]["surfaces"]["html"]["state"], "mapped")
         self.assertEqual(projected["Button"], baseline["Button"])
-        self.assertEqual(projected["ColorStatePicker"], baseline["ColorStatePicker"])
+        self.assertEqual(projected["VizLinePreview"], baseline["VizLinePreview"])
 
     def test_recipe_projection_does_not_promote_incomplete_readiness(self) -> None:
         from scripts import refresh_structured_data as refresh

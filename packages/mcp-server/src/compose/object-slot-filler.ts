@@ -786,7 +786,7 @@ function applyBoundFieldProps(
 
   // Keep value badges free of synthetic labels that would shadow their bound state.
   // Other supported components retain field-description labels.
-  if (!['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component) && fieldEntry.description && typeof nextProps.label !== 'string') {
+  if (!['StatusTimeline', 'ArchivePill', 'CancellationBadge', 'ColorStatePicker', 'GeoResolutionBadge'].includes(node.component) && fieldEntry.description && typeof nextProps.label !== 'string') {
     nextProps.label = fieldEntry.description;
   }
 

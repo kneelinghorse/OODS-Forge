@@ -23,10 +23,11 @@ export type RuntimeLedger = {
 const identity = (row: Pick<RuntimeCell, 'object' | 'context' | 'framework'>) => `${row.object}/${row.context}/${row.framework}`;
 
 /** A missing, duplicate, failed, or older cell cannot inflate the runtime ratio. */
-export function validateRuntimeLedger(ledger: RuntimeLedger, workflows = false): string[] {
+export function validateRuntimeLedger(ledger: RuntimeLedger, workflows = false, scopedIdentities?: readonly string[]): string[] {
   const issues: string[] = [];
   const contexts = workflows ? [...CONTEXTS, 'workflow'] : CONTEXTS;
-  const expected = OBJECTS.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => `${object}/${context}/${framework}`))).sort();
+  const expected = [...(scopedIdentities ?? OBJECTS.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => `${object}/${context}/${framework}`))))].sort();
+  if (!expected.length || new Set(expected).size !== expected.length) issues.push('a scoped population must declare nonempty distinct identities');
   if (JSON.stringify(ledger.rows.map(identity).sort()) !== JSON.stringify(expected)) issues.push(`population must contain exactly ${expected.length} distinct current cells`);
   if (!ledger.head || !ledger.runId || ledger.historicalReceiptsUnioned !== false || ledger.rows.some(row => row.head !== ledger.head || row.runId !== ledger.runId)) issues.push('historical or mixed-run receipts are forbidden');
   if (ledger.packCount !== 1) issues.push('exactly one package pack sweep is required');

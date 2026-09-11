@@ -1,3 +1,4 @@
+import { ArchiveEvent, CancellationEvent, ColorStatePicker, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview, StateTransitionEvent, StatusColorLegend } from '../src/trait-recipes.js';
 import type { SharedScenario } from '@oods/component-contracts';
 import type { ReactElement } from 'react';
 
@@ -76,6 +77,16 @@ export function renderSharedScenario(
 ): ReactElement {
   const { onEvent } = handlers;
   switch (scenario.id) {
+    case 'ArchiveEvent': return <ArchiveEvent {...scenario.props} />;
+    case 'CancellationEvent': return <CancellationEvent {...scenario.props} />;
+    case 'StateTransitionEvent': return <StateTransitionEvent {...scenario.props} />;
+    case 'ColorStatePicker': return <ColorStatePicker {...scenario.props} onChange={onEvent} />;
+    case 'StatusColorLegend': return <StatusColorLegend {...scenario.props} />;
+    case 'CommunicationDetailPanel': return <CommunicationDetailPanel {...scenario.props} />;
+    case 'GeoFieldMappingForm': return <GeoFieldMappingForm {...scenario.props} onChange={onEvent} />;
+    case 'GeoResolutionBadge': return <GeoResolutionBadge {...scenario.props} />;
+    case 'GeocodablePreview': return <GeocodablePreview {...scenario.props} />;
+
     case 'AuditSummaryCard': return <AuditSummaryCard {...scenario.props} />;
     case 'SortIndicator': return <SortIndicator {...scenario.props} onChange={onEvent} />;
     case 'TimelineEntryLabel': return <TimelineEntryLabel {...scenario.props} />;

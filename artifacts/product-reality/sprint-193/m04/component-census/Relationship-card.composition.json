@@ -1,0 +1,398 @@
+{
+  "status": "ok",
+  "layout": "card",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-card-7",
+        "component": "Card",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "card-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-8",
+                    "component": "CardHeader",
+                    "props": {
+                      "titleField": "label",
+                      "supportingField": "description"
+                    }
+                  },
+                  {
+                    "id": "ve-header-9",
+                    "component": "StatusBadge",
+                    "props": {
+                      "field": "status",
+                      "variant": "subtle",
+                      "label": "Status"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-body-3",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-body-4",
+                "component": "Card",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-footer-5",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-footer-6",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer"
+                },
+                "children": [
+                  {
+                    "id": "ve-footer-10",
+                    "component": "OwnershipMeta",
+                    "props": {
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role"
+                    }
+                  },
+                  {
+                    "id": "ve-footer-11",
+                    "component": "TagSummary",
+                    "props": {
+                      "field": "tags",
+                      "countField": "tag_count",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": true,
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "relationship_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the relationship edge.",
+        "semanticType": "graph.relationship.id"
+      },
+      "source_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the source node in the relationship."
+      },
+      "target_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the target node in the relationship."
+      },
+      "relationship_type": {
+        "type": "string",
+        "required": true,
+        "description": "Semantic type describing the edge between the source and target.",
+        "enum": [
+          "membership",
+          "ownership",
+          "follows",
+          "depends_on",
+          "references"
+        ],
+        "semanticType": "graph.relationship.type"
+      },
+      "direction": {
+        "type": "string",
+        "required": true,
+        "description": "Directionality applied when traversing the relationship.",
+        "enum": [
+          "unidirectional",
+          "bidirectional"
+        ],
+        "semanticType": "graph.relationship.direction"
+      },
+      "strength": {
+        "type": "string",
+        "required": false,
+        "description": "Signal representing how strongly the entities are connected.",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "semanticType": "graph.relationship.strength"
+      },
+      "origin_source": {
+        "type": "string",
+        "required": false,
+        "description": "System that originated or inferred the relationship.",
+        "enum": [
+          "manual",
+          "ingestion",
+          "analytics",
+          "integration"
+        ],
+        "semanticType": "graph.relationship.origin"
+      },
+      "is_bidirectional": {
+        "type": "boolean",
+        "required": true,
+        "description": "Flag indicating whether the relationship is symmetric."
+      }
+    }
+  },
+  "schemaRef": "compose-6367dd9a",
+  "schemaRefCreatedAt": "2026-09-11T03:26:22.751Z",
+  "schemaRefExpiresAt": "2026-09-11T03:56:22.751Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "CardHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CardHeader was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "CardHeader",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StatusBadge",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "footer",
+      "intent": "action-button",
+      "selectedComponent": "OwnershipMeta",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "OwnershipMeta was selected for slot \"footer\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "OwnershipMeta",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "body",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"body\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [],
+  "objectUsed": {
+    "name": "Relationship",
+    "version": "1.0.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "behavioral/Taggable"
+    ],
+    "fieldsComposed": 25,
+    "viewExtensionsApplied": {
+      "list": 5,
+      "detail": 5,
+      "form": 3,
+      "card": 4,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Relationship card view",
+    "layoutDetected": "context-inferred: card (from context=\"card\")",
+    "slotCount": 3,
+    "nodeCount": 11,
+    "intentSynthetic": true,
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.8
+    }
+  }
+}

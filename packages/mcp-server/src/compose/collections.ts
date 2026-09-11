@@ -85,6 +85,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (!header || !entries) continue;
       const payment = nodes.find(node => node.component === 'PaymentEventTimeline');
       const label = nodes.find(node => node.component === 'TimelineEntryLabel');
+      const traitEvents = nodes.filter(node => ['ArchiveEvent', 'CancellationEvent', 'StateTransitionEvent'].includes(node.component));
       header.children = [{ id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };
@@ -93,6 +94,9 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
         { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(label ? [label] : []), ...(payment ? [payment] : [])] },
         { id: `${entries.id}-empty`, component: 'Banner', props: { message: 'No events yet.' }, collectionControl: 'empty' },
       ];
+      // These recipes read the selected object's fields/history, not one generic
+      // collection event. Preserve them once outside the repeated collection.
+      if (traitEvents.length) screen.children!.push({ id: `${entries.id}-trait-events`, component: 'Stack', children: traitEvents });
     }
   }
 }
