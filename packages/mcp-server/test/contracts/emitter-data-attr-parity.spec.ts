@@ -47,7 +47,15 @@ type Emitter = {
 const emitters: Emitter[] = [
   { name: 'boxes-arrows', render: (m) => emitBoxesArrows(m).code },
   { name: 'wireframe', render: (m) => emitWireframe(m).code },
-  { name: 'branded-mockup', render: (m) => emitBrandedMockup(m).code },
+  // This suite proves semantic attribute parity with a supported render scope.
+  // The historical billing manifest's brand-default is intentionally refused by
+  // the separate unknown-brand contract; do not depend on silent fallback here.
+  { name: 'branded-mockup', render: (m) => {
+    const result = emitBrandedMockup(m, { brandOverlay: 'A' });
+    expect(result.status).toBe('ok');
+    expect(result.errors ?? []).toEqual([]);
+    return result.code;
+  } },
 ];
 
 function entitySelector(urn: string): string {

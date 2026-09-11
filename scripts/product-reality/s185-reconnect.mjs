@@ -20,6 +20,25 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's194-m07') {
+    const head = movers.s194.head;
+    const tools = JSON.parse(source(head, 'packages/mcp-server/registry/tool-capability-ledger.v1.json', root));
+    const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const retired = tools.retired.map(row => `${row.name} (decisions ${row.decisionIds.join(', ')})`).join('; ');
+    const body = [
+      `Sprint 194 candidate ${head}; prepared for Sprint 195 after independent review and delivery.`,
+      `Discovery now has 19 advertised and five on-demand tools. Retired: ${retired}. Refresh discovery after delivery; historical handlers do not restore a retired registration.`,
+      'health serves the 24-entry ledger:19 product-reality source proofs,5 on-demand contracts,19 portable calls. Built token scopes and defaultScope describe files and environment defaults, not active consumer scope. Component discovery remains109 governed React/Vue implementations; classification approval remains pending.',
+      'Host brand intake accepts inline A/B envelopes; brand.apply writes canonical source and captures a real token build. tokens.build selects built brand/theme outputs. Legacy brand-a/brand-b aliases warn. Map is an external mapping resolver; composition/codegen does not consume it. Saved schemas use versions/schemaRef, not ETags.',
+      'Dashboard measures resolve by default; resolveMeasures:false opts out. ECharts-primary viz output has echartsSpec and no placeholder spec. repl fragment calls warn for ignored overlays and per-node render errors. Inert request dslVersion and repl output.depth were removed. Release evidence receipts verify hashes and do not re-execute caller evidence. design.preview requires the local design-loop server.',
+      'Portable bundle:14 passing tool outcomes and5 documented limits. brand.apply lacks canonical brand source even in dry-run. tokens.build is exercised with apply:false because actual export needs stripped host build inputs. design.preview native N019 loses its code across the adapter. React/Vue code.generate and pipeline refuse with N015 because readiness references are omitted. These are recorded carries, not successful portable generation or brand writes.',
+      ...tools.rows.filter(row => row.caveats.length).map(row => `${row.name}: ${row.advertisedClaim.description}`),
+      'Primary PM2 remains the reviewed1f69c957 delivery. This candidate is BUILT, REVIEW PENDING, builderSelfCertified:false. No candidate delivery or send is performed by this prepared notice. Viz breadth195 and release proof196 remain the next phase-map increments.',
+      `Advertised/public movers from ${movers.s194.base}..${head}:\n${movers.s194.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's194-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-195', targets,
+      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint194 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
+  }
   if (movers.missionId === 's193-m07') {
     const head = movers.s193.head;
     const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];

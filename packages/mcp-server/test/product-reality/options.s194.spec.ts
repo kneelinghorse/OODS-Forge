@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import net from 'node:net';
 import { createHash } from 'node:crypto';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { handle as health } from '../../src/tools/health.js';
 import { handle as dashboard } from '../../src/tools/dashboard.render.js';
 import { handle as render } from '../../src/tools/viz.render.js';
@@ -25,6 +25,11 @@ function retain(name: string, value: unknown) {
 }
 
 describe('remaining options do what their public wire says (s194-m05)', () => {
+  // The retained s193/m05 Vega temporal-axis receipts were captured in Chicago.
+  // Local-time axes differ in UTC; compare unchanged bytes under that same
+  // recorded condition, rather than implying cross-timezone determinism.
+  beforeAll(() => vi.stubEnv('TZ', 'America/Chicago'));
+  afterAll(() => vi.unstubAllEnvs());
   it('health reports actual built scopes and identifies configured defaults without implying a consumer', async () => {
     const saved = { brand: process.env.MCP_BRAND, theme: process.env.MCP_THEME };
     try {
