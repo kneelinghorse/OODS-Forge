@@ -19,55 +19,12 @@ import {
   launchProofBrowser, type PackedPackageRecord,
 } from './s184-m06-live-consumers.js';
 
-export const OBJECTS = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
-export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
-export const FRAMEWORKS = ['react', 'vue'] as const;
-export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';
-type Context = typeof CONTEXTS[number];
-type Framework = typeof FRAMEWORKS[number];
-type Gate = { name: string; status: 'pass' | 'fail'; detail?: unknown; reason?: string };
-export type RuntimeCell = {
-  object: string; context: Context | 'workflow'; framework: Framework; head: string; runId: string;
-  status: 'pass' | 'typed-gap' | 'fail'; gates: Gate[]; artifactHash: string | null;
-  components: string[]; gap?: { code: string; components: string[]; reason: string };
-  report: string;
-};
-export type RuntimeLedger = {
-  schemaVersion: '1.0.0'; head: string; runId: string; historicalReceiptsUnioned: false;
-  packCount: number; browserImage: string; rows: RuntimeCell[];
-  summary: { cells: number; pass: number; typedGap: number; fail: number };
-};
+import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework, type Gate } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+export { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+
 const hash = (value: string | Buffer) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
 const write = async (file: string, value: unknown) => { await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, JSON.stringify(value, null, 2) + '\n'); };
 const identity = (row: Pick<RuntimeCell, 'object' | 'context' | 'framework'>) => `${row.object}/${row.context}/${row.framework}`;
-
-/** A missing, duplicate, failed, or older cell cannot inflate the runtime ratio. */
-export function validateRuntimeLedger(ledger: RuntimeLedger, workflows = false): string[] {
-  const issues: string[] = [];
-  const contexts = workflows ? [...CONTEXTS, 'workflow'] : CONTEXTS;
-  const expected = OBJECTS.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => `${object}/${context}/${framework}`))).sort();
-  if (JSON.stringify(ledger.rows.map(identity).sort()) !== JSON.stringify(expected)) issues.push(`population must contain exactly ${expected.length} distinct current cells`);
-  if (ledger.historicalReceiptsUnioned !== false || ledger.rows.some(row => row.head !== ledger.head || row.runId !== ledger.runId)) issues.push('historical or mixed-run receipts are forbidden');
-  if (ledger.packCount !== 1) issues.push('exactly one package pack sweep is required');
-  if (ledger.browserImage !== BROWSER_IMAGE) issues.push('the pinned Linux browser image is required');
-  for (const row of ledger.rows) {
-    if (row.status === 'fail') issues.push(`${identity(row)} failed`);
-    else if (row.status === 'typed-gap') {
-      if (row.gap?.code !== 'OODS-N015' || !row.gap.components.length || !row.gap.reason) issues.push(`${identity(row)} has an untyped gap`);
-    } else if (row.status !== 'pass' || !row.artifactHash || !row.gates.length || row.gates.some(gate => gate.status !== 'pass')) issues.push(`${identity(row)} lacks passing proof`);
-    if (row.status === 'pass') {
-      for (const name of ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states']) {
-        if (row.gates.filter(gate => gate.name === name && gate.status === 'pass').length !== 1) issues.push(`${identity(row)} lacks ${name}`);
-      }
-    }
-  }
-  const summary = summarize(ledger.rows);
-  if (JSON.stringify(summary) !== JSON.stringify(ledger.summary)) issues.push('summary differs from the measured rows');
-  return issues;
-}
-export function summarize(rows: RuntimeCell[]): RuntimeLedger['summary'] {
-  return { cells: rows.length, pass: rows.filter(row => row.status === 'pass').length, typedGap: rows.filter(row => row.status === 'typed-gap').length, fail: rows.filter(row => row.status === 'fail').length };
-}
 
 // Only the consumer mount entry changes. Generated files and schemas remain exact handler output.
 function mountEntry(framework: Framework, files: Record<string, string>) {
@@ -239,8 +196,8 @@ async function submittedPackages(output: string): Promise<PackedPackageRecord[]>
   });
 }
 
-async function cellProcess(output: string, packages: string, object: string, context: Context, framework: Framework, head: string, runId: string): Promise<RuntimeCell> {
-  const args = ['--import', 'tsx', fileURLToPath(import.meta.url), '--cell', output, packages, object, context, framework, head, runId];
+async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string): Promise<RuntimeCell> {
+  const args = ['--import', 'tsx', fileURLToPath(import.meta.url), context === 'workflow' ? '--workflow' : '--cell', output, packages, object, context, framework, head, runId];
   const relative = `cells/${object}/${context}/${framework}`;
   const log: string[] = [];
   const exitCode = await new Promise<number>((resolve, reject) => {
@@ -274,7 +231,7 @@ async function emitterBite(output: string, ledger: RuntimeLedger) {
   const rejected = structuredClone(ledger);
   rejected.rows[rejected.rows.findIndex(row => identity(row) === identity(candidate))] = red!;
   rejected.summary = summarize(rejected.rows);
-  const issues = validateRuntimeLedger(rejected);
+  const issues = validateRuntimeLedger(rejected, ledger.rows.some(row => row.context === 'workflow'));
   assert(issues.includes(`${identity(candidate)} failed`));
   const rejectedPath = path.join(output, 'bite/red-runtime-cells.v1.json');
   await write(rejectedPath, rejected);
@@ -287,7 +244,7 @@ async function emitterBite(output: string, ledger: RuntimeLedger) {
   await write(path.join(output, 'emitter-bite.json'), { source: 'packages/mcp-server/src/codegen/react-emitter.ts', operation: 'Omit the emitted JSX screen while retaining the original schema', beforeHash: hash(original), mutatedHash: hash(mutated), restoredHash: hash(await fs.readFile(emitter)), red, ledgerIssues: issues, redSpecExitCode: redSpec.exitCode, restored, sourceRestoredByteIdentical: true, reusedSweepTarballs: true });
 }
 
-export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS) {
+export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false) {
   await fs.mkdir(output, { recursive: true });
   assert.deepEqual((await listObjects({})).objects.map(object => object.name).sort(), [...OBJECTS]);
   const head = commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim();
@@ -302,7 +259,10 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
     await write(path.join(output, 'browser.json'), { image: BROWSER_IMAGE, version: browser.version(), userAgent });
     await page.close();
   } finally { await browser.close(); }
-  const inputs = objects.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => ({ object, context, framework }))));
+  const inputs: Array<{ object: string; context: Context | 'workflow'; framework: Framework }> = [
+    ...(workflows ? objects.map(object => ({ object, context: 'workflow' as const, framework: 'react' as const })) : []),
+    ...objects.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => ({ object, context, framework })))),
+  ];
   let cursor = 0;
   // Each worker gets an independent generator process and an independent temporary consumer.
   // Only immutable tarballs are shared; no compose ID counters or npm installs are shared.
@@ -311,19 +271,24 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
       const input = inputs[cursor++]!;
       const cell = await cellProcess(output, output, input.object, input.context, input.framework, head, ledger.runId);
       ledger.rows.push(cell);
+      if (input.context === 'workflow') ledger.rows.push(JSON.parse(await fs.readFile(path.join(output, `cells/${input.object}/workflow/vue/receipt.json`), 'utf8')));
       console.log(`${identity(cell)} ${cell.status}${cell.gates.find(gate => gate.status === 'fail') ? ': ' + cell.gates.find(gate => gate.status === 'fail')!.reason : ''}`);
     }
   }));
   ledger.rows.sort((a, b) => identity(a).localeCompare(identity(b)));
   ledger.summary = summarize(ledger.rows);
   await write(path.join(output, 'runtime-cells.v1.json'), ledger);
-  if (validateRuntimeLedger(ledger).length === 0) await emitterBite(output, ledger);
-  await write(path.join(output, 'validation.json'), { issues: validateRuntimeLedger(ledger) });
+  if (validateRuntimeLedger(ledger, workflows).length === 0) await emitterBite(output, ledger);
+  await write(path.join(output, 'validation.json'), { issues: validateRuntimeLedger(ledger, workflows) });
   return ledger;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  if (process.argv[2] === '--cell') {
+  if (process.argv[2] === '--workflow') {
+    const [, , , output, packages, object, , , head, runId] = process.argv;
+    const { runWorkflowCells } = await import('./s193-workflow-cells.js');
+    await runWorkflowCells(output!, object!, head!, runId!, await submittedPackages(packages!));
+  } else if (process.argv[2] === '--cell') {
     const [, , , output, packages, object, context, framework, head, runId] = process.argv;
     const browser = await launchProofBrowser();
     try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser); }
@@ -332,6 +297,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const output = path.resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-193/m02');
   const objects = process.env.OODS_RUNTIME_OBJECTS?.split(',') ?? OBJECTS;
   const contexts = (process.env.OODS_RUNTIME_CONTEXTS?.split(',') ?? CONTEXTS) as Context[];
-  runRuntimeCells(output, objects, contexts).then(ledger => { if (validateRuntimeLedger(ledger).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
+  const workflows = process.argv.includes('--workflows');
+  runRuntimeCells(output, objects, contexts, workflows).then(ledger => { if (validateRuntimeLedger(ledger, workflows).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
   }
 }

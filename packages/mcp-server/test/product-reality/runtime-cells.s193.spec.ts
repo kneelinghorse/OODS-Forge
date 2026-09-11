@@ -54,10 +54,10 @@ describe('s193 runtime population accountability', () => {
     const ledger = population(); ledger.packCount = 2; ledger.browserImage = 'host-chromium';
     expect(validateRuntimeLedger(ledger)).toEqual(expect.arrayContaining(['exactly one package pack sweep is required', 'the pinned Linux browser image is required']));
   });
-  it('the retained current sweep has 132 passing or explicitly unavailable cells with real artifacts', () => {
+  it('the retained current sweep has all passing or explicitly unavailable cells with real artifacts', () => {
     const output = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'artifacts/product-reality/sprint-193/m02/runtime-cells.v1.json');
     const ledger = JSON.parse(fs.readFileSync(output, 'utf8')) as RuntimeLedger;
-    expect(validateRuntimeLedger(ledger)).toEqual([]);
+    expect(validateRuntimeLedger(ledger, ledger.rows.some(row => row.context === 'workflow'))).toEqual([]);
     const bite = JSON.parse(fs.readFileSync(path.join(path.dirname(output), 'emitter-bite.json'), 'utf8'));
     expect(bite.red.status).toBe('fail');
     expect(bite.redSpecExitCode).not.toBe(0);

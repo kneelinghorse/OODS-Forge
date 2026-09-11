@@ -12,6 +12,7 @@ import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.j
 import { isTraitRecipe } from '../../packages/mcp-server/src/compose/trait-recipes.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
+import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import type { GeneratedArtifact } from '../../packages/mcp-server/src/codegen/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
 import {
@@ -57,14 +58,27 @@ async function mountedRecipes(page: Page) {
 }
 
 /** Expected obligations come from declarations, never from whichever DOM survived. */
+export function workflowEditProbe(schema: UiSchema) {
+  const fields = schema.objectSchema!;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? schema.workflow!.data.idField;
+  const editable = schemaNodes(schema).filter(node => ['Input', 'Textarea'].includes(node.component) && node.bindings?.onChange)
+    .map(node => String(node.props?.field)).filter(field => fields[field]?.type === 'string' && !fields[field]?.enum?.length);
+  const field = editable.includes(titleField) ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0];
+  assert(field, 'Workflow must declare a writable text field for persistence proof');
+  const nodes = schemaNodes(schema);
+  const timelineEmpty = !nodes.some(node => node.collection?.historyField || node.component === 'PaymentEventTimeline');
+  return { field, titleField, seeded: String(workflowSampleRecords(schema)[2]![field] ?? ''), saved: 'Team annual', timelineEmpty };
+}
+
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
   const nodes = schemaNodes(schema);
   const fields = schema.objectSchema ?? {};
   const billing = nodes.some(node => node.component === 'BillingAmountInput');
   const address = nodes.some(node => node.component === 'AddressEditor');
   const cancel = nodes.some(node => Object.values(node.bindings ?? {}).includes('handleCancel'));
+  const edit = workflowEditProbe(schema);
   return ['ten-sample-records', 'detail-navigation', 'edit-seeded-values',
-    ...(billing ? ['billing-edit-values'] : []), fields.plan_name ? 'save-plan-name' : 'save-record-title',
+    ...(billing ? ['billing-edit-values'] : []), fields.plan_name ? 'save-plan-name' : edit.field === edit.titleField ? 'save-record-title' : 'save-record-field',
     ...(billing ? ['billing-save-persists'] : []), ...(address ? ['address-save-persists'] : []),
     ...(cancel ? ['cancel-detail', 'cancel-list-badge'] : []), 'timeline-navigation-and-history'];
 }
@@ -73,10 +87,11 @@ export function assertWorkflowFlow(rows: Row[], expected: readonly string[]) {
   assert.ok(rows.every(row => row.status === 'passed'), JSON.stringify(rows));
 }
 
-export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name'): Promise<Row[]> {
+export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name', editProbe?: ReturnType<typeof workflowEditProbe>): Promise<Row[]> {
   const rows: Row[] = [];
   const selectedId = `${object.toLowerCase()}-003`;
-  const titleInput = () => page.getByRole('textbox', { name: fieldLabel(titleField), exact: true });
+  const edit = editProbe ?? { field: titleField, titleField, seeded: `${object} 03`, saved: 'Team annual' };
+  const titleInput = () => page.getByRole('textbox', { name: fieldLabel(edit.field), exact: true });
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
     await ready(page, 'list');
@@ -136,8 +151,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
     await observe(rows, 'edit-seeded-values', async () => {
       await page.locator('[data-oods-action="handleEdit"]').click(); await ready(page, 'form');
       const plan = await titleInput().inputValue();
-      assert.equal(plan, `${object} 03`);
-      return { id: await screen(page).getAttribute('data-selected-id'), plan };
+      assert.equal(plan, edit.seeded);
+      return { id: await screen(page).getAttribute('data-selected-id'), field: edit.field, plan };
     });
     const hasAddress = await page.locator('[data-oods-component="AddressEditor"]').count() > 0;
     const hasBilling = await page.locator('[data-oods-component="BillingAmountInput"]').count() > 0;
@@ -153,11 +168,16 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       assert.equal(await interval.inputValue(), 'yearly');
       return { options, amount: await amount.inputValue(), interval: await interval.inputValue(), invalidSaveStayedOnForm: true };
     });
-    await observe(rows, titleField === 'plan_name' ? 'save-plan-name' : 'save-record-title', async () => {
-      await titleInput().fill('Team annual');
+    await observe(rows, titleField === 'plan_name' ? 'save-plan-name' : edit.field === titleField ? 'save-record-title' : 'save-record-field', async () => {
+      await titleInput().fill(edit.saved);
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'detail');
-      assert.equal(await page.locator('.workflow-heading h1').innerText(), 'Team annual');
+      assert.equal(await page.locator('.workflow-heading h1').innerText(), edit.field === titleField ? edit.saved : selectedId);
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');
+      if (edit.field !== titleField) {
+        await go(page, 'form'); await ready(page, 'form');
+        assert.equal(await titleInput().inputValue(), edit.saved, 'Saved field must survive reloading the record from the store');
+        await go(page, 'detail'); await ready(page, 'detail');
+      }
       return { heading: await page.locator('.workflow-heading h1').innerText() };
     });
     if (hasBilling) await observe(rows, 'billing-save-persists', async () => {
@@ -223,7 +243,17 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
     await observe(rows, 'timeline-navigation-and-history', async () => {
       await go(page, 'list'); await ready(page, 'list');
       await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click(); await ready(page, 'detail');
-      await page.locator('[data-oods-action="handleViewTimeline"]').click(); await ready(page, 'timeline');
+      const timelineAction = page.locator('[data-oods-action="handleViewTimeline"]');
+      if (await timelineAction.count()) await timelineAction.click();
+      else await go(page, 'timeline');
+      await ready(page, 'timeline');
+      if (editProbe?.timelineEmpty) {
+        const collection = page.locator('[data-oods-collection="events"]');
+        await collection.waitFor({ state: 'visible' });
+        const text = await collection.innerText();
+        assert.match(text, /No events yet/);
+        return { text, id: await screen(page).getAttribute('data-selected-id'), disposition: 'The declared timeline collection has no lifecycle-history or payment-event source; its empty state is visible.' };
+      }
       const text = await page.getByRole('list', { name: 'Lifecycle history' }).innerText();
       if (cancellable) { assert.match(text, /pending[ _]cancellation/i); assert.match(text, /Budget changed for next year/); }
       else assert.ok(text.trim().length > 0, 'Declared lifecycle history must contain the seeded event');
@@ -270,7 +300,7 @@ async function observeStates(page: Page, url: string, framework: Framework) {
 }
 
 /** Query controls stay usable through empty results; a refresh must not steal typing focus. */
-export async function observeCollectionControls(page: Page, url: string, object = 'Subscription') {
+export async function observeCollectionControls(page: Page, url: string, object = 'Subscription', schema?: UiSchema) {
   await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
   await ready(page, 'list');
   if (!await page.locator('[data-oods-collection="rows"]').count()) return [];
@@ -280,8 +310,12 @@ export async function observeCollectionControls(page: Page, url: string, object 
   const statusControl = page.getByRole('combobox', { name: 'Status', exact: true });
   const options = await statusControl.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value));
   const selectedStatus = options.includes('active') ? 'active' : options.find(value => value !== '');
-  assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
-  const expectedIds = await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
+  if (schema) {
+    const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter');
+    assert.deepEqual(options, (filter?.props?.options as Array<{ value: string }>).map(option => option.value), 'Filter choices must match the public declaration');
+  } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
+  const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record.status === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
+    : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
   await observe(rows, 'type-through-empty-results', async () => {
     await search.focus(); await search.pressSequentially('not-a-record');
@@ -293,13 +327,18 @@ export async function observeCollectionControls(page: Page, url: string, object 
     assert.equal(await search.inputValue(), ''); assert.equal(await records.count(), total);
     return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
   });
-  await observe(rows, 'filter-composed-rows', async () => {
+  if (selectedStatus) await observe(rows, 'filter-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption(selectedStatus);
     assert.equal(await records.count(), expectedIds.length);
     assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), expectedIds);
     await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('');
     assert.equal(await records.count(), total);
     return { selectedStatus, selectedCount: expectedIds.length, expectedIds, restoredCount: total };
+  });
+  else await observe(rows, 'filter-has-no-declared-enum', async () => {
+    assert.deepEqual(options, ['']);
+    assert.equal(await records.count(), total);
+    return { options, reason: 'The public schema declares no status enum values; only All states is available. Filtering by a status is not proven.' };
   });
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
@@ -320,10 +359,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
   return rows;
 }
 
-export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean, object: string, titleField: string, requiredFlow: readonly string[]) {
+export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean, object: string, titleField: string, requiredFlow: readonly string[], editProbe?: ReturnType<typeof workflowEditProbe>) {
   const rows: Array<Record<string, unknown>> = [];
   const selectedId = `${object.toLowerCase()}-003`;
-  const flow = await observeFlow(page, url, requireBillingViews, object, titleField);
+  const flow = await observeFlow(page, url, requireBillingViews, object, titleField, editProbe);
   assertWorkflowFlow(flow, requiredFlow);
   await go(page, 'list'); await ready(page, 'list');
   for (const width of [390, 820, 1440]) {
@@ -368,14 +407,17 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
   const requireBillingViews = JSON.stringify(composition.schema).includes('CycleProgressCard');
   const requireAddressViews = JSON.stringify(composition.schema).includes('AddressEditor');
   const requiredFlow = expectedWorkflowFlow(composition.schema);
+  const editProbe = workflowEditProbe(composition.schema);
   const artifacts = new Map<Framework, GeneratedArtifact>();
+  const generationErrors: unknown[] = [];
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
-    assert.equal(generated.status, 'ok', JSON.stringify(generated.errors));
+    await json(path.join(output, `${framework}-generation.json`), generated);
+    if (generated.status !== 'ok') { generationErrors.push({ framework, errors: generated.errors }); continue; }
     assert.deepEqual(validateGeneratedArtifact(generated.artifact!), []);
     artifacts.set(framework, generated.artifact!);
-    await json(path.join(output, `${framework}-generation.json`), generated);
   }
+  assert.equal(generationErrors.length, 0, JSON.stringify(generationErrors));
   const tarballs = packedPackages ?? await packFoundationPackages(output) as PackedPackageRecord[];
   const browser = await launchProofBrowser();
   const cells: Array<Record<string, unknown>> = [];
@@ -448,6 +490,10 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           activeGate = 'mount';
           await page.goto(url, { waitUntil: 'domcontentloaded' }); await ready(page, 'list');
           assert.equal(await screen(page).count(), 1); assert.deepEqual(errors, []);
+          const accessibilityTree = await page.locator('#app').ariaSnapshot();
+          assert.ok(accessibilityTree.trim().length > 0, 'Mounted workflow must expose an accessibility tree');
+          await fs.writeFile(path.join(cellRoot, 'accessibility-tree.txt'), accessibilityTree + '\n');
+          cell.accessibilityTree = `${framework}/accessibility-tree.txt`;
           pass(activeGate, { screenCount: 1, errors: [...errors] });
           activeGate = 'hydration';
           const index = path.join(consumer, 'dist/index.html');
@@ -460,16 +506,16 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           pass(activeGate, { preservesSsrRoot: true, errors: [...errors] });
           await fs.writeFile(index, original);
           activeGate = 'interaction-evidence';
-          const flow = await observeFlow(page, url, requireBillingViews, object, titleField); cell.flow = flow;
+          const flow = await observeFlow(page, url, requireBillingViews, object, titleField, editProbe); cell.flow = flow;
           assert.equal(flow.some(row => row.name === 'address-save-persists' && row.status === 'passed'), requireAddressViews, 'Declared address editor must pass save and detail readback');
           await json(path.join(cellRoot, 'flow.json'), flow);
           assertWorkflowFlow(flow, requiredFlow);
           const states = await observeStates(page, url, framework); allStates.push(...states);
           await json(path.join(cellRoot, 'states.json'), states);
-          const collectionControls = await observeCollectionControls(page, url, object);
+          const collectionControls = await observeCollectionControls(page, url, object, composition.schema);
           await json(path.join(cellRoot, 'collection-controls.json'), collectionControls);
           assert.ok(collectionControls.every(row => row.status === 'passed'), JSON.stringify(collectionControls));
-          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField, requiredFlow); allScreenshots.push(...images);
+          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField, requiredFlow, editProbe); allScreenshots.push(...images);
           assert.deepEqual(errors, []);
           pass(activeGate, { flowRows: flow.length, stateObservations: states.length, screenshots: images.length, errors });
           await page.close();
@@ -492,14 +538,14 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
       const build = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true });
       await json(path.join(output, 'bite-build.json'), build); requireGreen(build, 'navigation bite build');
       const page = await browser.newPage();
-      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
+      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField, editProbe));
       assert.deepEqual(red.filter((row) => row.status === 'failed').map((row) => row.name), ['detail-navigation']);
       await fs.writeFile(file, original); assert.equal(digest(await fs.readFile(file)), digest(original));
       const restore = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true }); requireGreen(restore, 'restore navigation');
       await json(path.join(output, 'bite-restore-build.json'), restore);
-      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
+      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField, editProbe));
       assertWorkflowFlow(green, requiredFlow);
-      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
+      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField, editProbe));
       assertWorkflowFlow(unaffected, requiredFlow);
       await json(path.join(output, 'navigation-bite.json'), { framework: 'react', source: 'src/application.ts', beforeHash: digest(original), afterHash: digest(mutated), restoredHash: digest(await fs.readFile(file)), red, restored: green, unaffectedFramework: 'vue', unaffected });
       await page.close();
@@ -508,7 +554,10 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
     const report = { mission, object, cellReports, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
     await json(path.join(output, 'report.json'), report);
     return report;
-  } finally { await browser.close(); }
+  } finally {
+    await browser.close();
+    for (const consumer of consumers.values()) await fs.rm(consumer, { recursive: true, force: true });
+  }
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

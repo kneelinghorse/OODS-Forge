@@ -16,6 +16,7 @@ import { readComponentsDataset, resolveComponentCount } from './catalog.shared.j
 import { hasMappedRenderer } from '../render/component-map.js';
 import { withinAllowed } from '../lib/security.js';
 import { loadTrait } from '../objects/trait-loader.js';
+import { readRuntimeSummary } from '../lib/runtime-ledger.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
@@ -1004,6 +1005,12 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
     const componentCount = resolveComponentCount(componentsData);
     const filteredCount = hasFilters ? totalCount : undefined;
 
+    let runtimeEvidence = 'Current complete runtime proof is unavailable; catalog membership does not establish runtime coverage.';
+    try {
+      const runtime = readRuntimeSummary();
+      runtimeEvidence = `${runtime.pass}/${runtime.cells} generated cells pass packed runtime gates at ${runtime.head}; ${runtime.typedGap} typed gaps, ${runtime.fail} failures. This is runtime evidence, not craft or classification approval.`;
+    } catch { /* Preserve catalog availability while health reports the missing/invalid proof. */ }
+
     return {
       components,
       totalCount,
@@ -1013,7 +1020,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
       hasMore,
       detail,
       generatedAt: componentsData.generatedAt || new Date().toISOString(),
-      ...(componentsData.obligationScope ? { obligationScope: componentsData.obligationScope } : {}),
+      ...(componentsData.obligationScope ? { obligationScope: { ...componentsData.obligationScope, runtimeEvidence } } : {}),
       stats: {
         componentCount,
         traitCount: componentsData.stats?.traitCount || 0,

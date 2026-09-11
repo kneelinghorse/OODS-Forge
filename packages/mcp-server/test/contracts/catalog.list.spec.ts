@@ -105,7 +105,8 @@ describe('catalog.list', () => {
     expect(output.generatedAt).toBe(data.generatedAt);
     expect(output.components.map((row) => row.name).sort()).toEqual(data.components.map((row) => row.id).sort());
     expect(new Set(output.components.map((row) => row.name)).size).toBe(109);
-    expect(output.obligationScope).toEqual(data.obligationScope);
+    expect(output.obligationScope).toMatchObject(data.obligationScope as object);
+    expect(output.obligationScope?.runtimeEvidence).toMatch(/packed runtime gates|runtime proof is unavailable/);
     expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'proposed-awaiting-derek-approval' });
     expect(validateOutput(output)).toBe(true);
     expect(validateOutput({ ...output, obligationScope: { ...output.obligationScope, approvedRuntimeCensus: 98 } })).toBe(false);

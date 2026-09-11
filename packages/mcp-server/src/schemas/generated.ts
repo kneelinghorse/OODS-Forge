@@ -1024,6 +1024,10 @@ export namespace CatalogListOutputSchema {
      * Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.
      */
     obligationScope?: {
+      /**
+       * Current validated packed-runtime ratio and recorded head, or an explicit unavailable reason; independent of component scope and approval.
+       */
+      runtimeEvidence?: string;
       schemaVersion: string;
       decisionId: number;
       disposition: 'retain-all-obligations';
@@ -3541,6 +3545,18 @@ export type HealthInput = HealthInputSchema.HealthInput;
 // Source: health.output.json
 export namespace HealthOutputSchema {
   export interface HealthOutput {
+    productReality: {
+      /**
+       * Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.
+       */
+      runtime: {
+        cells: 154;
+        pass: number;
+        typedGap: number;
+        fail: number;
+        head: string;
+      } | null;
+    };
     status: 'ok' | 'degraded';
     server: {
       version: string;
