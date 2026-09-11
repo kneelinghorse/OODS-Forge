@@ -5,13 +5,16 @@ import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { handle as codeGenerateHandle } from '../../src/tools/code.generate.js';
 import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
 
-function expectedTargetReadinessReceipt() {
+function expectedLegacyNormalizationReceipt() {
   return recordValidationChecks(
     createValidationReceipt(undefined, 'react'),
     'schema-structure',
     'component-registry',
     'state-contract',
     'target-readiness',
+    'normalization-fidelity',
+    'binding-contract',
+    'events-contract',
   );
 }
 
@@ -306,7 +309,7 @@ describe('viz.compose handler', () => {
       expect(validation.errors).toHaveLength(0);
     });
 
-    it('render accepts the viz schema while React codegen reports exact known-unready nodes', async () => {
+    it('render accepts the legacy scaffold while codegen exposes its reserved-attribute fault after all roots become ready', async () => {
       const result = await handle({
         chartType: 'bar',
         dataBindings: { x: 'month', y: 'revenue' },
@@ -330,21 +333,15 @@ describe('viz.compose handler', () => {
         fileExtension: '',
         imports: [],
         warnings: [],
-        validationReceipt: expectedTargetReadinessReceipt(),
-        errors: [
-          ['viz-1', 'VizMarkPreview'],
-          ['viz-2', 'VizMarkControls'],
-          ['viz-3', 'VizAxisControls'],
-          ['viz-4', 'VizAxisSummary'],
-          ['viz-5', 'VizEncodingBadge'],
-          ['viz-6', 'VizEncodingBadge'],
-          ['viz-7', 'VizRoleBadge'],
-        ].map(([nodeId, component]) => ({
-          code: 'OODS-N015',
-          message: `Component ${component} is not emission-eligible for react; evidence state: unavailable.`,
-          nodeId,
-          component,
-        })),
+        validationReceipt: expectedLegacyNormalizationReceipt(),
+        // s193 removed the unavailable-root mask. The deprecated scaffold still
+        // authors an emitter-owned layout attribute; do not silently certify it.
+        errors: [{
+          code: 'OODS-V007',
+          message: 'Prop key "data-layout" collides with an emitter-owned attribute.',
+          nodeId: 'viz-8',
+          component: 'Stack',
+        }],
         meta: { nodeCount: 8, componentCount: 7 },
       });
     });
