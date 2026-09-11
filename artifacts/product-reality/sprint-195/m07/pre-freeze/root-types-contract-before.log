@@ -1,0 +1,49 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge
+
+ ❯ |core| tests/contracts/schema-types.contract.test.ts (3 tests | 1 failed) 578ms
+   × Schema-derived types > can be consumed from one barrel without ambiguous chart parameter type exports 575ms
+     → expected [ …(12) ] to deeply equal []
+   ✓ Schema-derived types > exist for every schema file 2ms
+   ✓ Schema-derived types > are all exported through the barrel file 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/contracts/schema-types.contract.test.ts > Schema-derived types > can be consumed from one barrel without ambiguous chart parameter type exports
+AssertionError: expected [ …(12) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartColorEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartDeclaration'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartColorEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartDeclaration'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartColorEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartDeclaration'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartColorEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartDeclaration'. Consider explicitly re-exporting to resolve the ambiguity.",
++   "Module './traits/mark-area.parameters' has already exported a member named 'ChartEncodingBinding'. Consider explicitly re-exporting to resolve the ambiguity.",
++ ]
+
+ ❯ tests/contracts/schema-types.contract.test.ts:42:103
+     40|     });
+     41|     const errors = ts.getPreEmitDiagnostics(program).filter((diagnosti…
+     42|     expect(errors.map((diagnostic) => ts.flattenDiagnosticMessageText(…
+       |                                                                                                       ^
+     43|   });
+     44| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  18:21:19
+   Duration  1.29s (transform 39ms, setup 0ms, collect 411ms, tests 578ms, environment 0ms, prepare 66ms)
+
