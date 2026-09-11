@@ -1,9 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import userEvent from '@testing-library/user-event';
-import { VizColorControls, VizLinePreview, VizOpacityControls } from '../src/viz-recipes.js';
+import { VizAxisControls, VizColorControls, VizLinePreview, VizOpacityControls } from '../src/viz-recipes.js';
 const value = { encodings: { color: { field: 'category', range: ['#123456', '#654321'] }, x: { field: 'period' } } };
 describe('Viz recipe consumer boundaries', () => {
+  it('an unbound axis title stays local until its data field exists', async () => {
+    const wrapper = mount(VizAxisControls);
+    try {
+      await wrapper.get('input[name="x.title"]').setValue('Revenue');
+      expect(wrapper.emitted('change')).toBeUndefined(); expect(wrapper.get('[role="alert"]').text()).toContain('field');
+      await wrapper.get('input[name="x.field"]').setValue('period');
+      await wrapper.get('input[name="x.title"]').setValue('Revenue by month');
+      expect(wrapper.emitted('change')?.at(-1)).toEqual([{ encodings: { x: { field: 'period', title: 'Revenue by month' } } }]);
+      expect(wrapper.find('[role="alert"]').exists()).toBe(false);
+    } finally { wrapper.unmount(); }
+  });
+
   it('invalid colors are announced without emitting and a valid edit preserves other bindings', async () => {
     const wrapper = mount(VizColorControls, { props: { value } });
     try {

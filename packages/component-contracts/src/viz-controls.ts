@@ -81,6 +81,7 @@ export function editVizIntent(value: VizIntentFragment, field: VizControlField, 
   if (field.key === 'chartType') return { value: { ...value, chartType: text as VizChartType } };
   if (field.key === 'opacity') return { value: { ...value, opacity: next as number } };
   const [channel, property] = field.key.split('.') as [VizChannel, string];
+  if (property !== 'field' && !value.encodings?.[channel]?.field) return { error: 'Choose a data field before editing this binding.' };
   return { value: { ...value, encodings: { ...value.encodings, [channel]: { ...value.encodings?.[channel], [property]: next } } } };
 }
 
@@ -96,7 +97,7 @@ export function vizSummaryRows(id: VizSummaryId, value: VizIntentFragment, chann
 export function isVizIntentFragment(value: unknown): value is VizIntentFragment {
   const record = (item: unknown): item is Record<string, unknown> => !!item && typeof item === 'object' && !Array.isArray(item);
   if (!record(value) || Object.keys(value).some(key => !['chartType', 'encodings', 'opacity'].includes(key))) return false;
-  if (value.chartType !== undefined && !['bar', 'line', 'area', 'scatter', 'heatmap'].includes(String(value.chartType))) return false;
+  if (value.chartType !== undefined && (typeof value.chartType !== 'string' || !['bar', 'line', 'area', 'scatter', 'heatmap'].includes(value.chartType))) return false;
   if (value.opacity !== undefined && (typeof value.opacity !== 'number' || !Number.isFinite(value.opacity) || value.opacity < 0 || value.opacity > 1)) return false;
   if (value.encodings === undefined) return true;
   if (!record(value.encodings)) return false;
@@ -105,9 +106,9 @@ export function isVizIntentFragment(value: unknown): value is VizIntentFragment 
     const allowed = ['field', 'type', 'scale', 'title', 'sort', ...(channel === 'color' ? ['range'] : [])];
     if (Object.keys(binding).some(key => !allowed.includes(key))) return false;
     if (binding.title !== undefined && typeof binding.title !== 'string') return false;
-    if (binding.type !== undefined && !['quantitative', 'temporal', 'nominal', 'ordinal'].includes(String(binding.type))) return false;
-    if (binding.scale !== undefined && !['linear', 'temporal', 'log', 'sqrt', 'band', 'point', 'diverging'].includes(String(binding.scale))) return false;
-    if (binding.sort !== undefined && !['none', 'ascending', 'descending'].includes(String(binding.sort))) return false;
+    if (binding.type !== undefined && (typeof binding.type !== 'string' || !['quantitative', 'temporal', 'nominal', 'ordinal'].includes(binding.type))) return false;
+    if (binding.scale !== undefined && (typeof binding.scale !== 'string' || !['linear', 'temporal', 'log', 'sqrt', 'band', 'point', 'diverging'].includes(binding.scale))) return false;
+    if (binding.sort !== undefined && (typeof binding.sort !== 'string' || !['none', 'ascending', 'descending'].includes(binding.sort))) return false;
     return binding.range === undefined || (Array.isArray(binding.range) && binding.range.length >= 2 && binding.range.every(color => typeof color === 'string' && /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(color)));
   });
 }

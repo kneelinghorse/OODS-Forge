@@ -23,3 +23,21 @@ describe('typed chart input edits', () => {
     expect(vizSummaryRows('VizEncodingBadge', {}, 'color')).toEqual([['COLOR', 'Not bound']]);
   });
 });
+
+describe('untrusted authoring input and empty bindings', () => {
+  it('does not accept coercible arrays or objects as typed enum strings', () => {
+    for (const chartType of [['bar'], { toString: () => 'bar' }]) expect(isVizIntentFragment({ chartType })).toBe(false);
+    for (const [key, value] of [['type', 'nominal'], ['scale', 'linear'], ['sort', 'ascending']]) {
+      expect(isVizIntentFragment({ encodings: { x: { field: 'period', [key!]: [value] } } })).toBe(false);
+    }
+  });
+  it('requires a field before emitting edits to that binding, then accepts the same title', () => {
+    const title = vizControlFields('VizAxisControls')[1]!;
+    expect(editVizIntent({}, title, 'Revenue')).toMatchObject({ error: expect.stringContaining('field') });
+    expect(editVizIntent({}, title, 'Revenue').value).toBeUndefined();
+    const bound = editVizIntent({}, vizControlFields('VizAxisControls')[0]!, 'period').value!;
+    const titled = editVizIntent(bound, title, 'Revenue').value!;
+    expect(isVizIntentFragment(titled)).toBe(true);
+    expect(titled.encodings?.x).toEqual({ field: 'period', title: 'Revenue' });
+  });
+});
