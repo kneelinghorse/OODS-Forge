@@ -1,0 +1,132 @@
+{
+  "sourceHead": "2030b4c9faefe78b74338e362907c672ec5b55f2",
+  "sourceState": "Corrective source committed; tool ledger derived afterward for the final freeze. No second full capture yet.",
+  "targeted": {
+    "root": 37,
+    "server": 37,
+    "contracts": 67,
+    "styles": 9,
+    "vueSsr": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "closeoutPreflight": {
+    "passed": 5,
+    "explicitlyFiltered": 1,
+    "reason": "The final154 runtime assertion must run after the new corrected sweep; no old runtime receipt substituted."
+  },
+  "ciGateCommands": [
+    {
+      "command": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-1.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-2.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint:enum-convergence"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-3.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint:enum-to-token"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-4.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint:audit-log"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-5.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint:brand-bleed"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-6.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "lint:tokens"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-7.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/schemas-tools",
+        "run",
+        "generate:check"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-8.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "generate:schema-types",
+        "--",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-9.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "-w",
+        "run",
+        "docs:api",
+        "--",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-10.log"
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "log": "/tmp/forge-s193-corrective-gate-11.log"
+    }
+  ],
+  "publicCompositionPreflight": {
+    "schemas": 77,
+    "generationCells": 154,
+    "normalizedChangesFromFirstFinalCensus": 0
+  },
+  "retainedFailure": "five-suite-closeout-attempt-1/four-suite-baseline.json",
+  "correctiveCaptureAllowance": "Exactly one remaining full capture under decision1833; all initial failures retained."
+}
