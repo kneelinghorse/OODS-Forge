@@ -62,7 +62,7 @@ describe("Sprint 177 closeout carrier", () => {
     "<!-- closeout-local-rows:end -->",
   );
 
-  it("covers the exact current set of 17 CI job keys once", () => {
+  it("covers the exact current set of 18 CI job keys once", () => {
     const jobsSection = workflow.slice(workflow.indexOf("\njobs:\n") + 7);
     const workflowJobs = [
       ...jobsSection.matchAll(/^  ([a-z][a-z0-9-]+):\s*$/gm),
@@ -72,9 +72,9 @@ describe("Sprint 177 closeout carrier", () => {
     ].map((match) => match[1]);
 
     expect([...carrierRows].sort()).toEqual([...workflowJobs].sort());
-    expect(workflowJobs).toHaveLength(17);
-    expect(new Set(carrierRows).size).toBe(17);
-    expect(checklist).toContain("Repeat through `CI-17` and `L-01` through `L-09`.");
+    expect(workflowJobs).toHaveLength(18);
+    expect(new Set(carrierRows).size).toBe(18);
+    expect(checklist).toContain("Repeat through `CI-18` and `L-01` through `L-09`.");
     expect(checklist).not.toContain("Repeat through `CI-14`");
   });
 
@@ -192,7 +192,21 @@ describe("Sprint 177 closeout carrier", () => {
   });
 
   it("serializes compiler and packaging proofs that can starve parallel readers", () => {
-    const coverageCommand = packageManifest.scripts?.["test:coverage"] ?? "";
+    // s194-m01 splits CI budgets while preserving this exact local serial chain.
+    expect(packageManifest.scripts?.["test:coverage"]).toBe(
+      "pnpm run test:coverage:root && pnpm run test:coverage:consumers",
+    );
+    expect(packageManifest.scripts?.["test:coverage:root"]).toBe("vitest --coverage");
+    const coverageCommand = `${packageManifest.scripts?.["test:coverage:root"]} && ${packageManifest.scripts?.["test:coverage:consumers"]}`;
+    for (const [job, nextJob, script] of [
+      ["coverage", "product-reality-consumers", "test:coverage:root"],
+      ["product-reality-consumers", "scale-determinism", "test:coverage:consumers"],
+    ]) {
+      const jobSource = workflow.slice(workflow.indexOf(`\n  ${job}:`), workflow.indexOf(`\n  ${nextJob}:`));
+      expect(jobSource).toContain("timeout-minutes: 30");
+      expect(jobSource).toContain("run: pnpm run pretest:coverage");
+      expect(jobSource).toContain(`run: pnpm run ${script}`);
+    }
     const serializedProofs = [
       {
         rootPath:

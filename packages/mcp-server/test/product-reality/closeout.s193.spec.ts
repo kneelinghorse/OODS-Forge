@@ -96,8 +96,13 @@ describe('Sprint 193 bounded closeout', () => {
     const ledger = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json`, 'utf8'));
     expect(validateRuntimeLedger(ledger, true)).toEqual([]);
     expect(ledger.summary).toEqual({ cells: 154, pass: 154, typedGap: 0, fail: 0 });
-    const current = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
-    expect(derivePublicHeadEquivalence({ root, implementationHead: ledger.head, executionHead: current, sprintId: 'sprint-193' }).changedPaths).toEqual([]);
+    // s194-m01: the historical proof binds its recorded execution, not future sprints' HEAD.
+    const manifest = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/closeout/manifest.json`, 'utf8'));
+    const capture = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/five-suite-closeout/four-suite-baseline.json`, 'utf8'));
+    expect(manifest.implementationHead).toBe(ledger.head);
+    expect(manifest.executionHead).toBe(capture.measuredHead);
+    expect(derivePublicHeadEquivalence({ root, implementationHead: ledger.head, executionHead: manifest.executionHead, sprintId: 'sprint-193' }).changedPaths).toEqual([]);
+    expect(derivePublicHeadEquivalence({ root, implementationHead: ledger.head, executionHead: 'db8d24d200c0ee888900359fb3a9f1c257206ca5', sprintId: 'sprint-193' }).changedPaths).toEqual(expect.arrayContaining(['.github/workflows/ci.yml', 'package.json']));
   });
   it('permits only additive receipt descendants after execution, never source edits or rewritten evidence', () => {
     expect(() => assertEvidenceOnlyHeadChanges([{ status: 'A', path: 'artifacts/product-reality/sprint-193/m07/five-suite-closeout/run-1/result.json' }], 'sprint-193')).not.toThrow();
