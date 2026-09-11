@@ -36,7 +36,7 @@ export * from './echarts-index.js';
  * THE SCOPE CHAIN CONTINUES (s172). Derek's ratified s172 pillar fork WAS that scope
  * decision, and what it changed was the premise rather than the count: the accuracy pillar
  * now also covers the 8 ECharts-primary types, whose IR is metadata-only and whose data
- * lives in a per-type operand this interface cannot reach. Those six rules (OODS-V154..V159)
+ * lives in a per-type operand this interface cannot reach. The initial six rules (OODS-V154..V159)
  * live in ./echarts-index.ts behind their OWN rule type and their own evaluator. This set,
  * this interface and evaluate(spec, compiled) are UNCHANGED — every s170 pin still holds,
  * and a cartesian rule still sees exactly the IR and the compiled spec.

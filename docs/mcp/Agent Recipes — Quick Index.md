@@ -160,7 +160,7 @@ viz.render { "rows": [{ "region": "North", "revenue": 120000 }, { "region": "Sou
 artifact.certify { "spec": { ... } }
 ```
 
-For an unchanged cartesian roundtrip, verify that `artifact.certify.contentHash` equals `viz.render.contentHash`, then inspect `coverage`, `conformant`, `pillars`, and `findings`. If you hand-edit the IR, certify the edited object and treat its new hash as the artifact identity. Do not pass `data` for cartesian charts. For an ECharts-primary chart, pass the same render input branch under `data` (for example, `data.sankey`) so determinism, accuracy, and warn-first a11y checks can run; its `coverage` remains `uncertified`, so read the individual pillars.
+For an unchanged cartesian roundtrip, verify that `artifact.certify.determinism.contentHash` equals `viz.render.contentHash`, then inspect `coverage`, `conformant`, `pillars`, and `findings`. If you hand-edit the IR, certify the edited object and treat its new hash as the artifact identity. Do not pass `data` for cartesian charts. For an ECharts-primary chart, pass the same render input branch under `data` (for example, `data.sankey`) to use the declared operand profile: accessibility, determinism, contrast and evaluated accuracy combine into a measured conformance boolean. Inspect failures even when coverage is `certified`; certification does not guarantee conformance. Without that operand, coverage stays `uncertified` and conformance stays `null`.
 
 **Labels**: `visualization`, `certification`
 **Notes**: Certification reads the supplied IR; it does not rebuild or re-recommend the chart.

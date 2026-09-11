@@ -11,16 +11,11 @@
 // contrast grade's render as the first hash — so `stable` is falsifiable, not a
 // compile tautology.
 //
-// Coverage-honest: the 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
-// from the IR's first mark trait) return coverage:'uncertified' / conformant:null, a
-// DISTINCT verdict, not a failure. That is a statement about the FOLDED GATE, not about
-// what was checked. Three of the four pillars carry real verdicts on that path:
-// contrast since s141, and — as of s172, whenever the caller supplies the optional `data`
-// operand — determinism and accuracy too (certify re-emits the ECharts option through the
-// same adapters viz.render uses, and evaluates a per-type accuracy set over the operand).
-// a11y-equivalence runs WARN-FIRST on that path as of s174: with the operand the 16 rules
-// evaluate over the operand-built table + narrative and every failure reaches findings[] at
-// its native severity, while the PILLAR stays 'unchecked' — findings first, verdict later.
+// ECharts-primary certification uses the declared data operand profile. With data,
+// a11y-equivalence is graded over the same table/narrative as viz.render, and the
+// folded verdict requires passing a11y, stable determinism, non-failing contrast,
+// and at least one evaluated clean accuracy rule. Without data, coverage remains
+// uncertified and conformant remains null; metadata cannot prove missing operands.
 // Contrast is a graded pillar (s137/s138/s139; render-backed since s176):
 // on the cartesian path certify RENDERS the compiled spec through @oods/viz-render and
 // grades the series-to-paint assignment the data marks actually carry (duplicates
@@ -32,10 +27,10 @@
 // exists to render. Both render paths are deterministic under their recorded contracts.
 //
 // Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar), widened to all
-// 13 types in s172. On the CERTIFIED path certify evaluates FOUR declared structural rules
+// 13 types in s172. On the Cartesian path certify evaluates FOUR declared structural rules
 // (non-zero bar baseline, dual axis, area-encodes-linear, aggregation-hiding) over the IR
 // and the compiled spec it already produced. On the ECHARTS path it evaluates a per-type set
-// (OODS-V154..V159) over the `data` operand — the only place those charts' data exists. No
+// (OODS-V154..V159 and OODS-V168..V173) over the `data` operand — the only place those charts' data exists. No
 // scorer, no corpus, no render step — #110 holds on both: the rules read, they never rebuild.
 // `accuracy:'pass'` means none of the rules OFFERED FOR THAT CHART TYPE was positively
 // detected, with accuracySummary.rulesEvaluated reporting how many actually resolved their
@@ -181,31 +176,31 @@ export interface ArtifactCertifyOutput {
   readonly contrastResults?: ReadonlyArray<{ theme: 'light' | 'dark'; brand: 'A' | 'B'; verdict: ContrastVerdict; measured: boolean; evidence: 'render' | 'baked-palette' | 'none'; note: string }>;
   readonly coverage?: 'certified' | 'uncertified';
   /**
-   * The folded conformance gate (s140 [B], extended s170), CARTESIAN PATH ONLY: true iff
-   * a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy
-   * is not 'fail' AND determinism is stable — measured at the requested CSS scope. null on the uncertified path, and it STAYS null there even when an ECharts
-   * accuracy rule fires (s172): that path makes no folded claim, so the failure is read from
-   * pillars.accuracy and findings[]. Absent on error.
+   * The folded conformance gate. ECharts data-backed calls require passing a11y,
+   * stable determinism, contrast neither fail nor ungradeable, and accuracy pass
+   * with at least one evaluated clean rule. Spec-only ECharts calls retain null.
+   * Cartesian grading is unchanged. Absent on error.
    */
   readonly conformant?: boolean | null;
   /**
    * One entry per failing rule. As of s172 this carries THREE families, told apart by code —
    * a11y-equivalence (OODS-A11Y-<rule.id>), cartesian accuracy (OODS-V150..V153) and
-   * ECharts-primary accuracy (OODS-V154..V159). It is no longer a11y-equivalence-only, and
-   * no longer empty on the uncertified path.
+   * ECharts-primary accuracy (OODS-V154..V159 and OODS-V168..V173). Findings retain
+   * native severity; evaluator faults are also exposed in pillars and notes.
    */
   readonly findings?: CertifyFinding[];
   /**
    * s175 m03 — the not-applicable a11y-equivalence results, in rule order, each naming the
-   * absent precondition. Present (as [] if none) EXACTLY when the warn-first engine ran to
+   * absent precondition. Present (as [] if none) EXACTLY when the a11y-equivalence engine ran to
    * completion — the ECharts-primary path with the `data` operand. Absent on the {spec}-only
    * path, on the cartesian path (decision 8: cartesian NA exposure is out of scope), on
-   * error, and when the engine faulted (the partial list is discarded; notes[] says so).
+   * error, and when the engine throws or returns an incomplete rule population. A fault in
+   * one rule retains the completed population and findings while failing the a11y pillar.
    */
   readonly a11yNotApplicable?: CertifyA11yNotApplicable[];
   /**
-   * The re-emit proof. Certified path: the Vega-Lite compile. Uncertified path (s172):
-   * the ECharts option, present whenever the `data` operand was supplied.
+   * The re-emit proof: the Vega-Lite compile for Cartesian charts, or the ECharts
+   * option and available normalized SVG whenever the `data` operand was supplied.
    */
   readonly determinism?: CertifyDeterminism;
   /** Per-pillar tri-state summary (s137, extended s170/s172). Present on both ok paths; absent on error. */
@@ -276,27 +271,10 @@ const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
   'MarkBubble',
 ]);
 
-// The a11y-equivalence note shared by every ECharts-primary verdict.
-//
-// s174 m01 — the DEFERRAL IS OVER, so the note stops describing one. The two prior wordings
-// (s172 m04's "no per-rule not-applicable state", s173 m01's correction of its false
-// "determinism and accuracy ARE checked" clause) both explained why the engine could not run
-// here. It runs now: the engine reports pass / fail / not-applicable-with-its-absent-
-// precondition-named, so an absent precondition is no longer indistinguishable from a
-// meaningful pass, and the rollout is warn-first — findings at native severity, pillar
-// unmoved.
-//
-// Two things the wording is careful about, both corrections of the older text:
-//   - It names the OPERAND GATE. Warn-first runs only when `data` is supplied; without the
-//     operand there is nothing to evaluate, and saying "a11y-equivalence runs here" flat
-//     would be false on the {spec}-only path that most callers take.
-//   - It drops "The accessible table + narrative are STILL generated". On the {spec}-only
-//     path nothing is generated — there is no data to generate from. They are generated on
-//     the data-backed path, which is where the operand-built table and narrative come from.
-// The verdict flip (pillar → pass/fail) is referenced UNDATED: shipped prose does not carry
-// sprint numbers (the s173→s174 date correction in this very sentence is why).
-const echartsA11yNote = (trait: string): string =>
-  `${trait} is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the \`data\` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.`;
+// Separate notes keep the missing-operand explanation accurate after enforcement.
+const echartsA11yNote = (trait: string, hasOperand = false): string => hasOperand
+  ? `${trait} is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.`
+  : `${trait} is an ECharts-primary mark. Without the \`data\` operand there is nothing to evaluate: no a11y findings appear, pillars.a11yEquivalence stays 'unchecked', coverage stays 'uncertified', and conformant stays null. Supply the matching operand to grade a11y-equivalence, determinism and accuracy over the chart's actual data.`;
 
 /**
  * What the s172 operand contributed to an ECharts-primary verdict: the determinism pillar
@@ -305,6 +283,7 @@ const echartsA11yNote = (trait: string): string =>
  * by silence.
  */
 interface EChartsOperandVerdict {
+  readonly a11yPillar: 'pass' | 'fail' | 'unchecked';
   readonly determinismPillar: 'pass' | 'fail' | 'unchecked';
   readonly determinism?: CertifyDeterminism;
   /** s172 m03 — the ECharts-side accuracy pillar, real whenever the operand is present. */
@@ -315,15 +294,11 @@ interface EChartsOperandVerdict {
     readonly contrast: ContrastVerdict;
     readonly contrastNote: string;
   };
-  /**
-   * Accuracy findings (OODS-V154..V159) followed by the s174 warn-first a11y-equivalence
-   * findings (OODS-A11Y-<rule.id>, native severity). There is deliberately no a11y PILLAR
-   * field here: warn-first surfaces findings without moving any verdict.
-   */
+  /** Accuracy findings followed by a11y-equivalence findings at native severity. */
   readonly findings: CertifyFinding[];
   /**
    * s175 m03 — the third state the note promises. Present (as [] when no rule was
-   * not-applicable) EXACTLY when the warn-first engine ran to completion; undefined when it
+   * not-applicable) EXACTLY when the a11y-equivalence engine ran to completion; undefined when it
    * did not (no operand, or the engine threw — the catch below discards the partial list and
    * says so in notes[]). Never folded into findings[]: a not-applicable rule is not a failure.
    */
@@ -331,12 +306,7 @@ interface EChartsOperandVerdict {
   readonly notes: string[];
 }
 
-/**
- * Shared shape for an ECharts-primary verdict. s141 gave it a REAL contrast pillar; s172
- * gives it a REAL determinism pillar whenever the `data` operand is supplied. coverage
- * stays 'uncertified' and conformant stays null (Design A — there is still no Vega-Lite
- * compile, so no a11y-equivalence claim), and the a11y note is retained.
- */
+/** The declared operand profile folds measured pillars; spec-only calls make no folded claim. */
 function echartsContrastVerdict(
   trait: string,
   contrast: ContrastVerdict,
@@ -345,26 +315,25 @@ function echartsContrastVerdict(
 ): ArtifactCertifyOutput {
   return {
     status: 'ok',
-    coverage: 'uncertified',
-    conformant: null,
+    coverage: operand.determinism ? 'certified' : 'uncertified',
+    conformant: operand.determinism
+      ? operand.a11yPillar === 'pass' && operand.determinismPillar === 'pass'
+        && contrast !== 'fail' && contrast !== 'ungradeable' && operand.accuracyPillar === 'pass'
+      : null,
     accuracyRules: echartsAccuracyRulesFor(echartsPrimaryTypeForMarkTrait(trait)!).map(rule => rule.code),
-    // s172 m03: findings[] now carries a THIRD family on this path — the ECharts accuracy
-    // codes OODS-V154..V159. conformant STAYS null: the uncertified path makes no folded
-    // claim (s141 Design A), so an accuracy fail here is read from pillars.accuracy and
-    // findings[], never from conformant. That is stated in the output schema prose.
     findings: operand.findings,
     // s175 m03: the not-applicable channel rides beside findings[] — present exactly when the
-    // warn-first engine ran (data-backed path), absent on the {spec}-only path.
+    // a11y-equivalence engine ran (data-backed path), absent on the {spec}-only path.
     ...(operand.a11yNotApplicable ? { a11yNotApplicable: operand.a11yNotApplicable } : {}),
     pillars: {
-      a11yEquivalence: 'unchecked',
+      a11yEquivalence: operand.a11yPillar,
       determinism: operand.determinismPillar,
       contrast,
       accuracy: operand.accuracyPillar,
     },
     ...(operand.determinism ? { determinism: operand.determinism } : {}),
     ...(operand.accuracySummary ? { accuracySummary: operand.accuracySummary } : {}),
-    notes: [echartsA11yNote(trait), ...operand.notes],
+    notes: [echartsA11yNote(trait, operand.determinism !== undefined), ...operand.notes],
     ...(contrastNote ? { contrastNote } : {}),
   };
 }
@@ -604,6 +573,7 @@ async function evaluateEChartsOperand(
 ): Promise<EChartsOperandVerdict | { failure: { code: string; message: string } }> {
   if (!operand) {
     return {
+      a11yPillar: 'unchecked',
       determinismPillar: 'unchecked',
       accuracyPillar: 'unchecked',
       findings: [],
@@ -655,20 +625,9 @@ async function evaluateEChartsOperand(
     );
   }
 
-  // A11Y-EQUIVALENCE, WARN-FIRST (s174 m01). The engine needs a table + narrative, which an
-  // ECharts-primary IR cannot supply — its data lives in the operand. Build the SAME context
-  // viz.render derives its structured a11y from (shared builder, not a transcription) and
-  // evaluate the 16 rules over it.
-  //
-  // Three properties make this "warn-first" rather than a verdict migration:
-  //   - the PILLAR is untouched ('unchecked' on every path this sprint — see the callers);
-  //   - findings keep their NATIVE severity (no s134-style forced remap — the output schema
-  //     promises exactly that, and R-09's 'error' really is an error-severity finding);
-  //   - nothing blocks: conformant is null on this path, so an a11y finding moves no gate.
-  // What the caller gets is the enumeration of what enforcement will one day require.
-  //
-  // Guarded exactly like the accuracy rules above: an engine fault degrades to zero a11y
-  // findings plus a note, never a status:error on an otherwise valid verdict.
+  // Grade the same operand-built context viz.render uses. A fault must not turn
+  // a missing evaluation into a pass; commit findings/NA only after completion.
+  let a11yPillar: EChartsOperandVerdict['a11yPillar'] = 'fail';
   const a11yNotes: string[] = [];
   // s175 m03 — the NOT-APPLICABLE channel. The engine's tri-state (s174) reports an absent
   // precondition as `passed:true` + `notApplicable:true` + `preconditionAbsent`, which the
@@ -681,7 +640,13 @@ async function evaluateEChartsOperand(
   try {
     const context = buildEChartsA11yContext(spec, operand.chartType, operand.branchData);
     const notApplicable: CertifyA11yNotApplicable[] = [];
-    for (const rule of validateVizEquivalenceRulesForContext(context)) {
+    const a11yFindings: CertifyFinding[] = [];
+    const results = validateVizEquivalenceRulesForContext(context);
+    const expectedIds = Array.from({ length: 16 }, (_, index) => `A11Y-R-${String(index + 1).padStart(2, '0')}`);
+    if (JSON.stringify(results.map(rule => rule.id).sort()) !== JSON.stringify(expectedIds)) throw new Error('Incomplete a11y-equivalence rule population');
+    let failed = false;
+    for (const rule of results) {
+      if (rule.executionError) failed = true;
       if (rule.notApplicable) {
         notApplicable.push({
           rule: rule.id,
@@ -692,20 +657,25 @@ async function evaluateEChartsOperand(
       if (rule.passed) {
         continue;
       }
-      findings.push({
+      if (rule.severity === 'error') failed = true;
+      a11yFindings.push({
         code: `OODS-A11Y-${rule.id}`,
         severity: rule.severity,
         message: rule.message ?? rule.summary,
       });
     }
     a11yNotApplicable = notApplicable;
+    findings.push(...a11yFindings);
+    a11yPillar = failed ? 'fail' : 'pass';
+    if (results.some(rule => rule.executionError)) a11yNotes.push('An a11y-equivalence rule faulted; the a11y pillar fails while findings retain native severity.');
   } catch {
     a11yNotes.push(
-      `The a11y-equivalence rules could not be evaluated for this ${operand.chartType}; no a11y findings are reported for it. pillars.a11yEquivalence is 'unchecked' on this path either way.`,
+      `The a11y-equivalence rules could not be evaluated for this ${operand.chartType}; no a11y findings or partial not-applicable results are reported for it. pillars.a11yEquivalence is 'fail', so the operand profile cannot pass.`,
     );
   }
 
   return {
+    a11yPillar,
     determinismPillar: rendered.stable ? 'pass' : 'fail',
     determinism: {
       stable: rendered.stable,
@@ -800,11 +770,8 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
     operand = resolved;
   }
 
-  // ECharts-primary (treemap/sunburst/sankey/...): no Vega-Lite compile, so still no
-  // a11y-equivalence claim — coverage stays 'uncertified'. A DISTINCT verdict, not a
-  // failure. As of s172 the DETERMINISM pillar is real here whenever the operand is
-  // present: certify re-emits the ECharts option twice through the same adapters
-  // viz.render uses and hashes the same JSON projection.
+  // ECharts-primary uses the declared operand profile without a Vega compile leg.
+  // Missing data retains the spec-only, explicitly uncertified response.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
     const operandVerdict = await evaluateEChartsOperand(spec, trait, operand, scope);
     if ('failure' in operandVerdict) {

@@ -13,7 +13,7 @@ import { handle as dashboard } from '../../packages/mcp-server/src/tools/dashboa
 import { handle as certify } from '../../packages/mcp-server/src/tools/artifact.certify.js';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
 const readJson = (file: string) => JSON.parse(readFileSync(resolve(root, file), 'utf8'));
 export const censusInputs: Parameters<typeof render>[0][] = readJson('scripts/product-reality/s190-viz-operands.json');
 const ajv = new Ajv({ strict: false, allErrors: true });
@@ -61,7 +61,8 @@ export async function measureVizCensus() {
       scopes.push({ theme, brand, svgHash: rendered.svgHash, renderHash: grade.determinism?.renderHash, repeated: true,
         render: rendered.render, a11yDescription: !!rendered.normalizedSpec?.a11y?.description,
         coverage: grade.coverage, conformant: grade.conformant, accuracyRules: grade.accuracyRules,
-        accuracySummary: grade.accuracySummary, contrast: grade.contrastResults![0] });
+        accuracySummary: grade.accuracySummary, pillars: grade.pillars, findings: grade.findings,
+        notes: grade.notes, contrast: grade.contrastResults![0] });
     }
     const { output: _output, rows, name, ...panelInput } = input;
     const dashboardRequest = { schemaVersion: 'v0.1', datasets: [{ id: 'data', rows: rows ?? censusInputs[0]!.rows! }],
@@ -84,21 +85,64 @@ export async function measureVizCensus() {
     if (!measured.length) notes.push(`Contrast verdict ${scopes[0].contrast.verdict}; no categorical canvas-ratio measurement claimed.`);
     if (places.length) notes.push(`Static sample chart placement: ${places.map(place => `${place.object}/${place.context}`).join(', ')}; edited form data does not regenerate SVG.`);
     const first = scopes[0];
+    assert(scopes.every(scope => scope.coverage === first.coverage), `${input.chartType}: scope-dependent certification coverage`);
+    if (first.coverage === 'uncertified' && first.render.engine === 'echarts') {
+      assert(first.notes?.length, `${input.chartType}: uncertified operand profile needs a measured reason`);
+      notes.push(`Uncertified operand profile: ${first.notes.join(' ')}`);
+    }
     registry.push({ chartType: input.chartType, specEngine: first.render.engine, publicSvg: scopes.every(scope => !!scope.svgHash),
       dashboardDrawn: drawn ? true : 'excluded (#881)', themes: { light: scopes.filter(scope => scope.theme === 'light').every(scope => !!scope.svgHash), dark: scopes.filter(scope => scope.theme === 'dark').every(scope => !!scope.svgHash), hc: hcAdmitted },
       brands: ['A', 'B'].filter(brand => scopes.filter(scope => scope.brand === brand).every(scope => !!scope.svgHash)),
       a11yDescription: scopes.every(scope => scope.a11yDescription), accuracyRules: first.accuracyRules,
-      certifyCoverage: first.coverage, contrastMeasured: measured, contrastPassed: passed, chartInApp: places.length ? 'placed' : 'not-placed', notes });
+      certifyCoverage: first.coverage, certifyProfile: first.render.engine === 'echarts' ? 'echarts-data' : 'cartesian',
+      certifyScopes: scopes.map(({ theme, brand, coverage, conformant, pillars, accuracySummary }) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })),
+      contrastMeasured: measured, contrastPassed: passed, chartInApp: places.length ? 'placed' : 'not-placed', notes });
     observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted });
   }
-  return { registry, observations, placementCompositions: 66, placements };
+  const accuracyControls = await measureVizAccuracyControls();
+  return { registry, observations, placementCompositions: 66, placements, accuracyControls };
+}
+
+/** Missing real predicates must make the census red even when the rule roster is intact. */
+export async function measureVizAccuracyControls() {
+  const results = [];
+  for (const [chartType, code, fieldKey] of [['bubble_map', 'OODS-V168', 'sizeField'], ['flow_map', 'OODS-V171', 'strengthField']] as const) {
+    const input = structuredClone(censusInputs.find(row => row.chartType === chartType)!);
+    assert(input, `${chartType}: missing accuracy control operand`);
+    const rendered = await render({ ...input, brand: 'A', theme: 'light', output: { svg: true, includeNormalizedSpec: true } });
+    assert.equal(rendered.status, 'ok', `${chartType}: accuracy control must start with public pixels`);
+    const geo = structuredClone((input as any).geo);
+    const field = geo[fieldKey];
+    assert(typeof field === 'string' && geo.rows?.length, `${chartType}: accuracy control requires its declared measure`);
+    geo.rows[0][field] = -1;
+    const grade = await certify({ spec: rendered.normalizedSpec!, data: { geo }, brand: 'A', theme: 'light' });
+    assert.equal(grade.status, 'ok', `${chartType}: accuracy control must be evaluated`);
+    assert(grade.findings?.some(finding => finding.code === code), `${chartType}: census missed required ${code} accuracy finding for a negative ${fieldKey}`);
+    assert.equal(grade.pillars?.accuracy, 'fail', `${chartType}: detected distortion must fail accuracy`);
+    assert.equal(grade.conformant, false, `${chartType}: detected distortion must fail the operand conformance gate`);
+    results.push({ chartType, expectedCode: code, field, suppliedValue: -1, grade });
+  }
+  return results;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const output = resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-190/m05');
+  const args = process.argv.slice(2);
+  const check = args.includes('--check');
+  const writeRegistry = args.includes('--write-registry');
+  assert(!(check && writeRegistry), '--check and --write-registry are separate operations');
+  assert(args.every(arg => !arg.startsWith('--') || ['--check', '--write-registry'].includes(arg)), 'Unknown census option');
+  const output = args.find(arg => !arg.startsWith('--')) ?? process.env.OODS_VIZ_CENSUS_OUTPUT;
+  assert(check || output, 'Provide an explicit census output directory; historical receipts are never a default destination.');
   const result = await measureVizCensus();
-  mkdirSync(output, { recursive: true });
-  writeFileSync(resolve(output, 'viz-census.json'), JSON.stringify(result.registry, null, 2) + '\n');
-  writeFileSync(resolve(output, 'viz-observations.json'), JSON.stringify(result, null, 2) + '\n');
-  console.log(JSON.stringify({ rows: result.registry.length, scopeIdentities: result.observations.reduce((n, row) => n + row.scopes.length, 0), placements: result.placements }));
+  if (check) assert.equal(canonical(result.registry), canonical(readJson('packages/viz-core/src/registry/viz-recipes.v1.json')), 'Measured viz registry differs from canonical source');
+  else {
+    mkdirSync(resolve(output!), { recursive: true });
+    writeFileSync(resolve(output!, 'viz-census.json'), JSON.stringify(result.registry, null, 2) + '\n');
+    writeFileSync(resolve(output!, 'viz-observations.json'), JSON.stringify(result, null, 2) + '\n');
+    if (writeRegistry) writeFileSync(resolve(root, 'packages/viz-core/src/registry/viz-recipes.v1.json'), JSON.stringify(result.registry, null, 2) + '\n');
+  }
+  console.log(JSON.stringify({ rows: result.registry.length, scopeIdentities: result.observations.reduce((n, row) => n + row.scopes.length, 0),
+    certified: result.registry.filter(row => row.certifyCoverage === 'certified').length,
+    nonconformantScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.conformant === false).length,
+    accuracyControls: result.accuracyControls.length, placements: result.placements }));
 }

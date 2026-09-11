@@ -16,11 +16,13 @@ SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the 
 
 Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.
 
-Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 5 certified / 8 uncertified; uncertified results keep conformant:null.
+Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 13 certified / 0 uncertified; uncertified results keep conformant:null.
+
+Measured scope verdicts: 48 conformant / 4 nonconformant / 0 uncertified. Types with a nonconformant scope: bubble_map.
 
 Theme parameters: light (13/13) and dark (13/13); HC pixels (0/13) are deferred. Brand parameters: A, B. Default scope is light/A.
 
-Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.
+Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: OODS-V154, OODS-V155, OODS-V156, OODS-V157, OODS-V158, OODS-V159, OODS-V168, OODS-V169, OODS-V170, OODS-V171, OODS-V172, OODS-V173; applicability and evaluated counts depend on the data operand.
 
 | Type | Engine | Dashboard | Certification | Contrast measured | Application |
 | --- | --- | --- | --- | --- | --- |
@@ -29,14 +31,14 @@ Contrast measurement records actual categorical canvas grades, including failure
 | area | vega-lite | true | certified | light, dark | placed |
 | scatter | vega-lite | true | certified | light, dark | not-placed |
 | heatmap | vega-lite | true | certified | none (exempt) | not-placed |
-| treemap | echarts | true | uncertified | light, dark | not-placed |
-| sunburst | echarts | true | uncertified | light, dark | not-placed |
-| sankey | echarts | true | uncertified | light, dark | not-placed |
-| chord | echarts | excluded (#881) | uncertified | light, dark | not-placed |
-| force_graph | echarts | true | uncertified | light, dark | not-placed |
-| choropleth | echarts | true | uncertified | none (exempt) | not-placed |
-| bubble_map | echarts | true | uncertified | none (exempt) | not-placed |
-| flow_map | echarts | excluded (#881) | uncertified | none (exempt) | not-placed |
+| treemap | echarts | true | certified | light, dark | not-placed |
+| sunburst | echarts | true | certified | light, dark | not-placed |
+| sankey | echarts | true | certified | light, dark | not-placed |
+| chord | echarts | excluded (#881) | certified | light, dark | not-placed |
+| force_graph | echarts | true | certified | light, dark | not-placed |
+| choropleth | echarts | true | certified | none (exempt) | not-placed |
+| bubble_map | echarts | true | certified | none (exempt) | not-placed |
+| flow_map | echarts | excluded (#881) | certified | none (exempt) | not-placed |
 
 - HC pixels deferred (#1851); HC token scopes retained.
 - Categorical contrast passes both brands in: light, dark.

@@ -69,7 +69,8 @@ function expectedAtLightScope(trait: string): Record<string, unknown> {
 const OFFERED: Record<string, string[]> = {
   MarkTreemap: ['OODS-V154', 'OODS-V155'], MarkSunburst: ['OODS-V154', 'OODS-V155'],
   MarkSankey: ['OODS-V156', 'OODS-V157', 'OODS-V158'], MarkChord: ['OODS-V156'],
-  MarkGraph: [], MarkChoropleth: ['OODS-V159'], MarkBubble: [], MarkFlow: [],
+  MarkGraph: ['OODS-V173'], MarkChoropleth: ['OODS-V159'],
+  MarkBubble: ['OODS-V168', 'OODS-V169', 'OODS-V170'], MarkFlow: ['OODS-V171', 'OODS-V172'],
 };
 function checkScopedMetadata(out: Record<string, unknown>, trait: string): Record<string, unknown> {
   const { accuracyRules, contrastResults, ...body } = out;
@@ -106,7 +107,11 @@ const DECLARED_NOTE_ADDITIONS: readonly string[] = [];
  * matches nothing and both replacement fragments live in the baseline's own note); it is
  * done by hand per the header doctrine.
  */
-const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContains: string }> = [];
+// s195 m04 corrects the old shared note: enforcement now applies WITH data, while
+// the spec-only path retains its missing-operand explanation and all nonprose fields.
+const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContains: string }> = [
+  { baselineContains: 'A11y-equivalence runs WARN-FIRST here', nowContains: 'Without the `data` operand there is nothing to evaluate' },
+];
 
 /**
  * THE MOVEMENT THAT IS NOT IN notes[].

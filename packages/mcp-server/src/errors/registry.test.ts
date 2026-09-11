@@ -10,6 +10,20 @@ import {
 } from './registry.js';
 
 describe('Error Registry', () => {
+  it.each([
+    ['OODS-V168', 'size is negative or non-finite'],
+    ['OODS-V169', 'radius rather than area'],
+    ['OODS-V170', 'conflicting encoded values'],
+    ['OODS-V171', 'strength is negative or non-finite'],
+    ['OODS-V172', 'directed geographic flow'],
+    ['OODS-V173', 'force-graph directed edge'],
+  ])('%s keeps its distinct operand-profile accuracy meaning and names the tool', (code, meaning) => {
+    expect(getDefinition(code)).toMatchObject({ code, category: 'validation', retryable: true });
+    expect(getDefinition(code)?.message).toContain('artifact.certify:');
+    expect(getDefinition(code)?.message).toContain(meaning);
+  });
+
+
   // ── Registry integrity ─────────────────────────────────────────────────
   it('contains at least 40 registered error codes', () => {
     expect(allCodes().length).toBeGreaterThanOrEqual(40);

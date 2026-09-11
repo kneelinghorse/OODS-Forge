@@ -26,13 +26,21 @@ describe('one executable visualization registry (s190 m05)', () => {
     expect(canonical(VIZ_RECIPES)).toBe(canonical(source));
     expect(result.placements).toEqual([{ object: 'Subscription', context: 'detail', chartType: 'area' }]);
     expect(source).toHaveLength(13);
-    expect(source.filter((row: any) => row.certifyCoverage === 'certified')).toHaveLength(5);
+    // s195-m04: the declared data operand profile certifies the eight ECharts types.
+    // Coverage records the exercised profile; each scope retains its real boolean.
+    expect(source.filter((row: any) => row.certifyCoverage === 'certified')).toHaveLength(13);
     expect(source.filter((row: any) => row.dashboardDrawn === true)).toHaveLength(11);
     for (const row of result.observations) for (const scope of row.scopes) {
       if (scope.coverage === 'uncertified') expect(scope.conformant).toBeNull();
+      else expect(typeof scope.conformant).toBe('boolean');
       expect(scope.contrast).toMatchObject({ theme: scope.theme, brand: scope.brand });
     }
     for (const row of result.registry) {
+      expect(row.certifyProfile).toBe(row.specEngine === 'echarts' ? 'echarts-data' : 'cartesian');
+      expect(row.certifyScopes).toEqual(result.observations.find(observation => observation.chartType === row.chartType).scopes
+        .map(({ theme, brand, coverage, conformant, pillars, accuracySummary }: any) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })));
+      expect(row.certifyScopes).toHaveLength(4);
+      for (const scope of row.certifyScopes) expect(scope.accuracySummary.rulesEvaluated).toBeGreaterThan(0);
       const exempt = ['heatmap', 'choropleth', 'bubble_map', 'flow_map'].includes(row.chartType);
       expect(row.contrastPassed).toEqual(exempt ? [] : ['light', 'dark']);
       if (exempt) expect(row.notes.join(' ')).toContain('exempt');
@@ -42,5 +50,10 @@ describe('one executable visualization registry (s190 m05)', () => {
     // A stale advertised cell must be rejected even when all other cells are right.
     const mutant = structuredClone(source); mutant[0].publicSvg = false;
     expect(canonical(mutant)).not.toBe(canonical(result.registry));
+    expect(result.accuracyControls.map(control => control.expectedCode)).toEqual(['OODS-V168', 'OODS-V171']);
+    for (const control of result.accuracyControls) {
+      expect(control.grade.findings).toEqual(expect.arrayContaining([expect.objectContaining({ code: control.expectedCode })]));
+      expect(control.grade).toMatchObject({ conformant: false, pillars: { accuracy: 'fail' } });
+    }
   }, 60_000);
 });

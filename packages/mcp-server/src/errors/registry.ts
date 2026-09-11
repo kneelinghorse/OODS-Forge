@@ -301,6 +301,17 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V166', { code: 'OODS-V166', category: 'validation', message: 'viz.render pattern conflicts with explicit data or source identity/presentation overrides', retryable: true }],
   ['OODS-V167', { code: 'OODS-V167', category: 'validation', message: 'viz.render pattern is authoring-only because its source structure is not supported by the public renderer', retryable: false }],
 
+  // s195 m04 operand-profile accuracy findings; renderer behavior is unchanged.
+  // V169 reports the public builder's default linear diameter; no size-scale override
+  // is exposed. V170 uses emitted coordinates, not the unused bubble geo.join.
+  // V172/V173 are directed: reciprocal flows/edges remain valid.
+  ['OODS-V168', { code: 'OODS-V168', category: 'validation', message: 'artifact.certify: bubble-map size is negative or non-finite', retryable: true }],
+  ['OODS-V169', { code: 'OODS-V169', category: 'validation', message: 'artifact.certify: bubble-map magnitudes use radius rather than area scaling', retryable: true }],
+  ['OODS-V170', { code: 'OODS-V170', category: 'validation', message: 'artifact.certify: overlapping bubble-map rows have conflicting encoded values', retryable: true }],
+  ['OODS-V171', { code: 'OODS-V171', category: 'validation', message: 'artifact.certify: flow-map strength is negative or non-finite', retryable: true }],
+  ['OODS-V172', { code: 'OODS-V172', category: 'validation', message: 'artifact.certify: a directed geographic flow appears more than once', retryable: true }],
+  ['OODS-V173', { code: 'OODS-V173', category: 'validation', message: 'artifact.certify: a force-graph directed edge appears more than once', retryable: true }],
+
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],

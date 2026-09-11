@@ -596,7 +596,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian path only — conformant rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar verdict summary (pillars — five-valued on contrast, four-valued on accuracy since s175) that disaggregates which pillar drove the verdict. COVERAGE 5 -> 13 (s172): the 8 ECharts-primary types still return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure — but three of the four pillars now carry real verdicts for them. contrast has since s141; determinism and accuracy do whenever the caller supplies the OPTIONAL `data` operand (the same data branch viz.render takes). Without `data` those two stay 'unchecked' and say so in notes[], naming the missing operand rather than implying a missing capability. DETERMINISM: on the cartesian path it is the Vega-Lite compile, proven byte-stable across two independent re-emits — and since s176, when the rendered-grading path rendered the chart, ALSO the render: two independent @oods/viz-render renders of the compiled spec must hash identically (reported as the OPTIONAL determinism.renderHash; a nondeterministic render fails `stable` and pulls conformant false). On the ECharts data-backed path, contentHash identifies the projected ECharts option from the first emission and stays equal to viz.render's contentHash for the same (spec, data) pair; renderHash identifies the first normalized SVG whenever server-side rendering succeeds. A second independent option emission and render must reproduce both identities for stable:true. The locally certified runtime contract and render-hash epoch are recorded at packages/viz-render/certified-matrix.json; a future matrix or epoch change requires an explicit reviewed update. A typed first-render fault leaves renderHash absent and makes stable false; bubble_map without inline geometry keeps its option proof, omits renderHash, and names the no-server-map limitation. certify claims nothing about what the CALLER rendered — the render leg is certify's own deterministic render — and the notes bind the proof to the locally certified runtime axes in that record. ACCURACY (s170 #818, widened s172): the CARTESIAN path evaluates exactly four reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (V151), area-encodes-linear (V152), aggregation-hiding (V153). The ECHARTS path evaluates a per-type set over the data operand — treemap and sunburst offer V154 (a node value area/angle cannot encode) and V155 (an explicit parent that is not the sum of its children); sankey offers V156 (negative/non-finite link value), V157 (a node height that is not the flow its links carry) and V158 (a duplicate directed flow); chord offers V156; choropleth offers V159 (a region matched to rows with CONFLICTING joined values). force_graph, bubble_map and flow_map offer NOTHING, and that is a stated position rather than a gap — but the two halves of it differ, and s173 m01 corrects s172's blanket wording: force_graph's distortion candidates really are adapter constants, while bubble_map's colorScale and flow_map's strengthField ARE authorable through the branch and simply have no rule written for them yet (a recorded scope decision, never an impossibility claim). READ accuracy:'pass' PRECISELY: it means none of the OFFERED rules positively detected its distortion, with accuracySummary.rulesEvaluated reporting how many actually resolved their operand. It is NOT a claim that the chart is accurate. On the ECharts path 'pass' additionally REQUIRES rulesEvaluated > 0: zero resolved rules is 'unchecked' there, whether the offered set was empty or every precondition was absent. CONTRAST is RENDER-MEASURED for the 5 cartesian-Vega types (s176): certify renders the compiled spec through @oods/viz-render and grades the SERIES-TO-PAINT ASSIGNMENT the data marks actually carry — duplicates retained, so a recycled palette (more consumed series than baked hexes) fails as a ΔE00=0 pair — against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD; config.tokens overrides honored). Unit classification still reads the compiled bytes, so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass', and non-palette paints are author chrome, skipped, never failed. ECharts contrast is render-measured when `data` is supplied: actual visible chart fills and strokes feed Role C, while the semantic N-long category-to-paint assignment feeds Role A with genuine palette-recycling duplicates retained. The 5 categorical families receive the combined worst verdict; the 3 geo families remain exempt under the sequential/continuous-color ruling while still carrying normalized render evidence. spec-only calls retain the reconstructed baked-palette verdict and its baked-bytes caveat. So coverage:'uncertified' does NOT imply contrast:'unchecked'; a consumer must not key 'is-ECharts/uncertified' off any pillar's value. contrastNote carries the rendered-contrast caveat.
+   * Certification of a Forge NormalizedVizSpec. Cartesian charts use the existing Vega-Lite profile; ECharts-primary charts with matching data use the declared operand profile without a Vega compile leg. Both report coverage certified and a boolean folded conformance verdict. The operand profile requires passing a11y-equivalence, stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule. Spec-only ECharts calls remain uncertified with conformant null and explicit missing-operand notes. Findings, not-applicable rules, rule counts and per-pillar verdicts expose what actually ran; evaluator or render faults never become a passing operand verdict. Render determinism identifies the projected option and independently repeated normalized SVG where available, within the certified runtime matrix; a geometry-free bubble map retains only its option proof with its stated limitation.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -604,19 +604,19 @@ export namespace ArtifactCertifyOutputSchema {
      */
     status: 'ok' | 'error';
     /**
-     * 'certified' for the 5 cartesian types (bar/line/area/scatter/heatmap) — carries a real folded conformance result. 'uncertified' for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord): there is no Vega-Lite compile, so no a11y-equivalence claim and therefore no folded gate. It does NOT mean nothing was checked. As of s141 contrast carries a real verdict on this path, and as of s172 determinism and accuracy do too whenever the `data` operand is supplied. Read the PILLARS, never the coverage value, to learn what ran. Absent on the error path.
+     * Certified identifies the Cartesian or declared ECharts data-operand profile, not a passing result: read conformant and the pillars. Uncertified identifies a spec-only ECharts call or an unmodeled mark. Spec-only ECharts contrast may still be reconstructed or exempt, while data-dependent a11y, determinism and accuracy remain unchecked. Absent on error.
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured at the requested theme and brand. null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
+     * Boolean for a certified profile; null for uncertified calls; absent on error. The ECharts operand profile is true only when a11y-equivalence passes, determinism is stable, contrast is neither fail nor ungradeable, and accuracy passes with rulesEvaluated greater than zero and no accuracy findings. Error-severity a11y findings and evaluation faults fail that pillar; ordinary warning findings and not-applicable rules do not. Cartesian behavior is unchanged: its four pillars fold together, with contrast/accuracy fail or ungradeable preventing conformance. Accuracy unchecked cannot pass the operand profile. A measured false is retained, never converted into uncertified.
      */
     conformant?: boolean | null;
     /**
-     * One entry per FAILING rule (empty when nothing fired). As of s172 this carries THREE rule families, told apart by their code: a11y-equivalence rules (OODS-A11Y-<rule.id>), CARTESIAN accuracy rules (OODS-V150..V153) and ECHARTS-PRIMARY accuracy rules (OODS-V154..V159). It is no longer a11y-equivalence-only, and it is no longer empty on the uncertified path.
+     * One entry per failing a11y-equivalence or accuracy rule, at native severity. A11y codes use OODS-A11Y-<rule.id>; accuracy codes use their registered OODS-V codes. Warnings remain visible without failing a11y, while error-severity a11y findings and any accuracy findings prevent operand conformance. An evaluator fault is reported separately in the pillar and notes, so empty findings alone never imply a pass.
      */
     findings?: Finding[];
     /**
-     * The THIRD STATE of the warn-first a11y-equivalence engine, reaching the wire (s175). One entry per rule whose DECLARED precondition was absent on this chart — in rule order, each naming the precondition — so a not-applicable rule is distinguishable from a meaningful pass, which is what the echartsA11yNote promises. Present EXACTLY when the warn-first engine ran to completion: the ECharts-primary path with the `data` operand supplied. It is [] there if every rule either passed or failed. ABSENT (not []) on the {spec}-only path (no operand, nothing evaluated), on the cartesian path (its a11y-equivalence verdict lives in pillars.a11yEquivalence + findings[]; cartesian not-applicable results are not exposed — a recorded scope decision), on the error path, and when the engine FAULTED mid-evaluation (the partial list is discarded and notes[] says the rules could not be evaluated). A not-applicable rule NEVER enters findings[]: the a11y ids here and the OODS-A11Y-* codes in findings[] are disjoint, and together with the rules that passed they account for all 16.
+     * One entry per a11y-equivalence rule whose declared precondition was absent, in rule order with the precondition named. Present, possibly empty, when the ECharts operand engine returns the complete rule population; absent without data, on Cartesian calls, on tool error, or when the engine throws or returns an incomplete population. An individual rule evaluator fault retains the completed engine population and native findings, while failing the a11y pillar. Not-applicable rules never enter findings and are not counted as failures.
      */
     a11yNotApplicable?: {
       /**
@@ -629,15 +629,15 @@ export namespace ArtifactCertifyOutputSchema {
       preconditionAbsent: string;
     }[];
     /**
-     * How the accuracy pillar was reached. Present whenever the rules were RUN: on the certified path always, and on the uncertified path whenever the `data` operand was supplied (s172). Absent on the error path, and absent on an ECharts verdict with NO operand — that absence is the device distinguishing 'no operand' from 'operand present, nothing offered or nothing resolved', which reports {rulesEvaluated:0, failing:0} plus a note saying which. rulesEvaluated is the honest examined-count the contrast pillar lacks: a rule whose operand could not be resolved (rows behind a data url, an aggregate op outside the IR vocabulary, a choropleth join with no geometry) is NOT counted and says why in notes[], so silence can never be read as coverage.
+     * How the accuracy pillar was reached. Present when rules completed: on Cartesian calls and ECharts calls with data. Absent without an ECharts operand or on an evaluator fault. rulesEvaluated counts resolved rule operands; a rule whose precondition is absent is not counted and explains why in notes. The ECharts operand profile requires at least one evaluated rule and zero failing rules.
      */
     accuracySummary?: {
       /**
-       * How many of the rules OFFERED FOR THIS CHART TYPE resolved their operand and ran. The cartesian path offers four; the ECharts path offers a per-type set of zero to three (see the top-level description). Always read accuracy:'pass' together with this number.
+       * How many offered rules resolved their operand and ran. Cartesian charts offer four rules; each ECharts-primary type offers one to three. An unresolved precondition is excluded from this count and explained in notes. Always read accuracy pass together with this number.
        */
       rulesEvaluated: number;
       /**
-       * How many of the evaluated rules positively detected their distortion. Equals the number of OODS-V15x entries in findings[].
+       * How many evaluated accuracy rules positively detected a distortion. Equals the number of accuracy-rule findings, excluding a11y findings; offered accuracy codes are listed in accuracyRules.
        */
       failing: number;
     };
@@ -659,11 +659,11 @@ export namespace ArtifactCertifyOutputSchema {
       renderHash?: string;
     };
     /**
-     * Per-pillar verdict summary. Present on both ok paths and absent on error. It disaggregates which pillar drove the result; on the uncertified ECharts path it is the only verdict surface because coverage remains 'uncertified' and conformant remains null. a11yEquivalence mirrors its own sub-result, determinism mirrors determinism.stable, contrast is render-measured on cartesian charts and on ECharts calls with `data` (spec-only ECharts calls retain the reconstructed baked-palette verdict), and accuracy is the structural-rules verdict.
+     * Per-pillar verdicts on successful tool responses, including nonconformant results. Data-backed ECharts calls grade a11y over the shared operand-built table/narrative, repeat option emission and available rendering for determinism, measure or exempt contrast, and run the per-type accuracy rules. Spec-only ECharts calls keep data-dependent pillars unchecked and retain legacy contrast behavior. A fault cannot silently produce a passing profile.
      */
     pillars?: {
       /**
-       * Cartesian a11y-equivalence — mirrors the a11y-equivalence sub-result (zero error-severity failures), NOT the folded conformant: 'pass'/'fail' on the certified path, 'unchecked' on the uncertified (ECharts-primary) path. On that second path 'unchecked' no longer means unevaluated: the 16 rules run WARN-FIRST whenever the `data` operand is supplied, each reporting pass, fail, or not-applicable with its absent precondition named, and every failure reaches findings[] as OODS-A11Y-<rule.id> at its native severity. The pillar stays 'unchecked' deliberately — warn-first surfaces the findings enforcement will require without moving any verdict, and the flip to pass/fail is a future enforce step. Without the operand there is nothing to evaluate and no a11y findings appear. An a11y-passing chart that fails contrast still reports a11yEquivalence:'pass' (with conformant:false).
+       * Pass when the complete rule evaluation has no error-severity failure or evaluator fault; fail otherwise. Ordinary warnings and declared not-applicable rules retain their channels without failing the pillar. ECharts evaluates the same operand-built table and narrative as viz.render; without data it stays unchecked. A whole-engine fault or incomplete rule population is fail with a note, never unchecked or pass.
        */
       a11yEquivalence: 'pass' | 'fail' | 'unchecked';
       /**
@@ -675,7 +675,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
-       * The structural accuracy verdict. CARTESIAN: the four declared rules over the IR + the compiled Vega-Lite spec (OODS-V150..V153). ECHARTS-PRIMARY (s172): the per-type rule set over the `data` operand (OODS-V154..V159). 'pass' means none of the rules OFFERED for this chart type positively detected its distortion — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired and the reason is in findings[] under its OODS-V15x code. 'ungradeable' (s175, #781) when grading was ATTEMPTED on the rule set it was given and failed for a reason outside the spec — the rules engine itself faulted (a fault degrades the pillar and never turns a valid verdict into status:error; on the cartesian path it pulls conformant false exactly as 'fail' does, and notes[] names the fault and how many rules were offered). 'unchecked' when nothing was attempted or nothing was gradeable — no operand to read (no compiled spec on an unmodeled mark; no `data` on an ECharts-primary IR), or every offered rule's precondition absent (rulesEvaluated:0 on the ECharts path, decision #1453). NOTE the deliberate asymmetry: on the ECHARTS path 'pass' requires rulesEvaluated > 0, so zero resolved rules reports 'unchecked'; the cartesian path keeps its s170 semantics, where 'pass' with rulesEvaluated:0 is possible — aligning the two is a separate item (decision #1453), not the #781 hole.
+       * Structural accuracy from the four Cartesian rules or the per-type ECharts data rules. Fail means a registered rule found a distortion; ungradeable means evaluation faulted; unchecked means no operand or no resolved rule. ECharts pass requires at least one evaluated rule with no findings. Its operand profile fails on fail, ungradeable or unchecked. Cartesian zero-rule semantics remain unchanged. Offered rules and evaluated rules are distinct; pass does not claim complete chart accuracy.
        */
       accuracy: 'pass' | 'fail' | 'ungradeable' | 'unchecked';
     };
@@ -684,7 +684,7 @@ export namespace ArtifactCertifyOutputSchema {
      */
     contrastNote?: string;
     /**
-     * Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the warn-first a11y-equivalence note (it names the operand gate and, on the data-backed path, where failures and not-applicable rules surface: findings[] and a11yNotApplicable[]), the a11y-engine-fault note when the rules could not be evaluated, the operand-absent determinism and accuracy notes, the data-backed option-and-render scope plus certified-runtime-matrix boundary, the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent.
+     * Path-specific scope and missing-operand explanations, runtime-matrix limits, unmet rule preconditions and evaluator faults. The operand note describes the enforced profile; the spec-only note explains why coverage remains uncertified and conformant null. Empty offered/resolved rule sets remain explicit and cannot pass the operand profile.
      */
     notes?: string[];
     /**
@@ -710,11 +710,28 @@ export namespace ArtifactCertifyOutputSchema {
     /**
      * Offered accuracy rule codes for this chart type. This closed set is distinct from accuracySummary.rulesEvaluated, which counts resolved operands; an empty array means no rule is offered.
      */
-    accuracyRules?: string[];
+    accuracyRules?: (
+      | 'OODS-V150'
+      | 'OODS-V151'
+      | 'OODS-V152'
+      | 'OODS-V153'
+      | 'OODS-V154'
+      | 'OODS-V155'
+      | 'OODS-V156'
+      | 'OODS-V157'
+      | 'OODS-V158'
+      | 'OODS-V159'
+      | 'OODS-V168'
+      | 'OODS-V169'
+      | 'OODS-V170'
+      | 'OODS-V171'
+      | 'OODS-V172'
+      | 'OODS-V173'
+    )[];
   }
   export interface Finding {
     /**
-     * A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); a registered accuracy-rule code — OODS-V150..V153 on the cartesian path (s170) or OODS-V154..V159 on the ECharts-primary path (s172); or an OODS-V error code on the error path.
+     * A per-rule equivalence code OODS-A11Y-<rule.id>, a registered accuracy-rule code listed in accuracyRules, or an OODS-V error code on the error path. The literal OODS-A11Y-A11Y-R-12 retains the full rule identity.
      */
     code: string;
     message: string;

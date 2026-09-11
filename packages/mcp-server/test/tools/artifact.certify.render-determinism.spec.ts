@@ -118,7 +118,7 @@ describe('artifact.certify — render-backed determinism (s176 m02)', () => {
       },
     });
     expect(dataBacked.status).toBe('ok');
-    expect(dataBacked.coverage).toBe('uncertified');
+    expect(dataBacked.coverage).toBe('certified');
     expect(Object.keys(dataBacked.determinism ?? {})).toEqual([
       'stable',
       'contentHash',

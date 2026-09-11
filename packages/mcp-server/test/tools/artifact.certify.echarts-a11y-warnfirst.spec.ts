@@ -1,22 +1,6 @@
-// s174 m01 — THE SHIPPED PROMISE, end to end.
-//
-// Forge's own schema prose has promised, by name, a warn-first a11y-equivalence rollout for
-// the 8 ECharts-primary types. This file is the proof that it landed on the path an agent
-// actually calls, rather than only in the engine (viz-core's own suite pins the 16×8
-// applicability matrix; that is the ENGINE's proof and it aliases to src, so it discriminates
-// without the dist trap).
-//
-// The four properties that make this WARN-FIRST rather than a verdict migration, each
-// asserted below rather than described:
-//   1. Findings appear ONLY with the `data` operand (the positive precondition). A {spec}-only
-//      call is unchanged and its note says why.
-//   2. Findings carry their NATIVE severity — an error-severity rule reports 'error'. The
-//      output schema promises exactly that ("not remapped"); s134's forced-'warning' remap is
-//      deliberately not repeated.
-//   3. pillars.a11yEquivalence stays 'unchecked' on every path. No enum moved, no verdict
-//      flipped, conformant stays null; nothing blocks.
-//   4. The table + narrative the engine judges are the SAME ones viz.render derives for the
-//      same (spec, data) pair — the shared-builder property, proven by cross-tool comparison.
+// s195 m04 declares the operand verdict migration over the existing s174/s175
+// exact finding, native severity, shared context and N/A controls. Spec-only calls
+// retain unchecked pillars and null conformance, with accurate missing-operand prose.
 
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
@@ -46,7 +30,7 @@ const validateOutput = getAjv().compile(outputSchema);
 
 const CASES = ECHARTS_OPERAND_CASES.map((c) => [c.chartType, c] as const);
 
-describe('artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01)', () => {
+describe('artifact.certify — a11y-equivalence declared operand profile (s195 m04)', () => {
   it.each(CASES)(
     '%s: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity',
     async (chartType, operand) => {
@@ -62,19 +46,18 @@ describe('artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primar
   );
 
   it.each(CASES)(
-    '%s: the PILLAR does not move — a11yEquivalence stays unchecked, conformant stays null, coverage stays uncertified',
+    '%s: ordinary warning findings retain a passing a11y pillar under the certified profile',
     async (_chartType, operand) => {
       const rendered = await vizRender(renderInputFor(operand) as never);
       const out = await certify({
         spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
         data: { [operand.branch]: operand.branchData } as never,
       });
-      // The findings really are there — otherwise "the pillar did not move" would be a claim
-      // about a path that never ran.
+      // Ordinary warnings remain visible without failing the a11y pillar.
       expect(a11yFindingsOf(out.findings).length).toBeGreaterThan(0);
-      expect(out.pillars?.a11yEquivalence).toBe('unchecked');
-      expect(out.conformant).toBeNull();
-      expect(out.coverage).toBe('uncertified');
+      expect(out.pillars?.a11yEquivalence).toBe('pass');
+      expect(out.conformant).toBe(operand.chartType !== 'bubble_map');
+      expect(out.coverage).toBe('certified');
     },
   );
 
@@ -90,11 +73,11 @@ describe('artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primar
 
   it.each(CASES)('%s: the note NAMES the operand gate and no longer promises a future rollout', async (_c, operand) => {
     const out = await certify({ spec: echartsPrimaryIr(operand.trait, operand.chartType) });
-    const note = (out.notes ?? []).find((n) => n.includes('A11y-equivalence runs WARN-FIRST here'));
+    const note = (out.notes ?? []).find((n) => n.includes('Without the `data` operand'));
     expect(note).toBeDefined();
-    expect(note).toContain('when the `data` operand is supplied');
-    expect(note).toContain('Without the operand there is nothing to evaluate');
-    expect(note).toContain("pillars.a11yEquivalence stays 'unchecked' in both cases");
+    expect(note).toContain('nothing to evaluate');
+    expect(note).toContain("pillars.a11yEquivalence stays 'unchecked'");
+    expect(note).toContain('conformant stays null');
     // The deferral wording is GONE, not merely joined by the new sentence.
     expect(note).not.toContain('deferred to a warn-first rollout');
     expect(note).not.toContain('no per-rule not-applicable state');
@@ -105,7 +88,7 @@ describe('artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primar
 
 describe('artifact.certify — NATIVE severity, no remap (s174 m01)', () => {
   it.each(CASES)(
-    '%s: a terse unnamed IR surfaces ERROR-severity a11y findings and STILL does not block',
+    '%s: a terse unnamed IR surfaces ERROR-severity a11y findings that fail conformance',
     async (chartType, operand) => {
       const out = await certify({
         spec: echartsPrimaryIr(operand.trait, operand.chartType),
@@ -116,10 +99,10 @@ describe('artifact.certify — NATIVE severity, no remap (s174 m01)', () => {
       // 'warning' remap is NOT repeated here, and the output schema's "not remapped" sentence
       // stays true.
       expect(out.findings?.find((f) => f.code === 'OODS-A11Y-A11Y-R-09')?.severity).toBe('error');
-      // Warn-first: an error-severity finding blocks nothing.
+      // The declared profile folds an error-severity a11y finding into false.
       expect(out.status).toBe('ok');
-      expect(out.pillars?.a11yEquivalence).toBe('unchecked');
-      expect(out.conformant).toBeNull();
+      expect(out.pillars?.a11yEquivalence).toBe('fail');
+      expect(out.conformant).toBe(false);
       expect(validateOutput(out)).toBe(true);
     },
   );
@@ -163,7 +146,7 @@ describe('artifact.certify — the operand-built context is viz.render’s, not 
   });
 });
 
-describe('artifact.certify — warn-first is a READER (s174 m01)', () => {
+describe('artifact.certify — a11y evaluation remains a READER (s195 m04)', () => {
   it('the a11y findings do not disturb the determinism proof or the accuracy count', async () => {
     const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'sankey')!;
     const rendered = await vizRender(renderInputFor(operand) as never);
@@ -338,11 +321,12 @@ describe('artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (
     expect(validateOutput(missingPrecondition)).toBe(false);
   });
 
-  it('the note names the channel and keeps the s174 substrings (a declared reword, same slot)', async () => {
+  it('the operand note describes the enforced profile and N/A channel', async () => {
     const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'sankey')!;
-    const out = await certify({ spec: echartsPrimaryIr(operand.trait, operand.chartType) });
-    const note = (out.notes ?? []).find((n) => n.includes('A11y-equivalence runs WARN-FIRST here'));
-    expect(note).toContain('not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed');
-    expect(note).toContain('failures surface in findings[] at their native severity');
+    const out = await certify({ spec: echartsPrimaryIr(operand.trait, operand.chartType), data: { sankey: operand.branchData } as never });
+    const note = (out.notes ?? [])[0];
+    expect(note).toContain('Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named');
+    expect(note).toContain('warning findings retain their native severity');
+    expect(note).toContain('Error-severity failures or evaluation faults fail pillars.a11yEquivalence');
   });
 });

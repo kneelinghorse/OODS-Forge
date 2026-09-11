@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { BRAND_CONTRAST_PAIRS, BRAND_CONTRAST_RULES } from "@oods/a11y-tools";
 import { NUCLEUS_COMPONENT_IDS } from "@oods/component-contracts";
+import { ACCURACY_RULES, ECHARTS_ACCURACY_RULES } from "@oods/viz-core";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(resolve(projectRoot, path), "utf8");
@@ -111,7 +112,12 @@ describe("how Forge works narrative truth", () => {
     const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
     const certify = JSON.parse(read("packages/mcp-server/src/schemas/artifact.certify.input.json"));
     expect(render.properties.chartType.enum).toHaveLength(13);
-    expect(html).toContain("server-rendered SVG for all 13 registered chart types");
+    const dashboardInput = JSON.parse(read("packages/mcp-server/src/schemas/dashboard.render.input.json"));
+    const panelTypes = dashboardInput.$defs.ChartPanel.properties.chartType.enum;
+    expect(panelTypes).toHaveLength(11);
+    expect(panelTypes).not.toContain("chord");
+    expect(panelTypes).not.toContain("flow_map");
+    expect(html).toContain(`server-rendered SVG for its ${panelTypes.length} admitted chart types`);
     const dashboard = read("packages/mcp-server/src/tools/dashboard.render.html.ts");
     expect(dashboard).toContain("await renderVegaLiteToSvg(");
     expect(dashboard).toContain("await renderEChartsToSvg(");
@@ -191,6 +197,29 @@ describe("how Forge works narrative truth", () => {
         /<tr><td>(Accessibility equivalence|Determinism|Contrast|Accuracy)<\/td>/g,
       ),
     ).toHaveLength(4);
+  });
+
+  it("describes the declared ECharts operand profile and the complete offered accuracy vocabulary", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const api = read("docs/api/artifact-certify.md");
+    const specs = read("docs/mcp/Tool-Specs.md");
+    const recipes = JSON.parse(read("packages/viz-core/src/registry/viz-recipes.v1.json")) as Array<{ specEngine: string; accuracyRules: string[]; certifyScopes: Array<{ conformant: boolean | null }> }>;
+    const scopes = recipes.flatMap(row => row.certifyScopes);
+    const offered = [...new Set(recipes.filter(row => row.specEngine === "echarts").flatMap(row => row.accuracyRules))].sort();
+    expect(api).toContain(`Measured scope verdicts: ${scopes.filter(scope => scope.conformant === true).length} conformant / ${scopes.filter(scope => scope.conformant === false).length} nonconformant / ${scopes.filter(scope => scope.conformant === null).length} uncertified`);
+    expect(api).toContain(`ECharts offered rules: ${offered.join(", ")}`);
+    expect(html).toContain(`${ACCURACY_RULES.length + ECHARTS_ACCURACY_RULES.length} reader-only structural-distortion rules`);
+    expect(html).toContain("Spec-only ECharts calls remain uncertified with null conformance");
+    expect(html).toContain("Certified coverage can carry a measured false conformance result");
+    for (const text of [descriptions["artifact.certify"], api, specs]) {
+      expect(text).toContain("declared operand profile");
+    }
+    for (const rule of ECHARTS_ACCURACY_RULES.filter(rule => Number(rule.code.slice(-3)) >= 168)) {
+      expect(descriptions["artifact.certify"]).toContain(rule.code);
+      expect(api).toContain(rule.code);
+    }
+    expect(descriptions["artifact.certify"]).not.toContain("runs WARN-FIRST");
+    expect(html).not.toContain('advanced chart types are "uncertified" by design');
   });
 
   it("derives the published token, bridge, and brand-contrast counts", () => {

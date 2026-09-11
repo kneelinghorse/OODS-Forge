@@ -767,7 +767,9 @@ Renders shared datasets into KPI/chart panels and deterministic self-contained H
 
 ### `artifact.certify`
 
-Grades the normalized IR returned by `viz.render`, with the same data operand for ECharts-primary families. Returns per-check accessibility, determinism, contrast and accuracy evidence; five Cartesian families can be certified and eight advanced families remain explicitly uncertified. HTML is rejected with OODS-V126. Scope is A/B and light/dark; HC chart pixels are unsupported.
+Grades the normalized IR returned by `viz.render`. The five Cartesian families certify from the IR alone. ECharts-primary families use the declared operand profile: pass the same `data` branch used to render the chart. That path grades accessibility equivalence, determinism, contrast and the offered accuracy rules, then returns a measured conformance boolean. Conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and at least one evaluated accuracy rule with no detected distortion. Warning-severity accessibility findings and named not-applicable rules remain visible. A certified result may be nonconformant; the measured failures are retained.
+
+Without an ECharts data operand, coverage remains `uncertified` and conformance remains `null`; notes name what could not be evaluated. No Vega-Lite compile is added to the ECharts profile. HTML is rejected with OODS-V126. Scope is A/B and light/dark; HC chart pixels are unsupported.
 
 [Complete input/output reference](../api/artifact-certify.md).
 
