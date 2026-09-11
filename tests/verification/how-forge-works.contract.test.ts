@@ -279,7 +279,7 @@ describe("how Forge works narrative truth", () => {
     );
   });
 
-  it("derives current Sprint 193 claims from the served ledger without approving the proposal", () => {
+  it("keeps the historical component ledger separate from current public runtime placement", () => {
     const ledger = JSON.parse(read("packages/component-contracts/registry/component-capability-ledger.v1.json"));
     const counts = (surface: string, state: string) => ledger.rows.filter((row: { surfaces: Record<string, { state: string }> }) => row.surfaces[surface].state === state).length;
     expect(ledger.rows).toHaveLength(109);
@@ -299,7 +299,10 @@ describe("how Forge works narrative truth", () => {
     expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED");
     expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
     expect(counts("generatedConsumer", "unavailable")).toBe(43);
-    expect(nearRoadmap).toContain("66/109");
+    const runtime = JSON.parse(read("artifacts/product-reality/sprint-195/m06/runtime-final/runtime-cells.v1.json"));
+    const placed = new Set(runtime.rows.flatMap((row: { components: string[] }) => row.components));
+    expect(placed.size).toBe(68);
+    expect(nearRoadmap).toContain(`${placed.size}/109`);
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

@@ -147,7 +147,7 @@ describe("agent-facing MCP docs follow the live registry", () => {
     );
     expect(recipes).toContain('artifact.certify { "spec": { ... } }');
     expect(recipes).toContain(
-      "`artifact.certify.contentHash` equals `viz.render.contentHash`",
+      "`artifact.certify.determinism.contentHash` equals `viz.render.contentHash`",
     );
 
     const render = recipes.indexOf("viz.render {");

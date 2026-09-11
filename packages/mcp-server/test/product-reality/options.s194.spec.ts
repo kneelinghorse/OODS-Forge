@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import net from 'node:net';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { handle as health } from '../../src/tools/health.js';
 import { handle as dashboard } from '../../src/tools/dashboard.render.js';
@@ -18,6 +19,25 @@ import { wire, repositoryRoot } from '../helpers/wire-boundary.js';
 
 const read = (file: string) => JSON.parse(fs.readFileSync(path.join(repositoryRoot, file), 'utf8'));
 const sha = (bytes: string) => createHash('sha256').update(bytes).digest('hex');
+const paletteMigrationRoot = 'artifacts/product-reality/sprint-195/m05/golden-migration';
+const paletteQualificationHead = '52b0da991705c4c565987bc9faf7738ba00d885e';
+// Source/golden qualification precedes the commit that retains the raw rendered evidence.
+const paletteReceiptHead = '3c8a7a5664f811b9168028d63684502ac956f657';
+function qualifiedPaletteBytes(file: string): string {
+  const relative = `${paletteMigrationRoot}/matrix/${file}`;
+  const qualified = execFileSync('git', ['show', `${paletteReceiptHead}:${relative}`], { cwd: repositoryRoot, encoding: 'utf8' });
+  expect(fs.readFileSync(path.join(repositoryRoot, relative), 'utf8')).toBe(qualified);
+  return qualified;
+}
+function migratedGraphHash(beforeHash: string, brand: string, theme: string): string {
+  const migration = read(`${paletteMigrationRoot}/golden-attribution.json`);
+  expect(migration.qualificationHead).toBe(paletteQualificationHead);
+  const matches = migration.matrixRows.filter((row: any) => row.source === 'artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json' && row.identity === `force_graph/${theme}/${brand}`);
+  expect(matches).toHaveLength(1);
+  expect(matches[0]).toMatchObject({ beforeHash, status: 'superseded' });
+  expect(sha(qualifiedPaletteBytes(`svg/force_graph-${brand}-${theme}.svg`))).toBe(matches[0].afterHash);
+  return matches[0].afterHash;
+}
 function retain(name: string, value: unknown) {
   if (!process.env.S194_OPTION_RECEIPTS) return;
   fs.mkdirSync(process.env.S194_OPTION_RECEIPTS, { recursive: true });
@@ -95,14 +115,15 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     retain('viz-output-identities', rows);
   }, 60_000);
 
-  it('preserves the delivered Sprint 193 rendering of all thirteen historical operands and eleven panels', async () => {
+  it('preserves thirteen historical operands and eleven panels through the qualified s195 palette migration', async () => {
     const prior = read('artifacts/product-reality/sprint-194/m05/delivered-baseline-render.json');
     expect(prior.sourceHead).toBe('1f69c957f4435a0a2f18b168b684de050f7a5f22');
     const inputs = [...CASES.map(({ chartType, encodings }) => ({ chartType, rows: [...SALES], encodings })), ...ECHARTS_OPERAND_CASES.map(renderInputFor)] as any[];
     const rows = [];
     for (const input of inputs) {
       const output = wire('viz.render', 'output', await render(wire('viz.render', 'input', { ...input, output: { ...input.output, svg: true, includeNormalizedSpec: true } })));
-      expect(output.svgHash).toBe(prior.table.find((row: any) => row.chartType === input.chartType).svgHash);
+      const beforeHash = prior.table.find((row: any) => row.chartType === input.chartType).svgHash;
+      expect(output.svgHash).toBe(input.chartType === 'force_graph' ? migratedGraphHash(beforeHash, 'A', 'light') : beforeHash);
       rows.push({ chartType: input.chartType, svgHash: output.svgHash });
     }
     const input = wire('dashboard.render', 'input', {
@@ -112,18 +133,24 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     });
     const output = wire('dashboard.render', 'output', await dashboard(input as any));
     expect(output.status).toBe('ok');
-    expect(output.outputHtmlHash).toBe(prior.dashboard.outputHtmlHash);
-    expect(output.html).toBe(fs.readFileSync(path.join(repositoryRoot, 'artifacts/product-reality/sprint-194/m05/delivered-baseline-dashboard.html'), 'utf8'));
+    const beforeHtml = fs.readFileSync(path.join(repositoryRoot, 'artifacts/product-reality/sprint-194/m05/delivered-baseline-dashboard.html'), 'utf8');
+    expect(sha(beforeHtml)).toBe(prior.dashboard.outputHtmlHash);
+    const afterHtml = qualifiedPaletteBytes('dashboard-A-light.html');
+    const migration = read(`${paletteMigrationRoot}/golden-attribution.json`);
+    expect(migration.matrixRows).toContainEqual(expect.objectContaining({ source: 'artifacts/product-reality/sprint-191/m05/matrix/matrix.json', identity: 'dashboard/light/A', beforeHash: prior.dashboard.outputHtmlHash, afterHash: sha(afterHtml), status: 'superseded' }));
+    expect(output.outputHtmlHash).toBe(sha(afterHtml));
+    expect(output.html).toBe(afterHtml);
     retain('delivered-render-identities', { rows, dashboard: { outputHtmlHash: output.outputHtmlHash } });
   }, 60_000);
 
-  it('retains all 52 Sprint 193 brand/theme SVG identities', async () => {
+  it('retains 48 Sprint 193 SVG identities and the four qualified s195 force_graph migrations', async () => {
     const prior = read('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json').observations;
     const inputs = read('scripts/product-reality/s190-viz-operands.json');
     const rows = [];
     for (const input of inputs) for (const scope of prior.find((row: any) => row.chartType === input.chartType).scopes) {
       const output = wire('viz.render', 'output', await render(wire('viz.render', 'input', { ...input, brand: scope.brand, theme: scope.theme, output: { ...input.output, svg: true } })));
-      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(scope.svgHash);
+      const expected = input.chartType === 'force_graph' ? migratedGraphHash(scope.svgHash, scope.brand, scope.theme) : scope.svgHash;
+      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(expected);
       rows.push({ chartType: input.chartType, brand: scope.brand, theme: scope.theme, svgHash: output.svgHash });
     }
     expect(rows).toHaveLength(52);

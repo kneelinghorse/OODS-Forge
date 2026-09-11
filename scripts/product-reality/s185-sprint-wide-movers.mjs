@@ -52,6 +52,21 @@ export const S193_BASE = 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d';
 export const S193_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S192_PUBLIC_RUNTIME_SCOPE, 'packages/mcp-server/src/lib/runtime-ledger.ts', 'packages/mcp-server/src/lib/tool-ledger.ts', 'packages/mcp-server/src/tools/health.ts', 'packages/mcp-server/registry', 'scripts/product-reality/s193-runtime-cells.ts', 'scripts/product-reality/s193-workflow-cells.ts', 'scripts/product-reality/s193-tool-truth.mjs', 'scripts/product-reality/s193-tool-caveats.json', 'scripts/product-reality/s184-m06-live-consumers.ts', 'scripts/product-reality/s185-m04-consumer-contract.ts', 'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-audit-closeout.mjs', 'scripts/product-reality/s185-suite-accounting.mjs', 'scripts/product-reality/s185-sprint-wide-movers.mjs', 'scripts/product-reality/s185-reconnect.mjs', 'packages/component-contracts/fixtures/viz-preview-samples.v1.json', 'scripts/product-reality/s188-m03-app-consumers.ts', 'scripts/product-reality/trait-recipe-assertions.ts', 'scripts/product-reality/viz-recipe-assertions.ts', 'schemas/traits', 'generated/types/traits', 'generated/types/index.ts', 'cmos/foundational-docs/closeout-checklist.md']);
 export const S194_BASE = '1f69c957f4435a0a2f18b168b684de050f7a5f22';
 export const S194_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S193_PUBLIC_RUNTIME_SCOPE, 'packages/mcp-server/src', 'packages/mcp-adapter', 'packages/mcp-sdk', 'configs/agent/policy.json', 'docs/api', 'docs/mcp', 'docs/runtime', 'docs/how-forge-works.html', 'scripts/product-reality/s194-input-options.mjs']);
+export const S195_BASE = '5b25c3c9ec795315bf52a698d135c96bffd66393';
+export const S195_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S194_PUBLIC_RUNTIME_SCOPE,
+  'domains/saas-billing', 'src/core/trait-definition.ts', 'docs/viz', 'docs/authoring-traits-viz.md',
+  'examples/viz/patterns-v2', 'scripts/product-reality/s190-viz-census.ts',
+  'scripts/product-reality/s195-attribute-viz-goldens.py', 'scripts/product-reality/s195-certify-profile-migration.mjs',
+  'scripts/product-reality/s195-certify-profile-receipt.ts', 'scripts/product-reality/s195-certify-profile-schema.ts',
+  'scripts/product-reality/s195-chart-declaration-schema.ts', 'scripts/product-reality/s195-hc-browser.ts',
+  'scripts/product-reality/s195-hc-built-receipt.ts', 'scripts/product-reality/s195-hc-schema.ts',
+  'scripts/product-reality/s195-health-viz-schema.ts', 'scripts/product-reality/s195-palette.ts',
+  'scripts/product-reality/s195-pattern-census.ts', 'scripts/product-reality/s195-pattern-input-schema.ts',
+  'scripts/product-reality/s195-pattern-sources.ts', 'scripts/product-reality/s195-qualify-viz-matrix.ts',
+  'scripts/product-reality/s195-soak-observation.mjs', 'scripts/product-reality/s195-viz-accuracy-bite.mjs',
+  'scripts/product-reality/s195-viz-bite-probe.ts', 'scripts/product-reality/s195-viz-certification-migration.mjs',
+  'scripts/product-reality/s195-viz-matrix.ts', 'scripts/product-reality/s195-viz-mutation-bites.mjs',
+  'scripts/product-reality/s195-viz-taxonomy.ts']);
 export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.tsx', 'packages/components-vue/src/table.ts']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
@@ -101,6 +116,18 @@ export function replayTableOmission(root = ROOT) {
 }
 
 export function deriveMovers(head, declaration, root = ROOT, options = {}) {
+  if (options.sprintId === 'sprint-195') {
+    assert(options.missionId === 's195-m07' && resolveCommit(options.base, root) === S195_BASE, 'Sprint195 requires its mission and locked build base.');
+    const range = deriveRange(S195_BASE, head, root, S195_PUBLIC_RUNTIME_SCOPE), comparison = { s195: {} };
+    for (const surface of ['canonicalPaths', 'publicPaths']) {
+      assert(Array.isArray(declaration?.s195?.[surface]), `Missing s195/${surface} declaration.`);
+      const result = compareDeclaredPaths(range[surface], declaration.s195[surface]);
+      assert(result.missingFromDeclaration.length === 0 && result.extraInDeclaration.length === 0, `s195/${surface}: declared mover union differs: ${canonical(result)}`);
+      comparison.s195[surface] = result;
+    }
+    return { missionId: 's195-m07', sprintId: 'sprint-195', status: 'passed', canonicalScope: CANONICAL_ADVERTISED_SCOPE,
+      publicScope: S195_PUBLIC_RUNTIME_SCOPE, s195: range, comparison };
+  }
   if (['sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194'].includes(options.sprintId)) {
     const toolTruth = options.sprintId === 'sprint-194';
     const scale = options.sprintId === 'sprint-193';
@@ -147,7 +174,7 @@ export function deriveMovers(head, declaration, root = ROOT, options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
   const options = { sprintId: argument('--sprint') ?? 'sprint-185', missionId: argument('--mission') ?? 's185-m05', base: argument('--base') };
-  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194'].includes(options.sprintId), 'Unsupported sprint.');
+  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(options.sprintId), 'Unsupported sprint.');
   const headIndex = process.argv.indexOf('--head');
   const head = resolveCommit(headIndex >= 0 ? process.argv[headIndex + 1] : 'HEAD', ROOT);
   const directory = path.resolve(ROOT, argument('--output') ?? (options.sprintId !== 'sprint-185' ? `artifacts/product-reality/${options.sprintId}/m06/movers` : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
@@ -156,7 +183,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     assert(!fs.existsSync(declarationPath), 'Refusing to replace an existing mover declaration. Review differences explicitly.');
     const declaration = { missionId: options.missionId, declarationHead: head,
       method: 'One reviewed declaration per sprint range; later checks independently re-run both Git diffs and reject additions or omissions.',
-      ...(options.sprintId === 'sprint-194' ? { s194: deriveRange(options.base, head, ROOT, S194_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-193' ? { s193: deriveRange(options.base, head, ROOT, S193_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-192' ? { s192: deriveRange(options.base, head, ROOT, S192_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-191' ? { s191: deriveRange(options.base, head, ROOT, S191_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-190' ? { s190: deriveRange(options.base, head, ROOT, S190_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-189' ? { s189: deriveRange(options.base, head, ROOT, S189_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-188' ? { s188: deriveRange(options.base, head, ROOT, S188_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
+      ...(options.sprintId === 'sprint-195' ? { s195: deriveRange(options.base, head, ROOT, S195_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-194' ? { s194: deriveRange(options.base, head, ROOT, S194_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-193' ? { s193: deriveRange(options.base, head, ROOT, S193_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-192' ? { s192: deriveRange(options.base, head, ROOT, S192_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-191' ? { s191: deriveRange(options.base, head, ROOT, S191_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-190' ? { s190: deriveRange(options.base, head, ROOT, S190_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-189' ? { s189: deriveRange(options.base, head, ROOT, S189_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-188' ? { s188: deriveRange(options.base, head, ROOT, S188_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
         : { s184: deriveRange(S184_BASE, S185_BASE), s185: deriveRange(S185_BASE, head) }) };
     fs.writeFileSync(declarationPath, canonical(declaration));
   }
@@ -164,7 +191,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const outputPath = path.join(directory, 'sprint-wide-movers.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(outputPath, 'utf8') === canonical(report), 'Mover report is stale.');
   else fs.writeFileSync(outputPath, canonical(report));
-  process.stdout.write(canonical(options.sprintId === 'sprint-194' ? { head, s194: { canonical: report.s194.canonicalPaths.length, public: report.s194.publicPaths.length } } : options.sprintId === 'sprint-193' ? { head, s193: { canonical: report.s193.canonicalPaths.length, public: report.s193.publicPaths.length } } : options.sprintId === 'sprint-192' ? { head, s192: { canonical: report.s192.canonicalPaths.length, public: report.s192.publicPaths.length } } : options.sprintId === 'sprint-191' ? { head, s191: { canonical: report.s191.canonicalPaths.length, public: report.s191.publicPaths.length } } : options.sprintId === 'sprint-190' ? { head, s190: { canonical: report.s190.canonicalPaths.length, public: report.s190.publicPaths.length } } : options.sprintId === 'sprint-189' ? { head, s189: { canonical: report.s189.canonicalPaths.length, public: report.s189.publicPaths.length } } : options.sprintId === 'sprint-188' ? { head, s188: { canonical: report.s188.canonicalPaths.length, public: report.s188.publicPaths.length } } : options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,
+  process.stdout.write(canonical(options.sprintId === 'sprint-195' ? { head, s195: { canonical: report.s195.canonicalPaths.length, public: report.s195.publicPaths.length } } : options.sprintId === 'sprint-194' ? { head, s194: { canonical: report.s194.canonicalPaths.length, public: report.s194.publicPaths.length } } : options.sprintId === 'sprint-193' ? { head, s193: { canonical: report.s193.canonicalPaths.length, public: report.s193.publicPaths.length } } : options.sprintId === 'sprint-192' ? { head, s192: { canonical: report.s192.canonicalPaths.length, public: report.s192.publicPaths.length } } : options.sprintId === 'sprint-191' ? { head, s191: { canonical: report.s191.canonicalPaths.length, public: report.s191.publicPaths.length } } : options.sprintId === 'sprint-190' ? { head, s190: { canonical: report.s190.canonicalPaths.length, public: report.s190.publicPaths.length } } : options.sprintId === 'sprint-189' ? { head, s189: { canonical: report.s189.canonicalPaths.length, public: report.s189.publicPaths.length } } : options.sprintId === 'sprint-188' ? { head, s188: { canonical: report.s188.canonicalPaths.length, public: report.s188.publicPaths.length } } : options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,
     s186: { canonical: report.s186.canonicalPaths.length, public: report.s186.publicPaths.length } }
     : { head, s184: { canonical: report.s184.canonicalPaths.length, public: report.s184.publicPaths.length },
     s185: { canonical: report.s185.canonicalPaths.length, public: report.s185.publicPaths.length }, tableControl: report.tableControl.status }));

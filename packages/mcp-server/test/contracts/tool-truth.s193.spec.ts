@@ -22,6 +22,8 @@ describe('tool truth derives claims without upgrading source references to runti
       expect(row.claimHash).toMatch(/^sha256:[0-9a-f]{64}$/); expect(row.inputSchemaHash).toMatch(/^sha256:[0-9a-f]{64}$/);
       for (const ref of [...row.receiptRefs, ...row.caveats]) expect(fs.existsSync(path.join(root, ref.path ?? ref.file))).toBe(true);
       expect(row.receiptRefs.every((ref: any) => ref.verifiedReceipt === false)).toBe(true);
+      // The active census cannot gain discovery references to its own changing closeout reports.
+      expect(row.receiptRefs.some((ref: any) => ref.path.includes('/sprint-195/m07/'))).toBe(false);
     }
   });
   it('ignores comments, type-only and schema-only imports but resolves nested and sibling handlers', () => {

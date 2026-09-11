@@ -38,11 +38,17 @@ for (const [mark, chartType] of Object.entries({ area: 'area', bar: 'bar', line:
   const filename = path.join(root, `schemas/traits/mark-${mark}.parameters.schema.json`);
   const parameters = JSON.parse(fs.readFileSync(filename, 'utf8'));
   const declaration = structuredClone(schema.$defs.chartDeclaration);
+  const traitName = `Mark${mark[0].toUpperCase()}${mark.slice(1)}`;
+  declaration.title = `${traitName}ChartDeclaration`;
   declaration.oneOf = declaration.oneOf.filter((branch: any) => chartType === 'area' || branch.properties.source.const !== 'payment-events');
   for (const branch of declaration.oneOf) branch.properties.chartType = { const: chartType };
   parameters.properties.chart = declaration;
   parameters.properties.title = { type: 'string', description: 'Title of the read-only chart projection.' };
   parameters.properties.description = { type: 'string', description: 'Accessible description of the read-only chart projection.' };
-  parameters.$defs = { ...parameters.$defs, chartEncodingBinding: schema.$defs.chartEncodingBinding, chartColorEncodingBinding: schema.$defs.chartColorEncodingBinding };
+  parameters.$defs = {
+    ...parameters.$defs,
+    chartEncodingBinding: { ...schema.$defs.chartEncodingBinding, title: `${traitName}ChartEncodingBinding` },
+    chartColorEncodingBinding: { ...schema.$defs.chartColorEncodingBinding, title: `${traitName}ChartColorEncodingBinding` },
+  };
   writeOrCheck(filename, parameters);
 }
