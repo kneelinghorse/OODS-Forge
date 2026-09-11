@@ -10,6 +10,9 @@ const MarkAreaTrait = {
   },
 
   parameters: [
+    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by viz.render for the authored sample.' },
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'chart',
       type: 'object',
@@ -170,6 +173,7 @@ const MarkAreaTrait = {
         props: {
           curveField: 'viz_area_curve',
           opacityField: 'viz_area_opacity',
+          svgParameter: 'previewSvg',
           baselineField: 'viz_area_baseline',
         },
       },
@@ -179,6 +183,7 @@ const MarkAreaTrait = {
         component: 'VizAreaControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           curveField: 'viz_area_curve',
           opacityField: 'viz_area_opacity',
           baselineField: 'viz_area_baseline',
@@ -190,6 +195,7 @@ const MarkAreaTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },

@@ -1,0 +1,44 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ✓ test/contracts/repl.tools.spec.ts (39 tests) 73ms
+ ❯ test/contracts/portable-boundary.s181.spec.ts (7 tests | 1 failed) 2561ms
+   ✓ s181 portable-runtime publish boundary > keeps the runtime component schema byte-identical to the planning producer output 3ms
+   ✓ s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data  1112ms
+   ✓ s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist  1145ms
+   ✓ s181 portable-runtime publish boundary > allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript 14ms
+   × s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership 42ms
+     → expected 'c704841842e02f9edf7574de231c75fccf738…' to be 'ec10b9807834bc684542510524127ee4d2394…' // Object.is equality
+   ✓ s181 portable-runtime publish boundary > B-19 keeps the runtime data schema out of generated.ts 3ms
+   ✓ s181 portable-runtime publish boundary > derives the adapter wire version from package.json and no longer stages planning files for fresh installs 241ms
+ ✓ test/contracts/api-docs-generator.spec.ts (7 tests) 1139ms
+   ✓ API reference generator > regeneration is idempotent  1126ms
+ ✓ test/contracts/repl.e2e.integration.spec.ts (4 tests) 48ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/portable-boundary.s181.spec.ts > s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership
+AssertionError: expected 'c704841842e02f9edf7574de231c75fccf738…' to be 'ec10b9807834bc684542510524127ee4d2394…' // Object.is equality
+
+Expected: "ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2"
+Received: "c704841842e02f9edf7574de231c75fccf738fb72fb3637378a3b8c547c6d6e8"
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts:278:32
+    276|     expect(registry.version).toBe(manifest.version);
+    277|     expect(registry.warnings).toEqual([]);
+    278|     expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d…
+       |                                ^
+    279|     // The active manifest can select an authorized named release, whi…
+    280|     // 109-row identity set and warning-free discovery remain the boun…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 56 passed (57)
+   Start at  00:43:44
+   Duration  6.24s (transform 652ms, setup 115ms, collect 1.34s, tests 3.82s, environment 0ms, prepare 311ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/repl.tools.spec.ts test/contracts/repl.e2e.integration.spec.ts test/contracts/api-docs-generator.spec.ts test/contracts/portable-boundary.s181.spec.ts

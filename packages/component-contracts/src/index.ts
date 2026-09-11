@@ -56,3 +56,7 @@ export * from './static-svg.js';
 export * from './behaviors.js';
 
 export * from './disputed.js';
+
+export * from './trait-recipes.js';
+
+export * from './viz-controls.js';

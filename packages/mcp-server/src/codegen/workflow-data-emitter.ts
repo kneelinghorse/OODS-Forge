@@ -35,6 +35,7 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
     if (schema.workflow && name === 'default_address_role') return workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary';
     if (schema.workflow && name === 'address_roles') return [workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'];
     if (field.enum?.length) return field.enum[index % field.enum.length];
+    if (field.type === 'uuid') return `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`;
     if (field.type.endsWith('[]') || field.type === 'array') return [];
     if (field.type === 'object') return {};
     if (field.type === 'boolean') return false;

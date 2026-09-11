@@ -21,7 +21,9 @@ export async function runComponentThemeProof({ framework, packageRoot, canonical
   const results = []; const failures = [];
   try {
     await server.listen();
-    browser = await chromium.launch({ headless: true });
+    browser = process.env.OODS_PLAYWRIGHT_WS_ENDPOINT
+      ? await chromium.connect(process.env.OODS_PLAYWRIGHT_WS_ENDPOINT, { exposeNetwork: '<loopback>' })
+      : await chromium.launch({ headless: true });
     const origin = `http://127.0.0.1:${server.httpServer.address().port}`;
     for (const { brand, theme } of cells) {
       const cell = `${brand}-${theme}`;
@@ -32,7 +34,11 @@ export async function runComponentThemeProof({ framework, packageRoot, canonical
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
       await page.clock.setFixedTime(new Date('2026-09-10T12:00:00Z'));
       await page.goto(`${origin}/test/visual.html?brand=${brand}&theme=${theme}`, { waitUntil: 'networkidle' });
-      await page.locator('body[data-visual-ready="true"]').waitFor();
+      try { await page.locator('body[data-visual-ready="true"]').waitFor(); }
+      catch (error) {
+        await writeFile(resolve(output, `${cell}-mount-failure.json`), JSON.stringify({ errors, error: String(error), html: await page.content() }, null, 2) + '\n');
+        throw new Error(`${framework}/${cell} did not mount: ${errors.join('; ') || String(error)}`);
+      }
       const proof = await page.evaluate(({ ids, contracts, theme }) => {
         const canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
         const context = canvas.getContext('2d', { willReadFrequently: true });
@@ -125,7 +131,7 @@ export async function runComponentThemeProof({ framework, packageRoot, canonical
       results.push({ cell, brand, theme, status: cellFailures.length ? 'failed' : 'passed', screenshot, screenshotSha256, ...proof, errors, failures: cellFailures });
       failures.push(...cellFailures); await page.close();
     }
-    const report = { schemaVersion: '1.0.0', mission: 's192-m04', target: framework, status: failures.length ? 'failed' : 'passed',
+    const report = { schemaVersion: '1.0.0', mission: argument('mission') ?? 's192-m04', target: framework, status: failures.length ? 'failed' : 'passed',
       generatedAt: new Date().toISOString(), browser: { name: 'chromium', version: browser.version() }, canonicalIds,
       selected: results.length, rootCells: canonicalIds.length * results.length, failed: failures.length, skipped: 0, failures, cells: results };
     await writeFile(resolve(output, 'report.json'), JSON.stringify(report, null, 2) + '\n');

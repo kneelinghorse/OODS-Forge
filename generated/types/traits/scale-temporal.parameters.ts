@@ -29,4 +29,8 @@ export interface ScaleTemporalTraitParameters {
    * Default date format string for axes + fallbacks.
    */
   outputFormat?: string;
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }

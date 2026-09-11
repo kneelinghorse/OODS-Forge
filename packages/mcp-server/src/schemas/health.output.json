@@ -2,8 +2,79 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "additionalProperties": false,
-  "required": ["status", "server", "registry", "tokens", "schemas", "latency"],
+  "required": ["status", "server", "registry", "tokens", "schemas", "latency", "productReality"],
   "properties": {
+    "productReality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "tools"],
+      "properties": {
+        "tools": {
+          "description": "Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "entries",
+            "byTier",
+            "head"
+          ],
+          "properties": {
+            "entries": {
+              "type": "integer",
+              "const": 27
+            },
+            "byTier": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "product-reality",
+                "contract",
+                "unit",
+                "none"
+              ],
+              "properties": {
+                "product-reality": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "contract": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unit": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "none": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "head": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
+          }
+        },
+        "runtime": {
+          "description": "Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.",
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["cells", "pass", "typedGap", "fail", "head"],
+          "properties": {
+            "cells": { "type": "integer", "const": 154 },
+            "pass": { "type": "integer", "minimum": 0 },
+            "typedGap": { "type": "integer", "minimum": 0 },
+            "fail": { "type": "integer", "minimum": 0 },
+            "head": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
     "status": {
       "type": "string",
       "enum": ["ok", "degraded"]

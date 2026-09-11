@@ -1,0 +1,190 @@
+{
+  "object": "Invoice",
+  "context": "workflow",
+  "framework": "react",
+  "head": "b88b07d5",
+  "runId": "s193-m03-probe-02",
+  "status": "fail",
+  "artifactHash": "sha256:51ba4f6582ecaacff690a118c0369a206d63b1fea47d43f05d8d99b05565c629",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text",
+    "Textarea"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:51ba4f6582ecaacff690a118c0369a206d63b1fea47d43f05d8d99b05565c629",
+        "response": "workflows/Invoice/react-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-react",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-react"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-react",
+              "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+            },
+            {
+              "specifier": "react",
+              "consumerRelative": "node_modules/react/index.js"
+            },
+            {
+              "specifier": "react-dom/client",
+              "consumerRelative": "node_modules/react-dom/client.js"
+            },
+            {
+              "specifier": "react-dom/server",
+              "consumerRelative": "node_modules/react-dom/server.node.js"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "react/logs/typecheck.log"
+        }
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "react/logs/build.log"
+        }
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "htmlHash": "sha256:5357c18126b47508d8abbd82763c57c9c82431485571d7cbea363f7ac0e9795c",
+          "generatedEntry": "src/ssr.tsx"
+        }
+      }
+    },
+    {
+      "name": "mount",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "screenCount": 1,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "preservesSsrRoot": true,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json",
+        "observation": {
+          "files": [
+            "index-BpSDIFGS.css"
+          ],
+          "bytes": 143935,
+          "sha256": "sha256:ebe70d671e8e6d27faf1032e39f5066e23724542e8ecb20c0a5da1f7e451fead",
+          "core": true,
+          "ported": true,
+          "requiresPorted": true,
+          "tokens": true
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "fail",
+      "detail": {
+        "report": "workflows/Invoice/react/receipt.json"
+      },
+      "reason": "[{\"name\":\"ten-sample-records\",\"status\":\"passed\",\"detail\":{\"active\":[\"invoice-001\",\"invoice-002\",\"invoice-003\",\"invoice-004\",\"invoice-005\",\"invoice-006\",\"invoice-007\",\"invoice-008\",\"invoice-009\",\"invoice-010\"],\"archived\":[],\"total\":10,\"disposition\":\"ten active records; object has no Archivable trait\"}},{\"name\":\"detail-navigation\",\"status\":\"passed\",\"detail\":{\"id\":\"invoice-003\",\"heading\":\"invoice-003\",\"mounts\":[]}},{\"name\":\"edit-seeded-values\",\"status\":\"passed\",\"detail\":{\"id\":\"invoice-003\",\"field\":\"invoice_number\",\"plan\":\"invoice-number sample 3\"}},{\"name\":\"save-record-field\",\"status\":\"passed\",\"detail\":{\"heading\":\"invoice-003\"}},{\"name\":\"timeline-navigation-and-history\",\"status\":\"failed\",\"error\":\"locator.innerText: Timeout 30000ms exceeded.\\nCall log:\\n\\u001b[2m  - waiting for getByRole('list', { name: 'Lifecycle history' })\\u001b[22m\\n\"}]"
+    },
+    {
+      "name": "workflow-proof",
+      "status": "fail",
+      "reason": "AssertionError [ERR_ASSERTION]: Every established workflow gate must pass"
+    }
+  ],
+  "report": "cells/Invoice/workflow/react/receipt.json"
+}

@@ -76,6 +76,13 @@ describe('Subscription workflow composition', () => {
     ]));
     for (const [index, context] of contexts.entries()) {
       const source = await compose({ object: 'Subscription', context });
+      if (context === 'list') {
+        const actualBranches = structuredClone(schema.screens[index]!.children!);
+        const strip = (node: typeof actualBranches[number]) => { node.id = node.id.slice(context.length + 1); node.children?.forEach(strip); };
+        actualBranches.forEach(strip);
+        expect(actualBranches, 'The list owns its state branches; workflow assembly must reuse them exactly once').toEqual(source.schema.screens[0].children);
+        continue;
+      }
       const actual = structuredClone(schema.screens[index]!.children!.find((node) => node.state === 'success')!);
       const stripPrefix = (node: typeof actual) => { node.id = node.id.slice(context.length + 1); node.children?.forEach(stripPrefix); };
       stripPrefix(actual);

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
   buildSavedSchemaCorpusEvidence,
@@ -12,6 +12,7 @@ import {
 import type { UiSchema } from '../../src/schemas/generated.js';
 import { handle as codeGenerate } from '../../src/tools/code.generate.js';
 import type { CodeGenerateOutput } from '../../src/tools/types.js';
+import * as targetReadiness from '../../src/codegen/target-readiness.js';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(testDirectory, '../../../..');
@@ -210,12 +211,20 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
     const originalSha256 = sha256(originalPath);
     const originalExitGateSha256 = sha256(path.join(corpusRoot, 'tier1-acceptance-sub-detail.json'));
     let mutatedTypedGaps = 0;
+    const preflight = targetReadiness.preflightTargetCapabilities;
+    const readinessFault = vi.spyOn(targetReadiness, 'preflightTargetCapabilities').mockImplementation((screens, target) => [
+      ...preflight(screens, target),
+      ...(screens.some(screen => screen.id === 'readiness-mutation-only') ? [{
+        code: 'OODS-N015', nodeId: 'readiness-mutation-only', component: 'ArchiveEvent',
+        message: `Injected unavailable target for ${target}; the real ArchiveEvent is governed.`,
+      }] : []),
+    ]);
     try {
       cpSync(corpusRoot, mutationCorpus, { recursive: true });
       const recordPath = path.join(mutationCorpus, `${recordName}.json`);
       const record = readJson<{ schema: UiSchema }>(recordPath);
-      // ArchiveSummary is now governed. This explicitly synthetic negative uses
-      // the still-unavailable ArchiveEvent; all original corpus hashes stay fixed.
+      // All109 roots are governed. Inject one readiness fault into this copied
+      // corpus only; the compiler and generator must agree on its typed gap.
       record.schema.screens.push({ id: 'readiness-mutation-only', component: 'ArchiveEvent' });
       writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`);
       expect(sha256(path.join(mutationCorpus, 'tier1-acceptance-sub-detail.json'))).toBe(originalExitGateSha256);
@@ -236,6 +245,7 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
       expect(sha256(originalPath)).toBe(originalSha256);
       expect(sha256(path.join(corpusRoot, 'tier1-acceptance-sub-detail.json'))).toBe(originalExitGateSha256);
     } finally {
+      readinessFault.mockRestore();
       rmSync(mutationRoot, { recursive: true, force: true });
     }
   });

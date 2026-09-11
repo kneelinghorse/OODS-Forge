@@ -20,6 +20,20 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's193-m07') {
+    const head = movers.s193.head;
+    const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const body = [
+      `Sprint 193 candidate ${head}; prepared for Sprint 194 after independent review and delivery.`,
+      'catalog_list productReality.surfaces now serves export 2026-09-11-s193-m07:109 React/Vue implementations and HTML mappings;109 verified accessibility/theme rows;interaction40 verified and69 explicitly static. The34 previously missing rows now have governed implementations. approvedRuntimeCensus remains null; classification approval remains pending.',
+      'health productReality.runtime serves the current154-cell single-head,one-pack ledger for all11objects/seven contexts/both frameworks. health productReality.tools serves27entries with source-test tiers7product-reality/12contract/4unit/4none; import tiers and README pointers are not runtime certification.',
+      'The optional Cartesian opacity input is validated and reaches renderer output. New visualization authoring controls are measured on bounded real-trait fixtures; no public object schema was hand-edited. Public SVG registry13/13 and dashboard11/11 remain unchanged; HC chart pixels and eight ECharts certifications remain open.',
+      'Reconnect after reviewed delivery to refresh discovery. Primary PM2 remains the c098237f delivery; this prepared notice executes no send.',
+      `Advertised/public movers from ${movers.s193.base}..${head}:\n${movers.s193.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's193-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-194', targets,
+      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint193 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
+  }
   if (movers.missionId === 's192-m07') {
     const head = movers.s192.head;
     const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];

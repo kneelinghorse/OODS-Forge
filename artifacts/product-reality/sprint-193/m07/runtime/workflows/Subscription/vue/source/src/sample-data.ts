@@ -1,0 +1,630 @@
+import type { DomainRecord } from './store';
+
+export const sampleData: DomainRecord[] = [
+  {
+    "status": "future",
+    "state_history": [
+      {
+        "from": null,
+        "to": "future",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "amount": 1900,
+    "currency": "usd",
+    "billing_interval": "monthly",
+    "payment_status": "pending",
+    "payment_method_type": "card",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-09-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-10-01T12:00:00.000Z",
+    "current_period_start": "2026-09-01T12:00:00.000Z",
+    "current_period_end": "2026-10-01T12:00:00.000Z",
+    "current_period_progress": 0.23333333333333334,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-001",
+    "plan_name": "Subscription 01",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer1@example.com",
+    "payment_history": [
+      {
+        "at": "2026-06-01T12:00:00.000Z",
+        "amount": 1520
+      },
+      {
+        "at": "2026-07-01T12:00:00.000Z",
+        "amount": 2090
+      },
+      {
+        "at": "2026-08-01T12:00:00.000Z",
+        "amount": 1710
+      },
+      {
+        "at": "2026-09-01T12:00:00.000Z",
+        "amount": 1900
+      }
+    ]
+  },
+  {
+    "status": "trialing",
+    "state_history": [
+      {
+        "from": null,
+        "to": "trialing",
+        "at": "2026-03-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-03-01T12:00:00.000Z",
+    "updated_at": "2026-03-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-03-01T12:00:00.000Z",
+    "amount": 3800,
+    "currency": "usd",
+    "billing_interval": "yearly",
+    "payment_status": "succeeded",
+    "payment_method_type": "ach",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-03-01T12:00:00.000Z",
+    "next_payment_due_at": "2027-03-01T12:00:00.000Z",
+    "current_period_start": "2026-03-01T12:00:00.000Z",
+    "current_period_end": "2027-03-01T12:00:00.000Z",
+    "current_period_progress": 0.5232876712328767,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-002",
+    "plan_name": "Subscription 02",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer2@example.com",
+    "payment_history": [
+      {
+        "at": "2025-12-01T12:00:00.000Z",
+        "amount": 3040
+      },
+      {
+        "at": "2026-01-01T12:00:00.000Z",
+        "amount": 4180
+      },
+      {
+        "at": "2026-02-01T12:00:00.000Z",
+        "amount": 3420
+      },
+      {
+        "at": "2026-03-01T12:00:00.000Z",
+        "amount": 3800
+      }
+    ]
+  },
+  {
+    "status": "active",
+    "state_history": [
+      {
+        "from": null,
+        "to": "active",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "amount": 5700,
+    "currency": "usd",
+    "billing_interval": "monthly",
+    "payment_status": "failed",
+    "payment_method_type": "wire",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-09-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-10-01T12:00:00.000Z",
+    "current_period_start": "2026-09-01T12:00:00.000Z",
+    "current_period_end": "2026-10-01T12:00:00.000Z",
+    "current_period_progress": 0.23333333333333334,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-003",
+    "plan_name": "Subscription 03",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer3@example.com",
+    "payment_history": [
+      {
+        "at": "2026-06-01T12:00:00.000Z",
+        "amount": 4560
+      },
+      {
+        "at": "2026-07-01T12:00:00.000Z",
+        "amount": 6270
+      },
+      {
+        "at": "2026-08-01T12:00:00.000Z",
+        "amount": 5130
+      },
+      {
+        "at": "2026-09-01T12:00:00.000Z",
+        "amount": 5700
+      }
+    ]
+  },
+  {
+    "status": "paused",
+    "state_history": [
+      {
+        "from": null,
+        "to": "paused",
+        "at": "2026-03-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-03-01T12:00:00.000Z",
+    "updated_at": "2026-03-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-03-01T12:00:00.000Z",
+    "amount": 7600,
+    "currency": "usd",
+    "billing_interval": "yearly",
+    "payment_status": "retrying",
+    "payment_method_type": "invoice",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-03-01T12:00:00.000Z",
+    "next_payment_due_at": "2027-03-01T12:00:00.000Z",
+    "current_period_start": "2026-03-01T12:00:00.000Z",
+    "current_period_end": "2027-03-01T12:00:00.000Z",
+    "current_period_progress": 0.5232876712328767,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-004",
+    "plan_name": "Subscription 04",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer4@example.com",
+    "payment_history": [
+      {
+        "at": "2025-12-01T12:00:00.000Z",
+        "amount": 6080
+      },
+      {
+        "at": "2026-01-01T12:00:00.000Z",
+        "amount": 8360
+      },
+      {
+        "at": "2026-02-01T12:00:00.000Z",
+        "amount": 6840
+      },
+      {
+        "at": "2026-03-01T12:00:00.000Z",
+        "amount": 7600
+      }
+    ]
+  },
+  {
+    "status": "pending_cancellation",
+    "state_history": [
+      {
+        "from": null,
+        "to": "pending_cancellation",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": true,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "amount": 9500,
+    "currency": "usd",
+    "billing_interval": "monthly",
+    "payment_status": "refunded",
+    "payment_method_type": "other",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-09-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-10-01T12:00:00.000Z",
+    "current_period_start": "2026-09-01T12:00:00.000Z",
+    "current_period_end": "2026-10-01T12:00:00.000Z",
+    "current_period_progress": 0.23333333333333334,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-005",
+    "plan_name": "Subscription 05",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer5@example.com",
+    "cancellation_reason": "Subscription no longer needed",
+    "cancellation_reason_code": "customer_request",
+    "cancellation_requested_at": "2026-09-01T12:00:00.000Z",
+    "payment_history": [
+      {
+        "at": "2026-06-01T12:00:00.000Z",
+        "amount": 7600
+      },
+      {
+        "at": "2026-07-01T12:00:00.000Z",
+        "amount": 10450
+      },
+      {
+        "at": "2026-08-01T12:00:00.000Z",
+        "amount": 8550
+      },
+      {
+        "at": "2026-09-01T12:00:00.000Z",
+        "amount": 9500
+      }
+    ]
+  },
+  {
+    "status": "past_due",
+    "state_history": [
+      {
+        "from": null,
+        "to": "past_due",
+        "at": "2026-03-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-03-01T12:00:00.000Z",
+    "updated_at": "2026-03-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-03-01T12:00:00.000Z",
+    "amount": 11400,
+    "currency": "usd",
+    "billing_interval": "yearly",
+    "payment_status": "pending",
+    "payment_method_type": "card",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-03-01T12:00:00.000Z",
+    "next_payment_due_at": "2027-03-01T12:00:00.000Z",
+    "current_period_start": "2026-03-01T12:00:00.000Z",
+    "current_period_end": "2027-03-01T12:00:00.000Z",
+    "current_period_progress": 0.5232876712328767,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-006",
+    "plan_name": "Subscription 06",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer6@example.com",
+    "payment_history": [
+      {
+        "at": "2025-12-01T12:00:00.000Z",
+        "amount": 9120
+      },
+      {
+        "at": "2026-01-01T12:00:00.000Z",
+        "amount": 12540
+      },
+      {
+        "at": "2026-02-01T12:00:00.000Z",
+        "amount": 10260
+      },
+      {
+        "at": "2026-03-01T12:00:00.000Z",
+        "amount": 11400
+      }
+    ]
+  },
+  {
+    "status": "unpaid",
+    "state_history": [
+      {
+        "from": null,
+        "to": "unpaid",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "amount": 13300,
+    "currency": "usd",
+    "billing_interval": "monthly",
+    "payment_status": "succeeded",
+    "payment_method_type": "ach",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-09-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-10-01T12:00:00.000Z",
+    "current_period_start": "2026-09-01T12:00:00.000Z",
+    "current_period_end": "2026-10-01T12:00:00.000Z",
+    "current_period_progress": 0.23333333333333334,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-007",
+    "plan_name": "Subscription 07",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer7@example.com",
+    "payment_history": [
+      {
+        "at": "2026-06-01T12:00:00.000Z",
+        "amount": 10640
+      },
+      {
+        "at": "2026-07-01T12:00:00.000Z",
+        "amount": 14630
+      },
+      {
+        "at": "2026-08-01T12:00:00.000Z",
+        "amount": 11970
+      },
+      {
+        "at": "2026-09-01T12:00:00.000Z",
+        "amount": 13300
+      }
+    ]
+  },
+  {
+    "status": "terminated",
+    "state_history": [
+      {
+        "from": null,
+        "to": "terminated",
+        "at": "2025-03-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2025-03-01T12:00:00.000Z",
+    "updated_at": "2025-03-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2025-03-01T12:00:00.000Z",
+    "amount": 15200,
+    "currency": "usd",
+    "billing_interval": "yearly",
+    "payment_status": "failed",
+    "payment_method_type": "wire",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2025-03-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-03-01T12:00:00.000Z",
+    "current_period_start": "2025-03-01T12:00:00.000Z",
+    "current_period_end": "2026-03-01T12:00:00.000Z",
+    "current_period_progress": 1,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-008",
+    "plan_name": "Subscription 08",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer8@example.com",
+    "cancellation_reason": "Subscription no longer needed",
+    "cancellation_reason_code": "customer_request",
+    "cancellation_requested_at": "2026-03-01T12:00:00.000Z",
+    "payment_history": [
+      {
+        "at": "2024-12-01T12:00:00.000Z",
+        "amount": 12160
+      },
+      {
+        "at": "2025-01-01T12:00:00.000Z",
+        "amount": 16720
+      },
+      {
+        "at": "2025-02-01T12:00:00.000Z",
+        "amount": 13680
+      },
+      {
+        "at": "2025-03-01T12:00:00.000Z",
+        "amount": 15200
+      }
+    ]
+  },
+  {
+    "status": "future",
+    "state_history": [
+      {
+        "from": null,
+        "to": "future",
+        "at": "2026-09-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "amount": 17100,
+    "currency": "usd",
+    "billing_interval": "monthly",
+    "payment_status": "retrying",
+    "payment_method_type": "invoice",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-09-01T12:00:00.000Z",
+    "next_payment_due_at": "2026-10-01T12:00:00.000Z",
+    "current_period_start": "2026-09-01T12:00:00.000Z",
+    "current_period_end": "2026-10-01T12:00:00.000Z",
+    "current_period_progress": 0.23333333333333334,
+    "is_archived": false,
+    "archived_at": null,
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-009",
+    "plan_name": "Subscription 09",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer9@example.com",
+    "payment_history": [
+      {
+        "at": "2026-06-01T12:00:00.000Z",
+        "amount": 13680
+      },
+      {
+        "at": "2026-07-01T12:00:00.000Z",
+        "amount": 18810
+      },
+      {
+        "at": "2026-08-01T12:00:00.000Z",
+        "amount": 15390
+      },
+      {
+        "at": "2026-09-01T12:00:00.000Z",
+        "amount": 17100
+      }
+    ]
+  },
+  {
+    "status": "trialing",
+    "state_history": [
+      {
+        "from": null,
+        "to": "trialing",
+        "at": "2026-03-01T12:00:00.000Z",
+        "event": "billing_cycle_started",
+        "title": "Billing Cycle Started",
+        "reason": "Sample record created"
+      }
+    ],
+    "allowed_transitions": [],
+    "cancel_at_period_end": false,
+    "created_at": "2026-03-01T12:00:00.000Z",
+    "updated_at": "2026-03-01T12:00:00.000Z",
+    "last_event": "billing_cycle_started",
+    "last_event_at": "2026-03-01T12:00:00.000Z",
+    "amount": 19000,
+    "currency": "usd",
+    "billing_interval": "yearly",
+    "payment_status": "refunded",
+    "payment_method_type": "other",
+    "proration_amount": 0,
+    "proration_date": 0,
+    "last_payment_at": "2026-03-01T12:00:00.000Z",
+    "next_payment_due_at": "2027-03-01T12:00:00.000Z",
+    "current_period_start": "2026-03-01T12:00:00.000Z",
+    "current_period_end": "2027-03-01T12:00:00.000Z",
+    "current_period_progress": 0.5232876712328767,
+    "is_archived": true,
+    "archived_at": "2026-09-07T12:00:00.000Z",
+    "restored_at": "2026-01-01T00:00:00.000Z",
+    "archive_reason": "",
+    "archived_by": "",
+    "archive_metadata": {},
+    "restoration_metadata": {},
+    "subscription_id": "subscription-010",
+    "plan_name": "Subscription 10",
+    "plan_code": "",
+    "plan_interval": "",
+    "customer_name": "",
+    "customer_email": "customer10@example.com",
+    "payment_history": [
+      {
+        "at": "2025-12-01T12:00:00.000Z",
+        "amount": 15200
+      },
+      {
+        "at": "2026-01-01T12:00:00.000Z",
+        "amount": 20900
+      },
+      {
+        "at": "2026-02-01T12:00:00.000Z",
+        "amount": 17100
+      },
+      {
+        "at": "2026-03-01T12:00:00.000Z",
+        "amount": 19000
+      }
+    ]
+  }
+];

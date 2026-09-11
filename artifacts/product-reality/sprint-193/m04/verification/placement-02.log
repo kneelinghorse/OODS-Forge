@@ -1,0 +1,43 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/trait-recipes.s193.spec.ts (10 tests | 1 failed) 234ms
+   ✓ nine declared non-visualization recipes > Subscription/timeline places ArchiveEvent and emits both governed targets without schema editing 101ms
+   ✓ nine declared non-visualization recipes > Subscription/timeline places CancellationEvent and emits both governed targets without schema editing 15ms
+   ✓ nine declared non-visualization recipes > Subscription/timeline places StateTransitionEvent and emits both governed targets without schema editing 15ms
+   ✓ nine declared non-visualization recipes > User/detail places CommunicationDetailPanel and emits both governed targets without schema editing 18ms
+   ✓ nine declared non-visualization recipes > S193TraitRecipes/form places ColorStatePicker and emits both governed targets without schema editing 25ms
+   ✓ nine declared non-visualization recipes > S193TraitRecipes/detail places StatusColorLegend and emits both governed targets without schema editing 17ms
+   ✓ nine declared non-visualization recipes > S193TraitRecipes/form places GeoFieldMappingForm and emits both governed targets without schema editing 15ms
+   × nine declared non-visualization recipes > S193TraitRecipes/list places GeoResolutionBadge and emits both governed targets without schema editing 14ms
+     → [{"code":"OODS-V007","message":"Field \"color_state\" cannot be represented by ColorSwatch on the react target; generation would discard the binding.","nodeId":"ve-items-18","component":"ColorSwatch"},{"code":"OODS-V007","message":"Prop \"size\" is not in the canonical ColorSwatch contract.","nodeId":"ve-items-18","component":"ColorSwatch"}]: expected 'error' to be 'ok' // Object.is equality
+   ✓ nine declared non-visualization recipes > S193TraitRecipes/detail places GeocodablePreview and emits both governed targets without schema editing 15ms
+   ✓ nine declared non-visualization recipes > the Colorized and Geocodable fixture is bounded and does not alter the canonical Product 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > S193TraitRecipes/list places GeoResolutionBadge and emits both governed targets without schema editing
+AssertionError: [{"code":"OODS-V007","message":"Field \"color_state\" cannot be represented by ColorSwatch on the react target; generation would discard the binding.","nodeId":"ve-items-18","component":"ColorSwatch"},{"code":"OODS-V007","message":"Prop \"size\" is not in the canonical ColorSwatch contract.","nodeId":"ve-items-18","component":"ColorSwatch"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/trait-recipes.s193.spec.ts:41:66
+     39|     for (const framework of ['react', 'vue'] as const) {
+     40|       const generated = await generate({ schema: result.schema, framew…
+     41|       expect(generated.status, JSON.stringify(generated.errors)).toBe(…
+       |                                                                  ^
+     42|       expect(generated.code).toContain(`<${component}`);
+     43|       expect(JSON.stringify(generated.errors ?? [])).not.toMatch(/OODS…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  22:23:49
+   Duration  1.82s (transform 912ms, setup 14ms, collect 1.40s, tests 234ms, environment 0ms, prepare 68ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/trait-recipes.s193.spec.ts

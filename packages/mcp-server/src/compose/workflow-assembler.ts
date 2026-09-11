@@ -50,10 +50,13 @@ export async function assembleWorkflow(
     const source = structuredClone(results[index]!.schema.screens[0]!);
     const prefix = (node: UiElement) => { node.id = `${context}-${node.id}`; node.children?.forEach(prefix); };
     prefix(source);
+    // A public list already owns the four branches. Reuse them so the workflow
+    // does not nest loading/error checks inside its success branch.
+    const ownsStates = UI_WORKFLOW_STATES.every(state => source.children?.some(child => child.state === state));
     const screen: UiElement = {
       id: `${context}-screen`, component: 'Stack', route: ROUTES[context],
       ...(source.bindings ? { bindings: source.bindings } : {}),
-      children: [
+      children: ownsStates ? source.children : [
         ...(['loading', 'empty', 'error'] as const).map((state): UiElement => ({
           id: `${context}-${state}`, component: 'Banner', state,
           props: { title: state === 'loading' ? 'Loading' : state === 'empty' ? 'No records found' : 'Unable to load records', message: state === 'error' ? 'Try again or choose another record.' : state === 'empty' ? 'Change the filters or add a record.' : 'Loading your records.' },

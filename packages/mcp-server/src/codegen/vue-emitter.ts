@@ -239,6 +239,7 @@ function localBindingForNode(
 }
 
 function vueControlledProp(occurrence: LocalBindingOccurrence): string | null {
+  if (occurrence.component === 'ColorStatePicker') return 'value';
   if (occurrence.component === 'Checkbox') return 'modelValue';
   if (
     occurrence.component === 'DatePicker'
@@ -277,7 +278,7 @@ function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
     attrs.push(`:${controlledProp}="${local.localSymbols.state}"`);
     const declaredEvent = vueEventName(node.component, local.event);
     const updateEvent = vueControlledUpdateEvent(controlledProp);
-    if (declaredEvent !== updateEvent) {
+    if (controlledProp !== 'value' && declaredEvent !== updateEvent) {
       attrs.push(`@${updateEvent}="${local.localSymbols.setter}"`);
     }
   }

@@ -443,6 +443,7 @@ export type ComponentCatalogEntry = ComponentCatalogSummary & {
 
 /** Current scope decision; historical per-row proposals do not exclude obligations. */
 export type ComponentObligationScope = {
+  runtimeEvidence?: string;
   schemaVersion: string;
   decisionId: number;
   disposition: "retain-all-obligations";

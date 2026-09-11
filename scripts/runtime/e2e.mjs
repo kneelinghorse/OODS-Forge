@@ -552,9 +552,15 @@ async function main() {
         traits: health.registry.traits,
         objects: health.registry.objects,
       },
-      { components: 109, traits: 41, objects: 11 },
+      { components: 109, traits: 45, objects: 11 },
     );
     assert.deepEqual(health.warnings ?? [], []);
+    assert.deepEqual(health.productReality.runtime, {
+      cells: 154, pass: 154, typedGap: 0, fail: 0,
+      head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
+    });
+    assert.deepEqual(health.productReality.tools.byTier, { "product-reality": 7, contract: 12, unit: 4, none: 4 });
+    assert.equal(health.productReality.tools.entries, 27);
     assert(
       isInside(runtimeRoot, path.resolve(health.schemas.storeDir)),
       "health schema store escaped extraction root",

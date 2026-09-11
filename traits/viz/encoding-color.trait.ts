@@ -10,6 +10,8 @@ const EncodingColorTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'supportedSchemes',
       type: 'string[]',
@@ -151,33 +153,17 @@ const EncodingColorTrait = {
   },
 
   view_extensions: {
-    detail: [
-      {
-        component: 'VizColorLegendConfig',
-        position: 'sidebar',
-        props: {
-          field: 'viz_encoding_color_field',
-          schemeField: 'viz_encoding_color_scheme',
-          redundancyField: 'viz_encoding_color_redundancy',
-        },
-      },
-    ],
+    detail: [{ component: 'VizEncodingBadge', position: 'sidebar', props: { intentParameter: 'renderIntent', channel: 'color' } }],
     form: [
-      {
-        component: 'VizColorControls',
-        position: 'top',
-        props: {
-          schemeField: 'viz_encoding_color_scheme',
-          channelField: 'viz_encoding_color_channel',
-          redundancyField: 'viz_encoding_color_redundancy',
-          contrastField: 'viz_encoding_color_min_contrast',
-        },
-      },
+      { component: 'VizColorControls', position: 'top', props: { intentParameter: 'renderIntent', schemeField: 'viz_encoding_color_scheme', channelField: 'viz_encoding_color_channel', redundancyField: 'viz_encoding_color_redundancy', contrastField: 'viz_encoding_color_min_contrast' } },
+      { component: 'VizColorLegendConfig', position: 'top', props: { intentParameter: 'renderIntent' } },
     ],
     list: [
       {
         component: 'VizEncodingBadge',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'color',
           axis: 'color',
           fieldField: 'viz_encoding_color_field',
         },

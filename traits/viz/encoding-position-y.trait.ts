@@ -10,6 +10,8 @@ const EncodingPositionYTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'fieldKinds',
       type: 'string[]',
@@ -143,6 +145,8 @@ const EncodingPositionYTrait = {
         component: 'VizAxisSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'y',
           axis: 'y',
           titleField: 'viz_encoding_y_axis_title',
           scaleField: 'viz_encoding_y_scale',
@@ -155,6 +159,8 @@ const EncodingPositionYTrait = {
         component: 'VizAxisControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'y',
           axis: 'y',
           fieldField: 'viz_encoding_y_field',
           kindField: 'viz_encoding_y_field_kind',
@@ -169,6 +175,8 @@ const EncodingPositionYTrait = {
       {
         component: 'VizEncodingBadge',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'y',
           axis: 'y',
           fieldField: 'viz_encoding_y_field',
         },

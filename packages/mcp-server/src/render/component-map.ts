@@ -1524,7 +1524,7 @@ function renderVizPreview(node: UiElement, childrenHtml: string, previewType: st
   const props = isRecord(node.props) ? node.props : {};
   const width = firstSerialized(props, ['width']) ?? '640';
   const height = firstSerialized(props, ['height']) ?? '360';
-  const svg = previewType === 'area' && typeof props.svg === 'string' ? assertStaticSvg(props.svg) : undefined;
+  const svg = typeof props.svg === 'string' ? assertStaticSvg(props.svg) : undefined;
   const title = typeof props.title === 'string' ? props.title : undefined;
   const description = typeof props.description === 'string' ? props.description : undefined;
   const attrs = buildAttributes(node, {

@@ -1,9 +1,12 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { fieldLabel } from './label-generator.js';
+import { VIZ_CONTROL_IDS } from '@oods/component-contracts';
 
 const controls = new Set(['Input', 'Select', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector', 'CancellationForm', 'BillingAmountInput', 'BillingIntervalSelector']);
 const owners: Record<string, string[]> = {
+  ColorStatePicker: ['field'],
+  GeoFieldMappingForm: ['latitudeField', 'longitudeField', 'identifierField', 'autoDetectField'],
   BillingAmountInput: ['amountField'], BillingIntervalSelector: ['intervalField'],
   CancellationForm: ['reasonField', 'codeField'], StatusSelector: ['field'],
 };
@@ -29,7 +32,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
           node.component = 'Input'; node.props.type = 'datetime-local';
         }
       }
-      if (owners[node.component]) {
+      if (owners[node.component] && !['ColorStatePicker', 'GeoFieldMappingForm'].includes(node.component)) {
         const fields = owners[node.component];
         node.props = { ...node.props };
         for (const directive of fields) {
@@ -40,6 +43,13 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       }
       if (node.component === 'BillingAmountInput') node.props = { ...node.props, help: `Amount in ${String(node.props?.currency ?? schema.workflow?.data.currency ?? schema.objectSchema?.[String(node.props?.currencyField)]?.enum?.[0] ?? 'USD').toUpperCase()}` };
       if (node.component === 'CancellationForm') node.props = { ...node.props, embedded: true, allowedReasons: composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Cancellable')?.ref.parameters?.allowedReasons ?? [] };
+      if (node.component === 'GeoFieldMappingForm') {
+        node.props = { ...node.props, embedded: true };
+        node.bindings = { ...node.bindings, onChange: 'handleGeoMappingChange' };
+      }
+      if ((VIZ_CONTROL_IDS as readonly string[]).includes(node.component)) {
+        node.bindings = { ...node.bindings, onChange: `handle${node.component}Change` };
+      }
     });
     // The native Save owns submit; field controls own edits. Cancellation belongs to detail.
     for (const screen of schema.screens) if (screen.bindings) {

@@ -1,0 +1,390 @@
+{
+  "object": "Usage",
+  "context": "workflow",
+  "framework": "vue",
+  "head": "00b251a7",
+  "runId": "s193-m03-probe-06",
+  "status": "pass",
+  "artifactHash": "sha256:b7c9d234aac6e2318f0c64b24a57843c75b69b0d2dc4fcbbd57fd005647b73c8",
+  "components": [
+    "Banner",
+    "Button",
+    "Card",
+    "DatePicker",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "Tabs",
+    "Text"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:b7c9d234aac6e2318f0c64b24a57843c75b69b0d2dc4fcbbd57fd005647b73c8",
+        "response": "workflows/Usage/vue-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-vue",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-vue"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-vue",
+              "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+            },
+            {
+              "specifier": "@vitejs/plugin-vue",
+              "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+            },
+            {
+              "specifier": "@vue/server-renderer",
+              "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+            },
+            {
+              "specifier": "vue",
+              "consumerRelative": "node_modules/vue/index.mjs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/typecheck.log"
+        }
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/build.log"
+        }
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "htmlHash": "sha256:4402004daa2392e6cce6bae09b41759a672deec680e5141c6edb9e4653d78356",
+          "generatedEntry": "src/ssr.ts"
+        }
+      }
+    },
+    {
+      "name": "mount",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "screenCount": 1,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "preservesSsrRoot": true,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "files": [
+            "index-BpSDIFGS.css"
+          ],
+          "bytes": 143935,
+          "sha256": "sha256:ebe70d671e8e6d27faf1032e39f5066e23724542e8ecb20c0a5da1f7e451fead",
+          "core": true,
+          "ported": true,
+          "requiresPorted": true,
+          "tokens": true
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Usage/vue/receipt.json",
+        "observation": {
+          "flowRows": 5,
+          "stateObservations": 16,
+          "screenshots": 12,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "accessibility-tree",
+      "status": "pass",
+      "detail": {
+        "path": "workflows/Usage/vue/accessibility-tree.txt"
+      }
+    },
+    {
+      "name": "context-states",
+      "status": "pass",
+      "detail": {
+        "observations": [
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "success",
+            "marker": "success",
+            "text": "Search\nStatus\nAll states\nok\ndelayed\ninvestigating\nSort\nName A–Z\nName Z–A\nusage-001\nSep 1, 2026, 12:00 PM\nusage-002\nSep 1, 2026, 12:00 PM\nusage-003\nSep 1, 2026, 12:00 PM\nusage-004\nSep 1, 2026, 12:00 PM\nusage-005\nSep 1, 2026, 12:00 PM\nusage-006\nSep 1, 2026, 12:00 PM\nusage-007\nSep 1, 2026, 12:00 PM\nusage-008\nSep 1, 2026, 12:00 PM\nusage-009\nSep 1, 2026, 12:00 PM\nusage-010\nSep 1, 2026, 12:00 PM\n10 records\nShowing 1–10 of 10\n‹\n1\n›\nPage 1 of 1"
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "success",
+            "marker": "success",
+            "text": "meter-name sample 1\nDetails\nStatus Timeline\nok\n2026-09-01T12:00:00.000Z\n0"
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "success",
+            "marker": "success",
+            "text": "Details\nPeriod start\n\nDate the usage accumulation window began.\n\nStatus\nEnter status\nok\ndelayed\ninvestigating\n\nHealth of the usage feed (ok, delayed, investigating).\n\nMeter name\n*\n\nFriendly metered feature name shown in UI (ex: Analytics Seats).\n\nIncluded quantity\n*\n\nQuantity included in base plan before overages.\n\nConsumed quantity\n*\n\nActual quantity consumed in the active period.\n\nUnit label\n*\n\nLabel for display, defaults to the unit parameter.\n\nRollover strategy\n\nStrategy for unused units (inherits rolloverStrategy parameter).\n\nOverage rate minor\n\nCost per additional unit expressed in minor currency units.\n\nProjected overage minor\n\nForecasted overage spend derived from consumption trends.\n\nLast event\n*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "success",
+            "marker": "success",
+            "text": "usage-001\nNo events yet."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\nTry again or choose another record."
+          }
+        ],
+        "flow": [
+          {
+            "name": "ten-sample-records",
+            "status": "passed",
+            "detail": {
+              "active": [
+                "usage-001",
+                "usage-002",
+                "usage-003",
+                "usage-004",
+                "usage-005",
+                "usage-006",
+                "usage-007",
+                "usage-008",
+                "usage-009",
+                "usage-010"
+              ],
+              "archived": [],
+              "total": 10,
+              "disposition": "ten active records; object has no Archivable trait"
+            }
+          },
+          {
+            "name": "detail-navigation",
+            "status": "passed",
+            "detail": {
+              "id": "usage-003",
+              "heading": "usage-003",
+              "mounts": []
+            }
+          },
+          {
+            "name": "edit-seeded-values",
+            "status": "passed",
+            "detail": {
+              "id": "usage-003",
+              "field": "meter_name",
+              "plan": "meter-name sample 3"
+            }
+          },
+          {
+            "name": "save-record-field",
+            "status": "passed",
+            "detail": {
+              "heading": "usage-003"
+            }
+          },
+          {
+            "name": "timeline-navigation-and-history",
+            "status": "passed",
+            "detail": {
+              "text": "No events yet.",
+              "id": "usage-003",
+              "disposition": "The declared timeline collection has no lifecycle-history or payment-event source; its empty state is visible."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "screenshots",
+      "status": "pass",
+      "detail": [
+        {
+          "width": 390,
+          "path": "workflows/Usage/screenshots/vue-list-390.png",
+          "hash": "sha256:094743b79909474a912de11dcbb022961bc7fbfdd912080c8af635036dff0035"
+        },
+        {
+          "width": 1440,
+          "path": "workflows/Usage/screenshots/vue-list-1440.png",
+          "hash": "sha256:fe14f08db4ef0300543f07239472293c7bbdbefd042970928bbab7db3de5587d"
+        }
+      ]
+    }
+  ],
+  "report": "cells/Usage/workflow/vue/receipt.json"
+}

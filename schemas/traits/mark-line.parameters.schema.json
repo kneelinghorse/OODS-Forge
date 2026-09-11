@@ -7,7 +7,11 @@
     "curve": {
       "type": "string",
       "description": "Curve interpolation strategy applied between data points.",
-      "enum": ["linear", "monotone", "step"],
+      "enum": [
+        "linear",
+        "monotone",
+        "step"
+      ],
       "default": "linear"
     },
     "strokeWidth": {
@@ -20,13 +24,26 @@
     "join": {
       "type": "string",
       "description": "Join style applied when segments meet.",
-      "enum": ["miter", "round", "bevel"],
+      "enum": [
+        "miter",
+        "round",
+        "bevel"
+      ],
       "default": "round"
     },
     "enableMarkers": {
       "type": "boolean",
       "description": "Adds optional point markers on line vertices.",
       "default": false
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
+    },
+    "previewSvg": {
+      "type": "string",
+      "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
     }
   },
   "required": [],

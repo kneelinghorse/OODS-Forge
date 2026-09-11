@@ -1,0 +1,65 @@
+[
+  {
+    "step": "fast-forward",
+    "command": [
+      "git",
+      "merge",
+      "--ff-only",
+      "origin/OODS-pro"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:15.961861+00:00"
+  },
+  {
+    "step": "install",
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:17.161310+00:00"
+  },
+  {
+    "step": "build-tokens",
+    "command": [
+      "pnpm",
+      "run",
+      "build:tokens"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:19.405295+00:00"
+  },
+  {
+    "step": "build-packages",
+    "command": [
+      "pnpm",
+      "run",
+      "build:packages"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:37.852314+00:00"
+  },
+  {
+    "step": "build-bridge",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-bridge",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:38.974374+00:00"
+  },
+  {
+    "step": "pkg-build",
+    "command": [
+      "pnpm",
+      "run",
+      "pkg:build"
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-09-11T01:46:45.939195+00:00"
+  }
+]

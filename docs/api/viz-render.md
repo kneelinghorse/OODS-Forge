@@ -44,6 +44,7 @@ Contrast measurement records actual categorical canvas grades, including failure
 |-----------|------|----------|---------|-------------|
 | `theme` | `light` \| `dark` | No | `"light"` | CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported. |
 | `brand` | `A` \| `B` | No | `"A"` | CSS token brand for chart pixels. Omission resolves light/A. |
+| `opacity` | number | No |  | Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families. |
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `rows` | object[] | No |  | Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value. |
 | `datasetRef` | string | No |  | Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'. |

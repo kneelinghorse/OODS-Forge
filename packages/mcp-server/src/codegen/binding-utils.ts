@@ -212,6 +212,22 @@ const ADDRESS_RECORD: BindingSemanticSignature = {
  * domain callback.
  */
 export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[] = [
+  {"id": "component:VizAreaControls.onChange", "scope": "component", "component": "VizAreaControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizAxisControls.onChange", "scope": "component", "component": "VizAxisControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizColorControls.onChange", "scope": "component", "component": "VizColorControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizHeatmapControls.onChange", "scope": "component", "component": "VizHeatmapControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizLineControls.onChange", "scope": "component", "component": "VizLineControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizMarkControls.onChange", "scope": "component", "component": "VizMarkControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizOpacityControls.onChange", "scope": "component", "component": "VizOpacityControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizPointControls.onChange", "scope": "component", "component": "VizPointControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizScaleControls.onChange", "scope": "component", "component": "VizScaleControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizScatterControls.onChange", "scope": "component", "component": "VizScatterControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizShapeControls.onChange", "scope": "component", "component": "VizShapeControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizSizeControls.onChange", "scope": "component", "component": "VizSizeControls", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizColorLegendConfig.onChange", "scope": "component", "component": "VizColorLegendConfig", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  {"id": "component:VizShapeLegend.onChange", "scope": "component", "component": "VizShapeLegend", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]}},
+  { id: 'component:ColorStatePicker.onChange', scope: 'component', component: 'ColorStatePicker', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  {"id": "component:GeoFieldMappingForm.onChange", "scope": "component", "component": "GeoFieldMappingForm", "event": "onChange", "kind": "domain", "signature": {"parameters": [{"name": "mapping", "type": "{ latitude: string; longitude: string; identifier: string; autoDetect: boolean }"}]}},
   { id: 'component:SortIndicator.onChange', scope: 'component', component: 'SortIndicator', event: 'onChange', kind: 'domain', signature: { parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] } },
   { id: 'component:Banner.onDismiss', scope: 'component', component: 'Banner', event: 'onDismiss', kind: 'local', signature: NO_PARAMETERS },
   { id: 'component:Button.onActivate', scope: 'component', component: 'Button', event: 'onActivate', kind: 'domain', signature: NO_PARAMETERS },
@@ -832,7 +848,7 @@ export function fieldValuePropTarget(component: string): string | undefined {
  * while no renderer reads it as data: the field must exist, and the directive
  * is consumed without a binding on every target.
  */
-export const FIELD_CONSUMED_UNBOUND: ReadonlySet<string> = new Set(['AddressCollectionPanel', 'AddressEditor']);
+export const FIELD_CONSUMED_UNBOUND: ReadonlySet<string> = new Set(['AddressCollectionPanel', 'AddressEditor', 'VizAreaControls', 'VizAxisControls', 'VizColorControls', 'VizHeatmapControls', 'VizLineControls', 'VizMarkControls', 'VizOpacityControls', 'VizPointControls', 'VizScaleControls', 'VizScatterControls', 'VizShapeControls', 'VizSizeControls', 'VizColorLegendConfig', 'VizShapeLegend', 'VizAxisSummary', 'VizOpacitySummary', 'VizScaleSummary', 'VizSizeSummary', 'VizEncodingBadge', 'VizRoleBadge', 'VizHeatmapPreview', 'VizLinePreview', 'VizMarkPreview', 'VizPointPreview', 'VizScatterPreview']);
 
 export type FieldContentResolution = {
   /** The content strategy used */
@@ -1002,6 +1018,15 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  ArchiveEvent: {"archivedAtField": "archivedAt", "restoredAtField": "restoredAt", "reasonField": "reason", "archivedByField": "archivedBy"},
+  CancellationEvent: {"timestampField": "timestamp", "labelField": "reason", "codeField": "code"},
+  StateTransitionEvent: {"historyField": "history", "labelField": "status"},
+  CommunicationDetailPanel: {"channelsField": "channels", "templatesField": "templates", "policiesField": "policies", "conversationsField": "conversations"},
+  ColorStatePicker: {},
+  StatusColorLegend: {"badgeField": "value"},
+  GeoFieldMappingForm: {"latitudeField": "latitude", "longitudeField": "longitude", "identifierField": "identifier", "autoDetectField": "autoDetect"},
+  GeoResolutionBadge: {"resolutionField": "resolution"},
+  GeocodablePreview: {"resolutionField": "resolution", "requiresLookupField": "requiresLookup", "detectedFieldsField": "detectedFields"},
   AuditSummaryCard: { auditLogField: 'auditLog' },
   SortIndicator: { sortFieldProp: 'sortField', sortDirectionProp: 'sortDirection' },
   BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
@@ -1143,6 +1168,35 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  VizAreaPreview: ['svgParameter', 'baselineField', 'curveField', 'opacityField'],
+  VizAreaControls: ["baselineField", "curveField", "opacityField", "tensionField", "intentParameter"],
+  VizAxisControls: ["aggregateField", "axis", "fieldField", "kindField", "scaleField", "sortField", "titleField", "zeroField", "intentParameter"],
+  VizAxisSummary: ["axis", "scaleField", "titleField", "zeroField", "intentParameter"],
+  VizColorControls: ["channelField", "contrastField", "redundancyField", "schemeField", "intentParameter"],
+  VizColorLegendConfig: ["field", "redundancyField", "schemeField", "intentParameter"],
+  VizEncodingBadge: ["axis", "fieldField", "intentParameter"],
+  VizHeatmapControls: ["intentParameter"],
+  VizHeatmapPreview: ["svgParameter"],
+  VizLineControls: ["curveField", "joinField", "markersField", "strokeField", "intentParameter"],
+  VizLinePreview: ["curveField", "markersField", "strokeWidthField", "svgParameter"],
+  VizMarkControls: ["cornerRadiusField", "orientationField", "paddingField", "stackingField", "intentParameter"],
+  VizMarkPreview: ["orientationField", "stackingField", "typeField", "svgParameter"],
+  VizOpacityControls: ["intentParameter"],
+  VizOpacitySummary: ["intentParameter"],
+  VizPointControls: ["opacityField", "shapeField", "sizeField", "strokeField", "intentParameter"],
+  VizPointPreview: ["fillField", "shapeField", "sizeField", "svgParameter"],
+  VizRoleBadge: ["labelField", "intentParameter"],
+  VizScaleControls: ["domainMaxField", "domainMinField", "formatField", "modeField", "niceField", "rangeMaxField", "rangeMinField", "timezoneField", "type", "zeroField", "intentParameter"],
+  VizScaleSummary: ["domainMaxField", "domainMinField", "modeField", "niceField", "timezoneField", "type", "zeroField", "intentParameter"],
+  VizScatterControls: ["intentParameter"],
+  VizScatterPreview: ["svgParameter"],
+  VizShapeControls: ["intentParameter"],
+  VizShapeLegend: ["intentParameter"],
+  VizSizeControls: ["maxAreaField", "maxField", "minAreaField", "minField", "strategyField", "intentParameter"],
+  VizSizeSummary: ["field", "maxField", "minField", "strategyField", "intentParameter"],
+  ArchiveEvent: ['metadataField', 'restorationMetadataField'],
+  ColorStatePicker: ['parameter'],
+  StatusColorLegend: ['parameter'],
   ArchivedRowOverlay: ['style'],
   ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
   ArchivePill: ['archivedAtField'],

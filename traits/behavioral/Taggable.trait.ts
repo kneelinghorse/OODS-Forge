@@ -170,15 +170,11 @@ const TaggableTrait = {
     ],
     detail: [
       {
-        component: 'TagManager',
+        component: 'TagSummary',
         position: 'top',
         props: {
           field: 'tags',
-          allowCustomParameter: 'allowCustomTags',
-          allowListParameter: 'allowedTags',
-          maxTagsParameter: 'maxTags',
-          moderationParameter: 'allowTagModeration',
-          synonymParameter: 'synonymResolution',
+          countField: 'tag_count',
         },
       },
     ],

@@ -105,7 +105,8 @@ describe('catalog.list', () => {
     expect(output.generatedAt).toBe(data.generatedAt);
     expect(output.components.map((row) => row.name).sort()).toEqual(data.components.map((row) => row.id).sort());
     expect(new Set(output.components.map((row) => row.name)).size).toBe(109);
-    expect(output.obligationScope).toEqual(data.obligationScope);
+    expect(output.obligationScope).toMatchObject(data.obligationScope as object);
+    expect(output.obligationScope?.runtimeEvidence).toMatch(/packed runtime gates|runtime proof is unavailable/);
     expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'proposed-awaiting-derek-approval' });
     expect(validateOutput(output)).toBe(true);
     expect(validateOutput({ ...output, obligationScope: { ...output.obligationScope, approvedRuntimeCensus: 98 } })).toBe(false);
@@ -113,29 +114,28 @@ describe('catalog.list', () => {
     expect(output.components.find((row) => row.name === 'BillingAmountInput')?.productReality?.proposedClassification).toBe('native');
   });
 
-  it('keeps HTML-stable discovery distinct from actual target readiness and measured maturity', async () => {
+  it('keeps HTML stability, governed maturity, and actual public runtime placement distinct', async () => {
     const stable = await handle({ status: 'stable', detail: 'summary', pageSize: 200 });
-    const governed = stable.components.find((row) => row.name === 'ArchivePill')!;
-    const unavailable = stable.components.find((row) => row.name === 'ArchiveEvent')!;
-    expect(governed.status).toBe('stable');
-    expect(unavailable.status).toBe('stable');
-    for (const target of ['react', 'vue'] as const) {
-      expect(governed.productReality?.surfaces[target].state).toBe('implemented-evidence-complete');
-      expect(unavailable.productReality?.surfaces[target].state).toBe('unavailable');
-      for (const [component, expected] of [['ArchivePill', 'ok'], ['ArchiveEvent', 'error'], ['BillingAmountInput', 'ok']] as const) {
+    for (const component of ['ArchivePill', 'ArchiveEvent', 'BillingAmountInput'] as const) {
+      const row = stable.components.find(entry => entry.name === component)!;
+      expect(row.status).toBe('stable');
+      for (const target of ['react', 'vue'] as const) {
+        expect(row.productReality?.surfaces[target].state).toBe('implemented-evidence-complete');
         const result = await generate({ framework: target, profile: 'build', schema: { version: '1.0.0', screens: [{ id: 'discovery-probe', component }] } });
-        expect(result.status, JSON.stringify(result.errors)).toBe(expected);
-        if (expected === 'error') expect(result.errors).toEqual([expect.objectContaining({ code: 'OODS-N015', component, message: expect.stringContaining('evidence state: unavailable') })]);
+        expect(result.status, JSON.stringify(result.errors)).toBe('ok');
       }
+      for (const surface of ['accessibility', 'theme'] as const) expect(row.productReality?.surfaces[surface].state).toBe('verified');
     }
-    for (const surface of ['accessibility', 'theme', 'interaction'] as const) {
-      expect(governed.productReality?.surfaces[surface].state).toBe(surface === 'interaction' ? 'not-applicable' : 'verified');
-      expect(unavailable.productReality?.surfaces[surface].state).toBe('unavailable');
-      expect(unavailable.productReality?.surfaces[surface].reason).toContain('implementation remains pending');
-    }
+    const fixtureOnly = stable.components.find(row => row.name === 'VizOpacityControls')!;
+    expect(fixtureOnly.productReality?.surfaces.react.state).toBe('implemented-evidence-complete');
+    expect(fixtureOnly.productReality?.surfaces.interaction.state).toBe('verified');
+    expect(fixtureOnly.productReality?.surfaces.generatedConsumer).toMatchObject({ state: 'unavailable', reason: expect.stringContaining('No current runtime cell places this component') });
+    const placed = stable.components.find(row => row.name === 'ArchiveEvent')!;
+    expect(placed.productReality?.surfaces.interaction.state).toBe('not-applicable');
+    expect(placed.productReality?.surfaces.generatedConsumer.state).toBe('implemented-evidence-complete');
+    expect(placed.productReality?.surfaces.generatedConsumer.evidence.every(ref => ref.includes('sprint-193/m07/runtime/runtime-cells.v1.json#/rows/'))).toBe(true);
     const planned = await handle({ status: 'planned', detail: 'summary', pageSize: 200 });
-    expect(planned.components.some((row) => row.name === 'BillingAmountInput')).toBe(false);
-    expect(stable.components.some((row) => row.name === 'BillingAmountInput')).toBe(true);
+    expect(planned.components.some(row => row.name === 'BillingAmountInput')).toBe(false);
   });
 
   it('passes additive target-specific product reality through summary output', async () => {

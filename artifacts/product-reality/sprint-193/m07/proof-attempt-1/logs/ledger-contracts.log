@@ -1,0 +1,66 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/catalog.list.spec.ts (30 tests | 1 failed) 989ms
+   ✓ catalog.list > validates schema contracts 42ms
+   ✓ catalog.list > should return component catalog 10ms
+   ✓ catalog.list > B-02 derives the catalog count from unique row IDs instead of stale stats 9ms
+   ✓ catalog.list > exposes accepted retain-109 scope without turning historical proposals into exclusions 17ms
+   × catalog.list > keeps HTML-stable discovery distinct from actual target readiness and measured maturity 15ms
+     → expected 'implemented-evidence-complete' to be 'unavailable' // Object.is equality
+   ✓ catalog.list > passes additive target-specific product reality through summary output 9ms
+   ✓ catalog.list > should default to summary mode with pagination for unfiltered calls 9ms
+   ✓ catalog.list > should allow explicit full detail without default pagination 108ms
+   ✓ catalog.list > should paginate when page/pageSize are provided 17ms
+   ✓ catalog.list > should include component properties 9ms
+   ✓ catalog.list > should filter by category 78ms
+   ✓ catalog.list > includes filteredCount in stats when filters are active 86ms
+   ✓ catalog.list > should filter by trait 87ms
+   ✓ catalog.list > suggests traits when a trait filter returns zero results 85ms
+   ✓ catalog.list > should filter by context 85ms
+   ✓ catalog.list > should return totalCount matching filtered results 76ms
+   ✓ catalog.list > deduplicates trait names per component 76ms
+   ✓ catalog.list > should include propSchema for components with traits 9ms
+   ✓ catalog.list > should have valid structure for propSchema entries 9ms
+   ✓ catalog.list > surfaces real content props in propSchema for primitive components (Workbench signal) 10ms
+   ✓ catalog.list > advertised primitive content props actually render (parity guard vs renderer drift) 1ms
+   ✓ catalog.list > should have valid structure for slots 8ms
+   ✓ catalog.list > indexes only explicit Storybook parameters.oodsComponentId(s) 1ms
+   ✓ catalog.list > should prefer code-connect snippets when available 9ms
+   ✓ catalog.list > every component has a non-empty status field 9ms
+   ✓ catalog.list > documents legacy status as static HTML-renderer-only 0ms
+   ✓ catalog.list > filters by status=stable 11ms
+   ✓ catalog.list > keeps the legacy status census scoped to the 109 mapped / 0 fallback HTML surface after the three disputed roots 92ms
+   ✓ catalog.list > all 4 Communicable components have stable status 8ms
+   ✓ catalog.list > status filter validates in input schema 0ms
+ ✓ test/product-reality/workflow-runtime.s193.spec.ts (14 tests) 668ms
+ ✓ test/contracts/tool-truth.s193.spec.ts (8 tests) 717ms
+   ✓ tool truth derives claims without upgrading source references to runtime proof > reproduces every byte from current source using the recorded census head  644ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/catalog.list.spec.ts > catalog.list > keeps HTML-stable discovery distinct from actual target readiness and measured maturity
+AssertionError: expected 'implemented-evidence-complete' to be 'unavailable' // Object.is equality
+
+Expected: "unavailable"
+Received: "implemented-evidence-complete"
+
+ ❯ test/contracts/catalog.list.spec.ts:125:66
+    123|     for (const target of ['react', 'vue'] as const) {
+    124|       expect(governed.productReality?.surfaces[target].state).toBe('im…
+    125|       expect(unavailable.productReality?.surfaces[target].state).toBe(…
+       |                                                                  ^
+    126|       for (const [component, expected] of [['ArchivePill', 'ok'], ['Ar…
+    127|         const result = await generate({ framework: target, profile: 'b…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 51 passed (52)
+   Start at  00:31:04
+   Duration  5.16s (transform 998ms, setup 19ms, collect 2.32s, tests 2.37s, environment 0ms, prepare 139ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/catalog.list.spec.ts test/contracts/tool-truth.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts

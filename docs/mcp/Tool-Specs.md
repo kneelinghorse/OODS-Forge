@@ -1197,14 +1197,14 @@ These tools are part of the default auto-registered surface and have full parame
 |------|---------|---------------|---------|
 | `pipeline` | Compose → validate → render → code generation in one call | Returns `schemaRef`; compact render output is on by default; `save` persists schemas beyond the 30-minute TTL | [pipeline](../api/pipeline.md) |
 | `health` | Inspect live server readiness and registry/token/schema-store status | Useful for connection smoke checks and current inventory counts | [health](../api/health.md) |
-| `map.update` | Update an existing mapping by id | `updates.oodsTraits` uses canonical structured-data trait names | [map.update](../api/map-update.md) |
-| `map.delete` | Delete an existing mapping by id | Removes the mapping record from the shared mapping store | [map.delete](../api/map-delete.md) |
-| `schema.save` | Persist a `schemaRef` under a stable name | Use before `schemaRef` expiry; supports tags and author metadata | [schema.save](../api/schema-save.md) |
-| `schema.load` | Load a saved schema into a fresh `schemaRef` | Returns a new 30-minute `schemaRef` plus schema metadata | [schema.load](../api/schema-load.md) |
-| `schema.list` | List saved schema metadata | Filter by object, context, or tags | [schema.list](../api/schema-list.md) |
-| `schema.delete` | Delete a saved schema | Removes the saved schema and index metadata entry | [schema.delete](../api/schema-delete.md) |
-| `object.list` | Browse canonical OODS objects | Trait filter accepts `lifecycle/Stateful` or suffix form `Stateful` | [object.list](../api/object-list.md) |
-| `object.show` | Show a full object definition with composed traits and view extensions | Optional context filter narrows the view-extension surface | [object.show](../api/object-show.md) |
+| `map.update` | Update an existing mapping by id | `updates.oodsTraits` uses canonical structured-data trait names | [map.update](../api/map.md) |
+| `map.delete` | Delete an existing mapping by id | Removes the mapping record from the shared mapping store | [map.delete](../api/map.md) |
+| `schema.save` | Persist a `schemaRef` under a stable name | Use before `schemaRef` expiry; supports tags and author metadata | [schema.save](../api/schema.md) |
+| `schema.load` | Load a saved schema into a fresh `schemaRef` | Returns a new 30-minute `schemaRef` plus schema metadata | [schema.load](../api/schema.md) |
+| `schema.list` | List saved schema metadata | Filter by object, context, or tags | [schema.list](../api/schema.md) |
+| `schema.delete` | Delete a saved schema | Removes the saved schema and index metadata entry | [schema.delete](../api/schema.md) |
+| `object.list` | Browse canonical OODS objects | Trait filter accepts `lifecycle/Stateful` or suffix form `Stateful` | [object.list](../api/object.md) |
+| `object.show` | Show a full object definition with composed traits and view extensions | Optional context filter narrows the view-extension surface | [object.show](../api/object.md) |
 | `viz.compose` | (Deprecated; use `viz.render`) Compose chart schemas from explicit bindings or object viz traits | Explicit `traits` use viz ids such as `mark-bar` and `encoding-position-x` | [viz.compose](../api/viz-compose.md) |
 
 ---

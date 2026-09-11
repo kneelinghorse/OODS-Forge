@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -66,6 +66,34 @@ describe("how Forge works narrative truth", () => {
     );
   });
 
+  it("states all registered chart SVG families and the actual certification scope", () => {
+    const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
+    const certify = JSON.parse(read("packages/mcp-server/src/schemas/artifact.certify.input.json"));
+    expect(render.properties.chartType.enum).toHaveLength(13);
+    expect(html).toContain("server-rendered SVG for all 13 registered chart types");
+    const dashboard = read("packages/mcp-server/src/tools/dashboard.render.html.ts");
+    expect(dashboard).toContain("await renderVegaLiteToSvg(");
+    expect(dashboard).toContain("await renderEChartsToSvg(");
+    expect(html).not.toContain("the others appear as described placeholders");
+    expect(certify.properties.brand.enum).toEqual(["A", "B"]);
+    expect(certify.properties.brand.default).toBe("A");
+    expect(certify.properties.theme.enum).toEqual(["light", "dark"]);
+    expect(certify.properties.theme.default).toBe("light");
+    expect(html).toContain("It accepts brand A or B and theme light or dark (defaults A/light)");
+    expect(html).toContain("server-side high-contrast chart pixels are unsupported");
+    expect(html).not.toContain("takes no brand input");
+    expect(html).not.toContain("light theme, brand-independent");
+    expect(html).not.toContain("Light theme only.");
+  });
+
+  it("Tool-Specs links resolve to existing grouped API pages", () => {
+    const specs = read("docs/mcp/Tool-Specs.md");
+    const links = [...specs.matchAll(/\]\((\.\.\/api\/[^)]+)\)/g)].map(match => match[1]);
+    expect(links.length).toBeGreaterThan(10);
+    for (const link of links) expect(existsSync(resolve(projectRoot, "docs/mcp", link.split("#")[0])), link).toBe(true);
+    for (const family of ["map", "schema", "object"]) expect(links).toContain(`../api/${family}.md`);
+  });
+
   it("names all four certification pillars, including accuracy", () => {
     const schema = JSON.parse(
       read("packages/mcp-server/src/schemas/artifact.certify.output.json"),
@@ -114,23 +142,27 @@ describe("how Forge works narrative truth", () => {
     );
   });
 
-  it("derives current Sprint 192 claims from the served ledger without approving the proposal", () => {
+  it("derives current Sprint 193 claims from the served ledger without approving the proposal", () => {
     const ledger = JSON.parse(read("packages/component-contracts/registry/component-capability-ledger.v1.json"));
     const counts = (surface: string, state: string) => ledger.rows.filter((row: { surfaces: Record<string, { state: string }> }) => row.surfaces[surface].state === state).length;
     expect(ledger.rows).toHaveLength(109);
-    expect(counts("react", "implemented-evidence-complete")).toBe(75);
-    expect(counts("vue", "implemented-evidence-complete")).toBe(75);
+    expect(counts("react", "implemented-evidence-complete")).toBe(109);
+    expect(counts("vue", "implemented-evidence-complete")).toBe(109);
     expect(counts("html", "mapped")).toBe(109);
-    expect(counts("accessibility", "verified")).toBe(75);
-    expect(counts("theme", "verified")).toBe(75);
-    expect(counts("interaction", "verified")).toBe(24);
-    expect(counts("interaction", "not-applicable")).toBe(51);
-    expect(counts("interaction", "unavailable")).toBe(34);
+    expect(counts("accessibility", "verified")).toBe(109);
+    expect(counts("theme", "verified")).toBe(109);
+    expect(counts("interaction", "verified")).toBe(40);
+    expect(counts("interaction", "not-applicable")).toBe(69);
+    expect(counts("interaction", "unavailable")).toBe(0);
     expect(ledger.approvedRuntimeCensus).toBeNull();
-    expect(html).toContain("75 React and 75 Vue implementations, 109 HTML mappings");
-    expect(html).toContain("verified for 24 and explicitly not applicable for 51 static rows");
+    expect(html).toContain("109 React and 109 Vue implementations, 109 HTML mappings");
+    expect(html).toContain("verified for 40 and explicitly not applicable for 69 static rows");
     expect(html).toContain("24 native, 84 recipe and 1 alias");
-    expect(nearRoadmap).toContain("24 verified / 51 not-applicable (static) / 34 unavailable");
+    expect(nearRoadmap).toContain("40 verified / 69 not-applicable");
+    expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — BUILT, REVIEW PENDING");
+    expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
+    expect(counts("generatedConsumer", "unavailable")).toBe(43);
+    expect(nearRoadmap).toContain("66/109");
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

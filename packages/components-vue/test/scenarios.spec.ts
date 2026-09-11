@@ -1,3 +1,7 @@
+import * as vizRecipes from '../src/viz-recipes.js';
+import { assertVizRecipeScenario } from '../../../scripts/product-reality/viz-recipe-assertions.js';
+import { ArchiveEvent, CancellationEvent, StateTransitionEvent, ColorStatePicker, StatusColorLegend, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview } from '../src/trait-recipes.js';
+import { assertTraitRecipeScenario } from '../../../scripts/product-reality/trait-recipe-assertions.js';
 import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
 import { mount } from '@vue/test-utils';
 import { h, nextTick, type Component, type Slot } from 'vue';
@@ -63,6 +67,8 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  ...vizRecipes,
+  ArchiveEvent, CancellationEvent, StateTransitionEvent, ColorStatePicker, StatusColorLegend, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview,
   AuditSummaryCard, SortIndicator, TimelineEntryLabel,
   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
@@ -153,6 +159,43 @@ describe('@oods/components-vue shared scenarios', () => {
         expect(component.text().trim().length, `${scenario.id} non-empty content`).toBeGreaterThan(0);
 
         switch (scenario.id) {
+        case 'VizAreaControls':
+        case 'VizAxisControls':
+        case 'VizColorControls':
+        case 'VizHeatmapControls':
+        case 'VizLineControls':
+        case 'VizMarkControls':
+        case 'VizOpacityControls':
+        case 'VizPointControls':
+        case 'VizScaleControls':
+        case 'VizScatterControls':
+        case 'VizShapeControls':
+        case 'VizSizeControls':
+        case 'VizColorLegendConfig':
+        case 'VizShapeLegend':
+        case 'VizAxisSummary':
+        case 'VizOpacitySummary':
+        case 'VizScaleSummary':
+        case 'VizSizeSummary':
+        case 'VizEncodingBadge':
+        case 'VizRoleBadge':
+        case 'VizHeatmapPreview':
+        case 'VizLinePreview':
+        case 'VizMarkPreview':
+        case 'VizPointPreview':
+        case 'VizScatterPreview':
+          assertVizRecipeScenario(scenario, component.element); break;
+        case 'ArchiveEvent':
+        case 'CancellationEvent':
+        case 'StateTransitionEvent':
+        case 'ColorStatePicker':
+        case 'StatusColorLegend':
+        case 'CommunicationDetailPanel':
+        case 'GeoFieldMappingForm':
+        case 'GeoResolutionBadge':
+        case 'GeocodablePreview':
+          assertTraitRecipeScenario(scenario.id, component.element); break;
+
           case 'AuditSummaryCard':
             expect([...component.element!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
             break;

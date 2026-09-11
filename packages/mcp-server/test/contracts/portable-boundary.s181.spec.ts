@@ -275,7 +275,13 @@ describe('s181 portable-runtime publish boundary', () => {
     expect([...registry.names].sort()).toEqual(payload.components.map((entry: { id: string }) => entry.id).sort());
     expect(registry.version).toBe(manifest.version);
     expect(registry.warnings).toEqual([]);
-    expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
+    const declaredAdditions = ['EncodingOpacity', 'EncodingShape', 'MarkRect', 'ScatterPlot'];
+    expect(traits).toHaveLength(45);
+    expect(traits).toEqual(expect.arrayContaining(declaredAdditions));
+    // Adding the four real authoring traits must not silently remove or rename
+    // any member of the previously published discovery set.
+    expect(sha256Json(traits.filter(trait => !declaredAdditions.includes(trait))))
+      .toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
     // The active manifest can select an authorized named release, while the
     // 109-row identity set and warning-free discovery remain the boundary.
     expect(registryResult).toEqual({ names: payload.components.map((entry: { id: string }) => entry.id).sort(), version: manifest.version, warnings: [] });

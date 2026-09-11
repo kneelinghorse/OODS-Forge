@@ -10,6 +10,9 @@ const MarkPointTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
+
     {
       name: 'shape',
       type: 'string',
@@ -191,6 +194,7 @@ const MarkPointTrait = {
         position: 'top',
         priority: 55,
         props: {
+          svgParameter: 'previewSvg',
           shapeField: 'viz_point_shape',
           sizeField: 'viz_point_size',
           fillField: 'viz_point_fill',
@@ -202,6 +206,7 @@ const MarkPointTrait = {
         component: 'VizPointControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           shapeField: 'viz_point_shape',
           sizeField: 'viz_point_size',
           opacityField: 'viz_point_opacity',
@@ -213,6 +218,7 @@ const MarkPointTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },

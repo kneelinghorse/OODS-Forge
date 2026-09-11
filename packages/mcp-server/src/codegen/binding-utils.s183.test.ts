@@ -23,6 +23,24 @@ describe('Sprint 183 binding analysis', () => {
       kind: definition.kind,
       parameters: definition.signature.parameters,
     }))).toEqual([
+      // s193-m05 exposes typed renderer fragments from 14 authoring controls/legends.
+      {"id": "component:VizAreaControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizAxisControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizColorControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizHeatmapControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizLineControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizMarkControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizOpacityControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizPointControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizScaleControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizScatterControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizShapeControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizSizeControls.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizColorLegendConfig.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      {"id": "component:VizShapeLegend.onChange", "kind": "domain", "parameters": [{"name": "intent", "type": "import('@oods/component-contracts').VizIntentFragment"}]},
+      // s193-m04 adds the declared color editor and structured geo mapping callback.
+      { id: 'component:ColorStatePicker.onChange', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
+      { id: 'component:GeoFieldMappingForm.onChange', kind: 'domain', parameters: [{ name: 'mapping', type: '{ latitude: string; longitude: string; identifier: string; autoDetect: boolean }' }] },
       // s192-m05 adds the native sort control's structured domain callback.
       { id: 'component:SortIndicator.onChange', kind: 'domain', parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] },
       { id: 'component:Banner.onDismiss', kind: 'local', parameters: [] },

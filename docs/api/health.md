@@ -15,6 +15,7 @@
 
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
+| `productReality` | object | Yes |  |
 | `status` | `ok` \| `degraded` | Yes |  |
 | `server` | object | Yes |  |
 | `registry` | object | Yes |  |

@@ -18,7 +18,7 @@ describe('Sprint 192 evidence-derived ledger and pending classification', () => 
     expect(ledgerPath).toContain('/component-capability-ledger.v1.json');
     expect(JSON.parse(readFileSync(ledgerPath, 'utf8'))).toEqual(componentCapabilityBaseline);
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
-    expect(manifest.version).toBe('2026-09-10');
+    expect(manifest.artifacts.find((row: { name: string }) => row.name === 'components').path).toBe(`artifacts/structured-data/oods-components-${manifest.version}.json`);
     expect(exported.obligationScope.approvedRuntimeCensus).toBeNull();
     for (const row of componentCapabilityBaseline.rows) {
       const published = exported.components.find((entry: { id: string }) => entry.id === row.id);

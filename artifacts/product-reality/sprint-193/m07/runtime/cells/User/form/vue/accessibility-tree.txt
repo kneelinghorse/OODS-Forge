@@ -1,0 +1,84 @@
+- text: Status
+- combobox "Status":
+  - option "draft"
+  - option "active"
+  - option "inactive"
+- paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+- group "Tags":
+  - text: Tags Tag
+  - textbox "Tag":
+    - /placeholder: Enter tags
+- banner:
+  - heading "Addresses" [level=3]
+- text: Street
+- textbox "Street"
+- text: City
+- textbox "City"
+- text: Region
+- textbox "Region"
+- text: Postal Code
+- textbox "Postal Code"
+- banner:
+  - heading "Preference Editor" [level=3]
+- text: Namespace
+- combobox "Namespace":
+  - option "Select..." [selected]
+- text: Preference Document
+- textbox "Preference Document"
+- banner:
+  - heading "Role Assignment" [level=3]
+- text: Role
+- combobox "Role":
+  - option "Select..." [selected]
+- text: Assignee
+- textbox "Assignee"
+- group "Template Picker":
+  - text: Template Picker Template
+  - combobox "Template":
+    - option "Select..." [selected]
+  - text: Channel
+  - combobox "Channel":
+    - option "Select..." [selected]
+- text: Created at
+- textbox "Created at":
+  - /placeholder: Timestamp recording when the entity was first created.
+  - text: 2026-09-05T12:00
+- paragraph: Timestamp recording when the entity was first created.
+- text: Timezone
+- textbox "Timezone"
+- paragraph: Preferred timezone applied when rendering timestamps.
+- text: Role
+- combobox "Role":
+  - option "Enter role" [disabled]
+  - option "end_user" [selected]
+  - option "admin"
+  - option "owner"
+  - option "billing"
+- paragraph: Highest privilege role currently granted to the user.
+- text: Name
+- textbox "Name": Consumer name
+- paragraph: Human-friendly name rendered in headers and list contexts.
+- text: Primary email
+- textbox "Primary email":
+  - /placeholder: Enter primary email
+  - text: consumer@example.test
+- paragraph: Canonical login email address for the user.
+- text: Last event
+- textbox "Last event":
+  - /placeholder: Enter last event
+  - text: Consumer last event
+- paragraph: Lifecycle event associated with the most recent timestamp mutation.
+- text: Preference version
+- textbox "Preference version":
+  - /placeholder: Enter preference version
+  - text: Consumer preference version
+- paragraph: SemVer mirror of preference_document.version for indexing and analytics.
+- text: Preference mutations
+- spinbutton "Preference mutations": "0"
+- paragraph: Monotonic counter incremented whenever preferences mutate (invalidates caches).
+- text: User id
+- textbox "User id":
+  - /placeholder: Enter user id
+  - text: consumer-user-id
+- paragraph: Primary identifier used to correlate identity across services.
+- button "Save"

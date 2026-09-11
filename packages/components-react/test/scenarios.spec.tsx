@@ -1,3 +1,5 @@
+import { assertVizRecipeScenario } from '../../../scripts/product-reality/viz-recipe-assertions.js';
+import { assertTraitRecipeScenario } from '../../../scripts/product-reality/trait-recipe-assertions.js';
 /* @vitest-environment jsdom */
 
 import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
@@ -30,6 +32,43 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
+        case 'VizAreaControls':
+        case 'VizAxisControls':
+        case 'VizColorControls':
+        case 'VizHeatmapControls':
+        case 'VizLineControls':
+        case 'VizMarkControls':
+        case 'VizOpacityControls':
+        case 'VizPointControls':
+        case 'VizScaleControls':
+        case 'VizScatterControls':
+        case 'VizShapeControls':
+        case 'VizSizeControls':
+        case 'VizColorLegendConfig':
+        case 'VizShapeLegend':
+        case 'VizAxisSummary':
+        case 'VizOpacitySummary':
+        case 'VizScaleSummary':
+        case 'VizSizeSummary':
+        case 'VizEncodingBadge':
+        case 'VizRoleBadge':
+        case 'VizHeatmapPreview':
+        case 'VizLinePreview':
+        case 'VizMarkPreview':
+        case 'VizPointPreview':
+        case 'VizScatterPreview':
+          assertVizRecipeScenario(scenario, component!); break;
+        case 'ArchiveEvent':
+        case 'CancellationEvent':
+        case 'StateTransitionEvent':
+        case 'ColorStatePicker':
+        case 'StatusColorLegend':
+        case 'CommunicationDetailPanel':
+        case 'GeoFieldMappingForm':
+        case 'GeoResolutionBadge':
+        case 'GeocodablePreview':
+          assertTraitRecipeScenario(scenario.id, component!); break;
+
         case 'AuditSummaryCard':
             expect([...component!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
             break;

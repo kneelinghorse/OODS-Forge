@@ -161,6 +161,7 @@ export type MountObligation = { nodeId: string; component: string; requiredIniti
 export function deriveMountObligations(schema: UiSchema, source: string, model: Record<string, unknown> = {}): MountObligation[] {
   const inactive = new Map<string, string>();
   const visit = (node: UiElement, inherited?: string) => {
+    inherited ??= node.state && node.state !== 'success' ? `inactive initial ${node.state} state ${node.id}` : undefined;
     if (inherited) inactive.set(node.id, inherited);
     const children = node.children ?? [];
     const preferred = node.props?.selectedId ?? node.props?.defaultSelectedId ?? node.props?.active ?? node.props?.activeTab;
@@ -255,6 +256,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     { id: 'consumer-event-1', kind: 'state', at: '2026-09-05T12:00:00Z', title: 'Created', description: 'Initial state' },
     { id: 'consumer-event-2', kind: 'state', at: '2026-09-06T12:00:00Z', title: 'Updated', description: 'Next state' },
   ];
+  if (schemaNodes(schema).some(node => node.state)) model.uiState = 'success';
   return model;
 }
 

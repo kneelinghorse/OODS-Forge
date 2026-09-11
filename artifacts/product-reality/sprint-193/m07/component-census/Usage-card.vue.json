@@ -1,0 +1,91 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n            <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Consumed quantity\">{{ consumedQuantity }}</Text>\n          </Stack>\n      <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n            <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n          </Stack>\n      <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n            <Button id=\"slot-footer-6\" data-oods-component=\"Button\" />\n          </Stack>\n    </Card>\n</template>\n\n<script setup lang=\"ts\">\nimport { Button, Card, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\nconst { anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:d4f1910c794b1e436a9b8160f84028ae66637fb35f3c474f92d249c2e4dc795c"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:74ecae94323a9d0ef81ed5b3cad5dcfbc88ecc8e6c371bb34a82d70abb47391a"
+  },
+  "code": "<template>\n  <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n            <Text id=\"slot-header-2\" data-oods-component=\"Text\" label=\"Consumed quantity\">{{ consumedQuantity }}</Text>\n          </Stack>\n      <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n            <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n          </Stack>\n      <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n            <Button id=\"slot-footer-6\" data-oods-component=\"Button\" />\n          </Stack>\n    </Card>\n</template>\n\n<script setup lang=\"ts\">\nimport { Button, Card, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\nconst { anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:74ecae94323a9d0ef81ed5b3cad5dcfbc88ecc8e6c371bb34a82d70abb47391a"
+    }
+  },
+  "meta": {
+    "nodeCount": 7,
+    "componentCount": 4
+  }
+}

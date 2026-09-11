@@ -85,3 +85,7 @@ export { BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector } from
 export { CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay } from './billing-views.js';
 
 export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';
+
+export { ArchiveEvent, CancellationEvent, ColorStatePicker, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview, StateTransitionEvent, StatusColorLegend } from './trait-recipes.js';
+
+export { VizAreaControls, VizAxisControls, VizColorControls, VizHeatmapControls, VizLineControls, VizMarkControls, VizOpacityControls, VizPointControls, VizScaleControls, VizScatterControls, VizShapeControls, VizSizeControls, VizColorLegendConfig, VizShapeLegend, VizAxisSummary, VizOpacitySummary, VizScaleSummary, VizSizeSummary, VizEncodingBadge, VizRoleBadge, VizHeatmapPreview, VizLinePreview, VizMarkPreview, VizPointPreview, VizScatterPreview } from './viz-recipes.js';

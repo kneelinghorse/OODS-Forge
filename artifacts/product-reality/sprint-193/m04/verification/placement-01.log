@@ -1,0 +1,73 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/trait-recipes.s193.spec.ts (10 tests | 7 failed) 210ms
+   × nine declared non-visualization recipes > Subscription/timeline places ArchiveEvent and emits both governed targets without schema editing 85ms
+     → expected [] to have a length of 1 but got +0
+   × nine declared non-visualization recipes > Subscription/timeline places CancellationEvent and emits both governed targets without schema editing 12ms
+     → expected [] to have a length of 1 but got +0
+   × nine declared non-visualization recipes > Subscription/timeline places StateTransitionEvent and emits both governed targets without schema editing 19ms
+     → expected [] to have a length of 1 but got +0
+   ✓ nine declared non-visualization recipes > User/detail places CommunicationDetailPanel and emits both governed targets without schema editing 25ms
+   × nine declared non-visualization recipes > S193TraitRecipes/form places ColorStatePicker and emits both governed targets without schema editing 17ms
+     → [{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical ColorStatePicker contract.","nodeId":"ve-title-29","component":"ColorStatePicker"}]: expected 'error' to be 'ok' // Object.is equality
+   ✓ nine declared non-visualization recipes > S193TraitRecipes/detail places StatusColorLegend and emits both governed targets without schema editing 17ms
+   × nine declared non-visualization recipes > S193TraitRecipes/form places GeoFieldMappingForm and emits both governed targets without schema editing 12ms
+     → expected [] to have a length of 1 but got +0
+   × nine declared non-visualization recipes > S193TraitRecipes/list places GeoResolutionBadge and emits both governed targets without schema editing 11ms
+     → expected [] to have a length of 1 but got +0
+   × nine declared non-visualization recipes > S193TraitRecipes/detail places GeocodablePreview and emits both governed targets without schema editing 12ms
+     → expected [] to have a length of 1 but got +0
+   ✓ nine declared non-visualization recipes > the Colorized and Geocodable fixture is bounded and does not alter the canonical Product 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > Subscription/timeline places ArchiveEvent and emits both governed targets without schema editing
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > Subscription/timeline places CancellationEvent and emits both governed targets without schema editing
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > Subscription/timeline places StateTransitionEvent and emits both governed targets without schema editing
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > S193TraitRecipes/form places GeoFieldMappingForm and emits both governed targets without schema editing
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > S193TraitRecipes/list places GeoResolutionBadge and emits both governed targets without schema editing
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > S193TraitRecipes/detail places GeocodablePreview and emits both governed targets without schema editing
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/product-reality/trait-recipes.s193.spec.ts:31:20
+     29|     expect(result.status).toBe('ok');
+     30|     const placed = nodes(result.schema.screens).filter(node => node.co…
+     31|     expect(placed).toHaveLength(1);
+       |                    ^
+     32|     if (component === 'ColorStatePicker' || component === 'StatusColor…
+     33|     if (component === 'GeoFieldMappingForm') {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  test/product-reality/trait-recipes.s193.spec.ts > nine declared non-visualization recipes > S193TraitRecipes/form places ColorStatePicker and emits both governed targets without schema editing
+AssertionError: [{"code":"OODS-V007","message":"Prop \"label\" is not in the canonical ColorStatePicker contract.","nodeId":"ve-title-29","component":"ColorStatePicker"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/trait-recipes.s193.spec.ts:41:66
+     39|     for (const framework of ['react', 'vue'] as const) {
+     40|       const generated = await generate({ schema: result.schema, framew…
+     41|       expect(generated.status, JSON.stringify(generated.errors)).toBe(…
+       |                                                                  ^
+     42|       expect(generated.code).toContain(`<${component}`);
+     43|       expect(JSON.stringify(generated.errors ?? [])).not.toMatch(/OODS…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 3 passed (10)
+   Start at  22:22:08
+   Duration  1.84s (transform 920ms, setup 18ms, collect 1.40s, tests 210ms, environment 0ms, prepare 63ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/trait-recipes.s193.spec.ts

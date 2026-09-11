@@ -17,4 +17,12 @@ export interface MarkBarTraitParameters {
    * Aggregation strategy when multiple series share the mark.
    */
   stacking?: 'auto' | 'normalize' | 'none';
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
+  /**
+   * Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered.
+   */
+  previewSvg?: string;
 }

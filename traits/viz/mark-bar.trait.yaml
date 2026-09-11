@@ -13,6 +13,8 @@ trait:
     - comparison
 
 parameters:
+  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
+  - {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."}
   - name: orientation
     type: string
     required: true
@@ -144,6 +146,7 @@ view_extensions:
       position: top
       priority: 60
       props:
+        svgParameter: previewSvg
         typeField: viz_mark_type
         orientationField: viz_mark_orientation
         stackingField: viz_mark_stacking
@@ -151,6 +154,7 @@ view_extensions:
     - component: VizMarkControls
       position: top
       props:
+        intentParameter: renderIntent
         orientationField: viz_mark_orientation
         paddingField: viz_mark_band_padding
         stackingField: viz_mark_stacking
@@ -158,6 +162,7 @@ view_extensions:
   list:
     - component: VizRoleBadge
       props:
+        intentParameter: renderIntent
         labelField: viz_mark_role
 
 tokens:

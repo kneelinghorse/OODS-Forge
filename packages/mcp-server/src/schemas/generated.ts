@@ -1024,6 +1024,10 @@ export namespace CatalogListOutputSchema {
      * Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.
      */
     obligationScope?: {
+      /**
+       * Current validated packed-runtime ratio and recorded head, or an explicit unavailable reason; independent of component scope and approval.
+       */
+      runtimeEvidence?: string;
       schemaVersion: string;
       decisionId: number;
       disposition: 'retain-all-obligations';
@@ -3541,6 +3545,31 @@ export type HealthInput = HealthInputSchema.HealthInput;
 // Source: health.output.json
 export namespace HealthOutputSchema {
   export interface HealthOutput {
+    productReality: {
+      /**
+       * Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.
+       */
+      tools: {
+        entries: 27;
+        byTier: {
+          'product-reality': number;
+          contract: number;
+          unit: number;
+          none: number;
+        };
+        head: string;
+      } | null;
+      /**
+       * Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.
+       */
+      runtime: {
+        cells: 154;
+        pass: number;
+        typedGap: number;
+        fail: number;
+        head: string;
+      } | null;
+    };
     status: 'ok' | 'degraded';
     server: {
       version: string;
@@ -8377,6 +8406,10 @@ export namespace VizRenderInputSchema {
      * CSS token brand for chart pixels. Omission resolves light/A.
      */
     brand?: 'A' | 'B';
+    /**
+     * Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families.
+     */
+    opacity?: number;
     /**
      * DSL version to use for this request. Defaults to the current version (1.0).
      */

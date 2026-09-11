@@ -3,6 +3,23 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 const shortName = (name: string) => name.replaceAll('_', ' ').replace(/^./, letter => letter.toUpperCase());
 
+/** Standalone lists expose the same public state operand as workflow screens. */
+export function populateListStates(schema: UiSchema): void {
+  for (const screen of schema.screens) {
+    if (!walk([screen]).some(node => node.collection?.source === 'rows') || walk([screen]).some(node => node.state)) continue;
+    screen.children = [
+      ...(['loading', 'empty', 'error'] as const).map(state => ({
+        id: `${screen.id}-${state}`, component: 'Banner', state,
+        props: {
+          title: state === 'loading' ? 'Loading' : state === 'empty' ? 'No records found' : 'Unable to load records',
+          message: state === 'error' ? 'Try again or choose another record.' : state === 'empty' ? 'Change the filters or add a record.' : 'Loading your records.',
+        },
+      })),
+      { id: `${screen.id}-success`, component: 'Stack', state: 'success', layout: screen.layout, children: screen.children },
+    ];
+  }
+}
+
 /** Collection data belongs to the screen; objectSchema still describes one record. */
 export function populateCollections(schema: UiSchema, context: string, objectName: string, minorUnits = 100): void {
   if (!schema.objectSchema || !['list', 'timeline'].includes(context)) return;
@@ -68,6 +85,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (!header || !entries) continue;
       const payment = nodes.find(node => node.component === 'PaymentEventTimeline');
       const label = nodes.find(node => node.component === 'TimelineEntryLabel');
+      const traitEvents = nodes.filter(node => ['ArchiveEvent', 'CancellationEvent', 'StateTransitionEvent'].includes(node.component));
       header.children = [{ id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };
@@ -76,6 +94,9 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
         { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(label ? [label] : []), ...(payment ? [payment] : [])] },
         { id: `${entries.id}-empty`, component: 'Banner', props: { message: 'No events yet.' }, collectionControl: 'empty' },
       ];
+      // These recipes read the selected object's fields/history, not one generic
+      // collection event. Preserve them once outside the repeated collection.
+      if (traitEvents.length) screen.children!.push({ id: `${entries.id}-trait-events`, component: 'Stack', children: traitEvents });
     }
   }
 }

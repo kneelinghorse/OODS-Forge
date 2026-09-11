@@ -1,0 +1,72 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/component-contracts
+
+ ❯ test/viz-controls.spec.ts (6 tests | 2 failed) 11ms
+   ✓ typed chart input edits > changes only the authored binding and never mutates the consumer input 2ms
+   ✓ typed chart input edits > zero opacity is a value; invalid opacity and incomplete colors never produce a fragment 0ms
+   ✓ typed chart input edits > validates only the public Cartesian control subset and never accepts data or invented channels 0ms
+   ✓ typed chart input edits > read-only summaries disclose absent data and preserve explicit zero 0ms
+   × untrusted authoring input and empty bindings > does not accept coercible arrays or objects as typed enum strings 4ms
+     → expected true to be false // Object.is equality
+   × untrusted authoring input and empty bindings > requires a field before emitting edits to that binding, then accepts the same title 3ms
+     → expected { value: { encodings: { …(1) } } } to match object { error: StringContaining "field" }
+(2 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/viz-controls.spec.ts > untrusted authoring input and empty bindings > does not accept coercible arrays or objects as typed enum strings
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/viz-controls.spec.ts:29:110
+     27| describe('untrusted authoring input and empty bindings', () => {
+     28|   it('does not accept coercible arrays or objects as typed enum string…
+     29|     for (const chartType of [['bar'], { toString: () => 'bar' }]) expe…
+       |                                                                                                              ^
+     30|     for (const [key, value] of [['type', 'nominal'], ['scale', 'linear…
+     31|       expect(isVizIntentFragment({ encodings: { x: { field: 'period', …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/viz-controls.spec.ts > untrusted authoring input and empty bindings > requires a field before emitting edits to that binding, then accepts the same title
+AssertionError: expected { value: { encodings: { …(1) } } } to match object { error: StringContaining "field" }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "error": StringContaining "field",
++   "value": {
++     "encodings": {
++       "x": {
++         "title": "Revenue",
++       },
++     },
++   },
+  }
+
+ ❯ test/viz-controls.spec.ts:36:49
+     34|   it('requires a field before emitting edits to that binding, then acc…
+     35|     const title = vizControlFields('VizAxisControls')[1]!;
+     36|     expect(editVizIntent({}, title, 'Revenue')).toMatchObject({ error:…
+       |                                                 ^
+     37|     expect(editVizIntent({}, title, 'Revenue').value).toBeUndefined();
+     38|     const bound = editVizIntent({}, vizControlFields('VizAxisControls'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  23:39:02
+   Duration  574ms (transform 76ms, setup 0ms, collect 59ms, tests 11ms, environment 0ms, prepare 99ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s193/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/viz-controls.spec.ts

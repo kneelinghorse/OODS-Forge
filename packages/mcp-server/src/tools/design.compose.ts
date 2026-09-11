@@ -40,7 +40,7 @@ import { loadObject } from '../objects/object-loader.js';
 import { composeObject, type ComposedObject } from '../objects/trait-composer.js';
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
-import { populateCollections } from '../compose/collections.js';
+import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail } from '../compose/form-detail.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema } from '../compose/object-slot-filler.js';
 import { isTraitRecipe } from '../compose/trait-recipes.js';
@@ -573,8 +573,9 @@ function fillSlots(
       }
     }
 
-    // Trait recipes remain available to explicit view-extension placement.
-    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => !isTraitRecipe(component.name)), {
+    // New trait recipes require explicit placement. The established generic
+    // preview remains eligible for intent-only dashboards as before Sprint193.
+    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => component.name === 'VizAreaPreview' || !isTraitRecipe(component.name)), {
       topN,
       intentContext: contextForSlot(slot),
       preferKeywordMatches: useKeywordMatches,
@@ -1913,6 +1914,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
 
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100));
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels);
+  if (composed && effectiveContext === 'list') populateListStates(schema);
   if (input.preferences?.brand) {
     const applyChartBrand = (node: UiElement): void => {
       if (node.chart) node.chart.brand = input.preferences!.brand;

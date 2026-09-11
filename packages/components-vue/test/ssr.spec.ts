@@ -1,7 +1,8 @@
-import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
+import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
 import { renderToString } from '@vue/server-renderer';
 import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
+import { renderSharedScenario } from './scenario-fixtures.js';
 
 import {
   AuditSummaryCard, SortIndicator, TimelineEntryLabel,
@@ -163,8 +164,9 @@ const ServerShowcase = defineComponent({
 describe('@oods/components-vue server rendering', () => {
   it('SSR-renders every nucleus component family with semantic markup', async () => {
     const html = await renderToString(h(ServerShowcase));
+    const scenarios = await renderToString(h("div", {}, sharedScenarios.map(scenario => renderSharedScenario(scenario))));
     for (const componentId of NUCLEUS_COMPONENT_IDS) {
-      expect(html, componentId).toContain(`data-oods-component="${componentId}"`);
+      expect(scenarios, componentId).toContain(`data-oods-component="${componentId}"`);
     }
     expect(html).toContain('<table');
     expect(html).toContain('<caption>Subscriptions</caption>');

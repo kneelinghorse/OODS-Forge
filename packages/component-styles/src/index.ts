@@ -17,6 +17,13 @@ export const COMPONENT_STYLE_IDS = [
   'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
   'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',
   'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
+  'ArchiveEvent', 'CancellationEvent', 'ColorStatePicker', 'CommunicationDetailPanel', 'GeoFieldMappingForm',
+  'GeoResolutionBadge', 'GeocodablePreview', 'StateTransitionEvent', 'StatusColorLegend', 'VizAreaControls',
+  'VizAxisControls', 'VizAxisSummary', 'VizColorControls', 'VizColorLegendConfig', 'VizEncodingBadge',
+  'VizHeatmapControls', 'VizHeatmapPreview', 'VizLineControls', 'VizLinePreview', 'VizMarkControls',
+  'VizMarkPreview', 'VizOpacityControls', 'VizOpacitySummary', 'VizPointControls', 'VizPointPreview',
+  'VizRoleBadge', 'VizScaleControls', 'VizScaleSummary', 'VizScatterControls', 'VizScatterPreview',
+  'VizShapeControls', 'VizShapeLegend', 'VizSizeControls', 'VizSizeSummary',
 ] as const;
 
 export const SUPPORTED_COMPONENT_THEME_CELLS = [

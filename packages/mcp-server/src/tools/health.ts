@@ -5,6 +5,8 @@ import { SchemaStore } from '../schema-store/index.js';
 import { ToolError } from '../errors/tool-error.js';
 import { CURRENT_VERSION, getChangelogSince, type ChangelogEntry } from '../versioning/versions.js';
 import { listObjects } from '../objects/object-loader.js';
+import { readRuntimeSummary, type RuntimeSummary } from '../lib/runtime-ledger.js';
+import { readToolSummary, type ToolSummary } from '../lib/tool-ledger.js';
 
 type ManifestArtifact = {
   name?: string;
@@ -29,6 +31,7 @@ type HealthOutput = {
   tokens: { built: boolean; theme: string; brand: string };
   schemas: { savedCount: number; storeDir: string };
   latency: number;
+  productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null };
   dslVersion?: string;
   warnings?: string[];
   changelog?: ChangelogEntry[];
@@ -187,6 +190,14 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
     warnings.push(`schema store unavailable: ${(error as Error).message}`);
   }
 
+  let runtime: RuntimeSummary | null = null;
+  try { runtime = readRuntimeSummary(); }
+  catch (error) { warnings.push(`runtime proof unavailable: ${(error as Error).message}`); }
+
+  let tools: ToolSummary | null = null;
+  try { tools = readToolSummary(); }
+  catch (error) { warnings.push(`tool proof unavailable: ${(error as Error).message}`); }
+
   const latency = Math.max(0, nowMs() - started);
   const status: HealthOutput['status'] = warnings.length > 0 ? 'degraded' : 'ok';
 
@@ -200,6 +211,7 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
     tokens: tokenInfo,
     schemas: schemaInfo,
     latency,
+    productReality: { runtime, tools },
     dslVersion: CURRENT_VERSION,
     ...(warnings.length > 0 ? { warnings } : {}),
   };

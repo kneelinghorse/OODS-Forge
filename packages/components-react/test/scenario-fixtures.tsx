@@ -1,3 +1,5 @@
+import { VizAreaControls, VizAxisControls, VizColorControls, VizHeatmapControls, VizLineControls, VizMarkControls, VizOpacityControls, VizPointControls, VizScaleControls, VizScatterControls, VizShapeControls, VizSizeControls, VizColorLegendConfig, VizShapeLegend, VizAxisSummary, VizOpacitySummary, VizScaleSummary, VizSizeSummary, VizEncodingBadge, VizRoleBadge, VizHeatmapPreview, VizLinePreview, VizMarkPreview, VizPointPreview, VizScatterPreview } from '../src/viz-recipes.js';
+import { ArchiveEvent, CancellationEvent, ColorStatePicker, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview, StateTransitionEvent, StatusColorLegend } from '../src/trait-recipes.js';
 import type { SharedScenario } from '@oods/component-contracts';
 import type { ReactElement } from 'react';
 
@@ -76,6 +78,41 @@ export function renderSharedScenario(
 ): ReactElement {
   const { onEvent } = handlers;
   switch (scenario.id) {
+    case 'VizAreaControls': return <VizAreaControls {...scenario.props} onChange={onEvent} />;
+    case 'VizAxisControls': return <VizAxisControls {...scenario.props} onChange={onEvent} />;
+    case 'VizColorControls': return <VizColorControls {...scenario.props} onChange={onEvent} />;
+    case 'VizHeatmapControls': return <VizHeatmapControls {...scenario.props} onChange={onEvent} />;
+    case 'VizLineControls': return <VizLineControls {...scenario.props} onChange={onEvent} />;
+    case 'VizMarkControls': return <VizMarkControls {...scenario.props} onChange={onEvent} />;
+    case 'VizOpacityControls': return <VizOpacityControls {...scenario.props} onChange={onEvent} />;
+    case 'VizPointControls': return <VizPointControls {...scenario.props} onChange={onEvent} />;
+    case 'VizScaleControls': return <VizScaleControls {...scenario.props} onChange={onEvent} />;
+    case 'VizScatterControls': return <VizScatterControls {...scenario.props} onChange={onEvent} />;
+    case 'VizShapeControls': return <VizShapeControls {...scenario.props} onChange={onEvent} />;
+    case 'VizSizeControls': return <VizSizeControls {...scenario.props} onChange={onEvent} />;
+    case 'VizColorLegendConfig': return <VizColorLegendConfig {...scenario.props} onChange={onEvent} />;
+    case 'VizShapeLegend': return <VizShapeLegend {...scenario.props} onChange={onEvent} />;
+    case 'VizAxisSummary': return <VizAxisSummary {...scenario.props} />;
+    case 'VizOpacitySummary': return <VizOpacitySummary {...scenario.props} />;
+    case 'VizScaleSummary': return <VizScaleSummary {...scenario.props} />;
+    case 'VizSizeSummary': return <VizSizeSummary {...scenario.props} />;
+    case 'VizEncodingBadge': return <VizEncodingBadge {...scenario.props} />;
+    case 'VizRoleBadge': return <VizRoleBadge {...scenario.props} />;
+    case 'VizHeatmapPreview': return <VizHeatmapPreview {...scenario.props} />;
+    case 'VizLinePreview': return <VizLinePreview {...scenario.props} />;
+    case 'VizMarkPreview': return <VizMarkPreview {...scenario.props} />;
+    case 'VizPointPreview': return <VizPointPreview {...scenario.props} />;
+    case 'VizScatterPreview': return <VizScatterPreview {...scenario.props} />;
+    case 'ArchiveEvent': return <ArchiveEvent {...scenario.props} />;
+    case 'CancellationEvent': return <CancellationEvent {...scenario.props} />;
+    case 'StateTransitionEvent': return <StateTransitionEvent {...scenario.props} />;
+    case 'ColorStatePicker': return <ColorStatePicker {...scenario.props} onChange={onEvent} />;
+    case 'StatusColorLegend': return <StatusColorLegend {...scenario.props} />;
+    case 'CommunicationDetailPanel': return <CommunicationDetailPanel {...scenario.props} />;
+    case 'GeoFieldMappingForm': return <GeoFieldMappingForm {...scenario.props} onChange={onEvent} />;
+    case 'GeoResolutionBadge': return <GeoResolutionBadge {...scenario.props} />;
+    case 'GeocodablePreview': return <GeocodablePreview {...scenario.props} />;
+
     case 'AuditSummaryCard': return <AuditSummaryCard {...scenario.props} />;
     case 'SortIndicator': return <SortIndicator {...scenario.props} onChange={onEvent} />;
     case 'TimelineEntryLabel': return <TimelineEntryLabel {...scenario.props} />;

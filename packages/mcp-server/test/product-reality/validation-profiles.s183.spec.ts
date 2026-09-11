@@ -1,4 +1,4 @@
-import { NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '@oods/component-contracts';
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
@@ -18,6 +18,7 @@ import type { UiSchema } from '../../src/schemas/generated.js';
 import { getAjv } from '../../src/lib/ajv.js';
 import codeGenerateInputSchema from '../../src/schemas/code.generate.input.json' assert { type: 'json' };
 import pipelineInputSchema from '../../src/schemas/pipeline.input.json' assert { type: 'json' };
+import { preflightTargetCapabilities } from '../../src/codegen/target-readiness.js';
 import { componentRenderers } from '../../src/render/component-map.js';
 import { handle as generateCode } from '../../src/tools/code.generate.js';
 import { handle as runPipeline } from '../../src/tools/pipeline.js';
@@ -76,10 +77,9 @@ const SUPPORTED_SCHEMA: UiSchema = {
   }],
 };
 
-// Present in the 109-row registry, but deliberately absent from both runnable
-// foundation targets. Emitting it would create an unresolved package import.
-// Sprint 186 ported the original fixture (AddressCollectionPanel); the gap now
-// lives on a recipe row outside the wave-2 slate, guarded below.
+// All 109 rows are now governed. Keep the profile-policy fault explicit instead
+// of moving a sentinel to another real component and depending on missing work.
+// Physical export/ref deletion gates are covered by readiness-ref-enforcement.
 const TARGET_GAP_COMPONENT = 'CommunicationDetailPanel';
 const TARGET_GAP_SCHEMA: UiSchema = {
   version: '1.0',
@@ -89,6 +89,19 @@ const TARGET_GAP_SCHEMA: UiSchema = {
     props: {},
   }],
 };
+
+const targetGapDependencies = {
+  targetCapabilityPreflight: (screens: readonly UiSchema['screens'][number][], framework: 'react' | 'vue') => [
+    ...preflightTargetCapabilities(screens, framework),
+    ...screens.filter(node => node.id === 'target-gap').map(node => ({
+      code: 'OODS-N015' as const,
+      message: 'Explicit unavailable-target fault for profile-policy verification.',
+      nodeId: node.id,
+      component: node.component,
+    })),
+  ],
+};
+const generateTargetGap = (input: CodeGenerateInput) => generateCode(input, targetGapDependencies);
 
 const HTML_FALLBACK_SCHEMA: UiSchema = {
   version: '1.0',
@@ -244,19 +257,21 @@ describe('Sprint 183 M03 validation profiles', () => {
     expect(result.validationReceipt.notChecked).toEqual([...RELEASE_CHECKS]);
   });
 
-  it('keeps the target-gap fixture on a registry row that neither runnable target governs', () => {
-    // When a wave ports this component, move the fixture to the next ungoverned recipe row.
-    expect(NUCLEUS_COMPONENT_IDS).not.toContain(TARGET_GAP_COMPONENT);
-    expect(PORTED_COMPONENT_IDS).not.toContain(TARGET_GAP_COMPONENT);
+  it('the governed fixture is only unavailable when the profile test injects its explicit fault', () => {
+    expect(NUCLEUS_COMPONENT_IDS).toContain(TARGET_GAP_COMPONENT);
+    for (const framework of ['react', 'vue'] as const) {
+      expect(preflightTargetCapabilities(TARGET_GAP_SCHEMA.screens, framework)).toEqual([]);
+      expect(targetGapDependencies.targetCapabilityPreflight(TARGET_GAP_SCHEMA.screens, framework)).toMatchObject([{ code: 'OODS-N015', component: TARGET_GAP_COMPONENT }]);
+    }
   });
 
   it('lets the same target gap proceed only under draft, with the gap visible', async () => {
-    const draft = await generateCode({
+    const draft = await generateTargetGap({
       framework: 'react',
       schema: TARGET_GAP_SCHEMA,
       profile: 'draft',
     });
-    const build = await generateCode({
+    const build = await generateTargetGap({
       framework: 'react',
       schema: TARGET_GAP_SCHEMA,
       profile: 'build',
@@ -293,7 +308,7 @@ describe('Sprint 183 M03 validation profiles', () => {
   it.each(targetCells)(
     '$profile blocks an unresolved $framework import for $styling/typescript=$typescript',
     async ({ profile, framework, styling, typescript }) => {
-      const result = await generateCode({
+      const result = await generateTargetGap({
         framework,
         schema: TARGET_GAP_SCHEMA,
         profile,

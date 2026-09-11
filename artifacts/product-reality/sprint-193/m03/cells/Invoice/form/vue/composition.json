@@ -1,0 +1,1081 @@
+{
+  "status": "ok",
+  "layout": "form",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-form-11",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        },
+        "children": [
+          {
+            "id": "form-title-1",
+            "component": "DetailHeader",
+            "props": {
+              "as": "h1",
+              "field": "billing_contact_name",
+              "label": "Billing contact name"
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title",
+              "confidence": 0.7,
+              "confidenceLevel": "low"
+            }
+          },
+          {
+            "id": "form-fields-8",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "form-field-group-2",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-0-3",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "status",
+                      "label": "Status",
+                      "placeholder": "Enter status",
+                      "help": "Canonical invoice status after provider mapping."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-1-5",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-1",
+                      "label": "field-1",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "issued_at",
+                      "label": "Issued at",
+                      "help": "Timestamp when the invoice was finalized or posted.",
+                      "type": "datetime-local"
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_issued_at"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-6",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-2-7",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-2",
+                      "label": "field-2",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "currency",
+                      "label": "Currency",
+                      "placeholder": "Enter currency",
+                      "help": "ISO 4217 currency for the invoice."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_currency"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-12",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-3-13",
+                    "component": "Textarea",
+                    "meta": {
+                      "intent": "slot:field-3",
+                      "label": "field-3",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "collection_state",
+                      "label": "Collection state",
+                      "help": "Dunning phase or retry program detail presented to success teams."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_collection_state"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-4-15",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-4",
+                      "label": "field-4",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "attempt_count",
+                      "label": "Attempt count",
+                      "placeholder": "Enter attempt count",
+                      "type": "number",
+                      "help": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_attempt_count"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-16",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-5",
+                      "label": "field-5",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "aging_bucket_days",
+                      "label": "Aging bucket days",
+                      "placeholder": "Enter aging bucket days",
+                      "type": "number",
+                      "help": "Number of days outstanding grouped for aging reports."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_aging_bucket_days"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-18",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-6",
+                      "label": "field-6",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "refund_policy_url",
+                      "label": "Refund policy url",
+                      "placeholder": "Enter refund policy url",
+                      "help": "Link to customer facing refund or cancellation policy."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_refund_policy_url"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-20",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-7",
+                      "label": "field-7",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "invoice_number",
+                      "label": "Invoice number",
+                      "placeholder": "Enter invoice number",
+                      "help": "Human readable invoice identifier presented to customers."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_invoice_number"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-22",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-8",
+                      "label": "field-8",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "total_minor",
+                      "label": "Total minor",
+                      "placeholder": "Enter total minor",
+                      "type": "number",
+                      "help": "Total amount due expressed in minor currency units."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_total_minor"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-24",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-9",
+                      "label": "field-9",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "balance_minor",
+                      "label": "Balance minor",
+                      "placeholder": "Enter balance minor",
+                      "type": "number",
+                      "help": "Remaining amount outstanding in minor units."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_balance_minor"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "form-actions-9",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-submit-10",
+                "component": "Button",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        }
+      }
+    ],
+    "objectSchema": {
+      "invoice_number": {
+        "type": "string",
+        "required": true,
+        "description": "Human readable invoice identifier presented to customers.",
+        "semanticType": "billing.invoice.number"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical invoice status after provider mapping.",
+        "semanticType": "billing.invoice.status"
+      },
+      "provider_status": {
+        "type": "string",
+        "required": false,
+        "description": "Original provider reported status or badge.",
+        "semanticType": "billing.invoice.provider_status"
+      },
+      "issued_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp when the invoice was finalized or posted.",
+        "semanticType": "billing.invoice.issued_at"
+      },
+      "due_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Payment due timestamp derived from payment terms.",
+        "semanticType": "billing.invoice.due_at"
+      },
+      "paid_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when full payment cleared.",
+        "semanticType": "billing.invoice.paid_at"
+      },
+      "total_minor": {
+        "type": "integer",
+        "required": true,
+        "description": "Total amount due expressed in minor currency units.",
+        "semanticType": "billing.invoice.total_minor"
+      },
+      "balance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Remaining amount outstanding in minor units.",
+        "semanticType": "billing.invoice.balance_minor"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency for the invoice.",
+        "semanticType": "billing.invoice.currency"
+      },
+      "payment_terms": {
+        "type": "string",
+        "required": false,
+        "description": "Payment term label describing when payment is expected.",
+        "semanticType": "billing.invoice.payment_terms"
+      },
+      "collection_state": {
+        "type": "string",
+        "required": false,
+        "description": "Dunning phase or retry program detail presented to success teams.",
+        "semanticType": "billing.invoice.collection_state"
+      },
+      "last_reminder_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp of most recent payment reminder issued to customer.",
+        "semanticType": "billing.invoice.last_reminder_at"
+      },
+      "aging_bucket_days": {
+        "type": "integer",
+        "required": false,
+        "description": "Number of days outstanding grouped for aging reports.",
+        "semanticType": "billing.invoice.aging_bucket_days"
+      },
+      "attempt_count": {
+        "type": "integer",
+        "required": false,
+        "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+        "semanticType": "billing.invoice.attempt_count"
+      },
+      "next_payment_attempt": {
+        "type": "datetime",
+        "required": false,
+        "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+        "semanticType": "billing.invoice.next_payment_attempt"
+      },
+      "memo": {
+        "type": "string",
+        "required": false,
+        "description": "Internal finance note or customer visible memo.",
+        "semanticType": "billing.invoice.memo"
+      },
+      "refundable_until": {
+        "type": "datetime",
+        "required": false,
+        "description": "Date when refund eligibility window ends for this record.",
+        "semanticType": "billing.refund.window_end"
+      },
+      "refund_policy_url": {
+        "type": "string",
+        "required": false,
+        "description": "Link to customer facing refund or cancellation policy.",
+        "semanticType": "billing.refund.policy_link"
+      },
+      "total_refunded_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cumulative amount refunded in minor currency units.",
+        "semanticType": "billing.refund.total_minor"
+      },
+      "credit_memo_balance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Remaining credit memo balance that can be applied to invoices.",
+        "semanticType": "billing.refund.credit_memo_balance_minor"
+      },
+      "credit_memo_type": {
+        "type": "string",
+        "required": false,
+        "description": "Category of credit memo tied to business justification.",
+        "semanticType": "billing.refund.credit_memo_type"
+      },
+      "last_refund_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the most recent refund was issued.",
+        "semanticType": "billing.refund.last_refund_at"
+      },
+      "requires_manager_approval": {
+        "type": "boolean",
+        "required": false,
+        "description": "Indicates if finance manager approval is required before issuing refund.",
+        "semanticType": "billing.refund.requires_manager_approval"
+      },
+      "notes": {
+        "type": "string",
+        "required": false,
+        "description": "Internal commentary about refund actions or policy exceptions.",
+        "semanticType": "billing.refund.notes"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "invoice_id": {
+        "type": "string",
+        "required": true,
+        "description": "Primary identifier for the invoice inside the billing domain.",
+        "semanticType": "billing.invoice.id"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Subscription identifier this invoice is associated with.",
+        "semanticType": "billing.invoice.subscription_id"
+      },
+      "provider": {
+        "type": "string",
+        "required": true,
+        "description": "Source system providing invoice data.",
+        "semanticType": "billing.invoice.provider"
+      },
+      "provider_invoice_id": {
+        "type": "string",
+        "required": false,
+        "description": "Native provider identifier retained for audit trails.",
+        "semanticType": "billing.invoice.provider_id"
+      },
+      "billing_contact_name": {
+        "type": "string",
+        "required": false,
+        "description": "Customer billing contact receiving the invoice.",
+        "semanticType": "billing.invoice.billing_contact_name"
+      },
+      "billing_contact_email": {
+        "type": "email",
+        "required": false,
+        "description": "Email address for the billing contact.",
+        "semanticType": "billing.invoice.billing_contact_email"
+      },
+      "tax_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Tax amount collected on the invoice in minor currency units.",
+        "semanticType": "billing.invoice.tax_minor"
+      },
+      "discount_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Total discounts applied to the invoice in minor units.",
+        "semanticType": "billing.invoice.discount_minor"
+      },
+      "subtotal_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Subtotal before discounts and tax in minor units.",
+        "semanticType": "billing.invoice.subtotal_minor"
+      },
+      "line_items": {
+        "type": "InvoiceLineItem[]",
+        "required": false,
+        "description": "Normalized line items with quantity, amount_minor, and description fields.",
+        "semanticType": "billing.invoice.line_items"
+      },
+      "attachments": {
+        "type": "AssetReference[]",
+        "required": false,
+        "description": "Supporting documents or credit memos associated with the invoice.",
+        "semanticType": "billing.invoice.attachments"
+      },
+      "portal_url": {
+        "type": "string",
+        "required": false,
+        "description": "Link to the hosted invoice or customer billing portal.",
+        "semanticType": "billing.invoice.portal_url"
+      },
+      "dunning_step": {
+        "type": "string",
+        "required": false,
+        "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+        "semanticType": "billing.invoice.dunning_step"
+      },
+      "payment_source": {
+        "type": "string",
+        "required": false,
+        "description": "Payment method used or expected (card, ach, wire).",
+        "semanticType": "billing.invoice.payment_source"
+      }
+    }
+  },
+  "schemaRef": "compose-22684798",
+  "schemaRefCreatedAt": "2026-09-11T02:56:13.388Z",
+  "schemaRefExpiresAt": "2026-09-11T03:26:13.388Z",
+  "selections": [
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.7,
+      "confidenceLevel": "medium",
+      "explanation": "DetailHeader was selected for slot \"title\" because preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header. Confidence is medium (0.70).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "confidence": 1,
+          "reason": "preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.92,
+          "reason": "preferred for \"page-header\" (rank 1); 1 context match(es); 1 region match(es); position affinity: Text fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Badge",
+          "confidence": 0.3,
+          "reason": "1 context match(es); 1 region match(es); 1 trait(s); position affinity: Badge fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-0\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-1\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "confidence": 1,
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.98,
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.56,
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-2\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "long-text-input",
+      "selectedComponent": "Textarea",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Textarea was selected for slot \"field-3\" because preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Textarea",
+          "confidence": 1,
+          "reason": "preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.98,
+          "reason": "preferred for \"long-text-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.56,
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-4\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Invoice' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V119",
+      "message": "No view_extensions found for context \"form\" in object \"Invoice\". Available contexts: detail, timeline, list"
+    }
+  ],
+  "objectUsed": {
+    "name": "Invoice",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingPayable",
+      "SaaSBillingRefundable",
+      "lifecycle/Timestampable"
+    ],
+    "fieldsComposed": 42,
+    "viewExtensionsApplied": {
+      "detail": 1,
+      "timeline": 1,
+      "list": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Invoice form view",
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "slotCount": 11,
+    "nodeCount": 25,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Invoice' has maturity 'beta' — composed output may change.",
+      "No view_extensions found for context \"form\" in object \"Invoice\". Available contexts: detail, timeline, list"
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 7,
+      "expansionReason": "Expanded from 3 to 10 field groups for 40 fields",
+      "patternsApplied": 42,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.97
+    }
+  }
+}

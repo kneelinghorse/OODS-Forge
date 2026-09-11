@@ -62,7 +62,7 @@ describe("Sprint 177 closeout carrier", () => {
     "<!-- closeout-local-rows:end -->",
   );
 
-  it("covers the exact current set of 16 CI job keys once", () => {
+  it("covers the exact current set of 17 CI job keys once", () => {
     const jobsSection = workflow.slice(workflow.indexOf("\njobs:\n") + 7);
     const workflowJobs = [
       ...jobsSection.matchAll(/^  ([a-z][a-z0-9-]+):\s*$/gm),
@@ -72,9 +72,9 @@ describe("Sprint 177 closeout carrier", () => {
     ].map((match) => match[1]);
 
     expect([...carrierRows].sort()).toEqual([...workflowJobs].sort());
-    expect(workflowJobs).toHaveLength(16);
-    expect(new Set(carrierRows).size).toBe(16);
-    expect(checklist).toContain("Repeat through `CI-16` and `L-01` through `L-09`.");
+    expect(workflowJobs).toHaveLength(17);
+    expect(new Set(carrierRows).size).toBe(17);
+    expect(checklist).toContain("Repeat through `CI-17` and `L-01` through `L-09`.");
     expect(checklist).not.toContain("Repeat through `CI-14`");
   });
 
