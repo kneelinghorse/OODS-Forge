@@ -1,0 +1,1108 @@
+{
+  "request": {
+    "schemaVersion": "v0.1",
+    "theme": "hc",
+    "datasets": [
+      {
+        "id": "sales",
+        "rows": [
+          {
+            "region": "North",
+            "quarter": "2024-01",
+            "revenue": 120000,
+            "units": 340
+          },
+          {
+            "region": "South",
+            "quarter": "2024-01",
+            "revenue": 135000,
+            "units": 410
+          },
+          {
+            "region": "North",
+            "quarter": "2024-02",
+            "revenue": 128000,
+            "units": 360
+          },
+          {
+            "region": "South",
+            "quarter": "2024-02",
+            "revenue": 142000,
+            "units": 430
+          },
+          {
+            "region": "North",
+            "quarter": "2024-03",
+            "revenue": 131000,
+            "units": 372
+          },
+          {
+            "region": "South",
+            "quarter": "2024-03",
+            "revenue": 150000,
+            "units": 455
+          }
+        ]
+      }
+    ],
+    "panels": [
+      {
+        "chartType": "bar",
+        "encodings": {
+          "x": {
+            "field": "region",
+            "scale": "band"
+          },
+          "y": {
+            "field": "revenue",
+            "aggregate": "sum"
+          }
+        },
+        "id": "bar",
+        "kind": "chart",
+        "datasetId": "sales"
+      },
+      {
+        "chartType": "line",
+        "encodings": {
+          "x": {
+            "field": "quarter",
+            "scale": "temporal"
+          },
+          "y": {
+            "field": "revenue",
+            "aggregate": "sum"
+          },
+          "color": {
+            "field": "region"
+          }
+        },
+        "id": "line",
+        "kind": "chart",
+        "datasetId": "sales"
+      },
+      {
+        "chartType": "area",
+        "encodings": {
+          "x": {
+            "field": "quarter",
+            "scale": "temporal"
+          },
+          "y": {
+            "field": "revenue",
+            "aggregate": "sum"
+          }
+        },
+        "id": "area",
+        "kind": "chart",
+        "datasetId": "sales"
+      },
+      {
+        "chartType": "scatter",
+        "encodings": {
+          "x": {
+            "field": "revenue",
+            "scale": "linear"
+          },
+          "y": {
+            "field": "units",
+            "scale": "linear"
+          },
+          "color": {
+            "field": "region"
+          }
+        },
+        "id": "scatter",
+        "kind": "chart",
+        "datasetId": "sales"
+      },
+      {
+        "chartType": "heatmap",
+        "encodings": {
+          "x": {
+            "field": "region",
+            "scale": "band"
+          },
+          "y": {
+            "field": "quarter",
+            "scale": "band"
+          },
+          "color": {
+            "field": "revenue",
+            "scale": "linear"
+          }
+        },
+        "id": "heatmap",
+        "kind": "chart",
+        "datasetId": "sales"
+      },
+      {
+        "chartType": "treemap",
+        "hierarchy": {
+          "type": "nested",
+          "data": {
+            "name": "Total",
+            "value": 100,
+            "children": [
+              {
+                "name": "Alpha",
+                "value": 40
+              },
+              {
+                "name": "Beta",
+                "value": 35
+              },
+              {
+                "name": "Gamma",
+                "value": 25
+              }
+            ]
+          }
+        },
+        "title": "Revenue split",
+        "id": "treemap",
+        "kind": "chart"
+      },
+      {
+        "chartType": "sunburst",
+        "hierarchy": {
+          "type": "nested",
+          "data": {
+            "name": "Total",
+            "value": 100,
+            "children": [
+              {
+                "name": "Alpha",
+                "value": 40
+              },
+              {
+                "name": "Beta",
+                "value": 35
+              },
+              {
+                "name": "Gamma",
+                "value": 25
+              }
+            ]
+          }
+        },
+        "title": "Revenue split",
+        "id": "sunburst",
+        "kind": "chart"
+      },
+      {
+        "chartType": "sankey",
+        "sankey": {
+          "nodes": [
+            {
+              "name": "Source"
+            },
+            {
+              "name": "Middle"
+            },
+            {
+              "name": "Sink"
+            }
+          ],
+          "links": [
+            {
+              "source": "Source",
+              "target": "Middle",
+              "value": 60
+            },
+            {
+              "source": "Middle",
+              "target": "Sink",
+              "value": 60
+            }
+          ]
+        },
+        "title": "Pipeline flow",
+        "id": "sankey",
+        "kind": "chart"
+      },
+      {
+        "chartType": "force_graph",
+        "network": {
+          "nodes": [
+            {
+              "id": "a",
+              "group": "core"
+            },
+            {
+              "id": "b",
+              "group": "core"
+            },
+            {
+              "id": "c",
+              "group": "edge"
+            }
+          ],
+          "links": [
+            {
+              "source": "a",
+              "target": "b",
+              "value": 3
+            },
+            {
+              "source": "b",
+              "target": "c",
+              "value": 1
+            }
+          ]
+        },
+        "title": "Service graph",
+        "id": "force_graph",
+        "kind": "chart"
+      },
+      {
+        "chartType": "choropleth",
+        "geo": {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "id": "CA",
+                "properties": {
+                  "region": "CA",
+                  "state_name": "California"
+                },
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -124,
+                        32
+                      ],
+                      [
+                        -114,
+                        32
+                      ],
+                      [
+                        -114,
+                        42
+                      ],
+                      [
+                        -124,
+                        42
+                      ],
+                      [
+                        -124,
+                        32
+                      ]
+                    ]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "id": "NV",
+                "properties": {
+                  "region": "NV",
+                  "state_name": "Nevada"
+                },
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -120,
+                        35
+                      ],
+                      [
+                        -114,
+                        35
+                      ],
+                      [
+                        -114,
+                        42
+                      ],
+                      [
+                        -120,
+                        42
+                      ],
+                      [
+                        -120,
+                        35
+                      ]
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "rows": [
+            {
+              "state": "CA",
+              "sales": 580
+            },
+            {
+              "state": "NV",
+              "sales": 96
+            }
+          ],
+          "join": {
+            "dataKey": "state",
+            "featureProperty": "region"
+          },
+          "valueField": "sales",
+          "colorScale": "linear"
+        },
+        "title": "State sales",
+        "id": "choropleth",
+        "kind": "chart"
+      },
+      {
+        "chartType": "bubble_map",
+        "geo": {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "id": "CA",
+                "properties": {
+                  "region": "CA",
+                  "state_name": "California"
+                },
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -124,
+                        32
+                      ],
+                      [
+                        -114,
+                        32
+                      ],
+                      [
+                        -114,
+                        42
+                      ],
+                      [
+                        -124,
+                        42
+                      ],
+                      [
+                        -124,
+                        32
+                      ]
+                    ]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "id": "NV",
+                "properties": {
+                  "region": "NV",
+                  "state_name": "Nevada"
+                },
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -120,
+                        35
+                      ],
+                      [
+                        -114,
+                        35
+                      ],
+                      [
+                        -114,
+                        42
+                      ],
+                      [
+                        -120,
+                        42
+                      ],
+                      [
+                        -120,
+                        35
+                      ]
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "rows": [
+            {
+              "city": "San Francisco",
+              "lng": -122.4,
+              "lat": 37.8,
+              "pop": 874
+            },
+            {
+              "city": "Las Vegas",
+              "lng": -115.1,
+              "lat": 36.2,
+              "pop": 646
+            }
+          ],
+          "longitudeField": "lng",
+          "latitudeField": "lat",
+          "sizeField": "pop",
+          "colorField": "pop",
+          "colorScale": "linear"
+        },
+        "title": "City population",
+        "id": "bubble_map",
+        "kind": "chart"
+      }
+    ],
+    "onPanelError": "omit",
+    "a11y": {
+      "description": "Measured HC render coverage."
+    },
+    "output": {
+      "html": true
+    }
+  },
+  "result": {
+    "status": "ok",
+    "schemaVersion": "v0.1",
+    "panels": [
+      {
+        "id": "bar",
+        "kind": "chart",
+        "chartType": "bar",
+        "renderer": "vega-lite",
+        "a11yDescription": "Bar chart of sum of revenue by region.",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "title": "Bar chart",
+          "description": "Bar chart of sum of revenue by region.",
+          "data": {
+            "values": [
+              {
+                "region": "North",
+                "quarter": "2024-01",
+                "revenue": 120000,
+                "units": 340
+              },
+              {
+                "region": "South",
+                "quarter": "2024-01",
+                "revenue": 135000,
+                "units": 410
+              },
+              {
+                "region": "North",
+                "quarter": "2024-02",
+                "revenue": 128000,
+                "units": 360
+              },
+              {
+                "region": "South",
+                "quarter": "2024-02",
+                "revenue": 142000,
+                "units": 430
+              },
+              {
+                "region": "North",
+                "quarter": "2024-03",
+                "revenue": 131000,
+                "units": 372
+              },
+              {
+                "region": "South",
+                "quarter": "2024-03",
+                "revenue": 150000,
+                "units": 455
+              }
+            ]
+          },
+          "config": {
+            "background": "Canvas",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "title": {
+              "color": "CanvasText",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+              "anchor": "start"
+            },
+            "axis": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "gridColor": "CanvasText",
+              "domainColor": "CanvasText",
+              "tickColor": "CanvasText"
+            },
+            "axisX": {
+              "grid": false
+            },
+            "axisY": {
+              "grid": true
+            },
+            "legend": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+            },
+            "view": {
+              "stroke": null
+            }
+          },
+          "usermeta": {
+            "oods": {
+              "specId": "bar",
+              "name": "Bar chart",
+              "portability": {
+                "tableColumnOrder": [
+                  "region",
+                  "revenue",
+                  "quarter",
+                  "units"
+                ]
+              },
+              "a11y": {
+                "description": "Bar chart of sum of revenue by region.",
+                "ariaLabel": "Bar chart of Revenue by Region"
+              }
+            }
+          },
+          "mark": {
+            "type": "bar",
+            "color": "oklch(0.56 0.1737 264.97)"
+          },
+          "encoding": {
+            "x": {
+              "field": "region",
+              "type": "ordinal",
+              "scale": {
+                "type": "band"
+              },
+              "title": "Region"
+            },
+            "y": {
+              "field": "revenue",
+              "type": "quantitative",
+              "aggregate": "sum",
+              "title": "Revenue"
+            }
+          }
+        },
+        "contentHash": "af47d253154c677513ef6776c05fdefd0b442a914a1dae13f5061d8e25d77d3d"
+      },
+      {
+        "id": "line",
+        "kind": "chart",
+        "chartType": "line",
+        "renderer": "vega-lite",
+        "a11yDescription": "Line chart of sum of revenue by quarter, split by region.",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "title": "Line chart",
+          "description": "Line chart of sum of revenue by quarter, split by region.",
+          "data": {
+            "values": [
+              {
+                "region": "North",
+                "quarter": "2024-01",
+                "revenue": 120000,
+                "units": 340
+              },
+              {
+                "region": "South",
+                "quarter": "2024-01",
+                "revenue": 135000,
+                "units": 410
+              },
+              {
+                "region": "North",
+                "quarter": "2024-02",
+                "revenue": 128000,
+                "units": 360
+              },
+              {
+                "region": "South",
+                "quarter": "2024-02",
+                "revenue": 142000,
+                "units": 430
+              },
+              {
+                "region": "North",
+                "quarter": "2024-03",
+                "revenue": 131000,
+                "units": 372
+              },
+              {
+                "region": "South",
+                "quarter": "2024-03",
+                "revenue": 150000,
+                "units": 455
+              }
+            ]
+          },
+          "config": {
+            "background": "Canvas",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "title": {
+              "color": "CanvasText",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+              "anchor": "start"
+            },
+            "axis": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "gridColor": "CanvasText",
+              "domainColor": "CanvasText",
+              "tickColor": "CanvasText"
+            },
+            "axisX": {
+              "grid": false
+            },
+            "axisY": {
+              "grid": true
+            },
+            "legend": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+            },
+            "view": {
+              "stroke": null
+            }
+          },
+          "usermeta": {
+            "oods": {
+              "specId": "line",
+              "name": "Line chart",
+              "portability": {
+                "tableColumnOrder": [
+                  "quarter",
+                  "revenue",
+                  "region",
+                  "units"
+                ]
+              },
+              "a11y": {
+                "description": "Line chart of sum of revenue by quarter, split by region.",
+                "ariaLabel": "Line chart of Revenue by Quarter"
+              }
+            }
+          },
+          "mark": {
+            "type": "line"
+          },
+          "encoding": {
+            "x": {
+              "field": "quarter",
+              "type": "temporal",
+              "scale": {
+                "type": "time"
+              },
+              "title": "Quarter"
+            },
+            "y": {
+              "field": "revenue",
+              "type": "quantitative",
+              "aggregate": "sum",
+              "title": "Revenue"
+            },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "oklch(0.56 0.1737 264.97)",
+                  "oklch(0.46 0.1875 274.17)",
+                  "oklch(0.6001 0.1195 161.58)",
+                  "oklch(0.6558 0.122 80.37)",
+                  "oklch(0.5824 0.1655 23.81)",
+                  "oklch(0.4755 0.1421 47.13)"
+                ]
+              },
+              "title": "Region"
+            }
+          }
+        },
+        "contentHash": "262fe9ea5113ff417e070cf89d209eb70c38ca26212aef2e4666c8d57a212c0c"
+      },
+      {
+        "id": "area",
+        "kind": "chart",
+        "chartType": "area",
+        "renderer": "vega-lite",
+        "a11yDescription": "Area chart of sum of revenue by quarter.",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "title": "Area chart",
+          "description": "Area chart of sum of revenue by quarter.",
+          "data": {
+            "values": [
+              {
+                "region": "North",
+                "quarter": "2024-01",
+                "revenue": 120000,
+                "units": 340
+              },
+              {
+                "region": "South",
+                "quarter": "2024-01",
+                "revenue": 135000,
+                "units": 410
+              },
+              {
+                "region": "North",
+                "quarter": "2024-02",
+                "revenue": 128000,
+                "units": 360
+              },
+              {
+                "region": "South",
+                "quarter": "2024-02",
+                "revenue": 142000,
+                "units": 430
+              },
+              {
+                "region": "North",
+                "quarter": "2024-03",
+                "revenue": 131000,
+                "units": 372
+              },
+              {
+                "region": "South",
+                "quarter": "2024-03",
+                "revenue": 150000,
+                "units": 455
+              }
+            ]
+          },
+          "config": {
+            "background": "Canvas",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "title": {
+              "color": "CanvasText",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+              "anchor": "start"
+            },
+            "axis": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "gridColor": "CanvasText",
+              "domainColor": "CanvasText",
+              "tickColor": "CanvasText"
+            },
+            "axisX": {
+              "grid": false
+            },
+            "axisY": {
+              "grid": true
+            },
+            "legend": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+            },
+            "view": {
+              "stroke": null
+            }
+          },
+          "usermeta": {
+            "oods": {
+              "specId": "area",
+              "name": "Area chart",
+              "portability": {
+                "tableColumnOrder": [
+                  "quarter",
+                  "revenue",
+                  "region",
+                  "units"
+                ]
+              },
+              "a11y": {
+                "description": "Area chart of sum of revenue by quarter.",
+                "ariaLabel": "Area chart of Revenue by Quarter"
+              }
+            }
+          },
+          "mark": {
+            "type": "area",
+            "color": "oklch(0.56 0.1737 264.97)"
+          },
+          "encoding": {
+            "x": {
+              "field": "quarter",
+              "type": "temporal",
+              "scale": {
+                "type": "time"
+              },
+              "title": "Quarter"
+            },
+            "y": {
+              "field": "revenue",
+              "type": "quantitative",
+              "aggregate": "sum",
+              "title": "Revenue"
+            }
+          }
+        },
+        "contentHash": "00a70caf6932bf0cab2137d4bc6c23d5cac96e929bf69ae9479e397f5e79bf3b"
+      },
+      {
+        "id": "scatter",
+        "kind": "chart",
+        "chartType": "scatter",
+        "renderer": "vega-lite",
+        "a11yDescription": "Scatter plot of units by revenue, split by region.",
+        "spec": {
+          "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+          "title": "Scatter plot",
+          "description": "Scatter plot of units by revenue, split by region.",
+          "data": {
+            "values": [
+              {
+                "region": "North",
+                "quarter": "2024-01",
+                "revenue": 120000,
+                "units": 340
+              },
+              {
+                "region": "South",
+                "quarter": "2024-01",
+                "revenue": 135000,
+                "units": 410
+              },
+              {
+                "region": "North",
+                "quarter": "2024-02",
+                "revenue": 128000,
+                "units": 360
+              },
+              {
+                "region": "South",
+                "quarter": "2024-02",
+                "revenue": 142000,
+                "units": 430
+              },
+              {
+                "region": "North",
+                "quarter": "2024-03",
+                "revenue": 131000,
+                "units": 372
+              },
+              {
+                "region": "South",
+                "quarter": "2024-03",
+                "revenue": 150000,
+                "units": 455
+              }
+            ]
+          },
+          "config": {
+            "background": "Canvas",
+            "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "title": {
+              "color": "CanvasText",
+              "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "fontSize": 24,
+              "fontWeight": 600,
+              "anchor": "start"
+            },
+            "axis": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "gridColor": "CanvasText",
+              "domainColor": "CanvasText",
+              "tickColor": "CanvasText"
+            },
+            "axisX": {
+              "grid": false
+            },
+            "axisY": {
+              "grid": true
+            },
+            "legend": {
+              "titleColor": "CanvasText",
+              "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              "labelColor": "CanvasText",
+              "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+            },
+            "view": {
+              "stroke": null
+            }
+          },
+          "usermeta": {
+            "oods": {
+              "specId": "scatter",
+              "name": "Scatter plot",
+              "portability": {
+                "tableColumnOrder": [
+                  "revenue",
+                  "units",
+                  "region",
+                  "quarter"
+                ]
+              },
+              "a11y": {
+                "description": "Scatter plot of units by revenue, split by region.",
+                "ariaLabel": "Scatter plot of Units by Revenue"
+              }
+            }
+          },
+          "mark": {
+            "type": "point"
+          },
+          "encoding": {
+            "x": {
+              "field": "revenue",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Revenue"
+            },
+            "y": {
+              "field": "units",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Units"
+            },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "oklch(0.56 0.1737 264.97)",
+                  "oklch(0.46 0.1875 274.17)",
+                  "oklch(0.6001 0.1195 161.58)",
+                  "oklch(0.6558 0.122 80.37)",
+                  "oklch(0.5824 0.1655 23.81)",
+                  "oklch(0.4755 0.1421 47.13)"
+                ]
+              },
+              "title": "Region"
+            }
+          }
+        },
+        "contentHash": "1d4b0726c6668e8866fdc9e1e901b677d8d67c4f8a2f0325f3be73f2edf7b0f6"
+      }
+    ],
+    "layout": [
+      {
+        "id": "bar",
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 2
+      },
+      {
+        "id": "line",
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 2
+      },
+      {
+        "id": "area",
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 2
+      },
+      {
+        "id": "scatter",
+        "x": 6,
+        "y": 2,
+        "w": 6,
+        "h": 2
+      }
+    ],
+    "links": [],
+    "a11y": {
+      "description": "Measured HC render coverage.",
+      "readingOrder": "kpi-first",
+      "panelOrder": [
+        "bar",
+        "line",
+        "area",
+        "scatter"
+      ],
+      "narrative": {
+        "summary": "Measured HC render coverage.",
+        "keyFindings": []
+      }
+    },
+    "warnings": [
+      {
+        "code": "OODS-V165",
+        "message": "panel \"heatmap\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"treemap\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"sunburst\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"sankey\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"force_graph\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"choropleth\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      },
+      {
+        "code": "OODS-V165",
+        "message": "panel \"bubble_map\" omitted: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "html": true,
+      "theme": "hc"
+    },
+    "meta": {
+      "panelCount": 4,
+      "datasetCount": 1,
+      "crossFiltered": false,
+      "errorPanelCount": 0
+    },
+    "tokenCssRef": "tokens.build",
+    "html": "<!DOCTYPE html>\n<html lang=\"en\" data-theme=\"hc\" data-brand=\"A\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Dashboard</title>\n<style>:root{--oods-color-fg:CanvasText;--oods-color-muted:GrayText;--oods-color-bg:Canvas;--oods-color-panel-bg:Canvas;--oods-color-panel-border:CanvasText;--oods-color-accent:CanvasText;--oods-color-positive:HighlightText;--oods-color-negative:HighlightText}.oods-dashboard{font-family:var(--oods-font-sans,system-ui,-apple-system,sans-serif);color:var(--oods-color-fg,#1a1a1a);background:var(--oods-color-bg,#ffffff);margin:0;padding:16px}.oods-dashboard-title{font-size:18px;margin:0 0 4px}.oods-dashboard-summary{margin:0 0 12px;font-size:14px;color:var(--oods-color-muted,#555)}.oods-dashboard-narrative{margin:0 0 12px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-dashboard-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.oods-panel{background:var(--oods-color-panel-bg,#ffffff);border:1px solid var(--oods-color-panel-border,#e2e2e2);border-radius:8px;padding:12px;box-sizing:border-box}.oods-kpi-title{margin:0 0 4px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-kpi-value{margin:0;font-size:28px;font-weight:600;color:var(--oods-color-accent,#1a1a1a)}.oods-kpi-delta{margin:4px 0 0;font-size:13px}.oods-trend-increasing{color:var(--oods-color-positive,#1a7f37)}.oods-trend-decreasing{color:var(--oods-color-negative,#b42318)}.oods-trend-flat{color:var(--oods-color-muted,#555)}.oods-chart figcaption{font-size:13px;color:var(--oods-color-muted,#555);margin-bottom:8px}.oods-placeholder-title{margin:0 0 4px;font-size:13px}.oods-placeholder-note{margin:0;font-size:13px;color:var(--oods-color-muted,#555)}.oods-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>\n</head>\n<body>\n<main class=\"oods-dashboard\" role=\"region\" aria-label=\"Dashboard\">\n<p class=\"oods-dashboard-summary\">Measured HC render coverage.</p>\n<section class=\"oods-dashboard-narrative\" aria-label=\"Key findings\">\n<p class=\"oods-narrative-summary\">Measured HC render coverage.</p>\n</section>\n<div class=\"oods-dashboard-grid\">\n<figure class=\"oods-panel oods-chart\" role=\"figure\" style=\"grid-column:1/span 6;grid-row:1/span 2\" aria-label=\"Bar chart of sum of revenue by region.\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"610\" height=\"330\" viewBox=\"0 0 610 330\"><rect width=\"610\" height=\"330\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h522v225h-522Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,225)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,175)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,125)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,75)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,25)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Region' for a discrete scale with 2 values: North, South\"><g transform=\"translate(0.5,225.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(130,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(391,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(130,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">North</text><text text-anchor=\"end\" transform=\"translate(391,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">South</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(261,60)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue' for a linear scale with values from 0 to 450,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,225)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,175)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,125)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,75)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,25)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,228)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,178)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">100,000</text><text text-anchor=\"end\" transform=\"translate(-7,128)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">200,000</text><text text-anchor=\"end\" transform=\"translate(-7,78.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">300,000</text><text text-anchor=\"end\" transform=\"translate(-7,28.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">400,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,225)\" x2=\"0\" y2=\"-225\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,112.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Region: North; Revenue: 379000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M13.050000000000011,35.50000000000001h234.9v189.5h-234.9Z\" fill=\"oklch(0.56 0.1737 264.97)\"/><path aria-label=\"Region: South; Revenue: 427000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M274.05,11.5h234.9v213.5h-234.9Z\" fill=\"oklch(0.56 0.1737 264.97)\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Bar chart'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Bar chart</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg></figure>\n<figure class=\"oods-panel oods-chart\" role=\"figure\" style=\"grid-column:7/span 6;grid-row:1/span 2\" aria-label=\"Line chart of sum of revenue by quarter, split by region.\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"610\" height=\"330\" viewBox=\"0 0 610 330\"><rect width=\"610\" height=\"330\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h446v255h-446Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,223)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,191)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,159)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,128)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,64)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,32)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Quarter' for a time scale with values from Sunday, 31 December 2023, 6:00:00 PM to Thursday, 29 February 2024, 6:00:00 PM\"><g transform=\"translate(0.5,255.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(46,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(98,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(151,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(203,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(255,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(307,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(359,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(411,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(46.458333333333336,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 07</text><text text-anchor=\"middle\" transform=\"translate(98.49166666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 14</text><text text-anchor=\"middle\" transform=\"translate(150.525,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 21</text><text text-anchor=\"middle\" transform=\"translate(202.55833333333334,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 28</text><text text-anchor=\"middle\" transform=\"translate(254.59166666666664,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 04</text><text text-anchor=\"middle\" transform=\"translate(306.625,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 11</text><text text-anchor=\"middle\" transform=\"translate(358.65833333333336,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 18</text><text text-anchor=\"middle\" transform=\"translate(410.69166666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"446\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(223,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Quarter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue' for a linear scale with values from 0 to 160,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,223)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,191)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,159)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,128)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,64)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,32)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,258)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,226.125)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">20,000</text><text text-anchor=\"end\" transform=\"translate(-7,194.25)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">40,000</text><text text-anchor=\"end\" transform=\"translate(-7,162.375)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">60,000</text><text text-anchor=\"end\" transform=\"translate(-7,130.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">80,000</text><text text-anchor=\"end\" transform=\"translate(-7,98.625)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">100,000</text><text text-anchor=\"end\" transform=\"translate(-7,66.75)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">120,000</text><text text-anchor=\"end\" transform=\"translate(-7,34.875)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">140,000</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">160,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"0\" y2=\"-255\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,127.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h446v255h-446Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Quarter: Dec 31, 2023; Revenue: 120000; Region: North\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,63.75L230.433,51L446,46.219\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h446v255h-446Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Quarter: Dec 31, 2023; Revenue: 135000; Region: South\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,39.844L230.433,28.688L446,15.938\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Region' for stroke color with 2 values: North, South\"><g transform=\"translate(466,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v40h-56Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v11h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">North</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v11h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">South</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-78,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Line chart'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Line chart</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg></figure>\n<figure class=\"oods-panel oods-chart\" role=\"figure\" style=\"grid-column:1/span 6;grid-row:3/span 2\" aria-label=\"Area chart of sum of revenue by quarter.\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"610\" height=\"330\" viewBox=\"0 0 610 330\"><rect width=\"610\" height=\"330\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h522v255h-522Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,213)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,170)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,128)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,85)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,42)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Quarter' for a time scale with values from Sunday, 31 December 2023, 6:00:00 PM to Thursday, 29 February 2024, 6:00:00 PM\"><g transform=\"translate(0.5,255.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(54,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(115,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(176,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(237,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(298,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(359,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(420,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(481,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(54.375,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 07</text><text text-anchor=\"middle\" transform=\"translate(115.27499999999999,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 14</text><text text-anchor=\"middle\" transform=\"translate(176.175,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 21</text><text text-anchor=\"middle\" transform=\"translate(237.075,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jan 28</text><text text-anchor=\"middle\" transform=\"translate(297.97499999999997,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 04</text><text text-anchor=\"middle\" transform=\"translate(358.875,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 11</text><text text-anchor=\"middle\" transform=\"translate(419.77500000000003,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 18</text><text text-anchor=\"middle\" transform=\"translate(480.67499999999995,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Feb 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"522\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(261,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Quarter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue' for a linear scale with values from 0 to 300,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,213)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,170)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,128)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,85)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,42)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,258)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,215.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">50,000</text><text text-anchor=\"end\" transform=\"translate(-7,173.00000000000003)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">100,000</text><text text-anchor=\"end\" transform=\"translate(-7,130.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">150,000</text><text text-anchor=\"end\" transform=\"translate(-7,88.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">200,000</text><text text-anchor=\"end\" transform=\"translate(-7,45.49999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">250,000</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">300,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"0\" y2=\"-255\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,127.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Quarter: Dec 31, 2023; Revenue: 255000\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M0,38.25L269.7,25.5L522,16.15L522,255L269.7,255L0,255Z\" fill=\"oklch(0.56 0.1737 264.97)\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Area chart'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Area chart</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg></figure>\n<figure class=\"oods-panel oods-chart\" role=\"figure\" style=\"grid-column:7/span 6;grid-row:3/span 2\" aria-label=\"Scatter plot of units by revenue, split by region.\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"610\" height=\"330\" viewBox=\"0 0 610 330\"><rect width=\"610\" height=\"330\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(51,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h480v255h-480Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,204)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,153)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,102)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,51)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Revenue' for a linear scale with values from 0 to 160,000\"><g transform=\"translate(0.5,255.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(30,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(60,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(90,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(150,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(180,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(210,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(240,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(270,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(300,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(330,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(360,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(390,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(420,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(450,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(30,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">10,000</text><text text-anchor=\"middle\" transform=\"translate(60,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">20,000</text><text text-anchor=\"middle\" transform=\"translate(90,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">30,000</text><text text-anchor=\"middle\" transform=\"translate(120,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">40,000</text><text text-anchor=\"middle\" transform=\"translate(150,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">50,000</text><text text-anchor=\"middle\" transform=\"translate(180,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">60,000</text><text text-anchor=\"middle\" transform=\"translate(210,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">70,000</text><text text-anchor=\"middle\" transform=\"translate(240,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">80,000</text><text text-anchor=\"middle\" transform=\"translate(270,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">90,000</text><text text-anchor=\"middle\" transform=\"translate(300,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">100,000</text><text text-anchor=\"middle\" transform=\"translate(330,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">110,000</text><text text-anchor=\"middle\" transform=\"translate(360,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">120,000</text><text text-anchor=\"middle\" transform=\"translate(390,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">130,000</text><text text-anchor=\"middle\" transform=\"translate(420,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">140,000</text><text text-anchor=\"middle\" transform=\"translate(450,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">150,000</text><text text-anchor=\"end\" transform=\"translate(480,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">160,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"480\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(240,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Units' for a linear scale with values from 0 to 500\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,204)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,153)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,102)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,51)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,258)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,207)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">100</text><text text-anchor=\"end\" transform=\"translate(-7,156)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">200</text><text text-anchor=\"end\" transform=\"translate(-7,105)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">300</text><text text-anchor=\"end\" transform=\"translate(-7,53.999999999999986)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">400</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,255)\" x2=\"0\" y2=\"-255\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,127.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Units</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Revenue: 120000; Units: 340; Region: North\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(360,81.6)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Revenue: 135000; Units: 410; Region: South\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(405,45.90000000000001)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Revenue: 128000; Units: 360; Region: North\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(384,71.4)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Revenue: 142000; Units: 430; Region: South\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(426,35.7)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Revenue: 131000; Units: 372; Region: North\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(393,65.28)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Revenue: 150000; Units: 455; Region: South\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(450,22.949999999999992)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"2\" opacity=\"0.7\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Region' for stroke color with 2 values: North, South\"><g transform=\"translate(498,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v45h-56Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v12.5h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">North</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v12.5h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"oklch(0.46 0.1875 274.17)\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">South</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Scatter plot'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Scatter plot</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg></figure>\n</div>\n</main>\n</body>\n</html>\n",
+    "specRef": "dashboard.render-34bec68d",
+    "specRefCreatedAt": "2026-09-11T21:39:18.384Z",
+    "specRefExpiresAt": "2026-09-11T22:09:18.384Z",
+    "contentHash": "ece6883cc73751e2775c7ef48fc7e2fb4c68684f697d8623446fbcf2c50f969d",
+    "outputHtmlHash": "0bfb8099dc1e1299839b268dee1002dd64d2ce83c0c704d54a1324481db88350"
+  }
+}

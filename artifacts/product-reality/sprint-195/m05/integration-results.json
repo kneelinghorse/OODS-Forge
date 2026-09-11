@@ -1,0 +1,111 @@
+{
+  "mission": "s195-m05",
+  "implementationHead": "52b0da991705c4c565987bc9faf7738ba00d885e",
+  "builderSelfCertified": false,
+  "decisions": [
+    1941,
+    1942
+  ],
+  "learnings": [
+    584,
+    585
+  ],
+  "fullSuiteCapture": "reserved for s195-m07; none run",
+  "checks": {
+    "palette": {
+      "tokenTests": 34,
+      "certifyTests": 136,
+      "skipped": 0,
+      "receipt": "palette/README.md"
+    },
+    "highContrast": {
+      "tests": 165,
+      "files": 7,
+      "skipped": 0,
+      "receipt": "hc/verification.json"
+    },
+    "goldenMigration": {
+      "coreTests": 16,
+      "rendererTests": 27,
+      "mcpTests": 101,
+      "skipped": 0,
+      "receipt": "golden-migration/README.md"
+    },
+    "narrative": {
+      "command": "pnpm exec vitest run --project core tests/verification/how-forge-works.contract.test.ts",
+      "exitCode": 0,
+      "tests": 15,
+      "skipped": 0,
+      "log": "narrative.log"
+    },
+    "browser": {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-browser.ts",
+      "exitCode": 0,
+      "cells": 10,
+      "skipped": 0,
+      "log": "browser-isolated-cache.log",
+      "report": "browser/report.json"
+    },
+    "schema": {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts --check",
+      "exitCode": 0,
+      "log": "hc-schema-check.log"
+    },
+    "apiGeneration": {
+      "command": "pnpm run docs:api",
+      "exitCode": 0,
+      "log": "docs-api.log"
+    },
+    "qualifiedMigrationAndLedger": {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/viz-golden-migration.s195.spec.ts test/contracts/tool-truth.s193.spec.ts",
+      "exitCode": 0,
+      "tests": 15,
+      "skipped": 0,
+      "log": "integration-checks.log"
+    },
+    "ledgerDerivation": {
+      "command": "node scripts/product-reality/s193-tool-truth.mjs --head 52b0da991705c4c565987bc9faf7738ba00d885e --check",
+      "exitCode": 0,
+      "total": 24,
+      "advertisedProductReality": 19,
+      "onDemandContract": 5,
+      "log": "tool-ledger-check.log"
+    }
+  },
+  "runtimeBuildRevision": "9c75a1dbb495ca26c16f2f75ce52095e72adb16e with pending m05 source; compiled receipt records this pre-commit revision accurately",
+  "status": "passed",
+  "goldenMigrationSummary": {
+    "changedFiles": 29,
+    "changedSnapshotFiles": 3,
+    "changedTestFiles": 10,
+    "changedDocumentationFiles": 8,
+    "newSvgEvidence": 56,
+    "movedSnapshotEntries": 14,
+    "matrixRows": 910,
+    "supersededMatrixRows": 231,
+    "previousMissionScopes": 52,
+    "previousMissionMovedScopes": 4,
+    "classes": {
+      "certified-render-matrix": {
+        "total": 8,
+        "superseded": 1
+      },
+      "dashboard-html": {
+        "total": 25,
+        "superseded": 25
+      },
+      "public-census": {
+        "total": 520,
+        "superseded": 104
+      },
+      "public-chart-matrix": {
+        "total": 325,
+        "superseded": 101
+      },
+      "public-pattern": {
+        "total": 32,
+        "superseded": 0
+      }
+    }
+  }
+}

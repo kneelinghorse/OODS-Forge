@@ -1,0 +1,126 @@
+{
+  "request": {
+    "chartType": "heatmap",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "region",
+        "scale": "band"
+      },
+      "y": {
+        "field": "quarter",
+        "scale": "band"
+      },
+      "color": {
+        "field": "revenue",
+        "scale": "linear"
+      }
+    },
+    "theme": "hc",
+    "brand": "A",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "error",
+    "spec": {},
+    "warnings": [],
+    "errors": [
+      {
+        "code": "OODS-V165",
+        "message": "SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "error"
+      }
+    ],
+    "output": {
+      "compact": true
+    }
+  },
+  "certification": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": false,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": false,
+      "contentHash": "cacadc3793f112e0c762550a80c80b18937718c1e7db4e3c570e6bea4278e79d"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "fail",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject",
+      "HC render proof failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented."
+    ],
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "none",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  },
+  "paints": []
+}

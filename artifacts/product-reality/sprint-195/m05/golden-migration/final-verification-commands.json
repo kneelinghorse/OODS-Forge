@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "src/tools/viz.render.fidelity.test.ts",
+      "src/tools/viz.render.geo-fidelity.test.ts",
+      "src/tools/viz.render.network-fidelity.test.ts",
+      "src/tools/dashboard.render.fidelity.test.ts",
+      "test/contracts/viz-recipes.s190.spec.ts",
+      "test/contracts/viz-pattern-registry.s195.spec.ts",
+      "test/contracts/viz-taxonomy.s195.spec.ts",
+      "test/product-reality/viz-certification.s195.spec.ts",
+      "test/product-reality/viz-golden-migration.s195.spec.ts",
+      "test/tools/artifact.certify.echarts-s179-baseline.spec.ts"
+    ],
+    "exitCode": 0,
+    "log": "mcp-qualified-final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--skipLibCheck",
+      "--strict",
+      "--esModuleInterop",
+      "--resolveJsonModule",
+      "--module",
+      "esnext",
+      "--moduleResolution",
+      "bundler",
+      "--target",
+      "es2022",
+      "scripts/product-reality/s190-viz-census.ts",
+      "scripts/product-reality/s195-pattern-census.ts",
+      "scripts/product-reality/s195-viz-matrix.ts",
+      "scripts/product-reality/s195-qualify-viz-matrix.ts"
+    ],
+    "exitCode": 2,
+    "log": "scripts-typecheck.log"
+  }
+]

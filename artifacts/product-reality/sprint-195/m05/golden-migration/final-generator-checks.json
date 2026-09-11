@@ -1,0 +1,88 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--skipLibCheck",
+      "--strict",
+      "--esModuleInterop",
+      "--resolveJsonModule",
+      "--module",
+      "esnext",
+      "--moduleResolution",
+      "bundler",
+      "--target",
+      "es2022",
+      "scripts/product-reality/s190-viz-census.ts",
+      "scripts/product-reality/s195-pattern-census.ts",
+      "scripts/product-reality/s195-viz-matrix.ts",
+      "scripts/product-reality/s195-qualify-viz-matrix.ts"
+    ],
+    "exitCode": 0,
+    "log": "scripts-typecheck-final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s195-qualify-viz-matrix.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "certified-matrix-check.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s190-viz-census.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "census-check.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s195-pattern-census.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "patterns-check.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s195-viz-taxonomy.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "taxonomy-check.log"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/product-reality/s195-attribute-viz-goldens.py",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "attribution-check.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "diff-check.log"
+  }
+]

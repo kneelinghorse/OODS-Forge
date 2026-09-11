@@ -1,0 +1,118 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge
+
+ ✓ |core| tests/tokens/categorical-overlays.s195.test.ts (10 tests) 37ms
+ ❯ |core| tests/tokens/collision-guard.test.ts (7 tests | 3 failed) 496ms
+   × s167 m01 — the token collision guard > exits ZERO on the real, de-collided source tree 130ms
+     → expected '   scope A/base  46 source files\n   …' to contain 'no non-exempt collisions'
+   × s167 m01 — the token collision guard > exits ZERO on an untouched copy of that tree (the sandbox is a faithful baseline) 107ms
+     → expected 1 to be +0 // Object.is equality
+   ✓ s167 m01 — the token collision guard > exits NON-ZERO on a seeded duplicate whose value differs 108ms
+   ✓ s167 m01 — the token collision guard > exits NON-ZERO when a duplicate leaks a brand path OUT of that brand directory 93ms
+   × s167 m01 — the token collision guard > exempts the declared brand overlay chain — which is doing real work, not nothing 16ms
+     → expected [ { …(2) } ] to deeply equal []
+   ✓ s167 m01 — the token collision guard > the exemption is NARROW: a collision spanning two brand directories is NOT exempt 2ms
+   ✓ s167 m01 — the token collision guard > allows only the declared categorical overlays, never arbitrary shared-token shadows 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/collision-guard.test.ts > s167 m01 — the token collision guard > exits ZERO on the real, de-collided source tree
+AssertionError: expected '   scope A/base  46 source files\n   …' to contain 'no non-exempt collisions'
+
+- Expected
++ Received
+
+- no non-exempt collisions
++    scope A/base  46 source files
++    scope A/dark  47 source files
++    scope A/hc    47 source files
++    scope B/base  46 source files
++    scope B/dark  47 source files
++    scope B/hc    47 source files
++ ✖ token collision guard: 1 colliding token path(s)
++   A token path declared in more than one file with differing values is
++   resolved by merge order, not by intent. Delete the duplicate, or move it
++   into the brand overlay chain if it is genuinely brand-scoped.
++
++   viz.scale.categorical.05   [scopes: A/base, A/dark, A/hc, B/base, B/dark, B/hc]
++       src/viz-scales.json                          = "oklch(0.5824 0.1655 23.89)"
++       src/tokens/brands/A/base.json                = "oklch(0.5824 0.1655 23.81)"
++       src/tokens/brands/B/base.json                = "oklch(0.5824 0.1655 23.81)"
++
+
+ ❯ tests/tokens/collision-guard.test.ts:54:17
+     52|   it('exits ZERO on the real, de-collided source tree', () => {
+     53|     const { code, out } = runGuard(TOKENS_PKG);
+     54|     expect(out).toContain('no non-exempt collisions');
+       |                 ^
+     55|     expect(code).toBe(0);
+     56|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  |core| tests/tokens/collision-guard.test.ts > s167 m01 — the token collision guard > exits ZERO on an untouched copy of that tree (the sandbox is a faithful baseline)
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/tokens/collision-guard.test.ts:60:18
+     58|   it('exits ZERO on an untouched copy of that tree (the sandbox is a f…
+     59|     const { code } = runGuard(sandbox);
+     60|     expect(code).toBe(0);
+       |                  ^
+     61|   });
+     62| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  |core| tests/tokens/collision-guard.test.ts > s167 m01 — the token collision guard > exempts the declared brand overlay chain — which is doing real work, not nothing
+AssertionError: expected [ { …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "declarations": [
++       {
++         "file": "src/viz-scales.json",
++         "value": "oklch(0.5824 0.1655 23.89)",
++       },
++       {
++         "file": "src/tokens/brands/A/base.json",
++         "value": "oklch(0.5824 0.1655 23.81)",
++       },
++       {
++         "file": "src/tokens/brands/B/base.json",
++         "value": "oklch(0.5824 0.1655 23.81)",
++       },
++       {
++         "file": "src/tokens/brands/A/dark.json",
++         "value": "oklch(0.64 0.1655 23.89)",
++       },
++     ],
++     "tokenPath": "viz.scale.categorical.05",
++   },
++ ]
+
+ ❯ tests/tokens/collision-guard.test.ts:122:47
+    120| 
+    121|     // With the exemption in place: clean.
+    122|     expect(findCollisions(files, TOKENS_PKG)).toEqual([]);
+       |                                               ^
+    123| 
+    124|     // Without it: the same two files collide on all 44 brand source l…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 14 passed (17)
+   Start at  16:30:00
+   Duration  955ms (transform 80ms, setup 0ms, collect 119ms, tests 533ms, environment 0ms, prepare 169ms)
+

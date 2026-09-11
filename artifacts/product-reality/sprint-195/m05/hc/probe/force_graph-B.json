@@ -1,0 +1,409 @@
+{
+  "request": {
+    "chartType": "force_graph",
+    "network": {
+      "nodes": [
+        {
+          "id": "a",
+          "group": "core"
+        },
+        {
+          "id": "b",
+          "group": "core"
+        },
+        {
+          "id": "c",
+          "group": "edge"
+        }
+      ],
+      "links": [
+        {
+          "source": "a",
+          "target": "b",
+          "value": 3
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "value": 1
+        }
+      ]
+    },
+    "name": "Service graph",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "hc",
+    "brand": "B",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "force_graph",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "color": [
+        "oklch(0.56 0.1737 264.97)",
+        "oklch(0.46 0.1875 274.17)",
+        "oklch(0.6001 0.1195 161.58)",
+        "oklch(0.6558 0.122 80.37)",
+        "oklch(0.5824 0.1655 23.89)",
+        "oklch(0.4755 0.1421 47.13)"
+      ],
+      "series": [
+        {
+          "type": "graph",
+          "name": "Service graph",
+          "layout": "force",
+          "data": [
+            {
+              "id": "a",
+              "name": "a",
+              "symbolSize": 10,
+              "category": 0,
+              "fixed": false
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "symbolSize": 10,
+              "category": 0,
+              "fixed": false
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "symbolSize": 10,
+              "category": 1,
+              "fixed": false
+            }
+          ],
+          "links": [
+            {
+              "source": "a",
+              "target": "b",
+              "value": 3,
+              "lineStyle": {
+                "width": 1
+              }
+            },
+            {
+              "source": "b",
+              "target": "c",
+              "value": 1,
+              "lineStyle": {
+                "width": 1
+              }
+            }
+          ],
+          "categories": [
+            {
+              "name": "core",
+              "itemStyle": {
+                "color": "oklch(0.56 0.1737 264.97)"
+              }
+            },
+            {
+              "name": "edge",
+              "itemStyle": {
+                "color": "oklch(0.46 0.1875 274.17)"
+              }
+            }
+          ],
+          "roam": true,
+          "draggable": true,
+          "label": {
+            "show": true,
+            "position": "right",
+            "formatter": "{b}",
+            "color": "CanvasText"
+          },
+          "labelLayout": {
+            "hideOverlap": true
+          },
+          "force": {
+            "repulsion": 100,
+            "gravity": 0.1,
+            "edgeLength": 30,
+            "friction": 0.6,
+            "layoutAnimation": true
+          },
+          "emphasis": {
+            "focus": "adjacency",
+            "lineStyle": {
+              "width": 4
+            }
+          },
+          "lineStyle": {
+            "color": "source",
+            "curveness": 0.3
+          },
+          "edgeLabel": {
+            "show": false
+          }
+        }
+      ],
+      "tooltip": {
+        "trigger": "item"
+      },
+      "legend": {
+        "show": true,
+        "data": [
+          "core",
+          "edge"
+        ],
+        "textStyle": {
+          "color": "CanvasText"
+        }
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Force-directed graph of Service graph."
+      },
+      "title": {
+        "text": "Service graph",
+        "textStyle": {
+          "color": "CanvasText"
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:force_graph",
+          "name": "Service graph",
+          "a11y": {
+            "description": "Force-directed graph of Service graph."
+          }
+        }
+      }
+    },
+    "a11yDescription": "Force-directed graph of Service graph.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkGraph",
+      "rowCount": 3,
+      "fields": []
+    },
+    "a11y": {
+      "narrative": {
+        "summary": "Service graph covers 3 data points totaling 4 Connections.",
+        "keyFindings": [
+          "High Connections: Connections 2 (b)",
+          "Low Connections: Connections 1 (a)",
+          "Total Connections: 4"
+        ]
+      },
+      "table": {
+        "caption": "Data table for Service graph",
+        "columns": [
+          {
+            "field": "id",
+            "label": "Id",
+            "isNumeric": false
+          },
+          {
+            "field": "group",
+            "label": "Group",
+            "isNumeric": false
+          },
+          {
+            "field": "degree",
+            "label": "Degree",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "id",
+                "text": "a"
+              },
+              {
+                "field": "group",
+                "text": "core"
+              },
+              {
+                "field": "degree",
+                "text": "1"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "id",
+                "text": "b"
+              },
+              {
+                "field": "group",
+                "text": "core"
+              },
+              {
+                "field": "degree",
+                "text": "2"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "id",
+                "text": "c"
+              },
+              {
+                "field": "group",
+                "text": "edge"
+              },
+              {
+                "field": "degree",
+                "text": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:force_graph",
+      "name": "Service graph",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkGraph"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Force-directed graph of Service graph."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-66093970",
+    "specRefCreatedAt": "2026-09-11T21:27:26.545Z",
+    "specRefExpiresAt": "2026-09-11T21:57:26.545Z",
+    "contentHash": "aa4914d00655cad3cd3989500a14804a59c3ba18b6f910d1f56e56f266924a4b",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M262.1 198.2Q281.5 187.6 300 199.8\" fill=\"none\" pointer-events=\"visible\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M300 199.8Q319.6 189.5 337.9 202\" fill=\"none\" pointer-events=\"visible\" stroke=\"oklch(0.56 0.1737 264.97)\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,262.0864,198.2107)\" fill=\"oklch(0.56 0.1737 264.97)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,300.0283,199.7666)\" fill=\"oklch(0.56 0.1737 264.97)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,337.8927,202.0424)\" fill=\"oklch(0.46 0.1875 274.17)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(272.0864 198.2107)\" fill=\"CanvasText\">a</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(310.0283 199.7666)\" fill=\"CanvasText\">b</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(347.8927 202.0424)\" fill=\"CanvasText\">c</text>\n<path d=\"M-5 -5l128.3 0l0 24l-128.3 0Z\" transform=\"translate(240.86 366)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#b7b9be\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<path d=\"M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0\" transform=\"translate(240.86 366)\" fill=\"oklch(0.56 0.1737 264.97)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"legend\" ecmeta_silent=\"true\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" x=\"30\" y=\"7\" transform=\"translate(240.86 366)\" fill=\"CanvasText\">core</text>\n<path d=\"M0 0l53.4 0l0 14l-53.4 0Z\" transform=\"translate(240.86 366)\" fill=\"none\" pointer-events=\"visible\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"legend\" class=\"oods-zr-3\"></path>\n<path d=\"M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0\" transform=\"translate(302.26 366)\" fill=\"oklch(0.46 0.1875 274.17)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"legend\" ecmeta_silent=\"true\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" x=\"30\" y=\"7\" transform=\"translate(302.26 366)\" fill=\"CanvasText\">edge</text>\n<path d=\"M0 0l56.9 0l0 14l-56.9 0Z\" transform=\"translate(302.26 366)\" fill=\"none\" pointer-events=\"visible\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"legend\" class=\"oods-zr-3\"></path>\n<path d=\"M-60.7 -5l121.4 0l0 28l-121.4 0Z\" transform=\"translate(300 20)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#3c3c41\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"CanvasText\">Service graph</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nstroke-width:4;\n}\n.oods-zr-1:hover {\ncursor:pointer;\n}\n.oods-zr-2:hover {\npointer-events:none;\n}\n.oods-zr-3:hover {\ncursor:pointer;\nfill:rgba(0,0,0,0);\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "753214aaef5af5d1b7a1ba9f5a12e40b41e7c49a9977a9f90f04bfd441934a74",
+    "svgBytes": 4037,
+    "svgRef": "viz.render-01ecb30f",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "B"
+    }
+  },
+  "certification": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V173"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "aa4914d00655cad3cd3989500a14804a59c3ba18b6f910d1f56e56f266924a4b",
+      "renderHash": "753214aaef5af5d1b7a1ba9f5a12e40b41e7c49a9977a9f90f04bfd441934a74"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkGraph is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/B.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "B",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/B.",
+        "reason": "forced-colors"
+      }
+    ]
+  },
+  "paints": [
+    "Canvas",
+    "none",
+    "oklch(0.56 0.1737 264.97)",
+    "oklch(0.46 0.1875 274.17)",
+    "CanvasText",
+    "rgb(0,0,0)",
+    "#b7b9be",
+    "#3c3c41"
+  ]
+}

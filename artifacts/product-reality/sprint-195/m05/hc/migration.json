@@ -1,0 +1,257 @@
+{
+  "mission": "s195-m05",
+  "base": "9c75a1dbb495ca26c16f2f75ce52095e72adb16e",
+  "decision": "HC raw scope paints and CSS system keywords; no invented server palette. The necessary public code.generate theme boundary is explicitly included for real React/Vue app proof (decision1941).",
+  "schemaGenerator": "scripts/product-reality/s195-hc-schema.ts",
+  "schemaFormatting": "Generator canonicalizes JSON indentation; semantic movement is bounded below. Generated types rebuilt from these schemas. The separate draft07 DashboardSpec IR was restored after an initial erroneous full copy from the draft2020 tool schema; no IR schema change remains.",
+  "rendering": "Raw emitted SVG validation checks fill/stroke/stop-color attribute and inline/style-block paints against current HC token declarations. Only none, transparent and local paint-server references are structural exceptions. Actual undeclared/default/fallback colors return typed V165; no engine/type denylist is used.",
+  "declaredHCOutcome": {
+    "renderedTypes": [
+      "bar",
+      "line",
+      "area",
+      "scatter"
+    ],
+    "typedDeferredTypes": [
+      "heatmap",
+      "treemap",
+      "sunburst",
+      "sankey",
+      "chord",
+      "force_graph",
+      "choropleth",
+      "bubble_map",
+      "flow_map"
+    ],
+    "brands": [
+      "A",
+      "B"
+    ],
+    "renderedScopes": 8,
+    "typedDeferredScopes": 18
+  },
+  "certify": "HC contrastResults reason forced-colors is required by generated schema, verdict is exempt and measured false. Actual rendering remains load-bearing for determinism; unsupported HC paints fail determinism/conformance and retain failure notes. A11y/accuracy rules are unchanged; spec-only ECharts remains uncertified/null.",
+  "schemas": [
+    {
+      "file": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "beforeSha256": "3ba8b6cffa8ae3daa5b11684d909f62816f26cd85c2f6bb2393450e8294e6807",
+      "afterSha256": "85f4307d61873898c2c99510069135734ee6b72193357b618807d097655d4e19",
+      "semanticChanges": [
+        {
+          "path": "properties.theme.description",
+          "before": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.",
+          "after": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
+        },
+        {
+          "path": "properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/viz.render.output.json",
+      "beforeSha256": "9ed124c915b4a936cf2f72cf5c4095a6dab2dad4d39940c4d56d206eead5726b",
+      "afterSha256": "e831078fd0472526975ea97c8841a2f2a8e93d7eb75256b3c062be711956a607",
+      "semanticChanges": [
+        {
+          "path": "properties.render.properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "beforeSha256": "a46bf263eca396aa57230a97bae6aa9bd6b83bd63385fa550a904ecaecb44415",
+      "afterSha256": "e44904e858e2299f172eba19970f6d72d3c4154089ef02947df47fd84cd316bd",
+      "semanticChanges": [
+        {
+          "path": "properties.theme.description",
+          "before": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.",
+          "after": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
+        },
+        {
+          "path": "properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/dashboard.render.output.json",
+      "beforeSha256": "3ad0614cf890460406dc8db3b4dacf4482ec5c19ab636423d99ecc2a3698976e",
+      "afterSha256": "62a776787c0d7e5178a191f47876b041ecb7771639ea24edf7413d1cb7704e34",
+      "semanticChanges": [
+        {
+          "path": "properties.html.description",
+          "before": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical.",
+          "after": "Opt-in self-contained dashboard HTML with scoped chart SVG, KPI tiles and error placeholders. Light/dark renders all admitted chart types. HC chart rendering preserves declared token colors; unsupported renderer paints become typed error panels under the existing placeholder/omit policy."
+        },
+        {
+          "path": "properties.output.properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        },
+        {
+          "path": "properties.outputHtmlHash.description",
+          "before": "Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.",
+          "after": "SHA-256 over the exact returned HTML bytes. Successful panels contain scoped SVG; failed panels follow the declared placeholder/omit policy, including measured HC render deferrals. This per-call identity is distinct from a certified runtime-matrix renderHashEpoch claim."
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+      "beforeSha256": "0297eeb1f60bdb060f0cfe2af93aaec5f5e5c6aefa015397226924af8344b340",
+      "afterSha256": "f416447425973e483ce398296718df83a9d4bbd36ffe5acb3fe9cd1e3c9429b8",
+      "semanticChanges": [
+        {
+          "path": "description",
+          "before": "Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
+          "after": "Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC contrast is exempt with reason forced-colors and no numeric grade; determinism, a11y and accuracy retain their normal evaluation. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio."
+        },
+        {
+          "path": "properties.theme.description",
+          "before": "CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope.",
+          "after": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
+        },
+        {
+          "path": "properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/artifact.certify.output.json",
+      "beforeSha256": "72cdfbf002c1b5f90e535e9499275ce2540df091c55f81ec63c9d8eb0958cbe3",
+      "afterSha256": "51bdbfbfc0f58b602bc476543b75636a084d8487553a2608a1557a47c2ba6082",
+      "semanticChanges": [
+        {
+          "path": "properties.contrastResults.items.allOf",
+          "before": null,
+          "after": [
+            {
+              "if": {
+                "properties": {
+                  "theme": {
+                    "const": "hc"
+                  }
+                },
+                "required": [
+                  "theme"
+                ]
+              },
+              "then": {
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "verdict": {
+                    "const": "exempt"
+                  },
+                  "measured": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "path": "properties.contrastResults.items.properties.reason",
+          "before": null,
+          "after": {
+            "const": "forced-colors",
+            "description": "HC contrast is delegated to the user agent forced-colors palette; no numeric server grade is claimed."
+          }
+        },
+        {
+          "path": "properties.contrastResults.items.properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        },
+        {
+          "path": "properties.pillars.properties.contrast.description",
+          "before": "Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.",
+          "after": "Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded. HC contrast is exempt with contrastResults reason forced-colors; the server preserves declared colors and makes no numeric contrast claim."
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    },
+    {
+      "file": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "beforeSha256": "3b9f8ac91e4d6c2d3c7a0c05f633cfb1e4d5d5a43a9f4ae04ed5fb54123e6149",
+      "afterSha256": "102726ac977147a6cbdbcd39bae7974eb66a79b6b1aaade6a5391da26da687a5",
+      "semanticChanges": [
+        {
+          "path": "properties.options.properties.theme.enum",
+          "before": [
+            "light",
+            "dark"
+          ],
+          "after": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        }
+      ],
+      "unrelatedSchemaSemanticsUnchanged": true
+    }
+  ]
+}

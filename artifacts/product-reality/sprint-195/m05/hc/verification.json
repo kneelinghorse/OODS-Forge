@@ -1,0 +1,200 @@
+{
+  "mission": "s195-m05 HC runtime and boundaries",
+  "status": "verified; source frozen",
+  "root": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+  "tests": {
+    "currentUnique": 165,
+    "files": 7,
+    "skipped": 0,
+    "breakdown": {
+      "hcBoundary": 22,
+      "existingOperandProfile": 21,
+      "chromeAndScope": 27,
+      "publicSvgAndDashboard": 95
+    },
+    "note": "Accumulated targeted passing runs; no single165-test run or full-package coverage claim."
+  },
+  "built": "built.json",
+  "migration": "migration.json",
+  "rawRendererProbe": "probe/; intentional pre-guard observations contain undeclared fallback colors and are not shipped successful HC verdicts.",
+  "commands": [
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/probe pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "renderer-probe.log",
+      "exitCode": 1,
+      "tests": 0,
+      "resolution": "Initial generator incorrectly copied the draft2020 tool schema onto the separate draft07 DashboardSpec IR. Restored that file and removed the copy; no IR schema mover remains."
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/probe pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "renderer-probe-corrected.log",
+      "exitCode": 1,
+      "tests": 15,
+      "passed": 13,
+      "failed": 2,
+      "resolution": "Actual raw renderer outputs retained: ECharts logs illegal oklch falling back to black; heatmap renders a non-token library palette. Added shared HC paint validation. Two dashboard fixture inputs accidentally included svgMark, corrected."
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "boundary-initial.log",
+      "exitCode": 0,
+      "tests": 15,
+      "passed": 15
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "boundary-expanded.log",
+      "exitCode": 1,
+      "tests": 22,
+      "passed": 18,
+      "failed": 4,
+      "resolution": "Dashboard fixture name is not a panel field; map to title. Generated detail is a component artifact without index.html; removed incorrect harness assertion and retain real generated SVG."
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "boundary-final.log",
+      "exitCode": 0,
+      "tests": 22,
+      "passed": 22
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "boundary-replayable.log",
+      "exitCode": 0,
+      "tests": 22,
+      "passed": 22,
+      "notes": "Retain raw dashboard request before AJV defaults mutate failed oneOf branches; apply actual AJV once per dispatch."
+    },
+    {
+      "command": "S195_HC_RECEIPTS=artifacts/product-reality/sprint-195/m05/hc/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts",
+      "log": "boundary-final-notes.log",
+      "exitCode": 0,
+      "tests": 22,
+      "passed": 22,
+      "notes": "Final HC render-fault note asserts contrast remains forced-colors exempt; no ungradeable contrast claim."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts",
+      "log": "schema-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts",
+      "log": "schema-codegen-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts",
+      "log": "schema-final-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-codegen-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-final-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/viz-core run build",
+      "log": "core-initial-build.log",
+      "exitCode": 0,
+      "notes": "Initial build enables census; final build embeds generated measured registry after token build."
+    },
+    {
+      "command": "pnpm --filter @oods/viz-core run build",
+      "log": "core-final-build.log",
+      "exitCode": 0,
+      "notes": "Initial build enables census; final build embeds generated measured registry after token build."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "log": "server-build.log",
+      "exitCode": 0,
+      "notes": "Final rebuild includes HC-specific failure-note truth correction; no pixel/core/registry change."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "log": "server-final-build.log",
+      "exitCode": 0,
+      "notes": "Final rebuild includes HC-specific failure-note truth correction; no pixel/core/registry change."
+    },
+    {
+      "command": "pnpm exec vitest run packages/viz-core/src/tokens/scoped-resolution.spec.ts packages/viz-core/src/tokens/oods-vega-config.spec.ts packages/viz-core/src/tokens/oods-echarts-chrome.spec.ts packages/mcp-server/src/tools/viz.render.svg.test.ts packages/mcp-server/src/tools/dashboard.render.test.ts packages/mcp-server/test/product-reality/certify-operand-profile.s195.spec.ts",
+      "log": "regression.log",
+      "exitCode": 0,
+      "tests": 21,
+      "passed": 21,
+      "notes": "Root configuration selected only the21 product-reality certify tests. The five excluded package files are not claimed executed by this command; explicit package-config runs follow."
+    },
+    {
+      "command": "pnpm exec vitest run src/tokens/scoped-resolution.spec.ts src/tokens/oods-vega-config.spec.ts src/tokens/oods-echarts-chrome.spec.ts",
+      "log": "core-regression.log",
+      "exitCode": 1,
+      "cwd": "packages/viz-core",
+      "tests": 27,
+      "passed": 27,
+      "notes": "All selected tests pass, but package-wide coverage threshold fails for a three-file targeted run; no full-package coverage claim."
+    },
+    {
+      "command": "pnpm exec vitest run --coverage.enabled=false src/tokens/scoped-resolution.spec.ts src/tokens/oods-vega-config.spec.ts src/tokens/oods-echarts-chrome.spec.ts",
+      "log": "core-regression-targeted.log",
+      "exitCode": 0,
+      "cwd": "packages/viz-core",
+      "tests": 27,
+      "passed": 27,
+      "notes": "Targeted tests executed explicitly without full-package coverage requirement."
+    },
+    {
+      "command": "pnpm exec vitest run src/tools/viz.render.svg.test.ts src/tools/dashboard.render.test.ts",
+      "log": "server-regression.log",
+      "exitCode": 0,
+      "cwd": "packages/mcp-server",
+      "tests": 95,
+      "passed": 95
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-built-receipt.ts",
+      "log": "built.log",
+      "exitCode": 1,
+      "notes": "Revalidating a retained post-AJV dashboard request exposed existing getAjv useDefaults mutation (KPI branch adds aggregate to a chart). Source receipt capture corrected to retain raw request; runtime change deferred."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-built-receipt.ts",
+      "log": "built-replay.log",
+      "exitCode": 0,
+      "observations": "built.json:26 render scopes,8rendered18typedDeferred,26certify outputs,2dashboards,2generated frameworks; actual compiled outputs equal source observations."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-built-receipt.ts",
+      "log": "built-final.log",
+      "exitCode": 0,
+      "observations": "built.json:26 render scopes,8rendered18typedDeferred,26certify outputs,2dashboards,2generated frameworks; actual compiled outputs equal source observations."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts --check",
+      "log": "schema-check.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-hc-schema.ts --check",
+      "log": "schema-final-check.log",
+      "exitCode": 0
+    }
+  ],
+  "limitations": [
+    "HC SVG pixels are measured for4types and typed-deferred for9types, bothbrands. No server-side system-color palette is invented.",
+    "HC contrast is exempt forced-colors; determinism fails when actual renderer output cannot preserve declared HC paints, leaving other rule semantics unchanged.",
+    "Browser forcedColorsactive proof is owned by root and retained under ../browser (10 measuredcells).",
+    "Existing AJV useDefaults mutation on oneOf dashboard chart panels was exposed by request replay; captured accurately, no adjacent runtime change made.",
+    "No golden, registry, brand canonical token, docs, PM2, CMOS, commit or full-suite capture owned by this slice."
+  ]
+}

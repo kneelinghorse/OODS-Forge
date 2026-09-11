@@ -1,0 +1,1527 @@
+<!doctype html><html data-brand="B" data-theme="hc"><head><style>/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --oods-viz-scale-sequential-01: oklch(0.94 0.025 250); /** Sequential scale step 01 – lightest tint for subtle backgrounds. */
+  --oods-viz-scale-sequential-02: oklch(0.84 0.04 250); /** Sequential scale step 02 – hover states on pale data regions. */
+  --oods-viz-scale-sequential-03: oklch(0.74 0.055 250); /** Sequential scale step 03 – low-emphasis series fills. */
+  --oods-viz-scale-sequential-04: oklch(0.64 0.07 250); /** Sequential scale step 04 – balanced fill for stacked charts. */
+  --oods-viz-scale-sequential-05: oklch(0.54 0.09 250); /** Sequential scale step 05 – baseline data hue. */
+  --oods-viz-scale-sequential-06: oklch(0.44 0.11 250); /** Sequential scale step 06 – hover/highlight overlay. */
+  --oods-viz-scale-sequential-07: oklch(0.34 0.13 250); /** Sequential scale step 07 – saturated accent for dense marks. */
+  --oods-viz-scale-sequential-08: oklch(0.24 0.14 250); /** Sequential scale step 08 – darker focus for dense data. */
+  --oods-viz-scale-sequential-09: oklch(0.14 0.15 250); /** Sequential scale step 09 – highest contrast extreme. */
+  --oods-viz-scale-diverging-neg-05: oklch(0.22 0.09 210); /** Diverging scale far-negative anchor. */
+  --oods-viz-scale-diverging-neg-04: oklch(0.32 0.08 210); /** Diverging scale negative level 4. */
+  --oods-viz-scale-diverging-neg-03: oklch(0.42 0.07 210); /** Diverging scale negative level 3. */
+  --oods-viz-scale-diverging-neg-02: oklch(0.52 0.06 210); /** Diverging scale negative level 2. */
+  --oods-viz-scale-diverging-neg-01: oklch(0.62 0.05 210); /** Diverging scale near-neutral negative. */
+  --oods-viz-scale-diverging-neutral: oklch(0.82 0.01 260); /** Diverging scale midpoint neutral. */
+  --oods-viz-scale-diverging-pos-01: oklch(0.62 0.06 25); /** Diverging scale near-neutral positive. */
+  --oods-viz-scale-diverging-pos-02: oklch(0.52 0.07 25); /** Diverging scale positive level 2. */
+  --oods-viz-scale-diverging-pos-03: oklch(0.42 0.08 25); /** Diverging scale positive level 3. */
+  --oods-viz-scale-diverging-pos-04: oklch(0.32 0.09 25); /** Diverging scale positive level 4. */
+  --oods-viz-scale-diverging-pos-05: oklch(0.22 0.11 25); /** Diverging scale far-positive anchor. */
+  --oods-viz-scale-categorical-01: oklch(0.56 0.1737 264.97); /** Categorical slot 01 (blue). Inline oklch, decoupled from sys.status.info.icon (s146 F1) — re-spaced so the palette clears min-pairwise ΔE00 ≥ 10 over CVD. */
+  --oods-viz-scale-categorical-02: oklch(0.46 0.1875 274.17); /** Categorical slot 02 (indigo). Inline oklch, decoupled from sys.status.accent.icon (s146 F1). */
+  --oods-viz-scale-categorical-03: oklch(0.6001 0.1195 161.58); /** Categorical slot 03 (green). Inline oklch, decoupled from sys.status.success.icon (s146 F1). */
+  --oods-viz-scale-categorical-04: oklch(0.6488 0.122 80.37); /** Categorical slot 04 (gold). Lightness reduced by 0.007 at fixed hue/chroma for >=3:1 on both light canvases (s191-m01). Inline oklch, decoupled from sys.status.warning.icon (s146 F1). */
+  --oods-viz-scale-categorical-05: oklch(0.5824 0.1655 23.81); /** Light categorical slot 05; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-viz-scale-categorical-06: oklch(0.4755 0.1421 47.13); /** Categorical slot 06 (rust). Inline oklch, decoupled from sys.status.neutral.icon and re-chromatized from the old near-gray slate (s146 F1 Q3) — a distinct warm hue that stays CVD-separable from slots 01-05. */
+  --oods-viz-size-point-01: 3px; /** Point glyph size XS for dense scatterplots. */
+  --oods-viz-size-point-02: 5px; /** Point glyph size SM for multi-series overlays. */
+  --oods-viz-size-point-03: 7px; /** Point glyph size MD used as default marker radius. */
+  --oods-viz-size-point-04: 10px; /** Point glyph size LG for highlighted selections. */
+  --oods-viz-size-point-05: 14px; /** Point glyph size XL for focus or annotations. */
+  --oods-viz-size-stroke-01: 1px; /** Stroke width hairline (grid, helper lines). */
+  --oods-viz-size-stroke-02: 2px; /** Stroke width default for lines and outlines. */
+  --oods-viz-size-stroke-03: 3px; /** Stroke width heavy for emphasis/selection. */
+  --oods-viz-size-stroke-04: 4px; /** Stroke width extreme for focus/highlight bands. */
+  --oods-viz-size-bar-narrow: 12px; /** Bar width for compact spark-style charts. */
+  --oods-viz-size-bar-standard: 18px; /** Bar width default for dashboard usage. */
+  --oods-viz-size-bar-wide: 24px; /** Bar width for storytelling layouts or focus states. */
+  --oods-viz-map-basemap-stroke-width: 0.5px; /** Base map stroke width for subtle boundary lines. */
+  --oods-viz-map-region-stroke-width: 1px; /** Region boundary stroke width. */
+  --oods-viz-map-region-hover-stroke-width: 2px; /** Region stroke width on hover state. */
+  --oods-viz-map-symbol-stroke-width: 1px; /** Symbol outline stroke width. */
+  --oods-viz-map-symbol-min-radius: 4px; /** Minimum symbol radius for bubble maps. */
+  --oods-viz-map-symbol-max-radius: 40px; /** Maximum symbol radius for bubble maps. */
+  --oods-viz-map-route-stroke-opacity: 0.6; /** Default opacity for route/flow lines. */
+  --oods-viz-map-route-min-width: 1px; /** Minimum route line width. */
+  --oods-viz-map-route-max-width: 10px; /** Maximum route line width for high-volume flows. */
+  --oods-motion-duration-fast: 120ms; /** Snappy micro interactions such as hovers. */
+  --oods-motion-duration-base: 180ms; /** Default interaction tempo for focus, chips, and buttons. */
+  --oods-motion-duration-slow: 320ms; /** Long-form transitions like banners entering the viewport. */
+  --oods-motion-easing-standard: cubic-bezier(0.2, 0, 0.38, 1); /** Primary ease-out curve for UI transitions. */
+  --oods-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1); /** Emphasized ease for entrance motion requiring more weight. */
+  --oods-motion-easing-linear: cubic-bezier(0, 0, 1, 1); /** Linear fallback for reduced-motion scenarios. */
+  --oods-motion-transition-hover-delay: 0ms; /** Hover affordances across buttons, chips, and cards. */
+  --oods-motion-transition-focus-delay: 0ms; /** Focus outlines and glow elevation. */
+  --oods-motion-transition-chip-in-delay: 0ms; /** Chip selection and entry into filter groups. */
+  --oods-motion-transition-chip-out-delay: 0ms; /** Chip deselection or removal. */
+  --oods-motion-transition-banner-reveal-delay: 20ms; /** Banner entrance along the vertical axis. */
+  --oods-motion-reduced-duration-fast: 0ms; /** Instant feedback for motion-sensitive contexts. */
+  --oods-motion-reduced-duration-base: 0ms; /** Primary reduced-motion tempo. */
+  --oods-motion-reduced-duration-slow: 0ms; /** Long-form transitions collapse to zero in reduced motion. */
+  --oods-motion-reduced-transition-hover-delay: 0ms; /** Hover states snap immediately when motion is reduced. */
+  --oods-motion-reduced-transition-focus-delay: 0ms; /** Focus rings become instant in reduced-motion. */
+  --oods-motion-reduced-transition-chip-in-delay: 0ms; /** Chip selection occurs without momentum. */
+  --oods-motion-reduced-transition-chip-out-delay: 0ms; /** Chip removal happens immediately. */
+  --oods-motion-reduced-transition-banner-reveal-delay: 0ms; /** Banner reveal falls back to an instant appearance. */
+  --oods-shadow-elevation-card-offset-x: 0px; /** Baseline elevation shadow for cards and raised panels. */
+  --oods-shadow-elevation-card-offset-y: 16px; /** Baseline elevation shadow for cards and raised panels. */
+  --oods-shadow-elevation-card-blur: 40px; /** Baseline elevation shadow for cards and raised panels. */
+  --oods-shadow-elevation-card-spread: -12px; /** Baseline elevation shadow for cards and raised panels. */
+  --oods-shadow-elevation-card-color: rgba(15, 23, 42, 0.12); /** Baseline elevation shadow for cards and raised panels. */
+  --oods-shadow-elevation-overlay-offset-x: 0px; /** High elevation shadow used for overlays and dialogs. */
+  --oods-shadow-elevation-overlay-offset-y: 24px; /** High elevation shadow used for overlays and dialogs. */
+  --oods-shadow-elevation-overlay-blur: 56px; /** High elevation shadow used for overlays and dialogs. */
+  --oods-shadow-elevation-overlay-spread: -16px; /** High elevation shadow used for overlays and dialogs. */
+  --oods-shadow-elevation-overlay-color: rgba(15, 23, 42, 0.24); /** High elevation shadow used for overlays and dialogs. */
+  --ref-border-width-hairline: 1px; /** Hairline border width for foundational surfaces. */
+  --ref-border-width-bold: 2px; /** Bold border width for emphasis and outlines. */
+  --ref-border-radius-sm: 8px; /** Small radius for banners and compact surfaces. */
+  --ref-border-radius-md: 12px; /** Medium radius for cards and panels. */
+  --ref-border-radius-pill: 999px; /** Pill radius for chip and badge treatments. */
+  --ref-border-style-solid: solid; /** Solid border style for primary UI elements. */
+  --ref-color-primary-100: oklch(0.9563 0.0277 225.69); /** Primary 100; airy accent surface drawn from Theme 0 ramp. */
+  --ref-color-primary-300: oklch(0.7031 0.1967 274.55); /** Primary 300; luminous accent for dark hover states. */
+  --ref-color-primary-400: oklch(0.6631 0.1867 274.55); /** Primary 400; elevated accent for dark mode focus/hover. */
+  --ref-color-primary-500: oklch(0.5631 0.1717 274.55); /** Primary 500; core interactive colour for Theme 0. */
+  --ref-color-primary-600: oklch(0.4631 0.1867 274.55); /** Primary 600; hover state reference for interactive surfaces. */
+  --ref-color-primary-700: oklch(0.4231 0.1967 274.55); /** Primary 700; pressed state reference for interactive surfaces. */
+  --ref-color-neutral-0: oklch(1 0 0); /** Neutral 0; pure white anchor for the lightest surfaces. */
+  --ref-color-neutral-50: oklch(0.9913 0.0013 286.38); /** Neutral 50; luminous canvas background for Theme 0. */
+  --ref-color-neutral-100: oklch(0.9816 0.0017 247.84); /** Neutral 100; primary raised surface. */
+  --ref-color-neutral-200: oklch(0.9417 0.0052 247.88); /** Neutral 200; subtle surface and soft border tone. */
+  --ref-color-neutral-300: oklch(0.8875 0.0147 264.49); /** Neutral 300; structural border contrast for light UI. */
+  --ref-color-neutral-400: oklch(0.7951 0.0148 268.46); /** Neutral 400; disabled foreground tone. */
+  --ref-color-neutral-500: oklch(0.6929 0.0198 269.00); /** Neutral 500; tertiary text and icon tone. */
+  --ref-color-neutral-600: oklch(0.5595 0.0225 270.01); /** Neutral 600; high-contrast muted text tone. */
+  --ref-color-neutral-700: oklch(0.5109 0.0264 269.16); /** Neutral 700; secondary body text tone. */
+  --ref-color-neutral-800: oklch(0.4239 0.021 267.53); /** Neutral 800; dense iconography tone. */
+  --ref-color-neutral-900: oklch(0.313 0.0171 266.40); /** Neutral 900; high-contrast foreground tone. */
+  --ref-color-info-100: oklch(0.9685 0.0148 260.73); /** Info 100; calming informational surface. */
+  --ref-color-info-300: oklch(0.8191 0.0763 260.81); /** Info 300; informational border tone. */
+  --ref-color-info-700: oklch(0.5466 0.1806 263.48); /** Info 700; informational icon tone. */
+  --ref-color-info-900: oklch(0.3847 0.1344 263.74); /** Info 900; informational headline/text tone. */
+  --ref-color-success-100: oklch(0.9743 0.0192 167.94); /** Success 100; success feedback surface. */
+  --ref-color-success-300: oklch(0.8671 0.0772 165.25); /** Success 300; success border tone. */
+  --ref-color-success-700: oklch(0.6005 0.1199 161.34); /** Success 700; success icon tone. */
+  --ref-color-success-900: oklch(0.4315 0.0821 163.04); /** Success 900; success text tone. */
+  --ref-color-warning-100: oklch(0.9795 0.026 90.09); /** Warning 100; warning feedback surface. */
+  --ref-color-warning-300: oklch(0.8949 0.1177 87.87); /** Warning 300; warning border tone. */
+  --ref-color-warning-700: oklch(0.6573 0.1198 81.65); /** Warning 700; warning icon tone. */
+  --ref-color-warning-900: oklch(0.4914 0.1012 82.20); /** Warning 900; warning text tone. */
+  --ref-color-critical-100: oklch(0.9672 0.0163 12.78); /** Critical 100; error feedback surface. */
+  --ref-color-critical-300: oklch(0.824 0.0834 19.01); /** Critical 300; error border tone. */
+  --ref-color-critical-700: oklch(0.6039 0.1827 24.43); /** Critical 700; error icon tone. */
+  --ref-color-critical-900: oklch(0.465 0.147 24.94); /** Critical 900; error text tone. */
+  --ref-color-archive-100: oklch(0.955 0.012 280); /** Archive 100; muted lavender-grey surface for archived entities. */
+  --ref-color-archive-300: oklch(0.79 0.04 280); /** Archive 300; subtle border tone for archive status. */
+  --ref-color-archive-700: oklch(0.56 0.065 280); /** Archive 700; muted indigo icon tone. */
+  --ref-color-archive-900: oklch(0.40 0.05 280); /** Archive 900; deep indigo text for archived items. */
+  --ref-space-inset-compact: 8px; /** Compact padding for dense containers. */
+  --ref-space-inset-default: 24px; /** Default padding for primary cards and panels. */
+  --ref-space-stack-compact: 12px; /** Tight vertical spacing between related items. */
+  --ref-space-stack-default: 20px; /** Standard vertical spacing between sections. */
+  --ref-space-inline-xs: 8px; /** Compact horizontal spacing. */
+  --ref-space-inline-sm: 14px; /** Small horizontal spacing used in chip contexts. */
+  --ref-space-scale-sm: 8px; /** Small geometry scalar (= 0.5rem); seeds the size.spacing contract. */
+  --ref-space-scale-md: 14px; /** Medium geometry scalar (= 0.875rem); seeds the size.spacing contract. */
+  --ref-space-scale-lg: 20px; /** Large geometry scalar (= 1.25rem); continues the +0.375rem scale ramp (sm 8 / md 14 / lg 20). Completes the t-shirt set so emitter md/sm/lg all resolve (sprint-125 m03). */
+  --ref-shadow-color-subtle: rgba(15, 23, 42, 0.12); /** Soft ambient shadow colour for elevated surfaces. */
+  --ref-shadow-color-strong: rgba(15, 23, 42, 0.24); /** Stronger shadow colour for high elevation overlays. */
+  --ref-typography-families-sans: 'DM Sans', '"Helvetica Neue"', Helvetica, Arial, sans-serif; /** Brand A primary sans-serif — Aeonik with system fallbacks. */
+  --ref-typography-families-display: 'Cormorant Garamond', Cormorant, Georgia, '"Times New Roman"', serif; /** Brand A display serif — Canela for large editorial headings. */
+  --ref-typography-weights-regular: 400; /** Standard reading weight. */
+  --ref-typography-weights-medium: 500; /** Medium emphasis for supporting text and labels. */
+  --ref-typography-weights-semibold: 600; /** Semibold weight for headings and key UI labels. */
+  --ref-typography-weights-bold: 700; /** Bold weight for hero headings and emphasis. */
+  --ref-typography-weights-light: 300; /** Light weight for editorial display headings. */
+  --ref-typography-sizes-xs: 12px; /** Caption scale. */
+  --ref-typography-sizes-sm: 14px; /** Compact body/label scale. */
+  --ref-typography-sizes-md: 16px; /** Default reading scale. */
+  --ref-typography-sizes-lg: 20px; /** Large supporting heading scale. */
+  --ref-typography-sizes-xl: 24px; /** Primary heading scale. */
+  --ref-typography-sizes-xxl: 32px; /** Hero heading scale. */
+  --ref-typography-sizes-display-sm: 48px; /** Small display heading — section heroes and feature titles. */
+  --ref-typography-sizes-display-md: 64px; /** Medium display heading — page hero titles. */
+  --ref-typography-sizes-display-lg: 80px; /** Large display heading — homepage hero statement. */
+  --ref-typography-line-height-tight: 120%; /** Tight rhythm for headlines and compact contexts. */
+  --ref-typography-line-height-standard: 140%; /** Baseline rhythm for UI text. */
+  --ref-typography-line-height-relaxed: 150%; /** Relaxed rhythm for dense reading. */
+  --ref-typography-line-height-loose: 160%; /** Loose rhythm for long-form detail views. */
+  --ref-typography-letter-spacing-tight: -0.01em; /** Tight tracking for large headings. */
+  --ref-typography-letter-spacing-default: 0em; /** Neutral tracking for body copy. */
+  --ref-typography-letter-spacing-wide: 0.08em; /** Wide tracking for uppercase captions. */
+  --oods-overlay-backdrop-opacity: 0.5; /** Default backdrop opacity for overlays. */
+  --oods-overlay-transition-open-delay: 0ms; /** Overlay open transition; collapses under reduced motion. */
+  --oods-overlay-transition-close-delay: 0ms; /** Overlay close transition; collapses under reduced motion. */
+  --sys-breakpoint-sm: 640; /** 640px. Number-typed so every platform emits a bare literal; a dimension would emit an invalid raw string into Swift and Kotlin. Value adopted from the installed Tailwind default, not invented — the repo already renders against it. */
+  --sys-breakpoint-md: 768; /** 768px. Tablet-portrait class, and the width the view-context rail collapses at (authored as a 48rem @container threshold). */
+  --sys-breakpoint-lg: 1024; /** 1024px. Tablet-landscape / small-laptop class. */
+  --sys-breakpoint-xl: 1280; /** 1280px. The viewport the VRT and a11y-contract capture suites run at. */
+  --sys-breakpoint-2xl: 1536; /** 1536px. Zero 2xl: usages in the repo today; it ships so the scale is complete and the generated Tailwind screens map stays identical to the framework default it replaces. Keys are authored ascending sm -> 2xl because Tailwind emits @media blocks in config order. */
+  --sys-control-gap: 0.5rem; /** Semantic component geometry: control gap. */
+  --sys-control-gap-compact: 0.25rem; /** Semantic component geometry: control gap compact. */
+  --sys-control-gap-tight: 0.375rem; /** Semantic component geometry: control gap tight. */
+  --sys-control-padding-block: 0.625rem; /** Semantic component geometry: control padding block. */
+  --sys-control-padding-inline: 1rem; /** Semantic component geometry: control padding inline. */
+  --sys-field-padding-inline: 0.75rem; /** Semantic component geometry: field padding inline. */
+  --sys-badge-padding-block: 0.125rem; /** Semantic component geometry: badge padding block. */
+  --sys-badge-padding-inline: 0.5rem; /** Semantic component geometry: badge padding inline. */
+  --sys-inset-sm: 0.75rem; /** Semantic component geometry: inset sm. */
+  --sys-inset-md: 1rem; /** Semantic component geometry: inset md. */
+  --sys-stack-xs: 0.5rem; /** Semantic component geometry: stack xs. */
+  --sys-stack-sm: 0.75rem; /** Semantic component geometry: stack sm. */
+  --sys-stack-md: 1rem; /** Semantic component geometry: stack md. */
+  --sys-inline-xs: 0.5rem; /** Semantic component geometry: inline xs. */
+  --sys-inline-sm: 0.75rem; /** Semantic component geometry: inline sm. */
+  --sys-inline-md: 1rem; /** Semantic component geometry: inline md. */
+  --sys-progress-height: 0.5rem; /** Semantic component geometry: progress height. */
+  --sys-radius-control: 0.5rem; /** Semantic component geometry: radius control. */
+  --sys-shadow-panel: 0 0.25rem 1rem rgb(0 0 0 / 12%); /** Compact raised-panel shadow. */
+  --sys-motion-reduced-transition-hover-delay: 0ms; /** Reduced-motion hover transition. */
+  --sys-motion-reduced-transition-focus-delay: 0ms; /** Reduced-motion focus transition. */
+  --sys-motion-reduced-transition-chip-in-delay: 0ms; /** Reduced-motion chip entry transition. */
+  --sys-motion-reduced-transition-chip-out-delay: 0ms; /** Reduced-motion chip exit transition. */
+  --sys-motion-reduced-transition-banner-reveal-delay: 0ms; /** Reduced-motion banner reveal transition. */
+  --sys-motion-transition-hover-delay: 0ms; /** System hover transition for interactive affordances. */
+  --sys-motion-transition-focus-delay: 0ms; /** System focus transition for outlines/glow. */
+  --sys-motion-transition-chip-in-delay: 0ms; /** System chip entry transition. */
+  --sys-motion-transition-chip-out-delay: 0ms; /** System chip exit transition. */
+  --sys-motion-transition-banner-reveal-delay: 20ms; /** System banner reveal transition. */
+  --sys-text-scale-caption-text-case: uppercase; /** System caption scale. */
+  --sys-text-scale-label-md-text-case: none; /** System label medium scale. */
+  --oods-text-scale-caption-text-case: uppercase; /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-label-md-text-case: none; /** Form labels and actionable micro copy. */
+  --oods-z-base: 0; /** Default stacking context for page content. */
+  --oods-z-raised: 10; /** Raised cards and sticky UI. */
+  --oods-z-overlay: 1000; /** Modal overlays and backdrops. */
+  --oods-z-toast: 1100; /** Toasts and non-blocking alerts. */
+  --oods-z-tooltip: 1200; /** Tooltips and popovers above overlays. */
+  --theme-dark-focus-ring-outer: oklch(0.85 0.13 274.55); /** Outer focus ring tuned for dark surfaces. */
+  --theme-dark-focus-ring-inner: oklch(0.16 0.015 260); /** Inner focus contrast colour that nests against the outer ring. */
+  --theme-dark-focus-text: oklch(0.77 0.16 274.55); /** Text and indicator colour used within focus treatments. */
+  --theme-dark-focus-width: 2px; /** Focus ring width shared with light theme. */
+  --theme-dark-motion-duration-fast: 120ms; /** Snappy micro interactions such as hovers. */
+  --theme-dark-motion-duration-base: 180ms; /** Default interaction tempo for focus, chips, and buttons. */
+  --theme-dark-motion-duration-slow: 320ms; /** Long-form transitions like banners entering the viewport. */
+  --theme-dark-motion-easing-standard: cubic-bezier(0.2, 0, 0.38, 1); /** Primary ease-out curve for UI transitions. */
+  --theme-dark-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1); /** Emphasized ease for entrance motion requiring more weight. */
+  --theme-dark-motion-easing-linear: cubic-bezier(0, 0, 1, 1); /** Linear fallback for reduced-motion scenarios. */
+  --theme-dark-motion-transition-hover-delay: 0ms; /** Hover affordances across buttons, chips, and cards. */
+  --theme-dark-motion-transition-focus-delay: 0ms; /** Focus outlines and glow elevation. */
+  --theme-dark-motion-transition-chip-in-delay: 0ms; /** Chip selection and entry into filter groups. */
+  --theme-dark-motion-transition-chip-out-delay: 0ms; /** Chip deselection or removal. */
+  --theme-dark-motion-transition-banner-reveal-delay: 20ms; /** Banner entrance along the vertical axis. */
+  --theme-dark-motion-reduced-duration-fast: 0ms; /** Instant feedback for motion-sensitive contexts. */
+  --theme-dark-motion-reduced-duration-base: 0ms; /** Primary reduced-motion tempo. */
+  --theme-dark-motion-reduced-duration-slow: 0ms; /** Long-form transitions collapse to zero in reduced motion. */
+  --theme-dark-motion-reduced-transition-hover-delay: 0ms; /** Hover states snap immediately when motion is reduced. */
+  --theme-dark-motion-reduced-transition-focus-delay: 0ms; /** Focus rings become instant in reduced-motion. */
+  --theme-dark-motion-reduced-transition-chip-in-delay: 0ms; /** Chip selection occurs without momentum. */
+  --theme-dark-motion-reduced-transition-chip-out-delay: 0ms; /** Chip removal happens immediately. */
+  --theme-dark-motion-reduced-transition-banner-reveal-delay: 0ms; /** Banner reveal falls back to an instant appearance. */
+  --theme-dark-shadow-elevation-card-offset-x: 0px; /** Primary elevation for dark cards—leans on outline support with a low, cool glow. */
+  --theme-dark-shadow-elevation-card-offset-y: 18px; /** Primary elevation for dark cards—leans on outline support with a low, cool glow. */
+  --theme-dark-shadow-elevation-card-blur: 48px; /** Primary elevation for dark cards—leans on outline support with a low, cool glow. */
+  --theme-dark-shadow-elevation-card-spread: -28px; /** Primary elevation for dark cards—leans on outline support with a low, cool glow. */
+  --theme-dark-shadow-elevation-card-color: rgba(4, 10, 22, 0.48); /** Primary elevation for dark cards—leans on outline support with a low, cool glow. */
+  --theme-dark-shadow-elevation-overlay-offset-x: 0px; /** Overlay elevation tuned for modals and trays without blooming. */
+  --theme-dark-shadow-elevation-overlay-offset-y: 32px; /** Overlay elevation tuned for modals and trays without blooming. */
+  --theme-dark-shadow-elevation-overlay-blur: 68px; /** Overlay elevation tuned for modals and trays without blooming. */
+  --theme-dark-shadow-elevation-overlay-spread: -30px; /** Overlay elevation tuned for modals and trays without blooming. */
+  --theme-dark-shadow-elevation-overlay-color: rgba(8, 18, 38, 0.55); /** Overlay elevation tuned for modals and trays without blooming. */
+  --theme-dark-status-info-surface: oklch(0.31 0.08 262); /** Informational surface balancing depth with clarity. */
+  --theme-dark-status-info-border: oklch(0.43 0.11 262); /** High-contrast info outline for banners and panels. */
+  --theme-dark-status-info-text: oklch(0.88 0.06 262); /** Informational text meeting AA on the info surface. */
+  --theme-dark-status-info-icon: oklch(0.8 0.1 262); /** Icon tone for info banners. */
+  --theme-dark-status-success-surface: oklch(0.32 0.09 161); /** Success confirmation background with AA margin. */
+  --theme-dark-status-success-border: oklch(0.43 0.11 161); /** Success border emphasising resolved state. */
+  --theme-dark-status-success-text: oklch(0.88 0.07 165); /** Success text with comfortable contrast against the surface. */
+  --theme-dark-status-success-icon: oklch(0.78 0.1 163); /** Icon colour for success states. */
+  --theme-dark-status-warning-surface: oklch(0.34 0.09 85); /** Warning tone that stays legible without overpowering the scene. */
+  --theme-dark-status-warning-border: oklch(0.46 0.12 85); /** Warning border for elevated callouts. */
+  --theme-dark-status-warning-text: oklch(0.9 0.08 87); /** Warning text that clears AA minimums on warning surfaces. */
+  --theme-dark-status-warning-icon: oklch(0.81 0.11 85); /** Warning icon colour harmonised with the border tone. */
+  --theme-dark-status-accent-surface: oklch(0.33 0.15 274.55); /** Accent ribbon for promotion or emphasis banners. */
+  --theme-dark-status-accent-border: oklch(0.45 0.18 274.55); /** Accent border providing crisp separation. */
+  --theme-dark-status-accent-text: oklch(0.86 0.1 274.55); /** Accent text that remains legible on saturated surfaces. */
+  --theme-dark-status-accent-icon: oklch(0.76 0.15 274.55); /** Accent icon tone pairing with the accent surface. */
+  --theme-dark-status-critical-surface: oklch(0.31 0.12 25); /** Critical surface tuned for alerts without blooming. */
+  --theme-dark-status-critical-border: oklch(0.43 0.15 25); /** Critical border that stays evident on dark shells. */
+  --theme-dark-status-critical-text: oklch(0.88 0.09 23); /** Critical text exceeding AA thresholds. */
+  --theme-dark-status-critical-icon: oklch(0.79 0.13 24); /** Critical icon treatment for destructive banners. */
+  --theme-dark-status-neutral-surface: oklch(0.32 0.02 260); /** Neutral notification surface for passive messaging. */
+  --theme-dark-status-neutral-border: oklch(0.41 0.025 260); /** Neutral border for low-emphasis outlines. */
+  --theme-dark-status-neutral-text: oklch(0.86 0.02 260); /** Neutral banner text ensuring AA compliance. */
+  --theme-dark-status-neutral-icon: oklch(0.74 0.02 260); /** Neutral banner icon tone. */
+  --theme-dark-status-archive-surface: oklch(0.30 0.06 280); /** Archive surface for dark mode archived entities. */
+  --theme-dark-status-archive-border: oklch(0.42 0.08 280); /** Archive border on dark backgrounds. */
+  --theme-dark-status-archive-text: oklch(0.87 0.05 280); /** Archive text meeting AA on dark archive surface. */
+  --theme-dark-status-archive-icon: oklch(0.77 0.08 280); /** Archive icon tone for dark mode. */
+  --theme-dark-surface-canvas: oklch(0.18 0.007 255); /** Primary dark canvas with a cool bias to avoid fogging. */
+  --theme-dark-surface-raised: oklch(0.24 0.007 255); /** Raised panel surface lifted just enough to separate from canvas. */
+  --theme-dark-surface-subtle: oklch(0.3 0.01 255); /** Subtle surface tone for secondary sections and timeline shells. */
+  --theme-dark-surface-disabled: oklch(0.31 0.005 255); /** Disabled surface keeps affordances visible without drawing focus. */
+  --theme-dark-surface-backdrop: oklch(0.12 0.015 255); /** Backdrop scrim for overlays; deepens scenes without flattening. */
+  --theme-dark-surface-inverse: oklch(0.96 0.002 255); /** Inverse surface for chips or sheets rendered inside dark UI. */
+  --theme-dark-surface-interactive-primary-default: oklch(0.43 0.17 274.55); /** Primary action surface tuned for dark backgrounds with AA margin. */
+  --theme-dark-surface-interactive-primary-hover: oklch(0.51 0.18 274.55); /** Hover raises luminance without sacrificing the Δ guardrail. */
+  --theme-dark-surface-interactive-primary-pressed: oklch(0.55 0.19 274.55); /** Pressed state stays above hover while maintaining relative colour bounds. */
+  --theme-dark-border-subtle: oklch(0.41 0.025 260); /** Default outline for cards and neutral shells on dark. */
+  --theme-dark-border-strong: oklch(0.5 0.03 260); /** High-emphasis border for focus traps and interactive outlines. */
+  --theme-dark-text-primary: oklch(0.91 0.006 260); /** Primary body text on dark backgrounds. */
+  --theme-dark-text-secondary: oklch(0.79 0.01 260); /** Secondary text for supporting detail copy. */
+  --theme-dark-text-muted: oklch(0.74 0.015 260); /** Muted captions and tertiary text. WCAG AA ≥4.5:1 on sys.surface.canvas. */
+  --theme-dark-text-inverse: oklch(0.22 0.02 265); /** Inverse text for light surfaces inside dark compositions. */
+  --theme-dark-text-accent: oklch(0.77 0.18 274.55); /** Accent text used for inline highlights and links. */
+  --theme-dark-text-on-interactive: oklch(0.97 0.003 260); /** Foreground for interactive primary surfaces. */
+  --theme-dark-text-disabled: oklch(0.55 0.01 260); /** Disabled text with minimum 3:1 contrast against disabled surfaces. */
+  --theme-dark-icon-primary: oklch(0.85 0.005 260); /** Primary icon colour for dark UI. */
+  --theme-dark-icon-muted: oklch(0.64 0.01 260); /** Muted icon treatment for tertiary affordances. */
+  --theme-dark-icon-on-interactive: oklch(0.97 0.003 260); /** Icon colour on primary interactive surfaces. */
+  --theme-focus-width: 2px; /** Standard focus outline width. */
+  --theme-motion-transition-hover-delay: 0ms;
+  --theme-motion-transition-focus-delay: 0ms;
+  --theme-motion-transition-chip-in-delay: 0ms;
+  --theme-motion-transition-chip-out-delay: 0ms;
+  --theme-motion-transition-banner-reveal-delay: 20ms;
+  --theme-motion-reduced-transition-hover-delay: 0ms;
+  --theme-motion-reduced-transition-focus-delay: 0ms;
+  --theme-motion-reduced-transition-chip-in-delay: 0ms;
+  --theme-motion-reduced-transition-chip-out-delay: 0ms;
+  --theme-motion-reduced-transition-banner-reveal-delay: 0ms;
+  --theme-shadow-elevation-card-offset-x: 0px;
+  --theme-shadow-elevation-card-offset-y: 16px;
+  --theme-shadow-elevation-card-blur: 40px;
+  --theme-shadow-elevation-card-spread: -12px;
+  --theme-shadow-elevation-card-color: rgba(15, 23, 42, 0.12);
+  --theme-shadow-elevation-overlay-offset-x: 0px;
+  --theme-shadow-elevation-overlay-offset-y: 24px;
+  --theme-shadow-elevation-overlay-blur: 56px;
+  --theme-shadow-elevation-overlay-spread: -16px;
+  --theme-shadow-elevation-overlay-color: rgba(15, 23, 42, 0.24);
+  --oods-color-brand-a-surface-canvas: oklch(0.967 0.03 86); /** Primary shell background with a warm Brand A tint. */
+  --oods-color-brand-a-surface-raised: oklch(0.935 0.037 86); /** Raised card surface separating panels with subtle warmth. */
+  --oods-color-brand-a-surface-subtle: oklch(0.893 0.048 86); /** Secondary panel surface tuned for AA contrast with primary text. */
+  --oods-color-brand-a-surface-disabled: oklch(0.886 0.03 86); /** Disabled surface. Measured 1.76:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance. */
+  --oods-color-brand-a-surface-backdrop: oklch(0.368 0.042 86); /** Overlay scrim aligned to Brand A neutrals. */
+  --oods-color-brand-a-surface-inverse: oklch(0.29 0.052 86); /** Inverse surface for tooltips and chips on warm panels. */
+  --oods-color-brand-a-surface-interactive-primary-default: oklch(0.56 0.19 43); /** Primary interactive background. ΔL −0.02 from the s167 value so near-white text.onInteractive clears AA with margin (measured 4.61:1, sRGB-clipped). */
+  --oods-color-brand-a-surface-interactive-primary-hover: oklch(0.52 0.2 43); /** Hover tracks new baseline with ΔL −0.06 / ΔC +0.01 guardrails. */
+  --oods-color-brand-a-surface-interactive-primary-pressed: oklch(0.46 0.21 43); /** Pressed deepens luminance (ΔL −0.12) while keeping hue clamp at 43°. */
+  --oods-color-brand-a-border-subtle: oklch(0.86 0.032 86); /** Default border tone for cards and inputs. */
+  --oods-color-brand-a-border-strong: oklch(0.6 0.052 86); /** High-emphasis outline for focus and separators. */
+  --oods-color-brand-a-focus-ring-outer: oklch(0.495 0.17 45); /** Light focus outline uses the full accent text colour to exceed 3:1 against canvas and raised surfaces. */
+  --oods-color-brand-a-focus-ring-inner: oklch(0.967 0.03 86); /** Inner focus ring matches the Brand A canvas in light mode. */
+  --oods-color-brand-a-focus-text: oklch(0.495 0.17 45); /** Branded light focus text matches the Brand A accent text. */
+  --oods-color-brand-a-text-primary: oklch(0.26 0.05 265); /** Primary body copy colour achieving ≥12:1 on canvas. */
+  --oods-color-brand-a-text-secondary: oklch(0.39 0.04 265); /** Secondary text for muted labels and metadata. */
+  --oods-color-brand-a-text-muted: oklch(0.46 0.03 265); /** Muted captions with ≥4.5:1 contrast on subtle surfaces. */
+  --oods-color-brand-a-text-inverse: oklch(0.92 0.02 86); /** Inverse body text for dark overlays. */
+  --oods-color-brand-a-text-accent: oklch(0.495 0.17 45); /** Accent text for inline highlights and links. ΔL −0.025 from the s168 value so the pairing with surface.subtle clears AA — that pairing was ungraded until s169 completed the text × panel grid. No ratio is quoted here on purpose: every text.accent claim is graded against the CANVAS pair, so a number about a different surface would be checked against the wrong one. */
+  --oods-color-brand-a-text-on-interactive: oklch(0.97 0.01 95); /** Foreground on primary interactive surfaces. Measured ≥4.61:1 (sRGB-clipped). */
+  --oods-color-brand-a-text-disabled: oklch(0.72 0.015 265); /** Disabled text. Measured 1.76:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components. */
+  --oods-color-brand-a-accent-background: oklch(0.9 0.06 45); /** Accent surface for callouts and banners. */
+  --oods-color-brand-a-accent-border: oklch(0.74 0.14 45); /** Accent border used by StatusChip tone=accent. */
+  --oods-color-brand-a-accent-text: oklch(0.5 0.17 45); /** Accent text to complement warm surfaces. */
+  --oods-color-brand-a-status-info-surface: oklch(0.9685 0.0148 268.73); /** Informational background tone. */
+  --oods-color-brand-a-status-info-border: oklch(0.8191 0.0763 268.81); /** Informational border tone. */
+  --oods-color-brand-a-status-info-text: oklch(0.3847 0.1344 271.74); /** Informational text colour. */
+  --oods-color-brand-a-status-info-icon: oklch(0.5466 0.1806 271.48); /** Informational icon colour. */
+  --oods-color-brand-a-status-success-surface: oklch(0.9743 0.0192 159.94); /** Success background tone. */
+  --oods-color-brand-a-status-success-border: oklch(0.8671 0.0772 157.25); /** Success border tone. */
+  --oods-color-brand-a-status-success-text: oklch(0.4315 0.0821 155.04); /** Success text tone. */
+  --oods-color-brand-a-status-success-icon: oklch(0.5738 0.1199 153.34); /** Success icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-a-status-warning-surface: oklch(0.9795 0.026 82.09); /** Warning background tone. */
+  --oods-color-brand-a-status-warning-border: oklch(0.8949 0.1177 79.87); /** Warning border tone. */
+  --oods-color-brand-a-status-warning-text: oklch(0.4914 0.1012 74.2); /** Warning text tone. */
+  --oods-color-brand-a-status-warning-icon: oklch(0.5932 0.1198 73.65); /** Warning icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-a-status-critical-surface: oklch(0.9672 0.0163 20.78); /** Critical background tone. */
+  --oods-color-brand-a-status-critical-border: oklch(0.824 0.0834 27.01); /** Critical border tone. */
+  --oods-color-brand-a-status-critical-text: oklch(0.465 0.147 32.94); /** Critical text tone. */
+  --oods-color-brand-a-status-critical-icon: oklch(0.6039 0.1827 32.43); /** Critical icon colour. */
+  --oods-color-brand-a-status-neutral-surface: oklch(0.9816 0.0017 255.84); /** Neutral status background tone. */
+  --oods-color-brand-a-status-neutral-border: oklch(0.8875 0.0147 272.49); /** Neutral status border tone. */
+  --oods-color-brand-a-status-neutral-text: oklch(0.4239 0.021 275.53); /** Neutral status text tone. */
+  --oods-color-brand-a-status-neutral-icon: oklch(0.5109 0.0264 277.16); /** Neutral status icon colour. */
+  --oods-color-brand-b-surface-canvas: oklch(0.97 0.015 230); /** Primary shell background for Brand B with a cool tint. */
+  --oods-color-brand-b-surface-raised: oklch(0.94 0.022 230); /** Raised card surface separating panels with cool neutrality. */
+  --oods-color-brand-b-surface-subtle: oklch(0.9 0.032 230); /** Secondary panel surface tuned for AA contrast with body text. */
+  --oods-color-brand-b-surface-disabled: oklch(0.88 0.015 230); /** Disabled surface. Measured 1.88:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance. */
+  --oods-color-brand-b-surface-backdrop: oklch(0.35 0.022 230); /** Overlay scrim aligned to Brand B neutrals. */
+  --oods-color-brand-b-surface-inverse: oklch(0.28 0.03 230); /** Inverse surface for tooltips and chips on cool panels. */
+  --oods-color-brand-b-surface-interactive-primary-default: oklch(0.535 0.18 232); /** Primary interactive background. ΔL −0.085 so near-white text.onInteractive clears AA. Measured ≥4.64:1 (sRGB-clipped). */
+  --oods-color-brand-b-surface-interactive-primary-hover: oklch(0.52 0.19 232); /** Hover tracks ΔL −0.10 / ΔC +0.01 to stay inside guardrails. */
+  --oods-color-brand-b-surface-interactive-primary-pressed: oklch(0.47 0.21 232); /** Pressed deepens luminance (ΔL −0.15) while keeping hue stable. */
+  --oods-color-brand-b-border-subtle: oklch(0.85 0.02 230); /** Default border tone for Brand B cards and inputs. */
+  --oods-color-brand-b-border-strong: oklch(0.6 0.035 232); /** High-emphasis outline for focus and separators. */
+  --oods-color-brand-b-focus-ring-outer: oklch(0.48 0.14 238); /** Light focus outline uses the full accent text colour to exceed 3:1 against canvas and raised surfaces. */
+  --oods-color-brand-b-focus-ring-inner: oklch(0.97 0.015 230); /** Inner focus ring matches the Brand B canvas in light mode. */
+  --oods-color-brand-b-focus-text: oklch(0.48 0.14 238); /** Branded light focus text matches the Brand B accent text. */
+  --oods-color-brand-b-text-primary: oklch(0.23 0.035 265); /** Primary body copy colour achieving ≥12:1 on canvas. */
+  --oods-color-brand-b-text-secondary: oklch(0.36 0.025 265); /** Secondary text for muted labels and metadata. */
+  --oods-color-brand-b-text-muted: oklch(0.45 0.02 265); /** Muted captions with ≥4.5:1 contrast on subtle surfaces. */
+  --oods-color-brand-b-text-inverse: oklch(0.94 0.01 232); /** Inverse body text for dark overlays. */
+  --oods-color-brand-b-text-accent: oklch(0.48 0.14 238); /** Accent text for links and highlights. Measured ≥5.72:1 on canvas (sRGB-clipped). ΔL −0.05 from the s168 value so the pairings with surface.raised and surface.subtle also clear AA — both were ungraded until s169 completed the text × panel grid. The quoted ratio is the canvas pair, which is the pair every text.accent claim is graded against. */
+  --oods-color-brand-b-text-on-interactive: oklch(0.98 0.003 250); /** Foreground on primary interactive surfaces. Measured ≥4.64:1 (sRGB-clipped). */
+  --oods-color-brand-b-text-disabled: oklch(0.7 0.015 265); /** Disabled text. Measured 1.88:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components. */
+  --oods-color-brand-b-accent-background: oklch(0.9 0.045 240); /** Accent surface for callouts and banners. */
+  --oods-color-brand-b-accent-border: oklch(0.74 0.12 240); /** Accent border used by StatusChip tone=accent. */
+  --oods-color-brand-b-accent-text: oklch(0.46 0.14 240); /** Accent text complementing cool surfaces. */
+  --oods-color-brand-b-status-info-surface: oklch(0.968 0.013 252); /** Informational background tone for Brand B. */
+  --oods-color-brand-b-status-info-border: oklch(0.82 0.07 252); /** Informational border tone. */
+  --oods-color-brand-b-status-info-text: oklch(0.39 0.13 254); /** Informational text colour. */
+  --oods-color-brand-b-status-info-icon: oklch(0.55 0.18 254); /** Informational icon colour. */
+  --oods-color-brand-b-status-success-surface: oklch(0.973 0.019 172); /** Success background tone. */
+  --oods-color-brand-b-status-success-border: oklch(0.868 0.078 168); /** Success border tone. */
+  --oods-color-brand-b-status-success-text: oklch(0.432 0.082 168); /** Success text tone. */
+  --oods-color-brand-b-status-success-icon: oklch(0.581 0.12 166); /** Success icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-b-status-warning-surface: oklch(0.978 0.026 82); /** Warning background tone. */
+  --oods-color-brand-b-status-warning-border: oklch(0.894 0.118 82); /** Warning border tone. */
+  --oods-color-brand-b-status-warning-text: oklch(0.49 0.102 80); /** Warning text tone. */
+  --oods-color-brand-b-status-warning-icon: oklch(0.599 0.12 80); /** Warning icon tone. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-b-status-critical-surface: oklch(0.966 0.017 20); /** Critical background tone. */
+  --oods-color-brand-b-status-critical-border: oklch(0.824 0.083 25); /** Critical border tone. */
+  --oods-color-brand-b-status-critical-text: oklch(0.466 0.147 24); /** Critical text tone. */
+  --oods-color-brand-b-status-critical-icon: oklch(0.604 0.182 24); /** Critical icon colour. */
+  --oods-color-brand-b-status-neutral-surface: oklch(0.982 0.002 248); /** Neutral status background tone. */
+  --oods-color-brand-b-status-neutral-border: oklch(0.888 0.014 256); /** Neutral status border tone. */
+  --oods-color-brand-b-status-neutral-text: oklch(0.425 0.021 262); /** Neutral status text tone. */
+  --oods-color-brand-b-status-neutral-icon: oklch(0.512 0.026 262); /** Neutral status icon colour. */
+  --oods-viz-scale-sequential-blue-1: var(--oods-viz-scale-sequential-01); /** Sequential blue step 1 - lightest for low values. */
+  --oods-viz-scale-sequential-blue-2: var(--oods-viz-scale-sequential-02); /** Sequential blue step 2. */
+  --oods-viz-scale-sequential-blue-3: var(--oods-viz-scale-sequential-03); /** Sequential blue step 3. */
+  --oods-viz-scale-sequential-blue-4: var(--oods-viz-scale-sequential-04); /** Sequential blue step 4 - midpoint. */
+  --oods-viz-scale-sequential-blue-5: var(--oods-viz-scale-sequential-05); /** Sequential blue step 5. */
+  --oods-viz-scale-sequential-blue-6: var(--oods-viz-scale-sequential-06); /** Sequential blue step 6. */
+  --oods-viz-scale-sequential-blue-7: var(--oods-viz-scale-sequential-07); /** Sequential blue step 7 - darkest for high values. */
+  --oods-viz-scale-diverging-negative-1: var(--oods-viz-scale-diverging-neg-01); /** Diverging near-neutral negative. */
+  --oods-viz-scale-diverging-negative-2: var(--oods-viz-scale-diverging-neg-03); /** Diverging negative level 2. */
+  --oods-viz-scale-diverging-negative-3: var(--oods-viz-scale-diverging-neg-05); /** Diverging far negative anchor. */
+  --oods-viz-scale-diverging-positive-1: var(--oods-viz-scale-diverging-pos-01); /** Diverging near-neutral positive. */
+  --oods-viz-scale-diverging-positive-2: var(--oods-viz-scale-diverging-pos-03); /** Diverging positive level 2. */
+  --oods-viz-scale-diverging-positive-3: var(--oods-viz-scale-diverging-pos-05); /** Diverging far positive anchor. */
+  --oods-viz-map-basemap-fill: var(--ref-color-neutral-100); /** Base map fill color for land/water boundaries. */
+  --oods-viz-map-basemap-stroke: var(--ref-color-neutral-300); /** Base map stroke color for coastlines and borders. */
+  --oods-viz-map-region-stroke: var(--ref-color-neutral-400); /** Region boundary stroke color for choropleth regions. */
+  --oods-viz-map-region-hover-stroke: var(--ref-color-primary-500); /** Region stroke color on hover state. */
+  --oods-viz-map-symbol-stroke: var(--ref-color-neutral-0); /** Symbol outline stroke for contrast on filled shapes. */
+  --oods-motion-transition-hover-duration: var(--oods-motion-duration-fast); /** Hover affordances across buttons, chips, and cards. */
+  --oods-motion-transition-hover-timing-function: var(--oods-motion-easing-standard); /** Hover affordances across buttons, chips, and cards. */
+  --oods-motion-transition-focus-duration: var(--oods-motion-duration-base); /** Focus outlines and glow elevation. */
+  --oods-motion-transition-focus-timing-function: var(--oods-motion-easing-standard); /** Focus outlines and glow elevation. */
+  --oods-motion-transition-chip-in-duration: var(--oods-motion-duration-base); /** Chip selection and entry into filter groups. */
+  --oods-motion-transition-chip-in-timing-function: var(--oods-motion-easing-emphasized); /** Chip selection and entry into filter groups. */
+  --oods-motion-transition-chip-out-duration: var(--oods-motion-duration-fast); /** Chip deselection or removal. */
+  --oods-motion-transition-chip-out-timing-function: var(--oods-motion-easing-standard); /** Chip deselection or removal. */
+  --oods-motion-transition-banner-reveal-duration: var(--oods-motion-duration-slow); /** Banner entrance along the vertical axis. */
+  --oods-motion-transition-banner-reveal-timing-function: var(--oods-motion-easing-emphasized); /** Banner entrance along the vertical axis. */
+  --oods-motion-reduced-transition-hover-duration: var(--oods-motion-reduced-duration-fast); /** Hover states snap immediately when motion is reduced. */
+  --oods-motion-reduced-transition-hover-timing-function: var(--oods-motion-easing-linear); /** Hover states snap immediately when motion is reduced. */
+  --oods-motion-reduced-transition-focus-duration: var(--oods-motion-reduced-duration-base); /** Focus rings become instant in reduced-motion. */
+  --oods-motion-reduced-transition-focus-timing-function: var(--oods-motion-easing-linear); /** Focus rings become instant in reduced-motion. */
+  --oods-motion-reduced-transition-chip-in-duration: var(--oods-motion-reduced-duration-base); /** Chip selection occurs without momentum. */
+  --oods-motion-reduced-transition-chip-in-timing-function: var(--oods-motion-easing-linear); /** Chip selection occurs without momentum. */
+  --oods-motion-reduced-transition-chip-out-duration: var(--oods-motion-reduced-duration-fast); /** Chip removal happens immediately. */
+  --oods-motion-reduced-transition-chip-out-timing-function: var(--oods-motion-easing-linear); /** Chip removal happens immediately. */
+  --oods-motion-reduced-transition-banner-reveal-duration: var(--oods-motion-reduced-duration-slow); /** Banner reveal falls back to an instant appearance. */
+  --oods-motion-reduced-transition-banner-reveal-timing-function: var(--oods-motion-easing-linear); /** Banner reveal falls back to an instant appearance. */
+  --ref-color-accent-100: var(--ref-color-primary-100); /** Accent 100; mirrors primary 100 for highlight surfaces. */
+  --ref-color-accent-300: var(--ref-color-primary-500); /** Accent 300; aligns accent border with primary default. */
+  --ref-color-accent-400: var(--ref-color-primary-600); /** Accent 400; accent hover derived from primary hover. */
+  --ref-color-accent-500: var(--ref-color-primary-700); /** Accent 500; accent foreground aligned to primary pressed. */
+  --oods-border-panel-default-width: var(--ref-border-width-hairline); /** Default border for cards and primary panels. */
+  --oods-border-panel-default-style: var(--ref-border-style-solid); /** Default border for cards and primary panels. */
+  --oods-border-panel-default-radius: var(--ref-border-radius-md); /** Default border for cards and primary panels. */
+  --oods-border-surface-default-width: var(--ref-border-width-hairline); /** Alias to panel default border. */
+  --oods-border-surface-default-style: var(--ref-border-style-solid); /** Alias to panel default border. */
+  --oods-border-surface-default-radius: var(--ref-border-radius-md); /** Alias to panel default border. */
+  --oods-border-status-critical-width: var(--ref-border-width-hairline); /** Critical status banner border with rounded corners. */
+  --oods-border-status-critical-style: var(--ref-border-style-solid); /** Critical status banner border with rounded corners. */
+  --oods-border-status-critical-radius: var(--ref-border-radius-sm); /** Critical status banner border with rounded corners. */
+  --oods-overlay-transition-open-duration: var(--oods-motion-duration-base); /** Overlay open transition; collapses under reduced motion. */
+  --oods-overlay-transition-open-timing-function: var(--oods-motion-easing-standard); /** Overlay open transition; collapses under reduced motion. */
+  --oods-overlay-transition-close-duration: var(--oods-motion-duration-base); /** Overlay close transition; collapses under reduced motion. */
+  --oods-overlay-transition-close-timing-function: var(--oods-motion-easing-standard); /** Overlay close transition; collapses under reduced motion. */
+  --sys-radius-pill: var(--ref-border-radius-pill); /** Pill curvature for labels and badges. */
+  --sys-text-weight-semibold: var(--ref-typography-weights-semibold); /** Semibold control and badge emphasis. */
+  --sys-focus-width: var(--theme-focus-width); /** Focus ring width. */
+  --sys-motion-duration-fast: var(--oods-motion-duration-fast); /** System fast duration for micro-interactions. */
+  --sys-motion-duration-base: var(--oods-motion-duration-base); /** System baseline duration for component transitions. */
+  --sys-motion-duration-slow: var(--oods-motion-duration-slow); /** System slow duration for entrance/exit motion. */
+  --sys-motion-reduced-duration-fast: var(--oods-motion-reduced-duration-fast); /** Reduced-motion fast duration resolves to instant. */
+  --sys-motion-reduced-duration-base: var(--oods-motion-reduced-duration-base); /** Reduced-motion default duration resolves to instant. */
+  --sys-motion-reduced-duration-slow: var(--oods-motion-reduced-duration-slow); /** Reduced-motion slow duration resolves to instant. */
+  --sys-motion-reduced-transition-hover-duration: var(--oods-motion-reduced-duration-fast); /** Reduced-motion hover transition. */
+  --sys-motion-reduced-transition-hover-timing-function: var(--oods-motion-easing-linear); /** Reduced-motion hover transition. */
+  --sys-motion-reduced-transition-focus-duration: var(--oods-motion-reduced-duration-base); /** Reduced-motion focus transition. */
+  --sys-motion-reduced-transition-focus-timing-function: var(--oods-motion-easing-linear); /** Reduced-motion focus transition. */
+  --sys-motion-reduced-transition-chip-in-duration: var(--oods-motion-reduced-duration-base); /** Reduced-motion chip entry transition. */
+  --sys-motion-reduced-transition-chip-in-timing-function: var(--oods-motion-easing-linear); /** Reduced-motion chip entry transition. */
+  --sys-motion-reduced-transition-chip-out-duration: var(--oods-motion-reduced-duration-fast); /** Reduced-motion chip exit transition. */
+  --sys-motion-reduced-transition-chip-out-timing-function: var(--oods-motion-easing-linear); /** Reduced-motion chip exit transition. */
+  --sys-motion-reduced-transition-banner-reveal-duration: var(--oods-motion-reduced-duration-slow); /** Reduced-motion banner reveal transition. */
+  --sys-motion-reduced-transition-banner-reveal-timing-function: var(--oods-motion-easing-linear); /** Reduced-motion banner reveal transition. */
+  --sys-motion-easing-standard: var(--oods-motion-easing-standard); /** System standard easing curve. */
+  --sys-motion-easing-emphasized: var(--oods-motion-easing-emphasized); /** System emphasized easing curve. */
+  --sys-motion-easing-linear: var(--oods-motion-easing-linear); /** System linear easing curve for reduced motion. */
+  --sys-motion-transition-hover-duration: var(--oods-motion-duration-fast); /** System hover transition for interactive affordances. */
+  --sys-motion-transition-hover-timing-function: var(--oods-motion-easing-standard); /** System hover transition for interactive affordances. */
+  --sys-motion-transition-focus-duration: var(--oods-motion-duration-base); /** System focus transition for outlines/glow. */
+  --sys-motion-transition-focus-timing-function: var(--oods-motion-easing-standard); /** System focus transition for outlines/glow. */
+  --sys-motion-transition-chip-in-duration: var(--oods-motion-duration-base); /** System chip entry transition. */
+  --sys-motion-transition-chip-in-timing-function: var(--oods-motion-easing-emphasized); /** System chip entry transition. */
+  --sys-motion-transition-chip-out-duration: var(--oods-motion-duration-fast); /** System chip exit transition. */
+  --sys-motion-transition-chip-out-timing-function: var(--oods-motion-easing-standard); /** System chip exit transition. */
+  --sys-motion-transition-banner-reveal-duration: var(--oods-motion-duration-slow); /** System banner reveal transition. */
+  --sys-motion-transition-banner-reveal-timing-function: var(--oods-motion-easing-emphasized); /** System banner reveal transition. */
+  --sys-text-scale-caption-font-family: var(--ref-typography-families-sans); /** System caption scale. */
+  --sys-text-scale-caption-font-weight: var(--ref-typography-weights-medium); /** System caption scale. */
+  --sys-text-scale-caption-font-size: var(--ref-typography-sizes-xs); /** System caption scale. */
+  --sys-text-scale-label-md-font-family: var(--ref-typography-families-sans); /** System label medium scale. */
+  --sys-text-scale-label-md-font-weight: var(--ref-typography-weights-semibold); /** System label medium scale. */
+  --sys-text-scale-label-md-font-size: var(--ref-typography-sizes-sm); /** System label medium scale. */
+  --sys-text-scale-body-sm-font-family: var(--ref-typography-families-sans); /** System compact body scale. */
+  --sys-text-scale-body-sm-font-weight: var(--ref-typography-weights-regular); /** System compact body scale. */
+  --sys-text-scale-body-sm-font-size: var(--ref-typography-sizes-sm); /** System compact body scale. */
+  --sys-text-scale-body-md-font-family: var(--ref-typography-families-sans); /** System default body scale. */
+  --sys-text-scale-body-md-font-weight: var(--ref-typography-weights-regular); /** System default body scale. */
+  --sys-text-scale-body-md-font-size: var(--ref-typography-sizes-md); /** System default body scale. */
+  --sys-text-scale-heading-lg-font-family: var(--ref-typography-families-sans); /** System large heading scale. */
+  --sys-text-scale-heading-lg-font-weight: var(--ref-typography-weights-semibold); /** System large heading scale. */
+  --sys-text-scale-heading-lg-font-size: var(--ref-typography-sizes-xl); /** System large heading scale. */
+  --sys-text-scale-heading-xl-font-family: var(--ref-typography-families-sans); /** System extra-large heading scale. */
+  --sys-text-scale-heading-xl-font-weight: var(--ref-typography-weights-bold); /** System extra-large heading scale. */
+  --sys-text-scale-heading-xl-font-size: var(--ref-typography-sizes-xxl); /** System extra-large heading scale. */
+  --sys-text-size-sm: var(--ref-typography-sizes-sm); /** Small font scalar; seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break. */
+  --sys-text-size-md: var(--ref-typography-sizes-md); /** Medium font scalar; seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break. */
+  --sys-text-size-lg: var(--ref-typography-sizes-lg); /** Large font scalar; seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break. */
+  --oods-text-line-height-tight: var(--ref-typography-line-height-tight); /** Tight rhythm for condensed contexts. */
+  --oods-text-line-height-standard: var(--ref-typography-line-height-standard); /** Standard rhythm for general UI copy. */
+  --oods-text-line-height-relaxed: var(--ref-typography-line-height-relaxed); /** Relaxed rhythm for supporting text. */
+  --oods-text-line-height-loose: var(--ref-typography-line-height-loose); /** Loose rhythm for long-form reading. */
+  --oods-text-letter-spacing-tight: var(--ref-typography-letter-spacing-tight); /** Tight tracking for display headings. */
+  --oods-text-letter-spacing-default: var(--ref-typography-letter-spacing-default); /** Neutral tracking. */
+  --oods-text-letter-spacing-wide: var(--ref-typography-letter-spacing-wide); /** Wide tracking for uppercase or caption text. */
+  --oods-text-scale-caption-font-family: var(--ref-typography-families-sans); /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-caption-font-weight: var(--ref-typography-weights-medium); /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-caption-font-size: var(--ref-typography-sizes-xs); /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-label-md-font-family: var(--ref-typography-families-sans); /** Form labels and actionable micro copy. */
+  --oods-text-scale-label-md-font-weight: var(--ref-typography-weights-semibold); /** Form labels and actionable micro copy. */
+  --oods-text-scale-label-md-font-size: var(--ref-typography-sizes-sm); /** Form labels and actionable micro copy. */
+  --oods-text-scale-body-sm-font-family: var(--ref-typography-families-sans); /** Compact body text for dense list views. */
+  --oods-text-scale-body-sm-font-weight: var(--ref-typography-weights-regular); /** Compact body text for dense list views. */
+  --oods-text-scale-body-sm-font-size: var(--ref-typography-sizes-sm); /** Compact body text for dense list views. */
+  --oods-text-scale-body-md-font-family: var(--ref-typography-families-sans); /** Primary body copy for detail reading. */
+  --oods-text-scale-body-md-font-weight: var(--ref-typography-weights-regular); /** Primary body copy for detail reading. */
+  --oods-text-scale-body-md-font-size: var(--ref-typography-sizes-md); /** Primary body copy for detail reading. */
+  --oods-text-scale-heading-lg-font-family: var(--ref-typography-families-sans); /** Major section headings and card titles. */
+  --oods-text-scale-heading-lg-font-weight: var(--ref-typography-weights-semibold); /** Major section headings and card titles. */
+  --oods-text-scale-heading-lg-font-size: var(--ref-typography-sizes-xl); /** Major section headings and card titles. */
+  --oods-text-scale-heading-xl-font-family: var(--ref-typography-families-sans); /** Page-level hero headings. */
+  --oods-text-scale-heading-xl-font-weight: var(--ref-typography-weights-bold); /** Page-level hero headings. */
+  --oods-text-scale-heading-xl-font-size: var(--ref-typography-sizes-xxl); /** Page-level hero headings. */
+  --theme-dark-motion-transition-hover-duration: var(--theme-dark-motion-duration-fast); /** Hover affordances across buttons, chips, and cards. */
+  --theme-dark-motion-transition-hover-timing-function: var(--theme-dark-motion-easing-standard); /** Hover affordances across buttons, chips, and cards. */
+  --theme-dark-motion-transition-focus-duration: var(--theme-dark-motion-duration-base); /** Focus outlines and glow elevation. */
+  --theme-dark-motion-transition-focus-timing-function: var(--theme-dark-motion-easing-standard); /** Focus outlines and glow elevation. */
+  --theme-dark-motion-transition-chip-in-duration: var(--theme-dark-motion-duration-base); /** Chip selection and entry into filter groups. */
+  --theme-dark-motion-transition-chip-in-timing-function: var(--theme-dark-motion-easing-emphasized); /** Chip selection and entry into filter groups. */
+  --theme-dark-motion-transition-chip-out-duration: var(--theme-dark-motion-duration-fast); /** Chip deselection or removal. */
+  --theme-dark-motion-transition-chip-out-timing-function: var(--theme-dark-motion-easing-standard); /** Chip deselection or removal. */
+  --theme-dark-motion-transition-banner-reveal-duration: var(--theme-dark-motion-duration-slow); /** Banner entrance along the vertical axis. */
+  --theme-dark-motion-transition-banner-reveal-timing-function: var(--theme-dark-motion-easing-emphasized); /** Banner entrance along the vertical axis. */
+  --theme-dark-motion-reduced-transition-hover-duration: var(--theme-dark-motion-reduced-duration-fast); /** Hover states snap immediately when motion is reduced. */
+  --theme-dark-motion-reduced-transition-hover-timing-function: var(--theme-dark-motion-easing-linear); /** Hover states snap immediately when motion is reduced. */
+  --theme-dark-motion-reduced-transition-focus-duration: var(--theme-dark-motion-reduced-duration-base); /** Focus rings become instant in reduced-motion. */
+  --theme-dark-motion-reduced-transition-focus-timing-function: var(--theme-dark-motion-easing-linear); /** Focus rings become instant in reduced-motion. */
+  --theme-dark-motion-reduced-transition-chip-in-duration: var(--theme-dark-motion-reduced-duration-base); /** Chip selection occurs without momentum. */
+  --theme-dark-motion-reduced-transition-chip-in-timing-function: var(--theme-dark-motion-easing-linear); /** Chip selection occurs without momentum. */
+  --theme-dark-motion-reduced-transition-chip-out-duration: var(--theme-dark-motion-reduced-duration-fast); /** Chip removal happens immediately. */
+  --theme-dark-motion-reduced-transition-chip-out-timing-function: var(--theme-dark-motion-easing-linear); /** Chip removal happens immediately. */
+  --theme-dark-motion-reduced-transition-banner-reveal-duration: var(--theme-dark-motion-reduced-duration-slow); /** Banner reveal falls back to an instant appearance. */
+  --theme-dark-motion-reduced-transition-banner-reveal-timing-function: var(--theme-dark-motion-easing-linear); /** Banner reveal falls back to an instant appearance. */
+  --theme-dark-space-inset-compact: var(--ref-space-inset-compact); /** Dark theme compact inset spacing matches light for parity. */
+  --theme-dark-space-inset-default: var(--ref-space-inset-default); /** Default inset padding shared across themes. */
+  --theme-dark-space-stack-compact: var(--ref-space-stack-compact); /** Compact vertical rhythm retained from base spacing. */
+  --theme-dark-space-stack-default: var(--ref-space-stack-default); /** Default vertical rhythm shared with Theme 0. */
+  --theme-dark-space-inline-xs: var(--ref-space-inline-xs); /** Extra-small inline spacing consistent across themes. */
+  --theme-dark-space-inline-sm: var(--ref-space-inline-sm); /** Small inline spacing retained for dark layouts. */
+  --theme-dark-space-scale-sm: var(--ref-space-scale-sm); /** Small geometry scalar at dark parity (mirrors Theme 0). */
+  --theme-dark-space-scale-md: var(--ref-space-scale-md); /** Medium geometry scalar at dark parity (mirrors Theme 0). */
+  --theme-dark-space-scale-lg: var(--ref-space-scale-lg); /** Large geometry scalar at dark parity (mirrors Theme 0). */
+  --theme-focus-ring-outer: var(--ref-color-neutral-900); /** Outer glow of focus ring. */
+  --theme-focus-ring-inner: var(--ref-color-neutral-100); /** Inner contrast colour for focus outlines. */
+  --theme-focus-text: var(--ref-color-primary-600); /** Focus text/indicator colour. */
+  --theme-motion-duration-fast: var(--oods-motion-duration-fast);
+  --theme-motion-duration-base: var(--oods-motion-duration-base);
+  --theme-motion-duration-slow: var(--oods-motion-duration-slow);
+  --theme-motion-easing-standard: var(--oods-motion-easing-standard);
+  --theme-motion-easing-emphasized: var(--oods-motion-easing-emphasized);
+  --theme-motion-easing-linear: var(--oods-motion-easing-linear);
+  --theme-motion-transition-hover-duration: var(--oods-motion-duration-fast);
+  --theme-motion-transition-hover-timing-function: var(--oods-motion-easing-standard);
+  --theme-motion-transition-focus-duration: var(--oods-motion-duration-base);
+  --theme-motion-transition-focus-timing-function: var(--oods-motion-easing-standard);
+  --theme-motion-transition-chip-in-duration: var(--oods-motion-duration-base);
+  --theme-motion-transition-chip-in-timing-function: var(--oods-motion-easing-emphasized);
+  --theme-motion-transition-chip-out-duration: var(--oods-motion-duration-fast);
+  --theme-motion-transition-chip-out-timing-function: var(--oods-motion-easing-standard);
+  --theme-motion-transition-banner-reveal-duration: var(--oods-motion-duration-slow);
+  --theme-motion-transition-banner-reveal-timing-function: var(--oods-motion-easing-emphasized);
+  --theme-motion-reduced-duration-fast: var(--oods-motion-reduced-duration-fast);
+  --theme-motion-reduced-duration-base: var(--oods-motion-reduced-duration-base);
+  --theme-motion-reduced-duration-slow: var(--oods-motion-reduced-duration-slow);
+  --theme-motion-reduced-transition-hover-duration: var(--oods-motion-reduced-duration-fast);
+  --theme-motion-reduced-transition-hover-timing-function: var(--oods-motion-easing-linear);
+  --theme-motion-reduced-transition-focus-duration: var(--oods-motion-reduced-duration-base);
+  --theme-motion-reduced-transition-focus-timing-function: var(--oods-motion-easing-linear);
+  --theme-motion-reduced-transition-chip-in-duration: var(--oods-motion-reduced-duration-base);
+  --theme-motion-reduced-transition-chip-in-timing-function: var(--oods-motion-easing-linear);
+  --theme-motion-reduced-transition-chip-out-duration: var(--oods-motion-reduced-duration-fast);
+  --theme-motion-reduced-transition-chip-out-timing-function: var(--oods-motion-easing-linear);
+  --theme-motion-reduced-transition-banner-reveal-duration: var(--oods-motion-reduced-duration-slow);
+  --theme-motion-reduced-transition-banner-reveal-timing-function: var(--oods-motion-easing-linear);
+  --theme-space-inset-compact: var(--ref-space-inset-compact); /** Compact padding for dense layouts in Theme 0. */
+  --theme-space-inset-default: var(--ref-space-inset-default); /** Default padding for spacious layouts in Theme 0. */
+  --theme-space-stack-compact: var(--ref-space-stack-compact); /** Tight vertical rhythm in Theme 0. */
+  --theme-space-stack-default: var(--ref-space-stack-default); /** Default vertical rhythm in Theme 0. */
+  --theme-space-inline-xs: var(--ref-space-inline-xs); /** Compact inline spacing for Theme 0. */
+  --theme-space-inline-sm: var(--ref-space-inline-sm); /** Small inline spacing for Theme 0. */
+  --theme-space-scale-sm: var(--ref-space-scale-sm); /** Small geometry scalar for Theme 0. */
+  --theme-space-scale-md: var(--ref-space-scale-md); /** Medium geometry scalar for Theme 0. */
+  --theme-space-scale-lg: var(--ref-space-scale-lg); /** Large geometry scalar for Theme 0. */
+  --theme-status-info-surface: var(--ref-color-info-100); /** Informational background tone. */
+  --theme-status-info-border: var(--ref-color-info-300); /** Informational border tone. */
+  --theme-status-info-text: var(--ref-color-info-900); /** Informational text colour. */
+  --theme-status-info-icon: var(--ref-color-info-700); /** Informational icon colour. */
+  --theme-status-success-surface: var(--ref-color-success-100); /** Success background tone. */
+  --theme-status-success-border: var(--ref-color-success-300); /** Success border tone. */
+  --theme-status-success-text: var(--ref-color-success-900); /** Success text tone. */
+  --theme-status-success-icon: var(--ref-color-success-700); /** Success icon colour. */
+  --theme-status-warning-surface: var(--ref-color-warning-100); /** Warning background tone. */
+  --theme-status-warning-border: var(--ref-color-warning-300); /** Warning border tone. */
+  --theme-status-warning-text: var(--ref-color-warning-900); /** Warning text tone. */
+  --theme-status-warning-icon: var(--ref-color-warning-700); /** Warning icon colour. */
+  --theme-status-critical-surface: var(--ref-color-critical-100); /** Critical background tone. */
+  --theme-status-critical-border: var(--ref-color-critical-300); /** Critical border tone. */
+  --theme-status-critical-text: var(--ref-color-critical-900); /** Critical text tone. */
+  --theme-status-critical-icon: var(--ref-color-critical-700); /** Critical icon colour. */
+  --theme-status-neutral-surface: var(--ref-color-neutral-100); /** Neutral status background tone. */
+  --theme-status-neutral-border: var(--ref-color-neutral-300); /** Neutral status border tone. */
+  --theme-status-neutral-text: var(--ref-color-neutral-800); /** Neutral status text tone. */
+  --theme-status-neutral-icon: var(--ref-color-neutral-700); /** Neutral status icon colour. */
+  --theme-status-archive-surface: var(--ref-color-archive-100); /** Archive status background tone. */
+  --theme-status-archive-border: var(--ref-color-archive-300); /** Archive status border tone. */
+  --theme-status-archive-text: var(--ref-color-archive-900); /** Archive status text colour. */
+  --theme-status-archive-icon: var(--ref-color-archive-700); /** Archive status icon colour. */
+  --theme-surface-canvas: var(--ref-color-neutral-50); /** Primary page background for Theme 0. */
+  --theme-surface-raised: var(--ref-color-neutral-100); /** Raised card surface with soft separation. */
+  --theme-surface-subtle: var(--ref-color-neutral-200); /** Secondary panel surface tone. */
+  --theme-surface-backdrop: var(--ref-color-neutral-900); /** Backdrop scrim for overlays. */
+  --theme-surface-inverse: var(--ref-color-neutral-900); /** Inverse surface for dark elements on light UI. */
+  --theme-surface-disabled: var(--ref-color-neutral-200); /** Surface colour for disabled components. */
+  --theme-surface-interactive-primary-default: var(--ref-color-primary-500); /** Primary action surface default state. */
+  --theme-surface-interactive-primary-hover: var(--ref-color-primary-600); /** Primary action hover surface. */
+  --theme-surface-interactive-primary-pressed: var(--ref-color-primary-700); /** Primary action pressed surface. */
+  --theme-border-subtle: var(--ref-color-neutral-200); /** Subtle border colour for cards and panels. */
+  --theme-border-strong: var(--ref-color-neutral-300); /** Strong border for dividers and outlines. */
+  --theme-text-primary: var(--ref-color-neutral-900); /** Primary body text. */
+  --theme-text-secondary: var(--ref-color-neutral-700); /** Secondary text for supporting content. */
+  --theme-text-muted: var(--ref-color-neutral-600); /** Muted text for captions and labels with AA contrast. */
+  --theme-text-inverse: var(--ref-color-neutral-100); /** Text presented on inverse surfaces. */
+  --theme-text-accent: var(--ref-color-primary-600); /** Accent text used sparingly for highlights. */
+  --theme-text-on-interactive: var(--ref-color-neutral-100); /** Text on interactive primary surfaces. */
+  --theme-text-disabled: var(--ref-color-neutral-400); /** Disabled text tone. */
+  --theme-icon-primary: var(--ref-color-neutral-800); /** Primary icon tone. */
+  --theme-icon-muted: var(--ref-color-neutral-500); /** Muted icon tone for tertiary affordances. */
+  --theme-icon-on-interactive: var(--ref-color-neutral-100); /** Icons on interactive primary surfaces. */
+  --oods-brand-a-surface-canvas: var(--oods-color-brand-a-surface-canvas); /** Alias for Brand A canvas surface. */
+  --oods-brand-a-surface-raised: var(--oods-color-brand-a-surface-raised); /** Alias for Brand A raised surface. */
+  --oods-brand-a-surface-subtle: var(--oods-color-brand-a-surface-subtle); /** Alias for Brand A subtle surface. */
+  --oods-brand-a-surface-interactive-primary: var(--oods-color-brand-a-surface-interactive-primary-default); /** Alias for Brand A primary interactive background. */
+  --oods-brand-a-text-primary: var(--oods-color-brand-a-text-primary); /** Alias for Brand A primary text. */
+  --oods-brand-a-text-secondary: var(--oods-color-brand-a-text-secondary); /** Alias for Brand A secondary text. */
+  --oods-brand-a-text-muted: var(--oods-color-brand-a-text-muted); /** Alias for Brand A muted text. */
+  --oods-brand-a-text-on-interactive: var(--oods-color-brand-a-text-on-interactive); /** Alias for Brand A interactive foreground. */
+  --oods-brand-a-border-subtle: var(--oods-color-brand-a-border-subtle); /** Alias for Brand A subtle border. */
+  --oods-brand-a-border-strong: var(--oods-color-brand-a-border-strong); /** Alias for Brand A strong border. */
+  --oods-brand-a-status-info-surface: var(--oods-color-brand-a-status-info-surface); /** Alias for Brand A info surface. */
+  --oods-brand-a-status-info-text: var(--oods-color-brand-a-status-info-text); /** Alias for Brand A info text. */
+  --oods-brand-a-status-success-surface: var(--oods-color-brand-a-status-success-surface); /** Alias for Brand A success surface. */
+  --oods-brand-a-status-success-text: var(--oods-color-brand-a-status-success-text); /** Alias for Brand A success text. */
+  --oods-brand-a-status-warning-surface: var(--oods-color-brand-a-status-warning-surface); /** Alias for Brand A warning surface. */
+  --oods-brand-a-status-warning-text: var(--oods-color-brand-a-status-warning-text); /** Alias for Brand A warning text. */
+  --oods-brand-a-status-critical-surface: var(--oods-color-brand-a-status-critical-surface); /** Alias for Brand A critical surface. */
+  --oods-brand-a-status-critical-text: var(--oods-color-brand-a-status-critical-text); /** Alias for Brand A critical text. */
+  --oods-brand-a-status-neutral-surface: var(--oods-color-brand-a-status-neutral-surface); /** Alias for Brand A neutral surface. */
+  --oods-brand-a-status-neutral-text: var(--oods-color-brand-a-status-neutral-text); /** Alias for Brand A neutral text. */
+  --oods-brand-b-surface-canvas: var(--oods-color-brand-b-surface-canvas); /** Alias for Brand B canvas surface. */
+  --oods-brand-b-surface-raised: var(--oods-color-brand-b-surface-raised); /** Alias for Brand B raised surface. */
+  --oods-brand-b-surface-subtle: var(--oods-color-brand-b-surface-subtle); /** Alias for Brand B subtle surface. */
+  --oods-brand-b-surface-interactive-primary: var(--oods-color-brand-b-surface-interactive-primary-default); /** Alias for Brand B primary interactive background. */
+  --oods-brand-b-text-primary: var(--oods-color-brand-b-text-primary); /** Alias for Brand B primary text. */
+  --oods-brand-b-text-secondary: var(--oods-color-brand-b-text-secondary); /** Alias for Brand B secondary text. */
+  --oods-brand-b-text-muted: var(--oods-color-brand-b-text-muted); /** Alias for Brand B muted text. */
+  --oods-brand-b-text-on-interactive: var(--oods-color-brand-b-text-on-interactive); /** Alias for Brand B interactive foreground. */
+  --oods-brand-b-border-subtle: var(--oods-color-brand-b-border-subtle); /** Alias for Brand B subtle border. */
+  --oods-brand-b-border-strong: var(--oods-color-brand-b-border-strong); /** Alias for Brand B strong border. */
+  --oods-brand-b-status-info-surface: var(--oods-color-brand-b-status-info-surface); /** Alias for Brand B info surface. */
+  --oods-brand-b-status-info-text: var(--oods-color-brand-b-status-info-text); /** Alias for Brand B info text. */
+  --oods-brand-b-status-success-surface: var(--oods-color-brand-b-status-success-surface); /** Alias for Brand B success surface. */
+  --oods-brand-b-status-success-text: var(--oods-color-brand-b-status-success-text); /** Alias for Brand B success text. */
+  --oods-brand-b-status-warning-surface: var(--oods-color-brand-b-status-warning-surface); /** Alias for Brand B warning surface. */
+  --oods-brand-b-status-warning-text: var(--oods-color-brand-b-status-warning-text); /** Alias for Brand B warning text. */
+  --oods-brand-b-status-critical-surface: var(--oods-color-brand-b-status-critical-surface); /** Alias for Brand B critical surface. */
+  --oods-brand-b-status-critical-text: var(--oods-color-brand-b-status-critical-text); /** Alias for Brand B critical text. */
+  --oods-brand-b-status-neutral-surface: var(--oods-color-brand-b-status-neutral-surface); /** Alias for Brand B neutral surface. */
+  --oods-brand-b-status-neutral-text: var(--oods-color-brand-b-status-neutral-text); /** Alias for Brand B neutral text. */
+  --cmp-badge-gap: var(--sys-control-gap-compact); /** Default badge gap role; component rules may override it. */
+  --cmp-badge-padding-block: var(--sys-badge-padding-block); /** Default badge padding block role; component rules may override it. */
+  --cmp-badge-padding-inline: var(--sys-badge-padding-inline); /** Default badge padding inline role; component rules may override it. */
+  --cmp-billing-cycle-progress-height: var(--sys-progress-height); /** Default billing cycle progress height role; component rules may override it. */
+  --cmp-button-gap: var(--sys-control-gap); /** Default button gap role; component rules may override it. */
+  --cmp-button-padding-block: var(--sys-control-padding-block); /** Default button padding block role; component rules may override it. */
+  --cmp-button-padding-inline: var(--sys-control-padding-inline); /** Default button padding inline role; component rules may override it. */
+  --cmp-button-radius: var(--sys-radius-control); /** Default button radius role; component rules may override it. */
+  --cmp-checkbox-gap: var(--sys-control-gap); /** Default checkbox gap role; component rules may override it. */
+  --cmp-input-gap: var(--sys-control-gap-tight); /** Default input gap role; component rules may override it. */
+  --cmp-input-padding-block: var(--sys-control-padding-block); /** Default input padding block role; component rules may override it. */
+  --cmp-input-padding-inline: var(--sys-field-padding-inline); /** Default input padding inline role; component rules may override it. */
+  --cmp-input-radius: var(--sys-radius-control); /** Default input radius role; component rules may override it. */
+  --cmp-shadow-panel: var(--sys-shadow-panel); /** Default shadow panel role; component rules may override it. */
+  --cmp-spacing-inline-md: var(--sys-inline-md); /** Default spacing inline md role; component rules may override it. */
+  --cmp-spacing-inline-sm: var(--sys-inline-sm); /** Default spacing inline sm role; component rules may override it. */
+  --cmp-spacing-inline-xs: var(--sys-inline-xs); /** Default spacing inline xs role; component rules may override it. */
+  --cmp-spacing-inset-compact: var(--sys-inset-sm); /** Default spacing inset compact role; component rules may override it. */
+  --cmp-spacing-inset-default: var(--sys-inset-md); /** Default spacing inset default role; component rules may override it. */
+  --cmp-spacing-inset-sm: var(--sys-inset-sm); /** Default spacing inset sm role; component rules may override it. */
+  --cmp-spacing-stack-default: var(--sys-stack-md); /** Default spacing stack default role; component rules may override it. */
+  --cmp-spacing-stack-md: var(--sys-stack-md); /** Default spacing stack md role; component rules may override it. */
+  --cmp-spacing-stack-sm: var(--sys-stack-sm); /** Default spacing stack sm role; component rules may override it. */
+  --cmp-spacing-stack-xs: var(--sys-stack-xs); /** Default spacing stack xs role; component rules may override it. */
+  --oods-border-panel-default-color: var(--theme-border-subtle); /** Default border for cards and primary panels. */
+  --oods-border-surface-default-color: var(--theme-border-subtle); /** Alias to panel default border. */
+  --oods-border-status-critical-color: var(--theme-status-critical-border); /** Critical status banner border with rounded corners. */
+  --oods-size-font-sm: var(--sys-text-size-sm); /** Small font scalar; emits --oods-size-font-sm. Seeded NOT consumed (Button-only seed has no font-size). */
+  --oods-size-font-md: var(--sys-text-size-md); /** Medium font scalar; emits --oods-size-font-md. Seeded NOT consumed (Button-only seed has no font-size). */
+  --oods-size-font-lg: var(--sys-text-size-lg); /** Large font scalar; emits --oods-size-font-lg. Seeded NOT consumed (Button-only seed has no font-size). */
+  --sys-text-scale-heading-md-font-size: var(--sys-text-size-lg); /** Compatibility alias for component CSS; use sys.text.size.lg for new references. */
+  --sys-focus-ring-outer: var(--theme-focus-ring-outer); /** Outer focus ring colour. */
+  --sys-focus-ring-inner: var(--theme-focus-ring-inner); /** Inner focus ring colour. */
+  --sys-focus-text: var(--theme-focus-text); /** Focus foreground colour. */
+  --sys-space-inset-compact: var(--theme-space-inset-compact); /** Compact inset spacing for semantic use. */
+  --sys-space-inset-default: var(--theme-space-inset-default); /** Default inset spacing for semantic use. */
+  --sys-space-stack-compact: var(--theme-space-stack-compact); /** Compact vertical spacing for semantic use. */
+  --sys-space-stack-default: var(--theme-space-stack-default); /** Default vertical spacing for semantic use. */
+  --sys-space-inline-xs: var(--theme-space-inline-xs); /** Compact inline spacing for semantic use. */
+  --sys-space-inline-sm: var(--theme-space-inline-sm); /** Small inline spacing for semantic use. */
+  --sys-space-scale-sm: var(--theme-space-scale-sm); /** Small geometry scalar for semantic use. */
+  --sys-space-scale-md: var(--theme-space-scale-md); /** Medium geometry scalar for semantic use. */
+  --sys-space-scale-lg: var(--theme-space-scale-lg); /** Large geometry scalar for semantic use. */
+  --sys-status-info-surface: var(--theme-status-info-surface); /** Informational background surface. */
+  --sys-status-info-border: var(--theme-status-info-border); /** Informational border colour. */
+  --sys-status-info-text: var(--theme-status-info-text); /** Informational text colour. */
+  --sys-status-info-icon: var(--theme-status-info-icon); /** Informational icon colour. */
+  --sys-status-success-surface: var(--theme-status-success-surface); /** Success feedback background. */
+  --sys-status-success-border: var(--theme-status-success-border); /** Success border colour. */
+  --sys-status-success-text: var(--theme-status-success-text); /** Success text colour. */
+  --sys-status-success-icon: var(--theme-status-success-icon); /** Success icon colour. */
+  --sys-status-warning-surface: var(--theme-status-warning-surface); /** Warning feedback background. */
+  --sys-status-warning-border: var(--theme-status-warning-border); /** Warning border colour. */
+  --sys-status-warning-text: var(--theme-status-warning-text); /** Warning text colour. */
+  --sys-status-warning-icon: var(--theme-status-warning-icon); /** Warning icon colour. */
+  --sys-status-critical-surface: var(--theme-status-critical-surface); /** Critical feedback background. */
+  --sys-status-critical-border: var(--theme-status-critical-border); /** Critical border colour. */
+  --sys-status-critical-text: var(--theme-status-critical-text); /** Critical text colour. */
+  --sys-status-critical-icon: var(--theme-status-critical-icon); /** Critical icon colour. */
+  --sys-status-neutral-surface: var(--theme-status-neutral-surface); /** Neutral feedback background. */
+  --sys-status-neutral-border: var(--theme-status-neutral-border); /** Neutral border colour. */
+  --sys-status-neutral-text: var(--theme-status-neutral-text); /** Neutral text colour. */
+  --sys-status-neutral-icon: var(--theme-status-neutral-icon); /** Neutral icon colour. */
+  --sys-status-archive-surface: var(--theme-status-archive-surface); /** Archive feedback background. */
+  --sys-status-archive-border: var(--theme-status-archive-border); /** Archive border colour. */
+  --sys-status-archive-text: var(--theme-status-archive-text); /** Archive text colour. */
+  --sys-status-archive-icon: var(--theme-status-archive-icon); /** Archive icon colour. */
+  --sys-status-timeline-node-surface: var(--theme-surface-subtle); /** Timeline node background. */
+  --sys-status-timeline-actor-text: var(--theme-text-secondary); /** Actor name text in timeline entries. */
+  --sys-status-timeline-reason-text: var(--theme-text-primary); /** Reason text in timeline entries. */
+  --sys-surface-canvas: var(--theme-surface-canvas); /** Primary application canvas. */
+  --sys-surface-raised: var(--theme-surface-raised); /** Raised card surface. */
+  --sys-surface-subtle: var(--theme-surface-subtle); /** Subtle secondary surface. */
+  --sys-surface-backdrop: var(--theme-surface-backdrop); /** Backdrop scrim surface. */
+  --sys-surface-inverse: var(--theme-surface-inverse); /** Inverse surface for dark-on-light treatments. */
+  --sys-surface-disabled: var(--theme-surface-disabled); /** Surface colour for disabled or inactive UI. */
+  --sys-surface-neutral: var(--theme-status-neutral-surface); /** Neutral surface for status-agnostic backgrounds and banners. */
+  --sys-surface-interactive-primary-default: var(--theme-surface-interactive-primary-default); /** Primary interactive surface default state. */
+  --sys-surface-interactive-primary-hover: var(--theme-surface-interactive-primary-hover); /** Primary interactive surface hover state. */
+  --sys-surface-interactive-primary-pressed: var(--theme-surface-interactive-primary-pressed); /** Primary interactive surface pressed state. */
+  --sys-border-subtle: var(--theme-border-subtle); /** Default border for surfaces. */
+  --sys-border-default: var(--theme-border-subtle); /** Default border alias. Used by Archivable and Stateful traits. */
+  --sys-border-strong: var(--theme-border-strong); /** High-emphasis border. */
+  --sys-border-neutral: var(--theme-status-neutral-border); /** Neutral border for status-agnostic containers and banners. */
+  --sys-text-primary: var(--theme-text-primary); /** Primary reading text. */
+  --sys-text-secondary: var(--theme-text-secondary); /** Secondary supporting text. */
+  --sys-text-muted: var(--theme-text-muted); /** Muted caption text. */
+  --sys-text-inverse: var(--theme-text-inverse); /** Text on inverse surfaces. */
+  --sys-text-accent: var(--theme-text-accent); /** Accent text colour. */
+  --sys-text-on-interactive: var(--theme-text-on-interactive); /** Text placed on primary interactive surfaces. */
+  --sys-text-disabled: var(--theme-text-disabled); /** Disabled or de-emphasised text. */
+  --sys-text-strong: var(--theme-text-primary); /** Strong emphasis text. Used by Labelled trait headings. */
+  --sys-text-tertiary: var(--theme-text-muted); /** Tertiary text for supplementary information. Used by Stateful timeline. */
+  --sys-text-neutral: var(--theme-status-neutral-text); /** Neutral status text for banners and status-agnostic contexts. */
+  --sys-text-line-height-tight: var(--oods-text-line-height-tight); /** System line-height for condensed typography contexts. */
+  --sys-text-line-height-standard: var(--oods-text-line-height-standard); /** System line-height for general UI copy. */
+  --sys-text-line-height-relaxed: var(--oods-text-line-height-relaxed); /** System line-height for spacious compositions. */
+  --sys-text-line-height-loose: var(--oods-text-line-height-loose); /** System line-height for long-form reading. */
+  --sys-text-scale-caption-line-height: var(--oods-text-line-height-standard); /** System caption scale. */
+  --sys-text-scale-caption-letter-spacing: var(--oods-text-letter-spacing-wide); /** System caption scale. */
+  --sys-text-scale-label-md-line-height: var(--oods-text-line-height-standard); /** System label medium scale. */
+  --sys-text-scale-label-md-letter-spacing: var(--oods-text-letter-spacing-default); /** System label medium scale. */
+  --sys-text-scale-body-sm-line-height: var(--oods-text-line-height-relaxed); /** System compact body scale. */
+  --sys-text-scale-body-sm-letter-spacing: var(--oods-text-letter-spacing-default); /** System compact body scale. */
+  --sys-text-scale-body-md-line-height: var(--oods-text-line-height-relaxed); /** System default body scale. */
+  --sys-text-scale-body-md-letter-spacing: var(--oods-text-letter-spacing-default); /** System default body scale. */
+  --sys-text-scale-heading-lg-line-height: var(--oods-text-line-height-tight); /** System large heading scale. */
+  --sys-text-scale-heading-lg-letter-spacing: var(--oods-text-letter-spacing-tight); /** System large heading scale. */
+  --sys-text-scale-heading-xl-line-height: var(--oods-text-line-height-tight); /** System extra-large heading scale. */
+  --sys-text-scale-heading-xl-letter-spacing: var(--oods-text-letter-spacing-tight); /** System extra-large heading scale. */
+  --sys-icon-primary: var(--theme-icon-primary); /** Primary icon colour. */
+  --sys-icon-muted: var(--theme-icon-muted); /** Muted icon colour. */
+  --sys-icon-on-interactive: var(--theme-icon-on-interactive); /** Icon colour on primary interactive surfaces. */
+  --oods-text-scale-caption-line-height: var(--oods-text-line-height-standard); /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-caption-letter-spacing: var(--oods-text-letter-spacing-wide); /** Caption text for metadata, badges, and helper copy. */
+  --oods-text-scale-label-md-line-height: var(--oods-text-line-height-standard); /** Form labels and actionable micro copy. */
+  --oods-text-scale-label-md-letter-spacing: var(--oods-text-letter-spacing-default); /** Form labels and actionable micro copy. */
+  --oods-text-scale-body-sm-line-height: var(--oods-text-line-height-relaxed); /** Compact body text for dense list views. */
+  --oods-text-scale-body-sm-letter-spacing: var(--oods-text-letter-spacing-default); /** Compact body text for dense list views. */
+  --oods-text-scale-body-md-line-height: var(--oods-text-line-height-relaxed); /** Primary body copy for detail reading. */
+  --oods-text-scale-body-md-letter-spacing: var(--oods-text-letter-spacing-default); /** Primary body copy for detail reading. */
+  --oods-text-scale-heading-lg-line-height: var(--oods-text-line-height-tight); /** Major section headings and card titles. */
+  --oods-text-scale-heading-lg-letter-spacing: var(--oods-text-letter-spacing-tight); /** Major section headings and card titles. */
+  --oods-text-scale-heading-xl-line-height: var(--oods-text-line-height-tight); /** Page-level hero headings. */
+  --oods-text-scale-heading-xl-letter-spacing: var(--oods-text-letter-spacing-tight); /** Page-level hero headings. */
+  --theme-status-accent-surface: var(--ref-color-accent-100); /** Accent background tone drawn from primary ramp. */
+  --theme-status-accent-border: var(--ref-color-accent-300); /** Accent border tone. */
+  --theme-status-accent-text: var(--ref-color-accent-500); /** Accent text tone. */
+  --theme-status-accent-icon: var(--ref-color-accent-400); /** Accent icon colour. */
+  --cmp-badge-font-size: var(--sys-text-size-sm); /** Default badge font size role; component rules may override it. */
+  --cmp-badge-font-weight: var(--sys-text-weight-semibold); /** Default badge font weight role; component rules may override it. */
+  --cmp-badge-radius: var(--sys-radius-pill); /** Default badge radius role; component rules may override it. */
+  --cmp-button-focus-width: var(--sys-focus-width); /** Default button focus width role; component rules may override it. */
+  --cmp-button-font-weight: var(--sys-text-weight-semibold); /** Default button font weight role; component rules may override it. */
+  --cmp-focus-width: var(--sys-focus-width); /** Default focus width role; component rules may override it. */
+  --oods-viz-margin-tight: var(--sys-space-inset-compact); /** Tight chart margin referencing system inset compact. */
+  --oods-viz-margin-default: var(--sys-space-inline-sm); /** Default chart margin referencing inline small spacing. */
+  --oods-viz-margin-roomy: var(--sys-space-stack-default); /** Roomy chart margin referencing stack default spacing. */
+  --oods-size-spacing-sm: var(--sys-space-scale-sm); /** Small geometry scalar; emits --oods-size-spacing-sm. Matches divergent-inspector's measured size.spacing key. */
+  --oods-size-spacing-md: var(--sys-space-scale-md); /** Medium geometry scalar; emits --oods-size-spacing-md. Matches divergent-inspector's measured size.spacing key. */
+  --oods-spacing-inset-compact: var(--sys-space-inset-compact); /** Inset spacing for dense contexts. */
+  --oods-spacing-inset-default: var(--sys-space-inset-default); /** Baseline inset spacing. */
+  --oods-spacing-stack-compact: var(--sys-space-stack-compact); /** Compact vertical rhythm. */
+  --oods-spacing-stack-default: var(--sys-space-stack-default); /** Default vertical rhythm. */
+  --oods-spacing-inline-xs: var(--sys-space-inline-xs); /** Extra small inline spacing. */
+  --oods-spacing-inline-sm: var(--sys-space-inline-sm); /** Small inline spacing. */
+  --sys-focus-ring: var(--sys-focus-ring-outer); /** Compatibility alias for component CSS; use sys.focus.ring.outer for new references. */
+  --sys-spacing-stack-compact: var(--sys-space-stack-compact); /** Compatibility alias for component CSS; use sys.space.stack.compact for new references. */
+  --sys-surface-accent: var(--sys-surface-interactive-primary-default); /** Compatibility alias for component CSS; use sys.surface.interactive.primary.default for new references. */
+  --sys-surface-default: var(--sys-surface-canvas); /** Compatibility alias for component CSS; use sys.surface.canvas for new references. */
+  --sys-text-default: var(--sys-text-primary); /** Compatibility alias for component CSS; use sys.text.primary for new references. */
+  --sys-text-subtle: var(--sys-text-secondary); /** Compatibility alias for component CSS; use sys.text.secondary for new references. */
+  --sys-status-accent-surface: var(--theme-status-accent-surface); /** Accent feedback background. */
+  --sys-status-accent-border: var(--theme-status-accent-border); /** Accent border colour. */
+  --sys-status-accent-text: var(--theme-status-accent-text); /** Accent text colour. */
+  --sys-status-accent-icon: var(--theme-status-accent-icon); /** Accent icon colour. */
+  --sys-status-timeline-node-border: var(--sys-border-subtle); /** Timeline node border. */
+  --sys-status-timeline-connector: var(--sys-border-subtle); /** Vertical connector line between timeline nodes. */
+  --cmp-badge-background: var(--sys-status-neutral-surface); /** Default badge background role; component rules may override it. */
+  --cmp-badge-border: var(--sys-border-subtle); /** Default badge border role; component rules may override it. */
+  --cmp-badge-color: var(--sys-text-primary); /** Default badge color role; component rules may override it. */
+  --cmp-badge-icon: var(--sys-text-primary); /** Default badge icon role; component rules may override it. */
+  --cmp-badge-text: var(--sys-text-primary); /** Default badge text role; component rules may override it. */
+  --cmp-banner-background: var(--sys-status-neutral-surface); /** Default banner background role; component rules may override it. */
+  --cmp-banner-border: var(--sys-border-subtle); /** Default banner border role; component rules may override it. */
+  --cmp-banner-text: var(--sys-text-primary); /** Default banner text role; component rules may override it. */
+  --cmp-billing-amount-text: var(--sys-text-strong); /** Default billing amount text role; component rules may override it. */
+  --cmp-billing-currency-text: var(--sys-text-secondary); /** Default billing currency text role; component rules may override it. */
+  --cmp-billing-cycle-progress-fill: var(--sys-surface-interactive-primary-default); /** Default billing cycle progress fill role; component rules may override it. */
+  --cmp-billing-interval-text: var(--sys-text-secondary); /** Default billing interval text role; component rules may override it. */
+  --cmp-billing-timeline-text: var(--sys-text-primary); /** Default billing timeline text role; component rules may override it. */
+  --cmp-border-default: var(--sys-border-subtle); /** Default border default role; component rules may override it. */
+  --cmp-border-subtle: var(--sys-border-subtle); /** Default border subtle role; component rules may override it. */
+  --cmp-button-background: var(--sys-surface-inverse); /** Default button background role; component rules may override it. */
+  --cmp-button-background-disabled: var(--sys-surface-disabled); /** Default button background disabled role; component rules may override it. */
+  --cmp-button-background-hover: var(--sys-surface-interactive-primary-hover); /** Default button background hover role; component rules may override it. */
+  --cmp-button-border: var(--sys-border-subtle); /** Default button border role; component rules may override it. */
+  --cmp-button-border-disabled: var(--sys-border-subtle); /** Default button border disabled role; component rules may override it. */
+  --cmp-button-focus-outer: var(--sys-focus-ring-outer); /** Default button focus outer role; component rules may override it. */
+  --cmp-button-text: var(--sys-text-inverse); /** Default button text role; component rules may override it. */
+  --cmp-button-text-disabled: var(--sys-text-disabled); /** Default button text disabled role; component rules may override it. */
+  --cmp-checkbox-background-checked: var(--sys-surface-interactive-primary-default); /** Default checkbox background checked role; component rules may override it. */
+  --cmp-checkbox-text: var(--sys-text-primary); /** Default checkbox text role; component rules may override it. */
+  --cmp-event-background: var(--sys-surface-raised); /** Default event background role; component rules may override it. */
+  --cmp-event-border: var(--sys-border-subtle); /** Default event border role; component rules may override it. */
+  --cmp-event-text: var(--sys-text-primary); /** Default event text role; component rules may override it. */
+  --cmp-filter-background: var(--sys-surface-raised); /** Default filter background role; component rules may override it. */
+  --cmp-filter-border: var(--sys-border-subtle); /** Default filter border role; component rules may override it. */
+  --cmp-filter-legend: var(--sys-text-secondary); /** Default filter legend role; component rules may override it. */
+  --cmp-filter-text: var(--sys-text-primary); /** Default filter text role; component rules may override it. */
+  --cmp-focus-outer: var(--sys-focus-ring-outer); /** Default focus outer role; component rules may override it. */
+  --cmp-form-background: var(--sys-surface-raised); /** Default form background role; component rules may override it. */
+  --cmp-form-border: var(--sys-border-subtle); /** Default form border role; component rules may override it. */
+  --cmp-form-hint: var(--sys-text-secondary); /** Default form hint role; component rules may override it. */
+  --cmp-form-text: var(--sys-text-primary); /** Default form text role; component rules may override it. */
+  --cmp-header-metadata: var(--sys-text-secondary); /** Default header metadata role; component rules may override it. */
+  --cmp-header-subtitle: var(--sys-text-secondary); /** Default header subtitle role; component rules may override it. */
+  --cmp-header-title: var(--sys-text-primary); /** Default header title role; component rules may override it. */
+  --cmp-input-background: var(--sys-surface-canvas); /** Default input background role; component rules may override it. */
+  --cmp-input-border: var(--sys-border-subtle); /** Default input border role; component rules may override it. */
+  --cmp-input-focus: var(--sys-focus-ring-outer); /** Default input focus role; component rules may override it. */
+  --cmp-input-message-border: var(--sys-status-warning-border); /** Default input message border role; component rules may override it. */
+  --cmp-input-message-text: var(--sys-status-warning-text); /** Default input message text role; component rules may override it. */
+  --cmp-input-placeholder: var(--sys-text-muted); /** Default input placeholder role; component rules may override it. */
+  --cmp-input-support-text: var(--sys-text-secondary); /** Default input support text role; component rules may override it. */
+  --cmp-input-text: var(--sys-text-primary); /** Default input text role; component rules may override it. */
+  --cmp-meta-label: var(--sys-text-secondary); /** Default meta label role; component rules may override it. */
+  --cmp-meta-text: var(--sys-text-primary); /** Default meta text role; component rules may override it. */
+  --cmp-panel-background: var(--sys-surface-raised); /** Default panel background role; component rules may override it. */
+  --cmp-panel-border: var(--sys-border-subtle); /** Default panel border role; component rules may override it. */
+  --cmp-panel-subtitle: var(--sys-text-secondary); /** Default panel subtitle role; component rules may override it. */
+  --cmp-panel-title: var(--sys-text-primary); /** Default panel title role; component rules may override it. */
+  --cmp-preview-frame: var(--sys-border-subtle); /** Default preview frame role; component rules may override it. */
+  --cmp-preview-placeholder: var(--sys-text-secondary); /** Default preview placeholder role; component rules may override it. */
+  --cmp-summary-background: var(--sys-surface-raised); /** Default summary background role; component rules may override it. */
+  --cmp-summary-border: var(--sys-border-subtle); /** Default summary border role; component rules may override it. */
+  --cmp-summary-label: var(--sys-text-secondary); /** Default summary label role; component rules may override it. */
+  --cmp-summary-text: var(--sys-text-primary); /** Default summary text role; component rules may override it. */
+  --cmp-surface-action: var(--sys-surface-inverse); /** Default surface action role; component rules may override it. */
+  --cmp-surface-action-hover: var(--sys-surface-interactive-primary-hover); /** Default surface action hover role; component rules may override it. */
+  --cmp-surface-panel: var(--sys-surface-raised); /** Default surface panel role; component rules may override it. */
+  --cmp-surface-subtle: var(--sys-surface-subtle); /** Default surface subtle role; component rules may override it. */
+  --cmp-swatch-border: var(--sys-border-subtle); /** Default swatch border role; component rules may override it. */
+  --cmp-swatch-chip: var(--sys-surface-interactive-primary-default); /** Default swatch chip role; component rules may override it. */
+  --cmp-text-accent: var(--sys-text-accent); /** Default text accent role; component rules may override it. */
+  --cmp-text-body: var(--sys-text-primary); /** Default text body role; component rules may override it. */
+  --cmp-text-muted: var(--sys-text-muted); /** Default text muted role; component rules may override it. */
+  --cmp-text-on-action: var(--sys-text-inverse); /** Default text on action role; component rules may override it. */
+  --cmp-text-primary: var(--sys-text-primary); /** Default text primary role; component rules may override it. */
+  --cmp-text-secondary: var(--sys-text-secondary); /** Default text secondary role; component rules may override it. */
+  --cmp-timeline-background: var(--sys-surface-raised); /** Default timeline background role; component rules may override it. */
+  --cmp-timeline-border: var(--sys-border-subtle); /** Default timeline border role; component rules may override it. */
+  --cmp-timeline-marker: var(--sys-text-primary); /** Default timeline marker role; component rules may override it. */
+  --cmp-timeline-text: var(--sys-text-primary); /** Default timeline text role; component rules may override it. */
+  --cmp-text-placeholder-color: var(--sys-text-muted); /** Default placeholder text colour. */
+  --cmp-text-placeholder-focus: var(--sys-text-secondary); /** Placeholder text colour when the input is focused. */
+  --cmp-text-placeholder-disabled: var(--sys-text-disabled); /** Placeholder text colour when the input is disabled. */
+  --cmp-text-placeholder-error: var(--sys-status-critical-text); /** Placeholder text colour in error state. */
+}
+
+/**
+ * brand A · theme base — brand namespace
+ */
+[data-brand='A'][data-theme='base'],
+[data-brand='A'][data-theme='light'] {
+  --oods-viz-scale-categorical-05: oklch(0.5824 0.1655 23.81); /** Light categorical slot 05; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-color-brand-a-surface-canvas: oklch(0.967 0.03 86); /** Primary shell background with a warm Brand A tint. */
+  --oods-color-brand-a-surface-raised: oklch(0.935 0.037 86); /** Raised card surface separating panels with subtle warmth. */
+  --oods-color-brand-a-surface-subtle: oklch(0.893 0.048 86); /** Secondary panel surface tuned for AA contrast with primary text. */
+  --oods-color-brand-a-surface-disabled: oklch(0.886 0.03 86); /** Disabled surface. Measured 1.76:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance. */
+  --oods-color-brand-a-surface-backdrop: oklch(0.368 0.042 86); /** Overlay scrim aligned to Brand A neutrals. */
+  --oods-color-brand-a-surface-inverse: oklch(0.29 0.052 86); /** Inverse surface for tooltips and chips on warm panels. */
+  --oods-color-brand-a-surface-interactive-primary-default: oklch(0.56 0.19 43); /** Primary interactive background. ΔL −0.02 from the s167 value so near-white text.onInteractive clears AA with margin (measured 4.61:1, sRGB-clipped). */
+  --oods-color-brand-a-surface-interactive-primary-hover: oklch(0.52 0.2 43); /** Hover tracks new baseline with ΔL −0.06 / ΔC +0.01 guardrails. */
+  --oods-color-brand-a-surface-interactive-primary-pressed: oklch(0.46 0.21 43); /** Pressed deepens luminance (ΔL −0.12) while keeping hue clamp at 43°. */
+  --oods-color-brand-a-border-subtle: oklch(0.86 0.032 86); /** Default border tone for cards and inputs. */
+  --oods-color-brand-a-border-strong: oklch(0.6 0.052 86); /** High-emphasis outline for focus and separators. */
+  --oods-color-brand-a-focus-ring-outer: oklch(0.495 0.17 45); /** Light focus outline uses the full accent text colour to exceed 3:1 against canvas and raised surfaces. */
+  --oods-color-brand-a-focus-ring-inner: oklch(0.967 0.03 86); /** Inner focus ring matches the Brand A canvas in light mode. */
+  --oods-color-brand-a-focus-text: oklch(0.495 0.17 45); /** Branded light focus text matches the Brand A accent text. */
+  --oods-color-brand-a-text-primary: oklch(0.26 0.05 265); /** Primary body copy colour achieving ≥12:1 on canvas. */
+  --oods-color-brand-a-text-secondary: oklch(0.39 0.04 265); /** Secondary text for muted labels and metadata. */
+  --oods-color-brand-a-text-muted: oklch(0.46 0.03 265); /** Muted captions with ≥4.5:1 contrast on subtle surfaces. */
+  --oods-color-brand-a-text-inverse: oklch(0.92 0.02 86); /** Inverse body text for dark overlays. */
+  --oods-color-brand-a-text-accent: oklch(0.495 0.17 45); /** Accent text for inline highlights and links. ΔL −0.025 from the s168 value so the pairing with surface.subtle clears AA — that pairing was ungraded until s169 completed the text × panel grid. No ratio is quoted here on purpose: every text.accent claim is graded against the CANVAS pair, so a number about a different surface would be checked against the wrong one. */
+  --oods-color-brand-a-text-on-interactive: oklch(0.97 0.01 95); /** Foreground on primary interactive surfaces. Measured ≥4.61:1 (sRGB-clipped). */
+  --oods-color-brand-a-text-disabled: oklch(0.72 0.015 265); /** Disabled text. Measured 1.76:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components. */
+  --oods-color-brand-a-accent-background: oklch(0.9 0.06 45); /** Accent surface for callouts and banners. */
+  --oods-color-brand-a-accent-border: oklch(0.74 0.14 45); /** Accent border used by StatusChip tone=accent. */
+  --oods-color-brand-a-accent-text: oklch(0.5 0.17 45); /** Accent text to complement warm surfaces. */
+  --oods-color-brand-a-status-info-surface: oklch(0.9685 0.0148 268.73); /** Informational background tone. */
+  --oods-color-brand-a-status-info-border: oklch(0.8191 0.0763 268.81); /** Informational border tone. */
+  --oods-color-brand-a-status-info-text: oklch(0.3847 0.1344 271.74); /** Informational text colour. */
+  --oods-color-brand-a-status-info-icon: oklch(0.5466 0.1806 271.48); /** Informational icon colour. */
+  --oods-color-brand-a-status-success-surface: oklch(0.9743 0.0192 159.94); /** Success background tone. */
+  --oods-color-brand-a-status-success-border: oklch(0.8671 0.0772 157.25); /** Success border tone. */
+  --oods-color-brand-a-status-success-text: oklch(0.4315 0.0821 155.04); /** Success text tone. */
+  --oods-color-brand-a-status-success-icon: oklch(0.5738 0.1199 153.34); /** Success icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-a-status-warning-surface: oklch(0.9795 0.026 82.09); /** Warning background tone. */
+  --oods-color-brand-a-status-warning-border: oklch(0.8949 0.1177 79.87); /** Warning border tone. */
+  --oods-color-brand-a-status-warning-text: oklch(0.4914 0.1012 74.2); /** Warning text tone. */
+  --oods-color-brand-a-status-warning-icon: oklch(0.5932 0.1198 73.65); /** Warning icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-a-status-critical-surface: oklch(0.9672 0.0163 20.78); /** Critical background tone. */
+  --oods-color-brand-a-status-critical-border: oklch(0.824 0.0834 27.01); /** Critical border tone. */
+  --oods-color-brand-a-status-critical-text: oklch(0.465 0.147 32.94); /** Critical text tone. */
+  --oods-color-brand-a-status-critical-icon: oklch(0.6039 0.1827 32.43); /** Critical icon colour. */
+  --oods-color-brand-a-status-neutral-surface: oklch(0.9816 0.0017 255.84); /** Neutral status background tone. */
+  --oods-color-brand-a-status-neutral-border: oklch(0.8875 0.0147 272.49); /** Neutral status border tone. */
+  --oods-color-brand-a-status-neutral-text: oklch(0.4239 0.021 275.53); /** Neutral status text tone. */
+  --oods-color-brand-a-status-neutral-icon: oklch(0.5109 0.0264 277.16); /** Neutral status icon colour. */
+}
+
+/**
+ * brand A · theme base — semantic bridge
+ */
+[data-brand='A'][data-theme='base'],
+[data-brand='A'][data-theme='light'] {
+  --theme-surface-canvas: oklch(0.967 0.03 86);
+  --theme-surface-raised: oklch(0.935 0.037 86);
+  --theme-surface-subtle: oklch(0.893 0.048 86);
+  --theme-surface-disabled: oklch(0.886 0.03 86);
+  --theme-surface-backdrop: oklch(0.368 0.042 86);
+  --theme-surface-inverse: oklch(0.29 0.052 86);
+  --theme-surface-interactive-primary-default: oklch(0.56 0.19 43);
+  --theme-surface-interactive-primary-hover: oklch(0.52 0.2 43);
+  --theme-surface-interactive-primary-pressed: oklch(0.46 0.21 43);
+  --theme-border-subtle: oklch(0.86 0.032 86);
+  --theme-border-strong: oklch(0.6 0.052 86);
+  --theme-focus-ring-outer: oklch(0.495 0.17 45);
+  --theme-focus-ring-inner: oklch(0.967 0.03 86);
+  --theme-focus-text: oklch(0.495 0.17 45);
+  --theme-text-primary: oklch(0.26 0.05 265);
+  --theme-text-secondary: oklch(0.39 0.04 265);
+  --theme-text-muted: oklch(0.46 0.03 265);
+  --theme-text-inverse: oklch(0.92 0.02 86);
+  --theme-text-accent: oklch(0.495 0.17 45);
+  --theme-text-on-interactive: oklch(0.97 0.01 95);
+  --theme-text-disabled: oklch(0.72 0.015 265);
+  --theme-status-info-surface: oklch(0.9685 0.0148 268.73);
+  --theme-status-info-border: oklch(0.8191 0.0763 268.81);
+  --theme-status-info-text: oklch(0.3847 0.1344 271.74);
+  --theme-status-info-icon: oklch(0.5466 0.1806 271.48);
+  --theme-status-success-surface: oklch(0.9743 0.0192 159.94);
+  --theme-status-success-border: oklch(0.8671 0.0772 157.25);
+  --theme-status-success-text: oklch(0.4315 0.0821 155.04);
+  --theme-status-success-icon: oklch(0.5738 0.1199 153.34);
+  --theme-status-warning-surface: oklch(0.9795 0.026 82.09);
+  --theme-status-warning-border: oklch(0.8949 0.1177 79.87);
+  --theme-status-warning-text: oklch(0.4914 0.1012 74.2);
+  --theme-status-warning-icon: oklch(0.5932 0.1198 73.65);
+  --theme-status-critical-surface: oklch(0.9672 0.0163 20.78);
+  --theme-status-critical-border: oklch(0.824 0.0834 27.01);
+  --theme-status-critical-text: oklch(0.465 0.147 32.94);
+  --theme-status-critical-icon: oklch(0.6039 0.1827 32.43);
+  --theme-status-neutral-surface: oklch(0.9816 0.0017 255.84);
+  --theme-status-neutral-border: oklch(0.8875 0.0147 272.49);
+  --theme-status-neutral-text: oklch(0.4239 0.021 275.53);
+  --theme-status-neutral-icon: oklch(0.5109 0.0264 277.16);
+}
+
+/**
+ * brand A · theme dark — brand namespace
+ */
+[data-brand='A'][data-theme='dark'] {
+  --oods-viz-scale-categorical-01: oklch(0.62 0.1737 264.97); /** Dark categorical slot 01; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-02: oklch(0.52 0.1875 274.17); /** Dark categorical slot 02; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-03: oklch(0.66 0.1195 161.58); /** Dark categorical slot 03; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-04: oklch(0.72 0.122 80.41); /** Dark categorical slot 04; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-viz-scale-categorical-05: oklch(0.64 0.1655 23.89); /** Dark categorical slot 05; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-06: oklch(0.55 0.1421 47.13); /** Dark categorical slot 06; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-color-brand-a-surface-canvas: oklch(0.18 0.05 45); /** Dark canvas — deep warm charcoal with an orange undertone. */
+  --oods-color-brand-a-surface-raised: oklch(0.24 0.05 45); /** Raised panel surface separating cards from canvas. */
+  --oods-color-brand-a-surface-subtle: oklch(0.3 0.06 45); /** Secondary surface for sidebars and panels. */
+  --oods-color-brand-a-surface-disabled: oklch(0.32 0.04 45); /** Disabled surface — desaturated warm mid-tone. */
+  --oods-color-brand-a-surface-backdrop: oklch(0.12 0.04 45); /** Backdrop scrim — near-black with a warm undertone. */
+  --oods-color-brand-a-surface-inverse: oklch(0.95 0.01 45); /** Inverse surface — warm off-white for light-on-dark overlays. */
+  --oods-color-brand-a-surface-interactive-primary-default: oklch(0.52 0.2 45); /** Primary interactive surface — brand orange. */
+  --oods-color-brand-a-surface-interactive-primary-hover: oklch(0.54 0.21 45); /** Hover brightens orange by ΔL +0.02, capped so near-white text.onInteractive holds AA. Measured ≥4.99:1 (sRGB-clipped). */
+  --oods-color-brand-a-surface-interactive-primary-pressed: oklch(0.56 0.22 45); /** Pressed brightens orange by ΔL +0.04, capped so near-white text.onInteractive holds AA. Measured ≥4.60:1 (sRGB-clipped). */
+  --oods-color-brand-a-border-subtle: oklch(0.44 0.04 45); /** Subtle border — warm dark mid-tone for cards and inputs. */
+  --oods-color-brand-a-border-strong: oklch(0.53 0.05 45); /** Strong border — brighter warm mid-tone for separation. */
+  --oods-color-brand-a-focus-ring-outer: oklch(0.862 0.106 65); /** Behavior-preserving dark focus halo, transcribed from the pre-token Chromium value. */
+  --oods-color-brand-a-focus-ring-inner: oklch(0.18 0.05 45); /** Behavior-preserving dark inner focus ring. */
+  --oods-color-brand-a-focus-text: oklch(0.79 0.17 45); /** Behavior-preserving dark focus text. */
+  --oods-color-brand-a-text-primary: oklch(0.92 0.02 92); /** Primary body text — warm near-white on dark canvas. */
+  --oods-color-brand-a-text-secondary: oklch(0.81 0.015 92); /** Secondary copy — warm mid-light for supporting detail. */
+  --oods-color-brand-a-text-muted: oklch(0.7 0.01 92); /** Muted captions on dark surfaces. */
+  --oods-color-brand-a-text-inverse: oklch(0.24 0.05 265); /** Inverse text — dark tone for light-surface contexts. */
+  --oods-color-brand-a-text-accent: oklch(0.79 0.17 45); /** Accent text — bright orange for inline highlights and links. */
+  --oods-color-brand-a-text-on-interactive: oklch(0.97 0.01 95); /** Foreground on orange interactive surfaces. */
+  --oods-color-brand-a-text-disabled: oklch(0.55 0.008 92); /** Disabled text — deliberately low-contrast; WCAG 1.4.3 exempts inactive controls. */
+  --oods-color-brand-a-accent-background: oklch(0.26 0.09 45); /** Accent background panel — canvas +ΔL 0.08 at the accent hue. */
+  --oods-color-brand-a-accent-border: oklch(0.52 0.2 45); /** Full-chroma orange accent border (mirrors the interactive primary). */
+  --oods-color-brand-a-accent-text: oklch(0.79 0.17 45); /** Bright orange accent text on dark accent backgrounds (mirrors text.accent). */
+  --oods-color-brand-a-status-info-surface: oklch(0.31 0.08 270); /** Informational surface for dark shells. */
+  --oods-color-brand-a-status-info-border: oklch(0.43 0.11 270); /** Informational border tone. */
+  --oods-color-brand-a-status-info-text: oklch(0.88 0.06 270); /** Informational text across Brand A dark. */
+  --oods-color-brand-a-status-info-icon: oklch(0.8 0.1 270); /** Informational icon tone. */
+  --oods-color-brand-a-status-success-surface: oklch(0.32 0.09 153); /** Success surface tuned for dark contexts. */
+  --oods-color-brand-a-status-success-border: oklch(0.43 0.11 153); /** Success border maintaining AA. */
+  --oods-color-brand-a-status-success-text: oklch(0.88 0.07 157); /** Success text with ≥4.5:1 contrast. */
+  --oods-color-brand-a-status-success-icon: oklch(0.78 0.1 155); /** Success icon colour. */
+  --oods-color-brand-a-status-warning-surface: oklch(0.34 0.09 77); /** Warning surface for dark UI. */
+  --oods-color-brand-a-status-warning-border: oklch(0.46 0.12 77); /** Warning border preserving separation. */
+  --oods-color-brand-a-status-warning-text: oklch(0.9 0.08 79); /** Warning text meeting AA on warning surface. */
+  --oods-color-brand-a-status-warning-icon: oklch(0.81 0.11 77); /** Warning icon tone. */
+  --oods-color-brand-a-status-critical-surface: oklch(0.31 0.12 33); /** Critical alert surface avoiding bloom. */
+  --oods-color-brand-a-status-critical-border: oklch(0.43 0.15 33); /** Critical outline with strong presence. */
+  --oods-color-brand-a-status-critical-text: oklch(0.88 0.09 31); /** Critical text above AA thresholds. */
+  --oods-color-brand-a-status-critical-icon: oklch(0.79 0.13 32); /** Critical icon colour. */
+  --oods-color-brand-a-status-neutral-surface: oklch(0.32 0.02 268); /** Neutral banner surface. */
+  --oods-color-brand-a-status-neutral-border: oklch(0.41 0.025 268); /** Neutral border tone. */
+  --oods-color-brand-a-status-neutral-text: oklch(0.86 0.02 268); /** Neutral text for dark banners. */
+  --oods-color-brand-a-status-neutral-icon: oklch(0.74 0.02 268); /** Neutral icon tone. */
+}
+
+/**
+ * brand A · theme dark — semantic bridge
+ */
+[data-brand='A'][data-theme='dark'] {
+  --theme-surface-canvas: oklch(0.18 0.05 45);
+  --theme-surface-raised: oklch(0.24 0.05 45);
+  --theme-surface-subtle: oklch(0.3 0.06 45);
+  --theme-surface-disabled: oklch(0.32 0.04 45);
+  --theme-surface-backdrop: oklch(0.12 0.04 45);
+  --theme-surface-inverse: oklch(0.95 0.01 45);
+  --theme-surface-interactive-primary-default: oklch(0.52 0.2 45);
+  --theme-surface-interactive-primary-hover: oklch(0.54 0.21 45);
+  --theme-surface-interactive-primary-pressed: oklch(0.56 0.22 45);
+  --theme-border-subtle: oklch(0.44 0.04 45);
+  --theme-border-strong: oklch(0.53 0.05 45);
+  --theme-focus-ring-outer: oklch(0.862 0.106 65);
+  --theme-focus-ring-inner: oklch(0.18 0.05 45);
+  --theme-focus-text: oklch(0.79 0.17 45);
+  --theme-text-primary: oklch(0.92 0.02 92);
+  --theme-text-secondary: oklch(0.81 0.015 92);
+  --theme-text-muted: oklch(0.7 0.01 92);
+  --theme-text-inverse: oklch(0.24 0.05 265);
+  --theme-text-accent: oklch(0.79 0.17 45);
+  --theme-text-on-interactive: oklch(0.97 0.01 95);
+  --theme-text-disabled: oklch(0.55 0.008 92);
+  --theme-status-info-surface: oklch(0.31 0.08 270);
+  --theme-status-info-border: oklch(0.43 0.11 270);
+  --theme-status-info-text: oklch(0.88 0.06 270);
+  --theme-status-info-icon: oklch(0.8 0.1 270);
+  --theme-status-success-surface: oklch(0.32 0.09 153);
+  --theme-status-success-border: oklch(0.43 0.11 153);
+  --theme-status-success-text: oklch(0.88 0.07 157);
+  --theme-status-success-icon: oklch(0.78 0.1 155);
+  --theme-status-warning-surface: oklch(0.34 0.09 77);
+  --theme-status-warning-border: oklch(0.46 0.12 77);
+  --theme-status-warning-text: oklch(0.9 0.08 79);
+  --theme-status-warning-icon: oklch(0.81 0.11 77);
+  --theme-status-critical-surface: oklch(0.31 0.12 33);
+  --theme-status-critical-border: oklch(0.43 0.15 33);
+  --theme-status-critical-text: oklch(0.88 0.09 31);
+  --theme-status-critical-icon: oklch(0.79 0.13 32);
+  --theme-status-neutral-surface: oklch(0.32 0.02 268);
+  --theme-status-neutral-border: oklch(0.41 0.025 268);
+  --theme-status-neutral-text: oklch(0.86 0.02 268);
+  --theme-status-neutral-icon: oklch(0.74 0.02 268);
+}
+
+/**
+ * brand A · theme hc — brand namespace
+ */
+[data-brand='A'][data-theme='hc'] {
+  --oods-viz-scale-categorical-04: oklch(0.6558 0.122 80.37); /** Retain the pre-s191 HC slot; HC pixels remain deferred. */
+  --oods-viz-scale-categorical-05: oklch(0.5824 0.1655 23.81); /** Light categorical slot 05; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-color-brand-a-surface-canvas: Canvas; /** Forced-colors canvas maps to system Canvas. */
+  --oods-color-brand-a-surface-raised: Canvas; /** Raised surfaces mirror Canvas in HC mode. */
+  --oods-color-brand-a-surface-subtle: Canvas; /** Subtle surfaces flatten to Canvas for predictability. */
+  --oods-color-brand-a-surface-disabled: Canvas; /** Disabled surfaces stay on Canvas to preserve outlines. */
+  --oods-color-brand-a-surface-backdrop: Canvas; /** Backdrop scrims fall back to Canvas in HC mode. */
+  --oods-color-brand-a-surface-inverse: CanvasText; /** Inverse surfaces flip to CanvasText for contrast. */
+  --oods-color-brand-a-surface-interactive-primary-default: Highlight; /** Primary action aligns to Highlight in HC. */
+  --oods-color-brand-a-surface-interactive-primary-hover: Highlight; /** Hover remains Highlight to avoid flicker. */
+  --oods-color-brand-a-surface-interactive-primary-pressed: Highlight; /** Pressed state remains Highlight. */
+  --oods-color-brand-a-border-subtle: CanvasText; /** Default border maps to CanvasText. */
+  --oods-color-brand-a-border-strong: Highlight; /** High-emphasis border uses Highlight for visibility. */
+  --oods-color-brand-a-focus-ring-outer: Highlight; /** High-contrast focus halo uses the system Highlight color. */
+  --oods-color-brand-a-focus-ring-inner: Canvas; /** High-contrast inner focus ring uses the system Canvas color. */
+  --oods-color-brand-a-focus-text: HighlightText; /** High-contrast focus text uses the system HighlightText color. */
+  --oods-color-brand-a-text-primary: CanvasText; /** Primary text uses CanvasText for HC compliance. */
+  --oods-color-brand-a-text-secondary: GrayText; /** Secondary copy falls back to GrayText. */
+  --oods-color-brand-a-text-muted: GrayText; /** Muted copy also maps to GrayText. */
+  --oods-color-brand-a-text-inverse: Canvas; /** Inverse text uses Canvas to contrast CanvasText surfaces. */
+  --oods-color-brand-a-text-accent: LinkText; /** Accent inline text maps to LinkText in HC. */
+  --oods-color-brand-a-text-on-interactive: HighlightText; /** Interactive foreground uses HighlightText. */
+  --oods-color-brand-a-text-disabled: GrayText; /** Disabled text uses GrayText baseline. */
+  --oods-color-brand-a-accent-background: Canvas; /** Accent surfaces resolve to Canvas. */
+  --oods-color-brand-a-accent-border: Highlight; /** Accent border leverages Highlight. */
+  --oods-color-brand-a-accent-text: HighlightText; /** Accent text maps to HighlightText. */
+  --oods-color-brand-a-status-info-surface: Canvas; /** Info backgrounds map to Canvas. */
+  --oods-color-brand-a-status-info-border: Highlight; /** Info borders use Highlight. */
+  --oods-color-brand-a-status-info-text: HighlightText; /** Info text uses HighlightText. */
+  --oods-color-brand-a-status-info-icon: HighlightText; /** Info icon uses HighlightText. */
+  --oods-color-brand-a-status-success-surface: Canvas; /** Success surfaces map to Canvas. */
+  --oods-color-brand-a-status-success-border: Highlight; /** Success border uses Highlight. */
+  --oods-color-brand-a-status-success-text: HighlightText; /** Success text uses HighlightText. */
+  --oods-color-brand-a-status-success-icon: HighlightText; /** Success icon uses HighlightText. */
+  --oods-color-brand-a-status-warning-surface: Canvas; /** Warning surfaces map to Canvas. */
+  --oods-color-brand-a-status-warning-border: Highlight; /** Warning border uses Highlight. */
+  --oods-color-brand-a-status-warning-text: HighlightText; /** Warning text uses HighlightText. */
+  --oods-color-brand-a-status-warning-icon: HighlightText; /** Warning icon uses HighlightText. */
+  --oods-color-brand-a-status-critical-surface: Canvas; /** Critical surfaces flatten to Canvas. */
+  --oods-color-brand-a-status-critical-border: Highlight; /** Critical border uses Highlight. */
+  --oods-color-brand-a-status-critical-text: HighlightText; /** Critical text uses HighlightText. */
+  --oods-color-brand-a-status-critical-icon: HighlightText; /** Critical icon uses HighlightText. */
+  --oods-color-brand-a-status-neutral-surface: Canvas; /** Neutral surface maps to Canvas. */
+  --oods-color-brand-a-status-neutral-border: CanvasText; /** Neutral border uses CanvasText. */
+  --oods-color-brand-a-status-neutral-text: CanvasText; /** Neutral text uses CanvasText. */
+  --oods-color-brand-a-status-neutral-icon: CanvasText; /** Neutral icon uses CanvasText. */
+}
+
+/**
+ * brand A · theme hc — semantic bridge
+ */
+[data-brand='A'][data-theme='hc'] {
+  --theme-surface-canvas: Canvas;
+  --theme-surface-raised: Canvas;
+  --theme-surface-subtle: Canvas;
+  --theme-surface-disabled: Canvas;
+  --theme-surface-backdrop: Canvas;
+  --theme-surface-inverse: CanvasText;
+  --theme-surface-interactive-primary-default: Highlight;
+  --theme-surface-interactive-primary-hover: Highlight;
+  --theme-surface-interactive-primary-pressed: Highlight;
+  --theme-border-subtle: CanvasText;
+  --theme-border-strong: Highlight;
+  --theme-focus-ring-outer: Highlight;
+  --theme-focus-ring-inner: Canvas;
+  --theme-focus-text: HighlightText;
+  --theme-text-primary: CanvasText;
+  --theme-text-secondary: GrayText;
+  --theme-text-muted: GrayText;
+  --theme-text-inverse: Canvas;
+  --theme-text-accent: LinkText;
+  --theme-text-on-interactive: HighlightText;
+  --theme-text-disabled: GrayText;
+  --theme-status-info-surface: Canvas;
+  --theme-status-info-border: Highlight;
+  --theme-status-info-text: HighlightText;
+  --theme-status-info-icon: HighlightText;
+  --theme-status-success-surface: Canvas;
+  --theme-status-success-border: Highlight;
+  --theme-status-success-text: HighlightText;
+  --theme-status-success-icon: HighlightText;
+  --theme-status-warning-surface: Canvas;
+  --theme-status-warning-border: Highlight;
+  --theme-status-warning-text: HighlightText;
+  --theme-status-warning-icon: HighlightText;
+  --theme-status-critical-surface: Canvas;
+  --theme-status-critical-border: Highlight;
+  --theme-status-critical-text: HighlightText;
+  --theme-status-critical-icon: HighlightText;
+  --theme-status-neutral-surface: Canvas;
+  --theme-status-neutral-border: CanvasText;
+  --theme-status-neutral-text: CanvasText;
+  --theme-status-neutral-icon: CanvasText;
+}
+
+/**
+ * brand B · theme base — brand namespace
+ */
+[data-brand='B'][data-theme='base'],
+[data-brand='B'][data-theme='light'] {
+  --oods-viz-scale-categorical-05: oklch(0.5824 0.1655 23.81); /** Light categorical slot 05; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-color-brand-b-surface-canvas: oklch(0.97 0.015 230); /** Primary shell background for Brand B with a cool tint. */
+  --oods-color-brand-b-surface-raised: oklch(0.94 0.022 230); /** Raised card surface separating panels with cool neutrality. */
+  --oods-color-brand-b-surface-subtle: oklch(0.9 0.032 230); /** Secondary panel surface tuned for AA contrast with body text. */
+  --oods-color-brand-b-surface-disabled: oklch(0.88 0.015 230); /** Disabled surface. Measured 1.88:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance. */
+  --oods-color-brand-b-surface-backdrop: oklch(0.35 0.022 230); /** Overlay scrim aligned to Brand B neutrals. */
+  --oods-color-brand-b-surface-inverse: oklch(0.28 0.03 230); /** Inverse surface for tooltips and chips on cool panels. */
+  --oods-color-brand-b-surface-interactive-primary-default: oklch(0.535 0.18 232); /** Primary interactive background. ΔL −0.085 so near-white text.onInteractive clears AA. Measured ≥4.64:1 (sRGB-clipped). */
+  --oods-color-brand-b-surface-interactive-primary-hover: oklch(0.52 0.19 232); /** Hover tracks ΔL −0.10 / ΔC +0.01 to stay inside guardrails. */
+  --oods-color-brand-b-surface-interactive-primary-pressed: oklch(0.47 0.21 232); /** Pressed deepens luminance (ΔL −0.15) while keeping hue stable. */
+  --oods-color-brand-b-border-subtle: oklch(0.85 0.02 230); /** Default border tone for Brand B cards and inputs. */
+  --oods-color-brand-b-border-strong: oklch(0.6 0.035 232); /** High-emphasis outline for focus and separators. */
+  --oods-color-brand-b-focus-ring-outer: oklch(0.48 0.14 238); /** Light focus outline uses the full accent text colour to exceed 3:1 against canvas and raised surfaces. */
+  --oods-color-brand-b-focus-ring-inner: oklch(0.97 0.015 230); /** Inner focus ring matches the Brand B canvas in light mode. */
+  --oods-color-brand-b-focus-text: oklch(0.48 0.14 238); /** Branded light focus text matches the Brand B accent text. */
+  --oods-color-brand-b-text-primary: oklch(0.23 0.035 265); /** Primary body copy colour achieving ≥12:1 on canvas. */
+  --oods-color-brand-b-text-secondary: oklch(0.36 0.025 265); /** Secondary text for muted labels and metadata. */
+  --oods-color-brand-b-text-muted: oklch(0.45 0.02 265); /** Muted captions with ≥4.5:1 contrast on subtle surfaces. */
+  --oods-color-brand-b-text-inverse: oklch(0.94 0.01 232); /** Inverse body text for dark overlays. */
+  --oods-color-brand-b-text-accent: oklch(0.48 0.14 238); /** Accent text for links and highlights. Measured ≥5.72:1 on canvas (sRGB-clipped). ΔL −0.05 from the s168 value so the pairings with surface.raised and surface.subtle also clear AA — both were ungraded until s169 completed the text × panel grid. The quoted ratio is the canvas pair, which is the pair every text.accent claim is graded against. */
+  --oods-color-brand-b-text-on-interactive: oklch(0.98 0.003 250); /** Foreground on primary interactive surfaces. Measured ≥4.64:1 (sRGB-clipped). */
+  --oods-color-brand-b-text-disabled: oklch(0.7 0.015 265); /** Disabled text. Measured 1.88:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components. */
+  --oods-color-brand-b-accent-background: oklch(0.9 0.045 240); /** Accent surface for callouts and banners. */
+  --oods-color-brand-b-accent-border: oklch(0.74 0.12 240); /** Accent border used by StatusChip tone=accent. */
+  --oods-color-brand-b-accent-text: oklch(0.46 0.14 240); /** Accent text complementing cool surfaces. */
+  --oods-color-brand-b-status-info-surface: oklch(0.968 0.013 252); /** Informational background tone for Brand B. */
+  --oods-color-brand-b-status-info-border: oklch(0.82 0.07 252); /** Informational border tone. */
+  --oods-color-brand-b-status-info-text: oklch(0.39 0.13 254); /** Informational text colour. */
+  --oods-color-brand-b-status-info-icon: oklch(0.55 0.18 254); /** Informational icon colour. */
+  --oods-color-brand-b-status-success-surface: oklch(0.973 0.019 172); /** Success background tone. */
+  --oods-color-brand-b-status-success-border: oklch(0.868 0.078 168); /** Success border tone. */
+  --oods-color-brand-b-status-success-text: oklch(0.432 0.082 168); /** Success text tone. */
+  --oods-color-brand-b-status-success-icon: oklch(0.581 0.12 166); /** Success icon colour. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-b-status-warning-surface: oklch(0.978 0.026 82); /** Warning background tone. */
+  --oods-color-brand-b-status-warning-border: oklch(0.894 0.118 82); /** Warning border tone. */
+  --oods-color-brand-b-status-warning-text: oklch(0.49 0.102 80); /** Warning text tone. */
+  --oods-color-brand-b-status-warning-icon: oklch(0.599 0.12 80); /** Warning icon tone. F4 lowers lightness only; measured ≥3.02:1 on surface.subtle, the limiting panel (sRGB-clipped). */
+  --oods-color-brand-b-status-critical-surface: oklch(0.966 0.017 20); /** Critical background tone. */
+  --oods-color-brand-b-status-critical-border: oklch(0.824 0.083 25); /** Critical border tone. */
+  --oods-color-brand-b-status-critical-text: oklch(0.466 0.147 24); /** Critical text tone. */
+  --oods-color-brand-b-status-critical-icon: oklch(0.604 0.182 24); /** Critical icon colour. */
+  --oods-color-brand-b-status-neutral-surface: oklch(0.982 0.002 248); /** Neutral status background tone. */
+  --oods-color-brand-b-status-neutral-border: oklch(0.888 0.014 256); /** Neutral status border tone. */
+  --oods-color-brand-b-status-neutral-text: oklch(0.425 0.021 262); /** Neutral status text tone. */
+  --oods-color-brand-b-status-neutral-icon: oklch(0.512 0.026 262); /** Neutral status icon colour. */
+}
+
+/**
+ * brand B · theme base — semantic bridge
+ */
+[data-brand='B'][data-theme='base'],
+[data-brand='B'][data-theme='light'] {
+  --theme-surface-canvas: oklch(0.97 0.015 230);
+  --theme-surface-raised: oklch(0.94 0.022 230);
+  --theme-surface-subtle: oklch(0.9 0.032 230);
+  --theme-surface-disabled: oklch(0.88 0.015 230);
+  --theme-surface-backdrop: oklch(0.35 0.022 230);
+  --theme-surface-inverse: oklch(0.28 0.03 230);
+  --theme-surface-interactive-primary-default: oklch(0.535 0.18 232);
+  --theme-surface-interactive-primary-hover: oklch(0.52 0.19 232);
+  --theme-surface-interactive-primary-pressed: oklch(0.47 0.21 232);
+  --theme-border-subtle: oklch(0.85 0.02 230);
+  --theme-border-strong: oklch(0.6 0.035 232);
+  --theme-focus-ring-outer: oklch(0.48 0.14 238);
+  --theme-focus-ring-inner: oklch(0.97 0.015 230);
+  --theme-focus-text: oklch(0.48 0.14 238);
+  --theme-text-primary: oklch(0.23 0.035 265);
+  --theme-text-secondary: oklch(0.36 0.025 265);
+  --theme-text-muted: oklch(0.45 0.02 265);
+  --theme-text-inverse: oklch(0.94 0.01 232);
+  --theme-text-accent: oklch(0.48 0.14 238);
+  --theme-text-on-interactive: oklch(0.98 0.003 250);
+  --theme-text-disabled: oklch(0.7 0.015 265);
+  --theme-status-info-surface: oklch(0.968 0.013 252);
+  --theme-status-info-border: oklch(0.82 0.07 252);
+  --theme-status-info-text: oklch(0.39 0.13 254);
+  --theme-status-info-icon: oklch(0.55 0.18 254);
+  --theme-status-success-surface: oklch(0.973 0.019 172);
+  --theme-status-success-border: oklch(0.868 0.078 168);
+  --theme-status-success-text: oklch(0.432 0.082 168);
+  --theme-status-success-icon: oklch(0.581 0.12 166);
+  --theme-status-warning-surface: oklch(0.978 0.026 82);
+  --theme-status-warning-border: oklch(0.894 0.118 82);
+  --theme-status-warning-text: oklch(0.49 0.102 80);
+  --theme-status-warning-icon: oklch(0.599 0.12 80);
+  --theme-status-critical-surface: oklch(0.966 0.017 20);
+  --theme-status-critical-border: oklch(0.824 0.083 25);
+  --theme-status-critical-text: oklch(0.466 0.147 24);
+  --theme-status-critical-icon: oklch(0.604 0.182 24);
+  --theme-status-neutral-surface: oklch(0.982 0.002 248);
+  --theme-status-neutral-border: oklch(0.888 0.014 256);
+  --theme-status-neutral-text: oklch(0.425 0.021 262);
+  --theme-status-neutral-icon: oklch(0.512 0.026 262);
+}
+
+/**
+ * brand B · theme dark — brand namespace
+ */
+[data-brand='B'][data-theme='dark'] {
+  --oods-viz-scale-categorical-01: oklch(0.62 0.1737 264.97); /** Dark categorical slot 01; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-02: oklch(0.52 0.1875 274.17); /** Dark categorical slot 02; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-03: oklch(0.66 0.1195 161.58); /** Dark categorical slot 03; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-04: oklch(0.72 0.122 80.41); /** Dark categorical slot 04; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-viz-scale-categorical-05: oklch(0.64 0.1655 23.89); /** Dark categorical slot 05; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-viz-scale-categorical-06: oklch(0.55 0.1421 47.13); /** Dark categorical slot 06; hue/chroma retained, lightness measured against both dark canvases (s191-m01). */
+  --oods-color-brand-b-surface-canvas: oklch(0.19 0.032 232); /** Dark canvas anchored in Brand B cool neutrals. */
+  --oods-color-brand-b-surface-raised: oklch(0.24 0.034 232); /** Raised panel surface separating cards from canvas. */
+  --oods-color-brand-b-surface-subtle: oklch(0.3 0.042 232); /** Secondary surface for sidebars and timelines. */
+  --oods-color-brand-b-surface-disabled: oklch(0.32 0.028 232); /** Disabled surface. Measured 2.59:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance. */
+  --oods-color-brand-b-surface-backdrop: oklch(0.12 0.028 232); /** Backdrop scrim avoiding bloom on dark UI. */
+  --oods-color-brand-b-surface-inverse: oklch(0.96 0.01 232); /** Inverse surface for sheets rendered inside dark panels. */
+  --oods-color-brand-b-surface-interactive-primary-default: oklch(0.43 0.19 232); /** Primary action surface cooled to match Brand B base theme. */
+  --oods-color-brand-b-surface-interactive-primary-hover: oklch(0.51 0.2 232); /** Hover lifts luminance by +0.08 staying within guardrails. */
+  --oods-color-brand-b-surface-interactive-primary-pressed: oklch(0.525 0.22 232); /** Pressed state. ΔL −0.035 so near-white text.onInteractive holds AA. Measured ≥4.69:1 (sRGB-clipped). */
+  --oods-color-brand-b-border-subtle: oklch(0.45 0.028 232); /** Default outline for cards on dark surfaces. */
+  --oods-color-brand-b-border-strong: oklch(0.54 0.035 232); /** High-emphasis border for focus and emphasis frames. */
+  --oods-color-brand-b-focus-ring-outer: oklch(0.868 0.1 238.4); /** Behavior-preserving dark focus halo, transcribed from the pre-token Chromium value. */
+  --oods-color-brand-b-focus-ring-inner: oklch(0.19 0.032 232); /** Behavior-preserving dark inner focus ring. */
+  --oods-color-brand-b-focus-text: oklch(0.8 0.16 232); /** Behavior-preserving dark focus text. */
+  --oods-color-brand-b-text-primary: oklch(0.92 0.02 250); /** Primary body text on dark backgrounds. */
+  --oods-color-brand-b-text-secondary: oklch(0.82 0.015 250); /** Secondary copy for supporting detail. */
+  --oods-color-brand-b-text-muted: oklch(0.72 0.01 250); /** Muted captions with ≥4.5:1 on subtle surfaces. */
+  --oods-color-brand-b-text-inverse: oklch(0.26 0.04 270); /** Inverse text for light surfaces within dark contexts. */
+  --oods-color-brand-b-text-accent: oklch(0.8 0.16 232); /** Accent text aligning with cool Brand B ramps. */
+  --oods-color-brand-b-text-on-interactive: oklch(0.97 0.01 248); /** Foreground on primary interactive surfaces. */
+  --oods-color-brand-b-text-disabled: oklch(0.55 0.007 250); /** Disabled text. Measured 2.59:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components. */
+  --oods-color-brand-b-accent-background: oklch(0.36 0.055 240); /** Accent panel tone for promotional banners in dark mode. */
+  --oods-color-brand-b-accent-border: oklch(0.5 0.1 240); /** Accent border preserving separation on dark UI. */
+  --oods-color-brand-b-accent-text: oklch(0.86 0.06 250); /** Accent foreground on cool accent surfaces. */
+  --oods-color-brand-b-status-info-surface: oklch(0.31 0.08 252); /** Informational surface for dark shells. */
+  --oods-color-brand-b-status-info-border: oklch(0.43 0.11 252); /** Informational border tone. */
+  --oods-color-brand-b-status-info-text: oklch(0.88 0.06 252); /** Informational text across Brand B dark mode. */
+  --oods-color-brand-b-status-info-icon: oklch(0.8 0.1 252); /** Informational icon tone. */
+  --oods-color-brand-b-status-success-surface: oklch(0.32 0.09 168); /** Success surface tuned for dark contexts. */
+  --oods-color-brand-b-status-success-border: oklch(0.43 0.11 168); /** Success border maintaining AA. */
+  --oods-color-brand-b-status-success-text: oklch(0.88 0.07 170); /** Success text with ≥4.5:1 contrast. */
+  --oods-color-brand-b-status-success-icon: oklch(0.78 0.1 168); /** Success icon colour. */
+  --oods-color-brand-b-status-warning-surface: oklch(0.34 0.09 82); /** Warning surface for dark UI. */
+  --oods-color-brand-b-status-warning-border: oklch(0.46 0.12 82); /** Warning border preserving separation. */
+  --oods-color-brand-b-status-warning-text: oklch(0.9 0.08 82); /** Warning text meeting AA on warning surface. */
+  --oods-color-brand-b-status-warning-icon: oklch(0.81 0.11 82); /** Warning icon tone. */
+  --oods-color-brand-b-status-critical-surface: oklch(0.31 0.12 24); /** Critical alert surface avoiding bloom. */
+  --oods-color-brand-b-status-critical-border: oklch(0.43 0.15 24); /** Critical outline with strong presence. */
+  --oods-color-brand-b-status-critical-text: oklch(0.88 0.09 24); /** Critical text above AA thresholds. */
+  --oods-color-brand-b-status-critical-icon: oklch(0.79 0.13 23); /** Critical icon colour. */
+  --oods-color-brand-b-status-neutral-surface: oklch(0.32 0.02 252); /** Neutral banner surface. */
+  --oods-color-brand-b-status-neutral-border: oklch(0.41 0.025 252); /** Neutral border tone. */
+  --oods-color-brand-b-status-neutral-text: oklch(0.86 0.02 252); /** Neutral text for dark banners. */
+  --oods-color-brand-b-status-neutral-icon: oklch(0.74 0.02 252); /** Neutral icon tone. */
+}
+
+/**
+ * brand B · theme dark — semantic bridge
+ */
+[data-brand='B'][data-theme='dark'] {
+  --theme-surface-canvas: oklch(0.19 0.032 232);
+  --theme-surface-raised: oklch(0.24 0.034 232);
+  --theme-surface-subtle: oklch(0.3 0.042 232);
+  --theme-surface-disabled: oklch(0.32 0.028 232);
+  --theme-surface-backdrop: oklch(0.12 0.028 232);
+  --theme-surface-inverse: oklch(0.96 0.01 232);
+  --theme-surface-interactive-primary-default: oklch(0.43 0.19 232);
+  --theme-surface-interactive-primary-hover: oklch(0.51 0.2 232);
+  --theme-surface-interactive-primary-pressed: oklch(0.525 0.22 232);
+  --theme-border-subtle: oklch(0.45 0.028 232);
+  --theme-border-strong: oklch(0.54 0.035 232);
+  --theme-focus-ring-outer: oklch(0.868 0.1 238.4);
+  --theme-focus-ring-inner: oklch(0.19 0.032 232);
+  --theme-focus-text: oklch(0.8 0.16 232);
+  --theme-text-primary: oklch(0.92 0.02 250);
+  --theme-text-secondary: oklch(0.82 0.015 250);
+  --theme-text-muted: oklch(0.72 0.01 250);
+  --theme-text-inverse: oklch(0.26 0.04 270);
+  --theme-text-accent: oklch(0.8 0.16 232);
+  --theme-text-on-interactive: oklch(0.97 0.01 248);
+  --theme-text-disabled: oklch(0.55 0.007 250);
+  --theme-status-info-surface: oklch(0.31 0.08 252);
+  --theme-status-info-border: oklch(0.43 0.11 252);
+  --theme-status-info-text: oklch(0.88 0.06 252);
+  --theme-status-info-icon: oklch(0.8 0.1 252);
+  --theme-status-success-surface: oklch(0.32 0.09 168);
+  --theme-status-success-border: oklch(0.43 0.11 168);
+  --theme-status-success-text: oklch(0.88 0.07 170);
+  --theme-status-success-icon: oklch(0.78 0.1 168);
+  --theme-status-warning-surface: oklch(0.34 0.09 82);
+  --theme-status-warning-border: oklch(0.46 0.12 82);
+  --theme-status-warning-text: oklch(0.9 0.08 82);
+  --theme-status-warning-icon: oklch(0.81 0.11 82);
+  --theme-status-critical-surface: oklch(0.31 0.12 24);
+  --theme-status-critical-border: oklch(0.43 0.15 24);
+  --theme-status-critical-text: oklch(0.88 0.09 24);
+  --theme-status-critical-icon: oklch(0.79 0.13 23);
+  --theme-status-neutral-surface: oklch(0.32 0.02 252);
+  --theme-status-neutral-border: oklch(0.41 0.025 252);
+  --theme-status-neutral-text: oklch(0.86 0.02 252);
+  --theme-status-neutral-icon: oklch(0.74 0.02 252);
+}
+
+/**
+ * brand B · theme hc — brand namespace
+ */
+[data-brand='B'][data-theme='hc'] {
+  --oods-viz-scale-categorical-04: oklch(0.6558 0.122 80.37); /** Retain the pre-s191 HC slot; HC pixels remain deferred. */
+  --oods-viz-scale-categorical-05: oklch(0.5824 0.1655 23.81); /** Light categorical slot 05; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05). */
+  --oods-color-brand-b-surface-canvas: Canvas; /** Forced-colors canvas maps to system Canvas. */
+  --oods-color-brand-b-surface-raised: Canvas; /** Raised surfaces mirror Canvas in HC mode. */
+  --oods-color-brand-b-surface-subtle: Canvas; /** Subtle surfaces flatten to Canvas for predictability. */
+  --oods-color-brand-b-surface-disabled: Canvas; /** Disabled surfaces stay on Canvas to preserve outlines. */
+  --oods-color-brand-b-surface-backdrop: Canvas; /** Backdrop scrims fall back to Canvas in HC mode. */
+  --oods-color-brand-b-surface-inverse: CanvasText; /** Inverse surfaces flip to CanvasText for contrast. */
+  --oods-color-brand-b-surface-interactive-primary-default: Highlight; /** Primary action aligns to Highlight in HC. */
+  --oods-color-brand-b-surface-interactive-primary-hover: Highlight; /** Hover remains Highlight to avoid flicker. */
+  --oods-color-brand-b-surface-interactive-primary-pressed: Highlight; /** Pressed state remains Highlight. */
+  --oods-color-brand-b-border-subtle: CanvasText; /** Default border maps to CanvasText. */
+  --oods-color-brand-b-border-strong: Highlight; /** High-emphasis border uses Highlight for visibility. */
+  --oods-color-brand-b-focus-ring-outer: Highlight; /** High-contrast focus halo uses the system Highlight color. */
+  --oods-color-brand-b-focus-ring-inner: Canvas; /** High-contrast inner focus ring uses the system Canvas color. */
+  --oods-color-brand-b-focus-text: HighlightText; /** High-contrast focus text uses the system HighlightText color. */
+  --oods-color-brand-b-text-primary: CanvasText; /** Primary text uses CanvasText for HC compliance. */
+  --oods-color-brand-b-text-secondary: GrayText; /** Secondary copy falls back to GrayText. */
+  --oods-color-brand-b-text-muted: GrayText; /** Muted copy also maps to GrayText. */
+  --oods-color-brand-b-text-inverse: Canvas; /** Inverse text uses Canvas to contrast CanvasText surfaces. */
+  --oods-color-brand-b-text-accent: LinkText; /** Accent inline text maps to LinkText in HC. */
+  --oods-color-brand-b-text-on-interactive: HighlightText; /** Interactive foreground uses HighlightText. */
+  --oods-color-brand-b-text-disabled: GrayText; /** Disabled text uses GrayText baseline. */
+  --oods-color-brand-b-accent-background: Canvas; /** Accent surfaces resolve to Canvas. */
+  --oods-color-brand-b-accent-border: Highlight; /** Accent border leverages Highlight. */
+  --oods-color-brand-b-accent-text: HighlightText; /** Accent text maps to HighlightText. */
+  --oods-color-brand-b-status-info-surface: Canvas; /** Info backgrounds map to Canvas. */
+  --oods-color-brand-b-status-info-border: Highlight; /** Info borders use Highlight. */
+  --oods-color-brand-b-status-info-text: HighlightText; /** Info text uses HighlightText. */
+  --oods-color-brand-b-status-info-icon: HighlightText; /** Info icon uses HighlightText. */
+  --oods-color-brand-b-status-success-surface: Canvas; /** Success surfaces map to Canvas. */
+  --oods-color-brand-b-status-success-border: Highlight; /** Success border uses Highlight. */
+  --oods-color-brand-b-status-success-text: HighlightText; /** Success text uses HighlightText. */
+  --oods-color-brand-b-status-success-icon: HighlightText; /** Success icon uses HighlightText. */
+  --oods-color-brand-b-status-warning-surface: Canvas; /** Warning surfaces map to Canvas. */
+  --oods-color-brand-b-status-warning-border: Highlight; /** Warning border uses Highlight. */
+  --oods-color-brand-b-status-warning-text: HighlightText; /** Warning text uses HighlightText. */
+  --oods-color-brand-b-status-warning-icon: HighlightText; /** Warning icon uses HighlightText. */
+  --oods-color-brand-b-status-critical-surface: Canvas; /** Critical surfaces flatten to Canvas. */
+  --oods-color-brand-b-status-critical-border: Highlight; /** Critical border uses Highlight. */
+  --oods-color-brand-b-status-critical-text: HighlightText; /** Critical text uses HighlightText. */
+  --oods-color-brand-b-status-critical-icon: HighlightText; /** Critical icon uses HighlightText. */
+  --oods-color-brand-b-status-neutral-surface: Canvas; /** Neutral surface maps to Canvas. */
+  --oods-color-brand-b-status-neutral-border: CanvasText; /** Neutral border uses CanvasText. */
+  --oods-color-brand-b-status-neutral-text: CanvasText; /** Neutral text uses CanvasText. */
+  --oods-color-brand-b-status-neutral-icon: CanvasText; /** Neutral icon uses CanvasText. */
+}
+
+/**
+ * brand B · theme hc — semantic bridge
+ */
+[data-brand='B'][data-theme='hc'] {
+  --theme-surface-canvas: Canvas;
+  --theme-surface-raised: Canvas;
+  --theme-surface-subtle: Canvas;
+  --theme-surface-disabled: Canvas;
+  --theme-surface-backdrop: Canvas;
+  --theme-surface-inverse: CanvasText;
+  --theme-surface-interactive-primary-default: Highlight;
+  --theme-surface-interactive-primary-hover: Highlight;
+  --theme-surface-interactive-primary-pressed: Highlight;
+  --theme-border-subtle: CanvasText;
+  --theme-border-strong: Highlight;
+  --theme-focus-ring-outer: Highlight;
+  --theme-focus-ring-inner: Canvas;
+  --theme-focus-text: HighlightText;
+  --theme-text-primary: CanvasText;
+  --theme-text-secondary: GrayText;
+  --theme-text-muted: GrayText;
+  --theme-text-inverse: Canvas;
+  --theme-text-accent: LinkText;
+  --theme-text-on-interactive: HighlightText;
+  --theme-text-disabled: GrayText;
+  --theme-status-info-surface: Canvas;
+  --theme-status-info-border: Highlight;
+  --theme-status-info-text: HighlightText;
+  --theme-status-info-icon: HighlightText;
+  --theme-status-success-surface: Canvas;
+  --theme-status-success-border: Highlight;
+  --theme-status-success-text: HighlightText;
+  --theme-status-success-icon: HighlightText;
+  --theme-status-warning-surface: Canvas;
+  --theme-status-warning-border: Highlight;
+  --theme-status-warning-text: HighlightText;
+  --theme-status-warning-icon: HighlightText;
+  --theme-status-critical-surface: Canvas;
+  --theme-status-critical-border: Highlight;
+  --theme-status-critical-text: HighlightText;
+  --theme-status-critical-icon: HighlightText;
+  --theme-status-neutral-surface: Canvas;
+  --theme-status-neutral-border: CanvasText;
+  --theme-status-neutral-text: CanvasText;
+  --theme-status-neutral-icon: CanvasText;
+}
+</style></head><body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="464" height="375" viewBox="0 0 464 375"><rect width="464" height="375" fill="Canvas"/><g fill="none" stroke-miterlimit="10" transform="translate(83,38)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h300v300h-300Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,300)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,263)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,225)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,188)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,150)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,113)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,75)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,38)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Quarter' for a time scale with values from Sunday, 31 December 2023, 6:00:00 PM to Thursday, 29 February 2024, 6:00:00 PM"><g transform="translate(0.5,300.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(31,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(66,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(101,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(136,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(171,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(206,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(241,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(276,0)" x2="0" y2="5" stroke="CanvasText" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="middle" transform="translate(31.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">Jan 07</text><text text-anchor="middle" transform="translate(66.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="0">Jan 14</text><text text-anchor="middle" transform="translate(101.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">Jan 21</text><text text-anchor="middle" transform="translate(136.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="0">Jan 28</text><text text-anchor="middle" transform="translate(171.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">Feb 04</text><text text-anchor="middle" transform="translate(206.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="0">Feb 11</text><text text-anchor="middle" transform="translate(241.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">Feb 18</text><text text-anchor="middle" transform="translate(276.25,15)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="0">Feb 25</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="300" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(150,30)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="CanvasText" opacity="1">Quarter</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 160,000"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,300)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,263)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,225)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,188)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,150)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,113)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,75)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,38)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/><line transform="translate(0,0)" x2="-5" y2="0" stroke="CanvasText" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,303)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">0</text><text text-anchor="end" transform="translate(-7,265.5)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">20,000</text><text text-anchor="end" transform="translate(-7,228)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">40,000</text><text text-anchor="end" transform="translate(-7,190.5)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">60,000</text><text text-anchor="end" transform="translate(-7,153)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">80,000</text><text text-anchor="end" transform="translate(-7,115.5)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">100,000</text><text text-anchor="end" transform="translate(-7,78)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">120,000</text><text text-anchor="end" transform="translate(-7,40.5)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">140,000</text><text text-anchor="end" transform="translate(-7,3)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">160,000</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,300)" x2="0" y2="-300" stroke="CanvasText" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-67,150) rotate(-90) translate(0,-2)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="CanvasText" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-scope pathgroup" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h300v300h-300Z"/><g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Quarter: Dec 31, 2023; Revenue: 120000; Region: North" role="graphics-symbol" aria-roledescription="line mark" d="M0,75L155,60L300,54.375" stroke="oklch(0.56 0.1737 264.97)" stroke-width="2"/></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h300v300h-300Z"/><g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Quarter: Dec 31, 2023; Revenue: 135000; Region: South" role="graphics-symbol" aria-roledescription="line mark" d="M0,46.875L155,33.75L300,18.75" stroke="oklch(0.46 0.1875 274.17)" stroke-width="2"/></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g><g class="mark-group role-legend" role="graphics-symbol" aria-roledescription="legend" aria-label="Symbol legend titled 'Region' for stroke color with 2 values: North, South"><g transform="translate(320,0)"><path class="background" aria-hidden="true" d="M0,0h56v40h-56Z" pointer-events="none"/><g><g class="mark-group role-legend-entry"><g transform="translate(0,16)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-group role-scope" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h56v11h-56Z" pointer-events="none" opacity="1"/><g><g class="mark-symbol role-legend-symbol" pointer-events="none"><path transform="translate(6,6)" d="M-5,0L5,0" stroke="oklch(0.56 0.1737 264.97)" stroke-width="1.5" opacity="1"/></g><g class="mark-text role-legend-label" pointer-events="none"><text text-anchor="start" transform="translate(16,9)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">North</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g><g transform="translate(0,13)"><path class="background" aria-hidden="true" d="M0,0h56v11h-56Z" pointer-events="none" opacity="1"/><g><g class="mark-symbol role-legend-symbol" pointer-events="none"><path transform="translate(6,6)" d="M-5,0L5,0" stroke="oklch(0.46 0.1875 274.17)" stroke-width="1.5" opacity="1"/></g><g class="mark-text role-legend-label" pointer-events="none"><text text-anchor="start" transform="translate(16,9)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10px" fill="CanvasText" opacity="1">South</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-text role-legend-title" pointer-events="none"><text text-anchor="start" transform="translate(0,9)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11px" font-weight="bold" fill="CanvasText" opacity="1">Region</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-title"><g transform="translate(-78,-33)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Line chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24px" font-weight="600" fill="CanvasText" opacity="1">Line chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></body></html>
