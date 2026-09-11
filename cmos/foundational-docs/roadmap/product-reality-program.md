@@ -294,8 +294,8 @@ not renamed complete.
 ## Preserved obligations and explicit parks
 
 - Sprint 191 m04 closes `#1318`–`#1322` with SR27, adapter-path checks, OODS-N013 descriptions,
-  retaken DTCG/schema bites and the A --final pin. `#1315` remains pending until Sprint 192 sends the
-  prepared final bundle re-pin notices after independent review. No delivery is inferred from assembly.
+  retaken DTCG/schema bites and the A --final pin. `#1315` was closed by Sprint 192 m01 (`#1883`), which sent the
+  prepared final bundle re-pin notices after the Sprint 191 review. No delivery is inferred from assembly.
 - The schema-ingest walker and `schema.ingest` draft remain historically shelved by `#1649`; active
   program decision `#1652` retains that result while superseding `#1649`'s incorrect surface claim.
 - Public package publication remains gated on licensing and distribution decisions.
