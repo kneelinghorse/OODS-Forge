@@ -262,6 +262,7 @@ const TRAIT_OF_FILE: Record<string, string> = {
   'mark-bar.parameters.schema.json': 'MarkBar',
   'mark-line.parameters.schema.json': 'MarkLine',
   'mark-point.parameters.schema.json': 'MarkPoint',
+  'mark-rect.parameters.schema.json': 'MarkRect',
 };
 
 type DeclaredOption = { trait: string; key: string; value: unknown };
@@ -516,7 +517,7 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
   it('covers every declared trait option key', () => {
     expect(DECLARED.length).toBeGreaterThanOrEqual(17);
     expect(new Set(DECLARED.map((d) => d.trait))).toEqual(
-      new Set(['MarkArea', 'MarkBar', 'MarkLine', 'MarkPoint']),
+      new Set(['MarkArea', 'MarkBar', 'MarkLine', 'MarkPoint', 'MarkRect']),
     );
   });
 
@@ -536,6 +537,7 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     MarkBar: { cornerRadius: 4 },
     MarkLine: { strokeWidth: 2.5, strokeDash: [4, 2] },
     MarkPoint: { strokeWidth: 1.5, opacity: 0.9, fillOpacity: 0.4, size: 42, shape: 'square' },
+    MarkRect: { opacity: 0.4 },
   };
 
   for (const [trait, options] of Object.entries(PASSTHROUGH)) {

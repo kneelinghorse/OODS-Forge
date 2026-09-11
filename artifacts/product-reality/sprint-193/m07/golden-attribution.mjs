@@ -9,6 +9,7 @@ const git = args => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const rows = git(['diff', '--name-status', '--no-renames', beforeHead, afterHead]).split('\n').map(line => { const [status, file] = line.split('\t'); return { status, file }; }).filter(row => !row.file.startsWith('artifacts/') && (/\/(test|tests|fixtures|__snapshots__)\/|\.(spec|test)\./.test(row.file) || row.file === 'scripts/runtime/e2e.mjs'));
 const reasons = {
+ 'tests/viz/mark-options-schema-validity-s167.test.ts': 'Extend the existing every-declared-option schema oracle to the new MarkRect mirror, including its real opacity passthrough control; retain all existing parameter probes and whole-spec validation.',
  'packages/component-contracts/test/ported-contracts.s184.spec.ts': 'Retain the historical eight-component evidence against its frozen Sprint192 ledger; current generatedConsumer reachability comes only from the full154 runtime projection.',
  'packages/components-vue/test/ssr.spec.ts': 'Render every current shared scenario through the real Vue server renderer and keep the original showcase semantic assertions.',
  'packages/mcp-server/src/tools/__tests__/code.generate.test.ts': 'Use the existing dependency seam for unavailable ArchiveEvent evidence after its port; preserve exact N015 shape and readiness-before-syntax ordering.',

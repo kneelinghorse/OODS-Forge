@@ -1109,6 +1109,32 @@ export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, 
   return { status: 'passed', skipped, derivation, gitEvidence, checkedCriteria: 43, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, executionHead, reviewHead, builderSelfCertified: false, separateReviewRequired: true };
 }
 
+export function auditSprint193CaptureLimit({ accounting, manifest, verify }) {
+  // Independently enforce the named one-time third capture, including its frozen receipt.
+  const captureExtension = accounting.captureExtensionAcceptance;
+  assert.equal(accounting.closeout.runs.length, 1);
+  if (captureExtension) {
+    const extension = JSON.parse(verify(captureExtension.receipt));
+    assert.equal(captureExtension.receipt.path, manifest.accounting.captureExtension);
+    assert.equal(extension.project, 'OODS-Forge'); assert.equal(extension.sprintId, 'sprint-193');
+    assert.equal(extension.missionId, 's193-m07'); assert.equal(extension.decisionId, 1911);
+    assert.equal(extension.sessionId, 'PS-2026-09-11-002');
+    assert.equal(extension.allowedTotalCaptures, 3); assert.equal(extension.stopAfterThisCapture, true);
+    assert.equal(extension.builderSelfCertified, false);
+    const priorHeads = ['0dde152832cc63c6c768e5932ec995e2d8c48219', '39e51fb249e327130548564978752a134c734d24'];
+    assert.deepEqual(extension.priorExecutionHeads, priorHeads);
+    assert.deepEqual(accounting.closeoutAttempts.map(attempt => attempt.measuredHead), priorHeads);
+    assert.deepEqual(captureExtension, { decisionId: 1911, totalCaptures: 3, priorExecutionHeads: priorHeads, stopAfterThisCapture: true, receipt: captureExtension.receipt });
+  } else { assert(!manifest.accounting.captureExtension); assert(accounting.closeoutAttempts.length <= 1); }
+  for (const [index, attempt] of accounting.closeoutAttempts.entries()) {
+    const aggregate = JSON.parse(verify(attempt.aggregate));
+    assert.equal(aggregate.measuredHead, attempt.measuredHead); assert.equal(aggregate.runs.length, 1); assert.equal(aggregate.suiteSelection, 'all');
+    const retained = accounting.executions.filter(row => row.cohort === `closeout-attempt-${index + 1}`);
+    assert.deepEqual(retained.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
+    assert(retained.some(row => JSON.parse(verify(row.rawReport)).testResults.some(file => (file.assertionResults ?? []).some(test => (test.failureMessages ?? []).some(message => message.includes('AssertionError'))))));
+  }
+}
+
 export function auditSprint193Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath }) {
   const base = 'artifacts/product-reality/sprint-193/m07';
   const manifest = JSON.parse(readFrozen(manifestPath));
@@ -1190,6 +1216,7 @@ export function auditSprint193Closeout({ executionHead, reviewHead, readOutput, 
   const toolProof = source('toolProof'); assert.equal(toolProof.byteIdentical, true); assert.equal(toolProof.sha256, digest(readFrozen(manifest.sources.toolLedger)));
   const health = source('health'); assert.equal(health.status, 'ok'); assert.deepEqual(health.productReality.runtime, { ...runtime.summary, head: runtime.head }); assert.deepEqual(health.productReality.tools, { entries: 27, byTier: counts, head: tools.head });
   assert.equal(accounting.status, 'passed'); assert.deepEqual(accounting.validationIssues, []); assert.deepEqual(accounting.unattributedDeltas, []);
+  auditSprint193CaptureLimit({ accounting, manifest, verify });
   const runs = accounting.executions.filter(row => row.cohort === 'closeout'); assert.equal(runs.length, 5); assert.deepEqual(runs.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
   for (const run of runs) {
     const raw = JSON.parse(verify(run.rawReport)); assert.equal(run.measuredHead, executionHead); const failed = accounting.timeoutAcceptance?.executionId === run.id ? 1 : 0;

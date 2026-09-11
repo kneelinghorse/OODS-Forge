@@ -336,8 +336,26 @@ export function validateSprint190TimeoutRerun({ failures, rerun, readBytes, exec
   return {decisionId:1833,kind:'isolated-wall-clock-timeout',originalFailureRetained:true,executionId:failure.executionId,rerun};
 }
 
+export function validateCloseoutCaptureLimit({ sprintId, closeout, attempts, extension }) {
+  assert.equal(closeout.runs.length, 1, 'Closeout requires exactly one full run.');
+  if (!extension) {
+    assert(attempts.length <= 1, 'Decision 1833 allows one capture and at most one corrective capture without a new decision.');
+    return undefined;
+  }
+  assert.equal(sprintId, 'sprint-193');
+  assert.equal(extension.project, 'OODS-Forge'); assert.equal(extension.sprintId, sprintId);
+  assert.equal(extension.missionId, 's193-m07'); assert.equal(extension.decisionId, 1911);
+  assert.equal(extension.sessionId, 'PS-2026-09-11-002');
+  assert.equal(extension.allowedTotalCaptures, 3); assert.equal(extension.stopAfterThisCapture, true);
+  assert.equal(extension.builderSelfCertified, false);
+  const priorExecutionHeads = ['0dde152832cc63c6c768e5932ec995e2d8c48219', '39e51fb249e327130548564978752a134c734d24'];
+  assert.deepEqual(extension.priorExecutionHeads, priorExecutionHeads);
+  assert.deepEqual(attempts.map(attempt => attempt.measuredHead), priorExecutionHeads, 'Decision 1911 requires both exact retained attempts and permits no fourth capture.');
+  return { decisionId: 1911, totalCaptures: 3, priorExecutionHeads, stopAfterThisCapture: true };
+}
+
 export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, attributions = [], failureDispositions = [],
-  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation,
+  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation, captureExtension,
   capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
   assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193'].includes(sprintId), 'Unsupported sprint.');
@@ -468,8 +486,11 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     role: 'Retained initial capture only. These executions are neither final closeout comparisons nor historical failure candidates.',
     ...loadCapture(attempt.path, `closeout-attempt-${index + 1}`, attempt.originalReferenceRoot) };
   });
+  let captureExtensionAcceptance;
+  if (captureExtension) assert.equal(sprintId, 'sprint-193');
   if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193'].includes(sprintId)) {
-    assert(closeout.runs.length === 1 && closeoutAttempts.length <= 1, 'Decision 1833 allows one capture and at most one corrective capture.');
+    captureExtensionAcceptance = validateCloseoutCaptureLimit({ sprintId, closeout, attempts: closeoutAttempts, extension: captureExtension ? json(captureExtension) : undefined });
+    if (captureExtensionAcceptance) captureExtensionAcceptance.receipt = refs.get(captureExtension);
     for (const [index, attempt] of closeoutAttempts.entries()) {
       const failures = observedFailures.filter(row => row.cohort === `closeout-attempt-${index + 1}`);
       assert.equal(attempt.runs.length, 1); assert.equal(attempt.suiteSelection, 'all');
@@ -609,6 +630,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
       ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
       limitation: postCaptureDerivation ? 'Decision 1890 permits exactly three hash-bound derivation files after capture; all product, test, package, configuration, schema and fixture inputs retain their actual execution identity.' : approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
     ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
+    ...(captureExtensionAcceptance ? { captureExtensionAcceptance } : {}),
     ...(goldenAttribution ? { goldenAttribution, goldenHistory } : {}),
     ...(sprintId === 'sprint-192' ? { addedSuite: { suite: 'component-packages', reason: 'Decision1884 adds the four-package runner as the fifth suite; root-core project membership is unchanged.', executionIds: executions.filter(row => row.cohort === 'closeout' && row.suite === 'component-packages').map(row => row.id) } } : {}),
     baselines, closeout, closeoutAttempts, executions, comparisons, historicalAttempts, closeoutFailures, unattributedDeltas, unusedAttributions,

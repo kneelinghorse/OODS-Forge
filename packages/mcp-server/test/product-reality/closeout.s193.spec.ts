@@ -2,8 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { deriveRange, deriveMovers, S193_PUBLIC_RUNTIME_SCOPE } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
-import { auditSprintRange } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
-import { SUITES, S192_SUITES, assertEvidenceOnlyHeadChanges } from '../../../../scripts/product-reality/s185-suite-accounting.mjs';
+import { auditSprintRange, auditSprint193CaptureLimit } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
+import { SUITES, S192_SUITES, assertEvidenceOnlyHeadChanges, validateCloseoutCaptureLimit } from '../../../../scripts/product-reality/s185-suite-accounting.mjs';
 import { validateRuntimeLedger } from '../../src/lib/runtime-ledger.js';
 import { derivePublicHeadEquivalence } from '../../../../scripts/product-reality/s185-closeout.mjs';
 import { buildNotices } from '../../../../scripts/product-reality/s185-reconnect.mjs';
@@ -15,6 +15,53 @@ const range = deriveRange(base, measured, root, S193_PUBLIC_RUNTIME_SCOPE);
 const options = { sprintId: 'sprint-193', missionId: 's193-m07', base };
 
 describe('Sprint 193 bounded closeout', () => {
+  it('binds the final extension to decision1911 and both failed heads, without allowing another capture', () => {
+    const extension = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/capture-extension.json`, 'utf8'));
+    const attempts = extension.priorExecutionHeads.map((measuredHead: string) => ({ measuredHead }));
+    const input = { sprintId: 'sprint-193', closeout: { runs: [{}] }, attempts, extension };
+    expect(validateCloseoutCaptureLimit(input)).toMatchObject({ decisionId: 1911, totalCaptures: 3, stopAfterThisCapture: true });
+    for (const invalid of [
+      { ...input, extension: undefined },
+      { ...input, attempts: attempts.slice(0, 1) },
+      { ...input, attempts: [...attempts, { measuredHead: 'a'.repeat(40) }] },
+      { ...input, attempts: [...attempts].reverse() },
+      { ...input, closeout: { runs: [{}, {}] } },
+      { ...input, sprintId: 'sprint-192' },
+      { ...input, extension: { ...extension, decisionId: 1833 } },
+      { ...input, extension: { ...extension, allowedTotalCaptures: 4 } },
+      { ...input, extension: { ...extension, stopAfterThisCapture: false } },
+    ]) expect(() => validateCloseoutCaptureLimit(invalid)).toThrow();
+  });
+  it('preserves the default two-capture limit for every existing bounded sprint', () => {
+    for (const sprintId of ['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193']) {
+      const input = { sprintId, closeout: { runs: [{}] }, attempts: [{ measuredHead: measured }] };
+      expect(validateCloseoutCaptureLimit(input)).toBeUndefined();
+      expect(() => validateCloseoutCaptureLimit({ ...input, attempts: [...input.attempts, ...input.attempts] })).toThrow(/Decision 1833/);
+    }
+  });
+  it('independently checks the extension receipt and all five suites from both actual retained failures', () => {
+    const receipt = { path: 'artifacts/product-reality/sprint-193/m07/capture-extension.json' };
+    const extension = JSON.parse(readFileSync(`${root}/${receipt.path}`, 'utf8'));
+    const closeoutAttempts = [1, 2].map(index => {
+      const directory = `artifacts/product-reality/sprint-193/m07/five-suite-closeout-attempt-${index}`;
+      const aggregate = { path: `${directory}/four-suite-baseline.json` };
+      const raw = JSON.parse(readFileSync(`${root}/${aggregate.path}`, 'utf8'));
+      return { aggregate, measuredHead: raw.measuredHead, suites: raw.runs[0].suites, directory };
+    });
+    const executions = closeoutAttempts.flatMap((attempt, index) => attempt.suites.map((suite: { suite: string }) => ({
+      cohort: `closeout-attempt-${index + 1}`, suite: suite.suite, rawReport: { path: `${attempt.directory}/run-1/${suite.suite}.vitest.json` },
+    })));
+    const accounting = { closeout: { runs: [{}] }, closeoutAttempts, executions,
+      captureExtensionAcceptance: { decisionId: 1911, totalCaptures: 3, priorExecutionHeads: extension.priorExecutionHeads, stopAfterThisCapture: true, receipt } };
+    const manifest = { accounting: { captureExtension: receipt.path } };
+    const verify = (ref: { path: string }) => readFileSync(`${root}/${ref.path}`);
+    expect(() => auditSprint193CaptureLimit({ accounting, manifest, verify })).not.toThrow();
+    expect(() => auditSprint193CaptureLimit({ accounting: { ...accounting, executions: executions.slice(1) }, manifest, verify })).toThrow();
+    expect(() => auditSprint193CaptureLimit({ accounting, manifest: { accounting: { captureExtension: 'unbound.json' } }, verify })).toThrow();
+    expect(() => auditSprint193CaptureLimit({ accounting: { ...accounting, closeoutAttempts: [...closeoutAttempts, closeoutAttempts[0]] }, manifest, verify })).toThrow();
+    const falsified = (ref: { path: string }) => ref.path === receipt.path ? Buffer.from(JSON.stringify({ ...extension, decisionId: 1833 })) : verify(ref);
+    expect(() => auditSprint193CaptureLimit({ accounting, manifest, verify: falsified })).toThrow();
+  });
   it('independently enumerates the catalog, contracts, styles, tokens and export boundary', () => {
     expect(S193_PUBLIC_RUNTIME_SCOPE).toEqual(expect.arrayContaining([
       'schemas/traits', 'generated/types/traits', 'generated/types/index.ts',
