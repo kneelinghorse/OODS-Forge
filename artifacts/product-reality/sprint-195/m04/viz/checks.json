@@ -1,0 +1,49 @@
+[
+  {
+    "name": "focused-tests",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "test/contracts/viz-recipes.s190.spec.ts",
+      "test/product-reality/viz-certification.s195.spec.ts"
+    ],
+    "exitCode": 0,
+    "log": "focused-tests.log"
+  },
+  {
+    "name": "script-typecheck",
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--skipLibCheck",
+      "--strict",
+      "--esModuleInterop",
+      "--resolveJsonModule",
+      "--module",
+      "esnext",
+      "--moduleResolution",
+      "bundler",
+      "--target",
+      "es2022",
+      "scripts/product-reality/s190-viz-census.ts"
+    ],
+    "exitCode": 0,
+    "log": "script-typecheck.log"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "diff-check.log"
+  }
+]

@@ -1,0 +1,169 @@
+{
+  "input": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:chord",
+      "name": "Regional trade",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkChord"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Chord diagram of Regional trade."
+      }
+    },
+    "data": {
+      "chord": {
+        "nodes": [
+          {
+            "name": "North"
+          },
+          {
+            "name": "South"
+          },
+          {
+            "name": "East"
+          }
+        ],
+        "links": [
+          {
+            "source": "North",
+            "target": "South",
+            "value": 12
+          },
+          {
+            "source": "South",
+            "target": "East",
+            "value": 8
+          },
+          {
+            "source": "East",
+            "target": "North",
+            "value": 5
+          }
+        ]
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V156"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "e0dd69f7772685abf894ca87e989cc04858c872690466ce2a1c274027b52710c",
+      "renderHash": "86db1949d8c7f39033d1da48a126609dd1c86cee7db8d749392726e514884594"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkChord is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  },
+  "specOnly": {
+    "status": "ok",
+    "coverage": "uncertified",
+    "conformant": null,
+    "accuracyRules": [
+      "OODS-V156"
+    ],
+    "findings": [],
+    "pillars": {
+      "a11yEquivalence": "unchecked",
+      "determinism": "unchecked",
+      "contrast": "pass",
+      "accuracy": "unchecked"
+    },
+    "notes": [
+      "MarkChord is an ECharts-primary mark. Without the `data` operand there is nothing to evaluate: no a11y findings appear, pillars.a11yEquivalence stays 'unchecked', coverage stays 'uncertified', and conformant stays null. Supply the matching operand to grade a11y-equivalence, determinism and accuracy over the chart's actual data.",
+      "Determinism is unchecked for MarkChord: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkChord: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
+    ],
+    "contrastNote": "Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = 9.88 (below the 10 best-practice target but >= 2, so not a failure). certify measures the categorical color bytes Forge baked into the compiled spec, against the requested CSS scope canvas; no rendered carrier measurement is claimed. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": false,
+        "evidence": "baked-palette",
+        "note": "Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = 9.88 (below the 10 best-practice target but >= 2, so not a failure). certify measures the categorical color bytes Forge baked into the compiled spec, against the requested CSS scope canvas; no rendered carrier measurement is claimed. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette. Scope: light/A."
+      }
+    ]
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "input": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:treemap",
+      "name": "Revenue split",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkTreemap"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Treemap of Revenue split."
+      }
+    },
+    "data": {
+      "hierarchy": {
+        "type": "nested",
+        "data": {
+          "name": "Total",
+          "value": 150,
+          "children": [
+            {
+              "name": "Alpha",
+              "value": 40
+            },
+            {
+              "name": "Beta",
+              "value": 35
+            },
+            {
+              "name": "Gamma",
+              "value": 25
+            }
+          ]
+        }
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": false,
+    "accuracyRules": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "findings": [
+      {
+        "code": "OODS-V155",
+        "severity": "error",
+        "message": "1 explicit parent value(s) do not equal the sum of their children: Total (declared 150, children sum to 100). The parent's tile or arc is sized by the declared value while its children tile the space beneath it, so the part-of-whole relationship the chart shows is not the one in the data."
+      },
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "fail"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "8313ed19b0c8599de0d78e37190c344b9b653faa2991dfb70e01ac4da640b48c",
+      "renderHash": "bfa0ee12dc03bfc2b373db650cfbaeba8febf36f5e45974cbcc8f579ffc39694"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 2,
+      "failing": 1
+    },
+    "notes": [
+      "MarkTreemap is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

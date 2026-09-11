@@ -1,0 +1,228 @@
+{
+  "input": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:sankey",
+      "name": "Pipeline flow",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkSankey"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Sankey diagram of Pipeline flow."
+      }
+    },
+    "data": {
+      "sankey": {
+        "nodes": [
+          {
+            "name": "Source"
+          },
+          {
+            "name": "Middle"
+          },
+          {
+            "name": "Sink"
+          }
+        ],
+        "links": [
+          {
+            "source": "Source",
+            "target": "Middle",
+            "value": 60
+          },
+          {
+            "source": "Middle",
+            "target": "Sink",
+            "value": 60
+          }
+        ]
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "control": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V156",
+      "OODS-V157",
+      "OODS-V158"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "0b37fe710e8e110833d25555e49de2a405ccb6ca80acd1fa8b90eafaadfc3ad4",
+      "renderHash": "69af693c36db665aea16fe9bed8700c782f1f5723921f8cca2bbdd1a0da7f77e"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 3,
+      "failing": 0
+    },
+    "notes": [
+      "MarkSankey is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": false,
+    "accuracyRules": [
+      "OODS-V156",
+      "OODS-V157",
+      "OODS-V158"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "ungradeable",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "0b37fe710e8e110833d25555e49de2a405ccb6ca80acd1fa8b90eafaadfc3ad4",
+      "renderHash": "69af693c36db665aea16fe9bed8700c782f1f5723921f8cca2bbdd1a0da7f77e"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 3,
+      "failing": 0
+    },
+    "notes": [
+      "MarkSankey is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "The contrast engine faulted while grading this spec (Error: injected contrast fault); the pillar is reported ungradeable rather than passed. certify attempted to read carrier paints from the normalized SVG rendered from the retained projected ECharts option, but no complete canvas grade was available for the requested scope. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "ungradeable",
+        "measured": false,
+        "evidence": "render",
+        "note": "The contrast engine faulted while grading this spec (Error: injected contrast fault); the pillar is reported ungradeable rather than passed. certify attempted to read carrier paints from the normalized SVG rendered from the retained projected ECharts option, but no complete canvas grade was available for the requested scope. Scope: light/A."
+      }
+    ]
+  }
+}

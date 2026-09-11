@@ -1,0 +1,18 @@
+{
+  "missionId": "s195-m04",
+  "implementationHead": "86b44639489552329a627219fe527918a6c08420",
+  "decisionId": 1940,
+  "learningId": 583,
+  "rootChecks": [
+    { "command": "pnpm exec vitest run --project core tests/verification/how-forge-works.contract.test.ts", "exitCode": 0, "testsPassed": 15, "testsSkipped": 0, "log": "docs/narrative-final.log" },
+    { "command": "pnpm --filter @oods/mcp-server exec vitest run test/contracts/viz-pattern-registry.s195.spec.ts test/product-reality/options.s194.spec.ts", "exitCode": 0, "testsPassed": 28, "testsSkipped": 0, "log": "docs/unchanged-pixels-patterns.log" },
+    { "command": "pnpm --filter @oods/viz-core exec vitest run src/a11y/a11y-equivalence-applicability-s174.spec.ts --coverage.enabled=false", "exitCode": 0, "testsPassed": 14, "testsSkipped": 0, "log": "docs/equivalence-regression-targeted.log" }
+  ],
+  "supersededRootAttempts": [
+    { "command": "pnpm --filter @oods/viz-core exec vitest run src/a11y/a11y-equivalence-applicability-s174.spec.ts", "exitCode": 1, "testsPassed": 14, "log": "docs/equivalence-regression.log", "reason": "An isolated test run inherited full-package coverage thresholds. The targeted run disables coverage collection; global coverage thresholds are unchanged." }
+  ],
+  "fullSuiteCaptureRun": false,
+  "finalServerBuild": { "exitCode": 0, "log": "final-server-build.log" },
+  "ledger": { "entries": 24, "advertisedProductReality": 19, "onDemandContract": 5, "generationCheckExitCode": 0, "testsPassed": 11, "testsSkipped": 0, "log": "tool-ledger-tests.log" },
+  "builderSelfCertified": false
+}

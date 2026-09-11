@@ -1,0 +1,348 @@
+[
+  {
+    "name": "V168 negative size",
+    "operand": {
+      "chartType": "bubble_map",
+      "branchData": {
+        "longitudeField": "lng",
+        "latitudeField": "lat",
+        "sizeField": "size",
+        "rows": [
+          {
+            "lng": 1,
+            "lat": 2,
+            "size": -1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "bubble-negative-size",
+          "code": "OODS-V168",
+          "message": "artifact.certify: 1 bubble_map bubble size value(s) in \"size\" are negative or non-finite: row 0 (-1). A drawn magnitude cannot represent these values; supply finite non-negative values."
+        }
+      ],
+      "rulesEvaluated": 2,
+      "notes": [
+        "Some bubble size values in \"size\" could not be resolved from the public geo operand; accuracy was not evaluated."
+      ]
+    }
+  },
+  {
+    "name": "V169 linear diameter",
+    "operand": {
+      "chartType": "bubble_map",
+      "branchData": {
+        "longitudeField": "lng",
+        "latitudeField": "lat",
+        "sizeField": "size",
+        "rows": [
+          {
+            "lng": 1,
+            "lat": 2,
+            "size": 1
+          },
+          {
+            "lng": 3,
+            "lat": 4,
+            "size": 4
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "bubble-radius-scaling",
+          "code": "OODS-V169",
+          "message": "artifact.certify: bubble_map encodes varying \"size\" values with the public renderer's default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override."
+        }
+      ],
+      "rulesEvaluated": 3,
+      "notes": []
+    }
+  },
+  {
+    "name": "V170 conflicting point",
+    "operand": {
+      "chartType": "bubble_map",
+      "branchData": {
+        "longitudeField": "lng",
+        "latitudeField": "lat",
+        "sizeField": "size",
+        "rows": [
+          {
+            "lng": 1,
+            "lat": 2,
+            "size": 1
+          },
+          {
+            "lng": 1,
+            "lat": 2,
+            "size": 2
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "bubble-radius-scaling",
+          "code": "OODS-V169",
+          "message": "artifact.certify: bubble_map encodes varying \"size\" values with the public renderer's default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override."
+        },
+        {
+          "ruleId": "bubble-coordinate-conflict",
+          "code": "OODS-V170",
+          "message": "artifact.certify: bubble_map rows overlap at the same geographic point with conflicting encoded values: [1,2] has conflicting \"size\" values. The public renderer draws every row at that coordinate, so one measurement can obscure another. Aggregate to one measurement per point or use distinct coordinates."
+        }
+      ],
+      "rulesEvaluated": 3,
+      "notes": []
+    }
+  },
+  {
+    "name": "V171 negative strength",
+    "operand": {
+      "chartType": "flow_map",
+      "branchData": {
+        "originLongitudeField": "x1",
+        "originLatitudeField": "y1",
+        "destinationLongitudeField": "x2",
+        "destinationLatitudeField": "y2",
+        "strengthField": "strength",
+        "rows": [
+          {
+            "x1": 1,
+            "y1": 2,
+            "x2": 3,
+            "y2": 4,
+            "strength": -1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "flow-map-negative-strength",
+          "code": "OODS-V171",
+          "message": "artifact.certify: 1 flow_map flow strength value(s) in \"strength\" are negative or non-finite: row 0 (-1). A drawn magnitude cannot represent these values; supply finite non-negative values."
+        }
+      ],
+      "rulesEvaluated": 2,
+      "notes": []
+    }
+  },
+  {
+    "name": "V172 duplicate directed route",
+    "operand": {
+      "chartType": "flow_map",
+      "branchData": {
+        "originLongitudeField": "x1",
+        "originLatitudeField": "y1",
+        "destinationLongitudeField": "x2",
+        "destinationLatitudeField": "y2",
+        "strengthField": "strength",
+        "rows": [
+          {
+            "x1": 1,
+            "y1": 2,
+            "x2": 3,
+            "y2": 4,
+            "strength": 1
+          },
+          {
+            "x1": 1,
+            "y1": 2,
+            "x2": 3,
+            "y2": 4,
+            "strength": 1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "flow-map-duplicate-flow",
+          "code": "OODS-V172",
+          "message": "artifact.certify: 1 flow_map directed route(s) appear more than once: [1,2,3,4] x2. Identical ordered endpoints overdraw the same arc, concealing separate flows. Aggregate each directed route; reciprocal routes are distinct."
+        }
+      ],
+      "rulesEvaluated": 2,
+      "notes": []
+    }
+  },
+  {
+    "name": "V173 duplicate directed edge",
+    "operand": {
+      "chartType": "force_graph",
+      "branchData": {
+        "nodes": [
+          {
+            "id": "A"
+          },
+          {
+            "id": "B"
+          }
+        ],
+        "links": [
+          {
+            "source": "A",
+            "target": "B",
+            "value": 1
+          },
+          {
+            "source": "A",
+            "target": "B",
+            "value": 1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [
+        {
+          "ruleId": "force-graph-duplicate-link",
+          "code": "OODS-V173",
+          "message": "artifact.certify: 1 force_graph directed edge(s) appear more than once: \"A\" -> \"B\" x2. Repeated directed edges share the same endpoints and overdraw the relationship, concealing multiplicity. Merge duplicate directed edges; reciprocal edges are distinct."
+        }
+      ],
+      "rulesEvaluated": 1,
+      "notes": []
+    }
+  },
+  {
+    "name": "clean bubble constant domain",
+    "operand": {
+      "chartType": "bubble_map",
+      "branchData": {
+        "longitudeField": "lng",
+        "latitudeField": "lat",
+        "sizeField": "size",
+        "rows": [
+          {
+            "lng": 1,
+            "lat": 2,
+            "size": 1
+          },
+          {
+            "lng": 3,
+            "lat": 4,
+            "size": 1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 3,
+      "notes": []
+    }
+  },
+  {
+    "name": "clean flow",
+    "operand": {
+      "chartType": "flow_map",
+      "branchData": {
+        "originLongitudeField": "x1",
+        "originLatitudeField": "y1",
+        "destinationLongitudeField": "x2",
+        "destinationLatitudeField": "y2",
+        "strengthField": "strength",
+        "rows": [
+          {
+            "x1": 1,
+            "y1": 2,
+            "x2": 3,
+            "y2": 4,
+            "strength": 1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 2,
+      "notes": []
+    }
+  },
+  {
+    "name": "clean reciprocal graph",
+    "operand": {
+      "chartType": "force_graph",
+      "branchData": {
+        "nodes": [
+          {
+            "id": "A"
+          },
+          {
+            "id": "B"
+          }
+        ],
+        "links": [
+          {
+            "source": "A",
+            "target": "B",
+            "value": 1
+          },
+          {
+            "source": "B",
+            "target": "A",
+            "value": 1
+          }
+        ]
+      }
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 1,
+      "notes": []
+    }
+  },
+  {
+    "name": "unresolved bubble_map",
+    "operand": {
+      "chartType": "bubble_map"
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 0,
+      "notes": [
+        "The bubble size field and rows could not be resolved from the public geo operand; accuracy was not evaluated.",
+        "The bubble size scale and values could not be resolved from the public geo operand; accuracy was not evaluated.",
+        "The bubble coordinates and rows could not be resolved from the public geo operand; accuracy was not evaluated."
+      ]
+    }
+  },
+  {
+    "name": "unresolved flow_map",
+    "operand": {
+      "chartType": "flow_map"
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 0,
+      "notes": [
+        "The flow strength field and rows could not be resolved from the public geo operand; accuracy was not evaluated.",
+        "The directed flow endpoints and rows could not be resolved from the public geo operand; accuracy was not evaluated."
+      ]
+    }
+  },
+  {
+    "name": "unresolved force_graph",
+    "operand": {
+      "chartType": "force_graph"
+    },
+    "result": {
+      "findings": [],
+      "rulesEvaluated": 0,
+      "notes": [
+        "The force_graph directed link list could not be resolved; duplicate-edge accuracy was not evaluated."
+      ]
+    }
+  }
+]

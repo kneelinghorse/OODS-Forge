@@ -1,0 +1,248 @@
+{
+  "input": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:flow_map",
+      "name": "Trade corridors",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkFlow"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Flow map of Trade corridors."
+      }
+    },
+    "data": {
+      "geo": {
+        "geojson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "rows": [
+          {
+            "from": "CA",
+            "to": "NV",
+            "oLng": -120,
+            "oLat": 37,
+            "dLng": -116,
+            "dLat": 39,
+            "volume": 540
+          },
+          {
+            "from": "NV",
+            "to": "CA",
+            "oLng": -116,
+            "oLat": 39,
+            "dLng": -120,
+            "dLat": 37,
+            "volume": 210
+          }
+        ],
+        "originLongitudeField": "oLng",
+        "originLatitudeField": "oLat",
+        "destinationLongitudeField": "dLng",
+        "destinationLatitudeField": "dLat",
+        "strengthField": "volume",
+        "curvature": 0.3
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V171",
+      "OODS-V172"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "04fac217d80a3998e091cce48fdfd1a5b1551380c6be4b001c8b03f831a6ca3b",
+      "renderHash": "bab223b6a50ee581338bead62b54bd292be08a594b02ccca2c3b2ab1793b5e68"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 2,
+      "failing": 0
+    },
+    "notes": [
+      "MarkFlow is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Geo carrier paints were read from the rendered ECharts SVG, but geo color remains exempt from categorical contrast grading under the standing gradient-essential ruling. certify reads actual carrier paints from the normalized SVG rendered from the retained projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Geo carrier paints were read from the rendered ECharts SVG, but geo color remains exempt from categorical contrast grading under the standing gradient-essential ruling. certify reads actual carrier paints from the normalized SVG rendered from the retained projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded. Scope: light/A."
+      }
+    ]
+  },
+  "specOnly": {
+    "status": "ok",
+    "coverage": "uncertified",
+    "conformant": null,
+    "accuracyRules": [
+      "OODS-V171",
+      "OODS-V172"
+    ],
+    "findings": [],
+    "pillars": {
+      "a11yEquivalence": "unchecked",
+      "determinism": "unchecked",
+      "contrast": "exempt",
+      "accuracy": "unchecked"
+    },
+    "notes": [
+      "MarkFlow is an ECharts-primary mark. Without the `data` operand there is nothing to evaluate: no a11y findings appear, pillars.a11yEquivalence stays 'unchecked', coverage stays 'uncertified', and conformant stays null. Supply the matching operand to grade a11y-equivalence, determinism and accuracy over the chart's actual data.",
+      "Determinism is unchecked for MarkFlow: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkFlow: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
+    ],
+    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. No categorical canvas ratio is graded for this scope. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "none",
+        "note": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. No categorical canvas ratio is graded for this scope. Scope: light/A."
+      }
+    ]
+  }
+}

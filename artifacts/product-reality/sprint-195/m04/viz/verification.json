@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m04",
+  "builderSelfCertified": false,
+  "baselineHead": "a10afdffe708055fa241e110eb1881bbd16c2968",
+  "summary": {
+    "types": 13,
+    "scopes": 52,
+    "unchangedSvgScopes": 52,
+    "beforeCertifiedTypes": 5,
+    "afterCertifiedTypes": 13,
+    "conformantScopes": 48,
+    "nonconformantScopes": 4,
+    "uncertifiedScopes": 0
+  },
+  "commands": [
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s190-viz-census.ts",
+        "artifacts/product-reality/sprint-195/m04/viz",
+        "--write-registry"
+      ],
+      "exitCode": 0,
+      "evidence": "viz-observations.json"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/product-reality/s195-viz-certification-migration.mjs"
+      ],
+      "exitCode": 0,
+      "evidence": "verdict-migration.json"
+    },
+    {
+      "name": "focused-tests",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/contracts/viz-recipes.s190.spec.ts",
+        "test/product-reality/viz-certification.s195.spec.ts"
+      ],
+      "exitCode": 0,
+      "log": "focused-tests.log"
+    },
+    {
+      "name": "script-typecheck",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "--skipLibCheck",
+        "--strict",
+        "--esModuleInterop",
+        "--resolveJsonModule",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "bundler",
+        "--target",
+        "es2022",
+        "scripts/product-reality/s190-viz-census.ts"
+      ],
+      "exitCode": 0,
+      "log": "script-typecheck.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "diff-check.log"
+    }
+  ],
+  "tests": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "accuracyBite": {
+    "path": "artifacts/product-reality/sprint-195/m04/bite/accuracy-bite.json",
+    "sha256": "2f2a111c5e0b27ef29576bed4340fd4c256cfb033a6b2952a1eef50c0454ef48"
+  },
+  "sourceFiles": [
+    {
+      "path": "scripts/product-reality/s190-viz-census.ts",
+      "sha256": "58a57e1cf24f48b5283f516a26f91f52fe61088b5e27d7b1c577f74185a424fd"
+    },
+    {
+      "path": "scripts/product-reality/s195-viz-certification-migration.mjs",
+      "sha256": "158edc11eb77ea149ff1b4835f7767edd4dec8441bd954820981a8c6a2a5f3d2"
+    },
+    {
+      "path": "scripts/product-reality/s195-viz-accuracy-bite.mjs",
+      "sha256": "8aa83c590f95c0559b5fa406891161ff3ba1b4257fdca509f67b6a72be1c4c7b"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-recipes.ts",
+      "sha256": "5d5f8ffb817122de6f7f6d796c50172db7fc989db3c702df3f03c57dd0824518"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-recipes.v1.json",
+      "sha256": "f238344cc80f9f50fbcf6145251ca450187f0045181e100b5403b7bc5bdd07a9"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "sha256": "8b70c17571f8676fcd3d39b9333feeab2c85392a1596728239f85037a780ac15"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/viz-certification.s195.spec.ts",
+      "sha256": "e345b8be4299234e8b87e510455661bfbf7baa171e56098851470bdfb4cf5e12"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/viz-census.json",
+      "sha256": "f238344cc80f9f50fbcf6145251ca450187f0045181e100b5403b7bc5bdd07a9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/viz-observations.json",
+      "sha256": "7f16f018e7d6af2d61feb76ab3e6f4526f65c5c2111d93184c2279b5726db76b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/verdict-migration.json",
+      "sha256": "bd77d69bbee88f0df2b1b629077a2579ad76c4e3e758ba4b815d45df6d015577"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/checks.json",
+      "sha256": "813440db555dc7676e164bb6cea8f225f48686f3a09b1c7225f20c6100ff7bc5"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/focused-tests.log",
+      "sha256": "0f78920edc68d6184e3541506bbad00eef879fff32df7d4098bc1c5bf46bb91d"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/script-typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m04/viz/before/provenance.json",
+      "sha256": "e70b1da67b4f8989da639c3a4e093633f638eda7433ab63ca4b500d3c54a055c"
+    }
+  ]
+}

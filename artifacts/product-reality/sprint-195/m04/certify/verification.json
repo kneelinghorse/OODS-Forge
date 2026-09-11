@@ -1,0 +1,139 @@
+{
+  "scope": "s195-m04 artifact.certify declared operand profile",
+  "workspace": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+  "status": "verified; source frozen for integration",
+  "verification": [
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-receipt.ts before",
+      "log": "before.log",
+      "exitCode": 0,
+      "observations": "before.json; eight observed pre-m04 compiled operand/spec-only pairs"
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-schema.ts",
+      "log": "schema-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "S195_CERTIFY_RECEIPTS=artifacts/product-reality/sprint-195/m04/certify/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/certify-operand-profile.s195.spec.ts",
+      "log": "boundary-tests.log",
+      "exitCode": 1,
+      "tests": 19,
+      "passed": 16,
+      "failed": 3,
+      "resolution": "Wire AJV correctly rejected the new V168\u2013V173 offered codes under old V15x-only schema. Schema generator now derives exact enum from both source accuracy registries."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-schema.ts",
+      "log": "schema-codes-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-codes-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "S195_CERTIFY_RECEIPTS=artifacts/product-reality/sprint-195/m04/certify/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/certify-operand-profile.s195.spec.ts packages/mcp-server/test/tools/artifact.certify",
+      "log": "regression-initial.log",
+      "exitCode": 1,
+      "tests": 386,
+      "passed": 377,
+      "failed": 9,
+      "resolution": "Eight immutable s179 baseline projections and one data coverage pin required the explicit m04 declared verdict/note/new accuracy movers. Historical fixture bytes untouched."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "log": "server-build.log",
+      "exitCode": 0,
+      "notes": "Sequential after coordinated successful viz-core build by accuracy agent; before taxonomy exclusive bite."
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-receipt.ts after",
+      "log": "after.log",
+      "exitCode": 0,
+      "observations": "after.json; eight certified, seven conformant and bubble V169 false; all eight spec-only null"
+    },
+    {
+      "command": "pnpm exec vitest run packages/mcp-server/test/tools/artifact.certify.echarts-s179-baseline.spec.ts packages/mcp-server/test/tools/artifact.certify.render-determinism.spec.ts",
+      "log": "regression-movers.log",
+      "exitCode": 0,
+      "tests": 15,
+      "passed": 15,
+      "failed": 0
+    },
+    {
+      "command": "S195_CERTIFY_RECEIPTS=artifacts/product-reality/sprint-195/m04/certify/boundary pnpm exec vitest run packages/mcp-server/test/product-reality/certify-operand-profile.s195.spec.ts packages/mcp-server/test/tools/artifact.certify.echarts-accuracy.spec.ts",
+      "log": "final-boundary-accuracy.log",
+      "exitCode": 0,
+      "tests": 49,
+      "passed": 49,
+      "failed": 0
+    },
+    {
+      "command": "node scripts/product-reality/s195-certify-profile-migration.mjs",
+      "log": "migration.log",
+      "exitCode": 0,
+      "observations": "migration.json; strict allowed path/value differences; eight unchanged option and render hash pairs"
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-schema.ts --check",
+      "log": "schema-check.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-schema.ts",
+      "log": "schema-prose-generation.log",
+      "exitCode": 0,
+      "notes": "Final prose narrows N/A absence to whole-engine/incomplete population; per-rule fault retains completed channels. Removes stale V15x-only descriptions."
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "log": "types-prose-generation.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-certify-profile-schema.ts --check",
+      "log": "schema-final-check.log",
+      "exitCode": 0
+    }
+  ],
+  "currentTestCoverage": {
+    "files": 16,
+    "tests": 391,
+    "skipped": 0,
+    "basis": "Union of current test files: initial regression passed 14 files except two declared-mover files; those two then passed 15/15. Final modified boundary/accuracy files passed49/49 (21+28). This is accumulated targeted evidence, not a claim that a single391-test run was executed."
+  },
+  "boundaries": {
+    "receipts": "boundary/*.json",
+    "cases": 21,
+    "ordinaryWarning": "R14 native warn retained and a11y pass",
+    "notApplicable": "Named preconditions retained separately",
+    "errorA11y": "R08/R09 error findings, a11y fail and conformant false",
+    "realAccuracyFailure": "Hierarchy V155 and bubble V169 fail folded gate",
+    "positiveBubble": "Constant sizes pass all3rules with full geometry; geometry-free option-only case retains limitation and no renderHash",
+    "faults": [
+      "whole a11y evaluator",
+      "incomplete rule set",
+      "actual warn-severity R14 rule evaluation throws",
+      "accuracy evaluator",
+      "zero resolved accuracy rules",
+      "contrast fault",
+      "render fault",
+      "unstable independent render"
+    ],
+    "profile": "Data-backed coverage certified with boolean conformant; spec-only coverage uncertified/null; both retained in observed receipts"
+  },
+  "limitations": [
+    "Geometry-free bubble-map certification retains pre-existing option-only determinism scope and no renderHash.",
+    "The memo contrast-not-fail conjunction retains existing ungradeable fault guard; recorded interpretation in migration.json.",
+    "Pre-m04 compiled receipt carries86736ca build metadata from final m03 build before commit; no fresh a10 baseline build is claimed.",
+    "Historical s172/s179 fixtures are unchanged; tests project explicit bounded movers.",
+    "No full portable campaign, full test-suite capture, PM2 action or commit was performed by this slice."
+  ]
+}
