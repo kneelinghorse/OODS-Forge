@@ -1,0 +1,1103 @@
+runtime-cells	Set up job	﻿2026-09-11T17:09:38.8467252Z Current runner version: '2.337.0'
+runtime-cells	Set up job	2026-09-11T17:09:38.8533910Z ##[group]Runner Image Provisioner
+runtime-cells	Set up job	2026-09-11T17:09:38.8535388Z Hosted Compute Agent
+runtime-cells	Set up job	2026-09-11T17:09:38.8536399Z Version: 20260828.587
+runtime-cells	Set up job	2026-09-11T17:09:38.8537459Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+runtime-cells	Set up job	2026-09-11T17:09:38.8538932Z Build Date: 2026-08-28T16:44:25Z
+runtime-cells	Set up job	2026-09-11T17:09:38.8539983Z Worker ID: {32059ead-a84d-4692-b150-859e620e0dcb}
+runtime-cells	Set up job	2026-09-11T17:09:38.8541247Z Azure Region: eastus2
+runtime-cells	Set up job	2026-09-11T17:09:38.8542179Z ##[endgroup]
+runtime-cells	Set up job	2026-09-11T17:09:38.8545061Z ##[group]Operating System
+runtime-cells	Set up job	2026-09-11T17:09:38.8546227Z Ubuntu
+runtime-cells	Set up job	2026-09-11T17:09:38.8547060Z 24.04.5
+runtime-cells	Set up job	2026-09-11T17:09:38.8548822Z LTS
+runtime-cells	Set up job	2026-09-11T17:09:38.8549685Z ##[endgroup]
+runtime-cells	Set up job	2026-09-11T17:09:38.8550541Z ##[group]Runner Image
+runtime-cells	Set up job	2026-09-11T17:09:38.8551612Z Image: ubuntu-24.04
+runtime-cells	Set up job	2026-09-11T17:09:38.8552542Z Version: 20260907.300.1
+runtime-cells	Set up job	2026-09-11T17:09:38.8554422Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+runtime-cells	Set up job	2026-09-11T17:09:38.8557327Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+runtime-cells	Set up job	2026-09-11T17:09:38.8559321Z ##[endgroup]
+runtime-cells	Set up job	2026-09-11T17:09:38.8561228Z ##[group]GITHUB_TOKEN Permissions
+runtime-cells	Set up job	2026-09-11T17:09:38.8564411Z Contents: read
+runtime-cells	Set up job	2026-09-11T17:09:38.8565266Z Metadata: read
+runtime-cells	Set up job	2026-09-11T17:09:38.8566213Z PullRequests: write
+runtime-cells	Set up job	2026-09-11T17:09:38.8567063Z ##[endgroup]
+runtime-cells	Set up job	2026-09-11T17:09:38.8570230Z Secret source: Actions
+runtime-cells	Set up job	2026-09-11T17:09:38.8571812Z Cache mode: write
+runtime-cells	Set up job	2026-09-11T17:09:38.8573273Z Prepare workflow directory
+runtime-cells	Set up job	2026-09-11T17:09:38.9566513Z Prepare all required actions
+runtime-cells	Set up job	2026-09-11T17:09:38.9638521Z Getting action download info
+runtime-cells	Set up job	2026-09-11T17:09:39.2638961Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+runtime-cells	Set up job	2026-09-11T17:09:39.3981224Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+runtime-cells	Set up job	2026-09-11T17:09:39.6699911Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+runtime-cells	Set up job	2026-09-11T17:09:39.7684474Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+runtime-cells	Set up job	2026-09-11T17:09:40.0114253Z Complete job name: runtime-cells
+runtime-cells	Initialize containers	﻿2026-09-11T17:09:40.0665224Z ##[group]Checking docker version
+runtime-cells	Initialize containers	2026-09-11T17:09:40.0679067Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1449569Z '1.48'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1463595Z Docker daemon API version: '1.48'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1464492Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1665791Z '1.48'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1682233Z Docker client API version: '1.48'
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1690329Z ##[endgroup]
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1693171Z ##[group]Clean up resources from previous jobs
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1699046Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=541c22"
+runtime-cells	Initialize containers	2026-09-11T17:09:40.1873361Z ##[command]/usr/bin/docker network prune --force --filter "label=541c22"
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2033479Z ##[endgroup]
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2034131Z ##[group]Create local container network
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2045370Z ##[command]/usr/bin/docker network create --label 541c22 github_network_b150688f40224940872bb1d2c504d7cf
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2809802Z 7cb6626334512996d54a616cabec78523d4345e8cc94cbd2367fcc2eb610ab4a
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2819986Z ##[endgroup]
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2846145Z ##[group]Starting job container
+runtime-cells	Initialize containers	2026-09-11T17:09:40.2870390Z ##[command]/usr/bin/docker pull mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4159276Z mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a: Pulling from playwright
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4543171Z cf57d2112d89: Pulling fs layer
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4544167Z e1de47aaed0a: Pulling fs layer
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4545149Z 495d3111de8d: Pulling fs layer
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4546205Z 44acc34a5cf7: Pulling fs layer
+runtime-cells	Initialize containers	2026-09-11T17:09:40.4547397Z 44acc34a5cf7: Waiting
+runtime-cells	Initialize containers	2026-09-11T17:09:40.5175521Z 495d3111de8d: Verifying Checksum
+runtime-cells	Initialize containers	2026-09-11T17:09:40.5181111Z 495d3111de8d: Download complete
+runtime-cells	Initialize containers	2026-09-11T17:09:40.7027857Z cf57d2112d89: Verifying Checksum
+runtime-cells	Initialize containers	2026-09-11T17:09:40.7030515Z cf57d2112d89: Download complete
+runtime-cells	Initialize containers	2026-09-11T17:09:41.0964288Z e1de47aaed0a: Verifying Checksum
+runtime-cells	Initialize containers	2026-09-11T17:09:41.0985839Z e1de47aaed0a: Download complete
+runtime-cells	Initialize containers	2026-09-11T17:09:42.9122727Z cf57d2112d89: Pull complete
+runtime-cells	Initialize containers	2026-09-11T17:09:45.2364187Z 44acc34a5cf7: Verifying Checksum
+runtime-cells	Initialize containers	2026-09-11T17:09:45.2366688Z 44acc34a5cf7: Download complete
+runtime-cells	Initialize containers	2026-09-11T17:09:51.2252099Z e1de47aaed0a: Pull complete
+runtime-cells	Initialize containers	2026-09-11T17:09:51.2511517Z 495d3111de8d: Pull complete
+runtime-cells	Initialize containers	2026-09-11T17:10:09.9465225Z 44acc34a5cf7: Pull complete
+runtime-cells	Initialize containers	2026-09-11T17:10:09.9543188Z Digest: sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+runtime-cells	Initialize containers	2026-09-11T17:10:09.9549223Z Status: Downloaded newer image for mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+runtime-cells	Initialize containers	2026-09-11T17:10:09.9570631Z mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+runtime-cells	Initialize containers	2026-09-11T17:10:09.9685038Z ##[command]/usr/bin/docker create --name 5d305132ffb34f2b8eba46fd5ce0a88d_mcrmicrosoftcomplaywrightsha256f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a_c89413 --label 541c22 --workdir /__w/OODS-Forge/OODS-Forge --network github_network_b150688f40224940872bb1d2c504d7cf --ipc=host -e "HOME=/github/home" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work":"/__w" -v "/home/runner/actions-runner/cached/2.337.0/externals":"/__e":ro -v "/home/runner/work/_temp":"/__w/_temp" -v "/home/runner/work/_actions":"/__w/_actions" -v "/opt/hostedtoolcache":"/__t" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" --entrypoint "tail" mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a "-f" "/dev/null"
+runtime-cells	Initialize containers	2026-09-11T17:10:10.9770516Z c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Initialize containers	2026-09-11T17:10:10.9789186Z ##[command]/usr/bin/docker start c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2100910Z c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2124101Z ##[command]/usr/bin/docker ps --all --filter id=c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2269746Z c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 Up Less than a second
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2294566Z ##[command]/usr/bin/docker inspect --format "{{range .Config.Env}}{{println .}}{{end}}" c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2465795Z GITHUB_ACTIONS=true
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2466265Z CI=true
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2466546Z HOME=/github/home
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2467007Z PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2467715Z LANG=C.UTF-8
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2467957Z LC_ALL=C.UTF-8
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2470193Z PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2496256Z ##[endgroup]
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2506660Z ##[group]Waiting for all services to be ready
+runtime-cells	Initialize containers	2026-09-11T17:10:11.2509261Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	﻿2026-09-11T17:10:11.2905563Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2914064Z ##[group]Run actions/checkout@v4
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2914552Z with:
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2914820Z   repository: kneelinghorse/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2918436Z   token: ***
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2918695Z   ssh-strict: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2918934Z   ssh-user: git
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2919179Z   persist-credentials: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2919723Z   clean: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2919966Z   sparse-checkout-cone-mode: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2920245Z   fetch-depth: 1
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2920470Z   fetch-tags: false
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2920704Z   show-progress: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2920935Z   lfs: false
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2921145Z   submodules: false
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2921480Z   set-safe-directory: true
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2921791Z   allow-unsafe-pr-checkout: false
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2922669Z env:
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2922884Z   NODE_VERSION: 24
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2923114Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.2989666Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5896392Z Syncing repository: kneelinghorse/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5898793Z ##[group]Getting Git version info
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5899415Z Working directory is '/__w/OODS-Forge/OODS-Forge'
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5900293Z [command]/usr/bin/git version
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5910323Z git version 2.43.0
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.5998099Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6017648Z Temporarily overriding HOME='/__w/_temp/3b92e915-be9e-41c2-9ff4-a824b8f47882' before making global git config changes
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6023666Z Adding repository directory to the temporary git global config as a safe directory
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6025117Z [command]/usr/bin/git config --global --add safe.directory /__w/OODS-Forge/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6099963Z Deleting the contents of '/__w/OODS-Forge/OODS-Forge'
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6117500Z ##[group]Initializing the repository
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6129577Z [command]/usr/bin/git init /__w/OODS-Forge/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6195992Z hint: Using 'master' as the name for the initial branch. This default branch name
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6219570Z hint: is subject to change. To configure the initial branch name to use in all
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6233122Z hint: of your new repositories, which will suppress this warning, call:
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6246721Z hint: 
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6263877Z hint: 	git config --global init.defaultBranch <name>
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6290242Z hint: 
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6291032Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6291968Z hint: 'development'. The just-created branch can be renamed via this command:
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6292818Z hint: 
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6293235Z hint: 	git branch -m <name>
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6293821Z Initialized empty Git repository in /__w/OODS-Forge/OODS-Forge/.git/
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6295703Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6329101Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6329891Z ##[group]Disabling automatic garbage collection
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6330518Z [command]/usr/bin/git config --local gc.auto 0
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6434465Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6435699Z ##[group]Setting up auth
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6439515Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6471794Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6921201Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.6970313Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7341770Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7380014Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7726828Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7792345Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7793793Z ##[group]Fetching the repository
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:11.7807934Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +71538162e839aec60dda6267a83f506906c1792e:refs/remotes/origin/codex/sprint-194-tools-truthful
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0116197Z From https://github.com/kneelinghorse/OODS-Forge
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0117940Z  * [new ref]           71538162e839aec60dda6267a83f506906c1792e -> origin/codex/sprint-194-tools-truthful
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0154569Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0155482Z ##[group]Determining the checkout info
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0161117Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0170138Z [command]/usr/bin/git sparse-checkout disable
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0231336Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0275153Z ##[group]Checking out the ref
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:22.0299898Z [command]/usr/bin/git checkout --progress --force -B codex/sprint-194-tools-truthful refs/remotes/origin/codex/sprint-194-tools-truthful
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.1199938Z Updating files:  18% (9427/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.1684966Z Updating files:  19% (9725/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.2334999Z Updating files:  20% (10237/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.2806077Z Updating files:  21% (10749/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.3414783Z Updating files:  22% (11261/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.4197461Z Updating files:  23% (11772/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.4993939Z Updating files:  24% (12284/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.5931379Z Updating files:  25% (12796/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.6770275Z Updating files:  26% (13308/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.7407222Z Updating files:  27% (13820/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.8160423Z Updating files:  28% (14331/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.8791298Z Updating files:  29% (14843/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:23.9776461Z Updating files:  30% (15355/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.0297689Z Updating files:  31% (15867/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.0821638Z Updating files:  32% (16379/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.1096513Z Updating files:  32% (16719/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.1582486Z Updating files:  33% (16891/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.2312060Z Updating files:  34% (17402/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.3050768Z Updating files:  35% (17914/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.4038587Z Updating files:  36% (18426/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.4994701Z Updating files:  37% (18938/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.5602940Z Updating files:  38% (19450/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.6761310Z Updating files:  39% (19961/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.7546395Z Updating files:  40% (20473/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.8305058Z Updating files:  41% (20985/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:24.9126916Z Updating files:  42% (21497/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.0850321Z Updating files:  43% (22009/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.2088869Z Updating files:  43% (22419/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.2560445Z Updating files:  44% (22521/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.2971086Z Updating files:  45% (23032/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.3326772Z Updating files:  46% (23544/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.4522146Z Updating files:  47% (24056/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.5274314Z Updating files:  48% (24568/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.6750072Z Updating files:  49% (25080/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.7501313Z Updating files:  50% (25591/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.8042812Z Updating files:  51% (26103/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.8482815Z Updating files:  52% (26615/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.8960429Z Updating files:  53% (27127/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.9470473Z Updating files:  54% (27639/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:25.9897844Z Updating files:  55% (28151/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.0432380Z Updating files:  56% (28662/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.0825355Z Updating files:  57% (29174/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.1042391Z Updating files:  57% (29498/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.1519428Z Updating files:  58% (29686/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.2315158Z Updating files:  59% (30198/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.2808528Z Updating files:  60% (30710/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.3876016Z Updating files:  61% (31222/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.4823602Z Updating files:  62% (31733/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.5344135Z Updating files:  63% (32245/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.6160995Z Updating files:  64% (32757/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.6847958Z Updating files:  65% (33269/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.7697787Z Updating files:  66% (33781/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.8955199Z Updating files:  67% (34292/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:26.9501138Z Updating files:  68% (34804/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.1265755Z Updating files:  69% (35316/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.1529574Z Updating files:  69% (35623/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.2103747Z Updating files:  70% (35828/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.2869435Z Updating files:  71% (36340/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.3430383Z Updating files:  72% (36852/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.4190253Z Updating files:  73% (37363/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.5034615Z Updating files:  74% (37875/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.6166926Z Updating files:  75% (38387/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.6624174Z Updating files:  76% (38899/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.7071011Z Updating files:  77% (39411/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.7678166Z Updating files:  78% (39922/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.8451164Z Updating files:  79% (40434/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.9235365Z Updating files:  80% (40946/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:27.9807313Z Updating files:  81% (41458/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.0275818Z Updating files:  82% (41970/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.0759557Z Updating files:  83% (42482/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.0821880Z Updating files:  84% (42993/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.1601686Z Updating files:  84% (43039/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.2405115Z Updating files:  85% (43505/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.3103969Z Updating files:  86% (44017/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.4605865Z Updating files:  87% (44529/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.5169299Z Updating files:  88% (45041/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.5935000Z Updating files:  89% (45552/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:28.6733373Z Updating files:  90% (46064/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.0020187Z Updating files:  91% (46576/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.1711336Z Updating files:  92% (47088/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.2290232Z Updating files:  92% (47115/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.2766013Z Updating files:  93% (47600/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.3122797Z Updating files:  94% (48112/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.3620109Z Updating files:  95% (48623/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.3992591Z Updating files:  96% (49135/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.4430316Z Updating files:  97% (49647/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.4862467Z Updating files:  98% (50159/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.5203344Z Updating files:  99% (50671/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.5204958Z Updating files: 100% (51182/51182)
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.5205869Z Updating files: 100% (51182/51182), done.
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.6198125Z Switched to a new branch 'codex/sprint-194-tools-truthful'
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.6204675Z branch 'codex/sprint-194-tools-truthful' set up to track 'origin/codex/sprint-194-tools-truthful'.
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.6414955Z ##[endgroup]
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.6761888Z [command]/usr/bin/git log -1 --format=%H
+runtime-cells	Run actions/checkout@v4	2026-09-11T17:10:29.6802359Z 71538162e839aec60dda6267a83f506906c1792e
+runtime-cells	Run pnpm/action-setup@v4	﻿2026-09-11T17:10:29.7726240Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7729613Z ##[group]Run pnpm/action-setup@v4
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7730019Z with:
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7730323Z   run_install: false
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7730649Z   dest: ~/setup-pnpm
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7730977Z   cache: false
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7731309Z   cache_dependency_path: pnpm-lock.yaml
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7731764Z   package_json_file: package.json
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7732164Z   standalone: false
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7732464Z env:
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7732736Z   NODE_VERSION: 24
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7733049Z ##[endgroup]
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:29.7738667Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:30.2009078Z ##[group]Running self-installer...
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:30.8195720Z (node:163) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:30.8197840Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.0519703Z Progress: resolved 1, reused 0, downloaded 0, added 0
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.0634639Z Packages: +1
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.0635903Z +
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.6537974Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7222189Z 
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7223284Z dependencies:
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7224998Z + pnpm 9.12.2 (12.4.1 is available)
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7225829Z 
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7255586Z Done in 1.1s
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7439929Z ##[endgroup]
+runtime-cells	Run pnpm/action-setup@v4	2026-09-11T17:10:31.7440525Z Installation Completed!
+runtime-cells	Run actions/setup-node@v4	﻿2026-09-11T17:10:31.7675274Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7676530Z ##[group]Run actions/setup-node@v4
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7676792Z with:
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7676989Z   node-version: 24
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7677207Z   cache: pnpm
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7677415Z   always-auth: false
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7677644Z   check-latest: false
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7680667Z   token: ***
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7680873Z env:
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7681063Z   NODE_VERSION: 24
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7681347Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7681671Z ##[endgroup]
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:31.7689962Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.0673935Z Found in cache @ /__t/node/24.20.0/x64
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.0692240Z (node:185) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.0693554Z ##[group]Environment details
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.0772167Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.5186933Z node: v24.20.0
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.5190997Z npm: 11.19.0
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.5193506Z yarn: 1.22.22
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.5195288Z ##[endgroup]
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.5195833Z [command]/github/home/setup-pnpm/node_modules/.bin/pnpm store path --silent
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:32.9531401Z /__w/.pnpm-store/v3
+runtime-cells	Run actions/setup-node@v4	2026-09-11T17:10:33.0420337Z pnpm cache is not found
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	﻿2026-09-11T17:10:33.0616583Z ##[group]Run git config --global --add safe.directory "$GITHUB_WORKSPACE"
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0617231Z ^[[36;1mgit config --global --add safe.directory "$GITHUB_WORKSPACE"^[[0m
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0620410Z shell: sh -e {0}
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0620649Z env:
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0620839Z   NODE_VERSION: 24
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0621119Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run git config --global --add safe.directory "$GITHUB_WORKSPACE"	2026-09-11T17:10:33.0621442Z ##[endgroup]
+runtime-cells	Run pnpm install --frozen-lockfile	﻿2026-09-11T17:10:33.1313336Z ##[group]Run pnpm install --frozen-lockfile
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1313765Z ^[[36;1mpnpm install --frozen-lockfile^[[0m
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1314197Z shell: sh -e {0}
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1314403Z env:
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1314595Z   NODE_VERSION: 24
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1314868Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.1315188Z ##[endgroup]
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.7511739Z Scope: all 22 workspace projects
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.8318881Z Lockfile is up to date, resolution step is skipped
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:33.9211637Z Progress: resolved 1, reused 0, downloaded 0, added 0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:34.0657674Z Packages: +946
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:34.0658622Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:34.9219029Z Progress: resolved 946, reused 0, downloaded 32, added 24
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:35.9225817Z Progress: resolved 946, reused 0, downloaded 169, added 160
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:36.9250247Z Progress: resolved 946, reused 0, downloaded 226, added 218
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:37.9244873Z Progress: resolved 946, reused 0, downloaded 233, added 221
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:38.9246525Z Progress: resolved 946, reused 0, downloaded 297, added 285
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:39.9290656Z Progress: resolved 946, reused 0, downloaded 403, added 393
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:40.9292784Z Progress: resolved 946, reused 0, downloaded 457, added 441
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:41.9311810Z Progress: resolved 946, reused 0, downloaded 514, added 502
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:42.9324214Z Progress: resolved 946, reused 0, downloaded 570, added 560
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:43.9327607Z Progress: resolved 946, reused 0, downloaded 672, added 659
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:44.9334595Z Progress: resolved 946, reused 0, downloaded 778, added 765
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:45.9329667Z Progress: resolved 946, reused 0, downloaded 938, added 935
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.0101616Z Progress: resolved 946, reused 0, downloaded 945, added 946, done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.5824325Z .../es5-ext@0.10.64/node_modules/es5-ext postinstall$  node -e "try{require('./_postinstall')}catch(e){}" || exit 0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.5833381Z .../node_modules/protobufjs postinstall$ node scripts/postinstall
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.6103024Z .../@bundled-es-modules/glob postinstall$ patch-package
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.6119321Z .../esbuild@0.25.10/node_modules/esbuild postinstall$ node install.js
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.6955780Z .../node_modules/protobufjs postinstall: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.7062521Z .../es5-ext@0.10.64/node_modules/es5-ext postinstall: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.8418606Z .../esbuild@0.25.10/node_modules/esbuild postinstall: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.9289092Z .../@bundled-es-modules/glob postinstall: patch-package 8.0.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.9302034Z .../@bundled-es-modules/glob postinstall: Applying patches...
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.9320849Z .../@bundled-es-modules/glob postinstall: No patch files found
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.9360196Z .../@bundled-es-modules/glob postinstall: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:46.9456960Z .../node_modules/style-dictionary postinstall$ patch-package
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.1133301Z .../node_modules/style-dictionary postinstall: patch-package 8.0.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.1135203Z .../node_modules/style-dictionary postinstall: Applying patches...
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.1136420Z .../node_modules/style-dictionary postinstall: No patch files found
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.1199799Z .../node_modules/style-dictionary postinstall: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4968063Z 
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4969494Z dependencies:
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4970028Z + @radix-ui/react-slot 1.2.3
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4970474Z + @rjsf/core 5.24.13
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4971331Z + @rjsf/utils 5.24.13
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4971776Z + @rjsf/validator-ajv8 5.24.13
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4972219Z + @types/geojson 7946.0.16
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4973661Z + @types/topojson-client 3.1.5
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4974040Z + @types/topojson-specification 1.0.5
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4975580Z + ajv 8.17.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4978621Z + ajv-formats 3.0.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4986402Z + d3-geo 3.1.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4986965Z + d3-scale 4.0.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4987287Z + echarts 6.0.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4988836Z + js-yaml 4.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4989157Z + luxon 3.7.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4989449Z + pg 8.16.3
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4989761Z + react 19.2.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4990115Z + react-dom 19.2.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4990461Z + react-window 1.8.11
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4990826Z + topojson-client 3.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4991169Z + vega 6.2.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4991544Z + vega-embed 7.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4991831Z + zod 4.1.12
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4992012Z 
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4992151Z devDependencies:
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4992567Z + @chromatic-com/storybook 4.1.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4993138Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4993909Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4994329Z + @oods/tokens 0.1.0 <- packages/tokens
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4994748Z + @oods/viz-core 0.1.0 <- packages/viz-core
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4995051Z + @playwright/test 1.56.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4995339Z + @storybook/addon-a11y 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4995640Z + @storybook/addon-docs 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4995947Z + @storybook/addon-onboarding 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4996236Z + @storybook/mdx2-csf 1.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4996524Z + @storybook/react 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4996790Z + @storybook/react-vite 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4997052Z + @testing-library/dom 10.4.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4997348Z + @testing-library/jest-dom 6.9.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4997646Z + @testing-library/react 16.3.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4997949Z + @testing-library/user-event 14.6.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4998259Z + @tokens-studio/sd-transforms 1.3.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.4999927Z + @types/d3-geo 3.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5000318Z + @types/d3-scale 4.0.9
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5000686Z + @types/js-yaml 4.0.9
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5001037Z + @types/luxon 3.7.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5001383Z + @types/node 20.19.21
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5001717Z + @types/pg 8.15.6
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5002066Z + @types/react 19.2.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5002442Z + @types/react-dom 19.2.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5002868Z + @types/react-window 1.8.8
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5003257Z + @types/semver 7.7.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5003575Z + @types/sql.js 1.4.9
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5003963Z + @typescript-eslint/eslint-plugin 6.21.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5004433Z + @typescript-eslint/parser 6.21.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5004837Z + @vitejs/plugin-react 5.0.4
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5005185Z + @vitest/browser 3.2.4
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5005538Z + @vitest/coverage-v8 3.2.4
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5005871Z + axe-core 4.11.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5006174Z + colorjs.io 0.5.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5006456Z + dotenv 17.4.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5006719Z + eslint 8.57.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5007106Z + eslint-plugin-storybook 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5007489Z + globals 17.6.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5007810Z + jsdom 24.1.3
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5010351Z + json-schema-to-typescript 13.1.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5011047Z + markdown-to-jsx 7.7.15
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5011471Z + pg-mem 3.0.5
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5011831Z + playwright 1.56.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5012187Z + postcss 8.5.28
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5012509Z + prettier 3.6.2
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5012841Z + rimraf 5.0.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5013150Z + semver 7.7.3
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5013462Z + sql.js 1.13.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5013798Z + storybook 9.1.10
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5014188Z + style-dictionary 4.4.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5014586Z + tailwindcss 3.4.18
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5014919Z + tsup 8.5.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5015229Z + tsx 4.20.6
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5015563Z + typescript 5.3.3
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5015915Z + vega-lite 6.4.1
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5016315Z + vite-tsconfig-paths 5.1.4
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5016712Z + vitest 3.2.4
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5017071Z + vitest-axe 0.1.0
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5017264Z 
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.5884396Z . prepare$ node tools/token-lint/setup-precommit.mjs
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.6295285Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.6338603Z . prepare: Done
+runtime-cells	Run pnpm install --frozen-lockfile	2026-09-11T17:10:47.6469205Z Done in 14.4s
+runtime-cells	Run pnpm run build:tokens	﻿2026-09-11T17:10:47.7184973Z ##[group]Run pnpm run build:tokens
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7185328Z ^[[36;1mpnpm run build:tokens^[[0m
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7185741Z shell: sh -e {0}
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7185959Z env:
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7186155Z   NODE_VERSION: 24
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7186431Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:47.7186758Z ##[endgroup]
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.2419950Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.2421225Z > @oods/foundry-mcp@0.1.0 build:tokens /__w/OODS-Forge/OODS-Forge
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.2422318Z > node packages/tokens/scripts/build.mjs
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.2422930Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6202483Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6204567Z Building design tokens with Style Dictionary…
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6930328Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6931370Z Token collisions detected (2):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6932206Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:48.6933129Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.1921614Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.1922691Z ios-swift
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.1923610Z ! dist/ios-swift/OodsTokens.swift, does not exist
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.2002104Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.2002964Z compose
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.2003968Z ! dist/compose/OodsTokens.kt, does not exist
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3222388Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3223694Z ts
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3224627Z ! dist/ts/tokens.ts, does not exist
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3235004Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3235735Z tailwind
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:49.3236659Z ! dist/tailwind/tokens.json, does not exist
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2071396Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2072791Z ios-swift
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2101064Z ✔︎ dist/ios-swift/OodsTokens.swift
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2102301Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2102904Z compose
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2103797Z ✔︎ dist/compose/OodsTokens.kt
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2780083Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2781480Z ts
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2782591Z ✔︎ dist/ts/tokens.ts
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2783059Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2783390Z tailwind
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.2792148Z ✔︎ dist/tailwind/tokens.json
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.3785691Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.3787233Z Token collisions detected (2):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.3788466Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.3789594Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.5703473Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.5704935Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.5705960Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.6149015Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.6150345Z Token collisions detected (2):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.6151573Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.6152687Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.7507440Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.7510832Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.7511601Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.8843381Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.8844520Z Token collisions detected (252):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.8847517Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:50.8848660Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.0184249Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.0188854Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.0191557Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.1349885Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.1351002Z Token collisions detected (227):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.1369515Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.1370735Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.2684405Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.2685426Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.2686748Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.4004494Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.4005554Z Token collisions detected (2):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.4007042Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.4008395Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.5278735Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.5279561Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.5280948Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.6442927Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.6444715Z Token collisions detected (252):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.6446204Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.6447577Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.7702665Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.7703524Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.7706116Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.8847299Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.8848619Z Token collisions detected (227):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.8850104Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:51.8851189Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.0125266Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.0127236Z css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.0132709Z ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.1287905Z 
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.1289608Z Token collisions detected (2):
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.1290680Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.1291838Z Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2705710Z ✔︎ tokens built successfully in 3.65s
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2707389Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2708453Z    types:    dist/ts/tokens.ts
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2709167Z    tailwind: dist/tailwind/tokens.json
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2709794Z    ios:      dist/ios-swift/OodsTokens.swift
+runtime-cells	Run pnpm run build:tokens	2026-09-11T17:10:52.2710441Z    compose:  dist/compose/OodsTokens.kt
+runtime-cells	Run pnpm run build:packages	﻿2026-09-11T17:10:52.3206604Z ##[group]Run pnpm run build:packages
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3207178Z ^[[36;1mpnpm run build:packages^[[0m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3207975Z shell: sh -e {0}
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3209357Z env:
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3209665Z   NODE_VERSION: 24
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3210112Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.3210585Z ##[endgroup]
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.8370557Z 
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.8371830Z > @oods/foundry-mcp@0.1.0 build:packages /__w/OODS-Forge/OODS-Forge
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.8373085Z > pnpm --filter @oods/* run build
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:52.8373544Z 
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:53.3725369Z Scope: 21 of 22 workspace projects
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:53.3760208Z apps/playground build$ tsc -b && vite build
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:53.3769905Z packages/a11y-tools build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:53.3779168Z packages/artifacts build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:53.3781124Z packages/component-contracts build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.0656316Z packages/a11y-tools build: ^[[34mCLI^[[39m Building entry: src/index.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.0667482Z packages/a11y-tools build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.0685362Z packages/a11y-tools build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.0820992Z packages/a11y-tools build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/a11y-tools/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.0922115Z packages/a11y-tools build: ^[[34mCLI^[[39m Target: node20
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1038573Z packages/a11y-tools build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1048938Z packages/a11y-tools build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1074616Z packages/a11y-tools build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1709759Z packages/component-contracts build: ^[[34mCLI^[[39m Building entry: src/index.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1828514Z packages/component-contracts build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1832040Z packages/component-contracts build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.1836644Z packages/component-contracts build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.2045453Z packages/component-contracts build: ^[[34mCLI^[[39m Target: es2022
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.2139135Z packages/component-contracts build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.2218088Z packages/component-contracts build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:55.2297344Z packages/component-contracts build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7730940Z packages/a11y-tools build: ^[[32mESM^[[39m ^[[1mdist/index.js     ^[[22m^[[32m14.75 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7797448Z packages/a11y-tools build: ^[[32mESM^[[39m ^[[1mdist/index.js.map ^[[22m^[[32m35.22 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7808819Z packages/a11y-tools build: ^[[32mESM^[[39m ⚡️ Build success in 1672ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7884952Z packages/a11y-tools build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs     ^[[22m^[[32m15.34 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7892819Z packages/a11y-tools build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs.map ^[[22m^[[32m35.23 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:56.7904495Z packages/a11y-tools build: ^[[32mCJS^[[39m ⚡️ Build success in 1674ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:57.6493007Z packages/a11y-tools build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:58.3709945Z packages/component-contracts build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:59.8443775Z packages/component-contracts build: ^[[32mESM^[[39m ^[[1mdist/index.js ^[[22m^[[32m894.48 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:59.8469375Z packages/component-contracts build: ^[[32mESM^[[39m ⚡️ Build success in 4623ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:59.8485621Z packages/component-contracts build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs ^[[22m^[[32m896.25 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:10:59.8523165Z packages/component-contracts build: ^[[32mCJS^[[39m ⚡️ Build success in 4625ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:00.7429292Z packages/artifacts build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:00.7504931Z packages/mcp-bridge build$ rimraf dist && tsc -p tsconfig.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.8637103Z packages/a11y-tools build: ^[[32mDTS^[[39m ⚡️ Build success in 9219ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.8649428Z packages/a11y-tools build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts  ^[[22m^[[32m9.01 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.8664821Z packages/a11y-tools build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts ^[[22m^[[32m9.01 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.8947533Z apps/playground build: ^[[36mvite v6.4.1 ^[[32mbuilding for production...^[[36m^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.9875196Z packages/a11y-tools build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:06.9905193Z packages/release-utils build$ rimraf dist && tsc -p tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:08.4797702Z apps/playground build: transforming...
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:08.6121028Z apps/playground build: Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:08.6123896Z apps/playground build:   npx update-browserslist-db@latest
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:08.6127527Z apps/playground build:   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.0809215Z packages/component-contracts build: ^[[32mDTS^[[39m ⚡️ Build success in 12388ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.0818075Z packages/component-contracts build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts  ^[[22m^[[32m107.62 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.0843975Z packages/component-contracts build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts ^[[22m^[[32m107.62 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.3915695Z packages/component-contracts build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.3955105Z packages/tokens build$ rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.6094925Z packages/mcp-bridge build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:10.6103718Z packages/tw-variants build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:11.9478740Z packages/tokens build: ✔︎ collision guard: no non-exempt collisions across 6 scopes
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:11.9482081Z packages/tokens build: Building design tokens with Style Dictionary…
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.0890508Z packages/release-utils build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.0960411Z packages/viz-render build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.1666904Z packages/tokens build: Token collisions detected (2):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.1676571Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.1699082Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2619158Z packages/tw-variants build: ^[[34mCLI^[[39m Building entry: src/context-matrix.ts, src/index.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2637320Z packages/tw-variants build: ^[[34mCLI^[[39m Using tsconfig: ../../tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2672890Z packages/tw-variants build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2682692Z packages/tw-variants build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2853182Z packages/tw-variants build: ^[[34mCLI^[[39m Target: node20
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2863371Z packages/tw-variants build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.2985473Z packages/tw-variants build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:12.3013914Z packages/tw-variants build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2667861Z packages/tw-variants build: ^[[32mCJS^[[39m ^[[1mdist/context-matrix.cjs     ^[[22m^[[32m6.42 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2670267Z packages/tw-variants build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs              ^[[22m^[[32m14.54 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2673289Z packages/tw-variants build: ^[[32mCJS^[[39m ^[[1mdist/context-matrix.cjs.map ^[[22m^[[32m13.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2675884Z packages/tw-variants build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs.map          ^[[22m^[[32m32.63 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2693270Z packages/tw-variants build: ^[[32mCJS^[[39m ⚡️ Build success in 965ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2702173Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/context-matrix.js     ^[[22m^[[32m139.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2705440Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/index.js              ^[[22m^[[32m8.03 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2716976Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/chunk-IHQKAR2X.js     ^[[22m^[[32m6.39 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2719648Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/context-matrix.js.map ^[[22m^[[32m78.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2733019Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/index.js.map          ^[[22m^[[32m19.16 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2735369Z packages/tw-variants build: ^[[32mESM^[[39m ^[[1mdist/chunk-IHQKAR2X.js.map ^[[22m^[[32m13.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.2737971Z packages/tw-variants build: ^[[32mESM^[[39m ⚡️ Build success in 965ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.8410321Z packages/tw-variants build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.8848133Z packages/viz-render build: ^[[34mCLI^[[39m Building entry: {"index":"src/index.ts","emitter":"src/emitter.ts","echarts-render.worker":"src/echarts-render.worker.ts"}
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.8850414Z packages/viz-render build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.8853282Z packages/viz-render build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.8886808Z packages/viz-render build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/viz-render/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.9157124Z packages/viz-render build: ^[[34mCLI^[[39m Target: node20
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.9351825Z packages/viz-render build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.9425415Z packages/viz-render build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:13.9435182Z packages/viz-render build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:14.1414290Z apps/playground build: ^[[32m✓^[[39m 48 modules transformed.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:14.6527869Z packages/tokens build: ios-swift
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:14.6529533Z packages/tokens build: ! dist/ios-swift/OodsTokens.swift, does not exist
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:14.6665196Z packages/tokens build: compose
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:14.6672778Z packages/tokens build: ! dist/compose/OodsTokens.kt, does not exist
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.0399754Z apps/playground build: rendering chunks...
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.0812055Z apps/playground build: computing gzip size...
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.1217204Z apps/playground build: ^[[2mdist/^[[22m^[[32mindex.html                 ^[[39m^[[1m^[[2m  0.69 kB^[[22m^[[1m^[[22m^[[2m │ gzip:  0.39 kB^[[22m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.1235416Z apps/playground build: ^[[2mdist/^[[22m^[[2massets/^[[22m^[[35mindex-DBhKWpVX.css  ^[[39m^[[1m^[[2m 25.90 kB^[[22m^[[1m^[[22m^[[2m │ gzip:  5.53 kB^[[22m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.1263368Z apps/playground build: ^[[2mdist/^[[22m^[[2massets/^[[22m^[[36mindex-CjtZwImZ.js   ^[[39m^[[1m^[[2m394.49 kB^[[22m^[[1m^[[22m^[[2m │ gzip: 88.73 kB^[[22m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.1271999Z apps/playground build: ^[[32m✓ built in 8.09s^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.4359493Z packages/tokens build: ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.4404828Z packages/tokens build: ! dist/ts/tokens.ts, does not exist
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.4414970Z packages/tokens build: tailwind
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.4422673Z packages/tokens build: ! dist/tailwind/tokens.json, does not exist
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.5831351Z apps/playground build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6282360Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/emitter.cjs                   ^[[22m^[[32m3.92 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6331551Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs                     ^[[22m^[[32m21.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6353667Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/echarts-render.worker.cjs     ^[[22m^[[32m24.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6384884Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/emitter.cjs.map               ^[[22m^[[32m12.80 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6394228Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs.map                 ^[[22m^[[32m52.80 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6412199Z packages/viz-render build: ^[[32mCJS^[[39m ^[[1mdist/echarts-render.worker.cjs.map ^[[22m^[[32m59.80 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6426061Z packages/viz-render build: ^[[32mCJS^[[39m ⚡️ Build success in 1685ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6435501Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/index.js                     ^[[22m^[[32m7.61 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6462166Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/emitter.js                   ^[[22m^[[32m3.59 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6470625Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/echarts-render.worker.js     ^[[22m^[[32m11.64 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6479373Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/chunk-TEIMVO34.js            ^[[22m^[[32m13.57 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6502785Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/chunk-J3M4JW2D.js            ^[[22m^[[32m456.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6511778Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/index.js.map                 ^[[22m^[[32m18.69 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6520447Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/emitter.js.map               ^[[22m^[[32m11.73 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6529580Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/echarts-render.worker.js.map ^[[22m^[[32m25.74 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6563149Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/chunk-TEIMVO34.js.map        ^[[22m^[[32m33.43 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6571828Z packages/viz-render build: ^[[32mESM^[[39m ^[[1mdist/chunk-J3M4JW2D.js.map        ^[[22m^[[32m1.11 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.6580469Z packages/viz-render build: ^[[32mESM^[[39m ⚡️ Build success in 1686ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:15.7902120Z packages/viz-render build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.2654353Z packages/tokens build: ios-swift
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.2677504Z packages/tokens build: ✔︎ dist/ios-swift/OodsTokens.swift
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.2710859Z packages/tokens build: compose
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.2720981Z packages/tokens build: ✔︎ dist/compose/OodsTokens.kt
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.4380710Z packages/tokens build: ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.4466294Z packages/tokens build: ✔︎ dist/ts/tokens.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.4467183Z packages/tokens build: tailwind
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.4472939Z packages/tokens build: ✔︎ dist/tailwind/tokens.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.6626872Z packages/tokens build: Token collisions detected (2):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.6629161Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:18.6630750Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.2025773Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.2028943Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.3406465Z packages/tokens build: Token collisions detected (2):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.3408498Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.3411417Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.8494430Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:19.8497065Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:20.3666229Z packages/tokens build: Token collisions detected (252):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:20.3668582Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:20.3671490Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:20.8264274Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:20.8283995Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:21.2234428Z packages/tokens build: Token collisions detected (227):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:21.2236980Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:21.2239389Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:21.7256904Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:21.7260549Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1407714Z packages/tw-variants build: ^[[32mDTS^[[39m ⚡️ Build success in 8305ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1459926Z packages/tw-variants build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts           ^[[22m^[[32m685.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1461569Z packages/tw-variants build: ^[[32mDTS^[[39m ^[[1mdist/context-matrix.d.ts  ^[[22m^[[32m573.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1463444Z packages/tw-variants build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts          ^[[22m^[[32m685.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1464837Z packages/tw-variants build: ^[[32mDTS^[[39m ^[[1mdist/context-matrix.d.cts ^[[22m^[[32m573.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1522882Z packages/tokens build: Token collisions detected (2):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1525721Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.1527965Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.3570450Z packages/tw-variants build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.4885560Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.4890895Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.7278916Z packages/tokens build: Token collisions detected (252):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.7290032Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:22.7292599Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.0465103Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.0468143Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.3054172Z packages/tokens build: Token collisions detected (227):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.3057124Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.3079125Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.6085443Z packages/tokens build: css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.6090023Z packages/tokens build: ✔︎ dist/css/tokens.css
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.8697730Z packages/tokens build: Token collisions detected (2):
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.8700476Z packages/tokens build: Use log.verbosity "verbose" or use CLI option --verbose for more details.
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:23.8702980Z packages/tokens build: Refer to: https://styledictionary.com/reference/logging/
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1467431Z packages/tokens build: ✔︎ tokens built successfully in 12.20s
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1493877Z packages/tokens build:    css:      dist/css/tokens.css (6 brand × theme scopes)
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1495716Z packages/tokens build:    types:    dist/ts/tokens.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1498157Z packages/tokens build:    tailwind: dist/tailwind/tokens.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1523775Z packages/tokens build:    ios:      dist/ios-swift/OodsTokens.swift
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.1526123Z packages/tokens build:    compose:  dist/compose/OodsTokens.kt
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.3319615Z packages/tokens build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6272047Z packages/viz-render build: ^[[32mDTS^[[39m ⚡️ Build success in 8840ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6273891Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/echarts-render.worker.d.ts  ^[[22m^[[32m13.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6276439Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/emitter.d.ts                ^[[22m^[[32m1.45 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6279101Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts                  ^[[22m^[[32m5.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6280903Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/echarts-render.worker.d.cts ^[[22m^[[32m13.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6284515Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/emitter.d.cts               ^[[22m^[[32m1.45 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.6286942Z packages/viz-render build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts                 ^[[22m^[[32m5.51 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.7071702Z packages/viz-render build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.7087306Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:24.7094067Z packages/viz-core build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2639849Z packages/viz-core build: ^[[34mCLI^[[39m Building entry: src/index.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2672055Z packages/viz-core build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2674970Z packages/viz-core build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2678375Z packages/viz-core build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/viz-core/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2697827Z packages/component-styles build: ^[[34mCLI^[[39m Building entry: src/index.ts, src/ported.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2716238Z packages/component-styles build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2721501Z packages/component-styles build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2726524Z packages/component-styles build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2797865Z packages/viz-core build: ^[[34mCLI^[[39m Target: node20
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2828824Z packages/component-styles build: ^[[34mCLI^[[39m Target: es2022
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2846410Z packages/viz-core build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2869567Z packages/component-styles build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2891948Z packages/component-styles build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2895499Z packages/viz-core build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.2898386Z packages/viz-core build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.6906972Z packages/component-styles build: ^[[32mESM^[[39m ^[[1mdist/index.js          ^[[22m^[[32m143.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.6909142Z packages/component-styles build: ^[[32mESM^[[39m ^[[1mdist/ported.js         ^[[22m^[[32m513.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.7014412Z packages/component-styles build: ^[[32mESM^[[39m ^[[1mdist/chunk-G34QIFQW.js ^[[22m^[[32m2.63 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.7016598Z packages/component-styles build: ^[[32mESM^[[39m ⚡️ Build success in 412ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.7019401Z packages/component-styles build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs  ^[[22m^[[32m2.78 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.7022184Z packages/component-styles build: ^[[32mCJS^[[39m ^[[1mdist/ported.cjs ^[[22m^[[32m2.73 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:25.7024663Z packages/component-styles build: ^[[32mCJS^[[39m ⚡️ Build success in 411ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:26.2726453Z packages/component-styles build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:28.7139892Z packages/viz-core build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8879263Z packages/viz-core build: ^[[32mESM^[[39m ^[[1mdist/index.js     ^[[22m^[[32m431.41 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8882842Z packages/viz-core build: ^[[32mESM^[[39m ^[[1mdist/index.js.map ^[[22m^[[32m1.19 MB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8886961Z packages/viz-core build: ^[[32mESM^[[39m ⚡️ Build success in 5600ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8905579Z packages/viz-core build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs     ^[[22m^[[32m436.06 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8908643Z packages/viz-core build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs.map ^[[22m^[[32m1.19 MB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:30.8926911Z packages/viz-core build: ^[[32mCJS^[[39m ⚡️ Build success in 5601ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.3359940Z packages/component-styles build: ^[[32mDTS^[[39m ⚡️ Build success in 7064ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.3369999Z packages/component-styles build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts   ^[[22m^[[32m2.60 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.3377374Z packages/component-styles build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.ts  ^[[22m^[[32m500.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.3384057Z packages/component-styles build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts  ^[[22m^[[32m2.60 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.3400409Z packages/component-styles build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.cts ^[[22m^[[32m500.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:33.4993882Z packages/component-styles build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.0661426Z packages/viz-core build: ^[[32mDTS^[[39m ⚡️ Build success in 8612ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.0669527Z packages/viz-core build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts  ^[[22m^[[32m301.30 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.0674855Z packages/viz-core build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts ^[[22m^[[32m301.30 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.1613388Z packages/viz-core build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.1621698Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.1625656Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7203696Z packages/components-vue build: ^[[34mCLI^[[39m Building entry: src/index.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7227735Z packages/components-vue build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7239212Z packages/components-react build: ^[[34mCLI^[[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7241649Z packages/components-vue build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7246459Z packages/components-vue build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7262146Z packages/components-react build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7273079Z packages/components-react build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7275983Z packages/components-react build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7358628Z packages/components-vue build: ^[[34mCLI^[[39m Target: es2022
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7403106Z packages/components-react build: ^[[34mCLI^[[39m Target: es2022
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7410332Z packages/components-vue build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7448777Z packages/components-vue build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7459025Z packages/components-vue build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7468431Z packages/components-react build: ^[[34mCLI^[[39m Cleaning output folder
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7549012Z packages/components-react build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:35.7551189Z packages/components-react build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:36.7088718Z packages/components-react build: Generated an empty chunk: "types".
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.5326851Z packages/components-react build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6017347Z packages/components-vue build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6194166Z packages/components-vue build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs ^[[22m^[[32m133.19 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6200677Z packages/components-vue build: ^[[32mCJS^[[39m ⚡️ Build success in 1869ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6255568Z packages/components-vue build: ^[[32mESM^[[39m ^[[1mdist/index.js ^[[22m^[[32m128.10 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6261851Z packages/components-vue build: ^[[32mESM^[[39m ⚡️ Build success in 1875ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:37.6634645Z packages/components-react build: Generated an empty chunk: "types".
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1909990Z packages/components-react build: ^[[32mCJS^[[39m ^[[1mdist/status.cjs ^[[22m^[[32m11.08 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1919558Z packages/components-react build: ^[[32mCJS^[[39m ^[[1mdist/ported.cjs ^[[22m^[[32m52.76 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1943663Z packages/components-react build: ^[[32mCJS^[[39m ^[[1mdist/types.cjs  ^[[22m^[[32m15.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1949254Z packages/components-react build: ^[[32mCJS^[[39m ^[[1mdist/table.cjs  ^[[22m^[[32m17.07 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1954154Z packages/components-react build: ^[[32mCJS^[[39m ^[[1mdist/index.cjs  ^[[22m^[[32m153.12 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1960569Z packages/components-react build: ^[[32mCJS^[[39m ⚡️ Build success in 2436ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.1995116Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/ported.js         ^[[22m^[[32m192.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2002378Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/status.js         ^[[22m^[[32m171.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2012553Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/table.js          ^[[22m^[[32m149.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2040923Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/chunk-YCI5AEWL.js ^[[22m^[[32m6.37 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2047222Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/chunk-G74PKSW3.js ^[[22m^[[32m10.89 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2053654Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/types.js          ^[[22m^[[32m1.00 B^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2060035Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/chunk-XMIP5ZGO.js ^[[22m^[[32m40.39 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2066736Z packages/components-react build: ^[[32mESM^[[39m ^[[1mdist/index.js          ^[[22m^[[32m87.14 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:38.2073380Z packages/components-react build: ^[[32mESM^[[39m ⚡️ Build success in 2445ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.1595142Z packages/components-vue build: ^[[32mDTS^[[39m ⚡️ Build success in 10945ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.1612687Z packages/components-vue build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts  ^[[22m^[[32m141.56 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.1618569Z packages/components-vue build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts ^[[22m^[[32m141.56 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2397124Z packages/components-react build: ^[[32mDTS^[[39m ⚡️ Build success in 11232ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2409639Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/index.d.ts   ^[[22m^[[32m21.31 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2411578Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.ts  ^[[22m^[[32m7.12 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2445600Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/status.d.ts  ^[[22m^[[32m1.39 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2447438Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/table.d.ts   ^[[22m^[[32m1.06 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2456920Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/types.d.ts   ^[[22m^[[32m23.79 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2458958Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/index.d.cts  ^[[22m^[[32m21.31 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2467766Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.cts ^[[22m^[[32m7.12 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2482690Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/status.d.cts ^[[22m^[[32m1.39 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2484651Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/table.d.cts  ^[[22m^[[32m1.07 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.2495872Z packages/components-react build: ^[[32mDTS^[[39m ^[[1mdist/types.d.cts  ^[[22m^[[32m23.79 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.3779971Z packages/components-react build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6361560Z packages/components-vue build: ^[[34mCLI^[[39m Building entry: src/ported.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6372851Z packages/components-vue build: ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6379885Z packages/components-vue build: ^[[34mCLI^[[39m tsup v8.5.0
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6381893Z packages/components-vue build: ^[[34mCLI^[[39m Using tsup config: /__w/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6427412Z packages/components-vue build: ^[[34mCLI^[[39m Target: es2022
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6453365Z packages/components-vue build: ^[[34mESM^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:48.6461728Z packages/components-vue build: ^[[34mCJS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:49.1564064Z packages/components-vue build: ^[[32mCJS^[[39m ^[[1mdist/ported.cjs ^[[22m^[[32m46.73 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:49.1566203Z packages/components-vue build: ^[[32mCJS^[[39m ⚡️ Build success in 510ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:49.1572245Z packages/components-vue build: ^[[32mESM^[[39m ^[[1mdist/ported.js ^[[22m^[[32m46.06 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:49.1576691Z packages/components-vue build: ^[[32mESM^[[39m ⚡️ Build success in 511ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:49.2199699Z packages/components-vue build: ^[[34mDTS^[[39m Build start
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:53.0711553Z packages/components-vue build: ^[[32mDTS^[[39m ⚡️ Build success in 3852ms
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:53.0721151Z packages/components-vue build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.ts  ^[[22m^[[32m20.67 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:53.0729012Z packages/components-vue build: ^[[32mDTS^[[39m ^[[1mdist/ported.d.cts ^[[22m^[[32m20.67 KB^[[39m
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:53.1462642Z packages/components-vue build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:53.1470453Z packages/mcp-server build$ rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../../artifacts/product-reality/sprint-194/m07/runtime/runtime-cells.v1.json dist/registry/runtime-cells.v1.json && node ../../scripts/build-revision.mjs dist/build-revision.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:59.8966966Z packages/mcp-server build: Done
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:11:59.8971562Z packages/sdk build$ rimraf dist && tsc -p tsconfig.json
+runtime-cells	Run pnpm run build:packages	2026-09-11T17:12:01.3804179Z packages/sdk build: Done
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	﻿2026-09-11T17:12:01.4135606Z ##[group]Run pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-193/m03-ci --workflows
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4136532Z ^[[36;1mpnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-193/m03-ci --workflows^[[0m
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4137216Z shell: sh -e {0}
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4137426Z env:
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4137622Z   NODE_VERSION: 24
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4137898Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:12:01.4138636Z ##[endgroup]
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:15:50.2535382Z Media/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:15:55.5397601Z Article/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:15:58.4428413Z Invoice/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:16:01.9707613Z Organization/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:18:36.7077509Z Plan/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:18:55.7026239Z Product/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:19:00.4277004Z Relationship/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:19:13.3341615Z Subscription/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:19:58.0038499Z Article/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:20:49.2416803Z Article/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:21:25.9745798Z Transaction/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:21:29.9582301Z Article/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:21:49.8736602Z Usage/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:22:01.7920170Z User/workflow/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:22:15.2302762Z Article/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:22:24.2595251Z Article/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:22:51.0604520Z Article/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:22:54.1397355Z Article/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:23:13.3629189Z Article/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:23:17.4846838Z Article/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:23:43.2658059Z Article/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:23:52.8811173Z Article/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:24:08.5726684Z Article/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:24:11.7120421Z Invoice/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:24:41.0466347Z Invoice/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:24:41.9293410Z Invoice/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:25:04.3913920Z Invoice/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:25:09.1492271Z Invoice/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:25:32.3261138Z Invoice/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:25:41.0393395Z Invoice/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:26:02.6216185Z Invoice/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:26:05.9270290Z Invoice/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:26:28.9152269Z Invoice/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:26:32.4497811Z Invoice/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:26:54.2971915Z Media/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:27:03.1215583Z Invoice/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:27:23.0922671Z Media/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:27:26.5725850Z Media/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:27:52.0804285Z Media/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:27:53.8402658Z Media/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:28:15.7090715Z Media/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:28:24.2621235Z Media/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:28:49.7949051Z Media/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:28:50.8880848Z Media/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:29:11.8182037Z Media/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:29:13.9429851Z Media/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:29:40.6529360Z Organization/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:29:46.0053153Z Media/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:30:04.4744893Z Organization/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:30:07.2863365Z Organization/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:30:35.3688469Z Organization/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:30:42.1774848Z Organization/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:30:57.9788079Z Organization/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:31:00.6189608Z Organization/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:31:30.8152548Z Organization/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:31:38.4435189Z Organization/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:31:51.2233437Z Organization/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:31:58.3797256Z Organization/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:32:29.5664720Z Plan/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:32:37.5544073Z Organization/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:32:50.5198107Z Plan/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:32:53.1791531Z Plan/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:33:30.0983046Z Plan/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:33:31.2762953Z Plan/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:33:46.9473738Z Plan/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:33:51.4703277Z Plan/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:34:22.8121215Z Plan/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:34:32.3769492Z Plan/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:34:39.9739738Z Plan/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:34:45.1709526Z Plan/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:35:21.7416506Z Product/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:35:24.4936751Z Plan/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:35:35.8715556Z Product/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:35:36.6935939Z Product/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:36:08.2672594Z Product/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:36:23.9477084Z Product/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:36:24.5911312Z Product/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:36:33.2580114Z Product/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:37:05.1203854Z Product/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:37:13.3565491Z Product/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:37:22.4395474Z Product/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:37:27.7090167Z Product/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:38:00.3270457Z Relationship/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:38:03.1548564Z Product/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:38:17.8996308Z Relationship/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:38:18.7914108Z Relationship/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:38:52.6945366Z Relationship/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:39:03.7344481Z Relationship/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:39:08.3832180Z Relationship/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:39:15.9696106Z Relationship/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:39:49.5122074Z Relationship/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:39:54.6658928Z Relationship/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:40:05.0801861Z Relationship/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:40:10.1683347Z Relationship/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:40:44.4202637Z Subscription/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:40:45.6369649Z Relationship/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:40:58.3911417Z Subscription/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:41:00.0114052Z Subscription/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:41:32.1354938Z Subscription/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:41:46.3401512Z Subscription/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:41:46.9135326Z Subscription/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:41:54.4928041Z Subscription/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:42:26.3373617Z Subscription/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:42:37.6654350Z Subscription/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:42:43.2668891Z Subscription/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:42:48.5674069Z Subscription/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:43:21.4066657Z Subscription/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:43:22.9945332Z Transaction/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:43:37.5585683Z Transaction/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:43:38.5500104Z Transaction/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:44:13.6400706Z Transaction/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:44:19.4949824Z Transaction/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:44:24.6291703Z Transaction/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:44:34.1060554Z Transaction/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:45:10.1819095Z Transaction/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:45:10.5148836Z Transaction/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:45:22.6710354Z Transaction/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:45:25.8768018Z Transaction/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:45:58.9102954Z Usage/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:46:09.4756761Z Transaction/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:46:12.2889949Z Usage/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:46:17.0117075Z Usage/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:46:56.3962201Z Usage/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:46:59.8314690Z Usage/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:47:03.7030448Z Usage/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:47:09.8458471Z Usage/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:47:48.4658563Z Usage/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:47:53.1025668Z Usage/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:47:55.3158835Z Usage/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:48:06.8290554Z Usage/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:48:39.6216557Z User/card/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:48:43.9859153Z Usage/timeline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:48:53.5301794Z User/card/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:48:55.2236246Z User/detail/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:49:32.4564880Z User/form/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:49:39.8542288Z User/detail/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:49:42.1677286Z User/inline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:49:52.0135128Z User/form/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:50:27.6941738Z User/inline/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:50:28.7559892Z User/list/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:50:36.4513018Z User/timeline/react pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:50:39.3038759Z User/list/vue pass
+runtime-cells	Measure all single-screen and workflow cells from one tarball sweep	2026-09-11T17:50:55.6048122Z User/timeline/vue pass
+runtime-cells	Reject missing, failed, or historical cells	﻿2026-09-11T17:51:36.5120998Z ##[group]Run pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5122091Z ^[[36;1mpnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts^[[0m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5122886Z shell: sh -e {0}
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5123097Z env:
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5123292Z   NODE_VERSION: 24
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5123561Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5124196Z   OODS_RUNTIME_REPORT: /home/runner/work/OODS-Forge/OODS-Forge/artifacts/product-reality/sprint-193/m03-ci/runtime-cells.v1.json
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:36.5124780Z ##[endgroup]
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:37.4997155Z 
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:37.4999220Z ^[[1m^[[46m RUN ^[[49m^[[22m ^[[36mv3.2.4 ^[[39m^[[90m/__w/OODS-Forge/OODS-Forge/packages/mcp-server^[[39m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:37.5022348Z 
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:41.3792022Z  ^[[32m✓^[[39m test/product-reality/workflow-runtime.s193.spec.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 1182^[[2mms^[[22m^[[39m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7469868Z  ^[[32m✓^[[39m test/product-reality/runtime-cells.s193.spec.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 75^[[2mms^[[22m^[[39m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7772151Z 
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7773032Z ^[[2m Test Files ^[[22m ^[[1m^[[32m2 passed^[[39m^[[22m^[[90m (2)^[[39m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7774004Z ^[[2m      Tests ^[[22m ^[[1m^[[32m21 passed^[[39m^[[22m^[[90m (21)^[[39m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7774663Z ^[[2m   Start at ^[[22m 17:51:37
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7790182Z ^[[2m   Duration ^[[22m 5.27s^[[2m (transform 1.29s, setup 27ms, collect 3.42s, tests 1.26s, environment 0ms, prepare 137ms)^[[22m
+runtime-cells	Reject missing, failed, or historical cells	2026-09-11T17:51:42.7791068Z 
+runtime-cells	Run actions/upload-artifact@v4	﻿2026-09-11T17:51:42.9542550Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9543772Z ##[group]Run actions/upload-artifact@v4
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9544046Z with:
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9544246Z   name: runtime-cells
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9544516Z   path: artifacts/product-reality/sprint-193/m03-ci
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9544830Z   if-no-files-found: warn
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9545067Z   compression-level: 6
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9545285Z   overwrite: false
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9545503Z   include-hidden-files: false
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9545741Z env:
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9545928Z   NODE_VERSION: 24
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9546175Z   PNPM_HOME: /github/home/setup-pnpm/node_modules/.bin
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9546478Z ##[endgroup]
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:42.9550684Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:43.3719774Z (node:25748) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:43.3739286Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:43.9377672Z With the provided path, there will be 2411 files uploaded
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:43.9379041Z Artifact name is valid!
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:43.9379658Z Root directory input is valid!
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:44.1914432Z Beginning upload of artifact content to blob storage
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:45.1990922Z (node:25748) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:45.3649249Z Uploaded bytes 8388608
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:46.0910427Z Uploaded bytes 16777216
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:46.7457125Z Uploaded bytes 25165824
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.2220945Z Uploaded bytes 33554432
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.4939696Z Uploaded bytes 37243190
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.5121139Z Finished uploading artifact content to blob storage!
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.5130304Z SHA256 digest of uploaded artifact zip is 50406e790ddc4391900b326a591745e6fc5a472f45f937ba87f8211dc81b7a7d
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.5131785Z Finalizing artifact upload
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.7384846Z Artifact runtime-cells.zip successfully finalized. Artifact ID 10276520455
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.7386705Z Artifact runtime-cells has been successfully uploaded! Final size is 37243190 bytes. Artifact ID is 10276520455
+runtime-cells	Run actions/upload-artifact@v4	2026-09-11T17:51:47.7397919Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34625999301/artifacts/10276520455
+runtime-cells	Post Run actions/setup-node@v4	﻿2026-09-11T17:51:47.7762592Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:51:47.7763781Z Post job cleanup.
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:51:47.7780972Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:51:48.0374664Z (node:25772) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:51:48.0395141Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:51:48.0646071Z [command]/usr/bin/tar --posix -cf cache.tgz --exclude cache.tgz -P -C /__w/OODS-Forge/OODS-Forge --files-from manifest.txt -z
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:52:07.6110667Z (node:25772) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:52:08.6040423Z Sent 92864512 of 127409032 (72.9%), 88.6 MBs/sec
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:52:08.9739833Z Sent 127409032 of 127409032 (100.0%), 88.6 MBs/sec
+runtime-cells	Post Run actions/setup-node@v4	2026-09-11T17:52:09.1733951Z Cache saved with the key: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+runtime-cells	Post Run pnpm/action-setup@v4	﻿2026-09-11T17:52:09.1921553Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Post Run pnpm/action-setup@v4	2026-09-11T17:52:09.1923661Z Post job cleanup.
+runtime-cells	Post Run pnpm/action-setup@v4	2026-09-11T17:52:09.1929519Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Post Run pnpm/action-setup@v4	2026-09-11T17:52:09.4523297Z Pruning is unnecessary.
+runtime-cells	Post Run actions/checkout@v4	﻿2026-09-11T17:52:09.4824683Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.4827000Z Post job cleanup.
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.4839866Z ##[command]/usr/bin/docker exec  c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847 sh -c "cat /etc/*release | grep ^ID"
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7143771Z [command]/usr/bin/git version
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7285690Z git version 2.43.0
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7366432Z Copying '/github/home/.gitconfig' to '/__w/_temp/bd34cc98-5a23-414e-b269-91fadaa3461c/.gitconfig'
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7403068Z Temporarily overriding HOME='/__w/_temp/bd34cc98-5a23-414e-b269-91fadaa3461c' before making global git config changes
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7409389Z Adding repository directory to the temporary git global config as a safe directory
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7410751Z [command]/usr/bin/git config --global --add safe.directory /__w/OODS-Forge/OODS-Forge
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7461642Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.7540378Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8058951Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8105897Z http.https://github.com/.extraheader
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8118606Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8200176Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8630212Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+runtime-cells	Post Run actions/checkout@v4	2026-09-11T17:52:09.8699881Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+runtime-cells	Stop containers	﻿2026-09-11T17:52:09.9307055Z Stop and remove container: 5d305132ffb34f2b8eba46fd5ce0a88d_mcrmicrosoftcomplaywrightsha256f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a_c89413
+runtime-cells	Stop containers	2026-09-11T17:52:09.9313404Z ##[command]/usr/bin/docker rm --force c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Stop containers	2026-09-11T17:52:10.5035333Z c7c95cbc0589489c94fd8ede2d7ffabb3865f8ee12cb05605cb83472b9eca847
+runtime-cells	Stop containers	2026-09-11T17:52:10.5092875Z Remove container network: github_network_b150688f40224940872bb1d2c504d7cf
+runtime-cells	Stop containers	2026-09-11T17:52:10.5097434Z ##[command]/usr/bin/docker network rm github_network_b150688f40224940872bb1d2c504d7cf
+runtime-cells	Stop containers	2026-09-11T17:52:10.5913457Z github_network_b150688f40224940872bb1d2c504d7cf
+runtime-cells	Complete job	﻿2026-09-11T17:52:10.5986056Z Cleaning up orphan processes
+runtime-cells	Complete job	2026-09-11T17:52:10.6393442Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
