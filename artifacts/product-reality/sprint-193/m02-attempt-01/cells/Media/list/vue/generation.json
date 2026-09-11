@@ -1,0 +1,156 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <template v-if=\"uiState === 'loading'\">\n        <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n      </template>\n      <template v-if=\"uiState === 'empty'\">\n        <Banner id=\"screen-list-9-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n      </template>\n      <template v-if=\"uiState === 'error'\">\n        <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n      </template>\n      <template v-if=\"uiState === 'success' || uiState === 'empty'\">\n        <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" :data-oods-state=\"uiState === 'success' ? 'success' : undefined\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n                      <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" :value=\"collectionQuery.search ?? ''\" :clearable=\"true\" @value-change=\"handleFilter({ ...collectionQuery, search: $event })\" />\n                      <Select id=\"slot-filters-2\" label=\"Status\" :value=\"collectionQuery.status ?? ''\" :options=\"[{'value': '', 'label': 'All states'}]\" @change=\"handleFilter({ ...collectionQuery, status: $event })\" />\n                      <Select id=\"list-toolbar-4-sort\" label=\"Sort\" :value=\"collectionQuery.descending ? 'desc' : 'asc'\" :options=\"[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]\" @change=\"handleSort('media_id')\" />\n                    </Stack>\n              <section id=\"list-items-5\" data-oods-collection=\"rows\"><template v-if=\"rows.length === 0\"><Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" /></template><ol v-else aria-label=\"Records\" class=\"oods-collection\"><li v-for=\"({ label, description, placeholder, status, stateHistory, allowedTransitions, createdAt, updatedAt, lastEvent, lastEventAt, classificationMetadata, categories, primaryCategoryId, primaryCategoryPath, tags, tagCount, tagPreview, mediaId, assetType, mimeType, storageBucket, objectKey, sourceUrl, checksum, fileSizeBytes, widthPx, heightPx, durationSeconds, transcodingProfiles }, collectionIndex) in rows\" :key=\"String(mediaId)\"><Button :id=\"'list-items-5-row-' + collectionIndex\" type=\"button\" class=\"oods-collection-row\" :data-record-id=\"String(mediaId)\" @click=\"handleRowClick(String(mediaId))\"><Text :id=\"'list-items-5-title-' + collectionIndex\" data-oods-component=\"Text\">{{ mediaId }}</Text>\n              <LabelCell :id=\"'ve-items-10-' + collectionIndex\" data-oods-component=\"LabelCell\" truncate :description=\"description\" :label=\"label\" />\n              <StatusBadge :id=\"'ve-items-11-' + collectionIndex\" data-oods-component=\"StatusBadge\" tone=\"lifecycle\" :status=\"status\" />\n              <RelativeTimestamp :id=\"'ve-items-12-' + collectionIndex\" data-oods-component=\"RelativeTimestamp\" :datetime=\"updatedAt ?? createdAt\" />\n              <ClassificationBadge :id=\"'slot-toolbar-actions-3-' + collectionIndex\" data-oods-component=\"ClassificationBadge\" mode=\"{classification_mode}\" :category=\"primaryCategoryId\" /></Button></li></ol></section>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n                      <PaginationBar id=\"slot-pagination-8\" :page=\"collectionQuery.page ?? 1\" :pageSize=\"collectionQuery.pageSize ?? 10\" :totalItems=\"collectionQuery.total ?? rows.length\" @page-change=\"handlePageChange\" />\n                    </Stack>\n            </Stack>\n      </template>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { Banner, Button, ClassificationBadge, LabelCell, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, StatusBadge, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ntype GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\ninterface Props {\n  rows?: Array<{ label: string; description?: string; placeholder?: string; status: string; stateHistory?: unknown[]; allowedTransitions?: string[]; createdAt: string; updatedAt?: string; lastEvent: string; lastEventAt?: string; classificationMetadata: unknown; categories?: unknown[]; primaryCategoryId?: string; primaryCategoryPath?: string; tags?: unknown[]; tagCount?: number; tagPreview?: string; mediaId: string; assetType: 'image' | 'video' | 'audio' | 'document'; mimeType: string; storageBucket: string; objectKey: string; sourceUrl?: string; checksum?: string; fileSizeBytes: number; widthPx?: number; heightPx?: number; durationSeconds?: number; transcodingProfiles?: string[] }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\nconst { actions, uiState, allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx, rows = [], collectionQuery = {} } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n/* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n/* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n/* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n/* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:83445d8f78312257af45b6051e89c701a20cd473224d503ca4637eb84c110654"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [
+      {
+        "name": "handleFilter",
+        "parameters": [
+          {
+            "name": "criteria",
+            "type": "Record<string, unknown>"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onFilter"
+          }
+        ]
+      },
+      {
+        "name": "handlePageChange",
+        "parameters": [
+          {
+            "name": "page",
+            "type": "number"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onPageChange"
+          }
+        ]
+      },
+      {
+        "name": "handleRowClick",
+        "parameters": [
+          {
+            "name": "rowId",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onRowClick"
+          }
+        ]
+      },
+      {
+        "name": "handleSort",
+        "parameters": [
+          {
+            "name": "column",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onSort"
+          }
+        ]
+      }
+    ],
+    "contentHash": "sha256:b7cae0bc3343505e8169d4e959fb5ffaef2ee81401367ab2596983f4f897fda6"
+  },
+  "code": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <template v-if=\"uiState === 'loading'\">\n        <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n      </template>\n      <template v-if=\"uiState === 'empty'\">\n        <Banner id=\"screen-list-9-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n      </template>\n      <template v-if=\"uiState === 'error'\">\n        <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n      </template>\n      <template v-if=\"uiState === 'success' || uiState === 'empty'\">\n        <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" :data-oods-state=\"uiState === 'success' ? 'success' : undefined\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n                      <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" :value=\"collectionQuery.search ?? ''\" :clearable=\"true\" @value-change=\"handleFilter({ ...collectionQuery, search: $event })\" />\n                      <Select id=\"slot-filters-2\" label=\"Status\" :value=\"collectionQuery.status ?? ''\" :options=\"[{'value': '', 'label': 'All states'}]\" @change=\"handleFilter({ ...collectionQuery, status: $event })\" />\n                      <Select id=\"list-toolbar-4-sort\" label=\"Sort\" :value=\"collectionQuery.descending ? 'desc' : 'asc'\" :options=\"[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]\" @change=\"handleSort('media_id')\" />\n                    </Stack>\n              <section id=\"list-items-5\" data-oods-collection=\"rows\"><template v-if=\"rows.length === 0\"><Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" /></template><ol v-else aria-label=\"Records\" class=\"oods-collection\"><li v-for=\"({ label, description, placeholder, status, stateHistory, allowedTransitions, createdAt, updatedAt, lastEvent, lastEventAt, classificationMetadata, categories, primaryCategoryId, primaryCategoryPath, tags, tagCount, tagPreview, mediaId, assetType, mimeType, storageBucket, objectKey, sourceUrl, checksum, fileSizeBytes, widthPx, heightPx, durationSeconds, transcodingProfiles }, collectionIndex) in rows\" :key=\"String(mediaId)\"><Button :id=\"'list-items-5-row-' + collectionIndex\" type=\"button\" class=\"oods-collection-row\" :data-record-id=\"String(mediaId)\" @click=\"handleRowClick(String(mediaId))\"><Text :id=\"'list-items-5-title-' + collectionIndex\" data-oods-component=\"Text\">{{ mediaId }}</Text>\n              <LabelCell :id=\"'ve-items-10-' + collectionIndex\" data-oods-component=\"LabelCell\" truncate :description=\"description\" :label=\"label\" />\n              <StatusBadge :id=\"'ve-items-11-' + collectionIndex\" data-oods-component=\"StatusBadge\" tone=\"lifecycle\" :status=\"status\" />\n              <RelativeTimestamp :id=\"'ve-items-12-' + collectionIndex\" data-oods-component=\"RelativeTimestamp\" :datetime=\"updatedAt ?? createdAt\" />\n              <ClassificationBadge :id=\"'slot-toolbar-actions-3-' + collectionIndex\" data-oods-component=\"ClassificationBadge\" mode=\"{classification_mode}\" :category=\"primaryCategoryId\" /></Button></li></ol></section>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n                      <PaginationBar id=\"slot-pagination-8\" :page=\"collectionQuery.page ?? 1\" :pageSize=\"collectionQuery.pageSize ?? 10\" :totalItems=\"collectionQuery.total ?? rows.length\" @page-change=\"handlePageChange\" />\n                    </Stack>\n            </Stack>\n      </template>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { Banner, Button, ClassificationBadge, LabelCell, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, StatusBadge, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ntype GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\ninterface Props {\n  rows?: Array<{ label: string; description?: string; placeholder?: string; status: string; stateHistory?: unknown[]; allowedTransitions?: string[]; createdAt: string; updatedAt?: string; lastEvent: string; lastEventAt?: string; classificationMetadata: unknown; categories?: unknown[]; primaryCategoryId?: string; primaryCategoryPath?: string; tags?: unknown[]; tagCount?: number; tagPreview?: string; mediaId: string; assetType: 'image' | 'video' | 'audio' | 'document'; mimeType: string; storageBucket: string; objectKey: string; sourceUrl?: string; checksum?: string; fileSizeBytes: number; widthPx?: number; heightPx?: number; durationSeconds?: number; transcodingProfiles?: string[] }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\nconst { actions, uiState, allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx, rows = [], collectionQuery = {} } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n/* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n/* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n/* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n/* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:b7cae0bc3343505e8169d4e959fb5ffaef2ee81401367ab2596983f4f897fda6"
+    }
+  },
+  "meta": {
+    "nodeCount": 19,
+    "componentCount": 11
+  }
+}

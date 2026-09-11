@@ -377,6 +377,18 @@ class RefreshStructuredDataTest(unittest.TestCase):
         placement = next(row for row in subscription["traits"] if row["reference"] == "viz/MarkArea")
         self.assertEqual(placement["parameters"]["chart"]["source"], "payment-events")
         subscription["traits"].remove(placement)
+        # Sprint 193 uses the existing read-only TagSummary in detail. Check that
+        # deliberate movement before projecting back to the frozen s182 inputs.
+        taggable = next(row for row in historical_projection["traits"] if row["name"] == "Taggable")
+        detail = next(row for row in taggable["viewExtensions"] if row["context"] == "detail")
+        self.assertEqual(detail["component"], "TagSummary")
+        self.assertEqual(detail["props"], {"field": "tags", "countField": "tag_count"})
+        taggable["viewExtensions"] = next(row for row in expected_components["traits"] if row["name"] == "Taggable")["viewExtensions"]
+        for component_id, fields in (("TagManager", ("traitUsages", "sourceFiles")), ("TagSummary", ("contexts", "traitUsages"))):
+            current = next(row for row in historical_projection["components"] if row["id"] == component_id)
+            frozen = next(row for row in expected_components["components"] if row["id"] == component_id)
+            for field in fields:
+                current[field] = frozen[field]
         self.assertEqual(historical_projection, expected_components)
         self.assertEqual(self.tokens_payload, expected_tokens)
 
@@ -390,7 +402,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "3148149776d59d7d8c4c7195818e644adf6bd76a8ccce25db5e0df9dd7bee13e",
+            "a362fcacd769c545459946f8f34824b233396094a17f9b0390d6db0aab1f725a",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),

@@ -1017,10 +1017,62 @@ def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
+def project_runtime_surfaces(capabilities: Dict[str, Any], ledger: Dict[str, Any], reference: str) -> Dict[str, Any]:
+    """Replace historical consumer claims with every placing cell of one complete sweep."""
+    rows = ledger.get("rows", [])
+    contexts = {"card", "detail", "form", "inline", "list", "timeline"}
+    if any(row.get("context") == "workflow" for row in rows):
+        contexts.add("workflow")
+    objects = {row["name"] for row in collect_objects()[0]}
+    expected = {(obj, context, target) for obj in objects for context in contexts for target in ("react", "vue")}
+    identities = [(row.get("object"), row.get("context"), row.get("framework")) for row in rows]
+    if len(rows) != len(expected) or set(identities) != expected:
+        raise ValueError("Runtime projection requires the complete distinct current population")
+    if (not ledger.get("head") or not ledger.get("runId") or ledger.get("historicalReceiptsUnioned") is not False
+            or any(row.get("head") != ledger["head"] or row.get("runId") != ledger["runId"] for row in rows)):
+        raise ValueError("Historical or mixed-head/run runtime receipts are forbidden")
+    if ledger.get("packCount") != 1 or ledger.get("browserImage") != "mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a":
+        raise ValueError("Runtime projection requires one pack and the pinned Linux browser")
+    required = {"generation", "fresh-exact-tarball-install", "strict-typecheck", "production-build", "mount", "accessibility-tree", "screenshots", "context-states"}
+    for row in rows:
+        if row.get("status") == "pass":
+            gates = row.get("gates", [])
+            if (not row.get("artifactHash") or any(gate.get("status") != "pass" for gate in gates)
+                    or any(sum(gate.get("name") == name for gate in gates) != 1 for name in required)):
+                raise ValueError("Passing runtime cell lacks required proof")
+        elif row.get("status") == "typed-gap":
+            gap = row.get("gap", {})
+            if gap.get("code") != "OODS-N015" or not gap.get("components") or not gap.get("reason"):
+                raise ValueError("Runtime gap must name its OODS-N015 components and reason")
+        elif row.get("status") != "fail":
+            raise ValueError("Unknown runtime cell status")
+    summary = {"cells": len(rows), "pass": sum(row["status"] == "pass" for row in rows),
+               "typedGap": sum(row["status"] == "typed-gap" for row in rows), "fail": sum(row["status"] == "fail" for row in rows)}
+    if ledger.get("summary") != summary:
+        raise ValueError("Runtime summary differs from measured rows")
+    result = copy.deepcopy(capabilities)
+    for component_id, capability in result.items():
+        placed = [(index, row) for index, row in enumerate(rows) if component_id in row.get("components", [])
+                  or component_id in row.get("gap", {}).get("components", [])]
+        refs = [f"{reference}#/rows/{index}" for index, _ in placed]
+        surface = {"state": "unavailable", "evidence": refs or [reference]}
+        if not placed:
+            surface["reason"] = "No current runtime cell places this component; historical receipts do not establish current coverage."
+        elif any(row["status"] == "fail" for _, row in placed):
+            surface.update(state="fail", reason="At least one current cell placing this component failed.")
+        elif any(row["status"] == "typed-gap" for _, row in placed):
+            surface["reason"] = " ".join(sorted({row["gap"]["reason"] for _, row in placed if row["status"] == "typed-gap"}))
+        else:
+            surface["state"] = "implemented-evidence-complete"
+        capability["surfaces"]["generatedConsumer"] = surface
+    return result
+
+
 def generate_structured_payloads(
     *,
     generated_at: Optional[str] = None,
     component_capabilities_path: Optional[Path] = None,
+    runtime_cells_path: Optional[Path] = None,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     intake_rows = load_component_intake()
     canonical_ids = {str(row["id"]) for row in intake_rows}
@@ -1030,6 +1082,9 @@ def generate_structured_payloads(
     )
     if component_capabilities_path is None:
         capabilities_by_id = project_measured_surfaces(project_trait_recipe_surfaces(project_foundation_surfaces(capabilities_by_id)))
+    if runtime_cells_path is not None:
+        reference = str(Path(runtime_cells_path).resolve().relative_to(REPO_ROOT))
+        capabilities_by_id = project_runtime_surfaces(capabilities_by_id, load_json(runtime_cells_path), reference)
     obligation_scope = load_json(COMPONENT_OBLIGATION_SCOPE_PATH)
     if obligation_scope["controllingObligationDenominator"] != len(canonical_ids):
         raise ValueError("Obligation scope must retain exact canonical intake membership")
@@ -1688,6 +1743,7 @@ def refresh_structured_data(
     *,
     output_dir: Path = OUTPUT_DIR,
     component_capabilities_path: Optional[Path] = None,
+    runtime_cells_path: Optional[Path] = None,
     baseline_components_path: Optional[Path] = None,
     baseline_tokens_path: Optional[Path] = None,
     generated_at: Optional[str] = None,
@@ -1703,6 +1759,7 @@ def refresh_structured_data(
     components_payload, tokens_payload = generate_structured_payloads(
         generated_at=generated_at,
         component_capabilities_path=component_capabilities_path,
+        runtime_cells_path=runtime_cells_path,
     )
 
     components_path = output_dir / "oods-components.json"
@@ -1837,6 +1894,11 @@ def parse_args() -> argparse.Namespace:
         help="Historical component capability JSON override (defaults to the baseline plus current declared recipe evidence).",
     )
     parser.add_argument(
+        "--runtime-cells",
+        type=Path,
+        help="Complete current runtime sweep; replaces every historical generated-consumer claim.",
+    )
+    parser.add_argument(
         "--baseline-components",
         type=Path,
         help="Baseline components JSON for delta generation (defaults to planning output, then cmos/research if present).",
@@ -1882,6 +1944,7 @@ def main() -> None:
     result = refresh_structured_data(
         output_dir=args.output_dir,
         component_capabilities_path=args.component_capabilities,
+        runtime_cells_path=args.runtime_cells,
         baseline_components_path=args.baseline_components,
         baseline_tokens_path=args.baseline_tokens,
         generated_at=args.generated_at,
