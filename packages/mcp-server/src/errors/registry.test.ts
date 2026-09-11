@@ -17,7 +17,7 @@ describe('Error Registry', () => {
 
   it('every definition has code, category, message, retryable', () => {
     for (const def of allCodes()) {
-      expect(def.code).toMatch(/^OODS-[VNCSRR]\d{3}$/);
+      expect(def.code).toMatch(/^OODS-[VNCSRW]\d{3}$/);
       expect(['validation', 'not_found', 'conflict', 'server_error', 'rate_limit']).toContain(def.category);
       expect(typeof def.message).toBe('string');
       expect(def.message.length).toBeGreaterThan(0);
@@ -28,6 +28,8 @@ describe('Error Registry', () => {
   it('code prefixes match categories', () => {
     const prefixMap: Record<string, string[]> = {
       V: ['validation'],
+      // Sprint194 fragment warnings are validation diagnostics, not failures.
+      W: ['validation'],
       N: ['not_found'],
       C: ['conflict'],
       S: ['server_error'],
