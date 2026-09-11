@@ -1,0 +1,427 @@
+{
+  "input": {
+    "pattern": "pattern:viz:running-total-area",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "light",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "area",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "ARR Burn-up",
+      "description": "ARR steadily increases with a sharper slope entering Q3.",
+      "data": {
+        "values": [
+          {
+            "month": "2025-03",
+            "arr": 140
+          },
+          {
+            "month": "2025-04",
+            "arr": 180
+          },
+          {
+            "month": "2025-05",
+            "arr": 220
+          },
+          {
+            "month": "2025-06",
+            "arr": 270
+          },
+          {
+            "month": "2025-07",
+            "arr": 310
+          },
+          {
+            "month": "2025-08",
+            "arr": 345
+          },
+          {
+            "month": "2025-09",
+            "arr": 390
+          }
+        ]
+      },
+      "config": {
+        "background": "#FDF3DE",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#18233C",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#DAD0BA",
+          "domainColor": "#D6DAE4",
+          "tickColor": "#D6DAE4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:running-total-area",
+          "name": "ARR Burn-up",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "month",
+              "arr"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "description": "ARR steadily increases with a sharper slope entering Q3.",
+            "ariaLabel": "ARR burn-up area chart",
+            "narrative": {
+              "summary": "The run rate accelerates after May, adding 120k ARR in three months.",
+              "keyFindings": [
+                "Burn-up crosses 300k in July",
+                "March–April plateau resolves in May"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Monthly ARR burn-up"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "color": "#416CD9"
+      },
+      "encoding": {
+        "x": {
+          "field": "month",
+          "type": "temporal",
+          "scale": {
+            "type": "time"
+          },
+          "title": "Month"
+        },
+        "y": {
+          "field": "arr",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear",
+            "zero": true
+          },
+          "title": "Net ARR Added ($k)"
+        }
+      },
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    },
+    "a11yDescription": "ARR steadily increases with a sharper slope entering Q3.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkArea",
+      "rowCount": 7,
+      "fields": [
+        "month",
+        "arr"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:running-total-area",
+      "name": "ARR Burn-up",
+      "data": {
+        "values": [
+          {
+            "month": "2025-03",
+            "arr": 140
+          },
+          {
+            "month": "2025-04",
+            "arr": 180
+          },
+          {
+            "month": "2025-05",
+            "arr": 220
+          },
+          {
+            "month": "2025-06",
+            "arr": 270
+          },
+          {
+            "month": "2025-07",
+            "arr": 310
+          },
+          {
+            "month": "2025-08",
+            "arr": 345
+          },
+          {
+            "month": "2025-09",
+            "arr": 390
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkArea",
+          "options": {
+            "baseline": "zero",
+            "curve": "monotone"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "month",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "temporal",
+          "title": "Month"
+        },
+        "y": {
+          "field": "arr",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Net ARR Added ($k)"
+        }
+      },
+      "a11y": {
+        "description": "ARR steadily increases with a sharper slope entering Q3.",
+        "ariaLabel": "ARR burn-up area chart",
+        "narrative": {
+          "summary": "The run rate accelerates after May, adding 120k ARR in three months.",
+          "keyFindings": [
+            "Burn-up crosses 300k in July",
+            "March–April plateau resolves in May"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Monthly ARR burn-up"
+        }
+      },
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "month",
+          "arr"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "a11y": {
+      "narrative": {
+        "summary": "The run rate accelerates after May, adding 120k ARR in three months.",
+        "keyFindings": [
+          "Burn-up crosses 300k in July",
+          "March–April plateau resolves in May"
+        ]
+      },
+      "table": {
+        "caption": "Monthly ARR burn-up",
+        "columns": [
+          {
+            "field": "month",
+            "label": "Month",
+            "isNumeric": false
+          },
+          {
+            "field": "arr",
+            "label": "Net ARR Added ($k)",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-03"
+              },
+              {
+                "field": "arr",
+                "text": "140"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-04"
+              },
+              {
+                "field": "arr",
+                "text": "180"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-05"
+              },
+              {
+                "field": "arr",
+                "text": "220"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-06"
+              },
+              {
+                "field": "arr",
+                "text": "270"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-07"
+              },
+              {
+                "field": "arr",
+                "text": "310"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-08"
+              },
+              {
+                "field": "arr",
+                "text": "345"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "month",
+                "text": "2025-09"
+              },
+              {
+                "field": "arr",
+                "text": "390"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "specRef": "viz.render-e7c41c50",
+    "specRefCreatedAt": "2026-09-11T20:47:53.966Z",
+    "specRefExpiresAt": "2026-09-11T21:17:53.966Z",
+    "contentHash": "0e6c4178d1ba19e4cba2acac301ea2d581f4626585ef1a92ec00915d9e309f3f",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"835\" height=\"473\" viewBox=\"0 0 835 473\"><rect width=\"835\" height=\"473\" fill=\"#FDF3DE\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(70,57)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,135)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Month' for a time scale with values from Friday, 28 February 2025, 6:00:00 PM to Sunday, 31 August 2025, 7:00:00 PM\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(5,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(32,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(60,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(87,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(114,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(142,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(169,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(196,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(224,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(251,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(279,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(306,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(333,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(361,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(388,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(416,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(443,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(470,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(498,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(525,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(553,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(580,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(607,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(635,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(662,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(690,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(717,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(4.891304347826087,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Mar 02</text><text text-anchor=\"middle\" transform=\"translate(32.28260869565217,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Mar 09</text><text text-anchor=\"middle\" transform=\"translate(59.5108695652174,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Mar 16</text><text text-anchor=\"middle\" transform=\"translate(86.90217391304347,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Mar 23</text><text text-anchor=\"middle\" transform=\"translate(114.29347826086956,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Mar 30</text><text text-anchor=\"middle\" transform=\"translate(141.68478260869566,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Apr 06</text><text text-anchor=\"middle\" transform=\"translate(169.07608695652175,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Apr 13</text><text text-anchor=\"middle\" transform=\"translate(196.4673913043478,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Apr 20</text><text text-anchor=\"middle\" transform=\"translate(223.8586956521739,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Apr 27</text><text text-anchor=\"middle\" transform=\"translate(251.25,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">May 04</text><text text-anchor=\"middle\" transform=\"translate(278.64130434782606,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">May 11</text><text text-anchor=\"middle\" transform=\"translate(306.0326086956522,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">May 18</text><text text-anchor=\"middle\" transform=\"translate(333.42391304347825,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">May 25</text><text text-anchor=\"middle\" transform=\"translate(360.8152173913044,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">June</text><text text-anchor=\"middle\" transform=\"translate(388.20652173913044,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Jun 08</text><text text-anchor=\"middle\" transform=\"translate(415.59782608695656,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(442.9891304347826,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(470.38043478260863,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Jun 29</text><text text-anchor=\"middle\" transform=\"translate(497.7717391304348,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Jul 06</text><text text-anchor=\"middle\" transform=\"translate(525.1630434782609,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Jul 13</text><text text-anchor=\"middle\" transform=\"translate(552.554347826087,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Jul 20</text><text text-anchor=\"middle\" transform=\"translate(579.945652173913,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Jul 27</text><text text-anchor=\"middle\" transform=\"translate(607.3369565217391,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Aug 03</text><text text-anchor=\"middle\" transform=\"translate(634.7282608695651,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Aug 10</text><text text-anchor=\"middle\" transform=\"translate(662.1195652173914,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Aug 17</text><text text-anchor=\"middle\" transform=\"translate(689.5108695652174,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">Aug 24</text><text text-anchor=\"middle\" transform=\"translate(716.9021739130435,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Aug 31</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Month</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Net ARR Added ($k)' for a linear scale with values from 0 to 400\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,318)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">50</text><text text-anchor=\"end\" transform=\"translate(-7,273)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">100</text><text text-anchor=\"end\" transform=\"translate(-7,228)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">150</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">200</text><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">250</text><text text-anchor=\"end\" transform=\"translate(-7,93)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">300</text><text text-anchor=\"end\" transform=\"translate(-7,48)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">350</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">400</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Net ARR Added ($k)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Month: Feb 28, 2025; Net ARR Added ($k): 140\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M0,234C40.435,222.102,80.87,210.203,121.304,198C160.435,186.19,199.565,175.237,238.696,162C279.13,148.321,319.565,130.679,360,117C399.13,103.763,438.261,92.096,477.391,81C517.826,69.534,558.261,61.5,598.696,49.5C639.13,37.5,679.565,23.25,720,9L720,360C679.565,360,639.13,360,598.696,360C558.261,360,517.826,360,477.391,360C438.261,360,399.13,360,360,360C319.565,360,279.13,360,238.696,360C199.565,360,160.435,360,121.304,360C80.87,360,40.435,360,0,360Z\" fill=\"#416CD9\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'ARR Burn-up'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#18233C\" opacity=\"1\">ARR Burn-up</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c",
+    "svgBytes": 15539,
+    "svgRef": "viz.render-4ab3cd3d",
+    "render": {
+      "engine": "vega-lite",
+      "width": 835,
+      "height": 473,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "certify": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "0e6c4178d1ba19e4cba2acac301ea2d581f4626585ef1a92ec00915d9e309f3f",
+      "renderHash": "e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

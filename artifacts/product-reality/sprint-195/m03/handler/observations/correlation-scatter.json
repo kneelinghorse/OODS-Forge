@@ -1,0 +1,524 @@
+{
+  "input": {
+    "pattern": "pattern:viz:correlation-scatter",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "light",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "scatter",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Latency vs Conversion",
+      "description": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+      "data": {
+        "values": [
+          {
+            "segment": "Starter",
+            "latency": 140,
+            "conversion": 2.8
+          },
+          {
+            "segment": "Starter",
+            "latency": 110,
+            "conversion": 3.3
+          },
+          {
+            "segment": "Starter",
+            "latency": 170,
+            "conversion": 2.1
+          },
+          {
+            "segment": "Growth",
+            "latency": 95,
+            "conversion": 4.4
+          },
+          {
+            "segment": "Growth",
+            "latency": 80,
+            "conversion": 5.1
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 70,
+            "conversion": 5.3
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 60,
+            "conversion": 5.6
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 85,
+            "conversion": 4.9
+          }
+        ]
+      },
+      "config": {
+        "background": "#FDF3DE",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#18233C",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#DAD0BA",
+          "domainColor": "#D6DAE4",
+          "tickColor": "#D6DAE4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:correlation-scatter",
+          "name": "Latency vs Conversion",
+          "theme": "brand-a",
+          "portability": {
+            "tableColumnOrder": [
+              "segment",
+              "latency",
+              "conversion"
+            ],
+            "fallbackType": "table",
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "description": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+            "ariaLabel": "Latency vs conversion scatter chart",
+            "narrative": {
+              "summary": "Enterprise dots cluster in the upper-left, confirming the inverse latency relationship.",
+              "keyFindings": [
+                "Every point above 120 ms falls below 3% conversion",
+                "Growth maintains >4% once latency <100 ms"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Conversion rate by latency bucket"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "point"
+      },
+      "encoding": {
+        "x": {
+          "field": "latency",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Latency (ms)"
+        },
+        "y": {
+          "field": "conversion",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Conversion (%)"
+        },
+        "color": {
+          "field": "segment",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#416CD9",
+              "#3E44BE",
+              "#279669",
+              "#B58525",
+              "#CA4948",
+              "#993B00"
+            ]
+          },
+          "title": "Segment",
+          "legend": {
+            "title": "Segment"
+          }
+        }
+      },
+      "width": 640,
+      "height": 420,
+      "padding": 24
+    },
+    "a11yDescription": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkPoint",
+      "rowCount": 8,
+      "fields": [
+        "segment",
+        "latency",
+        "conversion"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:correlation-scatter",
+      "name": "Latency vs Conversion",
+      "data": {
+        "values": [
+          {
+            "segment": "Starter",
+            "latency": 140,
+            "conversion": 2.8
+          },
+          {
+            "segment": "Starter",
+            "latency": 110,
+            "conversion": 3.3
+          },
+          {
+            "segment": "Starter",
+            "latency": 170,
+            "conversion": 2.1
+          },
+          {
+            "segment": "Growth",
+            "latency": 95,
+            "conversion": 4.4
+          },
+          {
+            "segment": "Growth",
+            "latency": 80,
+            "conversion": 5.1
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 70,
+            "conversion": 5.3
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 60,
+            "conversion": 5.6
+          },
+          {
+            "segment": "Enterprise",
+            "latency": 85,
+            "conversion": 4.9
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkPoint"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "latency",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear",
+          "title": "Latency (ms)"
+        },
+        "y": {
+          "field": "conversion",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Conversion (%)"
+        },
+        "color": {
+          "field": "segment",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "type": "nominal",
+          "title": "Segment",
+          "legend": {
+            "title": "Segment"
+          }
+        }
+      },
+      "a11y": {
+        "description": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+        "ariaLabel": "Latency vs conversion scatter chart",
+        "narrative": {
+          "summary": "Enterprise dots cluster in the upper-left, confirming the inverse latency relationship.",
+          "keyFindings": [
+            "Every point above 120 ms falls below 3% conversion",
+            "Growth maintains >4% once latency <100 ms"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Conversion rate by latency bucket"
+        }
+      },
+      "portability": {
+        "tableColumnOrder": [
+          "segment",
+          "latency",
+          "conversion"
+        ],
+        "fallbackType": "table",
+        "preferredRenderer": "vega-lite"
+      },
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 640,
+          "height": 420,
+          "padding": 24
+        }
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "a11y": {
+      "narrative": {
+        "summary": "Enterprise dots cluster in the upper-left, confirming the inverse latency relationship.",
+        "keyFindings": [
+          "Every point above 120 ms falls below 3% conversion",
+          "Growth maintains >4% once latency <100 ms"
+        ]
+      },
+      "table": {
+        "caption": "Conversion rate by latency bucket",
+        "columns": [
+          {
+            "field": "segment",
+            "label": "Segment",
+            "isNumeric": false
+          },
+          {
+            "field": "latency",
+            "label": "Latency (ms)",
+            "isNumeric": true
+          },
+          {
+            "field": "conversion",
+            "label": "Conversion (%)",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Starter"
+              },
+              {
+                "field": "latency",
+                "text": "140"
+              },
+              {
+                "field": "conversion",
+                "text": "2.8"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Starter"
+              },
+              {
+                "field": "latency",
+                "text": "110"
+              },
+              {
+                "field": "conversion",
+                "text": "3.3"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Starter"
+              },
+              {
+                "field": "latency",
+                "text": "170"
+              },
+              {
+                "field": "conversion",
+                "text": "2.1"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Growth"
+              },
+              {
+                "field": "latency",
+                "text": "95"
+              },
+              {
+                "field": "conversion",
+                "text": "4.4"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Growth"
+              },
+              {
+                "field": "latency",
+                "text": "80"
+              },
+              {
+                "field": "conversion",
+                "text": "5.1"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Enterprise"
+              },
+              {
+                "field": "latency",
+                "text": "70"
+              },
+              {
+                "field": "conversion",
+                "text": "5.3"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Enterprise"
+              },
+              {
+                "field": "latency",
+                "text": "60"
+              },
+              {
+                "field": "conversion",
+                "text": "5.6"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "segment",
+                "text": "Enterprise"
+              },
+              {
+                "field": "latency",
+                "text": "85"
+              },
+              {
+                "field": "conversion",
+                "text": "4.9"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "specRef": "viz.render-aca7a21f",
+    "specRefCreatedAt": "2026-09-11T20:47:54.001Z",
+    "specRefExpiresAt": "2026-09-11T21:17:54.001Z",
+    "contentHash": "e04c31bcd8f7d048b1ce27b44b487949310888773b6bf2aa23ffb76da01bcb7d",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"848\" height=\"533\" viewBox=\"0 0 848 533\"><rect width=\"848\" height=\"533\" fill=\"#FDF3DE\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(70,57)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h640v420h-640Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,385)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,350)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,280)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,245)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,175)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,140)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,105)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,70)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,35)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"640\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Latency (ms)' for a linear scale with values from 0 to 180\"><g transform=\"translate(0.5,420.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(36,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(71,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(107,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(142,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(178,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(213,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(249,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(284,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(320,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(356,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(391,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(427,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(462,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(498,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(533,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(569,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(604,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(640,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(35.55555555555556,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">10</text><text text-anchor=\"middle\" transform=\"translate(71.11111111111111,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">20</text><text text-anchor=\"middle\" transform=\"translate(106.66666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">30</text><text text-anchor=\"middle\" transform=\"translate(142.22222222222223,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">40</text><text text-anchor=\"middle\" transform=\"translate(177.77777777777777,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">50</text><text text-anchor=\"middle\" transform=\"translate(213.33333333333331,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">60</text><text text-anchor=\"middle\" transform=\"translate(248.88888888888889,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">70</text><text text-anchor=\"middle\" transform=\"translate(284.44444444444446,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">80</text><text text-anchor=\"middle\" transform=\"translate(320,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">90</text><text text-anchor=\"middle\" transform=\"translate(355.55555555555554,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">100</text><text text-anchor=\"middle\" transform=\"translate(391.11111111111114,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">110</text><text text-anchor=\"middle\" transform=\"translate(426.66666666666663,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">120</text><text text-anchor=\"middle\" transform=\"translate(462.22222222222223,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">130</text><text text-anchor=\"middle\" transform=\"translate(497.77777777777777,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">140</text><text text-anchor=\"middle\" transform=\"translate(533.3333333333334,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">150</text><text text-anchor=\"middle\" transform=\"translate(568.8888888888889,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">160</text><text text-anchor=\"middle\" transform=\"translate(604.4444444444445,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"0\">170</text><text text-anchor=\"end\" transform=\"translate(640,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">180</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"640\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(320,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Latency (ms)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Conversion (%)' for a linear scale with values from 0 to 6\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,385)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,350)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,280)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,245)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,175)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,140)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,105)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,70)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,35)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,423)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,388)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,353)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,318)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">1.5</text><text text-anchor=\"end\" transform=\"translate(-7,283.00000000000006)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">2.0</text><text text-anchor=\"end\" transform=\"translate(-7,247.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">2.5</text><text text-anchor=\"end\" transform=\"translate(-7,213)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">3.0</text><text text-anchor=\"end\" transform=\"translate(-7,177.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">3.5</text><text text-anchor=\"end\" transform=\"translate(-7,143.00000000000003)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">4.0</text><text text-anchor=\"end\" transform=\"translate(-7,108)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">4.5</text><text text-anchor=\"end\" transform=\"translate(-7,72.99999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">5.0</text><text text-anchor=\"end\" transform=\"translate(-7,38.000000000000014)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">5.5</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">6.0</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"0\" y2=\"-420\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,210) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Conversion (%)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Latency (ms): 140; Conversion (%): 2.8; Segment: Starter\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(497.77777777777777,224.00000000000006)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#279669\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 110; Conversion (%): 3.3; Segment: Starter\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(391.11111111111114,189.00000000000003)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#279669\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 170; Conversion (%): 2.1; Segment: Starter\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(604.4444444444445,272.99999999999994)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#279669\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 95; Conversion (%): 4.4; Segment: Growth\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(337.77777777777777,111.99999999999997)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#3E44BE\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 80; Conversion (%): 5.1; Segment: Growth\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(284.44444444444446,63.00000000000001)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#3E44BE\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 70; Conversion (%): 5.3; Segment: Enterprise\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(248.88888888888889,49.000000000000014)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 60; Conversion (%): 5.6; Segment: Enterprise\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(213.33333333333331,28.00000000000004)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Latency (ms): 85; Conversion (%): 4.9; Segment: Enterprise\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(302.22222222222223,76.99999999999996)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Segment' for stroke color with 3 values: Enterprise, Growth, Starter\"><g transform=\"translate(658,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v61h-96Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v12.5h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#416CD9\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Enterprise</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v12.5h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#3E44BE\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Growth</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,32)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v12.5h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#279669\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Starter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Segment</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Latency vs Conversion'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#18233C\" opacity=\"1\">Latency vs Conversion</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "3665bb5192c81e7879c558819d57a736970cdd64ea51aea3a65efa1d1104950d",
+    "svgBytes": 19517,
+    "svgRef": "viz.render-5ef0634c",
+    "render": {
+      "engine": "vega-lite",
+      "width": 848,
+      "height": 533,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "certify": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "e04c31bcd8f7d048b1ce27b44b487949310888773b6bf2aa23ffb76da01bcb7d",
+      "renderHash": "3665bb5192c81e7879c558819d57a736970cdd64ea51aea3a65efa1d1104950d"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

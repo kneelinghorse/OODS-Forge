@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "mission": "s195-m03",
+  "slice": "handler/schema/error boundary",
+  "status": "passed",
+  "commands": [
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-pattern-input-schema.ts",
+      "exitCode": 0,
+      "log": "schema-generation.log"
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate",
+      "exitCode": 0,
+      "log": "types-generation.log"
+    },
+    {
+      "command": "S195_PATTERN_HANDLER_RECEIPTS=artifacts/product-reality/sprint-195/m03/handler/observations pnpm exec vitest run packages/mcp-server/test/product-reality/viz-patterns.s195.spec.ts",
+      "attempt": 1,
+      "exitCode": 1,
+      "testsPassed": 36,
+      "testsFailed": 9,
+      "log": "pattern-boundary-attempt-1.log",
+      "reason": "Test assumptions corrected: SVG hashes are raw hexadecimal; JSON wire projection excludes Vega runtime Symbol metadata."
+    },
+    {
+      "command": "S195_PATTERN_HANDLER_RECEIPTS=artifacts/product-reality/sprint-195/m03/handler/observations pnpm exec vitest run packages/mcp-server/test/product-reality/viz-patterns.s195.spec.ts",
+      "attempt": 2,
+      "exitCode": 1,
+      "testsPassed": 44,
+      "testsFailed": 1,
+      "log": "pattern-boundary-attempt-2.log",
+      "reason": "Title pixel assertion corrected to expect XML escaping of the authored ampersand."
+    },
+    {
+      "command": "S195_PATTERN_HANDLER_RECEIPTS=artifacts/product-reality/sprint-195/m03/handler/observations pnpm exec vitest run packages/mcp-server/test/product-reality/viz-patterns.s195.spec.ts",
+      "attempt": 3,
+      "exitCode": 0,
+      "testsPassed": 45,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "log": "pattern-boundary-attempt-3.log"
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-pattern-input-schema.ts --check",
+      "exitCode": 0,
+      "log": "schema-check.log"
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate:check",
+      "exitCode": 0,
+      "log": "types-check.log"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.intent.test.ts src/tools/viz.render.svg.test.ts src/errors/registry.test.ts",
+      "exitCode": 0,
+      "testsPassed": 187,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "log": "existing-render-regressions.log",
+      "files": [
+        {
+          "path": "src/tools/viz.render.test.ts",
+          "passed": 113
+        },
+        {
+          "path": "src/tools/viz.render.intent.test.ts",
+          "passed": 16
+        },
+        {
+          "path": "src/tools/viz.render.svg.test.ts",
+          "passed": 38
+        },
+        {
+          "path": "src/errors/registry.test.ts",
+          "passed": 20
+        }
+      ]
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "exitCode": 0,
+      "log": "server-build.log"
+    }
+  ],
+  "rawLogsRetained": true,
+  "build": "passed",
+  "finalDistinctTestsPassed": 232,
+  "fullSuiteCapturePerformed": false,
+  "builderSelfCertified": false,
+  "environment": {
+    "node": "v24.6.0",
+    "TZ": null,
+    "resolvedTimeZone": "America/Chicago"
+  },
+  "observations": {
+    "directory": "observations",
+    "renderable": 8,
+    "authoringOnly": 13,
+    "conflicts": 14,
+    "allowedControls": 1,
+    "note": "Actual JSON-projected handler outputs, real SVG and certification results retained. Test retries corrected assertion expectations; they are targeted checks, not a five-suite capture."
+  },
+  "rawLogCapture": {
+    "shellOption": "pipefail",
+    "method": "stdout and stderr tee retained during each executed command"
+  }
+}

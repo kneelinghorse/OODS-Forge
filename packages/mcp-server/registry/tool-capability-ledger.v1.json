@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "ffcdc29ef225d28e54f094e2b430b707f85d1167",
+  "head": "b8f4220f0ba730d871dc75e0aea0467aa53eeb10",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -110,7 +110,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 787
+          "line": 788
         }
       ],
       "portableLimits": [
@@ -217,7 +217,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 794
+          "line": 795
         }
       ],
       "portableLimits": [],
@@ -289,7 +289,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 796
+          "line": 797
         }
       ],
       "portableLimits": [
@@ -358,7 +358,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 797
+          "line": 798
         }
       ],
       "portableLimits": [],
@@ -441,7 +441,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 799
+          "line": 800
         }
       ],
       "portableLimits": [],
@@ -787,7 +787,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 805
+          "line": 806
         }
       ],
       "portableLimits": [
@@ -1073,7 +1073,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 801
+          "line": 802
         }
       ],
       "portableLimits": [],
@@ -1131,7 +1131,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 804
+          "line": 805
         }
       ],
       "portableLimits": [
@@ -1244,7 +1244,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 808
+          "line": 809
         }
       ],
       "portableLimits": [
@@ -1331,7 +1331,7 @@
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 907
+          "line": 908
         }
       ],
       "portableLimits": [],
@@ -1395,7 +1395,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 810
+          "line": 811
         }
       ],
       "portableLimits": [],
@@ -1412,12 +1412,12 @@
       "name": "viz.render",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.",
-        "inputSchemaDescription": "Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option."
+        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.",
+        "inputSchemaDescription": "Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Authoring-only patterns return OODS-V167 with their structural limits; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available."
       },
-      "claimHash": "sha256:39c262bd1e338af36802a2af6a3cc078dbc71652a261857e715dede4cbd5a8d7",
+      "claimHash": "sha256:5bdb936fefb984ecdff45679bca1a2c28b4510371a361e84b1fa46a23332688c",
       "inputSchemaPath": "packages/mcp-server/src/schemas/viz.render.input.json",
-      "inputSchemaHash": "sha256:6457540f97f0e54c1c4b8fd157a13583477a66ebcb1912940b01dbfd2746d18d",
+      "inputSchemaHash": "sha256:3ba8b6cffa8ae3daa5b11684d909f62816f26cd85c2f6bb2393450e8294e6807",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1439,6 +1439,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts",
             "line": 7,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/viz-patterns.s195.spec.ts",
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           },
           {
@@ -1622,13 +1627,19 @@
           "line": 3,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m03/README.md",
+          "line": 3,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 780
+          "line": 781
         }
       ],
       "portableLimits": [],
@@ -1736,19 +1747,19 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 734
+          "line": 735
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 738
+          "line": 739
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 742
+          "line": 743
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 746
+          "line": 747
         }
       ],
       "portableLimits": [],
@@ -1770,6 +1781,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
             "line": 3,
+            "handler": "packages/mcp-server/src/tools/artifact.certify.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/viz-patterns.s195.spec.ts",
+            "line": 9,
             "handler": "packages/mcp-server/src/tools/artifact.certify.ts"
           }
         ],
@@ -1913,11 +1929,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 782
+          "line": 783
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 783
+          "line": 784
         }
       ],
       "portableLimits": [],
@@ -1969,7 +1985,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 812
+          "line": 813
         }
       ],
       "portableLimits": [],
@@ -2116,15 +2132,15 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 814
+          "line": 815
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 816
+          "line": 817
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 818
+          "line": 819
         }
       ],
       "portableLimits": [],
@@ -2246,15 +2262,15 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 820
+          "line": 821
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 822
+          "line": 823
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 824
+          "line": 825
         }
       ],
       "portableLimits": [],
@@ -2357,7 +2373,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 826
+          "line": 827
         }
       ],
       "portableLimits": [],
@@ -2569,7 +2585,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 828
+          "line": 829
         }
       ],
       "portableLimits": [],

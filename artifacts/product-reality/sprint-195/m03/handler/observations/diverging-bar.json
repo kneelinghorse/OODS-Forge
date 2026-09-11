@@ -1,0 +1,429 @@
+{
+  "input": {
+    "pattern": "pattern:viz:diverging-bar",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "light",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "bar",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "NPS Driver Impact",
+      "description": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+      "data": {
+        "values": [
+          {
+            "driver": "Onboarding",
+            "delta": 18
+          },
+          {
+            "driver": "Response Time",
+            "delta": 12
+          },
+          {
+            "driver": "Billing",
+            "delta": -7
+          },
+          {
+            "driver": "Reporting",
+            "delta": -12
+          },
+          {
+            "driver": "Admin",
+            "delta": 6
+          },
+          {
+            "driver": "Mobile",
+            "delta": -4
+          }
+        ]
+      },
+      "config": {
+        "background": "#FDF3DE",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#18233C",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#DAD0BA",
+          "domainColor": "#D6DAE4",
+          "tickColor": "#D6DAE4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#18233C",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#4B4D5A",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:diverging-bar",
+          "name": "NPS Driver Impact",
+          "theme": "brand-b",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "driver",
+              "delta"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "description": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+            "ariaLabel": "Diverging bar chart for NPS drivers",
+            "narrative": {
+              "summary": "Positive drivers cluster around onboarding + response, with reporting and billing as primary detractors.",
+              "keyFindings": [
+                "Reporting is the largest detractor",
+                "Support response adds 12 points"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Driver deltas"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "bar"
+      },
+      "encoding": {
+        "x": {
+          "field": "delta",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear",
+            "zero": true
+          },
+          "title": "NPS Δ"
+        },
+        "y": {
+          "field": "driver",
+          "type": "nominal",
+          "title": "Driver"
+        },
+        "color": {
+          "field": "delta",
+          "type": "quantitative",
+          "scale": {
+            "range": [
+              "#002331",
+              "#003D49",
+              "#085762",
+              "#3B737C",
+              "#628F97",
+              "#C0C4CB",
+              "#A87874",
+              "#8D5954",
+              "#733A36",
+              "#581B1A",
+              "#400000"
+            ],
+            "domainMid": 0
+          },
+          "title": "Impact"
+        }
+      },
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    },
+    "a11yDescription": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkBar",
+      "rowCount": 6,
+      "fields": [
+        "driver",
+        "delta"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:diverging-bar",
+      "name": "NPS Driver Impact",
+      "data": {
+        "values": [
+          {
+            "driver": "Onboarding",
+            "delta": 18
+          },
+          {
+            "driver": "Response Time",
+            "delta": 12
+          },
+          {
+            "driver": "Billing",
+            "delta": -7
+          },
+          {
+            "driver": "Reporting",
+            "delta": -12
+          },
+          {
+            "driver": "Admin",
+            "delta": 6
+          },
+          {
+            "driver": "Mobile",
+            "delta": -4
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar",
+          "options": {
+            "baseline": 0
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "delta",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear",
+          "title": "NPS Δ"
+        },
+        "y": {
+          "field": "driver",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "title": "Driver",
+          "type": "nominal"
+        },
+        "color": {
+          "field": "delta",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "scale": "diverging",
+          "title": "Impact"
+        }
+      },
+      "a11y": {
+        "description": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+        "ariaLabel": "Diverging bar chart for NPS drivers",
+        "narrative": {
+          "summary": "Positive drivers cluster around onboarding + response, with reporting and billing as primary detractors.",
+          "keyFindings": [
+            "Reporting is the largest detractor",
+            "Support response adds 12 points"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Driver deltas"
+        }
+      },
+      "config": {
+        "theme": "brand-b",
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "driver",
+          "delta"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "a11y": {
+      "narrative": {
+        "summary": "Positive drivers cluster around onboarding + response, with reporting and billing as primary detractors.",
+        "keyFindings": [
+          "Reporting is the largest detractor",
+          "Support response adds 12 points"
+        ]
+      },
+      "table": {
+        "caption": "Driver deltas",
+        "columns": [
+          {
+            "field": "driver",
+            "label": "Driver",
+            "isNumeric": false
+          },
+          {
+            "field": "delta",
+            "label": "NPS Δ",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Onboarding"
+              },
+              {
+                "field": "delta",
+                "text": "18"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Response Time"
+              },
+              {
+                "field": "delta",
+                "text": "12"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Billing"
+              },
+              {
+                "field": "delta",
+                "text": "-7"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Reporting"
+              },
+              {
+                "field": "delta",
+                "text": "-12"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Admin"
+              },
+              {
+                "field": "delta",
+                "text": "6"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "driver",
+                "text": "Mobile"
+              },
+              {
+                "field": "delta",
+                "text": "-4"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "specRef": "viz.render-7e7b88df",
+    "specRefCreatedAt": "2026-09-11T20:47:53.927Z",
+    "specRefExpiresAt": "2026-09-11T21:17:53.927Z",
+    "contentHash": "22c80092e61ec4f81460c9cd683fed1bb45a24170bbeb3adebec41d1f112cfd3",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"964\" height=\"468\" viewBox=\"0 0 964 468\"><rect width=\"964\" height=\"468\" fill=\"#FDF3DE\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(150,52)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,30)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"720\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'NPS Δ' for a linear scale with values from −12 to 18\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(48,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(96,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(144,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(192,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(240,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(288,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(336,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(384,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(432,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(528,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(576,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(624,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(672,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(720,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−12</text><text text-anchor=\"middle\" transform=\"translate(48,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−10</text><text text-anchor=\"middle\" transform=\"translate(96,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−8</text><text text-anchor=\"middle\" transform=\"translate(144,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−6</text><text text-anchor=\"middle\" transform=\"translate(192,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−4</text><text text-anchor=\"middle\" transform=\"translate(240,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−2</text><text text-anchor=\"middle\" transform=\"translate(288,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(336,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">2</text><text text-anchor=\"middle\" transform=\"translate(384,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">4</text><text text-anchor=\"middle\" transform=\"translate(432,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">6</text><text text-anchor=\"middle\" transform=\"translate(480,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">8</text><text text-anchor=\"middle\" transform=\"translate(528,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">10</text><text text-anchor=\"middle\" transform=\"translate(576,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">12</text><text text-anchor=\"middle\" transform=\"translate(624,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">14</text><text text-anchor=\"middle\" transform=\"translate(672,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">16</text><text text-anchor=\"end\" transform=\"translate(720,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">18</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">NPS Δ</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Driver' for a discrete scale with 6 values: Admin, Billing, Mobile, Onboarding, Reporting, Response Time\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,32.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Admin</text><text text-anchor=\"end\" transform=\"translate(-7,92.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Billing</text><text text-anchor=\"end\" transform=\"translate(-7,152.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Mobile</text><text text-anchor=\"end\" transform=\"translate(-7,212.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Onboarding</text><text text-anchor=\"end\" transform=\"translate(-7,272.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Reporting</text><text text-anchor=\"end\" transform=\"translate(-7,332.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">Response Time</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"360\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-115,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Driver</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"NPS Δ: 18; Driver: Onboarding; Impact: 18\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M288,183h432v54h-432Z\" fill=\"rgb(64, 0, 0)\"/><path aria-label=\"NPS Δ: 12; Driver: Response Time; Impact: 12\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M288,303h288v54h-288Z\" fill=\"rgb(106, 48, 44)\"/><path aria-label=\"NPS Δ: −7; Driver: Billing; Impact: −7\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M120,63h168v54h-168Z\" fill=\"rgb(15, 89, 100)\"/><path aria-label=\"NPS Δ: −12; Driver: Reporting; Impact: −12\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M0,243h288v54h-288Z\" fill=\"rgb(0, 35, 49)\"/><path aria-label=\"NPS Δ: 6; Driver: Admin; Impact: 6\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M288,3h144v54h-144Z\" fill=\"rgb(150, 99, 95)\"/><path aria-label=\"NPS Δ: −4; Driver: Mobile; Impact: −4\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M192,123h96v54h-96Z\" fill=\"rgb(72, 124, 133)\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Gradient legend titled 'Impact' for fill color with values from −12 to 18\"><g transform=\"translate(738,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h52v216h-52Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rect role-legend-gradient\" pointer-events=\"none\"><path d=\"M0,0h16v200h-16Z\" fill=\"url(#oods-id-0)\" stroke=\"#ddd\" stroke-width=\"0\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(18,189.66666666666666)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">−10</text><text text-anchor=\"start\" transform=\"translate(18,123)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"start\" transform=\"translate(18,56.33333333333334)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">10</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Impact</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-126,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'NPS Driver Impact'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#18233C\" opacity=\"1\">NPS Driver Impact</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g><defs><linearGradient id=\"oods-id-0\" x1=\"0\" x2=\"0\" y1=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"rgb(0, 35, 49)\"/><stop offset=\"0.06666666666666667\" stop-color=\"rgb(0, 57, 69)\"/><stop offset=\"0.13333333333333333\" stop-color=\"rgb(5, 78, 90)\"/><stop offset=\"0.2\" stop-color=\"rgb(38, 101, 111)\"/><stop offset=\"0.26666666666666666\" stop-color=\"rgb(72, 124, 133)\"/><stop offset=\"0.3333333333333333\" stop-color=\"rgb(115, 151, 162)\"/><stop offset=\"0.4\" stop-color=\"rgb(192, 196, 203)\"/><stop offset=\"0.4666666666666667\" stop-color=\"rgb(178, 153, 172)\"/><stop offset=\"0.5333333333333333\" stop-color=\"rgb(165, 116, 112)\"/><stop offset=\"0.6\" stop-color=\"rgb(150, 99, 95)\"/><stop offset=\"0.6666666666666666\" stop-color=\"rgb(135, 82, 77)\"/><stop offset=\"0.7333333333333333\" stop-color=\"rgb(121, 65, 60)\"/><stop offset=\"0.8\" stop-color=\"rgb(106, 48, 44)\"/><stop offset=\"0.8666666666666667\" stop-color=\"rgb(91, 31, 29)\"/><stop offset=\"0.9333333333333333\" stop-color=\"rgb(77, 15, 17)\"/><stop offset=\"1\" stop-color=\"rgb(64, 0, 0)\"/></linearGradient></defs></svg>",
+    "svgHash": "49a3eed525e8ecda73dea5a5720785de1e0b8694fbbc0804f7ea16c20d92ce56",
+    "svgBytes": 14048,
+    "svgRef": "viz.render-70568c3e",
+    "render": {
+      "engine": "vega-lite",
+      "width": 964,
+      "height": 468,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "certify": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "22c80092e61ec4f81460c9cd683fed1bb45a24170bbeb3adebec41d1f112cfd3",
+      "renderHash": "49a3eed525e8ecda73dea5a5720785de1e0b8694fbbc0804f7ea16c20d92ce56"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "unchecked",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "No gradeable OODS series paint: the compiled spec has no color encoding or OODS mark color, or none of its series paints rendered — author-decorative colors are skipped as chrome. certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "unchecked",
+        "measured": false,
+        "evidence": "render",
+        "note": "No gradeable OODS series paint: the compiled spec has no color encoding or OODS mark color, or none of its series paints rendered — author-decorative colors are skipped as chrome. certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m03",
+  "checkedAt": "2026-09-11T20:58:28.840200+00:00",
+  "checkedState": "working tree identified by source hashes; implementation commit assigned by mission closeout",
+  "builderSelfCertified": false,
+  "summary": {
+    "identities": 21,
+    "cells": 84,
+    "public": 8,
+    "authoringOnly": 13,
+    "conformantCells": 32,
+    "nonconformantCells": 0
+  },
+  "taxonomySummary": {
+    "types": 13,
+    "patterns": 21,
+    "families": 8,
+    "classified": 34,
+    "coreCells": 20,
+    "coreSurfaceComplete": 13,
+    "typedGaps": 7
+  },
+  "checks": [
+    {
+      "name": "focused-and-portable",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/contracts/viz-pattern-registry.s195.spec.ts",
+        "test/contracts/viz-taxonomy.s195.spec.ts",
+        "test/product-reality/health-viz.s195.spec.ts",
+        "test/contracts/portable-boundary.s181.spec.ts"
+      ],
+      "exitCode": 1,
+      "log": "artifacts/product-reality/sprint-195/m03/patterns/focused-and-portable.log"
+    },
+    {
+      "name": "pattern-check",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s195-pattern-census.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m03/patterns/pattern-check.log"
+    },
+    {
+      "name": "taxonomy-check",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s195-viz-taxonomy.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m03/patterns/taxonomy-check.log"
+    },
+    {
+      "name": "generator-typecheck",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "--skipLibCheck",
+        "--strict",
+        "--esModuleInterop",
+        "--resolveJsonModule",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "bundler",
+        "--target",
+        "es2022",
+        "scripts/product-reality/s195-pattern-census.ts",
+        "scripts/product-reality/s195-viz-taxonomy.ts"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m03/patterns/generator-typecheck.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m03/patterns/diff-check.log"
+    }
+  ],
+  "files": [
+    {
+      "path": "packages/viz-core/src/registry/viz-patterns.ts",
+      "sha256": "d3dfed1166cbc1aec6ddf8dc8562b2773f574c5049ed492e38910412d8d5616e"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-patterns.v1.json",
+      "sha256": "d85e6a5d4942324c5eba66a6184d006fa60f989e8519ba12169e915e5cebefe9"
+    },
+    {
+      "path": "scripts/product-reality/s195-pattern-census.ts",
+      "sha256": "541ff0a75268f0f9adb1791059debb3db2334cc25c15a727d811c12ad3e20a16"
+    },
+    {
+      "path": "docs/viz/pattern-library-v2.md",
+      "sha256": "c84662abeae7e495e501f53632d620c5f07de8e5440e32f285e3872c8c5aa16f"
+    },
+    {
+      "path": "scripts/product-reality/s195-viz-taxonomy.ts",
+      "sha256": "61e0cfdcc6bbc16017bbdbd884c0f0873f9bdc662eb585dcbe8c1c93931a8a5b"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-taxonomy.v1.json",
+      "sha256": "3635ee43621f1479ad416b214ea24e780a904829b89d8fe8a4fda0a4aaf81ea6"
+    },
+    {
+      "path": "docs/viz/taxonomy.md",
+      "sha256": "0115501952cfcfd9676fe6a563265e4a3d653581acc8ba09afb3a1732eac1efc"
+    },
+    {
+      "path": "packages/mcp-server/src/lib/viz-taxonomy.ts",
+      "sha256": "5fc5c8a47adbcbad261bd7ef74e52242c5c2ed715dbc89d1c2376fb5a98ae0e4"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-pattern-registry.s195.spec.ts",
+      "sha256": "d5c238876aea98ee131b508f325d38984901ea93c8e62fbd256cded803eba4c4"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-taxonomy.s195.spec.ts",
+      "sha256": "b61a79659fa5ec9914d51ae07ff5275f30eeda4e63d88a09c34a13f510104f25"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/health-viz.s195.spec.ts",
+      "sha256": "95f172596052e835e9a23ae23c8a1da8dde748f09851ae75e441ba985948482f"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "sha256": "1a5b4953ebf4a687c96f7d0ff9f1e9c70cc66b111b0e14e99cc7cfe74d0464eb"
+    },
+    {
+      "path": "scripts/runtime/e2e.mjs",
+      "sha256": "95fd234cf31c53618e3d7a6359204d33bfce886601257811c7116100c34929cb"
+    },
+    {
+      "path": "packages/mcp-server/package.json",
+      "sha256": "a1a68edce042261c9224cee416b3ebf8cb2e82beff44801784c6a771d272936a"
+    },
+    {
+      "path": "packages/viz-core/src/index.ts",
+      "sha256": "2773756c6b47dd645ed7ef22d0ca6fa286e0b50000e44c4ff5f6f50fbdbdef93"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m03/patterns/pattern-observations.json",
+      "sha256": "81c92a923d7e1c8d8b23ca4a8624857c7885dba197baeba852fa58d3652d33dc"
+    }
+  ]
+}
