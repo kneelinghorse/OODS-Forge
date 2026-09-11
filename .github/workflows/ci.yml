@@ -789,9 +789,9 @@ jobs:
   viz-determinism:
     name: viz-determinism
     runs-on: ubuntu-latest
-    # The full MCP suite includes the product-reality history and browser proofs;
-    # its retained local closeout run is approximately nine minutes by itself.
-    timeout-minutes: 25
+    # Run34571311238 hit the25-minute job cap during the full MCP suite.
+    # Allow CI setup and the complete population; per-test limits stay unchanged.
+    timeout-minutes: 45
     # sprint-110 m05: close the CI gap where the data-aware recommender's own
     # suites do NOT run under root CI. Runs @oods/viz-core's tests (profiler /
     # intent / scorer + the committed golden profiles + the sprint-111 network/
