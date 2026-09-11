@@ -10,4 +10,6 @@ First portable attempt failed at real token export; second failed at real React 
 
 Tool-Specs has exactly one grouped section per live registry entry; API pages regenerate from the 24-entry registry. The per-tool proof index links each advertised tool to its source boundary proof and retained evidence. Builder self-certification remains false.
 
-Targeted validation: 29 wire/ledger tests (nine files), 23 final fixture/API/retirement/ledger contracts (four files), and 17 narrative/link tests (two files); all final runs have zero skips. The earlier fixture-plus-ledger run caught a stale source inventory after the new fixture test was added; re-derivation resolves it.
+Targeted validation: 29 wire/ledger tests (nine files), 22 final fixture/API/retirement/ledger contracts (four files), and 17 narrative/link tests (two files); all final runs have zero skips. The earlier fixture-plus-ledger run caught a stale source inventory after the new fixture test was added; re-derivation resolves it.
+
+Clean source-bound bundle: `portable-e2e.json` passes at implementation head 3444ae4d with dirty:false, 245 third-party packages, 28 calls and an exactly restored tree. `portable-manifest.json` and `final-assemble.log` bind the archive. CI run 34623797961 is running; its portable job and uploaded receipt will be retained before mission closure.
