@@ -1,0 +1,65 @@
+{
+  "mission": "s195-m06",
+  "capturedAt": "2026-09-11T22:36:11.329Z",
+  "node": "v24.6.0",
+  "baseHead": "a3158282bba25713171d7216181bde28b69a80a1",
+  "source": {
+    "path": "scripts/product-reality/s184-m06-live-consumers.ts",
+    "beforeSha256": "1e8f163b33d525bf983db23f90f878a5079485140b20a6a0d0f54542a5fb907f",
+    "afterSha256": "85b075ad5449dd0912c2be5eee4370f05f41eecf070b4d1cec0573e4bec08439"
+  },
+  "test": {
+    "path": "packages/mcp-server/test/product-reality/static-server-teardown.s195.spec.ts",
+    "sha256": "b662e12cf611c547f588a2dfaeae6b49d296d602690a85b5fa9fda479861bc6f",
+    "identicalForBeforeAndAfter": true
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/static-server-teardown.s195.spec.ts > artifacts/product-reality/sprint-195/m06/static-server-teardown/before.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 1,
+      "log": "before.log",
+      "logSha256": "dd6ea70a81ff830c4e197d7e2a546249ccd396d0bad0fa3265df4704c0443c48",
+      "passed": 0,
+      "failed": 3,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/static-server-teardown.s195.spec.ts > artifacts/product-reality/sprint-195/m06/static-server-teardown/after.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 0,
+      "log": "after.log",
+      "logSha256": "e14e2de1e2019ba3942809e34163b1b2c42a11eed5096b5fed2c7e08c793ace8",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit -p ../../artifacts/product-reality/sprint-195/m06/static-server-teardown/tsconfig.json > artifacts/product-reality/sprint-195/m06/static-server-teardown/typecheck.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "result": {
+    "runtimeTimeoutChanges": false,
+    "callbackChanged": false,
+    "proofAssertionsChanged": false,
+    "buildsRun": 0,
+    "fullSweepsRun": 0,
+    "afterTestDurationMs": 23
+  },
+  "cmos": {
+    "sessionId": "PS-2026-09-11-008",
+    "learningId": 588
+  },
+  "priorSweep": {
+    "path": "artifacts/product-reality/sprint-195/m06/runtime",
+    "interruptedBy": "parent",
+    "signal": "SIGTERM",
+    "exitCode": 143,
+    "partialEvidencePreserved": true
+  },
+  "limitation": "This local-socket reproduction verifies shutdown for the observed retained/partial connection class; the parent must run a fresh full runtime sweep for integrated proof."
+}

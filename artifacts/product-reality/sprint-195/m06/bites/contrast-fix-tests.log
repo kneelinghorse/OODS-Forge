@@ -1,0 +1,64 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ✓ test/tools/artifact.certify.spec.ts (72 tests) 692ms
+ ❯ test/tools/certify-contrast.spec.ts (30 tests | 1 failed) 292ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > a single-series chart (no color encoding) -> pass on categorical-01 (baked mark.color, rendered) vs the canvas 131ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > the revised six-slot palette clears Role-C and the Role-A clean threshold (s195) 14ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > the prior below-target palette still emits a caution when explicitly supplied 10ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path) 4ms
+   ✓ certify-contrast — role-A (categorical distinguishability, min-over-CVD) > a chromatic-but-near-identical config.tokens override -> fail on role-A ΔE (<2), even though role-C + the F2 chroma floor pass 7ms
+   ✓ certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > a low-chroma (reads-as-gray) config.tokens override -> fail on the chroma floor, before the ΔE check 5ms
+   ✓ certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip) 7ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a chromatic 2-color agent range -> PASS (certify grades the supplied range, not the OODS palette) 4ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a GRAY 2-color agent range -> contrast FAIL on the chroma floor (Fork B: a gray "absent" slot reads as gray) 5ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a low-contrast-vs-canvas 2-color agent range -> role-C FAIL (a near-white "absent" slot is invisible on the panel) 7ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > under-cardinality caveat (critic amendment 4): 1 distinct value masks the gray-absent fail -> PASS on color[0] only 4ms
+   ✓ certify-contrast — a missing categorical bake cannot claim the gradient exemption > fails a compiled nominal color channel when its actual palette range is removed 1ms
+   ✓ certify-contrast — a missing categorical bake cannot claim the gradient exemption > fails a compiled ordinal color channel when its actual palette range is removed 0ms
+   × certify-contrast — a missing categorical bake cannot claim the gradient exemption > a passing sibling or decorative fallback cannot hide the missing categorical bake 4ms
+     → expected 'unchecked' to be 'fail' // Object.is equality
+   ✓ certify-contrast — continuous/default color without a palette is WCAG-exempt > a quantitative color encoding (baked NO range) -> exempt (gradient essential exception) 0ms
+   ✓ certify-contrast — continuous/default color without a palette is WCAG-exempt > a linear-scaled color encoding -> exempt 0ms
+   ✓ certify-contrast — continuous/default color without a palette is WCAG-exempt > a divergence binding (color trait EncodingDetail, compiled quantitative, no baked range) -> exempt, NEVER a false pass 0ms
+   ✓ certify-contrast — honesty + determinism > an unresolvable canvas (non-color override on the canvas token) -> 'ungradeable' (tried and failed), never 'unchecked' and never a silent pass 3ms
+   ✓ certify-contrast — honesty + determinism > a non-color override on a palette slot is IGNORED — the slot renders the OODS default, which certify grades (rendered-reality) 2ms
+   ✓ certify-contrast — honesty + determinism > is a pure function of the IR — identical verdict across repeated calls (the render is deterministic) 8ms
+   ✓ certify-contrast — s140 multi-mark union grading > C1 repro: a passing decorative mark.color on the first layer + a role-C-failing color palette on a later layer -> fail (was a false pass) 7ms
+   ✓ certify-contrast — s140 multi-mark union grading > companion regression: the color-bearing mark is NOT the first layer -> pass (was a false unchecked) 5ms
+   ✓ certify-contrast — s140 multi-mark union grading > a faint author annotation line + a passing color-encoded data layer -> pass (the decoration is skipped, not failed) 7ms
+   ✓ certify-contrast — s140 multi-mark union grading > a gradient (exempt) layer + a categorical (pass) layer -> pass — a graded categorical dominates a gradient 8ms
+   ✓ certify-contrast — s140 multi-mark union grading > facet-of-layer: the walker descends facet.spec.layer and grades every unit 10ms
+   ✓ certify-contrast — s140 multi-mark union grading > concat: the walker grades every section (both hconcat units), not just the first 8ms
+   ✓ certify-contrast — s176 render-backed assignment grading > ten series over the six-slot default palette -> role-A ΔE00=0 fail (the recycled assignment reaches the grader) 13ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an agent range LONGER than 6 slots is fully graded — the dead slice no longer caps at 6 (D8 coverage expansion) 5ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an author decoration painted in a PALETTE hex cannot fake a ΔE00=0 collision (D2 — the rejected multiset reading) 7ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an empty sample renders no marks -> 'unchecked' (a series unit with nothing rendered is not graded, D6) 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/tools/certify-contrast.spec.ts > certify-contrast — a missing categorical bake cannot claim the gradient exemption > a passing sibling or decorative fallback cannot hide the missing categorical bake
+AssertionError: expected 'unchecked' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "unchecked"
+
+ ❯ test/tools/certify-contrast.spec.ts:244:68
+    242|     missing.mark = { ...missing.mark, color: '#eeeeee' };
+    243|     const layered = { ...compiled, mark: undefined, encoding: undefine…
+    244|     expect((await evaluateContrastPillar(spec, layered)).contrast).toB…
+       |                                                                    ^
+    245|   });
+    246| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 101 passed (102)
+   Start at  17:17:37
+   Duration  2.10s (transform 382ms, setup 17ms, collect 792ms, tests 984ms, environment 0ms, prepare 103ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/tools/certify-contrast.spec.ts test/tools/artifact.certify.spec.ts

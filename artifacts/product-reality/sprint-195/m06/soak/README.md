@@ -1,0 +1,21 @@
+# s195-m06 — bounded #1442 investigation
+
+No retained-allocation cause was established. The strict resource assertion failed on the current head and a fresh-process unchanged renderer control. The CI job now reports `OODS-SOAK-1442` as a typed observation only after all other soak cases and the original hard resource and cleanup checks pass. Retention certification remains **not established**. The strict package command still fails on the original statistical assertion; the CI wrapper retains its exit code, JSON report, and full log.
+
+The work ran in `/tmp/oods-s195-soak/head`, an isolated source/package snapshot from `22c674c548b6f3859c462e150a4601222366c25c`. It never changed the primary checkout, PM2, or the shared renderer runtime. Node was v24.6.0, V8 13.6.233.10-node.24, darwin arm64. `isolation.json` proves the original soak test and all nine renderer source files equal historical control `5fdf8a182b12146cfe975f9878c4939f14776f9d`. The control replays this byte-identical renderer and resource operand in another fresh process with the same compiled dependency snapshot; it is not a rebuild or qualification of the entire old application.
+
+| Run | Heap slope B/window | Heap 99% lower bound | RSS slope B/window | RSS 99% lower bound | Strict result |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Current head | 9,416 | 2,456 | 74,313 | -24,229 | failed |
+| Unchanged renderer control | -263,571 | -428,971 | 118,394 | 59,223 | failed |
+| Full three-case suite | 3,549 | 556 | 88,162 | 46,886 | failed |
+
+Every resource run used the original 100 warmups, 2,000 unique-geometry renders, three settled resource samples per window, and eight fitted windows covering renders 1,300–2,000. Final worker heap was lower than the post-warmup baseline in all three runs. That does not invalidate the positive local slope assertion. No sampling or threshold changed: `investigation.json` records identical hashes for the original constants/budgets and trend calculation.
+
+The first two reproduction commands intentionally selected only the resource case (`-t 'plateaus after'`), so each left two other cases unselected. Their exact commands, nonzero exits, and raw samples are retained in `reproduction-commands.json`, `head.log`, and `unchanged-control.log`. The complete strict run in `full-suite-observation/` ran all three cases with **zero skips**: concurrency and latency passed, resource trend failed. Its raw Vitest exit was 1; the wrapper exited 0 with the explicit observation result. `final-classification-check.json` applies the final classifier to these same untouched raw files. Early isolated package-setup failures are retained in `initial-package-setup/`.
+
+A bounded inspector allocation profile was added only to the isolated compiled worker, then restored byte-identically (`allocation-profile-command.json`). It sampled allocations after warmup through the final render. The retained sample was dominated by diagnostic inspector overhead (272,992 bytes), followed by ECharts `VisualMapping.linear` (65,432 bytes), its sorting callback (35,368 bytes), and zrender SVG node construction. The complete call stacks are in `allocation-summary.json`; the raw profile is `allocation-profile.json`. These are allocation sites, not a demonstrated OODS retention chain. The profiled resource run passed, but inspector sampling perturbs allocation behavior and is explicitly not a release verdict.
+
+Source changes are limited to retaining measurements before assertion failure, tagging the unchanged statistical assertion, the narrow CI wrapper/artifact upload, and classifier/CI contract tests. The wrapper rejects missing or skipped cases, unrelated failures, unhandled runtime errors, hard heap/RSS ceiling failures, chart disposal failures, fault-cleanup failures, stale geometry, map growth, or deterministic-realm failures. It does not use `continue-on-error` or alter global thresholds.
+
+Targeted validation: `observation-contract.log` has 13/13 tests passing, and `ci-contract.log` has 8/8 passing, both with zero skips. The complete soak's **2 passed / 1 failed** result is retained separately and must not be described as a passing retention gate. `targeted-checks.json` contains commands and exits. These are builder observations, not independent release certification.

@@ -1,0 +1,54 @@
+- text: Consumer label Consumer placeholder Status
+- combobox "Status":
+  - option "draft"
+  - option "active"
+  - option "inactive"
+- paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+- group "Tags":
+  - text: Tags Tag
+  - textbox "Tag":
+    - /placeholder: Enter tags
+- text: Description
+- textbox "Description": Consumer description
+- paragraph: Supporting description used in detail and card contexts.
+- text: Created at
+- textbox "Created at":
+  - /placeholder: Timestamp recording when the entity was first created.
+  - text: 2026-09-05T12:00
+- paragraph: Timestamp recording when the entity was first created.
+- text: Relationship type
+- combobox "Relationship type":
+  - option "Enter relationship type" [disabled]
+  - option "membership" [selected]
+  - option "ownership"
+  - option "follows"
+  - option "depends_on"
+  - option "references"
+- paragraph: Semantic type describing the edge between the source and target.
+- text: Tag count
+- spinbutton "Tag count": "0"
+- paragraph: Computed number of tags assigned to the entity.
+- checkbox "Is bidirectional"
+- text: Is bidirectional
+- paragraph: Flag indicating whether the relationship is symmetric.
+- text: Label
+- textbox "Label":
+  - /placeholder: Enter label
+  - text: Consumer label
+- paragraph: Human-readable display name rendered in primary surfaces.
+- text: Placeholder
+- textbox "Placeholder":
+  - /placeholder: Enter placeholder
+  - text: Consumer placeholder
+- paragraph: Hint copy surfaced in form fields when the label is empty.
+- text: Last event
+- textbox "Last event":
+  - /placeholder: Enter last event
+  - text: Consumer last event
+- paragraph: Lifecycle event associated with the most recent timestamp mutation.
+- text: Owner id
+- textbox "Owner id":
+  - /placeholder: Enter owner id
+  - text: consumer-owner-id
+- paragraph: Identifier of the owning principal scoped by owner_type.
+- button "Save"

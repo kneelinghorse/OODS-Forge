@@ -1,0 +1,27 @@
+
+ RUN  v3.2.4 /private/tmp/oods-s195-soak/head/packages/mcp-server
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/soak/echarts-render-soak.s179.spec.ts [ test/soak/echarts-render-soak.s179.spec.ts ]
+Error: Cannot find package '@oods/artifacts' imported from '/private/tmp/oods-s195-soak/head/packages/mcp-server/src/tools/artifact.certify.ts'
+ ❯ src/tools/artifact.certify.ts:41:1
+     39| 
+     40| import { assertHcSvgPaints } from './hc-svg-paints.js';
+     41| import { canonicalize, sha256 } from '@oods/artifacts';
+       | ^
+     42| import {
+     43|   renderEChartsToSvg,
+
+Caused by: Error: Failed to load url @oods/artifacts (resolved id: @oods/artifacts) in /private/tmp/oods-s195-soak/head/packages/mcp-server/src/tools/artifact.certify.ts. Does the file exist?
+ ❯ loadAndTransform ../../../../../../Users/systemsystems/.codex/worktrees/s195/OODS-Forge/node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:35729:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  16:52:58
+   Duration  263ms (transform 66ms, setup 12ms, collect 0ms, tests 0ms, environment 0ms, prepare 59ms)
+

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "issue": "#1442",
+  "missionId": "s195-m06",
+  "baselineHead": "22c674c548b6f3859c462e150a4601222366c25c",
+  "controlHead": "5fdf8a182b12146cfe975f9878c4939f14776f9d",
+  "controlMethod": "Fresh process replay of byte-identical renderer source and resource test from historical control; compiled renderer dependency snapshot held identical. Other old application behavior is not claimed.",
+  "environment": {
+    "node": "v24.6.0",
+    "v8": "13.6.233.10-node.24",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "observations": [
+    {
+      "name": "head",
+      "strictExitCode": 1,
+      "selectedCases": 1,
+      "intentionallyUnselectedCases": 2,
+      "heapTrend": {
+        "slope": 9416.380952380952,
+        "slopeStandardError": 2214.645732807901,
+        "positiveTrendLower99": 2455.74941416572
+      },
+      "rssTrend": {
+        "slope": 74313.14285714286,
+        "slopeStandardError": 31352.956810079697,
+        "positiveTrendLower99": -24229.200396937624
+      },
+      "workerHeapDeltaBytes": -1036800,
+      "rawLog": "head.log"
+    },
+    {
+      "name": "unchanged-control",
+      "strictExitCode": 1,
+      "selectedCases": 1,
+      "intentionallyUnselectedCases": 2,
+      "heapTrend": {
+        "slope": -263571.2380952381,
+        "slopeStandardError": 52624.83741465755,
+        "positiveTrendLower99": -428971.1020895068
+      },
+      "rssTrend": {
+        "slope": 118393.90476190476,
+        "slopeStandardError": 18826.221440973186,
+        "positiveTrendLower99": 59223.09077292604
+      },
+      "workerHeapDeltaBytes": -1074408,
+      "rawLog": "unchanged-control.log"
+    },
+    {
+      "name": "full-suite",
+      "strictExitCode": 1,
+      "wrapperExitCode": 0,
+      "passedCases": 2,
+      "failedCases": 1,
+      "skippedCases": 0,
+      "heapTrend": {
+        "slope": 3549.0476190476193,
+        "slopeStandardError": 952.4038298839221,
+        "positiveTrendLower99": 555.6423817224522
+      },
+      "rssTrend": {
+        "slope": 88161.52380952382,
+        "slopeStandardError": 13132.562611914627,
+        "positiveTrendLower99": 46885.87952027615
+      },
+      "workerHeapDeltaBytes": -1086232,
+      "rawLog": "full-suite-observation/strict-soak.log"
+    }
+  ],
+  "thresholdAndStatisticsProof": {
+    "constants": {
+      "beforeSha256": "38663b9abfde62141033cffd59dd36f52b11e85916f0f427c45cfc3a5646d76c",
+      "afterSha256": "38663b9abfde62141033cffd59dd36f52b11e85916f0f427c45cfc3a5646d76c",
+      "unchanged": true
+    },
+    "statistics": {
+      "beforeSha256": "9f32ef855f8ba6e958a7e879d0b585af6bd0cd095eec815e4a47173e264cb1c5",
+      "afterSha256": "9f32ef855f8ba6e958a7e879d0b585af6bd0cd095eec815e4a47173e264cb1c5",
+      "unchanged": true
+    }
+  },
+  "rendererSourceChanges": false,
+  "provenRetentionCause": null,
+  "allocationProfile": {
+    "path": "allocation-profile.json",
+    "summary": "allocation-summary.json",
+    "interpretation": "Sampling retained allocations shows diagnostic inspector overhead plus ECharts VisualMapping and zrender SVG allocation sites. It does not establish a retained OODS cause; profiling changes allocation behavior and the diagnostic strict run passing is not a release verdict."
+  },
+  "disposition": {
+    "code": "OODS-SOAK-1442",
+    "status": "typed-observation",
+    "strictAssertionPreserved": true,
+    "thresholdChanges": false,
+    "retentionCertification": "not-established",
+    "requirements": [
+      "All three original cases run without skips",
+      "Concurrency and latency pass",
+      "Original hard heap and RSS ceilings pass",
+      "Chart disposal, forced-fault cleanup, bounded map alias, latest geometry and deterministic realm safety pass",
+      "Only the named statistical lower-bound failure may be observational",
+      "Unhandled runtime errors remain blocking"
+    ]
+  },
+  "builderSelfCertified": false
+}

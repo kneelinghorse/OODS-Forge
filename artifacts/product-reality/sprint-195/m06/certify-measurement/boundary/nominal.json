@@ -1,0 +1,105 @@
+{
+  "request": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:bar",
+      "name": "Bar chart",
+      "data": {
+        "values": [
+          {
+            "category": "One",
+            "amount": 8,
+            "series": "First"
+          },
+          {
+            "category": "Two",
+            "amount": 12,
+            "series": "Second"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "category",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "type": "nominal",
+          "title": "Category"
+        },
+        "y": {
+          "field": "amount",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "type": "quantitative",
+          "title": "Amount"
+        },
+        "color": {
+          "field": "series",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "type": "nominal",
+          "title": "Series"
+        }
+      },
+      "a11y": {
+        "description": "Bar chart of amount by category, split by series.",
+        "ariaLabel": "Bar chart of Amount by Category"
+      },
+      "portability": {
+        "tableColumnOrder": [
+          "category",
+          "amount",
+          "series"
+        ]
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": false,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "3419f861d2a7b7764d61576c59c2a0001fc3da282b9c4006f7f33879940d3677",
+      "renderHash": "94a75aa4e9eeff8b0512920bb13fd10c1d8ed679d3af825936365b16008939e6"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "fail",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "Categorical color encoding is missing its baked palette; the renderer default cannot establish categorical contrast conformance. No categorical canvas ratio is graded for the missing-palette unit. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "fail",
+        "measured": false,
+        "evidence": "none",
+        "note": "Categorical color encoding is missing its baked palette; the renderer default cannot establish categorical contrast conformance. No categorical canvas ratio is graded for the missing-palette unit. Scope: light/A."
+      }
+    ]
+  }
+}

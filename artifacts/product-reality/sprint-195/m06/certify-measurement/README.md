@@ -1,0 +1,9 @@
+# Missing-palette measurement evidence
+
+The physical palette-bake bite exposed a nominal/ordinal compiled color unit without a baked range being classified as exempt. The evaluator now fails that unit. The immediate `artifact.certify` caller also preserves the evaluator's internal unmeasured disposition instead of borrowing the independent determinism render as contrast evidence. The private marker is removed before public output serialization; the existing `measured` and `evidence` fields express the result.
+
+Four public input/output AJV boundary cases use the actual builder, adapter and handler: nominal missing range, ordinal missing range, a passing layer beside a missing-range layer, and an unchanged passing categorical control. The fixture removes only the actual compiled range. Three failure receipts retain a real stable determinism render while reporting contrast `fail`, `conformant:false`, `measured:false`, and `evidence:none`. The control retains `measured:true` and `evidence:render`.
+
+`boundary-initial.log` records 13 passing tests (four new cases plus nine existing fault/tristate regressions); `evaluator.log` records 30 passing evaluator tests including mixed layers and preserved gradient/decorative exemptions. Both executions exited 0, with zero skips. `typecheck.log` is empty because the production package typecheck exited 0. No build or full-suite capture was performed by this slice; taxonomy owns the coordinated physical bite and final package builds.
+
+The raw request/result pairs are under `boundary/`. Exact executed commands, observed exit statuses, and source/receipt hashes are in `verification.json`. These receipts complement the physical mutation's disabled/restored observations in `../bites/attempt-3/palette/`; the mock at this boundary does not replace that physical proof. The decision and dual-projection learning were captured as CMOS decision 1947 and learning 587 in session PS-2026-09-11-008, mission s195-m06.

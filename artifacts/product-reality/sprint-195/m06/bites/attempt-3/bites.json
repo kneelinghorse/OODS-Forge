@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m06",
+  "builderSelfCertified": false,
+  "records": [
+    {
+      "id": "palette",
+      "path": "packages/viz-core/src/adapters/vega-lite-adapter.ts",
+      "beforeSha256": "023d723256b7791442a2ef28b324b983f6ad51e05d19a5f598ef59b330cd6073",
+      "disabledSha256": "da2ef7249ac805b9a4d69890ffbd480fafd56dc5f36f7b82c3ba25d0bc46ad35",
+      "commands": [
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/viz-core",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "log": "palette/disabled-build.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s195-viz-bite-probe.ts",
+            "--expect-fail"
+          ],
+          "exitCode": 0,
+          "log": "palette/disabled-contrast.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s190-viz-census.ts",
+            "--check"
+          ],
+          "exitCode": 1,
+          "log": "palette/disabled-census.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/viz-core",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-build.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s195-viz-bite-probe.ts",
+            "--expect-pass"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-contrast.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s190-viz-census.ts",
+            "--check"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-census.log"
+        }
+      ],
+      "restoredByteIdentically": true,
+      "status": "passed"
+    }
+  ]
+}
