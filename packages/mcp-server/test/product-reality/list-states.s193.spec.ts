@@ -5,6 +5,14 @@ import { schemaNodes } from '../../../../scripts/product-reality/s185-m04-consum
 import { OBJECTS } from '../../../../scripts/product-reality/s193-runtime-cells.js';
 
 describe('public single-screen list state contract', () => {
+  it.each(['Organization', 'User'])('%s detail displays tags without an inert editing field', async object => {
+    const composed = await compose({ object, context: 'detail' });
+    const nodes = schemaNodes(composed.schema);
+    expect(nodes.some(node => node.component === 'TagManager')).toBe(false);
+    expect(nodes.find(node => node.component === 'TagSummary')?.props).toMatchObject({ field: 'tags', countField: 'tag_count' });
+    const form = await compose({ object, context: 'form' });
+    expect(schemaNodes(form.schema).some(node => node.component === 'TagInput')).toBe(true);
+  });
   it.each(OBJECTS)('%s declares all four states and emits the public state prop in both frameworks', async object => {
     const composed = await compose({ object, context: 'list' });
     expect(composed.status).toBe('ok');

@@ -276,9 +276,15 @@ async function emitterBite(output: string, ledger: RuntimeLedger) {
   rejected.summary = summarize(rejected.rows);
   const issues = validateRuntimeLedger(rejected);
   assert(issues.includes(`${identity(candidate)} failed`));
+  const rejectedPath = path.join(output, 'bite/red-runtime-cells.v1.json');
+  await write(rejectedPath, rejected);
+  const redSpec = commandResult('pnpm', ['--filter', '@oods/mcp-server', 'exec', 'vitest', 'run', 'test/product-reality/runtime-cells.s193.spec.ts', '-t', 'the retained current sweep'], REPOSITORY_ROOT, { environment: { OODS_RUNTIME_REPORT: rejectedPath } });
+  await write(path.join(output, 'bite/red-contract-spec.json'), redSpec);
+  assert.notEqual(redSpec.exitCode, 0, 'The retained-report contract spec must reject the missing screen');
+  assert.match(redSpec.stdout + redSpec.stderr, new RegExp(`${candidate.object}/card/react failed`));
   const restored = await cellProcess(path.join(output, 'bite/restored'), output, candidate.object, 'card', 'react', ledger.head, ledger.runId);
   assert.equal(restored.status, 'pass', JSON.stringify(restored.gates));
-  await write(path.join(output, 'emitter-bite.json'), { source: 'packages/mcp-server/src/codegen/react-emitter.ts', operation: 'Omit the emitted JSX screen while retaining the original schema', beforeHash: hash(original), mutatedHash: hash(mutated), restoredHash: hash(await fs.readFile(emitter)), red, ledgerIssues: issues, restored, sourceRestoredByteIdentical: true, reusedSweepTarballs: true });
+  await write(path.join(output, 'emitter-bite.json'), { source: 'packages/mcp-server/src/codegen/react-emitter.ts', operation: 'Omit the emitted JSX screen while retaining the original schema', beforeHash: hash(original), mutatedHash: hash(mutated), restoredHash: hash(await fs.readFile(emitter)), red, ledgerIssues: issues, redSpecExitCode: redSpec.exitCode, restored, sourceRestoredByteIdentical: true, reusedSweepTarballs: true });
 }
 
 export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS) {

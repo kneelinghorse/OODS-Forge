@@ -19,7 +19,7 @@ type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
 
 const USER_DETAIL_NEWLY_READY: readonly AffectedNode[] = [
-  ['ve-header-29', 'TagManager'],
+  ['ve-header-29', 'TagSummary'],
   ['slot-tab-1-6', 'MembershipPanel'],
   ['slot-tab-2-8', 'AddressCollectionPanel'],
   ['slot-tab-3-15', 'PreferencePanel'],

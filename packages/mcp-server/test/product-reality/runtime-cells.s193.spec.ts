@@ -60,6 +60,7 @@ describe('s193 runtime population accountability', () => {
     expect(validateRuntimeLedger(ledger)).toEqual([]);
     const bite = JSON.parse(fs.readFileSync(path.join(path.dirname(output), 'emitter-bite.json'), 'utf8'));
     expect(bite.red.status).toBe('fail');
+    expect(bite.redSpecExitCode).not.toBe(0);
     expect(bite.red.gates.filter((gate: { status: string }) => gate.status === 'fail').map((gate: { name: string }) => gate.name)).toEqual(['mount']);
     expect(bite.ledgerIssues).toContain(`${bite.red.object}/card/react failed`);
     expect(bite.restored.status).toBe('pass');
