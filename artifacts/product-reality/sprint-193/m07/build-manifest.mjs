@@ -8,7 +8,7 @@ const executionHead = process.argv[2]; assert.match(executionHead ?? '', /^[a-f0
 const historical = [
   [['verification.json','backup.json','rollback-check.log'], ['verification.json','final.json','build-results.json'], ['behavior-summary.json','generate-react.json','catalog.json'], ['send-readback.json','send-01.json','send-02.json','send-03.json'], ['verification.json','backup.json'], ['fast-forward.log','verification.json']],
   [['runtime-cells.v1.json','validation.json'], ['runtime-cells.v1.json','browser.json'], ['generated-consumer-projection.json'], ['emitter-bite.json','runtime-contract-tests.log'], ['runtime-contract-tests.log','corrections-tests.log']],
-  [['runtime-cells.v1.json','validation.json'], ['built-api-proof.json','runtime-cells.v1.json'], ['runtime-cells.v1.json'], ['README.md'], ['built-api-proof.json','emitter-bite.json']],
+  [['runtime-cells.v1.json','validation.json'], ['built-api-proof.json','runtime-cells.v1.json'], ['runtime-cells.v1.json'], ['design-loops/Invoice.json','design-loops/Plan.json','design-loops/Transaction.json','design-loops/Usage.json'], ['built-api-proof.json','emitter-bite.json']],
   [['react-measured.json','vue-measured.json'], ['react-measured.json','vue-measured.json','react-theme/report.json','vue-theme/report.json'], ['packed/scoped-runtime-cells.v1.json'], ['component-census/report.json','movement.json'], ['n015-census.json']],
   [['authored-roots.json','n015-census.json'], ['packed/scoped-runtime-cells.v1.json','pixel-comparison.json'], ['react-measured.json','vue-measured.json','react-theme/report.json','vue-theme/report.json'], ['packed/scoped-runtime-cells.v1.json','movement.json'], ['component-census/report.json','n015-census.json']],
   [['census.json'], ['health-dist.json','isolated-ledger.json'], ['scope-diff.json'], ['scope-diff.json'], ['s194-candidates.json']],
@@ -26,8 +26,8 @@ if (process.argv.includes('--check-inputs')) { console.log(`Verified ${bindings.
 const implementationHead = read(`${base}/component-proof.json`).head;
 const finalCriteria = [
   ['five-suite-closeout/four-suite-baseline.json','golden-attribution.json'],
-  ['component-proof.json','component-ledger.json','runtime/runtime-cells.v1.json','runtime/validation.json','tool-proof.json','health-dist.json','react-measured.json','vue-measured.json','react-theme/report.json','vue-theme/report.json','component-census/report.json','schema-movement.json','saved-original/report.json','saved-successor/report.json','saved-compatibility.json','viz-census.json'],
-  ['movers/sprint-wide-movers.json','movers/declared-movers.json','reconnect-plan.json'],
+  ['component-proof.json','component-ledger.json','runtime/runtime-cells.v1.json','runtime/validation.json','runtime/emitter-bite.json','projection-verification.json','tool-proof.json','health-dist.json','react-measured.json','vue-measured.json','react-theme/report.json','vue-theme/report.json','component-census/report.json','schema-movement.json','saved-original/report.json','saved-successor/report.json','saved-compatibility.json','viz-census.json'],
+  ['movers/sprint-wide-movers.json','movers/declared-movers.json','movers/attribution.json','reconnect-plan.json'],
   ['prose.json','ci/observed.json'],
   ['missions.json','component-proof.json','movers/sprint-wide-movers.json'],
 ];
