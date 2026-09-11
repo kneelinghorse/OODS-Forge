@@ -80,14 +80,12 @@ test('Annotations object included in list_tools response', () => {
 
 // ── Criterion 2: Correct classification of read-only vs destructive ──
 
-const READ_ONLY_TOOLS = ['catalog.list', 'structuredData.fetch', 'repl.validate',
-  'code.generate', 'design.compose', 'health', 'map.list', 'map.resolve',
-  'registry.snapshot', 'schema.load', 'schema.list', 'object.list', 'object.show',
-  'viz.render'];
-const WRITE_TOOLS = ['tokens.build', 'brand.apply', 'diag.snapshot', 'repl.render',
-  'release.tag', 'reviewKit.create', 'a11y.scan',
-  'purity.audit', 'vrt.run', 'billing.reviewKit', 'billing.switchFixtures',
-  'map.apply', 'map.create', 'map.update', 'map.delete', 'schema.save', 'schema.delete', 'pipeline'];
+const READ_ONLY_TOOLS = ['catalog.list', 'structuredData.fetch', 'code.generate',
+  'design.compose', 'design.preview', 'health', 'registry.snapshot', 'object',
+  'viz.render', 'dashboard.render', 'artifact.certify', 'fidelity.preview', 'brand.intake'];
+const WRITE_TOOLS = ['tokens.build', 'brand.apply', 'diag.snapshot', 'repl',
+  'release.tag', 'a11y.scan', 'billing.reviewKit', 'billing.switchFixtures',
+  'map', 'schema', 'pipeline'];
 
 test('Read-only tools have readOnlyHint: true', () => {
   for (const tool of READ_ONLY_TOOLS) {

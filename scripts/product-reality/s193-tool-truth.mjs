@@ -11,7 +11,7 @@ const ts = require('typescript');
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const LEDGER_PATH = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
 export const TIERS = ['product-reality', 'contract', 'unit', 'none'];
-const families = new Set(['map', 'schema', 'object', 'repl', 'review']);
+const families = new Set(['map', 'schema', 'object', 'repl']);
 const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
 const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]).sort();
 const quote = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

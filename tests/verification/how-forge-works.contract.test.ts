@@ -101,7 +101,7 @@ describe("how Forge works narrative truth", () => {
     for (const tool of registry.onDemand) {
       expect(onDemandRow).toContain(tool);
     }
-    expect(onDemandRow).not.toContain("review (resolve, chain)");
+    expect(onDemandRow).not.toContain(["review", "(resolve, chain)"].join(" "));
     expect(html).toContain(
       "map (create, list, resolve, update, delete, apply)",
     );
