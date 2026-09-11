@@ -132,7 +132,7 @@ describe('public scoped SVG contract', () => {
     expect((await render(svgInput(input))).svg).toBe(defaultRender.svg);
   });
 
-  it.each([{ theme: 'sepia' }, { theme: 'hc' }, { brand: 'C' }, { brand: 'a' }])('rejects unsupported scope %j at the public schema boundary', scope => {
+  it.each([{ theme: 'sepia' }, { brand: 'C' }, { brand: 'a' }])('rejects unsupported scope %j at the public schema boundary', scope => {
     expect(validateInput({ ...svgInput(inputs[0]!), ...scope })).toBe(false);
     expect(validateInput.errors?.some(error => error.keyword === 'enum')).toBe(true);
     expect(checkDashboard({ schemaVersion: 'v0.1', datasets: [], panels: [], a11y: { description: 'Scope rejection.' }, ...scope })).toBe(false);

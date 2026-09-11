@@ -13,9 +13,17 @@ export interface VizRecipeCapability {
   certifyCoverage: 'certified' | 'uncertified';
   /** Which data-bearing certification path the census actually exercised. */
   certifyProfile: 'cartesian' | 'echarts-data';
+  /** Actual pixels or a typed renderer failure for every admitted theme/brand cell. */
+  renderScopes: Array<{
+    theme: 'light' | 'dark' | 'hc';
+    brand: 'A' | 'B';
+    status: 'rendered' | 'typed-deferred';
+    svgHash?: string;
+    errors?: Array<{ code: string; message: string; severity?: string }>;
+  }>;
   /** Preserve measured booleans per scope; certified coverage never implies conformance. */
   certifyScopes: Array<{
-    theme: 'light' | 'dark';
+    theme: 'light' | 'dark' | 'hc';
     brand: 'A' | 'B';
     coverage: 'certified' | 'uncertified';
     conformant: boolean | null;

@@ -37,6 +37,7 @@
 // operand; it is not a claim that the chart is accurate. On the ECharts path 'pass'
 // additionally requires rulesEvaluated > 0.
 
+import { assertHcSvgPaints } from './hc-svg-paints.js';
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
   renderEChartsToSvg,
@@ -76,7 +77,7 @@ import {
 import { evaluateEChartsRenderContrast } from './certify-echarts-render-contrast.js';
 
 export interface ArtifactCertifyInput {
-  readonly theme?: 'light' | 'dark';
+  readonly theme?: 'light' | 'dark' | 'hc';
   readonly brand?: 'A' | 'B';
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
   readonly spec: unknown;
@@ -173,7 +174,7 @@ export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
   /** Offered rule IDs; distinct from the number whose operands resolved. */
   readonly accuracyRules?: readonly string[];
-  readonly contrastResults?: ReadonlyArray<{ theme: 'light' | 'dark'; brand: 'A' | 'B'; verdict: ContrastVerdict; measured: boolean; evidence: 'render' | 'baked-palette' | 'none'; note: string }>;
+  readonly contrastResults?: ReadonlyArray<{ reason?: 'forced-colors'; theme: 'light' | 'dark' | 'hc'; brand: 'A' | 'B'; verdict: ContrastVerdict; measured: boolean; evidence: 'render' | 'baked-palette' | 'none'; note: string }>;
   readonly coverage?: 'certified' | 'uncertified';
   /**
    * The folded conformance gate. ECharts data-backed calls require passing a11y,
@@ -455,15 +456,17 @@ async function evaluateEChartsRenderedOperand(
 
   let firstSvg: string;
   try {
-    firstSvg = await renderEChartsToSvg(outcome.firstProjected);
+    firstSvg = assertHcSvgPaints(await renderEChartsToSvg(outcome.firstProjected), scope);
   } catch (err) {
     const detail = renderFaultDetail(err);
     const note =
       `The first ECharts render failed (${detail}); renderHash is absent, ` +
-      'render-backed contrast is ungradeable, and stable is false.';
+      (scope.theme === 'hc'
+        ? 'HC contrast remains forced-colors exempt, and stable is false.'
+        : 'render-backed contrast is ungradeable, and stable is false.');
     return {
       stable: false,
-      contrast: 'ungradeable',
+      contrast: scope.theme === 'hc' ? 'exempt' : 'ungradeable',
       contrastNote: withEChartsContrastCaveat(note, 'not-rendered'),
       notes: [note],
     };
@@ -473,7 +476,9 @@ async function evaluateEChartsRenderedOperand(
   let contrast: ContrastVerdict;
   let contrastNote: string;
   try {
-    const grade = evaluateEChartsRenderContrast({
+    const grade = scope.theme === 'hc'
+      ? { contrast: 'exempt' as const, contrastNote: FORCED_COLORS_CONTRAST_NOTE }
+      : evaluateEChartsRenderContrast({
       chartType,
       normalizedSvg: firstSvg,
       projectedOption: outcome.firstProjected,
@@ -499,7 +504,7 @@ async function evaluateEChartsRenderedOperand(
   let renderStable = false;
   const proofNotes: string[] = [];
   try {
-    const secondSvg = await renderEChartsToSvg(outcome.secondProjected);
+    const secondSvg = assertHcSvgPaints(await renderEChartsToSvg(outcome.secondProjected), scope);
     renderStable = renderHash === sha256(secondSvg);
     if (!renderStable) {
       proofNotes.push(
@@ -723,18 +728,20 @@ function uncertifiedVerdict(notes: string[]): ArtifactCertifyOutput {
   };
 }
 
+const FORCED_COLORS_CONTRAST_NOTE = 'Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed.';
+
 export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCertifyOutput> {
   const theme = input?.theme ?? 'light', brand = input?.brand ?? 'A';
-  if (!['light', 'dark'].includes(theme) || !['A', 'B'].includes(brand)) {
-    return { status: 'error', errors: [{ code: 'OODS-V126', message: 'Certification supports themes light/dark and brands A/B.' }] };
+  if (!['light', 'dark', 'hc'].includes(theme) || !['A', 'B'].includes(brand)) {
+    return { status: 'error', errors: [{ code: 'OODS-V126', message: 'Certification supports themes light/dark/hc and brands A/B.' }] };
   }
   const result = await certifyAtScope(input, { theme, brand });
   if (result.status !== 'ok') return result;
-  const verdict = result.pillars?.contrast ?? 'unchecked';
+  const verdict = theme === 'hc' ? 'exempt' : result.pillars?.contrast ?? 'unchecked';
   const graded = verdict === 'pass' || verdict === 'fail';
   const rendered = result.determinism?.renderHash !== undefined;
-  const note = `${result.contrastNote ?? 'No contrast grade was available.'} Scope: ${theme}/${brand}.`;
-  return { ...result, contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: rendered && graded, evidence: rendered ? 'render' : graded ? 'baked-palette' : 'none', note }] };
+  const note = `${theme === 'hc' ? FORCED_COLORS_CONTRAST_NOTE : result.contrastNote ?? 'No contrast grade was available.'} Scope: ${theme}/${brand}.`;
+  return { ...result, ...(theme === 'hc' && result.pillars ? { pillars: { ...result.pillars, contrast: 'exempt' as const } } : {}), contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: rendered && graded, evidence: rendered ? 'render' : graded ? 'baked-palette' : 'none', note, ...(theme === 'hc' ? { reason: 'forced-colors' as const } : {}) }] };
 }
 
 async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): Promise<ArtifactCertifyOutput> {
@@ -777,6 +784,7 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
     if ('failure' in operandVerdict) {
       return { status: 'error', errors: [operandVerdict.failure] };
     }
+    if (scope.theme === 'hc') return echartsContrastVerdict(trait, 'exempt', FORCED_COLORS_CONTRAST_NOTE, operandVerdict);
     // Once an operand reached the render path, its retained projected option and normalized
     // SVG are the sole contrast evidence. Never fall back to the reconstruction grader after
     // a render was attempted (including a typed render fault).
@@ -865,7 +873,9 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
     let contrastNote: string | undefined;
     let gradedSvg: string | undefined;
     try {
-      const pillar = await evaluateContrastPillar(certifySpec, compiled, scope);
+      const pillar = scope.theme === 'hc'
+        ? { contrast: 'exempt' as const, contrastNote: FORCED_COLORS_CONTRAST_NOTE, renderedSvg: undefined }
+        : await evaluateContrastPillar(certifySpec, compiled, scope);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
       gradedSvg = pillar.renderedSvg;
@@ -884,13 +894,15 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
     // spec here. A renderer throw remains a failed determinism proof.
     let renderHash: string | undefined;
     let renderStable = true;
+    const hcRenderNotes: string[] = [];
     try {
-      const firstSvg = gradedSvg ?? await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec);
+      const firstSvg = assertHcSvgPaints(gradedSvg ?? await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec), scope);
       renderHash = sha256(firstSvg);
       renderStable =
-        renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
-    } catch {
+        renderHash === sha256(assertHcSvgPaints(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec), scope));
+    } catch (error) {
       renderStable = false;
+      if (scope.theme === 'hc') hcRenderNotes.push(`HC render proof failed: ${error instanceof Error ? error.message : String(error)}`);
     }
     // The folded stable: the compile proof AND (when a render happened) the render proof.
     const stable = compileStable && renderStable;
@@ -962,7 +974,7 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
       },
       ...(accuracySummary ? { accuracySummary } : {}),
       ...(contrastNote ? { contrastNote } : {}),
-      ...(accuracyNotes.length > 0 ? { notes: accuracyNotes } : {}),
+      ...((accuracyNotes.length + hcRenderNotes.length) > 0 ? { notes: [...accuracyNotes, ...hcRenderNotes] } : {}),
     };
   } catch (err) {
     const name = err instanceof Error ? err.name : 'Error';

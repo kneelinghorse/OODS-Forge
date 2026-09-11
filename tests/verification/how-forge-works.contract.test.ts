@@ -124,10 +124,17 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("the others appear as described placeholders");
     expect(certify.properties.brand.enum).toEqual(["A", "B"]);
     expect(certify.properties.brand.default).toBe("A");
-    expect(certify.properties.theme.enum).toEqual(["light", "dark"]);
+    expect(certify.properties.theme.enum).toEqual(["light", "dark", "hc"]);
     expect(certify.properties.theme.default).toBe("light");
-    expect(html).toContain("It accepts brand A or B and theme light or dark (defaults A/light)");
-    expect(html).toContain("server-side high-contrast chart pixels are unsupported");
+    expect(html).toContain("It accepts brand A or B and theme light, dark or hc (defaults A/light)");
+    expect(html).toContain("HC contrast alone is exempt with reason forced-colors");
+    expect(html).not.toContain("server-side high-contrast chart pixels are unsupported");
+    const recipes = JSON.parse(read("packages/viz-core/src/registry/viz-recipes.v1.json"));
+    const supported = recipes.filter((row: { themes: { hc: boolean } }) => row.themes.hc);
+    expect(supported.map((row: { chartType: string }) => row.chartType)).toEqual(["bar", "line", "area", "scatter"]);
+    for (const tool of ["viz-render", "dashboard-render", "artifact-certify"]) {
+      expect(read(`docs/api/${tool}.md`)).toContain(`hc (${supported.length}/${recipes.length} with measured SVGs; ${recipes.length - supported.length}/${recipes.length} typed-deferred)`);
+    }
     expect(html).not.toContain("takes no brand input");
     expect(html).not.toContain("light theme, brand-independent");
     expect(html).not.toContain("Light theme only.");
@@ -236,13 +243,13 @@ describe("how Forge works narrative truth", () => {
     const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
 
     expect(uniqueCssVariables.size).toBe(916);
-    expect(countTokenLeaves(brandBase)).toBe(44);
+    expect(countTokenLeaves(brandBase)).toBe(45);
     expect(bridgedSlots).toHaveLength(41);
     expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
     expect(BRAND_CONTRAST_RULES).toHaveLength(228);
 
     expect(html).toContain("CSS custom properties (916 variables)");
-    expect(html).toContain("44 leaves each");
+    expect(html).toContain("45 leaves each");
     expect(html).toContain("re-assigns 41 shared theme slots");
     expect(html).toContain(
       "228 brand-contrast rules (57 text/icon pairs per brand per theme)",

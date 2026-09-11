@@ -140,7 +140,7 @@
             "unchecked",
             "exempt"
           ],
-          "description": "Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded."
+          "description": "Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded. HC contrast is exempt with contrastResults reason forced-colors; the server preserves declared colors and makes no numeric contrast claim."
         },
         "accuracy": {
           "type": "string",
@@ -193,7 +193,8 @@
           "theme": {
             "enum": [
               "light",
-              "dark"
+              "dark",
+              "hc"
             ]
           },
           "brand": {
@@ -223,8 +224,46 @@
           },
           "note": {
             "type": "string"
+          },
+          "reason": {
+            "const": "forced-colors",
+            "description": "HC contrast is delegated to the user agent forced-colors palette; no numeric server grade is claimed."
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "theme": {
+                  "const": "hc"
+                }
+              },
+              "required": [
+                "theme"
+              ]
+            },
+            "then": {
+              "required": [
+                "reason"
+              ],
+              "properties": {
+                "verdict": {
+                  "const": "exempt"
+                },
+                "measured": {
+                  "const": false
+                }
+              }
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        ]
       }
     },
     "accuracyRules": {

@@ -22,7 +22,7 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
     if (!schema.objectSchema?.[field]) throw new Error(`Payment chart field '${field}' is absent from objectSchema.`);
   }
   const theme = options.theme ?? schema.theme ?? 'light';
-  if (theme !== 'light' && theme !== 'dark') throw new Error(`Payment chart theme '${theme}' is not supported.`);
+  if (theme !== 'light' && theme !== 'dark' && theme !== 'hc') throw new Error(`Payment chart theme '${theme}' is not supported.`);
   const records = workflowSampleRecords(schema);
   const files: Array<{ path: string; contents: string }> = [];
   const byRecord: Record<string, string> = {};

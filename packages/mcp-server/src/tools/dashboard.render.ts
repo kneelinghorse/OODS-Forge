@@ -661,7 +661,9 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       wantA11y,
       wantA11yEquivalence,
     );
-    const out = await vizRenderHandle({ ...vizInput, brand, theme });
+    const out = await vizRenderHandle({ ...vizInput, brand, theme,
+      ...(theme === 'hc' && wantHtml ? { output: { ...vizInput.output, svg: true } } : {}),
+    });
 
     if (out.status !== 'ok') {
       const issue = out.errors?.[0] ?? { code: 'OODS-V129', message: 'panel failed to render' };

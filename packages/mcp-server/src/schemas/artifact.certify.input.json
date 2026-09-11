@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/artifact.certify.input.json",
   "title": "Artifact certify input",
-  "description": "Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
+  "description": "Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC contrast is exempt with reason forced-colors and no numeric grade; determinism, a11y and accuracy retain their normal evaluation. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
   "type": "object",
   "required": [
     "spec"
@@ -42,10 +42,11 @@
       "type": "string",
       "enum": [
         "light",
-        "dark"
+        "dark",
+        "hc"
       ],
       "default": "light",
-      "description": "CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope."
+      "description": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
     },
     "brand": {
       "type": "string",

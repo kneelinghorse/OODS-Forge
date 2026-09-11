@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /** Live capability measurements. Product imports are ONLY the four public handlers.
  * Operands are retained copies of the existing fidelity cases, not registry expectations.
- * Invalid HC/dashboard requests are tested at their public JSON-schema boundary first.
+ * Every theme and dashboard request is tested at its public JSON-schema boundary first.
  */
 import assert from 'node:assert/strict';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -47,18 +47,32 @@ export async function measureVizCensus() {
     const defaultRender = await render(request);
     assert.equal(defaultRender.status, 'ok', JSON.stringify(defaultRender.errors));
     const scopes: any[] = [];
-    for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] as const) {
+    for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark', 'hc'] as const) {
       assert(validRender({ ...request, theme, brand }));
       const rendered = await render({ ...request, theme, brand });
       const repeated = await render({ ...request, theme, brand });
-      assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
+      if (rendered.status !== 'ok') {
+        assert.equal(theme, 'hc', `${input.chartType}/${theme}/${brand}: existing public scope failed`);
+        assert(rendered.errors?.length && rendered.errors.every(error => error.code && error.message), 'HC deferral requires a measured typed renderer failure');
+        assert.equal(repeated.status, 'error');
+        assert.deepEqual(repeated.errors, rendered.errors, 'HC failure must repeat deterministically');
+        scopes.push({ theme, brand, status: 'typed-deferred', errors: rendered.errors });
+        continue;
+      }
+      assert.equal(repeated.status, 'ok', JSON.stringify(repeated.errors));
+      assert(rendered.svg && rendered.svgHash, 'Successful scope requires actual public SVG bytes');
       assert.equal(rendered.svg, repeated.svg, `${input.chartType}/${theme}/${brand} repeat`);
       if (theme === 'light' && brand === 'A') assert.equal(rendered.svg, defaultRender.svg, 'omitted scope equals light/A');
       const data = Object.fromEntries(['hierarchy', 'sankey', 'chord', 'network', 'geo'].filter(key => key in input).map(key => [key, (input as any)[key]]));
       const grade = await certify({ spec: rendered.normalizedSpec!, theme, brand, ...(Object.keys(data).length ? { data } : {}) });
       assert.equal(grade.status, 'ok', JSON.stringify(grade.errors));
       assert.equal(grade.determinism?.renderHash, rendered.svgHash, `${input.chartType}/${theme}/${brand} certify identity`);
-      scopes.push({ theme, brand, svgHash: rendered.svgHash, renderHash: grade.determinism?.renderHash, repeated: true,
+      if (theme === 'hc') {
+        assert.equal(grade.pillars?.contrast, 'exempt', 'HC system-color contrast belongs to the forced-colors browser proof');
+        assert.equal(grade.contrastResults?.[0]?.verdict, 'exempt');
+        assert.match(JSON.stringify(grade.contrastResults), /forced-colors/);
+      }
+      scopes.push({ theme, brand, status: 'rendered', svg: rendered.svg, svgBytes: rendered.svgBytes, svgHash: rendered.svgHash, renderHash: grade.determinism?.renderHash, repeated: true,
         render: rendered.render, a11yDescription: !!rendered.normalizedSpec?.a11y?.description,
         coverage: grade.coverage, conformant: grade.conformant, accuracyRules: grade.accuracyRules,
         accuracySummary: grade.accuracySummary, pillars: grade.pillars, findings: grade.findings,
@@ -75,29 +89,34 @@ export async function measureVizCensus() {
     const drawn = panel?.status === 'ok' && /<svg\b/.test(panel.html ?? '') && !/class="[^"]*oods-placeholder/.test(panel.html ?? '');
     if (dashboardAdmitted) assert(drawn, `${input.chartType} admitted dashboard must draw`);
     const hcAdmitted = !!validRender({ ...request, theme: 'hc' });
-    assert.equal(hcAdmitted, false, 'HC pixels deferred under #1851; remeasure if admitted');
+    assert.equal(hcAdmitted, true, 'HC is part of the public scope boundary');
+    const successfulScopes = scopes.filter(scope => scope.status === 'rendered');
+    const establishedScopes = scopes.filter(scope => scope.theme !== 'hc');
+    const hcScopes = scopes.filter(scope => scope.theme === 'hc');
+    const hcDrawn = hcScopes.length === 2 && hcScopes.every(scope => scope.status === 'rendered');
     const places = placements.filter(place => place.chartType === input.chartType);
     const measured = (['light', 'dark'] as const).filter(theme => scopes.filter(scope => scope.theme === theme).every(scope => scope.contrast.measured));
     const passed = measured.filter(theme => scopes.filter(scope => scope.theme === theme).every(scope => scope.contrast.verdict === 'pass'));
-    const notes = ['HC pixels deferred (#1851); HC token scopes retained.'];
+    const notes = [hcDrawn ? 'HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.' : `HC pixels typed-deferred: ${hcScopes.filter(scope => scope.status === 'typed-deferred').flatMap(scope => scope.errors.map((error: any) => `${error.code}: ${error.message}`)).join('; ')}`];
     if (measured.length) notes.push(`Categorical contrast passes both brands in: ${passed.join(', ') || 'none'}.`);
     if (!dashboardAdmitted) notes.push('Dashboard exclusion (#881): the public panel schema does not admit this type.');
     if (!measured.length) notes.push(`Contrast verdict ${scopes[0].contrast.verdict}; no categorical canvas-ratio measurement claimed.`);
     if (places.length) notes.push(`Static sample chart placement: ${places.map(place => `${place.object}/${place.context}`).join(', ')}; edited form data does not regenerate SVG.`);
     const first = scopes[0];
-    assert(scopes.every(scope => scope.coverage === first.coverage), `${input.chartType}: scope-dependent certification coverage`);
+    assert(successfulScopes.every(scope => scope.coverage === first.coverage), `${input.chartType}: scope-dependent certification coverage`);
     if (first.coverage === 'uncertified' && first.render.engine === 'echarts') {
       assert(first.notes?.length, `${input.chartType}: uncertified operand profile needs a measured reason`);
       notes.push(`Uncertified operand profile: ${first.notes.join(' ')}`);
     }
-    registry.push({ chartType: input.chartType, specEngine: first.render.engine, publicSvg: scopes.every(scope => !!scope.svgHash),
-      dashboardDrawn: drawn ? true : 'excluded (#881)', themes: { light: scopes.filter(scope => scope.theme === 'light').every(scope => !!scope.svgHash), dark: scopes.filter(scope => scope.theme === 'dark').every(scope => !!scope.svgHash), hc: hcAdmitted },
-      brands: ['A', 'B'].filter(brand => scopes.filter(scope => scope.brand === brand).every(scope => !!scope.svgHash)),
-      a11yDescription: scopes.every(scope => scope.a11yDescription), accuracyRules: first.accuracyRules,
+    registry.push({ chartType: input.chartType, specEngine: first.render.engine, publicSvg: establishedScopes.every(scope => !!scope.svgHash),
+      dashboardDrawn: drawn ? true : 'excluded (#881)', themes: { light: scopes.filter(scope => scope.theme === 'light').every(scope => !!scope.svgHash), dark: scopes.filter(scope => scope.theme === 'dark').every(scope => !!scope.svgHash), hc: hcDrawn },
+      brands: ['A', 'B'].filter(brand => establishedScopes.filter(scope => scope.brand === brand).every(scope => !!scope.svgHash)),
+      a11yDescription: successfulScopes.every(scope => scope.a11yDescription), accuracyRules: first.accuracyRules,
       certifyCoverage: first.coverage, certifyProfile: first.render.engine === 'echarts' ? 'echarts-data' : 'cartesian',
-      certifyScopes: scopes.map(({ theme, brand, coverage, conformant, pillars, accuracySummary }) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })),
+      renderScopes: scopes.map(({ theme, brand, status, svgHash, errors }) => ({ theme, brand, status, ...(svgHash ? { svgHash } : {}), ...(errors ? { errors } : {}) })),
+      certifyScopes: successfulScopes.map(({ theme, brand, coverage, conformant, pillars, accuracySummary }) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })),
       contrastMeasured: measured, contrastPassed: passed, chartInApp: places.length ? 'placed' : 'not-placed', notes });
-    observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted });
+    observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted, hcDrawn });
   }
   const accuracyControls = await measureVizAccuracyControls();
   return { registry, observations, placementCompositions: 66, placements, accuracyControls };
@@ -142,6 +161,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     if (writeRegistry) writeFileSync(resolve(root, 'packages/viz-core/src/registry/viz-recipes.v1.json'), JSON.stringify(result.registry, null, 2) + '\n');
   }
   console.log(JSON.stringify({ rows: result.registry.length, scopeIdentities: result.observations.reduce((n, row) => n + row.scopes.length, 0),
+    renderedScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.status === 'rendered').length,
+    typedDeferredScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.status === 'typed-deferred').length,
     certified: result.registry.filter(row => row.certifyCoverage === 'certified').length,
     nonconformantScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.conformant === false).length,
     accuracyControls: result.accuracyControls.length, placements: result.placements }));

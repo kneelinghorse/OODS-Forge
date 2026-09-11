@@ -101,9 +101,9 @@ describe('artifact.certify — contrast engine fault degrades, never errors', ()
       expect(validateOutput(cartesian)).toBe(true);
 
       const echarts = await handle({ spec: buildSankeySpec() });
-      // s191 repairs light/A slot 04; this is a measured pass, not a masked evaluator fault.
+      // s195 hue revision clears both Role-C and the Role-A clean threshold.
       expect(echarts.pillars?.contrast).toBe('pass');
-      expect(echarts.contrastNote).toContain('Distinguishability caution');
+      expect(echarts.contrastNote).not.toContain('Distinguishability caution');
       expect(echarts.contrastNote).not.toContain('synthetic contrast-engine fault');
       expect(validateOutput(echarts)).toBe(true);
     } finally {

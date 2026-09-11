@@ -189,9 +189,12 @@ async function renderCssBundle() {
         destination: 'tokens.css',
         format: 'css/variables',
         filter: (token) => oodsScoping.isBrandToken(token, scope.brand)
-          || (scope.theme !== 'base'
-            && /^viz\.scale\.categorical\.0[1-6]$/.test(token.path.join('.'))
-            && token.filePath === `src/tokens/brands/${scope.brand}/${scope.theme}.json`),
+          || (/^viz\.scale\.categorical\.0[1-6]$/.test(token.path.join('.'))
+            && [
+              'src/tokens/brands/A/base.json',
+              'src/tokens/brands/B/base.json',
+              `src/tokens/brands/${scope.brand}/${scope.theme}.json`,
+            ].includes(token.filePath)),
         options: {
           selector: selectors.join(',\n'),
           outputReferences: false,

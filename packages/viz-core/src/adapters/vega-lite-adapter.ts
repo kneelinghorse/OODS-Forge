@@ -19,7 +19,7 @@ const ORDINAL_SCALE_TYPES = new Set(['band', 'point']);
 // renders is the diverging range that would be graded ("rendered == certified"). A diverging
 // color is a continuous gradient (role-B exempt), so this is a bake, not a graded palette.
 const divergingRange = (scope: TokenScope): readonly string[] => getVizScaleTokens('diverging')
-  .map((token) => toHex(resolveTokenToColor(token, scope) ?? ''))
+  .map((token) => scope.theme === 'hc' ? resolveTokenToColor(token, scope) : toHex(resolveTokenToColor(token, scope) ?? ''))
   .filter((color): color is string => Boolean(color));
 const MARK_TRAIT_MAP = {
   MarkBar: 'bar',

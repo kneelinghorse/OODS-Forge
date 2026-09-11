@@ -4,15 +4,95 @@
   "title": "Viz render output",
   "description": "A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The five Cartesian families return spec (Vega-Lite) and optional echartsSpec; the eight ECharts-primary families omit spec and always return echartsSpec with output.echarts true and reason echarts-primary-family.",
   "type": "object",
-  "required": ["status", "warnings"],
-  "allOf": [{ "if": { "properties": { "status": { "const": "ok" }, "chartType": { "enum": ["bar", "line", "area", "scatter", "heatmap"] } }, "required": ["status", "chartType"] }, "then": { "required": ["spec"] } }, {
-    "if": { "properties": { "status": { "const": "ok" }, "chartType": { "enum": ["treemap", "sunburst", "sankey", "force_graph", "chord", "choropleth", "bubble_map", "flow_map"] } }, "required": ["status", "chartType"] },
-    "then": { "required": ["echartsSpec", "output"], "not": { "required": ["spec"] }, "properties": { "output": { "required": ["echarts", "reason"], "properties": { "echarts": { "const": true } } } } }
-  }],
+  "required": [
+    "status",
+    "warnings"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ok"
+          },
+          "chartType": {
+            "enum": [
+              "bar",
+              "line",
+              "area",
+              "scatter",
+              "heatmap"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "chartType"
+        ]
+      },
+      "then": {
+        "required": [
+          "spec"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ok"
+          },
+          "chartType": {
+            "enum": [
+              "treemap",
+              "sunburst",
+              "sankey",
+              "force_graph",
+              "chord",
+              "choropleth",
+              "bubble_map",
+              "flow_map"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "chartType"
+        ]
+      },
+      "then": {
+        "required": [
+          "echartsSpec",
+          "output"
+        ],
+        "not": {
+          "required": [
+            "spec"
+          ]
+        },
+        "properties": {
+          "output": {
+            "required": [
+              "echarts",
+              "reason"
+            ],
+            "properties": {
+              "echarts": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "status": {
       "type": "string",
-      "enum": ["ok", "error"],
+      "enum": [
+        "ok",
+        "error"
+      ],
       "description": "Whether rendering succeeded."
     },
     "chartType": {
@@ -21,7 +101,10 @@
     },
     "mode": {
       "type": "string",
-      "enum": ["explicit", "suggest"],
+      "enum": [
+        "explicit",
+        "suggest"
+      ],
       "description": "Whether the chart type was supplied explicitly or chosen by the recommender."
     },
     "spec": {
@@ -50,18 +133,34 @@
         "table": {
           "type": "object",
           "description": "Accessible data table. Present when a table could be derived (omitted when the source had no inline rows / the fallback was disabled).",
-          "required": ["caption", "columns", "rows"],
+          "required": [
+            "caption",
+            "columns",
+            "rows"
+          ],
           "properties": {
-            "caption": { "type": "string" },
+            "caption": {
+              "type": "string"
+            },
             "columns": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["field", "label", "isNumeric"],
+                "required": [
+                  "field",
+                  "label",
+                  "isNumeric"
+                ],
                 "properties": {
-                  "field": { "type": "string" },
-                  "label": { "type": "string" },
-                  "isNumeric": { "type": "boolean" }
+                  "field": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "isNumeric": {
+                    "type": "boolean"
+                  }
                 },
                 "additionalProperties": false
               }
@@ -70,16 +169,25 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["cells"],
+                "required": [
+                  "cells"
+                ],
                 "properties": {
                   "cells": {
                     "type": "array",
                     "items": {
                       "type": "object",
-                      "required": ["field", "text"],
+                      "required": [
+                        "field",
+                        "text"
+                      ],
                       "properties": {
-                        "field": { "type": "string" },
-                        "text": { "type": "string" }
+                        "field": {
+                          "type": "string"
+                        },
+                        "text": {
+                          "type": "string"
+                        }
                       },
                       "additionalProperties": false
                     }
@@ -94,10 +202,20 @@
         "narrative": {
           "type": "object",
           "description": "Narrative summary + key findings derived from the data.",
-          "required": ["summary", "keyFindings"],
+          "required": [
+            "summary",
+            "keyFindings"
+          ],
           "properties": {
-            "summary": { "type": "string" },
-            "keyFindings": { "type": "array", "items": { "type": "string" } }
+            "summary": {
+              "type": "string"
+            },
+            "keyFindings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           "additionalProperties": false
         }
@@ -107,13 +225,22 @@
     "suggestion": {
       "type": "object",
       "description": "Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives.",
-      "required": ["patternId", "score"],
+      "required": [
+        "patternId",
+        "score"
+      ],
       "properties": {
-        "patternId": { "type": "string" },
-        "score": { "type": "number" },
+        "patternId": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
         "rationale": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Human-readable scorer signals explaining why this pattern was chosen (data-aware justifications)."
         },
         "confidence": {
@@ -127,11 +254,21 @@
           "description": "Runner-up recommendations, best first.",
           "items": {
             "type": "object",
-            "required": ["patternId", "score", "chartType"],
+            "required": [
+              "patternId",
+              "score",
+              "chartType"
+            ],
             "properties": {
-              "patternId": { "type": "string" },
-              "score": { "type": "number" },
-              "chartType": { "type": "string" }
+              "patternId": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "chartType": {
+                "type": "string"
+              }
             },
             "additionalProperties": false
           }
@@ -143,11 +280,65 @@
       "type": "boolean",
       "description": "Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced)."
     },
-    "svg": {"type": "string", "description": "Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles."},
-    "svgHash": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash."},
-    "svgBytes": {"type": "integer", "minimum": 1, "description": "UTF-8 byte length of svg."},
-    "svgRef": {"type": "string", "description": "Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef."},
-    "render": {"type": "object", "required": ["engine", "width", "height", "theme", "brand"], "properties": {"engine": {"enum": ["vega-lite", "echarts"]}, "width": {"type": "number", "exclusiveMinimum": 0}, "height": {"type": "number", "exclusiveMinimum": 0}, "theme": {"enum": ["light", "dark"]}, "brand": {"enum": ["A", "B"]}}, "additionalProperties": false, "description": "Actual SVG dimensions, primary engine and rendered scope."},
+    "svg": {
+      "type": "string",
+      "description": "Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles."
+    },
+    "svgHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash."
+    },
+    "svgBytes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "UTF-8 byte length of svg."
+    },
+    "svgRef": {
+      "type": "string",
+      "description": "Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef."
+    },
+    "render": {
+      "type": "object",
+      "required": [
+        "engine",
+        "width",
+        "height",
+        "theme",
+        "brand"
+      ],
+      "properties": {
+        "engine": {
+          "enum": [
+            "vega-lite",
+            "echarts"
+          ]
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "theme": {
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        },
+        "brand": {
+          "enum": [
+            "A",
+            "B"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "description": "Actual SVG dimensions, primary engine and rendered scope."
+    },
     "specRef": {
       "type": "string",
       "description": "Temporary reference to the produced spec for pipeline reuse (mirrors the retired chart scaffold schemaRef)."
@@ -171,27 +362,52 @@
     "output": {
       "type": "object",
       "description": "Echoes the normalized output controls used by the renderer.",
-      "required": ["compact"],
+      "required": [
+        "compact"
+      ],
       "properties": {
-        "svg": {"type": "boolean"},
-        "width": {"type": "integer", "minimum": 1},
-        "height": {"type": "integer", "minimum": 1},
-        "compact": { "type": "boolean" },
-        "echarts": { "type": "boolean" },
-        "reason": { "const": "echarts-primary-family", "description": "This chart family requires ECharts, so output.echarts is forced true even when omitted or false." },
-        "includeNormalizedSpec": { "type": "boolean" },
-        "includeA11y": { "type": "boolean" }
+        "svg": {
+          "type": "boolean"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "compact": {
+          "type": "boolean"
+        },
+        "echarts": {
+          "type": "boolean"
+        },
+        "reason": {
+          "const": "echarts-primary-family",
+          "description": "This chart family requires ECharts, so output.echarts is forced true even when omitted or false."
+        },
+        "includeNormalizedSpec": {
+          "type": "boolean"
+        },
+        "includeA11y": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     },
     "errors": {
       "type": "array",
-      "items": { "$ref": "#/$defs/issue" },
+      "items": {
+        "$ref": "#/$defs/issue"
+      },
       "description": "Fatal errors (present and non-empty when status is 'error')."
     },
     "warnings": {
       "type": "array",
-      "items": { "$ref": "#/$defs/issue" },
+      "items": {
+        "$ref": "#/$defs/issue"
+      },
       "description": "Non-fatal issues encountered during rendering."
     },
     "meta": {
@@ -199,7 +415,10 @@
       "properties": {
         "renderer": {
           "type": "string",
-          "enum": ["vega-lite", "echarts"],
+          "enum": [
+            "vega-lite",
+            "echarts"
+          ],
           "description": "Primary renderer for the returned payload."
         },
         "mark": {
@@ -213,7 +432,9 @@
         },
         "fields": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Field names present in the data."
         },
         "inferredFields": {
@@ -221,25 +442,90 @@
           "description": "Inferred field profiles (present in suggest mode).",
           "items": {
             "type": "object",
-            "required": ["name", "type", "role"],
+            "required": [
+              "name",
+              "type",
+              "role"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "type": { "type": "string", "enum": ["quantitative", "temporal", "nominal", "ordinal"] },
-              "role": { "type": "string", "enum": ["measure", "dimension"] },
-              "cardinality": { "type": "integer", "minimum": 0 },
-              "distinctRatio": { "type": "number", "minimum": 0, "maximum": 1 },
-              "min": { "type": "number" },
-              "max": { "type": "number" },
-              "mean": { "type": "number" },
-              "stddev": { "type": "number" },
-              "skew": { "type": "number" },
-              "outlierCount": { "type": "integer", "minimum": 0 },
-              "hasNegative": { "type": "boolean" },
-              "hasZero": { "type": "boolean" },
-              "isInteger": { "type": "boolean" },
-              "temporalGranularity": { "type": "string", "enum": ["year", "quarter", "month", "day", "time"] },
-              "temporalRegular": { "type": "boolean" },
-              "geoKind": { "type": "string", "enum": ["lat", "lon", "region", "none"] }
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "quantitative",
+                  "temporal",
+                  "nominal",
+                  "ordinal"
+                ]
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "measure",
+                  "dimension"
+                ]
+              },
+              "cardinality": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "distinctRatio": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "mean": {
+                "type": "number"
+              },
+              "stddev": {
+                "type": "number"
+              },
+              "skew": {
+                "type": "number"
+              },
+              "outlierCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hasNegative": {
+                "type": "boolean"
+              },
+              "hasZero": {
+                "type": "boolean"
+              },
+              "isInteger": {
+                "type": "boolean"
+              },
+              "temporalGranularity": {
+                "type": "string",
+                "enum": [
+                  "year",
+                  "quarter",
+                  "month",
+                  "day",
+                  "time"
+                ]
+              },
+              "temporalRegular": {
+                "type": "boolean"
+              },
+              "geoKind": {
+                "type": "string",
+                "enum": [
+                  "lat",
+                  "lon",
+                  "region",
+                  "none"
+                ]
+              }
             },
             "additionalProperties": false
           }
@@ -252,13 +538,30 @@
   "$defs": {
     "issue": {
       "type": "object",
-      "required": ["code", "message"],
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
-        "code": { "type": "string" },
-        "message": { "type": "string" },
-        "path": { "type": "string" },
-        "hint": { "type": "string" },
-        "severity": { "type": "string", "enum": ["error", "warning"] }
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning"
+          ]
+        }
       },
       "additionalProperties": false
     }

@@ -14,7 +14,7 @@ DETERMINISM. Two independent compiler/adapter emissions are compared and rendere
 
 CONTRAST. Cartesian charts and ECharts calls with data grade actual rendered paints. Role C checks mark-to-canvas WCAG 3:1; Role A checks categorical CIEDE2000 distinguishability across normal vision and three CVD simulations, retaining recycled-palette duplicates. Missing baked OODS palette bytes cannot produce contrast:'pass'. The three geo families retain the standing contrast exemption with their render evidence; this includes ordinal bubble maps. Spec-only ECharts calls retain the reconstructed palette grade and caveat. Cartesian conformance still fails for fail or ungradeable contrast/accuracy; unchecked and exempt retain their existing semantics. Read every pillar's enum, including ungradeable. contrastResults reports the requested theme/brand and measurement evidence; exemptions do not claim a canvas ratio.
 
-SCOPE. Theme light|dark and brand A|B select the same CSS scope as rendering, default light/A. HC token exports exist, but HC pixels remain deferred. After a release that changes a schema or verdict, reconnect clients that cache tool descriptions and schemas.
+SCOPE. Theme light|dark|hc and brand A|B select the same CSS scope as rendering, default light/A. HC contrast returns exempt, measured:false and reason:forced-colors, with no numeric grade. Accessibility, accuracy and determinism retain their normal evaluation; an actual HC render failure fails determinism and conformance. Four Cartesian types have HC SVG proof; heatmap and the eight ECharts-primary types retain measured undeclared-paint failures. After a release that changes a schema or verdict, reconnect clients that cache tool descriptions and schemas.
 
 **Registration:** auto
 
@@ -24,9 +24,9 @@ Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked again
 
 Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 13 certified / 0 uncertified; uncertified results keep conformant:null.
 
-Measured scope verdicts: 48 conformant / 4 nonconformant / 0 uncertified. Types with a nonconformant scope: bubble_map.
+Measured scope verdicts: 56 conformant / 4 nonconformant / 0 uncertified. Types with a nonconformant scope: bubble_map.
 
-Theme parameters: light (13/13) and dark (13/13); HC pixels (0/13) are deferred. Brand parameters: A, B. Default scope is light/A.
+Theme parameters: light (13/13), dark (13/13) and hc (4/13 with measured SVGs; 9/13 typed-deferred). HC emits declared scope paints verbatim and contrast is forced-colors exempt; actual render failures still fail determinism. Brand parameters: A, B. Default scope is light/A.
 
 Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: OODS-V154, OODS-V155, OODS-V156, OODS-V157, OODS-V158, OODS-V159, OODS-V168, OODS-V169, OODS-V170, OODS-V171, OODS-V172, OODS-V173; applicability and evaluated counts depend on the data operand.
 
@@ -46,11 +46,20 @@ Contrast measurement records actual categorical canvas grades, including failure
 | bubble_map | echarts | true | certified | none (exempt) | not-placed |
 | flow_map | echarts | excluded (#881) | certified | none (exempt) | not-placed |
 
-- HC pixels deferred (#1851); HC token scopes retained.
+- HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.
 - Categorical contrast passes both brands in: light, dark.
 - Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.
 - Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
 - Dashboard exclusion (#881): the public panel schema does not admit this type.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.
 
 ## Input Parameters
 
@@ -63,7 +72,7 @@ Contrast measurement records actual categorical canvas grades, including failure
 | `data.chord` | _ref_ | No |  |  |
 | `data.network` | _ref_ | No |  |  |
 | `data.geo` | _ref_ | No |  |  |
-| `theme` | `light` \| `dark` | No | `"light"` | CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope. |
+| `theme` | `light` \| `dark` \| `hc` | No | `"light"` | CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. No server-side system-color hex palette is invented. |
 | `brand` | `A` \| `B` | No | `"A"` | CSS brand scope, matching viz.render for the same normalized spec and data operand. |
 
 ## Output Shape

@@ -9,6 +9,7 @@
 // is validated against viz.render.output.json after return (so the shape here
 // must stay additionalProperties-clean).
 
+import { assertHcSvgPaints } from './hc-svg-paints.js';
 import {
   adaptChordToECharts,
   adaptGraphToECharts,
@@ -260,6 +261,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
           height: height ?? ECHARTS_SSR_DIMENSIONS.height,
         }))
       : await renderVegaLiteToSvg(out.spec as unknown as VegaLiteSpec, { width, height });
+    assertHcSvgPaints(svg, input);
     const root = /^<svg\b[^>]*>/.exec(svg)?.[0];
     const renderedWidth = Number(root?.match(/\bwidth="([\d.]+)"/)?.[1]);
     const renderedHeight = Number(root?.match(/\bheight="([\d.]+)"/)?.[1]);

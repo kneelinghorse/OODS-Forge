@@ -18,6 +18,7 @@
 // emits an on-brand-by-construction-ready structure with token-var defaults so m04
 // only injects the values.
 
+import { assertHcSvgPaints } from './hc-svg-paints.js';
 import { renderVegaLiteToSvg, renderEChartsToSvg, normalizeEChartsSvg, type VegaLiteSpec } from '@oods/viz-render';
 import { resolveTokenToColor, type TokenScope } from '@oods/viz-core';
 import { contrastRatio } from '@oods/a11y-tools';
@@ -184,7 +185,7 @@ export interface ChartTableData {
 
 export interface ComposeHtmlArgs {
   readonly brand?: ExportBrand;
-  readonly theme?: 'light' | 'dark';
+  readonly theme?: TokenScope['theme'];
   readonly title?: string;
   readonly panels: readonly PanelResult[];
   readonly layout: readonly Placement[];
@@ -222,7 +223,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
     if (!panel) {
       continue;
     }
-    cells.push(await renderPanelCell(panel, placementById.get(id), columns, tableData?.get(id), dataQualityField));
+    cells.push(await renderPanelCell(panel, placementById.get(id), columns, tableData?.get(id), dataQualityField, { theme: args.theme, brand: args.brand }));
   }
 
   const docTitle = title ?? 'Dashboard';
@@ -270,6 +271,7 @@ async function renderPanelCell(
   columns: number,
   table: ChartTableData | undefined,
   dataQualityField: string | undefined,
+  scope: TokenScope,
 ): Promise<string> {
   const style = placement ? ` style="${gridStyle(placement)}"` : '';
 
@@ -291,14 +293,14 @@ async function renderPanelCell(
           }
         : {};
     const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { ...dims });
-    return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
+    return chartCell(panel.title, panel.a11yDescription, assertHcSvgPaints(svg, scope), style, table, dataQualityField);
   }
   if (panel.echartsSpec) {
     const dims = placement && columns > 0
       ? { width: Math.round((placement.w / columns) * NOMINAL_DASHBOARD_WIDTH_PX), height: placement.h * NOMINAL_ROW_HEIGHT_PX }
       : undefined;
     const svg = normalizeEChartsSvg(await renderEChartsToSvg(panel.echartsSpec, dims));
-    return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
+    return chartCell(panel.title, panel.a11yDescription, assertHcSvgPaints(svg, scope), style, table, dataQualityField);
   }
   throw new Error('Chart panel has no renderable spec.');
 }

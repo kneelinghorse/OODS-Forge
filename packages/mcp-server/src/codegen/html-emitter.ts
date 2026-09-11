@@ -87,7 +87,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
         theme: options.theme,
         brand: options.brand ?? 'A',
         // renderDocument already emits the default component CSS exactly once.
-        componentCss: `:root { color-scheme: ${options.theme ?? (schema.theme === 'dark' ? 'dark' : 'light')}; }`,
+        componentCss: `:root { color-scheme: ${options.theme === 'hc' ? 'normal' : options.theme ?? (schema.theme === 'dark' ? 'dark' : 'light')}; }`,
       } : {}),
     });
 

@@ -65,14 +65,26 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
     expect(out.contrastNote).toContain('series-to-paint assignment of the rendered chart');
   });
 
-  it('the repaired six-slot palette clears light/A Role-C with an honest Role-A caution (s191)', async () => {
-    // Fixed hue/chroma, minimal lightness repair: Role-C passes; ΔE00 9.88 stays below the clean target.
+  it('the revised six-slot palette clears Role-C and the Role-A clean threshold (s195)', async () => {
+    // s195 moves only slot05 hue by -0.08 degrees: actual min ΔE00 is 10.01756.
     const out = await grade(
       mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
     );
     expect(out.contrast).toBe('pass');
     expect(out.contrastNote).not.toContain('below 3:1');
+    expect(out.contrastNote).not.toContain('Distinguishability caution');
+  });
+
+  it('the prior below-target palette still emits a caution when explicitly supplied', async () => {
+    const prior = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00'];
+    const out = await grade(mk({
+      color: { field: 'series', type: 'nominal' },
+      values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']),
+      tokens: Object.fromEntries(prior.map((paint, index) => [`--oods-viz-scale-categorical-0${index + 1}`, paint])),
+    }));
+    expect(out.contrast).toBe('pass');
     expect(out.contrastNote).toContain('Distinguishability caution');
+    expect(out.contrastNote).toContain('9.88');
   });
 
   it('a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path)', async () => {

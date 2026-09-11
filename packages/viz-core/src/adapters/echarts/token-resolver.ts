@@ -27,7 +27,7 @@ export function resolveTokenToColor(token: string, scope: TokenScope = DEFAULT_S
   const normalized = normalizeTokenName(token);
   const value = lookupTokenValue(normalized, scope);
   if (value) {
-    return formatColorValue(value);
+    return scope.theme === 'hc' ? value.trim() : formatColorValue(value);
   }
   // Try with --oods- prefix fallback
   const prefixed = normalized.startsWith('--oods-') ? undefined : `--oods-${normalized.slice(2)}`;
@@ -35,7 +35,7 @@ export function resolveTokenToColor(token: string, scope: TokenScope = DEFAULT_S
     return undefined;
   }
   const fallback = lookupTokenValue(prefixed, scope);
-  return fallback ? formatColorValue(fallback) : undefined;
+  return fallback ? (scope.theme === 'hc' ? fallback.trim() : formatColorValue(fallback)) : undefined;
 }
 
 /**

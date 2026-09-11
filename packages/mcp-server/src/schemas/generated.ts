@@ -348,7 +348,7 @@ export namespace ArtifactCertifyInputSchema {
       };
 
   /**
-   * Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.
+   * Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC contrast is exempt with reason forced-colors and no numeric grade; determinism, a11y and accuracy retain their normal evaluation. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.
    */
   export interface ArtifactCertifyInput {
     /**
@@ -368,9 +368,9 @@ export namespace ArtifactCertifyInputSchema {
       geo?: GeoBranch;
     };
     /**
-     * CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope.
+     * CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented.
      */
-    theme?: 'light' | 'dark';
+    theme?: 'light' | 'dark' | 'hc';
     /**
      * CSS brand scope, matching viz.render for the same normalized spec and data operand.
      */
@@ -671,7 +671,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
+       * Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded. HC contrast is exempt with contrastResults reason forced-colors; the server preserves declared colors and makes no numeric contrast claim.
        */
       contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
@@ -699,12 +699,7 @@ export namespace ArtifactCertifyOutputSchema {
      */
     contrastResults?: [
       {
-        theme: 'light' | 'dark';
-        brand: 'A' | 'B';
-        verdict: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
-        measured: boolean;
-        evidence: 'render' | 'baked-palette' | 'none';
-        note: string;
+        [k: string]: any;
       }
     ];
     /**
@@ -1301,7 +1296,7 @@ export namespace CodeGenerateInputSchema {
       /**
        * Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults.
        */
-      theme?: 'light' | 'dark';
+      theme?: 'light' | 'dark' | 'hc';
       /**
        * Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A.
        */
@@ -2193,9 +2188,9 @@ export namespace DashboardRenderInputSchema {
    */
   export interface DashboardRenderInput {
     /**
-     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     * CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented.
      */
-    theme?: 'light' | 'dark';
+    theme?: 'light' | 'dark' | 'hc';
     /**
      * IR version discriminant (V01 convention). A future template/shape change bumps to v0.2.
      */
@@ -2681,7 +2676,7 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical.
+     * Opt-in self-contained dashboard HTML with scoped chart SVG, KPI tiles and error placeholders. Light/dark renders all admitted chart types. HC chart rendering preserves declared token colors; unsupported renderer paints become typed error panels under the existing placeholder/omit policy.
      */
     html?: string;
     /**
@@ -2695,7 +2690,7 @@ export namespace DashboardRenderOutputSchema {
      */
     contentHash?: string;
     /**
-     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
+     * SHA-256 over the exact returned HTML bytes. Successful panels contain scoped SVG; failed panels follow the declared placeholder/omit policy, including measured HC render deferrals. This per-call identity is distinct from a certified runtime-matrix renderHashEpoch claim.
      */
     outputHtmlHash?: string;
     /**
@@ -2715,7 +2710,7 @@ export namespace DashboardRenderOutputSchema {
       /**
        * Echoes an explicitly requested CSS token theme.
        */
-      theme?: 'light' | 'dark';
+      theme?: 'light' | 'dark' | 'hc';
       /**
        * Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed.
        */
@@ -7847,9 +7842,9 @@ export namespace VizRenderInputSchema {
 
   export interface VizRenderInput2 {
     /**
-     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     * CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented.
      */
-    theme?: 'light' | 'dark';
+    theme?: 'light' | 'dark' | 'hc';
     /**
      * CSS token brand for chart pixels. Omission resolves light/A.
      */
@@ -8395,7 +8390,7 @@ export namespace VizRenderOutputSchema {
       engine: 'vega-lite' | 'echarts';
       width: number;
       height: number;
-      theme: 'light' | 'dark';
+      theme: 'light' | 'dark' | 'hc';
       brand: 'A' | 'B';
     };
     /**

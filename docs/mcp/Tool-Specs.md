@@ -281,7 +281,7 @@ Portable React/Vue generation returns OODS-N015 because readiness source/test/de
 Subscription detail declares a read-only `VizAreaPreview.chart` over
 `last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. This public
 UiSchema declaration is rendered through `viz.render` during generation using
-the compose theme and brand (default light/A). React and Vue receive an optional
+the requested `options.theme` (light/dark/hc) and brand (default light/A). The generated HC Subscription/detail area assets are verified in React and Vue under forced colours. React and Vue receive an optional
 typed `svg` prop with a seed default; workflows include one hashed static SVG
 asset per seed record, selected by record id. These sample charts stay fixed
 when the local record is edited; consumers can supply a replacement SVG.
@@ -769,7 +769,7 @@ Renders shared datasets into KPI/chart panels and deterministic self-contained H
 
 Grades the normalized IR returned by `viz.render`. The five Cartesian families certify from the IR alone. ECharts-primary families use the declared operand profile: pass the same `data` branch used to render the chart. That path grades accessibility equivalence, determinism, contrast and the offered accuracy rules, then returns a measured conformance boolean. Conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and at least one evaluated accuracy rule with no detected distortion. Warning-severity accessibility findings and named not-applicable rules remain visible. A certified result may be nonconformant; the measured failures are retained.
 
-Without an ECharts data operand, coverage remains `uncertified` and conformance remains `null`; notes name what could not be evaluated. No Vega-Lite compile is added to the ECharts profile. HTML is rejected with OODS-V126. Scope is A/B and light/dark; HC chart pixels are unsupported.
+Without an ECharts data operand, coverage remains `uncertified` and conformance remains `null`; notes name what could not be evaluated. No Vega-Lite compile is added to the ECharts profile. HTML is rejected with OODS-V126. Scope is A/B and light/dark/hc. HC contrast is exempt with `reason: forced-colors` and no numeric grade; accessibility, accuracy and determinism still evaluate normally. HC SVG proof covers bar, line, area and scatter. Heatmap and all eight ECharts types retain OODS-V165 undeclared-paint failures, which fail certification determinism and conformance. The registry pins the measured failures; no server-side system-colour hex palette is invented.
 
 [Complete input/output reference](../api/artifact-certify.md).
 

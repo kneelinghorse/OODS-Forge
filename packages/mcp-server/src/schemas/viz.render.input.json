@@ -9,10 +9,11 @@
       "type": "string",
       "enum": [
         "light",
-        "dark"
+        "dark",
+        "hc"
       ],
       "default": "light",
-      "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported."
+      "description": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
     },
     "brand": {
       "type": "string",

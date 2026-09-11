@@ -4,7 +4,9 @@
   "title": "Code export input",
   "description": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.",
   "type": "object",
-  "required": ["framework"],
+  "required": [
+    "framework"
+  ],
   "properties": {
     "schema": {
       "$ref": "./repl.ui.schema.json",
@@ -16,12 +18,20 @@
     },
     "framework": {
       "type": "string",
-      "enum": ["react", "vue", "html"],
+      "enum": [
+        "react",
+        "vue",
+        "html"
+      ],
       "description": "Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode)."
     },
     "profile": {
       "type": "string",
-      "enum": ["draft", "build", "release"],
+      "enum": [
+        "draft",
+        "build",
+        "release"
+      ],
       "description": "Validation profile. draft reports non-structural target/contract gaps, including workflow-state contract gaps, as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence."
     },
     "releaseEvidence": {
@@ -29,12 +39,24 @@
       "additionalProperties": false,
       "description": "Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash.",
       "properties": {
-        "rendered": { "$ref": "#/$defs/releaseEvidenceItem" },
-        "interaction": { "$ref": "#/$defs/releaseEvidenceItem" },
-        "accessibility": { "$ref": "#/$defs/releaseEvidenceItem" },
-        "theme": { "$ref": "#/$defs/releaseEvidenceItem" },
-        "determinism": { "$ref": "#/$defs/releaseEvidenceItem" },
-        "performance": { "$ref": "#/$defs/releaseEvidenceItem" }
+        "rendered": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "interaction": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "theme": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "determinism": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "performance": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        }
       }
     },
     "options": {
@@ -42,12 +64,19 @@
       "properties": {
         "theme": {
           "type": "string",
-          "enum": ["light", "dark"],
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
           "description": "Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults."
         },
         "brand": {
           "type": "string",
-          "enum": ["A", "B"],
+          "enum": [
+            "A",
+            "B"
+          ],
           "description": "Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A."
         },
         "typescript": {
@@ -57,7 +86,11 @@
         },
         "styling": {
           "type": "string",
-          "enum": ["inline", "tokens", "tailwind"],
+          "enum": [
+            "inline",
+            "tokens",
+            "tailwind"
+          ],
           "default": "tokens",
           "description": "React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error."
         }
@@ -69,8 +102,16 @@
   "allOf": [
     {
       "anyOf": [
-        { "required": ["schema"] },
-        { "required": ["schemaRef"] }
+        {
+          "required": [
+            "schema"
+          ]
+        },
+        {
+          "required": [
+            "schemaRef"
+          ]
+        }
       ]
     }
   ],
@@ -78,9 +119,15 @@
     "releaseEvidenceItem": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "artifactContentHash", "reference"],
+      "required": [
+        "status",
+        "artifactContentHash",
+        "reference"
+      ],
       "properties": {
-        "status": { "const": "passed" },
+        "status": {
+          "const": "passed"
+        },
         "artifactContentHash": {
           "type": "string",
           "pattern": "^sha256:[a-f0-9]{64}$",
