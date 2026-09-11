@@ -361,7 +361,8 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     return content;
   };
   const json = file => JSON.parse(bytes(file).toString('utf8'));
-  const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+  // Full sprint evidence inventories can exceed Node's default 1 MiB buffer.
+  const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trim();
   assert.equal(git(['rev-parse', executionHead]), executionHead, 'Execution head must be a full immutable commit id.');
   assert.equal(git(['rev-parse', reviewHead]), reviewHead, 'Review head must be a full immutable commit id.');
   const changedPaths = (before, after) => git(['diff', '--name-status', '--no-renames', before, after]).split('\n').filter(Boolean)
