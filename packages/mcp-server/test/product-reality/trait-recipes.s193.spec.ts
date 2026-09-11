@@ -54,6 +54,15 @@ describe('nine declared non-visualization recipes', () => {
       const generated = await generate({ schema: result.schema, framework, profile: 'build' });
       expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
       expect(generated.code).toContain(`<${component}`);
+      if (component === 'ColorStatePicker' && framework === 'react') {
+        // The recipe emits the selected string, not its nested Select's DOM event.
+        expect(generated.code).toContain('const handleChange_color_state = (value: string)');
+        expect(generated.code).not.toContain('const handleChange_color_state = (event:');
+        expect(generated.code).toContain('value={handleChange_color_stateState}');
+      }
+      if (component === 'ColorStatePicker' && framework === 'vue') {
+        expect(generated.code).toContain(':value="handleChange_color_stateState"');
+      }
       expect(JSON.stringify(generated.errors ?? [])).not.toMatch(/OODS-(V007|N015|N016)/);
     }
     expect(JSON.stringify(result.schema)).toBe(before);

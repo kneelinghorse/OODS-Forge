@@ -67,7 +67,17 @@ async function contextProof(page: Page, url: string, context: Context, schema: U
     await required.fill('');
     assert.equal(await required.evaluate((element: HTMLInputElement) => element.checkValidity()), false, 'Empty required value must fail native validation');
     await required.fill(before);
-    return { seededValues: values, requiredEmptyInvalid: true };
+    const recipeChanges: Record<string, unknown> = {};
+    if (nodes.some(node => node.component === 'ColorStatePicker')) {
+      const picker = page.locator('[data-oods-component="ColorStatePicker"] select');
+      const previous = await picker.inputValue();
+      const next = await picker.locator('option:not([disabled])').evaluateAll(options => options.map(option => (option as HTMLOptionElement).value).find(value => value !== (options[0]?.parentElement as HTMLSelectElement)?.value));
+      assert(next !== undefined, 'Color state recipe needs a second declared value to prove its writer');
+      await picker.selectOption(next);
+      assert.equal(await picker.inputValue(), next, 'Typed color selection must survive the generated parent state update');
+      recipeChanges.ColorStatePicker = { previous, selected: next };
+    }
+    return { seededValues: values, requiredEmptyInvalid: true, recipeChanges };
   }
   if (context === 'detail') {
     const editable = await page.locator('input:not([readonly]):not([disabled]):not([type="hidden"]):not([type="search"]),textarea:not([readonly]):not([disabled])').count();

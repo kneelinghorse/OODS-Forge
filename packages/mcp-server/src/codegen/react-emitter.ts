@@ -234,6 +234,7 @@ function reactControlledProp(occurrence: LocalBindingOccurrence): string | null 
     || occurrence.component === 'Textarea'
     || occurrence.component === 'StatusSelector'
     || occurrence.component === 'TagInput'
+    || occurrence.component === 'ColorStatePicker'
   ) return 'value';
   if (occurrence.component === 'Tabs') return 'selectedId';
   return null;
@@ -973,6 +974,7 @@ function generateReactLocalHandler(
   if (occurrence.component !== 'Banner') {
     const parameter = occurrence.signature.parameters[0]!;
     const receivesNativeEvent = occurrence.component !== 'Tabs'
+      && occurrence.component !== 'ColorStatePicker'
       && (occurrence.event === 'onChange' || occurrence.event === 'onInput');
     if (receivesNativeEvent) {
       // A shared field may be edited by distinct native controls (for example
