@@ -1,0 +1,103 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{planName}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:98335eace520fe7d3197d707ab8afc5d7526b8110a6970efdaafb8fdc2d924ee"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:060ba6f8b6f7bff42f455cf6b5e0b2c54ec2d0ee7a73432a6c2e750080b96b36"
+  },
+  "code": "import React from 'react';\nimport { Banner, Card, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{planName}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css",
+    "@oods/component-contracts"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:060ba6f8b6f7bff42f455cf6b5e0b2c54ec2d0ee7a73432a6c2e750080b96b36"
+    }
+  },
+  "meta": {
+    "nodeCount": 6,
+    "componentCount": 4
+  }
+}

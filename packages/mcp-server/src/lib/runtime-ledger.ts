@@ -61,7 +61,9 @@ export function summarize(rows: RuntimeCell[]): RuntimeLedger['summary'] {
 export type RuntimeSummary = RuntimeLedger['summary'] & { head: string };
 export function readRuntimeSummary(): RuntimeSummary {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
-  const file = process.env.MCP_RUNTIME_CELLS_PATH ?? path.join(root, 'artifacts/product-reality/sprint-193/m03/runtime-cells.v1.json');
+  const source = path.join(root, 'artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json');
+  const shipped = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../registry/runtime-cells.v1.json');
+  const file = process.env.MCP_RUNTIME_CELLS_PATH ?? (fs.existsSync(source) ? source : shipped);
   const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
   const issues = validateRuntimeLedger(ledger, true);
   if (issues.length) throw new Error(`Runtime ledger rejected: ${issues.join('; ')}`);

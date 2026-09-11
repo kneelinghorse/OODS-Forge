@@ -426,7 +426,10 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_live_refresh_matches_current_capabilities_and_recorded_timestamp(self) -> None:
         expected_components = json.loads(DEFAULT_BASELINE_COMPONENTS_PATH.read_text())
         expected_tokens = json.loads(DEFAULT_BASELINE_TOKENS_PATH.read_text())
-        current_components, current_tokens = generate_structured_payloads(generated_at=expected_components["generatedAt"])
+        current_components, current_tokens = generate_structured_payloads(
+            generated_at=expected_components["generatedAt"],
+            runtime_cells_path=CMOS_ROOT.parent / "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json",
+        )
         self.assertEqual(current_components, expected_components)
         self.assertEqual(current_tokens, expected_tokens)
 

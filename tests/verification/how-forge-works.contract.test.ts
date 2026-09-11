@@ -158,7 +158,11 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("109 React and 109 Vue implementations, 109 HTML mappings");
     expect(html).toContain("verified for 40 and explicitly not applicable for 69 static rows");
     expect(html).toContain("24 native, 84 recipe and 1 alias");
-    expect(nearRoadmap).toContain("24 verified / 51 not-applicable (static) / 34 unavailable");
+    expect(nearRoadmap).toContain("40 verified / 69 not-applicable");
+    expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — BUILT, REVIEW PENDING");
+    expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
+    expect(counts("generatedConsumer", "unavailable")).toBe(43);
+    expect(nearRoadmap).toContain("66/109");
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

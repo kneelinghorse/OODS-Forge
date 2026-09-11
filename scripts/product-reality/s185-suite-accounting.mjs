@@ -211,6 +211,7 @@ export function retainedCaptureReference(aggregatePath, ref, originalRoot) {
 
 /** Decision 1741 permits captured receipts and named derived outputs, never arbitrary artifact fixtures. */
 export function allowedReviewEvidence(file, sprintId = 'sprint-185') {
+  if (sprintId === 'sprint-193') return /^artifacts\/product-reality\/sprint-193\/m07\/(?:(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md))$/.test(file);
   if (sprintId === 'sprint-192') return /^artifacts\/product-reality\/sprint-192\/m07\/(?:(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
   if (sprintId === 'sprint-191') return /^artifacts\/product-reality\/sprint-191\/m05\/(?:(?:four-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
   if (sprintId === 'sprint-190') return /^artifacts\/product-reality\/sprint-190\/m06\/(?:(?:four-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
@@ -339,9 +340,10 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation,
   capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
-  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192'].includes(sprintId), 'Unsupported sprint.');
-  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
-  const baselinePaths = sprintId === 'sprint-192'
+  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193'].includes(sprintId), 'Unsupported sprint.');
+  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
+  const baselinePaths = sprintId === 'sprint-193'
+    ? { sprint192Closeout: baselinePath ?? 'artifacts/product-reality/sprint-192/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-192'
     ? { sprint191Closeout: baselinePath ?? 'artifacts/product-reality/sprint-191/m05/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-191'
     ? { sprint190Closeout: baselinePath ?? 'artifacts/product-reality/sprint-190/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-190'
     ? { sprint189Closeout: baselinePath ?? 'artifacts/product-reality/sprint-189/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-189'
@@ -386,7 +388,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     });
     for (const run of aggregate.runs) {
       const runOutput = { run: run.run, cleanBefore: run.cleanBefore, cleanAfter: run.cleanAfter, suiteExecutionIds: [] };
-      const selected = capture.suiteSelection === 'all' ? (aggregate.sprintId === 'sprint-192' ? S192_SUITES : SUITES) : capture.suiteSelection;
+      const selected = capture.suiteSelection === 'all' ? (['sprint-192', 'sprint-193'].includes(aggregate.sprintId) ? S192_SUITES : SUITES) : capture.suiteSelection;
       assert.deepEqual(run.suites.map(row => row.suite).sort(), [...selected].sort(), 'A captured suite is missing or duplicated.');
       for (const embedded of run.suites) {
         const receiptPath = captureRef(embedded.receipt.path);
@@ -465,7 +467,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     role: 'Retained initial capture only. These executions are neither final closeout comparisons nor historical failure candidates.',
     ...loadCapture(attempt.path, `closeout-attempt-${index + 1}`, attempt.originalReferenceRoot) };
   });
-  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192'].includes(sprintId)) {
+  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193'].includes(sprintId)) {
     assert(closeout.runs.length === 1 && closeoutAttempts.length <= 1, 'Decision 1833 allows one capture and at most one corrective capture.');
     for (const [index, attempt] of closeoutAttempts.entries()) {
       const failures = observedFailures.filter(row => row.cohort === `closeout-attempt-${index + 1}`);
@@ -513,7 +515,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   } else {
     assertEvidenceOnlyHeadChanges(headChanges, sprintId);
     if (timeoutRerun) {
-      assert(['sprint-190','sprint-191','sprint-192'].includes(sprintId));
+      assert(['sprint-190','sprint-191','sprint-192','sprint-193'].includes(sprintId));
       timeoutAcceptance=validateSprint190TimeoutRerun({failures:closeoutFailures,rerun:json(timeoutRerun),readBytes:bytes,executionHead});
       closeoutFailures[0].status='isolated-timeout-disclosed';
     }
@@ -527,7 +529,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   for (const [cohort, baseline] of Object.entries(baselines)) {
     const changed = changedPaths(baseline.measuredHead, executionHead);
     changedAt.set(cohort, changed);
-    for (const currentRun of closeout.runs) for (const baselineRun of baseline.runs) for (const suite of SUITES) {
+    for (const currentRun of closeout.runs) for (const baselineRun of baseline.runs) for (const suite of (sprintId === 'sprint-193' ? S192_SUITES : SUITES)) {
       const oldId = baselineRun.suiteExecutionIds.find(id => executions.find(row => row.id === id).suite === suite);
       const newId = currentRun.suiteExecutionIds.find(id => executions.find(row => row.id === id).suite === suite);
       const old = executionDetails.get(oldId); const current = executionDetails.get(newId);
@@ -583,7 +585,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
         runs: report.runs.map(run => ({ run: run.run, suites: run.suites.map(row => ({ suite: row.suite, exitCode: row.exitCode,
           status: row.status, countsAsReportedHistorically: row.vitest?.tests ?? null, receipt: row.receipt })) })) };
     });
-  const goldenAttribution = sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
+  const goldenAttribution = sprintId === 'sprint-193' ? json('artifacts/product-reality/sprint-193/m07/golden-attribution.json') : sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
   if (goldenAttribution) for (const row of goldenAttribution.files) {
     assert.equal(hash(bytes(row.file)), row.afterSha256, `m03 golden changed: ${row.file}`);
     assert.equal(hash(execFileSync('git', ['show', `${goldenAttribution.beforeHead}:${row.file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 })), row.beforeSha256);
@@ -599,7 +601,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
       tokenDifferences: refs.get(tokenDifferences), files: goldenAttribution.files },
       laterPixelGoldenChanges: [], disclosure: 'The m02 dashboard migration precedes the one m03 scope migration. All 15 m03 file hashes are verified unchanged at closeout.' };
   }
-  return { schemaVersion: '1.0.0', mission: missionId, kind: sprintId === 'sprint-192' ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
+  return { schemaVersion: '1.0.0', mission: missionId, kind: ['sprint-192', 'sprint-193'].includes(sprintId) ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
     headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout && !postCaptureDerivation,
       ...(derivationAcceptance ?? {}),
@@ -623,7 +625,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const failurePath = argument('--failures');
   const sprintId = argument('--sprint') ?? 'sprint-185';
   const report = deriveSuiteAccounting({ executionHead: argument('--execution-head'), reviewHead: argument('--review-head'),
-    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
+    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
     ...(argument('--capture') ? { capturePath: argument('--capture') } : {}),
     ...(argument('--baseline') ? { baselinePath: argument('--baseline') } : {}),
     ...(argument('--timeout-rerun') ? { timeoutRerun: argument('--timeout-rerun') } : {}),

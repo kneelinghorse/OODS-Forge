@@ -46,11 +46,11 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   domains: 14,
   objects: 8,
   schemas: 52,
-  traits: 68,
+  traits: 76,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
-  // Sprint 192 retains the measured 2026-09-10 component/token refresh pair.
-  "artifacts/structured-data": 29,
+  // Sprint 193 retains the dated public/runtime-projected component/token refresh pairs.
+  "artifacts/structured-data": 37,
 });
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([
@@ -543,7 +543,7 @@ function allowedCmosProvenance(relative) {
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
     relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||
-    /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
+    /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}(?:-s193-m0[457])?|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
       relative,
     ) ||
     /^traits\/viz\/layout-facet\.trait\.(?:ts|yaml)$/.test(relative)
