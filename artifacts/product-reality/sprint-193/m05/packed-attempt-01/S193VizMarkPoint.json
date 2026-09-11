@@ -1,0 +1,223 @@
+{
+  "object": {
+    "name": "S193VizMarkPoint",
+    "version": "1.1.0",
+    "domain": "core.catalog",
+    "description": "Canonical catalog entry combining pricing, lifecycle, and merchandising metadata.",
+    "tags": [
+      "universal",
+      "product",
+      "commerce",
+      "taxonomy"
+    ]
+  },
+  "traits": [
+    {
+      "name": "content/Labelled",
+      "alias": "ProductLabel"
+    },
+    {
+      "name": "lifecycle/Stateful",
+      "parameters": {
+        "states": [
+          "draft",
+          "in_review",
+          "active",
+          "retired"
+        ],
+        "initialState": "draft"
+      }
+    },
+    {
+      "name": "lifecycle/Timestampable",
+      "parameters": {
+        "recordedEvents": [
+          "created",
+          "spec_updated",
+          "price_changed",
+          "retired"
+        ],
+        "timezone": "UTC"
+      }
+    },
+    {
+      "name": "financial/Priceable",
+      "parameters": {
+        "supportedCurrencies": [
+          "USD",
+          "EUR",
+          "GBP",
+          "AUD"
+        ],
+        "defaultCurrency": "USD",
+        "pricingModels": [
+          "one_time",
+          "subscription",
+          "usage_based"
+        ],
+        "billingIntervals": [
+          "one_time",
+          "month",
+          "year"
+        ],
+        "taxBehavior": "exclusive"
+      }
+    },
+    {
+      "name": "core/Classifiable",
+      "alias": "ProductClassification",
+      "parameters": {
+        "classification_mode": "taxonomy",
+        "hierarchy_storage_model": "materialized_path",
+        "tag_policy": "locked",
+        "max_tags": 8,
+        "require_primary_category": true
+      }
+    },
+    {
+      "name": "behavioral/Searchable",
+      "parameters": {
+        "placeholder": "Search products...",
+        "debounceMs": 300
+      }
+    },
+    {
+      "name": "behavioral/Filterable",
+      "parameters": {
+        "filterMode": "immediate",
+        "showFilterCount": true
+      }
+    },
+    {
+      "name": "behavioral/Pageable",
+      "parameters": {
+        "defaultPageSize": 25,
+        "pageSizeOptions": [
+          10,
+          25,
+          50,
+          100
+        ]
+      }
+    },
+    {
+      "name": "viz/MarkPoint",
+      "parameters": {
+        "renderIntent": "{\"chartType\":\"scatter\",\"encodings\":{\"x\":{\"field\":\"value\",\"type\":\"quantitative\"},\"y\":{\"field\":\"other\",\"type\":\"quantitative\"},\"shape\":{\"field\":\"category\",\"type\":\"nominal\"}}}",
+        "previewSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#FDF3DE\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h317v135h-317Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"317\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"317\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"317\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"317\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"317\" y2=\"0\" stroke=\"#DAD0BA\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Value' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,135.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(29,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(58,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(86,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(115,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(144,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(173,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(202,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(231,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(259,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(288,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(317,0)\" x2=\"0\" y2=\"5\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(28.81818181818182,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">2</text><text text-anchor=\"middle\" transform=\"translate(57.63636363636364,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">4</text><text text-anchor=\"middle\" transform=\"translate(86.45454545454545,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">6</text><text text-anchor=\"middle\" transform=\"translate(115.27272727272728,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">8</text><text text-anchor=\"middle\" transform=\"translate(144.0909090909091,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">10</text><text text-anchor=\"middle\" transform=\"translate(172.9090909090909,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">12</text><text text-anchor=\"middle\" transform=\"translate(201.72727272727272,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">14</text><text text-anchor=\"middle\" transform=\"translate(230.54545454545456,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">16</text><text text-anchor=\"middle\" transform=\"translate(259.3636363636364,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">18</text><text text-anchor=\"middle\" transform=\"translate(288.1818181818182,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(317,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">22</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"317\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(158.5,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Other' for a linear scale with values from 0 to 20\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,104.25)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,70.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,36.75)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#4B4D5A\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"0\" y2=\"-135\" stroke=\"#D6DAE4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,67.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#18233C\" opacity=\"1\">Other</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Value: 12; Other: 7\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(172.9090909090909,87.75)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Value: 18; Other: 13\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(259.3636363636364,47.25)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Value: 22; Other: 12\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(317,54)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/><path aria-label=\"Value: 15; Other: 20\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(216.13636363636363,0)\" d=\"M2.739,0A2.739,2.739,0,1,1,-2.739,0A2.739,2.739,0,1,1,2.739,0\" stroke=\"#416CD9\" stroke-width=\"2\" opacity=\"0.7\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Point chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#18233C\" opacity=\"1\">Point chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>"
+      }
+    }
+  ],
+  "schema": {
+    "product_id": {
+      "type": "uuid",
+      "required": true,
+      "description": "Primary identifier for the product listing."
+    },
+    "sku": {
+      "type": "string",
+      "required": true,
+      "description": "Merchandising SKU exposed to commerce systems."
+    },
+    "inventory_status": {
+      "type": "string",
+      "required": true,
+      "default": "in_stock",
+      "description": "Availability state synchronized with inventory service.",
+      "validation": {
+        "enum": [
+          "in_stock",
+          "low_stock",
+          "backorder",
+          "discontinued"
+        ]
+      }
+    },
+    "release_channel": {
+      "type": "string",
+      "required": true,
+      "default": "general_availability",
+      "description": "Channel describing how the product is released to customers.",
+      "validation": {
+        "enum": [
+          "alpha",
+          "beta",
+          "limited",
+          "general_availability"
+        ]
+      }
+    },
+    "requires_subscription": {
+      "type": "boolean",
+      "required": true,
+      "default": false,
+      "description": "Indicates whether access to the product requires an active subscription."
+    },
+    "support_level": {
+      "type": "string",
+      "required": false,
+      "description": "SLA tier associated with the product.",
+      "validation": {
+        "enum": [
+          "standard",
+          "premium",
+          "enterprise"
+        ]
+      }
+    },
+    "summary_blurb": {
+      "type": "string",
+      "required": false,
+      "description": "Short merchandising description surfaced in marketing contexts.",
+      "validation": {
+        "maxLength": 160
+      }
+    }
+  },
+  "semantics": {
+    "product_id": {
+      "semantic_type": "product.id",
+      "token_mapping": "tokenMap(product.id.primary)"
+    },
+    "sku": {
+      "semantic_type": "product.sku",
+      "token_mapping": "tokenMap(product.sku.primary)"
+    },
+    "inventory_status": {
+      "semantic_type": "product.inventory.status",
+      "token_mapping": "tokenMap(inventory.status.*)"
+    },
+    "release_channel": {
+      "semantic_type": "product.release.channel",
+      "token_mapping": "tokenMap(product.release.channel)"
+    },
+    "requires_subscription": {
+      "semantic_type": "product.access.requires_subscription",
+      "token_mapping": "tokenMap(product.access.subscription)"
+    }
+  },
+  "tokens": {
+    "product.sku.primary": "var(--text-strong)",
+    "inventory.status.low_stock": "var(--status-warning)",
+    "inventory.status.discontinued": "var(--status-danger)"
+  },
+  "metadata": {
+    "owners": [
+      "product@oods.systems",
+      "commerce@oods.systems"
+    ],
+    "steward": "merchandising@oods.systems",
+    "changelog": [
+      {
+        "version": "1.1.0",
+        "date": "2025-11-18",
+        "description": "Added Classifiable trait (taxonomy mode) for hierarchical categories + breadcrumbs."
+      },
+      {
+        "version": "1.0.0",
+        "date": "2025-10-16",
+        "description": "Initial Universal Quintet baseline."
+      }
+    ]
+  }
+}
