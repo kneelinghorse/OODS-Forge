@@ -45,12 +45,16 @@ export function handlerImports(file, source, root, names) {
   });
 }
 
-export function deriveToolTruth({ root = ROOT, head } = {}) {
+export function deriveToolTruth({ root = ROOT, head, mode = 's194' } = {}) {
   assert.match(head ?? '', /^[0-9a-f]{40}$/);
   const read = file => fs.readFileSync(path.join(root, file), 'utf8');
   const registry = JSON.parse(read('packages/mcp-server/src/tools/registry.json'));
   const names = [...registry.auto, ...registry.onDemand];
-  assert.equal(names.length, 27); assert.equal(new Set(names).size, 27);
+  assert(['s193', 's194'].includes(mode), 'Unknown tool-truth mode');
+  const retired = mode === 's194' ? JSON.parse(read('artifacts/product-reality/sprint-194/m04/retired-tools.json')).retired : [];
+  assert.equal(names.length + retired.length, 27);
+  assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 27);
+  for (const row of retired) assert(row.decisionIds.length > 0 && row.decisionIds.every(Number.isInteger));
   const descriptions = JSON.parse(read('packages/mcp-adapter/tool-descriptions.json'));
   const index = read('packages/mcp-server/src/index.ts');
   const toolSpecs = new Map([...index.matchAll(/'([^']+)':\s*\{\s*modulePath:\s*'([^']+)',\s*inputSchema:\s*'([^']+)'/g)].map(match => [match[1], { handler: match[2], schema: match[3] }]));
@@ -88,13 +92,15 @@ export function deriveToolTruth({ root = ROOT, head } = {}) {
     return { name, registration: registry.auto.includes(name) ? 'auto' : 'on-demand', advertisedClaim, claimHash: hash(serialize(advertisedClaim)), inputSchemaPath, inputSchemaHash: hash(inputBytes), proofTier: TIERS.find(tier => tests[tier]?.length) ?? 'none', testImports: tests, receiptRefs, portableE2E: portableE2ERefs.length > 0, portableE2ERefs, caveats: structuredCaveats };
   });
   const byTier = population => Object.fromEntries(TIERS.map(tier => [tier, population.filter(row => row.proofTier === tier).length]));
-  return { schemaVersion: '1.0.0', head, builderSelfCertified: false, methodology: { proofTier: 'Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.', receiptRefs: 'README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.', portableE2E: 'Literal callTool names in scripts/runtime/e2e.mjs; source coverage only, not a claim this census executed the portable E2E.' }, summary: { entries: rows.length, auto: registry.auto.length, onDemand: registry.onDemand.length, byTier: byTier(rows), autoByTier: byTier(rows.filter(row => row.registration === 'auto')), onDemandByTier: byTier(rows.filter(row => row.registration === 'on-demand')), portableE2E: rows.filter(row => row.portableE2E).length }, rows };
+  return { schemaVersion: '1.0.0', ...(mode === 's194' ? { mode, retired } : {}), head, builderSelfCertified: false, methodology: { proofTier: 'Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.', receiptRefs: 'README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.', portableE2E: 'Literal callTool names in scripts/runtime/e2e.mjs; source coverage only, not a claim this census executed the portable E2E.' }, summary: { entries: rows.length, auto: registry.auto.length, onDemand: registry.onDemand.length, byTier: byTier(rows), autoByTier: byTier(rows.filter(row => row.registration === 'auto')), onDemandByTier: byTier(rows.filter(row => row.registration === 'on-demand')), portableE2E: rows.filter(row => row.portableE2E).length }, rows };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const headIndex = process.argv.indexOf('--head');
   const head = headIndex < 0 ? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim() : process.argv[headIndex + 1];
-  const ledger = deriveToolTruth({ head });
+  const modeIndex = process.argv.indexOf('--mode');
+  const mode = modeIndex < 0 ? 's194' : process.argv[modeIndex + 1];
+  const ledger = deriveToolTruth({ head, mode });
   if (process.argv.includes('--check')) assert.equal(fs.readFileSync(path.join(ROOT, LEDGER_PATH), 'utf8'), serialize(ledger));
   else fs.writeFileSync(path.join(ROOT, LEDGER_PATH), serialize(ledger));
   console.log(serialize({ head, ...ledger.summary }));

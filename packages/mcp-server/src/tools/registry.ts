@@ -30,7 +30,6 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'pipeline',
     'health',
     'registry.snapshot',
-    'viz.compose',
     'viz.render',
     'dashboard.render',
     'artifact.certify',
@@ -39,14 +38,12 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'schema',
     'object',
     'repl',
-    'review',
   ],
   onDemand: [
     'diag.snapshot',
     'billing.reviewKit',
     'billing.switchFixtures',
     'a11y.scan',
-    'release.verify',
     'release.tag',
   ],
 };

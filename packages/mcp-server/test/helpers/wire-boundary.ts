@@ -10,7 +10,7 @@ const specs = new Map([...index.matchAll(/'([^']+)':\s*\{\s*modulePath:\s*'[^']+
 const validators = new Map<string, ReturnType<ReturnType<typeof getAjv>['compile']>>();
 
 /** Validate JSON wire values against the schema actually registered for the tool. */
-export function wire(tool: string, direction: 'input' | 'output', value: unknown): void {
+export function wire<T>(tool: string, direction: 'input' | 'output', value: T): T {
   const key = tool + '.' + direction;
   if (!validators.has(key)) {
     const spec = specs.get(tool);
@@ -19,7 +19,10 @@ export function wire(tool: string, direction: 'input' | 'output', value: unknown
     validators.set(key, (schema.$id ? getAjv().getSchema(schema.$id) : undefined) ?? getAjv().compile(schema));
   }
   const validate = validators.get(key)!;
-  expect(validate(JSON.parse(JSON.stringify(value))), key + ': ' + JSON.stringify(validate.errors)).toBe(true);
+  const json = JSON.parse(JSON.stringify(value)) as T;
+  const valid = validate(json);
+  expect(valid, key + ': ' + JSON.stringify(validate.errors)).toBe(true);
+  return json;
 }
 
 export function retain(name: string, value: unknown): void {

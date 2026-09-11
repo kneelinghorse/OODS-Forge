@@ -225,10 +225,6 @@ function buildErrorCodes(toolName: string): string {
     'map.delete': [
       { code: 'OODS-N004', desc: 'Mapping not found' },
     ],
-    'viz.compose': [
-      { code: 'OODS-V006', desc: 'Unknown component during slot selection' },
-      { code: 'OODS-N001', desc: 'Object not found in registry' },
-    ],
   };
 
   const codes = [...common, ...(specific[toolName] ?? [])];

@@ -66,7 +66,7 @@ beforeAll(() => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const outputSchemaPath = path.resolve(
     __dirname,
-    '../../src/schemas/review.resolve.output.json',
+    '../fixtures/object-catalog/historical-review-resolve.output.json',
   );
   const outputSchema = JSON.parse(fs.readFileSync(outputSchemaPath, 'utf8'));
   validateOutput = ajv.compile(outputSchema);

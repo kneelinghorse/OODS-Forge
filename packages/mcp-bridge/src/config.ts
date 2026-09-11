@@ -108,7 +108,6 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'brand.intake', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'billing.reviewKit', modes: ['dry-run', 'apply'], approval: 'required' },
     { name: 'billing.switchFixtures', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'release.verify', modes: ['dry-run'], approval: 'optional', allow: ['maintainer'] },
     { name: 'release.tag', modes: ['dry-run', 'apply'], approval: 'required', allow: ['maintainer'] },
     { name: 'tokens.build', modes: ['dry-run'], approval: 'optional' },
     { name: 'structuredData.fetch', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
@@ -117,7 +116,6 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'design.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'pipeline', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'registry.snapshot', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'viz.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'viz.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'dashboard.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     // Grouped action-parameter tools (s107-m01/m01b) — delegate to the
@@ -126,7 +124,6 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'schema', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
     { name: 'object', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'repl', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-    { name: 'review', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
   ],
 };
 

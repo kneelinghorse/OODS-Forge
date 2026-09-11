@@ -559,8 +559,10 @@ async function main() {
       cells: 154, pass: 154, typedGap: 0, fail: 0,
       head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
     });
-    assert.deepEqual(health.productReality.tools.byTier, { "product-reality": 7, contract: 12, unit: 4, none: 4 });
-    assert.equal(health.productReality.tools.entries, 27);
+    // s194-m04: retired entries leave the live roster; health must match the shipped ledger.
+    const toolLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/tool-capability-ledger.v1.json"));
+    assert.deepEqual(health.productReality.tools.byTier, toolLedger.summary.byTier);
+    assert.equal(health.productReality.tools.entries, registry.auto.length + registry.onDemand.length);
     assert(
       isInside(runtimeRoot, path.resolve(health.schemas.storeDir)),
       "health schema store escaped extraction root",

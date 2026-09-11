@@ -74,30 +74,29 @@ Full schema and field reference: `docs/mcp/Tool-Specs.md` → "Project-level def
 
 ## Cross-tool semantics
 
-- `schemaRef` TTL: refs returned by `design.compose`, `design.preview`, `viz.compose`, `pipeline`, and `schema.load` last 30 minutes. Persist them with `schema.save` when the workflow spans sessions or multiple review loops.
+- `schemaRef` TTL: refs returned by `design.compose`, `design.preview`, `pipeline`, and `schema.load` last 30 minutes. Persist them with `schema.save` when the workflow spans sessions or multiple review loops.
 - `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. For `repl` (`action: render`), HTML/fragments are returned only when `apply: true`.
 - `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl` (`action: render`) keeps full token CSS by default; opt into compact behavior with `output.compact: true`.
-- Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`. `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`.
+- Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`.
 - Override escape hatch: when `design.compose` returns a low-confidence selection or `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object":"Subscription","context":"detail","preferences":{"componentOverrides":{"tab-0":"Card"}}}`.
 
-## MCP tool surface (27 tools)
+## MCP tool surface (24 tools)
 
 The counts and tool names below are derived from
 `packages/mcp-server/src/tools/registry.json`; use that file as the generation
 source whenever this hand-authored inventory is refreshed.
 
-**Auto-registered (21 tools)** — available by default. The five action families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
+**Auto-registered (19 tools)** — available by default. The four action families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
 
 | Group | Tools |
 |------|-------|
 | Core design/runtime | `tokens.build`, `structuredData.fetch`, `repl` (`render`/`validate`), `brand.apply`, `brand.intake`, `catalog.list`, `health` |
-| Composition + generation | `design.compose`, `design.preview`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview` |
+| Composition + generation | `design.compose`, `design.preview`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview` |
 | Mapping + schema persistence | `map` (`create`/`list`/`resolve`/`update`/`delete`), `schema` (`save`/`load`/`list`/`delete`) |
 | Registry inspection | `object` (`list`/`show`), `registry.snapshot` |
 | Certification | `artifact.certify` |
-| Review | `review` (`resolve`/`chain`) |
 
-**On-demand (6 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
+**On-demand (5 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
 
 | Tool | Purpose |
 |------|---------|
@@ -105,7 +104,6 @@ source whenever this hand-authored inventory is refreshed.
 | `diag.snapshot` | Diagnostics artifact bundle |
 | `billing.reviewKit` | Billing provider comparison kit |
 | `billing.switchFixtures` | Switch billing provider fixtures |
-| `release.verify` | Package reproducibility verification (maintainer only) |
 | `release.tag` | Git tag creation (maintainer only) |
 
 Full contracts: `docs/mcp/Tool-Specs.md` and `docs/api/README.md`

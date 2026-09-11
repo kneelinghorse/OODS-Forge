@@ -17,7 +17,6 @@ describe('dslVersion parameter', () => {
     'repl.render.input.json',
     'code.generate.input.json',
     'pipeline.input.json',
-    'viz.compose.input.json',
   ];
 
   for (const schemaFile of toolsWithDslVersion) {

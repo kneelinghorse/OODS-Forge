@@ -1,0 +1,202 @@
+{
+  "tool": "billing.switchFixtures",
+  "mode": "dry-run",
+  "output": {
+    "artifacts": [],
+    "transcriptPath": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-on-demand-s194-MBMF3l/2026-09-11/billing.switchFixtures/2026-09-11T16-07-04-698Z/transcript.json",
+    "bundleIndexPath": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-on-demand-s194-MBMF3l/2026-09-11/billing.switchFixtures/2026-09-11T16-07-04-698Z/bundle_index.json",
+    "preview": {
+      "summary": "Switch billing fixtures from Stripe to Chargebee.",
+      "notes": [
+        "Subscription: account_key acct_1001 → acct_2042.",
+        "Subscription: account_name Atlas Analytics → Northwind Finance.",
+        "Subscription: account_owner Leslie Alexander → Devon Lane.",
+        "Subscription: account_owner_email leslie.alexander@example.com → devon.lane@example.com.",
+        "Subscription: amount_minor 284000 → 124000.",
+        "Invoice: aging_bucket_days 2 → 0.",
+        "Invoice: balance_minor 284000 → 124000.",
+        "Invoice: billing_contact_email jordan.reed@example.com → casey.harper@example.com.",
+        "Invoice: billing_contact_name Jordan Reed → Casey Harper.",
+        "Invoice: collection_state retrying → pending."
+      ],
+      "diffs": [
+        {
+          "path": "billing/switch/subscription/stripe-to-chargebee.json",
+          "status": "modified",
+          "summary": {
+            "additions": 0,
+            "deletions": 0
+          },
+          "hunks": [],
+          "structured": {
+            "type": "json",
+            "before": {
+              "account_key": "acct_1001",
+              "account_name": "Atlas Analytics",
+              "account_owner": "Leslie Alexander",
+              "account_owner_email": "leslie.alexander@example.com",
+              "amount_minor": "284000",
+              "billing_anchor_day": "1",
+              "billing_interval": "annual",
+              "collection_method": "charge_automatically",
+              "consumed_quantity": "62",
+              "credit_memo_balance_minor": "0",
+              "credit_memo_type": "retention_incentive",
+              "current_period_end": "2025-07-01T00:00:00Z",
+              "current_period_start": "2025-06-01T00:00:00Z",
+              "health_score": "82",
+              "included_quantity": "50",
+              "meter_name": "Active seats",
+              "notes": "Finance running smart retries while success team monitors usage.",
+              "overage_rate_minor": "450",
+              "period_end": "2025-06-30",
+              "period_start": "2025-06-01",
+              "plan_code": "scale",
+              "plan_name": "Scale",
+              "projected_overage_minor": "5400",
+              "provider": "stripe",
+              "provider_subscription_id": "sub_abcd1234",
+              "refund_policy_url": "https://atlas.example.com/policies/refunds",
+              "refundable_until": "2025-07-01T00:00:00Z",
+              "renewal_rate_minor": "284000",
+              "requires_manager_approval": "false",
+              "risk_segment": "at_risk",
+              "samples[0].timestamp": "2025-06-20T00:00:00Z",
+              "samples[0].value": "58",
+              "samples[1].timestamp": "2025-06-23T00:00:00Z",
+              "samples[1].value": "60",
+              "samples[2].timestamp": "2025-06-26T00:00:00Z",
+              "samples[2].value": "62",
+              "status": "delinquent",
+              "status_note": "Renewal invoice retrying after card failure.",
+              "subscription_id": "sub_2025_001",
+              "unit_label": "seats"
+            },
+            "after": {
+              "account_key": "acct_2042",
+              "account_name": "Northwind Finance",
+              "account_owner": "Devon Lane",
+              "account_owner_email": "devon.lane@example.com",
+              "amount_minor": "124000",
+              "billing_anchor_day": "15",
+              "billing_interval": "quarterly",
+              "collection_method": "send_invoice",
+              "consumed_quantity": "840",
+              "credit_memo_balance_minor": "1200",
+              "credit_memo_type": "goodwill",
+              "current_period_end": "2025-07-15T00:00:00Z",
+              "current_period_start": "2025-06-15T00:00:00Z",
+              "health_score": "91",
+              "included_quantity": "1200",
+              "meter_name": "Automations",
+              "notes": "Customer expanding finance workflows across regions.",
+              "overage_rate_minor": "95",
+              "period_end": "2025-06-14",
+              "period_start": "2025-05-15",
+              "plan_code": "plus-quarterly",
+              "plan_name": "Plus",
+              "projected_overage_minor": "0",
+              "provider": "chargebee",
+              "provider_subscription_id": "cb_sub_441",
+              "refund_policy_url": "https://northwind.example.com/refunds",
+              "refundable_until": "2025-07-30T00:00:00Z",
+              "renewal_rate_minor": "124000",
+              "requires_manager_approval": "true",
+              "risk_segment": "growth",
+              "samples[0].timestamp": "2025-06-05T00:00:00Z",
+              "samples[0].value": "780",
+              "samples[1].timestamp": "2025-06-10T00:00:00Z",
+              "samples[1].value": "820",
+              "samples[2].timestamp": "2025-06-14T00:00:00Z",
+              "samples[2].value": "840",
+              "status": "active",
+              "status_note": "Auto renewal confirmed. Payment pending but within terms.",
+              "subscription_id": "sub_cb_441",
+              "unit_label": "runs"
+            }
+          }
+        },
+        {
+          "path": "billing/switch/invoice/stripe-to-chargebee.json",
+          "status": "modified",
+          "summary": {
+            "additions": 0,
+            "deletions": 0
+          },
+          "hunks": [],
+          "structured": {
+            "type": "json",
+            "before": {
+              "aging_bucket_days": "2",
+              "balance_minor": "284000",
+              "billing_contact_email": "jordan.reed@example.com",
+              "billing_contact_name": "Jordan Reed",
+              "collection_state": "retrying",
+              "due_at": "2025-07-08T00:00:00Z",
+              "dunning_step": "reminder_first",
+              "invoice_id": "inv_784512",
+              "invoice_number": "INV-784512",
+              "issued_at": "2025-07-01T00:00:00Z",
+              "last_reminder_at": "2025-07-03T10:00:00Z",
+              "line_items[0].amount_minor": "284000",
+              "line_items[0].description": "Scale plan",
+              "line_items[0].unit_amount_minor": "284000",
+              "memo": "Auto charge failed - card expired.",
+              "payment_source": "card",
+              "payment_terms": "net_7",
+              "portal_url": "https://billing.example.com/invoices/INV-784512",
+              "provider": "stripe",
+              "provider_invoice_id": "in_67890",
+              "provider_status": "open",
+              "subscription_id": "sub_2025_001",
+              "subtotal_minor": "261280",
+              "tax_minor": "22720",
+              "total_minor": "284000"
+            },
+            "after": {
+              "aging_bucket_days": "0",
+              "balance_minor": "124000",
+              "billing_contact_email": "casey.harper@example.com",
+              "billing_contact_name": "Casey Harper",
+              "collection_state": "pending",
+              "due_at": "2025-07-15T00:00:00Z",
+              "dunning_step": "not_applicable",
+              "invoice_id": "inv_cb_9910",
+              "invoice_number": "CB-9910",
+              "issued_at": "2025-06-15T00:00:00Z",
+              "last_reminder_at": "null",
+              "line_items[0].amount_minor": "124000",
+              "line_items[0].description": "Plus plan",
+              "line_items[0].unit_amount_minor": "124000",
+              "memo": "Invoice generated at start of quarter.",
+              "payment_source": "invoice",
+              "payment_terms": "net_30",
+              "portal_url": "https://console.chargebee.com/invoices/CB-9910",
+              "provider": "chargebee",
+              "provider_invoice_id": "cb_inv_9910",
+              "provider_status": "payment_due",
+              "subscription_id": "sub_cb_441",
+              "subtotal_minor": "124000",
+              "tax_minor": "0",
+              "total_minor": "124000"
+            }
+          }
+        }
+      ],
+      "specimens": [
+        "Stripe subscription · sub_2025_001 · status delinquent · $2,840.00",
+        "Chargebee subscription · sub_cb_441 · status active · $1,240.00"
+      ]
+    }
+  },
+  "files": [
+    {
+      "name": "transcript.json",
+      "content": "{\n  \"schemaVersion\": \"1.0\",\n  \"source\": \"mcp-server\",\n  \"command\": \"plan\",\n  \"tool\": \"billing.switchFixtures\",\n  \"args\": {\n    \"payload\": {\n      \"provider\": \"chargebee\"\n    },\n    \"apply\": false,\n    \"options\": {\n      \"approve\": false,\n      \"role\": null\n    }\n  },\n  \"user\": \"system\",\n  \"hostname\": \"Mac\",\n  \"startTime\": \"2026-09-11T16:07:04.698Z\",\n  \"endTime\": \"2026-09-11T16:07:04.711Z\",\n  \"exitCode\": 0,\n  \"artifacts\": [],\n  \"redactions\": [\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_path\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_path\"\n    }\n  ],\n  \"signature\": {\n    \"algo\": \"sha256\",\n    \"hash\": \"5462006666326cdf7a98c92f734b3ad5ad7eca945d457a0f6d5d238dc798693f\"\n  }\n}"
+    },
+    {
+      "name": "bundle_index.json",
+      "content": "{\n  \"schemaVersion\": \"1.0\",\n  \"generatedAt\": \"2026-09-11T16:07:04.712Z\",\n  \"files\": [\n    {\n      \"path\": \"transcript.json\",\n      \"name\": \"transcript.json\",\n      \"purpose\": \"Run transcript\",\n      \"sizeBytes\": 984,\n      \"sha256\": \"47effea0d8f842237d959fc2e8fd2187457dfc7dc05a7666f018210e387ad85b\"\n    }\n  ]\n}"
+    }
+  ]
+}

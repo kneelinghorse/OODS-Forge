@@ -15,8 +15,6 @@ export type DslVersion = '1.0';
 export interface VersionFeatures {
   /** Whether compose supports behavioral trait view extensions. */
   composeViewExtensions: boolean;
-  /** Whether viz.compose supports chart composition. */
-  vizCompose: boolean;
   /** Whether codegen supports Tailwind CVA output. */
   tailwindCva: boolean;
   /** Whether fragment mode is available in repl.render. */
@@ -41,7 +39,6 @@ export const VERSION_REGISTRY: ReadonlyMap<DslVersion, VersionEntry> = new Map([
       released: '2026-03-05',
       features: {
         composeViewExtensions: true,
-        vizCompose: true,
         tailwindCva: true,
         fragmentMode: true,
         deprecationWarnings: true,

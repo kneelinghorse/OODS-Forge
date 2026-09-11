@@ -123,7 +123,7 @@ Contrast measurement records actual categorical canvas grades, including failure
 | `svgBytes` | integer | No | UTF-8 byte length of svg. |
 | `svgRef` | string | No | Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef. |
 | `render` | object | No | Actual SVG dimensions, primary engine and rendered scope. |
-| `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef). |
+| `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors the retired chart scaffold schemaRef). |
 | `specRefCreatedAt` | string | No | ISO timestamp when the specRef was created. |
 | `specRefExpiresAt` | string | No | ISO timestamp when the specRef expires. |
 | `contentHash` | string | No | Deterministic SHA-256 (hex) over the canonicalized primary payload (the Vega-Lite spec, or the JSON-projected ECharts option for ECharts-primary types) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable across calls: the same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02). |

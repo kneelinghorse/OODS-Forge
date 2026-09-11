@@ -66,13 +66,13 @@ describe("how Forge works narrative truth", () => {
       read("packages/mcp-server/src/tools/registry.json"),
     ) as ToolRegistry;
 
-    expect(registry.auto).toHaveLength(21);
-    expect(registry.onDemand).toHaveLength(6);
+    expect(registry.auto).toHaveLength(19);
+    expect(registry.onDemand).toHaveLength(5);
     expect(html).toContain(
-      "27 registered tools (21 auto + 6 on demand), as defined by",
+      "24 registered tools (19 auto + 5 on demand), as defined by",
     );
     expect(html).toContain(
-      "packages/mcp-server/src/tools/registry.json</span>: 21 tools register by default and 6 more",
+      "packages/mcp-server/src/tools/registry.json</span>: 19 tools register by default and 5 more",
     );
     expect(html).toContain(
       `The ${registry.auto.length + registry.onDemand.length}-tool roster comes from`,
@@ -87,7 +87,7 @@ describe("how Forge works narrative truth", () => {
     }
     expect(onDemandRow).not.toContain("review (resolve, chain)");
     expect(html).toContain(
-      "map (create, list, resolve, update, delete, apply) · review (resolve, chain)",
+      "map (create, list, resolve, update, delete, apply)",
     );
   });
 

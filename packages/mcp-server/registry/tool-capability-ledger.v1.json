@@ -1,6 +1,33 @@
 {
   "schemaVersion": "1.0.0",
-  "head": "c12f4af393e3652555e0854c1d550a3ff88b6edf",
+  "mode": "s194",
+  "retired": [
+    {
+      "name": "viz.compose",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Deprecated field-names-only scaffold; viz.render is the data-bound chart tool."
+    },
+    {
+      "name": "review",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Evaluation emits labels without target field/value edits; RFC6902 patch semantics cannot be derived. Internal evaluation and fidelity emitters remain unregistered."
+    },
+    {
+      "name": "release.verify",
+      "decisionIds": [
+        1916,
+        1923
+      ],
+      "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
+    }
+  ],
+  "head": "2f112b6502acf48904f9bed85c5c1f34220b4115",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -8,26 +35,26 @@
     "portableE2E": "Literal callTool names in scripts/runtime/e2e.mjs; source coverage only, not a claim this census executed the portable E2E."
   },
   "summary": {
-    "entries": 27,
-    "auto": 21,
-    "onDemand": 6,
+    "entries": 24,
+    "auto": 19,
+    "onDemand": 5,
     "byTier": {
       "product-reality": 16,
-      "contract": 3,
-      "unit": 4,
-      "none": 4
+      "contract": 6,
+      "unit": 2,
+      "none": 0
     },
     "autoByTier": {
       "product-reality": 16,
-      "contract": 2,
-      "unit": 3,
+      "contract": 1,
+      "unit": 2,
       "none": 0
     },
     "onDemandByTier": {
       "product-reality": 0,
-      "contract": 1,
-      "unit": 1,
-      "none": 4
+      "contract": 5,
+      "unit": 0,
+      "none": 0
     },
     "portableE2E": 4
   },
@@ -304,6 +331,11 @@
           {
             "path": "packages/mcp-server/test/contracts/diag.snapshot-counts.spec.ts",
             "line": 3,
+            "handler": "packages/mcp-server/src/tools/catalog.list.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/diag.snapshot.s194.spec.ts",
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/catalog.list.ts"
           },
           {
@@ -591,11 +623,6 @@
           {
             "path": "packages/mcp-server/test/compose/form-field-differentiation.spec.ts",
             "line": 3,
-            "handler": "packages/mcp-server/src/tools/code.generate.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 5,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1002,7 +1029,7 @@
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 19,
+            "line": 17,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -1099,7 +1126,7 @@
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 680
+          "line": 682
         }
       ],
       "caveats": [
@@ -1166,51 +1193,6 @@
           "file": "packages/mcp-server/src/tools/registry.snapshot.ts",
           "reason": "Draft preferred terms, review decisions and capabilities are surfaced losslessly, not consumed by mapping resolution or generation.",
           "line": 34
-        }
-      ]
-    },
-    {
-      "name": "viz.compose",
-      "registration": "auto",
-      "advertisedClaim": {
-        "description": "(Deprecated; use viz.render) Compose a visualization schema from chart type, data bindings, and/or object viz traits. Returns schemaRef for pipeline reuse. schemaRef includes createdAt/expiresAt (default TTL: 30 minutes). Supports bar, line, area, and point chart types with axis, color, and size encodings. Deprecated in favor of viz.render, which compiles inline data rows into a real, renderable Vega-Lite/ECharts spec; viz.compose returns only a field-name component scaffold and remains callable for back-compat.",
-        "inputSchemaDescription": "Compose a visualization schema from chart type, data bindings, and/or object viz traits. Provide at least one of 'chartType', 'object', or 'traits'."
-      },
-      "claimHash": "sha256:d2c7afcf49ad7eb986324bb90b9c4d3d451c62fcf11250baddf5add6d2acbd0b",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/viz.compose.input.json",
-      "inputSchemaHash": "sha256:cf9dc8ee20b4b51e063d5c0e227321c347cffcab990fd8bf4bb76efa8ef4d07e",
-      "proofTier": "contract",
-      "testImports": {
-        "product-reality": [],
-        "contract": [
-          {
-            "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 18,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          }
-        ],
-        "unit": [
-          {
-            "path": "packages/mcp-server/test/compose/viz-auto-binding.spec.ts",
-            "line": 8,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 2,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          }
-        ]
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": [
-        {
-          "kind": "placeholder",
-          "file": "packages/mcp-server/src/tools/viz.render.ts",
-          "reason": "Deprecated field-name scaffold; it is not the real data-bound renderer or a certifiable artifact.",
-          "line": 5
         }
       ]
     },
@@ -1412,7 +1394,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 616
+          "line": 618
         }
       ],
       "caveats": []
@@ -1513,19 +1495,19 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 570
+          "line": 572
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 574
+          "line": 576
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 578
+          "line": 580
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 582
+          "line": 584
         }
       ],
       "caveats": []
@@ -1683,11 +1665,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 617
+          "line": 619
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 620
+          "line": 622
         }
       ],
       "caveats": []
@@ -1908,12 +1890,12 @@
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 20,
+            "line": 18,
             "handler": "packages/mcp-server/src/tools/schema/list.ts"
           },
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 21,
+            "line": 19,
             "handler": "packages/mcp-server/src/tools/schema/load.ts"
           },
           {
@@ -2114,12 +2096,12 @@
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 16,
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/repl.validate.ts"
           },
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 17,
+            "line": 16,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
           },
           {
@@ -2197,16 +2179,6 @@
           {
             "path": "packages/mcp-server/test/compose/templates.spec.ts",
             "line": 14,
-            "handler": "packages/mcp-server/src/tools/repl.render.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 3,
-            "handler": "packages/mcp-server/src/tools/repl.validate.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 4,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
           },
           {
@@ -2304,83 +2276,13 @@
       "caveats": []
     },
     {
-      "name": "review",
-      "registration": "auto",
-      "advertisedClaim": {
-        "description": "Grouped reconciliation-review tool. Set `action` to resolve (apply a policy bundle to an Object Catalog manifest) or chain (compose the full review-queue → resolve → conflict-detail → apply-summary artifacts). Consolidates the former review.* tools with identical per-action behavior.",
-        "inputSchemaDescription": "Grouped action-parameter tool consolidating the review family (resolve, chain) into one MCP tool. The `action` discriminator selects the per-action body; each branch reproduces the exact per-action input schema (review.resolve.input.json / review.chain.input.json) with `action` added to its allowed properties. Per-action handlers and their behaviour are unchanged — this is a zero-functionality-loss consolidation."
-      },
-      "claimHash": "sha256:786589c6e774f2c5a6792466a86cd11d3bac67560dc97e17c13cb384b227fb11",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/review.input.json",
-      "inputSchemaHash": "sha256:5437c86f72aa8de0a42702c3117b83a2faa718a5c9d26b922813ff7f9aa9aa32",
-      "proofTier": "unit",
-      "testImports": {
-        "product-reality": [],
-        "contract": [],
-        "unit": [
-          {
-            "path": "packages/mcp-server/test/e2e/apply-summary-q3.e2e.spec.ts",
-            "line": 38,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/e2e/review-resolve-q3.e2e.spec.ts",
-            "line": 42,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/codegen/apply-summary-emitter.test.ts",
-            "line": 29,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.chain.test.ts",
-            "line": 2,
-            "handler": "packages/mcp-server/src/tools/review.chain.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.group.test.ts",
-            "line": 31,
-            "handler": "packages/mcp-server/src/tools/review.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.group.test.ts",
-            "line": 32,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.resolve.test.ts",
-            "line": 22,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          }
-        ]
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": [
-        {
-          "kind": "placeholder",
-          "file": "packages/mcp-server/src/tools/review.chain.ts",
-          "reason": "The chain accepts only server-resident allow-listed fixtures.",
-          "line": 14
-        },
-        {
-          "kind": "no-op",
-          "file": "packages/mcp-server/src/codegen/review-policy.ts",
-          "reason": "patch is a policy decision label; this label alone is not evidence of applying a patch to canonical source.",
-          "line": 31
-        }
-      ]
-    },
-    {
       "name": "diag.snapshot",
       "registration": "on-demand",
       "advertisedClaim": {
-        "description": "Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility.",
+        "description": "Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility. Always writes diagnostic receipt artifacts; apply is an ignored bridge-parity key. Does not rebuild tokens or run browser tests.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:2fd20bae146f52ad06ce5fcbbc2dda09f57646cdb8903d2df8f34afe3050579b",
+      "claimHash": "sha256:bbb6089f97ede831d53efe9cbae5492e561f5b76d117dd66efa3bdf6d1c758fc",
       "inputSchemaPath": "packages/mcp-server/src/schemas/generic.input.json",
       "inputSchemaHash": "sha256:c39167851540568dfcbc0981f53277ac12c5084d5a88ec39d74d428ed9170a71",
       "proofTier": "contract",
@@ -2390,6 +2292,11 @@
           {
             "path": "packages/mcp-server/test/contracts/diag.snapshot-counts.spec.ts",
             "line": 4,
+            "handler": "packages/mcp-server/src/tools/diag.snapshot.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/diag.snapshot.s194.spec.ts",
+            "line": 2,
             "handler": "packages/mcp-server/src/tools/diag.snapshot.ts"
           }
         ],
@@ -2410,10 +2317,16 @@
       "claimHash": "sha256:1fb9e53f03ce080e52a10fbf59da980cbf08a34a7b41e019433c7f825ad05697",
       "inputSchemaPath": "packages/mcp-server/src/schemas/billing.reviewKit.input.json",
       "inputSchemaHash": "sha256:44e59451d89ddd75a795aef321597e27d6dfdf90e0b7d465b593b532e2a0218e",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/billing.reviewKit.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/billing.reviewKit.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],
@@ -2431,10 +2344,16 @@
       "claimHash": "sha256:3c3f1485bc775fcf4f6d6c3b9b6eb963c7e0e2ee64f7f2a0e7406fd53215aa2f",
       "inputSchemaPath": "packages/mcp-server/src/schemas/billing.switchFixtures.input.json",
       "inputSchemaHash": "sha256:c829f274ec2b3c601a77a604f77c2541d51859c9022d78f473aed3eb28fd3e3c",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/billing.switchFixtures.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/billing.switchFixtures.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],
@@ -2452,10 +2371,16 @@
       "claimHash": "sha256:46b89ffe6694530d069c6c964fca532185018de7e21c527f03c0e655884a1df6",
       "inputSchemaPath": "packages/mcp-server/src/schemas/a11y.scan.input.json",
       "inputSchemaHash": "sha256:091cfb2613612a40a94fee0190e8da5c632de8ab36b10d4d0ed88e3143e161f2",
-      "proofTier": "unit",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/a11y.scan.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/a11y.scan.ts"
+          }
+        ],
         "unit": [
           {
             "path": "packages/mcp-server/test/a11y/a11y.contract.spec.ts",
@@ -2463,27 +2388,6 @@
             "handler": "packages/mcp-server/src/tools/a11y.scan.ts"
           }
         ]
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": []
-    },
-    {
-      "name": "release.verify",
-      "registration": "on-demand",
-      "advertisedClaim": {
-        "description": "Verify release readiness for specified packages. Checks changelogs, versions, and build artifacts.",
-        "inputSchemaDescription": ""
-      },
-      "claimHash": "sha256:6738cc78270d4f9424312fd5bf165338fe357d97f586162b5c026aeaf0541f10",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/release.verify.input.json",
-      "inputSchemaHash": "sha256:47b4841f09ce133b8775c99d6112bab50794e81ffb71d0d68de43c5f190c280a",
-      "proofTier": "none",
-      "testImports": {
-        "product-reality": [],
-        "contract": [],
-        "unit": []
       },
       "receiptRefs": [],
       "portableE2E": false,
@@ -2500,10 +2404,16 @@
       "claimHash": "sha256:a1ade4fe04e816bbb3635cf133d8a34c4eecc28997178f54655e0efc174e29b5",
       "inputSchemaPath": "packages/mcp-server/src/schemas/release.tag.input.json",
       "inputSchemaHash": "sha256:f47607da0f879b272d102d900cbf80734af019cf506124944c1e62c64f8012b2",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/release.tag.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/release.tag.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],

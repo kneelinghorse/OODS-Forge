@@ -2,7 +2,7 @@
 //
 // Turns inline rows (or a cached datasetRef) into a REAL, data-bound Vega-Lite
 // spec (ECharts opt-in) via the headless @oods/viz-core engine. This replaces
-// the field-names-only viz.compose placeholder: it imports ONLY from
+// the retired field-names-only scaffold: it imports ONLY from
 // @oods/viz-core and never touches the placeholder compose/viz-trait-resolver.
 //
 // Input is AJV-validated against viz.render.input.json before dispatch; output
@@ -585,7 +585,7 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
       }
     }
 
-    // specRef for downstream pipeline reuse (mirrors viz.compose schemaRef).
+    // specRef for downstream pipeline reuse.
     const record = createValueRef(spec, 'viz.render');
     const ref = describeSchemaRef(record);
     out.specRef = ref.ref;

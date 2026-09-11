@@ -65,7 +65,6 @@ Bridge policy excerpt (`configs/agent/policy.json`):
       "ratePerMinute": 20
     },
     { "name": "a11y.scan", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
-    { "name": "release.verify", "modes": ["dry-run"], "approval": "optional", "allow": ["maintainer"], "ratePerMinute": 6 },
     { "name": "release.tag", "modes": ["dry-run", "apply"], "approval": "required", "allow": ["maintainer"], "ratePerMinute": 6 },
     { "name": "tokens.build", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 12 }
   ],

@@ -15,8 +15,8 @@ describe('tool truth derives claims without upgrading source references to runti
   it('reproduces every byte from current source using the recorded census head', () => {
     const ledger = read();
     expect(serialize(deriveToolTruth({ root, head: ledger.head }))).toBe(fs.readFileSync(file, 'utf8'));
-    // s194-m02 adds four brand boundaries; m03 adds map, snapshot, schema, object and structured-data boundaries.
-    expect(ledger.summary).toEqual({ entries: 27, auto: 21, onDemand: 6, byTier: { 'product-reality': 16, contract: 3, unit: 4, none: 4 }, autoByTier: { 'product-reality': 16, contract: 2, unit: 3, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 1, unit: 1, none: 4 }, portableE2E: 4 });
+    // s194-m04 retires two auto tools; five on-demand tools now have real dry-run contracts.
+    expect(ledger.summary).toEqual({ entries: 24, auto: 19, onDemand: 5, byTier: { 'product-reality': 16, contract: 6, unit: 2, none: 0 }, autoByTier: { 'product-reality': 16, contract: 1, unit: 2, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 5, unit: 0, none: 0 }, portableE2E: 4 });
     expect(ledger.rows.filter((row: any) => row.portableE2E).map((row: any) => row.name).sort()).toEqual(['artifact.certify', 'dashboard.render', 'health', 'viz.render']);
     for (const row of ledger.rows) {
       expect(row.claimHash).toMatch(/^sha256:[0-9a-f]{64}$/); expect(row.inputSchemaHash).toMatch(/^sha256:[0-9a-f]{64}$/);
@@ -26,21 +26,21 @@ describe('tool truth derives claims without upgrading source references to runti
   });
   it('ignores comments, type-only and schema-only imports but resolves nested and sibling handlers', () => {
     const imports = handlerImports('packages/mcp-server/test/contracts/probe.spec.ts', `
-      // import { handle } from '../../src/tools/review.js';
-      import type { Handle } from '../../src/tools/review.js';
-      import { type Foo } from '../../src/tools/review.js';
-      import schema from '../../src/schemas/review.input.json';
+      // import { handle } from '../../src/tools/map.js';
+      import type { Handle } from '../../src/tools/map.js';
+      import { type Foo } from '../../src/tools/map.js';
+      import schema from '../../src/schemas/map.input.json';
       import { handle } from '../../src/tools/schema/save.js';
       const render = await import('../../src/tools/viz.render.js');
-    `, root, ['review', 'schema', 'viz.render']);
+    `, root, ['map', 'schema', 'viz.render']);
     expect(imports.map((ref: any) => ref.tool)).toEqual(['schema', 'viz.render']);
     expect(handlerImports('packages/mcp-server/src/tools/__tests__/probe.test.ts', "import { handle } from '../health.js';", root, ['health'])).toMatchObject([{ tool: 'health' }]);
   });
   it.each(['missing-row', 'edited-tier', 'edited-total', 'edited-claim'])('%s cannot be served as a valid census', mutation => {
     const ledger = read();
     if (mutation === 'missing-row') ledger.rows.pop();
-    if (mutation === 'edited-tier') ledger.rows.find((row: any) => row.name === 'review').proofTier = 'product-reality';
-    if (mutation === 'edited-total') ledger.summary.byTier.none = 0;
+    if (mutation === 'edited-tier') ledger.rows.find((row: any) => row.name === 'health').proofTier = 'none';
+    if (mutation === 'edited-total') ledger.summary.byTier.none += 1;
     if (mutation === 'edited-claim') ledger.rows[0].advertisedClaim.description += ' New unsupported promise.';
     expect(() => projectToolSummary(ledger)).toThrow(/Tool ledger rejected/);
   });

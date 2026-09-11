@@ -2,7 +2,7 @@
  * Viz Trait Resolution Engine
  *
  * Resolves viz trait names (from objects or explicit input) into structured
- * configuration for chart composition. Handles all 19 viz trait categories:
+ * configuration for internal trait inspection. Handles all 19 viz trait categories:
  *   - Mark traits (6): bar, line, area, point, scatter, heatmap → chart type
  *   - Encoding traits (6): position-x, position-y, color, size, opacity, shape → axis/scale config
  *   - Layout traits (3): layer, facet, concat → composition strategy
@@ -10,7 +10,17 @@
  *   - Interaction traits (2): tooltip, highlight → interaction components
  */
 
-import type { ChartType, DataBindings } from '../tools/viz.compose.js';
+export type ChartType = 'bar' | 'line' | 'area' | 'point' | 'scatter' | 'heatmap';
+
+export interface DataBindings {
+  x?: string;
+  y?: string;
+  color?: string;
+  size?: string;
+  opacity?: string;
+  shape?: string;
+}
+
 import type { FieldDefinition } from '../objects/types.js';
 
 /* ------------------------------------------------------------------ */

@@ -1,0 +1,132 @@
+{
+  "tool": "billing.reviewKit",
+  "mode": "dry-run",
+  "output": {
+    "artifacts": [],
+    "transcriptPath": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-on-demand-s194-fRdQP6/2026-09-11/billing.reviewKit/2026-09-11T16-07-06-369Z/transcript.json",
+    "bundleIndexPath": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-on-demand-s194-fRdQP6/2026-09-11/billing.reviewKit/2026-09-11T16-07-06-369Z/bundle_index.json",
+    "preview": {
+      "summary": "Billing review kit for Subscription using fixtures: Stripe, Chargebee.",
+      "notes": [
+        "Chargebee: account_key acct_1001 → acct_2042.",
+        "Chargebee: account_name Atlas Analytics → Northwind Finance.",
+        "Chargebee: account_owner Leslie Alexander → Devon Lane.",
+        "Chargebee: account_owner_email leslie.alexander@example.com → devon.lane@example.com.",
+        "Chargebee: amount_minor 284000 → 124000.",
+        "Chargebee: billing_anchor_day 1 → 15."
+      ],
+      "diffs": [
+        {
+          "path": "billing/review-kit/subscription/stripe-vs-chargebee.json",
+          "status": "modified",
+          "summary": {
+            "additions": 0,
+            "deletions": 0
+          },
+          "hunks": [],
+          "structured": {
+            "type": "json",
+            "before": {
+              "account_key": "acct_1001",
+              "account_name": "Atlas Analytics",
+              "account_owner": "Leslie Alexander",
+              "account_owner_email": "leslie.alexander@example.com",
+              "amount_minor": "284000",
+              "billing_anchor_day": "1",
+              "billing_interval": "annual",
+              "collection_method": "charge_automatically",
+              "consumed_quantity": "62",
+              "credit_memo_balance_minor": "0",
+              "credit_memo_type": "retention_incentive",
+              "current_period_end": "2025-07-01T00:00:00Z",
+              "current_period_start": "2025-06-01T00:00:00Z",
+              "health_score": "82",
+              "included_quantity": "50",
+              "meter_name": "Active seats",
+              "notes": "Finance running smart retries while success team monitors usage.",
+              "overage_rate_minor": "450",
+              "period_end": "2025-06-30",
+              "period_start": "2025-06-01",
+              "plan_code": "scale",
+              "plan_name": "Scale",
+              "projected_overage_minor": "5400",
+              "provider": "stripe",
+              "provider_subscription_id": "sub_abcd1234",
+              "refund_policy_url": "https://atlas.example.com/policies/refunds",
+              "refundable_until": "2025-07-01T00:00:00Z",
+              "renewal_rate_minor": "284000",
+              "requires_manager_approval": "false",
+              "risk_segment": "at_risk",
+              "samples[0].timestamp": "2025-06-20T00:00:00Z",
+              "samples[0].value": "58",
+              "samples[1].timestamp": "2025-06-23T00:00:00Z",
+              "samples[1].value": "60",
+              "samples[2].timestamp": "2025-06-26T00:00:00Z",
+              "samples[2].value": "62",
+              "status": "delinquent",
+              "status_note": "Renewal invoice retrying after card failure.",
+              "subscription_id": "sub_2025_001",
+              "unit_label": "seats"
+            },
+            "after": {
+              "account_key": "acct_2042",
+              "account_name": "Northwind Finance",
+              "account_owner": "Devon Lane",
+              "account_owner_email": "devon.lane@example.com",
+              "amount_minor": "124000",
+              "billing_anchor_day": "15",
+              "billing_interval": "quarterly",
+              "collection_method": "send_invoice",
+              "consumed_quantity": "840",
+              "credit_memo_balance_minor": "1200",
+              "credit_memo_type": "goodwill",
+              "current_period_end": "2025-07-15T00:00:00Z",
+              "current_period_start": "2025-06-15T00:00:00Z",
+              "health_score": "91",
+              "included_quantity": "1200",
+              "meter_name": "Automations",
+              "notes": "Customer expanding finance workflows across regions.",
+              "overage_rate_minor": "95",
+              "period_end": "2025-06-14",
+              "period_start": "2025-05-15",
+              "plan_code": "plus-quarterly",
+              "plan_name": "Plus",
+              "projected_overage_minor": "0",
+              "provider": "chargebee",
+              "provider_subscription_id": "cb_sub_441",
+              "refund_policy_url": "https://northwind.example.com/refunds",
+              "refundable_until": "2025-07-30T00:00:00Z",
+              "renewal_rate_minor": "124000",
+              "requires_manager_approval": "true",
+              "risk_segment": "growth",
+              "samples[0].timestamp": "2025-06-05T00:00:00Z",
+              "samples[0].value": "780",
+              "samples[1].timestamp": "2025-06-10T00:00:00Z",
+              "samples[1].value": "820",
+              "samples[2].timestamp": "2025-06-14T00:00:00Z",
+              "samples[2].value": "840",
+              "status": "active",
+              "status_note": "Auto renewal confirmed. Payment pending but within terms.",
+              "subscription_id": "sub_cb_441",
+              "unit_label": "runs"
+            }
+          }
+        }
+      ],
+      "specimens": [
+        "Stripe Subscription · sub_2025_001 · status delinquent · $2,840.00",
+        "Chargebee Subscription · sub_cb_441 · status active · $1,240.00"
+      ]
+    }
+  },
+  "files": [
+    {
+      "name": "transcript.json",
+      "content": "{\n  \"schemaVersion\": \"1.0\",\n  \"source\": \"mcp-server\",\n  \"command\": \"plan\",\n  \"tool\": \"billing.reviewKit\",\n  \"args\": {\n    \"payload\": {\n      \"object\": \"Subscription\",\n      \"fixtures\": [\n        \"stripe\",\n        \"chargebee\"\n      ]\n    },\n    \"apply\": false,\n    \"options\": {\n      \"approve\": false,\n      \"role\": null\n    }\n  },\n  \"user\": \"system\",\n  \"hostname\": \"Mac\",\n  \"startTime\": \"2026-09-11T16:07:06.369Z\",\n  \"endTime\": \"2026-09-11T16:07:06.369Z\",\n  \"exitCode\": 0,\n  \"artifacts\": [],\n  \"redactions\": [\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_string\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_path\"\n    },\n    {\n      \"field\": \"*\",\n      \"reason\": \"configured_path\"\n    }\n  ],\n  \"signature\": {\n    \"algo\": \"sha256\",\n    \"hash\": \"e55a99bf3d9ab01fac644da40dcf341f159e4814635c576c17e04ea1ac330954\"\n  }\n}"
+    },
+    {
+      "name": "bundle_index.json",
+      "content": "{\n  \"schemaVersion\": \"1.0\",\n  \"generatedAt\": \"2026-09-11T16:07:06.370Z\",\n  \"files\": [\n    {\n      \"path\": \"transcript.json\",\n      \"name\": \"transcript.json\",\n      \"purpose\": \"Run transcript\",\n      \"sizeBytes\": 1047,\n      \"sha256\": \"9d9d16591ab433f7553205900e707fbfc394e14b23b00bbc6d0445c2d2751545\"\n    }\n  ]\n}"
+    }
+  ]
+}

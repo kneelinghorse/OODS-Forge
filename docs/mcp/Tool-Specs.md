@@ -6,7 +6,7 @@ For exhaustive per-tool parameter tables across the full live tool surface, also
 
 ## Registration + enablement
 
-Auto tools are registered by default (21 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
+Auto tools are registered by default (19 at the time of writing). On-demand tools are only registered when enabled (5 at the time of writing).
 
 - Enable every on-demand tool: `MCP_TOOLSET=all`
 - Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot`
@@ -57,13 +57,12 @@ Precedence: explicit param → `.oodsrc` value → hardcoded default.
 
 ## Cross-tool semantics
 
-- `schemaRef` TTL: refs returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` (and the `specRef` trio from `viz.render`) expire after 30 minutes. Persist work with `schema.save` before expiry if you need cross-session reuse.
+- `schemaRef` TTL: refs returned by `design.compose`, `pipeline`, and `schema.load` (and the `specRef` trio from `viz.render`) expire after 30 minutes. Persist work with `schema.save` before expiry if you need cross-session reuse.
 - `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. `repl.render` returns HTML/fragments only when `apply: true`.
 - `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl.render` keeps full token CSS by default; opt into compact mode with `output.compact: true`.
 - Trait-name formats vary by tool family:
   - `catalog.list` and `map.*` use canonical structured-data trait names such as `Stateful`, `Labelled`, or `Priceable`
   - `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`
-  - `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`
 
 ## Transport
 
@@ -86,9 +85,9 @@ Response (error):
 
 ---
 
-## Auto tool contracts (21 registry entries)
+## Auto tool contracts (19 registry entries)
 
-The 21 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
 
 ### `tokens.build`
 
@@ -324,7 +323,6 @@ Notes:
 - **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
 - **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
 - **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Supports 13 chart types: 5 tabular (`bar`, `line`, `area`, `scatter`, `heatmap`) in both suggest and explicit mode, plus 8 explicit-only (`treemap`, `sunburst`, `sankey`, `force_graph`, `chord`, `choropleth`, `bubble_map`, `flow_map`).
-- **vs `viz.compose`**: `viz.render` replaces the field-names-only `viz.compose` scaffold. It binds the actual data into `data.values`, so the returned spec is genuinely renderable (proven via `vl.compile` + `vega.parse` goldens), not just AJV-valid. `viz.compose` remains callable but is deprecated.
 - **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
 
 Example input (explicit mode):
@@ -397,7 +395,7 @@ Notes:
 - **Explicit vs suggest**: when `chartType` is set, `encodings` with at least `x` and `y` is required. Omit `chartType` to enter suggest mode, where field profiles are inferred and the recommender returns a `suggestion` (`{ patternId, score }`) alongside `inferredFields` in `meta`.
 - **Output controls**: `output.compact` (default `true`) returns `tokenCssRef` instead of inlining token CSS; `output.echarts` (default `false`) also returns `echartsSpec`; `output.includeNormalizedSpec` (default `false`) also returns the intermediate `NormalizedVizSpec` IR.
 - **Renderability**: the `spec` is a compiled Vega-Lite spec that passes `vl.compile` + `vega.parse` (locked by the render-fidelity goldens), with the input rows bound into `data.values` — a consumer (e.g. Workbench) renders it; the server does not SSR.
-- `specRef`/`specRefCreatedAt`/`specRefExpiresAt`: a TTL reference trio for pipeline reuse, mirroring `viz.compose`'s `schemaRef`.
+- `specRef`/`specRefCreatedAt`/`specRefExpiresAt`: a TTL reference trio for pipeline reuse.
 - Full parameter/output tables: [viz.render](../api/viz-render.md).
 
 ---
@@ -1209,13 +1207,12 @@ These tools are part of the default auto-registered surface and have full parame
 | `schema.delete` | Delete a saved schema | Removes the saved schema and index metadata entry | [schema.delete](../api/schema.md) |
 | `object.list` | Browse canonical OODS objects | Trait filter accepts `lifecycle/Stateful` or suffix form `Stateful` | [object.list](../api/object.md) |
 | `object.show` | Show a full object definition with composed traits and view extensions | Optional context filter narrows the view-extension surface | [object.show](../api/object.md) |
-| `viz.compose` | (Deprecated; use `viz.render`) Compose chart schemas from explicit bindings or object viz traits | Explicit `traits` use viz ids such as `mark-bar` and `encoding-position-x` | [viz.compose](../api/viz-compose.md) |
 
 ---
 
-## On-demand tool contracts (6 registry entries)
+## On-demand tool contracts (5 registry entries)
 
-The 6 on-demand entries come from `packages/mcp-server/src/tools/registry.json`. Enable them via `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`.
+The 5 on-demand entries come from `packages/mcp-server/src/tools/registry.json`. Enable them via `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`.
 
 ### `a11y.scan`
 
@@ -1294,34 +1291,6 @@ Input fields:
 |-------|------|----------|-------------|
 | `provider` | `"stripe"` \| `"chargebee"` | Yes | Target billing provider |
 | `apply` | boolean | No (default `false`) | Record switch artifacts |
-
----
-
-### `release.verify`
-
-- **Input schema**: `packages/mcp-server/src/schemas/release.verify.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/release.verify.output.json`
-- **Policy**: **maintainer only** | writes `${BASE}/${DATE}/**` | timeout 180s | rate 6/min | concurrency 1
-- **Purpose**: Verify package reproducibility and sanity. Packs each package twice and compares SHA256 hashes.
-
-Example input:
-```json
-{ "packages": ["@oods/tokens", "@oods/tw-variants"], "apply": true }
-```
-
-Input fields:
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `packages` | `"@oods/tokens"` \| `"@oods/tw-variants"` \| `"@oods/a11y-tools"` | No | Packages to verify (defaults to all) |
-| `fromTag` | string | No | Git tag to diff changelog from |
-| `apply` | boolean | No | Write verification artifacts |
-
-Output fields:
-| Field | Type | Description |
-|-------|------|-------------|
-| `results` | array | Per-package result: name, version, identical (bool), sha256, sizeBytes, files |
-| `changelogPath` | string | Path to generated changelog |
-| `summary` | string | Human-readable summary |
 
 ---
 

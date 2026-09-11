@@ -1,3 +1,4 @@
+// s194-m04 / CMOS #1922: unregistered historical helper; not an MCP tool.
 /**
  * review.chain — C5 chain composition MCP tool (sprint-105 m04).
  *

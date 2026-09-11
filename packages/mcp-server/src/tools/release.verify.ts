@@ -1,3 +1,4 @@
+// s194-m04 / CMOS #1923: unregistered historical helper; apply:false still rebuilds packages.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

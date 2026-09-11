@@ -83,9 +83,9 @@ test('Annotations object included in list_tools response', () => {
 const READ_ONLY_TOOLS = ['catalog.list', 'structuredData.fetch', 'repl.validate',
   'code.generate', 'design.compose', 'health', 'map.list', 'map.resolve',
   'registry.snapshot', 'schema.load', 'schema.list', 'object.list', 'object.show',
-  'viz.compose'];
+  'viz.render'];
 const WRITE_TOOLS = ['tokens.build', 'brand.apply', 'diag.snapshot', 'repl.render',
-  'release.verify', 'release.tag', 'reviewKit.create', 'a11y.scan',
+  'release.tag', 'reviewKit.create', 'a11y.scan',
   'purity.audit', 'vrt.run', 'billing.reviewKit', 'billing.switchFixtures',
   'map.apply', 'map.create', 'map.update', 'map.delete', 'schema.save', 'schema.delete', 'pipeline'];
 

@@ -80,15 +80,6 @@ describe('OodsClient', () => {
       expect(result.status).toBe('ok');
     });
 
-    it('vizCompose delegates to viz.compose tool', async () => {
-      const { client, mockCall } = createMockClient();
-      mockCall.mockResolvedValue({ status: 'ok', chartType: 'bar' });
-
-      const result = await client.vizCompose({ chartType: 'bar' });
-
-      expect(mockCall).toHaveBeenCalledWith('viz.compose', { chartType: 'bar' });
-      expect(result.status).toBe('ok');
-    });
 
     it('pipeline delegates to pipeline tool', async () => {
       const { client, mockCall } = createMockClient();

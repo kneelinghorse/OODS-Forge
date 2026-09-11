@@ -1,6 +1,6 @@
 # diag.snapshot
 
-> Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility.
+> Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility. Always writes diagnostic receipt artifacts; apply is an ignored bridge-parity key. Does not rebuild tokens or run browser tests.
 
 **Registration:** on-demand
 

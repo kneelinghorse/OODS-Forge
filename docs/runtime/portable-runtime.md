@@ -214,7 +214,6 @@ design.compose
 pipeline
 health
 registry.snapshot
-viz.compose
 viz.render
 dashboard.render
 artifact.certify
@@ -223,7 +222,6 @@ map
 schema
 object
 repl
-review
 ```
 
 Advertisement is not a promise that every host-repository mutation is
