@@ -697,9 +697,8 @@ jobs:
   coverage:
     name: coverage
     runs-on: ubuntu-latest
-    # Product-reality proofs replay committed baselines and launch generated
-    # consumers in Chromium. The expanded suite continues into four sequential
-    # compiler/package proofs after the root coverage run, so retain headroom.
+    # Root coverage and product-reality consumers have independent build/run
+    # budgets; the local test:coverage command still runs both in order.
     timeout-minutes: 30
     steps:
       - name: Checkout repository
@@ -735,8 +734,11 @@ jobs:
       - name: Build tokens
         run: pnpm run build:tokens
 
-      - name: Run coverage suite
-        run: pnpm run test:coverage
+      - name: Build coverage prerequisites
+        run: pnpm run pretest:coverage
+
+      - name: Run root coverage suite
+        run: pnpm run test:coverage:root
 
       - name: Upload coverage artifacts
         if: always()
@@ -745,6 +747,52 @@ jobs:
           name: coverage-${{ github.run_id }}
           path: coverage
           if-no-files-found: warn
+
+  product-reality-consumers:
+    name: product-reality-consumers
+    runs-on: ubuntu-latest
+    # Root coverage and product-reality consumers have independent build/run
+    # budgets; the local test:coverage command still runs both in order.
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright (Chromium)
+        run: pnpm exec playwright install chromium
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build coverage prerequisites
+        run: pnpm run pretest:coverage
+
+      - name: Run product-reality consumers
+        run: pnpm run test:coverage:consumers
 
   scale-determinism:
     name: scale-determinism
