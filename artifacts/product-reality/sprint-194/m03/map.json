@@ -1,0 +1,232 @@
+{
+  "input": {
+    "action": "create",
+    "externalSystem": "s194-external",
+    "externalComponent": "SaveButton",
+    "oodsTraits": [
+      "Stateful"
+    ],
+    "preferred_terms": [
+      {
+        "entity_type": "preferred_term",
+        "id": "term-save-record",
+        "slug": "save-record",
+        "label": "Save Record",
+        "aliases": [
+          "Save",
+          "Store",
+          "Persist"
+        ],
+        "scope": "registry",
+        "domain": "data-management",
+        "source_decision_ids": [
+          "dec-001"
+        ]
+      }
+    ],
+    "disambiguation_decisions": [
+      {
+        "decision_id": "dec-001",
+        "decision_type": "preferred_name",
+        "scope": "registry",
+        "status": "promoted",
+        "target_kind": "preferred_term",
+        "target_id": "term-save-record",
+        "selected_value": "Save Record",
+        "rationale": "Reviewer canonicalized 'Save', 'Store', 'Persist' as 'Save Record'.",
+        "alternatives": [
+          {
+            "value": "Store Record",
+            "score": 0.55,
+            "reasoning": "more general; less domain-clear"
+          },
+          {
+            "value": "Persist Record",
+            "score": 0.31,
+            "reasoning": "technical; less user-facing"
+          }
+        ],
+        "preferred_term_id": "term-save-record",
+        "decided_by": "human",
+        "decided_at": "2026-05-20T16:00:00.000Z"
+      },
+      {
+        "decision_id": "dec-002",
+        "decision_type": "mapping_rejection",
+        "scope": "registry",
+        "status": "accepted",
+        "target_kind": "candidate_object",
+        "target_id": "candidate-form-banner",
+        "selected_value": "rejected",
+        "rationale": "Candidate was visual chrome, not a domain object.",
+        "decided_by": "agent",
+        "decided_at": "2026-05-20T16:05:00.000Z"
+      }
+    ],
+    "capabilities": [
+      {
+        "entity_type": "capability",
+        "id": "cap-save-record",
+        "slug": "save-record",
+        "name": "Save Record",
+        "canonical_verb": "save",
+        "aliases": [
+          "store",
+          "persist"
+        ],
+        "oods_traits": [
+          "Stateful"
+        ],
+        "projection_variant_ids": [
+          "synthetic-button-desktop",
+          "synthetic-button-mobile"
+        ],
+        "preconditions": [
+          {
+            "type": "auth",
+            "description": "User must be signed in.",
+            "confidence": 0.95
+          }
+        ]
+      }
+    ],
+    "propMappings": [
+      {
+        "externalProp": "state",
+        "oodsProp": "status",
+        "coercion": {
+          "type": "enum",
+          "mapping": {
+            "busy": "pending"
+          }
+        }
+      }
+    ],
+    "apply": false
+  },
+  "dry": {
+    "status": "ok",
+    "mapping": {
+      "id": "s194-external-save-button",
+      "externalSystem": "s194-external",
+      "externalComponent": "SaveButton",
+      "oodsTraits": [
+        "Stateful"
+      ],
+      "propMappings": [
+        {
+          "externalProp": "state",
+          "oodsProp": "status",
+          "coercion": {
+            "type": "enum",
+            "mapping": {
+              "busy": "pending"
+            }
+          }
+        }
+      ],
+      "confidence": "manual",
+      "metadata": {
+        "createdAt": "2026-09-11T15:51:36.502Z"
+      }
+    },
+    "etag": "5ea90b6a0e15274bf951383be0c9035237ea496fbc7acd93ac77ac8db534a07b",
+    "applied": false,
+    "warnings": [
+      "Dry run: mapping not persisted. Set apply=true to write to artifacts/structured-data/component-mappings.json."
+    ]
+  },
+  "created": {
+    "status": "ok",
+    "mapping": {
+      "id": "s194-external-save-button",
+      "externalSystem": "s194-external",
+      "externalComponent": "SaveButton",
+      "oodsTraits": [
+        "Stateful"
+      ],
+      "propMappings": [
+        {
+          "externalProp": "state",
+          "oodsProp": "status",
+          "coercion": {
+            "type": "enum",
+            "mapping": {
+              "busy": "pending"
+            }
+          }
+        }
+      ],
+      "confidence": "manual",
+      "metadata": {
+        "createdAt": "2026-09-11T15:51:36.517Z"
+      }
+    },
+    "etag": "a525e61624f5b0dd962904df83392ea419f23ccf9e7772e22113a5872cb6f6c2",
+    "applied": true
+  },
+  "resolved": {
+    "status": "ok",
+    "mapping": {
+      "id": "s194-external-save-button",
+      "externalSystem": "s194-external",
+      "externalComponent": "SaveButton",
+      "oodsTraits": [
+        "Stateful"
+      ],
+      "propMappings": [
+        {
+          "externalProp": "state",
+          "oodsProp": "status",
+          "coercion": {
+            "type": "enum",
+            "mapping": {
+              "busy": "pending"
+            }
+          }
+        }
+      ],
+      "confidence": "manual",
+      "metadata": {
+        "createdAt": "2026-09-11T15:51:36.517Z"
+      }
+    },
+    "propTranslations": [
+      {
+        "externalProp": "state",
+        "oodsProp": "status",
+        "coercionType": "enum",
+        "coercionDetail": {
+          "type": "enum",
+          "mapping": {
+            "busy": "pending"
+          }
+        }
+      }
+    ]
+  },
+  "preferred": {
+    "status": "not_found",
+    "message": "No mapping found for s194-external/Save Record. Use map.list to see available systems, or map.create with apply=true to add one."
+  },
+  "deleted": {
+    "status": "ok",
+    "deleted": {
+      "id": "s194-external-save-button",
+      "externalSystem": "s194-external",
+      "externalComponent": "SaveButton"
+    },
+    "etag": "1f125f6d6ff8bb5311f3bffd84318e78917327d5a82e0a38271314753348dff1"
+  },
+  "absent": {
+    "status": "not_found",
+    "message": "No mapping found for s194-external/savebutton. Use map.list to see available systems, or map.create with apply=true to add one."
+  },
+  "snapshotEtags": [
+    "8a042fbf4d1401d6595ae7e0bd6e8e47bf64343434fc1273024c943607cb1bcd",
+    "4b29ef85121d934d351752c774ca697b4da84800b5e5a67cad983536e91da4fa",
+    "6bacdd415dad81682de7b14e4179609505abc5eb18a77795d4d57a788c4f5275"
+  ],
+  "canonicalUnchanged": true,
+  "limitation": "No composer or generator consumes mappings. Draft review fields are surfaced, not consumed by resolution."
+}

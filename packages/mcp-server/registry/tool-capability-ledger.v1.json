@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "head": "c89dcf05be3e4f8ddee54aeac6e6759b39855498",
+  "head": "661ffdc7f108df28b2804c96a85c3f827a944d64",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -12,14 +12,14 @@
     "auto": 21,
     "onDemand": 6,
     "byTier": {
-      "product-reality": 11,
-      "contract": 8,
+      "product-reality": 16,
+      "contract": 3,
       "unit": 4,
       "none": 4
     },
     "autoByTier": {
-      "product-reality": 11,
-      "contract": 7,
+      "product-reality": 16,
+      "contract": 2,
       "unit": 3,
       "none": 0
     },
@@ -88,15 +88,21 @@
       "name": "structuredData.fetch",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode.",
-        "inputSchemaDescription": ""
+        "description": "Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode. listVersions and version are dataset-only; supplying them in kind mode returns structuredData.fetch-specific OODS-V202.",
+        "inputSchemaDescription": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202."
       },
-      "claimHash": "sha256:99cdb110dbd57fcfc4d2fb79f7d0c255079ea2e5dbfbaf728de36511512e4119",
+      "claimHash": "sha256:71d184454b01e10ea403dd4798bbda1c03391d151c505637fae8a57a5f507e4b",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
-      "inputSchemaHash": "sha256:1acc9adf45e9f395030eae92c3f28c0f35afde48da552b13d5d81eed2cf87a79",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:833c1bb6f2247d0177e2f4cd4459ecb0e63893570328a872e546eac4e0aedf3a",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/structured-data.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/structuredData.fetch.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
@@ -136,6 +142,18 @@
         {
           "path": "artifacts/product-reality/sprint-187/m05/README.md",
           "line": 26,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 9,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 21,
           "kind": "readme-reference",
           "verifiedReceipt": false
         }
@@ -728,6 +746,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/theme.s191.spec.ts",
             "line": 2,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -1092,15 +1115,21 @@
       "name": "registry.snapshot",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve.",
-        "inputSchemaDescription": "Bulk-read the current OODS registry state (maps, traits, objects) in a single call."
+        "description": "Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation.",
+        "inputSchemaDescription": "Bulk-read the current OODS registry state (maps, traits, objects) in a single call. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation."
       },
-      "claimHash": "sha256:c344fc71d7fb9cca8e223ac5803d0d8021f8dfe1e1b29c15637a0d14312216ac",
+      "claimHash": "sha256:47b846c6173bb4beef355f2451a199d5a3ed24511fd6b1120dfa04a4bdc88840",
       "inputSchemaPath": "packages/mcp-server/src/schemas/registry.snapshot.input.json",
-      "inputSchemaHash": "sha256:7a94a435e0193bd6ac76342ebb6d1235c33b7b95b4ff87ddb0e49f9794a2377e",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:f25a2c6a58099b56a010e50ba0f5ec9af323593e683171e397b5ff39dfa4fc9e",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/registry.snapshot.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/registry-snapshot.spec.ts",
@@ -1109,7 +1138,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/registry-v14-roundtrip.spec.ts",
-            "line": 40,
+            "line": 41,
             "handler": "packages/mcp-server/src/tools/registry.snapshot.ts"
           }
         ],
@@ -1121,10 +1150,24 @@
           }
         ]
       },
-      "receiptRefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
       "portableE2E": false,
       "portableE2ERefs": [],
-      "caveats": []
+      "caveats": [
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/registry.snapshot.ts",
+          "reason": "Draft preferred terms, review decisions and capabilities are surfaced losslessly, not consumed by mapping resolution or generation.",
+          "line": 34
+        }
+      ]
     },
     {
       "name": "viz.compose",
@@ -1706,15 +1749,21 @@
       "name": "map",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior.",
-        "inputSchemaDescription": "Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property."
+        "description": "Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.",
+        "inputSchemaDescription": "Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution."
       },
-      "claimHash": "sha256:404c1cd9bf499a7db00d3a31e10d1ac0a13b73a18da16c5afa83c0113d07b7be",
+      "claimHash": "sha256:a8afb11eac72c2e0e5167996398f4936a9f89f1028b7433fdf119fec59ddf3a8",
       "inputSchemaPath": "packages/mcp-server/src/schemas/map.input.json",
-      "inputSchemaHash": "sha256:ba4928bd3d37cd05244c052c9ea07c3d8680e64bd2ea0b9568f03db2870c96d6",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:caf2dd1c09c8c6c13bc0ea4fc5db34ffd03bfbd4316785be6d57bf554d8c414e",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/map.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/map-apply.spec.ts",
@@ -1748,7 +1797,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/registry-v14-roundtrip.spec.ts",
-            "line": 39,
+            "line": 40,
             "handler": "packages/mcp-server/src/tools/map.create.ts"
           },
           {
@@ -1830,9 +1879,9 @@
       "portableE2ERefs": [],
       "caveats": [
         {
-          "kind": "no-op",
+          "kind": "documented-limit",
           "file": "docs/how-forge-works.html",
-          "reason": "Mappings resolve an external vocabulary to traits; no composer/codegen consumer targets the mapped external library.",
+          "reason": "Map records and resolves mappings for external consumers. No composer/codegen consumer; preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution.",
           "line": 316
         }
       ]
@@ -1841,15 +1890,21 @@
       "name": "schema",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL.",
+        "description": "Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.",
         "inputSchemaDescription": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Mirrors the established review.chain discriminated-union precedent using plain JSON-Schema if/then (no AJV discriminator keyword)."
       },
-      "claimHash": "sha256:ed3f82625a92a8a7383a74d3546afd00c318051ae60be2636f338e20c5241e57",
+      "claimHash": "sha256:959c0a7efd522dafe5f5872a0bc6c44b3671547e9a296ebc8f72ccc132933c06",
       "inputSchemaPath": "packages/mcp-server/src/schemas/schema.input.json",
       "inputSchemaHash": "sha256:2138884d58e43d1b37a1649b1d26d1643072fc0bf04d578e98dacbb3c9c43778",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/schema/index.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
@@ -1950,9 +2005,15 @@
       "claimHash": "sha256:f52c74aeb35963a4d8b297dc994110d55a811f6f11773a3b999cbd0b5981b231",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
       "inputSchemaHash": "sha256:f57410cd145f0e7aee63c31472c0f66e20867e55b12ab34c42646999cda14c94",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/object.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/object.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/error-observability.contract.spec.ts",

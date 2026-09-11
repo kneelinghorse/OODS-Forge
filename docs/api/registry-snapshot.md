@@ -1,6 +1,6 @@
 # registry.snapshot
 
-> Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve.
+> Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation.
 
 **Registration:** auto
 

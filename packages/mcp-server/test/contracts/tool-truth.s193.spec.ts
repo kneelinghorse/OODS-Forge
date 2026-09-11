@@ -15,8 +15,8 @@ describe('tool truth derives claims without upgrading source references to runti
   it('reproduces every byte from current source using the recorded census head', () => {
     const ledger = read();
     expect(serialize(deriveToolTruth({ root, head: ledger.head }))).toBe(fs.readFileSync(file, 'utf8'));
-    // s194-m02 adds real wire + source/build/browser coverage for all four brand tools.
-    expect(ledger.summary).toEqual({ entries: 27, auto: 21, onDemand: 6, byTier: { 'product-reality': 11, contract: 8, unit: 4, none: 4 }, autoByTier: { 'product-reality': 11, contract: 7, unit: 3, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 1, unit: 1, none: 4 }, portableE2E: 4 });
+    // s194-m02 adds four brand boundaries; m03 adds map, snapshot, schema, object and structured-data boundaries.
+    expect(ledger.summary).toEqual({ entries: 27, auto: 21, onDemand: 6, byTier: { 'product-reality': 16, contract: 3, unit: 4, none: 4 }, autoByTier: { 'product-reality': 16, contract: 2, unit: 3, none: 0 }, onDemandByTier: { 'product-reality': 0, contract: 1, unit: 1, none: 4 }, portableE2E: 4 });
     expect(ledger.rows.filter((row: any) => row.portableE2E).map((row: any) => row.name).sort()).toEqual(['artifact.certify', 'dashboard.render', 'health', 'viz.render']);
     for (const row of ledger.rows) {
       expect(row.claimHash).toMatch(/^sha256:[0-9a-f]{64}$/); expect(row.inputSchemaHash).toMatch(/^sha256:[0-9a-f]{64}$/);

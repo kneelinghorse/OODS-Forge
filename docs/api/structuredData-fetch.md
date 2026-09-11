@@ -1,6 +1,6 @@
 # structuredData.fetch
 
-> Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode.
+> Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode. listVersions and version are dataset-only; supplying them in kind mode returns structuredData.fetch-specific OODS-V202.
 
 **Registration:** auto
 

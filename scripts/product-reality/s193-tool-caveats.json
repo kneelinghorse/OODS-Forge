@@ -33,10 +33,10 @@
   ],
   "map": [
     {
-      "kind": "no-op",
+      "kind": "documented-limit",
       "file": "docs/how-forge-works.html",
-      "anchor": "the composer and code generator do not yet target external libraries",
-      "reason": "Mappings resolve an external vocabulary to traits; no composer/codegen consumer targets the mapped external library."
+      "anchor": "records and resolves mappings for external consumers; no composer or generator consumes them",
+      "reason": "Map records and resolves mappings for external consumers. No composer/codegen consumer; preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution."
     }
   ],
   "health": [
@@ -91,6 +91,14 @@
       "file": "packages/mcp-server/src/codegen/validation-profile.ts",
       "anchor": "const accepted = Array.isArray(evidence.accepted)",
       "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof."
+    }
+  ],
+  "registry.snapshot": [
+    {
+      "kind": "documented-limit",
+      "file": "packages/mcp-server/src/tools/registry.snapshot.ts",
+      "anchor": "// v1.4.0 stub round-trip",
+      "reason": "Draft preferred terms, review decisions and capabilities are surfaced losslessly, not consumed by mapping resolution or generation."
     }
   ]
 }

@@ -299,6 +299,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],
+  ['OODS-V202', { code: 'OODS-V202', category: 'validation', message: 'structuredData.fetch input invalid', retryable: true }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
   ['OODS-N001', { code: 'OODS-N001', category: 'not_found', message: 'Unknown tool', retryable: false }],

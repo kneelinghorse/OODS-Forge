@@ -10,8 +10,9 @@
  *   - top-level `capabilities[]`              (capability rollup entities)
  *   - per-mapping `projection_variants[]`     (cross-surface identity)
  *
- * The Stage1 emitter producing real instances of these fields is a separate
- * concern; this test exercises the OODS-side implementation gap only.
+ * These arrays are surfaced, not consumed by map.resolve, composition or
+ * generation (s194-m03 narrowing). Lossless persistence is the bounded claim;
+ * this contract does not certify executable review or vocabulary semantics.
  *
  * Bilateral non-regression: the production
  * `artifacts/structured-data/component-mappings.json` continues to validate

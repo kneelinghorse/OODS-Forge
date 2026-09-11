@@ -50,6 +50,17 @@ describe("how Forge works narrative truth", () => {
     expect(read("packages/mcp-server/src/codegen/branded-mockup-emitter.ts")).not.toContain("const BRAND_TOKENS");
   });
 
+  it("pins the accepted mapping descope and distinguishes surfaced draft data from runtime behavior", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const limit = "records and resolves mappings for external consumers; no composer or generator consumes them";
+    expect(html).toContain(limit);
+    expect(descriptions.map.toLowerCase()).toContain(limit);
+    expect(descriptions["registry.snapshot"]).toContain("surfaced, not consumed");
+    expect(descriptions["structuredData.fetch"]).toContain("dataset-only");
+    expect(descriptions["structuredData.fetch"]).toContain("OODS-V202");
+    expect(descriptions.schema).toContain("not ETags or conditional requests");
+  });
+
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
       read("packages/mcp-server/src/tools/registry.json"),

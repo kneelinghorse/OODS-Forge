@@ -4333,7 +4333,7 @@ export type MapDeleteOutput = MapDeleteOutputSchema.MapDeleteOutput;
 // Source: map.input.json
 export namespace MapInputSchema {
   /**
-   * Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property.
+   * Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution.
    */
   export type MapInput = MapInput1 & MapInput2;
   export type MapInput1 = {
@@ -5432,7 +5432,7 @@ export type PipelineOutput = PipelineOutputSchema.PipelineOutput;
 // Source: registry.snapshot.input.json
 export namespace RegistrySnapshotInputSchema {
   /**
-   * Bulk-read the current OODS registry state (maps, traits, objects) in a single call.
+   * Bulk-read the current OODS registry state (maps, traits, objects) in a single call. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation.
    */
   export interface RegistrySnapshotInput {}
 }
@@ -8015,6 +8015,9 @@ export type Stage1ProjectionVariant = Stage1ProjectionVariantSchema.Stage1Projec
 
 // Source: structuredData.fetch.input.json
 export namespace StructuredDataFetchInputSchema {
+  /**
+   * Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202.
+   */
   export type StructuredDataFetchInput = StructuredDataFetchInput1 & StructuredDataFetchInput2;
   export type StructuredDataFetchInput2 = {
     [k: string]: any;

@@ -350,13 +350,13 @@ async function handleRollupFetch(
 ): Promise<StructuredDataFetchOutput> {
   const kind = input.kind as Stage1RollupKind;
   if (!input.runPath) {
-    throw new ToolError('OODS-V201', `structuredData.fetch requires runPath when kind is set.`, { kind });
+    throw new ToolError('OODS-V202', `structuredData.fetch requires runPath when kind is set.`, { kind });
   }
   if (input.listVersions) {
-    throw new ToolError('OODS-V201', 'listVersions is not supported in kind mode.', { kind });
+    throw new ToolError('OODS-V202', 'structuredData.fetch: listVersions is not supported in kind mode.', { kind });
   }
   if (input.version) {
-    throw new ToolError('OODS-V201', 'version is not supported in kind mode.', { kind });
+    throw new ToolError('OODS-V202', 'structuredData.fetch: version is not supported in kind mode.', { kind });
   }
 
   const includePayload = input.includePayload !== false;
@@ -392,7 +392,7 @@ export async function handle(input: StructuredDataFetchInput): Promise<Structure
 
   if (!input.dataset) {
     throw new ToolError(
-      'OODS-V201',
+      'OODS-V202',
       'structuredData.fetch requires either dataset (components|tokens|manifest) or kind+runPath.',
       { input },
     );
