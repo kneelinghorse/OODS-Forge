@@ -62,6 +62,7 @@ import {
   ECHARTS_GEO_EXEMPT_NOTE,
   evaluateContrastPillar,
   evaluateEChartsCategoricalContrast,
+  type ContrastPillarResult,
   type ContrastVerdict,
 } from './certify-contrast.js';
 import {
@@ -735,16 +736,17 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   if (!['light', 'dark', 'hc'].includes(theme) || !['A', 'B'].includes(brand)) {
     return { status: 'error', errors: [{ code: 'OODS-V126', message: 'Certification supports themes light/dark/hc and brands A/B.' }] };
   }
-  const result = await certifyAtScope(input, { theme, brand });
+  const { contrastMeasured, ...result } = await certifyAtScope(input, { theme, brand });
   if (result.status !== 'ok') return result;
   const verdict = theme === 'hc' ? 'exempt' : result.pillars?.contrast ?? 'unchecked';
   const graded = verdict === 'pass' || verdict === 'fail';
   const rendered = result.determinism?.renderHash !== undefined;
   const note = `${theme === 'hc' ? FORCED_COLORS_CONTRAST_NOTE : result.contrastNote ?? 'No contrast grade was available.'} Scope: ${theme}/${brand}.`;
-  return { ...result, ...(theme === 'hc' && result.pillars ? { pillars: { ...result.pillars, contrast: 'exempt' as const } } : {}), contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: rendered && graded, evidence: rendered ? 'render' : graded ? 'baked-palette' : 'none', note, ...(theme === 'hc' ? { reason: 'forced-colors' as const } : {}) }] };
+  return { ...result, ...(theme === 'hc' && result.pillars ? { pillars: { ...result.pillars, contrast: 'exempt' as const } } : {}), contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: contrastMeasured !== false && rendered && graded, evidence: contrastMeasured === false ? 'none' : rendered ? 'render' : graded ? 'baked-palette' : 'none', note, ...(theme === 'hc' ? { reason: 'forced-colors' as const } : {}) }] };
 }
 
-async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): Promise<ArtifactCertifyOutput> {
+// Internal measurement disposition is removed by handle before public serialization.
+async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): Promise<ArtifactCertifyOutput & { contrastMeasured?: false }> {
   // INPUT — permissive boundary (§3b of the m01 memo): the tool schema only asserts
   // {spec:object}; assertNormalizedVizSpec (AJV vs the runtime schema) is the
   // authoritative validator. An invalid IR returns a structured error, never a throw.
@@ -872,13 +874,15 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
     let contrast: ContrastVerdict = 'unchecked';
     let contrastNote: string | undefined;
     let gradedSvg: string | undefined;
+    let contrastMeasured: false | undefined;
     try {
-      const pillar = scope.theme === 'hc'
+      const pillar: ContrastPillarResult = scope.theme === 'hc'
         ? { contrast: 'exempt' as const, contrastNote: FORCED_COLORS_CONTRAST_NOTE, renderedSvg: undefined }
         : await evaluateContrastPillar(certifySpec, compiled, scope);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
       gradedSvg = pillar.renderedSvg;
+      contrastMeasured = pillar.contrastMeasured;
     } catch (err) {
       contrast = 'ungradeable';
       contrastNote = contrastFaultNote(err);
@@ -974,6 +978,7 @@ async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): P
       },
       ...(accuracySummary ? { accuracySummary } : {}),
       ...(contrastNote ? { contrastNote } : {}),
+      ...(contrastMeasured === false ? { contrastMeasured } : {}),
       ...((accuracyNotes.length + hcRenderNotes.length) > 0 ? { notes: [...accuracyNotes, ...hcRenderNotes] } : {}),
     };
   } catch (err) {

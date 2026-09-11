@@ -12,6 +12,9 @@ trait:
     - trend
 
 parameters:
+  - {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."}
+  - {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."}
+  - {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."}
   - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
   - {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."}
   - name: curve
@@ -144,6 +147,15 @@ view_extensions:
         curveField: viz_line_curve
         strokeWidthField: viz_line_stroke_width
         markersField: viz_line_markers
+  dashboard:
+    - component: VizLinePreview
+      position: top
+      priority: 60
+      props:
+        svgParameter: previewSvg
+        curveField: viz_line_curve
+        strokeWidthField: viz_line_stroke_width
+        markersField: viz_line_markers
   form:
     - component: VizLineControls
       position: top
@@ -199,6 +211,7 @@ metadata:
     notes: Provide textual summary for trend direction and extrema.
   regionsUsed:
     - detail
+    - dashboard
     - form
     - list
   examples:

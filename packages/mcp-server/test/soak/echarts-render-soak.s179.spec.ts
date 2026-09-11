@@ -280,7 +280,7 @@ function plateauEvidence(
     distinct >= 3
   ) {
     expect(trend.slope).toBeLessThanOrEqual(slopeBudget);
-    expect(trend.positiveTrendLower99).toBeLessThanOrEqual(0);
+    expect(trend.positiveTrendLower99, "OODS-SOAK-1442: statistically positive retained resource trend").toBeLessThanOrEqual(0);
     return {
       method: "least-squares-slope",
       slopeBytesPerWindow: trend.slope,
@@ -628,6 +628,20 @@ describe.sequential(
 
       const workerHeapDeltaBytes =
         samples.at(-1)!.workerHeapUsedBytes - samples[0].workerHeapUsedBytes;
+      // Retain the measurements even when a later release assertion fails (#1442).
+      // Emitting evidence does not change any sampling window or threshold.
+      emitEvidence("resources-observed", {
+        warmupRenders: WARMUP_RENDERS,
+        measuredRenders: MEASURED_RENDERS,
+        plateauWindowRange: "1300..2000",
+        workerHeapDeltaBytes,
+        heapTrend: leastSquaresTrend(samples.slice(PLATEAU_SAMPLE_START).map(sample => sample.workerHeapUsedBytes)),
+        rssTrend: leastSquaresTrend(samples.slice(PLATEAU_SAMPLE_START).map(sample => sample.processRssBytes)),
+        samples,
+        beforeFault,
+        afterFault,
+        budgets: BUDGETS,
+      });
       expect(workerHeapDeltaBytes).toBeLessThanOrEqual(
         BUDGETS.workerHeapAbsoluteDeltaBytes,
       );

@@ -955,8 +955,15 @@ jobs:
       - name: Record certified runtime axes
         run: node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'
 
-      - name: Run ECharts concurrency and resource soak
-        run: pnpm --filter @oods/mcp-server run test:echarts-soak
+      - name: Run strict ECharts soak and retain the typed resource observation
+        run: node scripts/product-reality/s195-soak-observation.mjs
+
+      - name: Retain strict soak result and resource samples
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: echarts-soak-observation
+          path: artifacts/echarts-soak/
 
   portable-runtime:
     name: portable-runtime

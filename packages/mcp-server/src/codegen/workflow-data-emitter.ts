@@ -20,8 +20,11 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
     },
   };
   const { idField, lifecycleStates, billingIntervals, currency, sampleCount } = workflow.data;
+  const charts = chartNodes(schema.screens).map(node => node.chart!);
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
   const seedValue = (name: string, field: FieldSchemaEntry, index: number): unknown => {
+    const chart = charts.find(chart => chart.source === 'record-array' && chart.dataField === name);
+    if (chart?.source === 'record-array') return structuredClone(chart.sampleRows);
     if (name === idField) return `${workflow.object.toLowerCase()}-${String(index + 1).padStart(3, '0')}`;
     if (name === titleField) return `${workflow.object} ${String(index + 1).padStart(2, '0')}`;
     if (name === 'status' && lifecycleStates.length) return lifecycleStates[index % lifecycleStates.length];
@@ -50,7 +53,7 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
   };
   const seedAt = '2026-09-08T12:00:00.000Z';
   const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
-  const chart = chartNodes(schema.screens)[0]?.chart;
+  const chart = charts.find(chart => chart.source === 'payment-events');
   const creationEvent = workflow.data.recordedEvents?.find(event => /creat|start/.test(event)) ?? workflow.data.recordedEvents?.[0] ?? 'created';
   const records = Array.from({ length: sampleCount }, (_, index) => {
     const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]));
@@ -82,7 +85,7 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
       assign('cancellation_requested_at', ended ? endAt : startAt);
     }
     if (record.is_archived) assign('archived_at', '2026-09-07T12:00:00.000Z');
-    if (chart) {
+    if (chart?.source === 'payment-events') {
       // Four recorded payments, in minor units, ending at the last payment date.
       record.payment_history = [0.8, 1.1, 0.9, 1].map((factor, paymentIndex) => {
         const at = new Date(String(record[chart.dateFields[0]!]));
@@ -120,7 +123,7 @@ ${chartNodes(schema.screens).length ? "import { chartSvgByRecord } from './chart
 
 export type DomainRecord = {
 ${types}
-${chartNodes(schema.screens).length ? '  payment_history: Array<{ at: string; amount: number }>;\n' : ''}};
+${chartNodes(schema.screens).some(node => node.chart?.source === 'payment-events') ? '  payment_history: Array<{ at: string; amount: number }>;\n' : ''}};
 ${Object.values(fields).some(field => field.type === 'AddressableEntry[]') ? `
 const asRecord = (value: unknown): Record<string, unknown> => value && typeof value === 'object' ? value as Record<string, unknown> : {};
 export function collectionAddress(entries: unknown[] | undefined, role?: string) {

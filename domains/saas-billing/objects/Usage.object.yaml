@@ -24,6 +24,22 @@ traits:
         - reset
       timezone: UTC
       allowNullUpdatedAt: true
+  - name: viz/MarkLine
+    parameters:
+      title: Example API-call usage
+      description: Synthetic API-call counts for generated example records.
+      chart:
+        chartType: line
+        source: record-array
+        dataField: samples
+        encodings:
+          x: {field: timestamp, scale: temporal, title: Recorded at}
+          y: {field: value, title: API calls}
+        # Synthetic examples from domains/saas-billing/examples/usage-api-calls.json.
+        sampleRows:
+          - {timestamp: "2025-06-15T00:00:00Z", value: 1200}
+          - {timestamp: "2025-06-20T00:00:00Z", value: 1800}
+          - {timestamp: "2025-06-25T00:00:00Z", value: 1500}
 
 schema:
   usage_id:

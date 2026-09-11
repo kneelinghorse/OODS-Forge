@@ -488,7 +488,7 @@ export type CodeGenerateInput = {
   options?: {
     typescript?: boolean;
     styling?: CodegenStyling;
-    theme?: 'light' | 'dark';
+    theme?: NonNullable<import('../schemas/generated.js').CodeGenerateInput['options']>['theme'];
     brand?: 'A' | 'B';
   };
 };

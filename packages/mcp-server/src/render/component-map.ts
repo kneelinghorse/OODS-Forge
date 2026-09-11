@@ -1530,7 +1530,7 @@ function renderVizPreview(node: UiElement, childrenHtml: string, previewType: st
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
     consumedProps: new Set(['width', 'height', 'svg', 'title', 'description']),
-    htmlOverrides: svg !== undefined ? { role: 'img', 'aria-label': title ?? description ?? 'Payment amounts' } : {},
+    htmlOverrides: svg !== undefined ? { role: 'img', 'aria-label': title ?? description ?? (previewType === 'area' ? 'Payment amounts' : `${defaultLabel} chart`) } : {},
     dataOverrides: {
       'data-viz-preview-type': previewType,
       'data-viz-width': width,

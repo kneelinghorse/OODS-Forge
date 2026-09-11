@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { VIZ_RECIPES } from '@oods/viz-core';
-import { canonical, measureVizCensus } from '../../../../scripts/product-reality/s190-viz-census.js';
+import { canonical, collectChartPlacements, measureVizCensus } from '../../../../scripts/product-reality/s190-viz-census.js';
 
 const root = new URL('../../../../', import.meta.url);
 const read = (file: string) => readFileSync(new URL(file, root), 'utf8');
@@ -19,12 +19,34 @@ describe('one executable visualization registry (s190 m05)', () => {
     expect(read('scripts/product-reality/s190-viz-census.ts')).not.toMatch(/import\s*\(|require\s*\(/);
   });
 
+  it('inventories actual chart nodes and preserves the public request without mistaking source metadata for runtime proof', () => {
+    const chart = { chartType: 'line', source: 'record-array', dataField: 'samples' };
+    const schema = { metadata: { chart }, screens: [{ children: [{ id: 'trend', component: 'VizLinePreview', chart }] }] };
+    expect(collectChartPlacements(schema, { object: 'Usage', layout: 'dashboard' })).toEqual([
+      { object: 'Usage', context: null, layout: 'dashboard', nodeId: 'trend', component: 'VizLinePreview', chartType: 'line', chartSource: 'record-array', dataField: 'samples', evidence: 'composed-declaration' },
+    ]);
+    expect(collectChartPlacements({ metadata: { chart }, id: 'empty', component: 'VizLinePreview', props: { chart } }, { object: 'Usage', context: 'detail' })).toEqual([]);
+    expect(() => collectChartPlacements({ component: 'VizLinePreview', chart }, { object: 'Usage', context: 'detail' })).toThrow('node identity');
+  });
+
   it('the exported registry equals every live census cell after canonicalization', async () => {
     const source = JSON.parse(read('packages/viz-core/src/registry/viz-recipes.v1.json'));
     const result = await measureVizCensus();
     expect(canonical(source)).toBe(canonical(result.registry));
     expect(canonical(VIZ_RECIPES)).toBe(canonical(source));
-    expect(result.placements).toEqual([{ object: 'Subscription', context: 'detail', chartType: 'area' }]);
+    expect(result.placementCompositions).toBe(88);
+    expect(result.placements.map(({ object, context, layout, component, chartType, dataField }) => [object, context, layout, component, chartType, dataField ?? null])).toEqual([
+      ['Invoice', 'detail', null, 'VizMarkPreview', 'bar', 'line_items'],
+      ['Invoice', 'workflow', null, 'VizMarkPreview', 'bar', 'line_items'],
+      ['Invoice', null, 'dashboard', 'VizMarkPreview', 'bar', 'line_items'],
+      ['Subscription', 'detail', null, 'VizAreaPreview', 'area', null],
+      ['Subscription', 'workflow', null, 'VizAreaPreview', 'area', null],
+      ['Usage', 'detail', null, 'VizLinePreview', 'line', 'samples'],
+      ['Usage', 'workflow', null, 'VizLinePreview', 'line', 'samples'],
+      ['Usage', null, 'dashboard', 'VizLinePreview', 'line', 'samples'],
+    ]);
+    expect([...new Set(result.placements.map(place => place.chartType))].sort()).toEqual(['area', 'bar', 'line']);
+    expect(result.placements.every(place => place.evidence === 'composed-declaration')).toBe(true);
     expect(source).toHaveLength(13);
     expect(result.observations.flatMap(row => row.scopes)).toHaveLength(78);
     // s195-m04: the declared data operand profile certifies the eight ECharts types.
@@ -47,6 +69,10 @@ describe('one executable visualization registry (s190 m05)', () => {
     }
     for (const row of result.registry) {
       expect(row.certifyProfile).toBe(row.specEngine === 'echarts' ? 'echarts-data' : 'cartesian');
+      if (row.chartInApp === 'not-placed') {
+        expect(row.notes.join(' ')).toContain('Not placed:');
+        if (row.specEngine === 'echarts') expect(row.notes.join(' ')).toContain('decision #1944');
+      } else expect(row.notes.join(' ')).toContain('runtime proof is retained separately');
       expect(row.certifyScopes).toEqual(result.observations.find(observation => observation.chartType === row.chartType).scopes.filter((scope: any) => scope.status === 'rendered')
         .map(({ theme, brand, coverage, conformant, pillars, accuracySummary }: any) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })));
       expect(row.renderScopes).toHaveLength(6);

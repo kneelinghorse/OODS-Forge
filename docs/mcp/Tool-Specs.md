@@ -279,7 +279,17 @@ Example input (explicit full detail):
 Portable React/Vue generation returns OODS-N015 because readiness source/test/declaration references are not shipped; host generation remains supported.
 
 Subscription detail declares a read-only `VizAreaPreview.chart` over
-`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. This public
+`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. Invoice adds
+`VizMarkPreview` over `line_items` in detail and dashboard layouts, with amounts
+kept in minor currency units and matching descriptions summed. Usage adds
+`VizLinePreview` over timestamp/value `samples` in those layouts. Its seed rows
+are explicitly labelled synthetic API-call examples; the canonical meter unit
+remains `api_calls`.
+
+Bound canonical MarkArea, MarkBar, MarkLine, MarkPoint and MarkRect declarations
+use trait `title` and `description` parameters. Detail is projected; dashboard is
+projected when the trait authors that context. MarkRect maps to the heatmap
+preview. Unknown bound marks and mismatched chart types fail. Each public
 UiSchema declaration is rendered through `viz.render` during generation using
 the requested `options.theme` (light/dark/hc) and brand (default light/A). The generated HC Subscription/detail area assets are verified in React and Vue under forced colours. React and Vue receive an optional
 typed `svg` prop with a seed default; workflows include one hashed static SVG
@@ -289,6 +299,19 @@ Generated applications require no visualization runtime. The component embeds
 the SVG verbatim in a labelled figure and retains the existing placeholder when
 `svg` is omitted. Its passive SVG boundary rejects scripts, style blocks or
 attributes, and external references.
+
+The `record-array` chart source binds a declared object array, public chart
+encodings, and explicit `sampleRows` used to seed generated example records.
+Generation reads the rows from each resulting record. One distinct chart
+declaration is supported per generated object; identical repeated projections
+share its assets. ECharts placement is carried under decision #1944: no matching
+authored preview trait or object operand is present. Relationship's scalar edge
+fields require an explicit directed nodes/links transformation before a graph
+placement can claim the public network contract. The visualization census
+records composed chart declarations; executed application proof is separate.
+React/Vue application generation and isolated HTML chart nodes carry the real
+SVG. Full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs
+normalization limit; chart-node proof does not certify a full HTML application.
 
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`

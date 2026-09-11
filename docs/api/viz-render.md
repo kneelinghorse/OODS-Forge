@@ -20,8 +20,8 @@ Contrast measurement records actual categorical canvas grades, including failure
 
 | Type | Engine | Dashboard | Certification | Contrast measured | Application |
 | --- | --- | --- | --- | --- | --- |
-| bar | vega-lite | true | certified | light, dark | not-placed |
-| line | vega-lite | true | certified | light, dark | not-placed |
+| bar | vega-lite | true | certified | light, dark | placed |
+| line | vega-lite | true | certified | light, dark | placed |
 | area | vega-lite | true | certified | light, dark | placed |
 | scatter | vega-lite | true | certified | light, dark | not-placed |
 | heatmap | vega-lite | true | certified | none (exempt) | not-placed |
@@ -36,10 +36,14 @@ Contrast measurement records actual categorical canvas grades, including failure
 
 - HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.
 - Categorical contrast passes both brands in: light, dark.
-- Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
+- Composed chart declarations: Invoice/detail, Invoice/workflow, Invoice/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Composed chart declarations: Usage/detail, Usage/workflow, Usage/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Composed chart declarations: Subscription/detail, Subscription/workflow. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.
 - HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.
 - Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
 - HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.
+- Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.
 - HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
 - HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
 - HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
@@ -53,7 +57,7 @@ Contrast measurement records actual categorical canvas grades, including failure
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `theme` | `light` \| `dark` \| `hc` | No | `"light"` | CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. No server-side system-color hex palette is invented. |
+| `theme` | `light` \| `dark` \| `hc` | No | `"light"` | CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented. |
 | `brand` | `A` \| `B` | No | `"A"` | CSS token brand for chart pixels. Omission resolves light/A. |
 | `opacity` | number | No |  | Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families. |
 | `rows` | object[] | No |  | Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value. |

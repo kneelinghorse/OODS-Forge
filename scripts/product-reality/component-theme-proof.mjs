@@ -142,7 +142,7 @@ export async function runComponentThemeProof({ framework, packageRoot, canonical
 
 // The chart proof uses the same browser/theme boundary as the component proof.
 // Callers mount real public outputs; this harness only observes computed paints.
-export async function runVizForcedColourProof({ cases, output, chromium }) {
+export async function runVizThemeProof({ cases, output, chromium, mission = 's195-m05' }) {
   await mkdir(output, { recursive: true });
   const browser = process.env.OODS_PLAYWRIGHT_WS_ENDPOINT
     ? await chromium.connect(process.env.OODS_PLAYWRIGHT_WS_ENDPOINT, { exposeNetwork: '<loopback>' })
@@ -150,21 +150,25 @@ export async function runVizForcedColourProof({ cases, output, chromium }) {
   const cells = [];
   try {
     for (const specimen of cases) {
+      const theme = specimen.theme ?? 'hc';
       const errors = [];
       const page = await browser.newPage({ viewport: { width: 1280, height: 1000 }, deviceScaleFactor: 1,
-        colorScheme: 'dark', forcedColors: 'active' });
+        colorScheme: theme === 'light' ? 'light' : 'dark', forcedColors: theme === 'hc' ? 'active' : 'none' });
       page.on('pageerror', error => errors.push(error.message));
       page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
       await page.clock.setFixedTime(new Date('2026-09-10T12:00:00Z'));
       try {
         await specimen.mount(page);
-        const proof = await page.evaluate(selector => {
+        const proof = await page.evaluate(({ selector, expectedSvg }) => {
           const probe = document.createElement('span');
           probe.style.cssText = 'color:CanvasText;background:Canvas'; document.body.append(probe);
           const system = { foreground: getComputedStyle(probe).color, background: getComputedStyle(probe).backgroundColor };
           probe.remove();
           const charts = [...document.querySelectorAll(selector)].map(svg => {
             const bounds = svg.getBoundingClientRect();
+            const expected = document.createElement('div');
+            if (expectedSvg) expected.innerHTML = expectedSvg;
+            const canvasRect = svg.querySelector(':scope > rect');
             const paints = [...svg.querySelectorAll('path,rect,line,circle,polygon,text')].map(element => {
               const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
               return { tag: element.tagName, mark: Boolean(element.closest('.role-mark')), text: element.textContent?.trim() || null,
@@ -173,29 +177,37 @@ export async function runVizForcedColourProof({ cases, output, chromium }) {
                 width: rect.width, height: rect.height, visibility: style.visibility,
                 declaredFill: element.getAttribute('fill'), declaredStroke: element.getAttribute('stroke') };
             });
-            return { width: bounds.width, height: bounds.height, paints };
+            return { width: bounds.width, height: bounds.height, paints,
+              canvas: canvasRect ? getComputedStyle(canvasRect).fill : getComputedStyle(svg).backgroundColor,
+              ...(expectedSvg ? { matchesPublicSvg: expected.querySelector('svg')?.outerHTML === svg.outerHTML } : {}) };
           });
           return { brand: document.documentElement.dataset.brand, theme: document.documentElement.dataset.theme,
             forcedColours: matchMedia('(forced-colors: active)').matches, system, charts,
             placeholders: document.querySelectorAll('[data-viz-preview-placeholder]').length };
-        }, specimen.selector ?? 'svg');
+        }, { selector: specimen.selector ?? 'svg', expectedSvg: specimen.expectedSvg });
         const failures = [];
         const check = (ok, message) => { if (!ok) failures.push(message); };
-        check(proof.brand === specimen.brand && proof.theme === 'hc', 'Wrong theme scope');
-        check(proof.forcedColours, 'Forced colours are inactive');
-        check(proof.system.foreground !== proof.system.background, 'System foreground is indistinguishable from canvas');
+        check(proof.brand === specimen.brand && proof.theme === theme, 'Wrong theme scope');
+        check(proof.forcedColours === (theme === 'hc'), 'Forced-colours media differs from the requested scope');
+        if (theme === 'hc') check(proof.system.foreground !== proof.system.background, 'System foreground is indistinguishable from canvas');
         check(proof.charts.length === specimen.svgCount, `Expected ${specimen.svgCount} actual chart SVGs, found ${proof.charts.length}`);
         check(proof.placeholders === 0, 'A chart placeholder replaced the public SVG');
-        const visiblePaint = paint => paint.visibility === 'visible' && Number(paint.opacity) > 0
-          && ((paint.fill !== 'none' && paint.fill !== proof.system.background && Number(paint.fillOpacity) > 0)
-            || (paint.stroke !== 'none' && paint.stroke !== proof.system.background && Number(paint.strokeOpacity) > 0));
+        const visiblePaint = (paint, canvas) => paint.visibility === 'visible' && Number(paint.opacity) > 0
+          && ((paint.fill !== 'none' && paint.fill !== canvas && Number(paint.fillOpacity) > 0)
+            || (paint.stroke !== 'none' && paint.stroke !== canvas && Number(paint.strokeOpacity) > 0));
         for (const chart of proof.charts) {
           check(chart.width > 0 && chart.height > 0, 'Chart has no visible bounds');
-          check(chart.paints.some(paint => paint.mark && (paint.width > 0 || paint.height > 0) && visiblePaint(paint)), 'No distinguishable data mark');
-          check(chart.paints.some(paint => paint.tag === 'text' && paint.text && visiblePaint(paint)), 'No distinguishable chart label');
+          if (specimen.expectedSvg) check(chart.matchesPublicSvg, 'Mounted chart differs from the public SVG');
+          const canvas = theme === 'hc' ? proof.system.background : chart.canvas;
+          check(chart.paints.some(paint => paint.mark && (paint.width > 0 || paint.height > 0) && visiblePaint(paint, canvas)), 'No distinguishable data mark');
+          check(chart.paints.some(paint => paint.tag === 'text' && paint.text && visiblePaint(paint, canvas)), 'No distinguishable chart label');
         }
+        if (specimen.accessibleName) check(await page.getByRole('img', { name: specimen.accessibleName, exact: true }).isVisible(), 'The named chart is missing from the accessible tree');
         check(errors.length === 0, `Browser errors: ${errors.join('; ')}`);
         const screenshot = `${specimen.id}.png`;
+        const accessibilityTree = await page.locator('body').ariaSnapshot();
+        check(Boolean(accessibilityTree.trim()), 'Accessible tree is empty');
+        await writeFile(resolve(output, `${specimen.id}-accessibility-tree.txt`), accessibilityTree + '\n');
         await page.screenshot({ path: resolve(output, screenshot), fullPage: true, animations: 'disabled' });
         cells.push({ id: specimen.id, status: failures.length ? 'failed' : 'passed', ...proof, errors, failures, screenshot,
           screenshotSha256: createHash('sha256').update(await readFile(resolve(output, screenshot))).digest('hex') });
@@ -205,11 +217,13 @@ export async function runVizForcedColourProof({ cases, output, chromium }) {
       } finally { await page.close(); }
     }
     const failures = cells.flatMap(cell => cell.failures.map(failure => `${cell.id}: ${failure}`));
-    const report = { mission: 's195-m05', status: failures.length ? 'failed' : 'passed',
-      browser: { name: 'chromium', version: browser.version() }, forcedColors: 'active',
+    const report = { mission, status: failures.length ? 'failed' : 'passed',
+      browser: { name: 'chromium', version: browser.version() }, forcedColors: cases.every(specimen => (specimen.theme ?? 'hc') === 'hc') ? 'active' : 'by-theme',
       selected: cases.length, skipped: 0, failed: failures.length, failures, cells };
     await writeFile(resolve(output, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-    assert.deepEqual(failures, [], 'Public charts must remain distinguishable in the user forced-colour palette');
+    assert.deepEqual(failures, [], 'Public charts must remain visible in their requested theme scope');
     return report;
   } finally { await browser.close(); }
 }
+
+export const runVizForcedColourProof = runVizThemeProof;

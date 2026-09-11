@@ -3,45 +3,179 @@
   "$id": "https://designlab.local/schemas/repl.ui.schema.json",
   "title": "Agentic REPL UI Schema",
   "type": "object",
-  "required": ["version", "screens"],
+  "required": [
+    "version",
+    "screens"
+  ],
   "properties": {
-    "workflow": { "$ref": "#/$defs/workflow" },
-    "$schema": { "type": "string" },
-    "version": { "type": "string", "minLength": 1 },
-    "dsVersion": { "type": "string" },
-    "theme": { "type": "string" },
+    "workflow": {
+      "$ref": "#/$defs/workflow"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dsVersion": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
     "screens": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/uiElement" }
+      "items": {
+        "$ref": "#/$defs/uiElement"
+      }
     },
     "tokenOverrides": {
       "type": "object",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "description": "Object-level semantic token overrides. Keys are token paths (e.g., 'billing.subscription.status.active'), values are CSS variable references (e.g., 'var(--semantic-success)')."
     },
     "objectSchema": {
       "type": "object",
-      "additionalProperties": { "$ref": "#/$defs/fieldSchemaEntry" },
+      "additionalProperties": {
+        "$ref": "#/$defs/fieldSchemaEntry"
+      },
       "description": "Object field schema for codegen. Maps field names to type metadata from composed object traits."
     }
   },
   "additionalProperties": false,
   "$defs": {
     "chartDeclaration": {
-      "description": "Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["chartType", "source", "dateFields", "amountField", "minorUnits", "currencyField"],
-      "properties": {
-        "chartType": { "const": "area" },
-        "source": { "const": "payment-events" },
-        "dateFields": { "type": "array", "minItems": 2, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
-        "amountField": { "type": "string", "minLength": 1 },
-        "minorUnits": { "type": "number", "exclusiveMinimum": 0 },
-        "currencyField": { "type": "string", "minLength": 1 },
-        "brand": { "enum": ["A", "B"] }
-      }
+      "title": "ChartDeclaration",
+      "description": "Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.",
+      "oneOf": [
+        {
+          "description": "Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chartType",
+            "source",
+            "dateFields",
+            "amountField",
+            "minorUnits",
+            "currencyField"
+          ],
+          "properties": {
+            "chartType": {
+              "const": "area"
+            },
+            "source": {
+              "const": "payment-events"
+            },
+            "dateFields": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "amountField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minorUnits": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "currencyField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "brand": {
+              "enum": [
+                "A",
+                "B"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chartType",
+            "source",
+            "dataField",
+            "encodings",
+            "sampleRows"
+          ],
+          "properties": {
+            "chartType": {
+              "enum": [
+                "bar",
+                "line",
+                "area",
+                "scatter",
+                "heatmap"
+              ]
+            },
+            "source": {
+              "const": "record-array"
+            },
+            "dataField": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Declared objectSchema array field containing the chart rows."
+            },
+            "encodings": {
+              "type": "object",
+              "description": "Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).",
+              "properties": {
+                "x": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "y": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "color": {
+                  "$ref": "#/$defs/chartColorEncodingBinding"
+                },
+                "size": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "shape": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "detail": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "x",
+                "y"
+              ]
+            },
+            "sampleRows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": true
+              },
+              "description": "Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented."
+            },
+            "brand": {
+              "enum": [
+                "A",
+                "B"
+              ]
+            }
+          }
+        }
+      ]
     },
     "workflow": {
       "type": "object",
@@ -162,11 +296,30 @@
             "minorUnits"
           ],
           "properties": {
-            "addressRoles": { "type": "array", "items": { "type": "string" } },
-            "defaultAddressRole": { "type": "string" },
-            "recordedEvents": { "type": "array", "items": { "type": "string" } },
-            "cancellationRequiresReason": { "type": "boolean" },
-            "cancellationReasonCodes": { "type": "array", "items": { "type": "string" } },
+            "addressRoles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "defaultAddressRole": {
+              "type": "string"
+            },
+            "recordedEvents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cancellationRequiresReason": {
+              "type": "boolean"
+            },
+            "cancellationReasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "idField": {
               "type": "string",
               "minLength": 1
@@ -211,48 +364,111 @@
     },
     "fieldSchemaEntry": {
       "type": "object",
-      "required": ["type", "required"],
+      "required": [
+        "type",
+        "required"
+      ],
       "properties": {
-        "type": { "type": "string", "description": "Field data type (string, integer, number, boolean, datetime, email, etc.)." },
-        "required": { "type": "boolean", "description": "Whether the field is required." },
-        "description": { "type": "string", "description": "Human-readable field description." },
+        "type": {
+          "type": "string",
+          "description": "Field data type (string, integer, number, boolean, datetime, email, etc.)."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field is required."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable field description."
+        },
         "enum": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Allowed values for enum-constrained fields."
         },
-        "semanticType": { "type": "string", "description": "Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status')." }
+        "semanticType": {
+          "type": "string",
+          "description": "Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status')."
+        }
       },
       "additionalProperties": false
     },
     "layout": {
       "type": "object",
       "properties": {
-        "type": { "type": "string", "enum": ["stack", "grid", "inline", "section", "sidebar"] },
-        "align": { "type": "string", "enum": ["start", "center", "end", "space-between"] },
-        "gapToken": { "type": "string" }
+        "type": {
+          "type": "string",
+          "enum": [
+            "stack",
+            "grid",
+            "inline",
+            "section",
+            "sidebar"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "space-between"
+          ]
+        },
+        "gapToken": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "style": {
       "type": "object",
       "properties": {
-        "spacingToken": { "type": "string" },
-        "radiusToken": { "type": "string" },
-        "shadowToken": { "type": "string" },
-        "colorToken": { "type": "string" },
-        "typographyToken": { "type": "string" }
+        "spacingToken": {
+          "type": "string"
+        },
+        "radiusToken": {
+          "type": "string"
+        },
+        "shadowToken": {
+          "type": "string"
+        },
+        "colorToken": {
+          "type": "string"
+        },
+        "typographyToken": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "meta": {
       "type": "object",
       "properties": {
-        "label": { "type": "string" },
-        "intent": { "type": "string" },
-        "notes": { "type": "string" },
-        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
-        "confidenceLevel": { "type": "string", "enum": ["high", "medium", "low"] },
+        "label": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidenceLevel": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
         "unresolvedEntity": {
           "type": "string",
           "description": "Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally."
@@ -262,7 +478,9 @@
     },
     "bindings": {
       "type": "object",
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "props": {
       "type": "object",
@@ -270,21 +488,42 @@
     },
     "uiElement": {
       "type": "object",
-      "required": ["id", "component"],
+      "required": [
+        "id",
+        "component"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "component": { "type": "string", "minLength": 1 },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
         "state": {
           "type": "string",
           "minLength": 1,
           "description": "Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning."
         },
-        "route": { "type": "string" },
-        "layout": { "$ref": "#/$defs/layout" },
-        "style": { "$ref": "#/$defs/style" },
-        "props": { "$ref": "#/$defs/props" },
-        "chart": { "$ref": "#/$defs/chartDeclaration" },
-        "bindings": { "$ref": "#/$defs/bindings" },
+        "route": {
+          "type": "string"
+        },
+        "layout": {
+          "$ref": "#/$defs/layout"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "props": {
+          "$ref": "#/$defs/props"
+        },
+        "chart": {
+          "$ref": "#/$defs/chartDeclaration"
+        },
+        "bindings": {
+          "$ref": "#/$defs/bindings"
+        },
         "collection": {
           "type": "object",
           "required": [
@@ -329,11 +568,234 @@
         },
         "children": {
           "type": "array",
-          "items": { "$ref": "#/$defs/uiElement" }
+          "items": {
+            "$ref": "#/$defs/uiElement"
+          }
         },
-        "meta": { "$ref": "#/$defs/meta" }
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
       },
       "additionalProperties": false
+    },
+    "chartEncodingBinding": {
+      "title": "ChartEncodingBinding",
+      "description": "An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "chartColorEncodingBinding": {
+      "title": "ChartColorEncodingBinding",
+      "description": "A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "range": {
+              "type": "array",
+              "description": "Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.",
+              "items": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+              },
+              "minItems": 2
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

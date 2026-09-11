@@ -140,6 +140,29 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("Light theme only.");
   });
 
+  it("distinguishes authored object charts from executed proof and labels API-call examples truthfully (s195)", () => {
+    const invoice = read("domains/saas-billing/objects/Invoice.object.yaml");
+    const usage = read("domains/saas-billing/objects/Usage.object.yaml");
+    expect(invoice).toContain("dataField: line_items");
+    expect(invoice).toContain("title: Amount (minor units)");
+    expect(usage).toContain("unit: api_calls");
+    expect(usage).toContain("description: Synthetic API-call counts for generated example records.");
+    const examples = JSON.parse(read("domains/saas-billing/examples/usage-api-calls.json"));
+    expect(examples.usage.unit_label).toBe("api_calls");
+    expect(examples.description).toContain("not provider observations");
+    expect(html).toContain("Invoice and Usage author detail and dashboard placements");
+    expect(html).toContain("synthetic API-call counts");
+    expect(html).toContain("capability inventory observes composed declarations");
+    expect(html).toContain("generated-application runtime proof is recorded separately");
+    expect(html).toContain("ECharts placement is carried under decision #1944");
+    expect(html).toContain("explicit directed nodes/links transformation");
+    expect(html).not.toContain("MarkHeatmap");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(descriptions["code.generate"]).toContain("Bound record-array charts");
+    expect(descriptions["code.generate"]).toContain("full Invoice/Usage detail HTML retains OODS-V007");
+    expect(html).toContain("full Invoice/Usage detail HTML retains OODS-V007");
+  });
+
   it("pins the taxonomy sentence to classified identities without claiming every pattern has public pixels", () => {
     const taxonomy = JSON.parse(read("packages/viz-core/src/registry/viz-taxonomy.v1.json"));
     expect(taxonomy.summary).toMatchObject({ types: 13, patterns: 21, families: 8, classified: 34 });

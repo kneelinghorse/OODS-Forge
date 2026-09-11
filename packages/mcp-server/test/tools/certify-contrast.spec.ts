@@ -221,7 +221,38 @@ describe('certify-contrast — F5 explicit agent color range (sprint-147, honest
   });
 });
 
-describe('certify-contrast — role-B (no baked palette) is WCAG-exempt', () => {
+describe('certify-contrast — a missing categorical bake cannot claim the gradient exemption', () => {
+  it.each(['nominal', 'ordinal'])('fails a compiled %s color channel when its actual palette range is removed', async (type) => {
+    const spec = mk({ color: { field: 'series', type }, values: seriesRows(['a', 'b']) });
+    const compiled = structuredClone(toVegaLiteSpec(spec));
+    const unit = compiled as any;
+    expect(unit.encoding.color.scale.range).toHaveLength(6);
+    delete unit.encoding.color.scale.range;
+    const out = await evaluateContrastPillar(spec, compiled);
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastMeasured).toBe(false);
+    expect(out.contrastNote).toContain('Categorical color encoding is missing its baked palette');
+    expect(out.contrastNote).toContain('No categorical canvas ratio is graded');
+  });
+
+  it('a passing sibling or decorative fallback cannot hide the missing categorical bake', async () => {
+    const spec = mkMulti({ marks: [
+      { trait: 'MarkBar', color: { field: 'series', type: 'nominal' } },
+      { trait: 'MarkPoint', color: { field: 'series', type: 'nominal' } },
+    ], values: seriesRows(['a', 'b']) });
+    const compiled = toVegaLiteSpec(spec) as any;
+    const missing = compiled.layer[1];
+    delete missing.encoding.color.scale.range;
+    missing.mark = { ...missing.mark, color: '#eeeeee' };
+    const out = await evaluateContrastPillar(spec, compiled);
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastMeasured).toBe(false);
+    expect(out.contrastNote).toContain('Categorical color encoding is missing its baked palette');
+    expect(out.contrastNote).toContain('No categorical canvas ratio is graded for the missing-palette unit.');
+  });
+});
+
+describe('certify-contrast — continuous/default color without a palette is WCAG-exempt', () => {
   it('a quantitative color encoding (baked NO range) -> exempt (gradient essential exception)', async () => {
     const out = await grade(mk({ color: { field: 'value', type: 'quantitative' } }));
     expect(out.contrast).toBe('exempt');

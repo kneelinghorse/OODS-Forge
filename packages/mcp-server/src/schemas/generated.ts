@@ -49,6 +49,106 @@ export type A11yReport = A11yReportSchema.A11YReport;
 // Source: a11y.scan.input.json
 export namespace A11yScanInputSchema {
   /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
+
+  /**
    * Accessibility scan input. Runs WCAG contrast checks against design tokens.
    */
   export interface A11YScanInput {
@@ -172,21 +272,6 @@ export namespace A11yScanInputSchema {
   }
   export interface Props {
     [k: string]: any;
-  }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -1266,6 +1351,105 @@ export namespace CodeGenerateInputSchema {
   export type CodeGenerateInput1 = {
     [k: string]: any;
   };
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
 
   export interface CodeGenerateInput2 {
     schema?: AgenticREPLUISchema;
@@ -1425,21 +1609,6 @@ export namespace CodeGenerateInputSchema {
   }
   export interface Props {
     [k: string]: any;
-  }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -2949,6 +3118,106 @@ export type DesignComposeInput = DesignComposeInputSchema.DesignComposeInput;
 // Source: design.compose.output.json
 export namespace DesignComposeOutputSchema {
   /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
+
+  /**
    * Generated UiSchema with component selections and validation result.
    */
   export interface DesignComposeOutput {
@@ -3210,21 +3479,6 @@ export namespace DesignComposeOutputSchema {
   }
   export interface Props {
     [k: string]: any;
-  }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -5619,6 +5873,105 @@ export namespace ReplOutputSchema {
    */
   export type ReplOutput = AgenticREPLRenderOutput | AgenticREPLValidateOutput;
   /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
+  /**
    * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
@@ -5813,21 +6166,6 @@ export namespace ReplOutputSchema {
   export interface Props {
     [k: string]: any;
   }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
-  }
   export interface Bindings {
     [k: string]: string;
   }
@@ -5940,6 +6278,105 @@ export namespace ReplRenderInputSchema {
   export type ReplRenderInput1 = {
     [k: string]: any;
   };
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
   /**
    * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
@@ -6119,21 +6556,6 @@ export namespace ReplRenderInputSchema {
   export interface Props {
     [k: string]: any;
   }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
-  }
   export interface Bindings {
     [k: string]: string;
   }
@@ -6192,6 +6614,105 @@ export type ReplRenderInput = ReplRenderInputSchema.ReplRenderInput;
 
 // Source: repl.render.output.json
 export namespace ReplRenderOutputSchema {
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
   /**
    * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
@@ -6387,21 +6908,6 @@ export namespace ReplRenderOutputSchema {
   export interface Props {
     [k: string]: any;
   }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
-  }
   export interface Bindings {
     [k: string]: string;
   }
@@ -6460,6 +6966,106 @@ export type ReplRenderOutput = ReplRenderOutputSchema.ReplRenderOutput;
 
 // Source: repl.ui.schema.json
 export namespace UiSchemaSchema {
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
+
   export interface UiSchema {
     workflow?: Workflow;
     $schema?: string;
@@ -6572,21 +7178,6 @@ export namespace UiSchemaSchema {
   export interface Props {
     [k: string]: any;
   }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
-  }
   export interface Bindings {
     [k: string]: string;
   }
@@ -6632,6 +7223,105 @@ export namespace ReplValidateInputSchema {
   export type ReplValidateInput1 = {
     [k: string]: any;
   };
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
   /**
    * Required when mode='patch'. Accepts JSON Patch array or node patch object(s).
    */
@@ -6773,21 +7463,6 @@ export namespace ReplValidateInputSchema {
   export interface Props {
     [k: string]: any;
   }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
-  }
   export interface Bindings {
     [k: string]: string;
   }
@@ -6872,6 +7547,105 @@ export type ReplValidateInput = ReplValidateInputSchema.ReplValidateInput;
 
 // Source: repl.validate.output.json
 export namespace ReplValidateOutputSchema {
+  /**
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   */
+  export type ChartDeclaration =
+    | {
+        chartType: 'area';
+        source: 'payment-events';
+        /**
+         * @minItems 2
+         */
+        dateFields: [string, string, ...string[]];
+        amountField: string;
+        minorUnits: number;
+        currencyField: string;
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+        source: 'record-array';
+        /**
+         * Declared objectSchema array field containing the chart rows.
+         */
+        dataField: string;
+        /**
+         * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+         */
+        encodings: {
+          x: ChartEncodingBinding;
+          y: ChartEncodingBinding;
+          color?: ChartColorEncodingBinding;
+          size?: ChartEncodingBinding;
+          shape?: ChartEncodingBinding;
+          detail?: ChartEncodingBinding;
+        };
+        /**
+         * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type ChartEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ChartColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
   /**
    * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
@@ -7020,21 +7794,6 @@ export namespace ReplValidateOutputSchema {
   }
   export interface Props {
     [k: string]: any;
-  }
-  /**
-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
-   */
-  export interface ChartDeclaration {
-    chartType: 'area';
-    source: 'payment-events';
-    /**
-     * @minItems 2
-     */
-    dateFields: [string, string, ...string[]];
-    amountField: string;
-    minorUnits: number;
-    currencyField: string;
-    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;

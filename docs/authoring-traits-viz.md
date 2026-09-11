@@ -28,7 +28,53 @@ Each YAML definition includes:
 - Token references that defer to future `--cmp-viz-*` variables. No literal
   colors are introduced; everything maps to the forthcoming viz token pack.
 
-## Composition Rules
+## Bound charts in public objects
+
+The current public placement path accepts a `chart` parameter on MarkArea,
+MarkBar, MarkLine, MarkPoint and MarkRect. Their previews are VizAreaPreview,
+VizMarkPreview, VizLinePreview, VizPointPreview and VizHeatmapPreview respectively.
+A bound declaration projects existing domain fields rather than adding mark
+controls or requiring standalone encoding traits. Its `title` and `description`
+parameters describe the chart and its units. Detail is projected; dashboard is
+projected when authored by the trait. MarkBar and MarkLine currently author both.
+Unknown bound marks or mismatched chart types fail loudly.
+
+Invoice's bar declaration binds `line_items` and preserves minor currency units.
+Usage's line declaration binds `samples` and seeds explicitly synthetic API-call
+examples. For example, its canonical object includes:
+
+```yaml
+- name: viz/MarkLine
+  parameters:
+    title: Example API-call usage
+    description: Synthetic API-call counts for generated example records.
+    chart:
+      chartType: line
+      source: record-array
+      dataField: samples
+      encodings:
+        x: {field: timestamp, scale: temporal, title: Recorded at}
+        y: {field: value, title: API calls}
+      sampleRows:
+        - {timestamp: "2025-06-15T00:00:00Z", value: 1200}
+        - {timestamp: "2025-06-20T00:00:00Z", value: 1800}
+        - {timestamp: "2025-06-25T00:00:00Z", value: 1500}
+```
+
+The host's schema must declare the data array. `sampleRows` seeds that array in
+generated example records, and generation passes each record's actual rows to
+public `viz.render`. One distinct chart declaration is supported per object;
+identical repeated projections share assets. React/Vue applications and isolated HTML chart nodes receive static
+SVG. Full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs
+normalization limit. Editing a local record does not regenerate its SVG. Consumers can replace
+the typed `svg` prop. The passive preview rejects active or external SVG content.
+
+Subscription retains its existing `payment-events` Area declaration and
+major-unit conversion. ECharts placement remains an explicit carry under decision
+#1944: a new placement needs an authored object operand and a governed preview
+trait, including any required node/link transformation and component proof loops.
+
+## Standalone Composition Rules
 
 - **Single mark per layer** – All mark traits declare `metadata.conflicts_with`
   and the dependency graph enforces that only one of `MarkBar`, `MarkLine`,

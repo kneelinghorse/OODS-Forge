@@ -44,6 +44,14 @@ interface RankedExtension {
   traitOrder: number;
 }
 
+const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; component: string }>> = {
+  MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
+  MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
+  MarkLine: { chartType: 'line', component: 'VizLinePreview' },
+  MarkPoint: { chartType: 'scatter', component: 'VizPointPreview' },
+  MarkRect: { chartType: 'heatmap', component: 'VizHeatmapPreview' },
+};
+
 /**
  * Compose an object definition by resolving all its traits.
  * Merges schemas (field collision = last-trait-wins + warning),
@@ -74,17 +82,30 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
 
     // A bound chart projects existing domain fields. Mark controls belong only
     // to unbound visualization objects, never to their host's form or schema.
-    if (traitDef.trait.name === 'MarkArea' && ref.parameters?.chart) {
+    if (traitDef.trait.name.startsWith('Mark') && ref.parameters?.chart) {
+      const preview = BOUND_MARK_PREVIEWS[traitDef.trait.name];
+      if (!preview) throw new Error(`Bound chart trait "${traitDef.trait.name}" has no supported preview projection.`);
+      const chart = ref.parameters.chart;
+      if (typeof chart !== 'object' || Array.isArray(chart) || !('chartType' in chart) || chart.chartType !== preview.chartType) {
+        throw new Error(`Bound chart trait "${traitDef.trait.name}" requires chartType "${preview.chartType}".`);
+      }
+      const parameters = {
+        ...Object.fromEntries(traitDef.parameters.filter(parameter => parameter.default !== undefined).map(parameter => [parameter.name, parameter.default])),
+        ...ref.parameters,
+      };
+      const contexts = traitDef.view_extensions?.dashboard ? ['detail', 'dashboard'] : ['detail'];
       traitDef = {
         ...traitDef,
         schema: {},
         semantics: {},
-        view_extensions: {
-          detail: (traitDef.view_extensions?.detail ?? []).map(extension => ({
-            ...extension,
-            props: { chart: ref.parameters!.chart, title: 'Payment amounts', description: 'Recorded sample payments in major currency units.' },
-          })),
-        },
+        dependencies: [],
+        view_extensions: Object.fromEntries(contexts.map(context => [context, [{
+          component: preview.component, position: 'top', priority: 55, props: {
+            chart: structuredClone(chart),
+            ...(parameters.title !== undefined ? { title: parameters.title } : {}),
+            ...(parameters.description !== undefined ? { description: parameters.description } : {}),
+          },
+        }]])),
       };
     }
     resolvedTraits.push({ ref, definition: traitDef });

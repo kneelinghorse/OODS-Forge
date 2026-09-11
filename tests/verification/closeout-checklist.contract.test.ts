@@ -139,9 +139,13 @@ describe("Sprint 177 closeout carrier", () => {
     );
     expect(soakRow).toContain("while every hard ceiling passed");
     expect(soakJob).toContain("timeout-minutes: 15");
+    // s195-m06 retains the strict command's JSON/log result and only classifies
+    // the reproduced #1442 statistical bound after the other gates pass.
     expect(soakJob).toContain(
-      "run: pnpm --filter @oods/mcp-server run test:echarts-soak",
+      "run: node scripts/product-reality/s195-soak-observation.mjs",
     );
+    expect(soakJob).toContain("name: echarts-soak-observation");
+    expect(soakJob).not.toContain("continue-on-error");
     expect(portableRow).toContain("pnpm install --frozen-lockfile");
     expect(portableRow).toContain(
       "node --test packages/mcp-adapter/test-s181-lifecycle.js",

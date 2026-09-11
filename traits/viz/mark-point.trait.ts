@@ -10,6 +10,9 @@ const MarkPointTrait = {
   },
 
   parameters: [
+    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
+    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
     {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
     {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
 

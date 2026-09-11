@@ -20,27 +20,65 @@ const ajv = new Ajv({ strict: false, allErrors: true });
 const renderSchema = readJson('packages/mcp-server/src/schemas/viz.render.input.json');
 const validRender = ajv.compile(renderSchema);
 const validDashboard = ajv.compile(readJson('packages/mcp-server/src/schemas/dashboard.render.input.json'));
+const composeSchema = readJson('packages/mcp-server/src/schemas/design.compose.input.json');
+const validCompose = ajv.compile(composeSchema);
 export function canonical(value: unknown): string {
   const sort = (item: any): any => Array.isArray(item) ? item.map(sort) : item && typeof item === 'object'
     ? Object.fromEntries(Object.keys(item).sort().map(key => [key, sort(item[key])])) : item;
   return JSON.stringify(sort(value));
 }
 
+type PlacementRequest = Pick<Parameters<typeof compose>[0], 'object' | 'context' | 'layout'>;
+export interface ChartPlacement {
+  object: string;
+  context: string | null;
+  layout: string | null;
+  nodeId: string;
+  component: string;
+  chartType: string;
+  chartSource: string;
+  dataField?: string;
+  evidence: 'composed-declaration';
+}
+
+/** Inventory the actual UiSchema nodes. This observes placement, not executed consumer pixels. */
+export function collectChartPlacements(schema: unknown, request: PlacementRequest): ChartPlacement[] {
+  const placements: ChartPlacement[] = [];
+  const walk = (node: any) => {
+    if (!node || typeof node !== 'object') return;
+    const chart = node.chart;
+    if (typeof node.component === 'string' && chart?.chartType) {
+      assert(typeof node.id === 'string', 'Placed chart requires a UiSchema node identity');
+      placements.push({ object: request.object!, context: request.context ?? null, layout: request.layout ?? null,
+        nodeId: node.id, component: node.component, chartType: chart.chartType, chartSource: chart.source,
+        ...(chart.dataField ? { dataField: chart.dataField } : {}), evidence: 'composed-declaration' });
+    }
+    for (const value of Object.values(node)) if (typeof value === 'object') walk(value);
+  };
+  walk(schema);
+  return placements;
+}
+
+export async function measureVizPlacements() {
+  const placements: ChartPlacement[] = [];
+  const requests: PlacementRequest[] = [];
+  for (const object of ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User']) {
+    for (const context of composeSchema.properties.context.enum) requests.push({ object, context });
+    requests.push({ object, layout: 'dashboard' });
+  }
+  for (const request of requests) {
+    assert(validCompose(request), JSON.stringify(validCompose.errors));
+    const out = await compose(request);
+    assert.equal(out.status, 'ok', `${JSON.stringify(request)}: ${JSON.stringify(out.errors)}`);
+    placements.push(...collectChartPlacements(out.schema, request));
+  }
+  return { placements, placementCompositions: requests.length, placementRequests: requests };
+}
+
 export async function measureVizCensus() {
   assert.deepEqual(censusInputs.map(input => input.chartType).sort(), [...renderSchema.properties.chartType.enum].sort());
-  const placements: Array<{ object: string; context: string; chartType: string }> = [];
-  const walk = (node: any, object: string, context: string) => {
-    if (!node || typeof node !== 'object') return;
-    if (node.chart?.chartType) placements.push({ object, context, chartType: node.chart.chartType });
-    for (const value of Object.values(node)) if (typeof value === 'object') walk(value, object, context);
-  };
-  for (const object of ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User']) {
-    for (const context of ['detail', 'list', 'form', 'timeline', 'card', 'inline'] as const) {
-      const out = await compose({ object, context });
-      assert.equal(out.status, 'ok', `${object}/${context}: ${JSON.stringify(out.errors)}`);
-      walk(out.schema, object, context);
-    }
-  }
+  const placementResult = await measureVizPlacements();
+  const { placements } = placementResult;
   const observations: any[] = [], registry: any[] = [];
   for (const input of censusInputs) {
     const request = { ...input, output: { ...input.output, svg: true, includeNormalizedSpec: true } };
@@ -101,7 +139,14 @@ export async function measureVizCensus() {
     if (measured.length) notes.push(`Categorical contrast passes both brands in: ${passed.join(', ') || 'none'}.`);
     if (!dashboardAdmitted) notes.push('Dashboard exclusion (#881): the public panel schema does not admit this type.');
     if (!measured.length) notes.push(`Contrast verdict ${scopes[0].contrast.verdict}; no categorical canvas-ratio measurement claimed.`);
-    if (places.length) notes.push(`Static sample chart placement: ${places.map(place => `${place.object}/${place.context}`).join(', ')}; edited form data does not regenerate SVG.`);
+    if (places.length) {
+      const scopes = [...new Set(places.map(place => `${place.object}/${place.context ?? `layout:${place.layout}`}`))];
+      notes.push(`Composed chart declarations: ${scopes.join(', ')}. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.`);
+    } else if (defaultRender.render?.engine === 'echarts') {
+      notes.push('Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.');
+    } else {
+      notes.push('Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.');
+    }
     const first = scopes[0];
     assert(successfulScopes.every(scope => scope.coverage === first.coverage), `${input.chartType}: scope-dependent certification coverage`);
     if (first.coverage === 'uncertified' && first.render.engine === 'echarts') {
@@ -119,7 +164,7 @@ export async function measureVizCensus() {
     observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted, hcDrawn });
   }
   const accuracyControls = await measureVizAccuracyControls();
-  return { registry, observations, placementCompositions: 66, placements, accuracyControls };
+  return { registry, observations, ...placementResult, accuracyControls };
 }
 
 /** Missing real predicates must make the census red even when the rule roster is intact. */
