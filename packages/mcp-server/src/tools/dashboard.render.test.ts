@@ -56,14 +56,15 @@ describe('dashboard.render', () => {
     expect(validateInput(metricOverview())).toBe(true);
   });
 
-  it('accepts an inert measureRef on the KPI panel at the boundary and re-bakes NO KPI number or a11y string (sprint-116)', async () => {
+  it('resolveMeasures=false preserves the inert KPI measureRef contract and baseline values (sprint-116)', async () => {
     // metricOverview() merges its argument at the ENVELOPE top level, so a
     // top-level measureRef would be rejected by the dashboard-level
     // additionalProperties:false. Deep-clone it INTO the KPI panel instead
     // (a separate cloned fixture — never the shared metricOverview() output reused
     // across assertions). measureRef is a governed-measure provenance tag; the
-    // contract is "accepted at the boundary, unread by compute, never echoed".
-    const base = metricOverview();
+    // opt-out contract is "accepted at the boundary, unread by compute, never echoed".
+    // Sprint 194 resolves measures by default; this historical proof opts out.
+    const base = metricOverview({ resolveMeasures: false });
     const panels = base.panels.map((p) => ({ ...(p as Record<string, unknown>) }));
     (panels[0] as Record<string, unknown>).measureRef = 'gm.revenue';
     const withRef = { ...base, panels } as DashboardRenderInput;

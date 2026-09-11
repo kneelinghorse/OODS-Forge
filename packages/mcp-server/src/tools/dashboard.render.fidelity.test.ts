@@ -206,14 +206,15 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
   });
 
-  it('additivity parity: an inert measureRef on the KPI panel leaves the composed payload byte-identical (sprint-116)', async () => {
+  it('additivity parity: resolveMeasures=false leaves the inert KPI measureRef payload byte-identical (sprint-116)', async () => {
     // Clone METRIC_OVERVIEW (NEVER mutate the shared constant — it backs the
     // golden above) and add the governed-measure tag to the KPI panel. The ENTIRE
     // composed payload must stay byte-identical to the baseline: measureRef is
-    // unread by compute and never echoed onto the output. This is the byte-level
+    // unread by compute with resolveMeasures=false and never echoed onto the output. This is the byte-level
     // proof that the descriptor re-bakes no golden.
     const withRef = {
       ...METRIC_OVERVIEW,
+      resolveMeasures: false,
       panels: METRIC_OVERVIEW.panels.map((p, i) =>
         i === 0
           ? { ...(p as Record<string, unknown>), measureRef: 'gm.revenue' }
