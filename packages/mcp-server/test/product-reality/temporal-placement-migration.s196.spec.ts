@@ -96,6 +96,10 @@ describe('temporal placement migration preserves operands and historical proof (
     const request = wire('code.generate', 'input', structuredClone(row.request));
     const result = wire('code.generate', 'output', await generate(request));
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-    expect(result.artifact).toEqual(row.result.artifact);
+    // This regression protects temporal SVG bytes, not unrelated workflow controls.
+    // Complete historical artifacts remain compared across timezones above.
+    const assets = (artifact: NonNullable<CodeGenerateOutput['artifact']>) => artifact.files.filter(file => file.path.endsWith('.svg'));
+    expect(assets(result.artifact!)).not.toHaveLength(0);
+    expect(assets(result.artifact!)).toEqual(assets(row.result.artifact!));
   }, 60000);
 });

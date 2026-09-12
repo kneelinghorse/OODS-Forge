@@ -9,14 +9,18 @@ import {
 } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 
 const root = resolve(import.meta.dirname, '../../../..');
-// These source operands belong to the retained Sprint195 proofs; UTC intentionally
-// changed the live registry and renderer in Sprint196. Do not rewrite old receipts.
-const historicalVizPaths = new Set(['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts']);
-const historicalViz = new Map<string, Buffer>();
+// Source operands belong to the retained proofs. Read their recorded revisions
+// so later renderer/cancellation work never rewrites or invalidates history.
+const historicalSourceHeads = new Map([
+  ...['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts'].map(file => [file, '1d100e20bcc0911031192406625357638adecbe5'] as const),
+  ['packages/mcp-server/src/codegen/react-emitter.ts', 'c6453c97883feb38dda203628684a7bb9643765d'],
+]);
+const historicalSources = new Map<string, Buffer>();
 const bytes = (file: string): Buffer => {
-  if (!historicalVizPaths.has(file)) return readFileSync(resolve(root, file));
-  if (!historicalViz.has(file)) historicalViz.set(file, execFileSync('git', ['show', `1d100e20bcc0911031192406625357638adecbe5:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
-  return historicalViz.get(file)!;
+  const head = historicalSourceHeads.get(file);
+  if (!head) return readFileSync(resolve(root, file));
+  if (!historicalSources.has(file)) historicalSources.set(file, execFileSync('git', ['show', `${head}:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
+  return historicalSources.get(file)!;
 };
 const json = (file: string): any => JSON.parse(bytes(file).toString());
 const hash = (file: string) => createHash('sha256').update(bytes(file)).digest('hex');
