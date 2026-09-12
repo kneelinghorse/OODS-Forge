@@ -1,0 +1,1638 @@
+﻿2026-09-12T09:14:23.6326076Z Current runner version: '2.337.0'
+2026-09-12T09:14:23.6363368Z ##[group]Runner Image Provisioner
+2026-09-12T09:14:23.6365041Z Hosted Compute Agent
+2026-09-12T09:14:23.6366083Z Version: 20260828.587
+2026-09-12T09:14:23.6367306Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-12T09:14:23.6368622Z Build Date: 2026-08-28T16:44:25Z
+2026-09-12T09:14:23.6369883Z Worker ID: {7d02f5bf-9417-488a-8760-97635cd02a7c}
+2026-09-12T09:14:23.6371284Z Azure Region: eastus
+2026-09-12T09:14:23.6372263Z ##[endgroup]
+2026-09-12T09:14:23.6374694Z ##[group]Operating System
+2026-09-12T09:14:23.6376253Z Ubuntu
+2026-09-12T09:14:23.6377214Z 24.04.5
+2026-09-12T09:14:23.6378073Z LTS
+2026-09-12T09:14:23.6379020Z ##[endgroup]
+2026-09-12T09:14:23.6380047Z ##[group]Runner Image
+2026-09-12T09:14:23.6381078Z Image: ubuntu-24.04
+2026-09-12T09:14:23.6382247Z Version: 20260907.300.1
+2026-09-12T09:14:23.6384382Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-12T09:14:23.6387571Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-12T09:14:23.6389342Z ##[endgroup]
+2026-09-12T09:14:23.6391575Z ##[group]GITHUB_TOKEN Permissions
+2026-09-12T09:14:23.6394339Z Contents: read
+2026-09-12T09:14:23.6395791Z Metadata: read
+2026-09-12T09:14:23.6396829Z PullRequests: write
+2026-09-12T09:14:23.6397960Z ##[endgroup]
+2026-09-12T09:14:23.6400988Z Secret source: Actions
+2026-09-12T09:14:23.6402602Z Cache mode: write
+2026-09-12T09:14:23.6403773Z Prepare workflow directory
+2026-09-12T09:14:23.6976413Z Prepare all required actions
+2026-09-12T09:14:23.7048272Z Getting action download info
+2026-09-12T09:14:23.9683734Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-12T09:14:25.4341021Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-12T09:14:25.6453248Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-12T09:14:25.7439299Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2026-09-12T09:14:25.8497209Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-12T09:14:26.0940151Z Complete job name: a11y-contract
+2026-09-12T09:14:26.2190311Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:14:26.2199617Z ##[group]Run actions/checkout@v4
+2026-09-12T09:14:26.2200709Z with:
+2026-09-12T09:14:26.2201497Z   repository: kneelinghorse/OODS-Forge
+2026-09-12T09:14:26.2206459Z   token: ***
+2026-09-12T09:14:26.2207237Z   ssh-strict: true
+2026-09-12T09:14:26.2207992Z   ssh-user: git
+2026-09-12T09:14:26.2208761Z   persist-credentials: true
+2026-09-12T09:14:26.2209617Z   clean: true
+2026-09-12T09:14:26.2210398Z   sparse-checkout-cone-mode: true
+2026-09-12T09:14:26.2211285Z   fetch-depth: 1
+2026-09-12T09:14:26.2212043Z   fetch-tags: false
+2026-09-12T09:14:26.2212814Z   show-progress: true
+2026-09-12T09:14:26.2213574Z   lfs: false
+2026-09-12T09:14:26.2214357Z   submodules: false
+2026-09-12T09:14:26.2215316Z   set-safe-directory: true
+2026-09-12T09:14:26.2216174Z   allow-unsafe-pr-checkout: false
+2026-09-12T09:14:26.2217684Z env:
+2026-09-12T09:14:26.2218445Z   NODE_VERSION: 24
+2026-09-12T09:14:26.2219205Z ##[endgroup]
+2026-09-12T09:14:26.3474413Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-12T09:14:26.3479152Z ##[group]Getting Git version info
+2026-09-12T09:14:26.3487888Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T09:14:26.3491497Z [command]/usr/bin/git version
+2026-09-12T09:14:26.3610679Z git version 2.55.0
+2026-09-12T09:14:26.3618858Z ##[endgroup]
+2026-09-12T09:14:26.3630312Z Temporarily overriding HOME='/home/runner/work/_temp/a9d8a08c-83cf-46d7-b107-b14eba5ffd8f' before making global git config changes
+2026-09-12T09:14:26.3635205Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T09:14:26.3648219Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:14:26.3737736Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T09:14:26.3761277Z ##[group]Initializing the repository
+2026-09-12T09:14:26.3766948Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:14:26.3927605Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-12T09:14:26.3931385Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-12T09:14:26.3938533Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-12T09:14:26.3941041Z hint: call:
+2026-09-12T09:14:26.3942973Z hint:
+2026-09-12T09:14:26.3945242Z hint: 	git config --global init.defaultBranch <name>
+2026-09-12T09:14:26.3947688Z hint:
+2026-09-12T09:14:26.3949621Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-12T09:14:26.3952671Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-12T09:14:26.3955405Z hint:
+2026-09-12T09:14:26.3957677Z hint: 	git branch -m <name>
+2026-09-12T09:14:26.3959632Z hint:
+2026-09-12T09:14:26.3962200Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-12T09:14:26.3965907Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-12T09:14:26.3972613Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T09:14:26.4030690Z ##[endgroup]
+2026-09-12T09:14:26.4033844Z ##[group]Disabling automatic garbage collection
+2026-09-12T09:14:26.4037357Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-12T09:14:26.4118394Z ##[endgroup]
+2026-09-12T09:14:26.4121002Z ##[group]Setting up auth
+2026-09-12T09:14:26.4123621Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T09:14:26.4175039Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T09:14:26.4866838Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T09:14:26.4886852Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T09:14:26.5078883Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T09:14:26.5116644Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T09:14:26.5375158Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-12T09:14:26.5422453Z ##[endgroup]
+2026-09-12T09:14:26.5425841Z ##[group]Fetching the repository
+2026-09-12T09:14:26.5435927Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +43b5f5b041319f02a93c4988661d263c40856822:refs/remotes/pull/103/merge
+2026-09-12T09:14:46.6224595Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T09:14:46.6225872Z  * [new ref]           43b5f5b041319f02a93c4988661d263c40856822 -> pull/103/merge
+2026-09-12T09:14:46.6243326Z ##[endgroup]
+2026-09-12T09:14:46.6244049Z ##[group]Determining the checkout info
+2026-09-12T09:14:46.6245138Z ##[endgroup]
+2026-09-12T09:14:46.6246727Z [command]/usr/bin/git sparse-checkout disable
+2026-09-12T09:14:46.6921578Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-12T09:14:46.7085431Z ##[group]Checking out the ref
+2026-09-12T09:14:46.7089847Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/103/merge
+2026-09-12T09:14:47.9006100Z Updating files:  14% (10086/71879)
+2026-09-12T09:14:47.9698169Z Updating files:  15% (10782/71879)
+2026-09-12T09:14:48.0591206Z Updating files:  16% (11501/71879)
+2026-09-12T09:14:48.1676714Z Updating files:  17% (12220/71879)
+2026-09-12T09:14:48.2746241Z Updating files:  18% (12939/71879)
+2026-09-12T09:14:48.3664566Z Updating files:  19% (13658/71879)
+2026-09-12T09:14:48.4627068Z Updating files:  20% (14376/71879)
+2026-09-12T09:14:48.5657090Z Updating files:  21% (15095/71879)
+2026-09-12T09:14:48.6417750Z Updating files:  22% (15814/71879)
+2026-09-12T09:14:48.7148885Z Updating files:  23% (16533/71879)
+2026-09-12T09:14:48.8101993Z Updating files:  24% (17251/71879)
+2026-09-12T09:14:48.8292035Z Updating files:  25% (17970/71879)
+2026-09-12T09:14:48.9001939Z Updating files:  25% (18083/71879)
+2026-09-12T09:14:49.0065175Z Updating files:  26% (18689/71879)
+2026-09-12T09:14:49.0994423Z Updating files:  27% (19408/71879)
+2026-09-12T09:14:49.2146850Z Updating files:  28% (20127/71879)
+2026-09-12T09:14:49.3088479Z Updating files:  29% (20845/71879)
+2026-09-12T09:14:49.4148046Z Updating files:  30% (21564/71879)
+2026-09-12T09:14:49.6827225Z Updating files:  31% (22283/71879)
+2026-09-12T09:14:49.7286487Z Updating files:  32% (23002/71879)
+2026-09-12T09:14:49.8294395Z Updating files:  33% (23721/71879)
+2026-09-12T09:14:49.8464984Z Updating files:  33% (24352/71879)
+2026-09-12T09:14:50.0073710Z Updating files:  34% (24439/71879)
+2026-09-12T09:14:50.1483478Z Updating files:  35% (25158/71879)
+2026-09-12T09:14:50.2160992Z Updating files:  36% (25877/71879)
+2026-09-12T09:14:50.3339178Z Updating files:  37% (26596/71879)
+2026-09-12T09:14:50.4012062Z Updating files:  38% (27315/71879)
+2026-09-12T09:14:50.4528352Z Updating files:  39% (28033/71879)
+2026-09-12T09:14:50.5306701Z Updating files:  40% (28752/71879)
+2026-09-12T09:14:50.6107820Z Updating files:  41% (29471/71879)
+2026-09-12T09:14:50.6656138Z Updating files:  42% (30190/71879)
+2026-09-12T09:14:50.7568140Z Updating files:  43% (30908/71879)
+2026-09-12T09:14:50.8292403Z Updating files:  44% (31627/71879)
+2026-09-12T09:14:50.8461798Z Updating files:  44% (32119/71879)
+2026-09-12T09:14:50.9377253Z Updating files:  45% (32346/71879)
+2026-09-12T09:14:51.0296167Z Updating files:  46% (33065/71879)
+2026-09-12T09:14:51.1500352Z Updating files:  47% (33784/71879)
+2026-09-12T09:14:51.3135791Z Updating files:  48% (34502/71879)
+2026-09-12T09:14:51.4936110Z Updating files:  49% (35221/71879)
+2026-09-12T09:14:51.5843386Z Updating files:  50% (35940/71879)
+2026-09-12T09:14:51.6430655Z Updating files:  51% (36659/71879)
+2026-09-12T09:14:51.7422155Z Updating files:  52% (37378/71879)
+2026-09-12T09:14:51.8331789Z Updating files:  53% (38096/71879)
+2026-09-12T09:14:51.8768091Z Updating files:  53% (38478/71879)
+2026-09-12T09:14:51.9359486Z Updating files:  54% (38815/71879)
+2026-09-12T09:14:51.9992684Z Updating files:  55% (39534/71879)
+2026-09-12T09:14:52.1009494Z Updating files:  56% (40253/71879)
+2026-09-12T09:14:52.2585992Z Updating files:  57% (40972/71879)
+2026-09-12T09:14:52.3151498Z Updating files:  58% (41690/71879)
+2026-09-12T09:14:52.3870212Z Updating files:  59% (42409/71879)
+2026-09-12T09:14:52.4946119Z Updating files:  60% (43128/71879)
+2026-09-12T09:14:52.5827565Z Updating files:  61% (43847/71879)
+2026-09-12T09:14:52.6437459Z Updating files:  62% (44565/71879)
+2026-09-12T09:14:52.7915149Z Updating files:  63% (45284/71879)
+2026-09-12T09:14:52.8301514Z Updating files:  64% (46003/71879)
+2026-09-12T09:14:52.9187837Z Updating files:  64% (46208/71879)
+2026-09-12T09:14:53.0105979Z Updating files:  65% (46722/71879)
+2026-09-12T09:14:53.0665643Z Updating files:  66% (47441/71879)
+2026-09-12T09:14:53.1443771Z Updating files:  67% (48159/71879)
+2026-09-12T09:14:53.2499817Z Updating files:  68% (48878/71879)
+2026-09-12T09:14:53.3215686Z Updating files:  69% (49597/71879)
+2026-09-12T09:14:53.3832282Z Updating files:  70% (50316/71879)
+2026-09-12T09:14:53.4351364Z Updating files:  71% (51035/71879)
+2026-09-12T09:14:53.4900290Z Updating files:  72% (51753/71879)
+2026-09-12T09:14:53.5548902Z Updating files:  73% (52472/71879)
+2026-09-12T09:14:53.6549523Z Updating files:  74% (53191/71879)
+2026-09-12T09:14:53.7477485Z Updating files:  75% (53910/71879)
+2026-09-12T09:14:53.8292459Z Updating files:  76% (54629/71879)
+2026-09-12T09:14:53.8625933Z Updating files:  76% (55128/71879)
+2026-09-12T09:14:54.0390405Z Updating files:  77% (55347/71879)
+2026-09-12T09:14:54.3679344Z Updating files:  78% (56066/71879)
+2026-09-12T09:14:54.4254169Z Updating files:  79% (56785/71879)
+2026-09-12T09:14:54.5318787Z Updating files:  80% (57504/71879)
+2026-09-12T09:14:54.6797376Z Updating files:  81% (58222/71879)
+2026-09-12T09:14:54.8294561Z Updating files:  82% (58941/71879)
+2026-09-12T09:14:54.8675657Z Updating files:  82% (59443/71879)
+2026-09-12T09:14:54.9916369Z Updating files:  83% (59660/71879)
+2026-09-12T09:14:55.0996139Z Updating files:  84% (60379/71879)
+2026-09-12T09:14:55.2621180Z Updating files:  85% (61098/71879)
+2026-09-12T09:14:55.3525578Z Updating files:  86% (61816/71879)
+2026-09-12T09:14:55.4305016Z Updating files:  87% (62535/71879)
+2026-09-12T09:14:55.6783551Z Updating files:  88% (63254/71879)
+2026-09-12T09:14:55.7666499Z Updating files:  89% (63973/71879)
+2026-09-12T09:14:55.8230404Z Updating files:  90% (64692/71879)
+2026-09-12T09:14:55.8317949Z Updating files:  91% (65410/71879)
+2026-09-12T09:14:55.8866704Z Updating files:  91% (65481/71879)
+2026-09-12T09:14:55.9719717Z Updating files:  92% (66129/71879)
+2026-09-12T09:14:56.1282247Z Updating files:  93% (66848/71879)
+2026-09-12T09:14:56.4996654Z Updating files:  94% (67567/71879)
+2026-09-12T09:14:56.5484016Z Updating files:  95% (68286/71879)
+2026-09-12T09:14:56.6045428Z Updating files:  96% (69004/71879)
+2026-09-12T09:14:56.6568535Z Updating files:  97% (69723/71879)
+2026-09-12T09:14:56.7173402Z Updating files:  98% (70442/71879)
+2026-09-12T09:14:56.7736940Z Updating files:  99% (71161/71879)
+2026-09-12T09:14:56.7738005Z Updating files: 100% (71879/71879)
+2026-09-12T09:14:56.7739165Z Updating files: 100% (71879/71879), done.
+2026-09-12T09:14:56.9235802Z Note: switching to 'refs/remotes/pull/103/merge'.
+2026-09-12T09:14:56.9236618Z 
+2026-09-12T09:14:56.9263685Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-12T09:14:56.9265291Z changes and commit them, and you can discard any commits you make in this
+2026-09-12T09:14:56.9266509Z state without impacting any branches by switching back to a branch.
+2026-09-12T09:14:56.9267019Z 
+2026-09-12T09:14:56.9267913Z If you want to create a new branch to retain commits you create, you may
+2026-09-12T09:14:56.9269963Z do so (now or later) by using -c with the switch command. Example:
+2026-09-12T09:14:56.9270443Z 
+2026-09-12T09:14:56.9270622Z   git switch -c <new-branch-name>
+2026-09-12T09:14:56.9270935Z 
+2026-09-12T09:14:56.9271104Z Or undo this operation with:
+2026-09-12T09:14:56.9271386Z 
+2026-09-12T09:14:56.9271533Z   git switch -
+2026-09-12T09:14:56.9272023Z 
+2026-09-12T09:14:56.9272401Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-12T09:14:56.9272941Z 
+2026-09-12T09:14:56.9273587Z HEAD is now at 43b5f5b0 Merge 63efd098cc1def448014a1da09d64394dd3dfaf7 into 91c1f5f2bbf2027cbc6768ef04c880f191671c73
+2026-09-12T09:14:56.9431322Z ##[endgroup]
+2026-09-12T09:14:56.9482600Z [command]/usr/bin/git log -1 --format=%H
+2026-09-12T09:14:56.9525728Z 43b5f5b041319f02a93c4988661d263c40856822
+2026-09-12T09:14:56.9761784Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:14:56.9765052Z ##[group]Run pnpm/action-setup@v4
+2026-09-12T09:14:56.9765525Z with:
+2026-09-12T09:14:56.9765858Z   run_install: false
+2026-09-12T09:14:56.9766235Z   dest: ~/setup-pnpm
+2026-09-12T09:14:56.9766828Z   cache: false
+2026-09-12T09:14:56.9767215Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-12T09:14:56.9767723Z   package_json_file: package.json
+2026-09-12T09:14:56.9768177Z   standalone: false
+2026-09-12T09:14:56.9768526Z env:
+2026-09-12T09:14:56.9768840Z   NODE_VERSION: 24
+2026-09-12T09:14:56.9769188Z ##[endgroup]
+2026-09-12T09:14:57.1517288Z ##[group]Running self-installer...
+2026-09-12T09:14:57.7303851Z (node:2047) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T09:14:57.7306713Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:14:57.8846491Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T09:14:57.8958221Z Packages: +1
+2026-09-12T09:14:57.8963142Z +
+2026-09-12T09:14:58.3907019Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-12T09:14:58.5267348Z 
+2026-09-12T09:14:58.5278332Z dependencies:
+2026-09-12T09:14:58.5291781Z + pnpm 9.12.2 (12.4.1 is available)
+2026-09-12T09:14:58.5292434Z 
+2026-09-12T09:14:58.5917177Z Done in 1.1s
+2026-09-12T09:14:58.6090851Z ##[endgroup]
+2026-09-12T09:14:58.6091469Z Installation Completed!
+2026-09-12T09:14:58.6292518Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:14:58.6293815Z ##[group]Run actions/setup-node@v4
+2026-09-12T09:14:58.6294083Z with:
+2026-09-12T09:14:58.6294286Z   node-version: 24
+2026-09-12T09:14:58.6294504Z   cache: pnpm
+2026-09-12T09:14:58.6294715Z   always-auth: false
+2026-09-12T09:14:58.6295336Z   check-latest: false
+2026-09-12T09:14:58.6298049Z   token: ***
+2026-09-12T09:14:58.6298259Z env:
+2026-09-12T09:14:58.6298466Z   NODE_VERSION: 24
+2026-09-12T09:14:58.6298750Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:14:58.6299076Z ##[endgroup]
+2026-09-12T09:14:58.8365626Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-12T09:14:58.8368101Z (node:2060) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:14:58.8369647Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:14:58.8372108Z ##[group]Environment details
+2026-09-12T09:15:02.2861600Z node: v24.20.0
+2026-09-12T09:15:02.2862492Z npm: 11.19.0
+2026-09-12T09:15:02.2863149Z yarn: 1.22.22
+2026-09-12T09:15:02.2865766Z ##[endgroup]
+2026-09-12T09:15:02.2890552Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-12T09:15:02.7285607Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-12T09:15:02.8118441Z Cache hit for: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T09:15:02.8276946Z (node:2060) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T09:15:03.5994466Z Received 125339883 of 125339883 (100.0%), 164.4 MBs/sec
+2026-09-12T09:15:03.5995733Z Cache Size: ~120 MB (125339883 B)
+2026-09-12T09:15:03.6028714Z [command]/usr/bin/tar -xf /home/runner/work/_temp/dad1cdf4-a131-407f-b708-5dd13d2a6b1d/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-12T09:15:06.4656328Z Cache restored successfully
+2026-09-12T09:15:06.4719246Z Cache restored from key: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T09:15:06.4954330Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-12T09:15:06.4955047Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-12T09:15:06.5000117Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:15:06.5000607Z env:
+2026-09-12T09:15:06.5000813Z   NODE_VERSION: 24
+2026-09-12T09:15:06.5001113Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:15:06.5001447Z ##[endgroup]
+2026-09-12T09:15:07.0237870Z Scope: all 22 workspace projects
+2026-09-12T09:15:07.1026547Z Lockfile is up to date, resolution step is skipped
+2026-09-12T09:15:07.1956475Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T09:15:07.3451605Z Packages: +946
+2026-09-12T09:15:07.3453512Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-12T09:15:08.1942835Z Progress: resolved 946, reused 756, downloaded 0, added 0
+2026-09-12T09:15:09.1941528Z Progress: resolved 946, reused 945, downloaded 0, added 452
+2026-09-12T09:15:10.0057255Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-12T09:15:11.3066771Z 
+2026-09-12T09:15:11.3067731Z dependencies:
+2026-09-12T09:15:11.3068729Z + @radix-ui/react-slot 1.2.3
+2026-09-12T09:15:11.3069704Z + @rjsf/core 5.24.13
+2026-09-12T09:15:11.3070509Z + @rjsf/utils 5.24.13
+2026-09-12T09:15:11.3071477Z + @rjsf/validator-ajv8 5.24.13
+2026-09-12T09:15:11.3072383Z + @types/geojson 7946.0.16
+2026-09-12T09:15:11.3075207Z + @types/topojson-client 3.1.5
+2026-09-12T09:15:11.3076094Z + @types/topojson-specification 1.0.5
+2026-09-12T09:15:11.3076826Z + ajv 8.17.1
+2026-09-12T09:15:11.3077435Z + ajv-formats 3.0.1
+2026-09-12T09:15:11.3078023Z + d3-geo 3.1.1
+2026-09-12T09:15:11.3078600Z + d3-scale 4.0.2
+2026-09-12T09:15:11.3092070Z + echarts 6.0.0
+2026-09-12T09:15:11.3093942Z + js-yaml 4.1.0
+2026-09-12T09:15:11.3108119Z + luxon 3.7.2
+2026-09-12T09:15:11.3108833Z + pg 8.16.3
+2026-09-12T09:15:11.3109492Z + react 19.2.0
+2026-09-12T09:15:11.3110209Z + react-dom 19.2.0
+2026-09-12T09:15:11.3112037Z + react-window 1.8.11
+2026-09-12T09:15:11.3128461Z + topojson-client 3.1.0
+2026-09-12T09:15:11.3138655Z + vega 6.2.0
+2026-09-12T09:15:11.3142401Z + vega-embed 7.1.0
+2026-09-12T09:15:11.3160818Z + zod 4.1.12
+2026-09-12T09:15:11.3165766Z 
+2026-09-12T09:15:11.3166359Z devDependencies:
+2026-09-12T09:15:11.3167305Z + @chromatic-com/storybook 4.1.1
+2026-09-12T09:15:11.3175255Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-12T09:15:11.3176496Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-12T09:15:11.3177585Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-12T09:15:11.3178502Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-12T09:15:11.3197805Z + @playwright/test 1.56.1
+2026-09-12T09:15:11.3198789Z + @storybook/addon-a11y 9.1.10
+2026-09-12T09:15:11.3199574Z + @storybook/addon-docs 9.1.10
+2026-09-12T09:15:11.3200381Z + @storybook/addon-onboarding 9.1.10
+2026-09-12T09:15:11.3201143Z + @storybook/mdx2-csf 1.1.0
+2026-09-12T09:15:11.3201837Z + @storybook/react 9.1.10
+2026-09-12T09:15:11.3202591Z + @storybook/react-vite 9.1.10
+2026-09-12T09:15:11.3203322Z + @testing-library/dom 10.4.1
+2026-09-12T09:15:11.3204088Z + @testing-library/jest-dom 6.9.1
+2026-09-12T09:15:11.3205106Z + @testing-library/react 16.3.0
+2026-09-12T09:15:11.3222319Z + @testing-library/user-event 14.6.1
+2026-09-12T09:15:11.3227961Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-12T09:15:11.3228615Z + @types/d3-geo 3.1.0
+2026-09-12T09:15:11.3229132Z + @types/d3-scale 4.0.9
+2026-09-12T09:15:11.3229644Z + @types/js-yaml 4.0.9
+2026-09-12T09:15:11.3230119Z + @types/luxon 3.7.1
+2026-09-12T09:15:11.3230606Z + @types/node 20.19.21
+2026-09-12T09:15:11.3231069Z + @types/pg 8.15.6
+2026-09-12T09:15:11.3231518Z + @types/react 19.2.2
+2026-09-12T09:15:11.3231992Z + @types/react-dom 19.2.2
+2026-09-12T09:15:11.3232465Z + @types/react-window 1.8.8
+2026-09-12T09:15:11.3232931Z + @types/semver 7.7.1
+2026-09-12T09:15:11.3233397Z + @types/sql.js 1.4.9
+2026-09-12T09:15:11.3233938Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-12T09:15:11.3235260Z + @typescript-eslint/parser 6.21.0
+2026-09-12T09:15:11.3235976Z + @vitejs/plugin-react 5.0.4
+2026-09-12T09:15:11.3236487Z + @vitest/browser 3.2.4
+2026-09-12T09:15:11.3236952Z + @vitest/coverage-v8 3.2.4
+2026-09-12T09:15:11.3237801Z + axe-core 4.11.0
+2026-09-12T09:15:11.3238207Z + colorjs.io 0.5.2
+2026-09-12T09:15:11.3238596Z + dotenv 17.4.2
+2026-09-12T09:15:11.3238965Z + eslint 8.57.1
+2026-09-12T09:15:11.3239441Z + eslint-plugin-storybook 9.1.10
+2026-09-12T09:15:11.3239918Z + globals 17.6.0
+2026-09-12T09:15:11.3240290Z + jsdom 24.1.3
+2026-09-12T09:15:11.3240768Z + json-schema-to-typescript 13.1.2
+2026-09-12T09:15:11.3241372Z + markdown-to-jsx 7.7.15
+2026-09-12T09:15:11.3241822Z + pg-mem 3.0.5
+2026-09-12T09:15:11.3242214Z + playwright 1.56.1
+2026-09-12T09:15:11.3242606Z + postcss 8.5.28
+2026-09-12T09:15:11.3242977Z + prettier 3.6.2
+2026-09-12T09:15:11.3243344Z + rimraf 5.0.10
+2026-09-12T09:15:11.3243711Z + semver 7.7.3
+2026-09-12T09:15:11.3244082Z + sql.js 1.13.0
+2026-09-12T09:15:11.3244312Z + storybook 9.1.10
+2026-09-12T09:15:11.3244569Z + style-dictionary 4.4.0
+2026-09-12T09:15:11.3245373Z + tailwindcss 3.4.18
+2026-09-12T09:15:11.3245825Z + tsup 8.5.0
+2026-09-12T09:15:11.3246198Z + tsx 4.20.6
+2026-09-12T09:15:11.3246608Z + typescript 5.3.3
+2026-09-12T09:15:11.3246903Z + vega-lite 6.4.1
+2026-09-12T09:15:11.3247180Z + vite-tsconfig-paths 5.1.4
+2026-09-12T09:15:11.3247447Z + vitest 3.2.4
+2026-09-12T09:15:11.3247688Z + vitest-axe 0.1.0
+2026-09-12T09:15:11.3247828Z 
+2026-09-12T09:15:11.4196265Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-12T09:15:11.4789055Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-12T09:15:11.4869726Z . prepare: Done
+2026-09-12T09:15:11.5169385Z Done in 4.9s
+2026-09-12T09:15:11.5693830Z ##[group]Run pnpm run build:tokens
+2026-09-12T09:15:11.5694191Z [36;1mpnpm run build:tokens[0m
+2026-09-12T09:15:11.5730703Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:15:11.5730986Z env:
+2026-09-12T09:15:11.5731192Z   NODE_VERSION: 24
+2026-09-12T09:15:11.5731490Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:15:11.5731834Z ##[endgroup]
+2026-09-12T09:15:12.1159617Z 
+2026-09-12T09:15:12.1160887Z > @oods/foundry-mcp@0.1.0 build:tokens /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:15:12.1162340Z > node packages/tokens/scripts/build.mjs
+2026-09-12T09:15:12.1163125Z 
+2026-09-12T09:15:12.5135484Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-12T09:15:12.5146448Z Building design tokens with Style Dictionary…
+2026-09-12T09:15:12.6133107Z 
+2026-09-12T09:15:12.6133919Z Token collisions detected (9):
+2026-09-12T09:15:12.6135492Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:12.6136822Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:13.2645583Z 
+2026-09-12T09:15:13.2646363Z ios-swift
+2026-09-12T09:15:13.2647272Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-12T09:15:13.2713604Z 
+2026-09-12T09:15:13.2714281Z compose
+2026-09-12T09:15:13.2715458Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-12T09:15:13.4305388Z 
+2026-09-12T09:15:13.4315890Z ts
+2026-09-12T09:15:13.4335735Z ! dist/ts/tokens.ts, does not exist
+2026-09-12T09:15:13.4355090Z 
+2026-09-12T09:15:13.4368594Z tailwind
+2026-09-12T09:15:13.4375624Z ! dist/tailwind/tokens.json, does not exist
+2026-09-12T09:15:14.3915691Z 
+2026-09-12T09:15:14.3917329Z ios-swift
+2026-09-12T09:15:14.3918481Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-12T09:15:14.3919097Z 
+2026-09-12T09:15:14.3919442Z compose
+2026-09-12T09:15:14.3920149Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-12T09:15:14.4569800Z 
+2026-09-12T09:15:14.4570831Z ts
+2026-09-12T09:15:14.4571981Z ✔︎ dist/ts/tokens.ts
+2026-09-12T09:15:14.4572628Z 
+2026-09-12T09:15:14.4573078Z tailwind
+2026-09-12T09:15:14.4573899Z ✔︎ dist/tailwind/tokens.json
+2026-09-12T09:15:14.5385563Z 
+2026-09-12T09:15:14.5390730Z Token collisions detected (9):
+2026-09-12T09:15:14.5391885Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:14.5393308Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:14.7488425Z 
+2026-09-12T09:15:14.7489258Z css
+2026-09-12T09:15:14.7490650Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:14.7930265Z 
+2026-09-12T09:15:14.7933447Z Token collisions detected (9):
+2026-09-12T09:15:14.7934395Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:14.7935689Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:14.9493164Z 
+2026-09-12T09:15:14.9497208Z css
+2026-09-12T09:15:14.9499793Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:15.1206552Z 
+2026-09-12T09:15:15.1207786Z Token collisions detected (257):
+2026-09-12T09:15:15.1209363Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:15.1210719Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:15.2648568Z 
+2026-09-12T09:15:15.2649358Z css
+2026-09-12T09:15:15.2650702Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:15.4036646Z 
+2026-09-12T09:15:15.4037495Z Token collisions detected (234):
+2026-09-12T09:15:15.4040288Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:15.4041320Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:15.5480851Z 
+2026-09-12T09:15:15.5484728Z css
+2026-09-12T09:15:15.5509214Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:15.6997250Z 
+2026-09-12T09:15:15.6998290Z Token collisions detected (9):
+2026-09-12T09:15:15.6999893Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:15.7001234Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:15.8486091Z 
+2026-09-12T09:15:15.8486796Z css
+2026-09-12T09:15:15.8489772Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:15.9801046Z 
+2026-09-12T09:15:15.9802216Z Token collisions detected (257):
+2026-09-12T09:15:15.9803810Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:15.9805378Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:16.1239745Z 
+2026-09-12T09:15:16.1243557Z css
+2026-09-12T09:15:16.1245130Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:16.2506261Z 
+2026-09-12T09:15:16.2507536Z Token collisions detected (234):
+2026-09-12T09:15:16.2508815Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:16.2510038Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:16.3973009Z 
+2026-09-12T09:15:16.3973721Z css
+2026-09-12T09:15:16.3975036Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:16.5282876Z 
+2026-09-12T09:15:16.5283893Z Token collisions detected (9):
+2026-09-12T09:15:16.5285380Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:16.5286691Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:16.6781561Z ✔︎ tokens built successfully in 4.16s
+2026-09-12T09:15:16.6782724Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-12T09:15:16.6783743Z    types:    dist/ts/tokens.ts
+2026-09-12T09:15:16.6784511Z    tailwind: dist/tailwind/tokens.json
+2026-09-12T09:15:16.6785578Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-12T09:15:16.6786336Z    compose:  dist/compose/OodsTokens.kt
+2026-09-12T09:15:16.7195790Z ##[group]Run pnpm --filter @oods/tw-variants run build
+2026-09-12T09:15:16.7196564Z [36;1mpnpm --filter @oods/tw-variants run build[0m
+2026-09-12T09:15:16.7249721Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:15:16.7250200Z env:
+2026-09-12T09:15:16.7250572Z   NODE_VERSION: 24
+2026-09-12T09:15:16.7251066Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:15:16.7251628Z ##[endgroup]
+2026-09-12T09:15:17.2373807Z 
+2026-09-12T09:15:17.2386890Z > @oods/tw-variants@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants
+2026-09-12T09:15:17.2388244Z > rimraf dist && tsup --config tsup.config.ts
+2026-09-12T09:15:17.2388986Z 
+2026-09-12T09:15:17.6255856Z [34mCLI[39m Building entry: src/context-matrix.ts, src/index.ts
+2026-09-12T09:15:17.6256988Z [34mCLI[39m Using tsconfig: ../../tsconfig.json
+2026-09-12T09:15:17.6258047Z [34mCLI[39m tsup v8.5.0
+2026-09-12T09:15:17.6259812Z [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+2026-09-12T09:15:17.6318016Z [34mCLI[39m Target: node20
+2026-09-12T09:15:17.6355919Z [34mCLI[39m Cleaning output folder
+2026-09-12T09:15:17.6359241Z [34mESM[39m Build start
+2026-09-12T09:15:17.6375870Z [34mCJS[39m Build start
+2026-09-12T09:15:18.1600267Z [32mCJS[39m [1mdist/context-matrix.cjs     [22m[32m6.42 KB[39m
+2026-09-12T09:15:18.1611301Z [32mCJS[39m [1mdist/index.cjs              [22m[32m14.54 KB[39m
+2026-09-12T09:15:18.1612811Z [32mCJS[39m [1mdist/context-matrix.cjs.map [22m[32m13.51 KB[39m
+2026-09-12T09:15:18.1614127Z [32mCJS[39m [1mdist/index.cjs.map          [22m[32m32.63 KB[39m
+2026-09-12T09:15:18.1615555Z [32mCJS[39m ⚡️ Build success in 525ms
+2026-09-12T09:15:18.1616673Z [32mESM[39m [1mdist/context-matrix.js     [22m[32m139.00 B[39m
+2026-09-12T09:15:18.1617861Z [32mESM[39m [1mdist/index.js              [22m[32m8.03 KB[39m
+2026-09-12T09:15:18.1619053Z [32mESM[39m [1mdist/chunk-IHQKAR2X.js     [22m[32m6.39 KB[39m
+2026-09-12T09:15:18.1620302Z [32mESM[39m [1mdist/context-matrix.js.map [22m[32m78.00 B[39m
+2026-09-12T09:15:18.1621511Z [32mESM[39m [1mdist/index.js.map          [22m[32m19.16 KB[39m
+2026-09-12T09:15:18.1622697Z [32mESM[39m [1mdist/chunk-IHQKAR2X.js.map [22m[32m13.51 KB[39m
+2026-09-12T09:15:18.1623711Z [32mESM[39m ⚡️ Build success in 525ms
+2026-09-12T09:15:18.2526261Z [34mDTS[39m Build start
+2026-09-12T09:15:21.2106233Z [32mDTS[39m ⚡️ Build success in 2961ms
+2026-09-12T09:15:21.2110060Z [32mDTS[39m [1mdist/index.d.ts           [22m[32m685.00 B[39m
+2026-09-12T09:15:21.2113556Z [32mDTS[39m [1mdist/context-matrix.d.ts  [22m[32m573.00 B[39m
+2026-09-12T09:15:21.2115242Z [32mDTS[39m [1mdist/index.d.cts          [22m[32m685.00 B[39m
+2026-09-12T09:15:21.2116661Z [32mDTS[39m [1mdist/context-matrix.d.cts [22m[32m573.00 B[39m
+2026-09-12T09:15:21.2852754Z ##[group]Run pnpm --filter @oods/component-contracts run build
+2026-09-12T09:15:21.2853676Z [36;1mpnpm --filter @oods/component-contracts run build[0m
+2026-09-12T09:15:21.2922040Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:15:21.2922515Z env:
+2026-09-12T09:15:21.2922864Z   NODE_VERSION: 24
+2026-09-12T09:15:21.2923370Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:15:21.2923952Z ##[endgroup]
+2026-09-12T09:15:21.7935286Z 
+2026-09-12T09:15:21.7936926Z > @oods/component-contracts@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts
+2026-09-12T09:15:21.7938586Z > rimraf dist && tsup --config tsup.config.ts
+2026-09-12T09:15:21.7939318Z 
+2026-09-12T09:15:22.2153371Z [34mCLI[39m Building entry: src/index.ts
+2026-09-12T09:15:22.2160182Z [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-12T09:15:22.2161273Z [34mCLI[39m tsup v8.5.0
+2026-09-12T09:15:22.2163143Z [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+2026-09-12T09:15:22.2226023Z [34mCLI[39m Target: es2022
+2026-09-12T09:15:22.2256115Z [34mCLI[39m Cleaning output folder
+2026-09-12T09:15:22.2276467Z [34mESM[39m Build start
+2026-09-12T09:15:22.2290375Z [34mCJS[39m Build start
+2026-09-12T09:15:23.2621385Z [34mDTS[39m Build start
+2026-09-12T09:15:23.7226586Z [32mCJS[39m [1mdist/index.cjs [22m[32m896.25 KB[39m
+2026-09-12T09:15:23.7266000Z [32mCJS[39m ⚡️ Build success in 1491ms
+2026-09-12T09:15:23.7345963Z [32mESM[39m [1mdist/index.js [22m[32m894.48 KB[39m
+2026-09-12T09:15:23.7395921Z [32mESM[39m ⚡️ Build success in 1493ms
+2026-09-12T09:15:26.3333745Z [32mDTS[39m ⚡️ Build success in 3491ms
+2026-09-12T09:15:26.3335418Z [32mDTS[39m [1mdist/index.d.ts  [22m[32m107.62 KB[39m
+2026-09-12T09:15:26.3336393Z [32mDTS[39m [1mdist/index.d.cts [22m[32m107.62 KB[39m
+2026-09-12T09:15:26.4090102Z ##[group]Run pnpm run build-storybook
+2026-09-12T09:15:26.4090458Z [36;1mpnpm run build-storybook[0m
+2026-09-12T09:15:26.4146213Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:15:26.4146482Z env:
+2026-09-12T09:15:26.4146682Z   NODE_VERSION: 24
+2026-09-12T09:15:26.4146971Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:15:26.4147478Z ##[endgroup]
+2026-09-12T09:15:26.8711992Z 
+2026-09-12T09:15:26.8713191Z > @oods/foundry-mcp@0.1.0 build-storybook /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:15:26.8714516Z > storybook build
+2026-09-12T09:15:26.8715470Z 
+2026-09-12T09:15:27.5217520Z [1mstorybook v9.1.10
+2026-09-12T09:15:27.5218580Z [22m
+2026-09-12T09:15:27.5245427Z info => Cleaning outputDir: [36mstorybook-static[39m
+2026-09-12T09:15:27.7187327Z info => Loading presets
+2026-09-12T09:15:28.7078751Z info => Building manager..
+2026-09-12T09:15:29.2264078Z info => Building preview..
+2026-09-12T09:15:29.4849436Z info Using tsconfig paths for react-docgen
+2026-09-12T09:15:29.4911075Z No story files found for the specified pattern: [34msrc/stories/**/*.mdx[39m
+2026-09-12T09:15:30.0119631Z 
+2026-09-12T09:15:30.0120567Z > @oods/tokens@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens
+2026-09-12T09:15:30.0121827Z > rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-12T09:15:30.0122417Z 
+2026-09-12T09:15:30.3806666Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-12T09:15:30.3836012Z Building design tokens with Style Dictionary…
+2026-09-12T09:15:30.4625455Z 
+2026-09-12T09:15:30.4635897Z Token collisions detected (9):
+2026-09-12T09:15:30.4656060Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:30.4657146Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:31.0028581Z 
+2026-09-12T09:15:31.0035882Z ios-swift
+2026-09-12T09:15:31.0043398Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-12T09:15:31.0044064Z 
+2026-09-12T09:15:31.0044473Z compose
+2026-09-12T09:15:31.0045490Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-12T09:15:31.1331080Z 
+2026-09-12T09:15:31.1332066Z ts
+2026-09-12T09:15:31.1332975Z ! dist/ts/tokens.ts, does not exist
+2026-09-12T09:15:31.1341715Z 
+2026-09-12T09:15:31.1342107Z tailwind
+2026-09-12T09:15:31.1342955Z ! dist/tailwind/tokens.json, does not exist
+2026-09-12T09:15:32.0055688Z 
+2026-09-12T09:15:32.0056438Z ios-swift
+2026-09-12T09:15:32.0057665Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-12T09:15:32.0058256Z 
+2026-09-12T09:15:32.0058561Z compose
+2026-09-12T09:15:32.0059269Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-12T09:15:32.0706277Z 
+2026-09-12T09:15:32.0707010Z ts
+2026-09-12T09:15:32.0708202Z ✔︎ dist/ts/tokens.ts
+2026-09-12T09:15:32.0708637Z 
+2026-09-12T09:15:32.0708919Z tailwind
+2026-09-12T09:15:32.0709587Z ✔︎ dist/tailwind/tokens.json
+2026-09-12T09:15:32.1550487Z 
+2026-09-12T09:15:32.1552093Z Token collisions detected (9):
+2026-09-12T09:15:32.1553389Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:32.1555276Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:32.3619437Z 
+2026-09-12T09:15:32.3620875Z css
+2026-09-12T09:15:32.3623788Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:32.4057037Z 
+2026-09-12T09:15:32.4057949Z Token collisions detected (9):
+2026-09-12T09:15:32.4059557Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:32.4060892Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:32.5606330Z 
+2026-09-12T09:15:32.5607307Z css
+2026-09-12T09:15:32.5608868Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:32.7259392Z 
+2026-09-12T09:15:32.7260462Z Token collisions detected (257):
+2026-09-12T09:15:32.7262051Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:32.7263409Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:32.8722420Z 
+2026-09-12T09:15:32.8726471Z css
+2026-09-12T09:15:32.8727828Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:33.0083647Z 
+2026-09-12T09:15:33.0085044Z Token collisions detected (234):
+2026-09-12T09:15:33.0090229Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:33.0091479Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:33.1556528Z 
+2026-09-12T09:15:33.1559608Z css
+2026-09-12T09:15:33.1560985Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:33.3066918Z 
+2026-09-12T09:15:33.3068092Z Token collisions detected (9):
+2026-09-12T09:15:33.3069668Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:33.3071053Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:33.4520359Z 
+2026-09-12T09:15:33.4521138Z css
+2026-09-12T09:15:33.4525515Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:33.5814432Z 
+2026-09-12T09:15:33.5815606Z Token collisions detected (257):
+2026-09-12T09:15:33.5817309Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:33.5818725Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:33.7246472Z 
+2026-09-12T09:15:33.7247805Z css
+2026-09-12T09:15:33.7248843Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:33.8493007Z 
+2026-09-12T09:15:33.8493857Z Token collisions detected (234):
+2026-09-12T09:15:33.8495287Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:33.8496561Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:33.9930795Z 
+2026-09-12T09:15:33.9931577Z css
+2026-09-12T09:15:33.9932786Z ✔︎ dist/css/tokens.css
+2026-09-12T09:15:34.1198755Z 
+2026-09-12T09:15:34.1206183Z Token collisions detected (9):
+2026-09-12T09:15:34.1207404Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:15:34.1208796Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:15:34.2661081Z ✔︎ tokens built successfully in 3.89s
+2026-09-12T09:15:34.2662186Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-12T09:15:34.2663096Z    types:    dist/ts/tokens.ts
+2026-09-12T09:15:34.2663863Z    tailwind: dist/tailwind/tokens.json
+2026-09-12T09:15:34.2664657Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-12T09:15:34.2665672Z    compose:  dist/compose/OodsTokens.kt
+2026-09-12T09:15:34.5236883Z [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+2026-09-12T09:15:34.6010679Z [34mAttention:[39m Storybook now collects completely anonymous telemetry regarding usage. This information is used to shape Storybook's roadmap and prioritize features.
+2026-09-12T09:15:34.6013368Z You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2026-09-12T09:15:34.6015847Z [36mhttps://storybook.js.org/telemetry[39m
+2026-09-12T09:15:34.6017768Z 
+2026-09-12T09:15:36.5801376Z transforming...
+2026-09-12T09:15:37.5383046Z [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+2026-09-12T09:15:48.8074570Z (node:2316) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+2026-09-12T09:15:48.8078558Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:16:00.8182899Z [33m[plugin vite:resolve] Module "node:crypto" has been externalized for browser compatibility, imported by "/home/runner/work/OODS-Forge/OODS-Forge/src/utils/hash/sha256.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+2026-09-12T09:16:16.7546696Z [32m✓[39m 2659 modules transformed.
+2026-09-12T09:16:18.1126390Z rendering chunks...
+2026-09-12T09:16:22.3968841Z computing gzip size...
+2026-09-12T09:16:23.6447311Z [2mstorybook-static/[22m[32miframe.html                                                    [39m[1m[2m   19.58 kB[22m[1m[22m[2m │ gzip:   5.30 kB[22m
+2026-09-12T09:16:23.6536053Z [2mstorybook-static/[22m[2massets/[22m[35mProgress-BmiqskSx.css                                   [39m[1m[2m    1.66 kB[22m[1m[22m[2m │ gzip:   0.52 kB[22m
+2026-09-12T09:16:23.6538896Z [2mstorybook-static/[22m[2massets/[22m[35mStepper-BH9kROQA.css                                    [39m[1m[2m    3.17 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+2026-09-12T09:16:23.6576996Z [2mstorybook-static/[22m[2massets/[22m[35mPagination-Ds7DCwF1.css                                 [39m[1m[2m    3.41 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+2026-09-12T09:16:23.6616626Z [2mstorybook-static/[22m[2massets/[22m[35mBreadcrumbs-CRpeVKzG.css                                [39m[1m[2m    3.46 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+2026-09-12T09:16:23.6623600Z [2mstorybook-static/[22m[2massets/[22m[35mTagPill-BkAHZaKK.css                                    [39m[1m[2m    4.12 kB[22m[1m[22m[2m │ gzip:   1.13 kB[22m
+2026-09-12T09:16:23.6677740Z [2mstorybook-static/[22m[2massets/[22m[35mTabs-M6rjellP.css                                       [39m[1m[2m    4.38 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+2026-09-12T09:16:23.6696618Z [2mstorybook-static/[22m[2massets/[22m[35maddress-types-DXNV0PwR.css                              [39m[1m[2m    6.12 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2026-09-12T09:16:23.6723896Z [2mstorybook-static/[22m[2massets/[22m[35mCategoryTree-BLEO57eG.css                               [39m[1m[2m    7.04 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+2026-09-12T09:16:23.6731927Z [2mstorybook-static/[22m[2massets/[22m[35mforms-DhyefL6t.css                                      [39m[1m[2m    8.66 kB[22m[1m[22m[2m │ gzip:   1.55 kB[22m
+2026-09-12T09:16:23.6756925Z [2mstorybook-static/[22m[2massets/[22m[35miframe-BzLYzwXG.css                                     [39m[1m[2m  285.40 kB[22m[1m[22m[2m │ gzip:  37.17 kB[22m
+2026-09-12T09:16:23.6776710Z [2mstorybook-static/[22m[2massets/[22m[36m__vite-browser-external-BIHI7g3E.js                     [39m[1m[2m    0.03 kB[22m[1m[22m[2m │ gzip:   0.05 kB[22m
+2026-09-12T09:16:23.7043782Z [2mstorybook-static/[22m[2massets/[22m[36mdesign-tokens-C2inXIig.js                               [39m[1m[2m    0.11 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-09-12T09:16:23.7247267Z [2mstorybook-static/[22m[2massets/[22m[36mformat-compact-Cjy90nd7.js                              [39m[1m[2m    0.12 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-09-12T09:16:23.7266502Z [2mstorybook-static/[22m[2massets/[22m[36mTable-CDhUr5dr.js                                       [39m[1m[2m    0.17 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+2026-09-12T09:16:23.7397593Z [2mstorybook-static/[22m[2massets/[22m[36mOverlayRoot-DFvDrTXj.js                                 [39m[1m[2m    0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+2026-09-12T09:16:23.7400613Z [2mstorybook-static/[22m[2massets/[22m[36mBubbleChart-B7fOQnsf.js                                 [39m[1m[2m    0.23 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+2026-09-12T09:16:23.7402417Z [2mstorybook-static/[22m[2massets/[22m[36mobject-BfcmK0qs.js                                      [39m[1m[2m    0.35 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+2026-09-12T09:16:23.7404155Z [2mstorybook-static/[22m[2massets/[22m[36mshared-a1SZEvId.js                                      [39m[1m[2m    0.38 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+2026-09-12T09:16:23.7406154Z [2mstorybook-static/[22m[2massets/[22m[36mindex-M0jGI9eX.js                                       [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+2026-09-12T09:16:23.7407846Z [2mstorybook-static/[22m[2massets/[22m[36mobject-Ctb68GHO.js                                      [39m[1m[2m    0.51 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+2026-09-12T09:16:23.7410294Z [2mstorybook-static/[22m[2massets/[22m[36mBadge.stories-q_nDGtEn.js                               [39m[1m[2m    0.61 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2026-09-12T09:16:23.7412227Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-Cg542aAS.js                              [39m[1m[2m    0.61 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2026-09-12T09:16:23.7414007Z [2mstorybook-static/[22m[2massets/[22m[36mInput.stories-HtvwP-yN.js                               [39m[1m[2m    0.65 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-12T09:16:23.7416160Z [2mstorybook-static/[22m[2massets/[22m[36mBanner.stories-B1AU_Xk9.js                              [39m[1m[2m    0.65 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-12T09:16:23.7417976Z [2mstorybook-static/[22m[2massets/[22m[36mToggle.stories-C2xfSeJ-.js                              [39m[1m[2m    0.69 kB[22m[1m[22m[2m │ gzip:   0.43 kB[22m
+2026-09-12T09:16:23.7419756Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox.stories-DfPIwVD3.js                            [39m[1m[2m    0.70 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-12T09:16:23.7421535Z [2mstorybook-static/[22m[2massets/[22m[36mTextArea.stories-CpExI1xW.js                            [39m[1m[2m    0.71 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-12T09:16:23.7423261Z [2mstorybook-static/[22m[2massets/[22m[36mjsx-runtime-D_zvdyIk.js                                 [39m[1m[2m    0.73 kB[22m[1m[22m[2m │ gzip:   0.46 kB[22m
+2026-09-12T09:16:23.7425101Z [2mstorybook-static/[22m[2massets/[22m[36mwithPage-DAPUertW.js                                    [39m[1m[2m    0.79 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+2026-09-12T09:16:23.7426923Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip.stories-ByjD2x43.js                             [39m[1m[2m    0.84 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+2026-09-12T09:16:23.7428742Z [2mstorybook-static/[22m[2massets/[22m[36mfieldUtils-D3i5JNgY.js                                  [39m[1m[2m    0.87 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-12T09:16:23.7430478Z [2mstorybook-static/[22m[2massets/[22m[36museTooltip-D2UW6nPs.js                                  [39m[1m[2m    0.88 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-12T09:16:23.7432198Z [2mstorybook-static/[22m[2massets/[22m[36mprofiler-C6okNAFs.js                                    [39m[1m[2m    0.90 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+2026-09-12T09:16:23.7433923Z [2mstorybook-static/[22m[2massets/[22m[36mtoken-values-BBiJr8Np.js                                [39m[1m[2m    0.94 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+2026-09-12T09:16:23.7435885Z [2mstorybook-static/[22m[2massets/[22m[36muserTiming-Di4SONa0.js                                  [39m[1m[2m    1.00 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2026-09-12T09:16:23.7437635Z [2mstorybook-static/[22m[2massets/[22m[36mPopover.stories-BBlO88m5.js                             [39m[1m[2m    1.02 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+2026-09-12T09:16:23.7439379Z [2mstorybook-static/[22m[2massets/[22m[36mCard.stories-hEM86GWy.js                                [39m[1m[2m    1.03 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-12T09:16:23.7441125Z [2mstorybook-static/[22m[2massets/[22m[36mDetail.stories-DAIDi2ja.js                              [39m[1m[2m    1.03 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+2026-09-12T09:16:23.7442888Z [2mstorybook-static/[22m[2massets/[22m[36mList.stories-BFfEVshW.js                                [39m[1m[2m    1.04 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-12T09:16:23.7444632Z [2mstorybook-static/[22m[2massets/[22m[36mInline.stories-Cr3dktQL.js                              [39m[1m[2m    1.04 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-12T09:16:23.7446508Z [2mstorybook-static/[22m[2massets/[22m[36mForm.stories-CkZ01eWS.js                                [39m[1m[2m    1.06 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2026-09-12T09:16:23.7448413Z [2mstorybook-static/[22m[2massets/[22m[36mTimeline.stories-CPR8Mr-F.js                            [39m[1m[2m    1.08 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-12T09:16:23.7450204Z [2mstorybook-static/[22m[2massets/[22m[36mForcedColors.stories-CiueVvmX.js                        [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.64 kB[22m
+2026-09-12T09:16:23.7452140Z [2mstorybook-static/[22m[2massets/[22m[36mactive-WriDRwKw.js                                      [39m[1m[2m    1.20 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+2026-09-12T09:16:23.7453923Z [2mstorybook-static/[22m[2massets/[22m[36mpreload-helper-Dp1pzeXC.js                              [39m[1m[2m    1.27 kB[22m[1m[22m[2m │ gzip:   0.73 kB[22m
+2026-09-12T09:16:23.7455822Z [2mstorybook-static/[22m[2massets/[22m[36mDocsRenderer-PQXLIZUC-CyY0Ad_G.js                       [39m[1m[2m    1.30 kB[22m[1m[22m[2m │ gzip:   0.71 kB[22m
+2026-09-12T09:16:23.7457612Z [2mstorybook-static/[22m[2massets/[22m[36mhierarchy-utils-BsVLmEIJ.js                             [39m[1m[2m    1.40 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-09-12T09:16:23.7459351Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.Form-BcYGbzTH.js                               [39m[1m[2m    1.46 kB[22m[1m[22m[2m │ gzip:   0.71 kB[22m
+2026-09-12T09:16:23.7461047Z [2mstorybook-static/[22m[2massets/[22m[36mBadge-CKa_JNzD.js                                       [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2026-09-12T09:16:23.7462733Z [2mstorybook-static/[22m[2massets/[22m[36mSheet-Dhwy0K1i.js                                       [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.76 kB[22m
+2026-09-12T09:16:23.7464466Z [2mstorybook-static/[22m[2massets/[22m[36mToggle-Cgem2RYf.js                                      [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.68 kB[22m
+2026-09-12T09:16:23.7466295Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox-FSzv2LMt.js                                    [39m[1m[2m    1.51 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+2026-09-12T09:16:23.7468008Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryBreadcrumb-C9XtHKXv.js                          [39m[1m[2m    1.60 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-09-12T09:16:23.7469720Z [2mstorybook-static/[22m[2massets/[22m[36msubscription-C1kagOOH.js                                [39m[1m[2m    1.61 kB[22m[1m[22m[2m │ gzip:   0.77 kB[22m
+2026-09-12T09:16:23.7471409Z [2mstorybook-static/[22m[2massets/[22m[36mactive-Ezbq0kJo.js                                      [39m[1m[2m    1.66 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+2026-09-12T09:16:23.7473098Z [2mstorybook-static/[22m[2massets/[22m[36mstatusMap-vNRpwO6a.js                                   [39m[1m[2m    1.76 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+2026-09-12T09:16:23.7474951Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Toggle-BiOpqEjg.js                           [39m[1m[2m    1.83 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+2026-09-12T09:16:23.7476707Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Radio-ogU6aBFi.js                            [39m[1m[2m    1.84 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-12T09:16:23.7478452Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Checkbox-B18Z9ZA0.js                         [39m[1m[2m    1.86 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-12T09:16:23.7480194Z [2mstorybook-static/[22m[2massets/[22m[36mTextArea-HVxJrCZd.js                                    [39m[1m[2m    1.91 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+2026-09-12T09:16:23.7481903Z [2mstorybook-static/[22m[2massets/[22m[36mPopover-Br9oHeGv.js                                     [39m[1m[2m    1.99 kB[22m[1m[22m[2m │ gzip:   1.00 kB[22m
+2026-09-12T09:16:23.7483637Z [2mstorybook-static/[22m[2massets/[22m[36mscale-token-mapper-O3Lj-JOz.js                          [39m[1m[2m    2.01 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+2026-09-12T09:16:23.7485646Z [2mstorybook-static/[22m[2massets/[22m[36mButton-Bdgx6Xoa.js                                      [39m[1m[2m    2.02 kB[22m[1m[22m[2m │ gzip:   0.72 kB[22m
+2026-09-12T09:16:23.7487411Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Tooltip-B_teIp67.js                          [39m[1m[2m    2.11 kB[22m[1m[22m[2m │ gzip:   0.91 kB[22m
+2026-09-12T09:16:23.7489385Z [2mstorybook-static/[22m[2massets/[22m[36maddress-formatter-jjX4-Rcg.js                           [39m[1m[2m    2.12 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+2026-09-12T09:16:23.7491097Z [2mstorybook-static/[22m[2massets/[22m[36mview-CN7KMbr3.js                                        [39m[1m[2m    2.14 kB[22m[1m[22m[2m │ gzip:   0.93 kB[22m
+2026-09-12T09:16:23.7492832Z [2mstorybook-static/[22m[2massets/[22m[36mBrandA-17bskDVu.js                                      [39m[1m[2m    2.17 kB[22m[1m[22m[2m │ gzip:   1.02 kB[22m
+2026-09-12T09:16:23.7494539Z [2mstorybook-static/[22m[2massets/[22m[36mPageHeader-CktJynF3.js                                  [39m[1m[2m    2.17 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-12T09:16:23.7496571Z [2mstorybook-static/[22m[2massets/[22m[36mBarChart-BkUzSuyq.js                                    [39m[1m[2m    2.20 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+2026-09-12T09:16:23.7498694Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Toast-D3xGRxup.js                            [39m[1m[2m    2.20 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+2026-09-12T09:16:23.7499974Z [2mstorybook-static/[22m[2massets/[22m[36mAccessibleTable-B76rmHkq.js                             [39m[1m[2m    2.24 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+2026-09-12T09:16:23.7501215Z [2mstorybook-static/[22m[2massets/[22m[36mPageHeader.stories-BaTOv6vS.js                          [39m[1m[2m    2.31 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+2026-09-12T09:16:23.7502427Z [2mstorybook-static/[22m[2massets/[22m[36mindex-BoRlhAYW.js                                       [39m[1m[2m    2.35 kB[22m[1m[22m[2m │ gzip:   0.96 kB[22m
+2026-09-12T09:16:23.7503643Z [2mstorybook-static/[22m[2massets/[22m[36moverlay-manager.stories-BWTYJvqf.js                     [39m[1m[2m    2.37 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-12T09:16:23.7505226Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.TextArea-CgiRxMeJ.js                         [39m[1m[2m    2.45 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-12T09:16:23.7506485Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Badge-CRxLwHMW.js                            [39m[1m[2m    2.46 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+2026-09-12T09:16:23.7507660Z [2mstorybook-static/[22m[2massets/[22m[36mhooks-sv7BQsVd.js                                       [39m[1m[2m    2.49 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+2026-09-12T09:16:23.7508813Z [2mstorybook-static/[22m[2massets/[22m[36mInput-B3HJq3zL.js                                       [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+2026-09-12T09:16:23.7510017Z [2mstorybook-static/[22m[2massets/[22m[36mLayeredCharts.stories-BirTiJFz.js                       [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   1.04 kB[22m
+2026-09-12T09:16:23.7511257Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-DtWlACKJ.js                               [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+2026-09-12T09:16:23.7512472Z [2mstorybook-static/[22m[2massets/[22m[36mSheet.stories-5rwn7BhX.js                               [39m[1m[2m    2.54 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+2026-09-12T09:16:23.7513695Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.StatusShowcase-BE_9SWro.js                   [39m[1m[2m    2.55 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-09-12T09:16:23.7515348Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Select-COO4QvOH.js                           [39m[1m[2m    2.58 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-12T09:16:23.7516637Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip-BqRx8Kt2.js                                     [39m[1m[2m    2.62 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+2026-09-12T09:16:23.7518443Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Tabs-CJ_HA8OY.js                             [39m[1m[2m    2.65 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+2026-09-12T09:16:23.7519881Z [2mstorybook-static/[22m[2massets/[22m[36mBadge.stories-JvlqQLXE.js                               [39m[1m[2m    2.67 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-09-12T09:16:23.7521643Z [2mstorybook-static/[22m[2massets/[22m[36mTagList-CsJP-5P6.js                                     [39m[1m[2m    2.68 kB[22m[1m[22m[2m │ gzip:   1.00 kB[22m
+2026-09-12T09:16:23.7523371Z [2mstorybook-static/[22m[2massets/[22m[36mkeyboard-nav-CeVL6uvK.js                                [39m[1m[2m    2.69 kB[22m[1m[22m[2m │ gzip:   1.36 kB[22m
+2026-09-12T09:16:23.7525476Z [2mstorybook-static/[22m[2massets/[22m[36mTagList.stories-bcscWSBt.js                             [39m[1m[2m    2.75 kB[22m[1m[22m[2m │ gzip:   1.06 kB[22m
+2026-09-12T09:16:23.7527271Z [2mstorybook-static/[22m[2massets/[22m[36mInvoice.stories-Da7wwm1q.js                             [39m[1m[2m    2.78 kB[22m[1m[22m[2m │ gzip:   0.91 kB[22m
+2026-09-12T09:16:23.7529134Z [2mstorybook-static/[22m[2massets/[22m[36mBanner.stories-BLYtJqGw.js                              [39m[1m[2m    2.78 kB[22m[1m[22m[2m │ gzip:   1.15 kB[22m
+2026-09-12T09:16:23.7530881Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Button-CGC5vzaa.js                           [39m[1m[2m    2.81 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+2026-09-12T09:16:23.7532753Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Input-DHjVxECf.js                            [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-12T09:16:23.7534531Z [2mstorybook-static/[22m[2massets/[22m[36mSubscription.stories-C-tISsso.js                        [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-12T09:16:23.7536633Z [2mstorybook-static/[22m[2massets/[22m[36mtag-CiDFr6a8.js                                         [39m[1m[2m    2.86 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+2026-09-12T09:16:23.7538347Z [2mstorybook-static/[22m[2massets/[22m[36mview-DiA4MryG.js                                        [39m[1m[2m    2.87 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-09-12T09:16:23.7540099Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Banner-GETY9C7C.js                           [39m[1m[2m    2.87 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-12T09:16:23.7541886Z [2mstorybook-static/[22m[2massets/[22m[36mFacetedCharts.stories-DAemgdDt.js                       [39m[1m[2m    2.93 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-09-12T09:16:23.7543692Z [2mstorybook-static/[22m[2massets/[22m[36mCompositorHarness.stories-CQWjkRHQ.js                   [39m[1m[2m    2.95 kB[22m[1m[22m[2m │ gzip:   1.36 kB[22m
+2026-09-12T09:16:23.7545624Z [2mstorybook-static/[22m[2massets/[22m[36mAddressDisplay.stories-BOVfwsrQ.js                      [39m[1m[2m    2.98 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-09-12T09:16:23.7547594Z [2mstorybook-static/[22m[2massets/[22m[36moverlay-contract.stories-DFED0X6g.js                    [39m[1m[2m    3.03 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+2026-09-12T09:16:23.7549387Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.stories-BOkuIBeX.js                            [39m[1m[2m    3.07 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+2026-09-12T09:16:23.7551133Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-CtSd0UyG.js                              [39m[1m[2m    3.25 kB[22m[1m[22m[2m │ gzip:   1.02 kB[22m
+2026-09-12T09:16:23.7553064Z [2mstorybook-static/[22m[2massets/[22m[36mDialog.stories-4ueYlNRG.js                              [39m[1m[2m    3.29 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+2026-09-12T09:16:23.7555017Z [2mstorybook-static/[22m[2massets/[22m[36mcontext-gallery.stories-1yCHIIph.js                     [39m[1m[2m    3.48 kB[22m[1m[22m[2m │ gzip:   1.54 kB[22m
+2026-09-12T09:16:23.7557048Z [2mstorybook-static/[22m[2massets/[22m[36mUserWithAddresses.stories-XrlSBHBD.js                   [39m[1m[2m    3.50 kB[22m[1m[22m[2m │ gzip:   1.48 kB[22m
+2026-09-12T09:16:23.7558824Z [2mstorybook-static/[22m[2massets/[22m[36maddress-types-BuyVtHxN.js                               [39m[1m[2m    3.51 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-12T09:16:23.7560537Z [2mstorybook-static/[22m[2massets/[22m[36mBanner-DjGSCP1x.js                                      [39m[1m[2m    3.58 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+2026-09-12T09:16:23.7562281Z [2mstorybook-static/[22m[2massets/[22m[36mComponentSetIV-dDVjOpuE.js                              [39m[1m[2m    3.80 kB[22m[1m[22m[2m │ gzip:   1.29 kB[22m
+2026-09-12T09:16:23.7564045Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox.stories-DdOCs7fu.js                            [39m[1m[2m    3.85 kB[22m[1m[22m[2m │ gzip:   1.23 kB[22m
+2026-09-12T09:16:23.7565956Z [2mstorybook-static/[22m[2massets/[22m[36mOrganizationLocations.stories-BDVKOQ_u.js               [39m[1m[2m    3.91 kB[22m[1m[22m[2m │ gzip:   1.63 kB[22m
+2026-09-12T09:16:23.7567733Z [2mstorybook-static/[22m[2massets/[22m[36mToast-DRtRBcuf.js                                       [39m[1m[2m    3.92 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+2026-09-12T09:16:23.7569445Z [2mstorybook-static/[22m[2massets/[22m[36mLineChart-rJPRxb-k.js                                   [39m[1m[2m    3.97 kB[22m[1m[22m[2m │ gzip:   1.78 kB[22m
+2026-09-12T09:16:23.7571183Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-BIv4c1Fg.js                               [39m[1m[2m    3.98 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+2026-09-12T09:16:23.7572910Z [2mstorybook-static/[22m[2massets/[22m[36maddress-display-4_quap1x.js                             [39m[1m[2m    4.20 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+2026-09-12T09:16:23.7574845Z [2mstorybook-static/[22m[2massets/[22m[36mUsageAggregationHarness.stories-C2aRlJZQ.js             [39m[1m[2m    4.24 kB[22m[1m[22m[2m │ gzip:   1.57 kB[22m
+2026-09-12T09:16:23.7576798Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.List-IM3USP5n.js                               [39m[1m[2m    4.27 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+2026-09-12T09:16:23.7578551Z [2mstorybook-static/[22m[2massets/[22m[36mTagPill-Co1c2sv1.js                                     [39m[1m[2m    4.41 kB[22m[1m[22m[2m │ gzip:   1.04 kB[22m
+2026-09-12T09:16:23.7580376Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.DeliveryHealthWidget.stories-DjA2WxoC.js  [39m[1m[2m    4.42 kB[22m[1m[22m[2m │ gzip:   1.67 kB[22m
+2026-09-12T09:16:23.7582261Z [2mstorybook-static/[22m[2massets/[22m[36mAddressFormatting.stories-BMGAfYeE.js                   [39m[1m[2m    4.42 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+2026-09-12T09:16:23.7584029Z [2mstorybook-static/[22m[2massets/[22m[36mToastPortal-C0hhLROO.js                                 [39m[1m[2m    4.47 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+2026-09-12T09:16:23.7585976Z [2mstorybook-static/[22m[2massets/[22m[36mOrganizationMembers.stories-C3F7V8k1.js                 [39m[1m[2m    4.48 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+2026-09-12T09:16:23.7587754Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.stories-AHYCTlNE.js                                [39m[1m[2m    4.52 kB[22m[1m[22m[2m │ gzip:   1.90 kB[22m
+2026-09-12T09:16:23.7589493Z [2mstorybook-static/[22m[2massets/[22m[36mcontext-matrix-DnLCejKW.js                              [39m[1m[2m    4.59 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+2026-09-12T09:16:23.7591453Z [2mstorybook-static/[22m[2massets/[22m[36mTokenTransformHarness.stories-B3fM9Kaj.js               [39m[1m[2m    4.63 kB[22m[1m[22m[2m │ gzip:   1.66 kB[22m
+2026-09-12T09:16:23.7593306Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Timeline-DjYrVgQJ.js                           [39m[1m[2m    4.74 kB[22m[1m[22m[2m │ gzip:   1.79 kB[22m
+2026-09-12T09:16:23.7595400Z [2mstorybook-static/[22m[2massets/[22m[36mRadio.stories-Bk-P11A4.js                               [39m[1m[2m    4.75 kB[22m[1m[22m[2m │ gzip:   1.75 kB[22m
+2026-09-12T09:16:23.7597190Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Shadows-QZtwsuQ5.js                         [39m[1m[2m    4.91 kB[22m[1m[22m[2m │ gzip:   1.83 kB[22m
+2026-09-12T09:16:23.7599027Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Form-Du1vH1OL.js                               [39m[1m[2m    4.92 kB[22m[1m[22m[2m │ gzip:   1.84 kB[22m
+2026-09-12T09:16:23.7600849Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-wiring-sanity.stories-D6SGCm0P.js               [39m[1m[2m    4.97 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-09-12T09:16:23.7602621Z [2mstorybook-static/[22m[2massets/[22m[36mtabs-C8xDiKD2.js                                        [39m[1m[2m    4.97 kB[22m[1m[22m[2m │ gzip:   2.04 kB[22m
+2026-09-12T09:16:23.7604373Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Detail-KK4-lsqE.js                             [39m[1m[2m    5.05 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+2026-09-12T09:16:23.7606323Z [2mstorybook-static/[22m[2massets/[22m[36mBreadcrumbs.docs-YdL5CdMz.js                            [39m[1m[2m    5.15 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+2026-09-12T09:16:23.7608103Z [2mstorybook-static/[22m[2massets/[22m[36mListHarness.stories-DGlM7o6T.js                         [39m[1m[2m    5.15 kB[22m[1m[22m[2m │ gzip:   2.07 kB[22m
+2026-09-12T09:16:23.7609877Z [2mstorybook-static/[22m[2massets/[22m[36mVizTokens.stories-D11WWD7Z.js                           [39m[1m[2m    5.16 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+2026-09-12T09:16:23.7611650Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Borders-DRLfWOvo.js                         [39m[1m[2m    5.18 kB[22m[1m[22m[2m │ gzip:   1.93 kB[22m
+2026-09-12T09:16:23.7613419Z [2mstorybook-static/[22m[2massets/[22m[36mSelect.stories-DoD8iJUO.js                              [39m[1m[2m    5.26 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2026-09-12T09:16:23.7615292Z [2mstorybook-static/[22m[2massets/[22m[36mPagination.docs-B8NKgyFw.js                             [39m[1m[2m    5.35 kB[22m[1m[22m[2m │ gzip:   1.97 kB[22m
+2026-09-12T09:16:23.7617058Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip.stories-IIOWHFpg.js                             [39m[1m[2m    5.38 kB[22m[1m[22m[2m │ gzip:   1.56 kB[22m
+2026-09-12T09:16:23.7618820Z [2mstorybook-static/[22m[2massets/[22m[36mVizLayeredView-uNWKW_bQ.js                              [39m[1m[2m    5.44 kB[22m[1m[22m[2m │ gzip:   2.21 kB[22m
+2026-09-12T09:16:23.7620636Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.docs-CRoiSqKb.js                                   [39m[1m[2m    5.53 kB[22m[1m[22m[2m │ gzip:   2.01 kB[22m
+2026-09-12T09:16:23.7622354Z [2mstorybook-static/[22m[2massets/[22m[36mStepper.docs-D_zOdOH7.js                                [39m[1m[2m    5.53 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+2026-09-12T09:16:23.7624105Z [2mstorybook-static/[22m[2massets/[22m[36mObjectMatrix.stories-DfEMYVMF.js                        [39m[1m[2m    5.57 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+2026-09-12T09:16:23.7625984Z [2mstorybook-static/[22m[2massets/[22m[36mstate-guards-BumdKES3.js                                [39m[1m[2m    5.57 kB[22m[1m[22m[2m │ gzip:   1.52 kB[22m
+2026-09-12T09:16:23.7627930Z [2mstorybook-static/[22m[2massets/[22m[36mProgress.docs-BoS2PRu3.js                               [39m[1m[2m    5.61 kB[22m[1m[22m[2m │ gzip:   2.03 kB[22m
+2026-09-12T09:16:23.7629784Z [2mstorybook-static/[22m[2massets/[22m[36mMembershipManager.stories-BsQ69GBp.js                   [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.34 kB[22m
+2026-09-12T09:16:23.7631714Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.ConversationThread.stories-C6Ch4zmI.js    [39m[1m[2m    5.72 kB[22m[1m[22m[2m │ gzip:   2.06 kB[22m
+2026-09-12T09:16:23.7633777Z [2mstorybook-static/[22m[2massets/[22m[36mpreference-store-H5oHjFZW.js                            [39m[1m[2m    5.88 kB[22m[1m[22m[2m │ gzip:   2.09 kB[22m
+2026-09-12T09:16:23.7635747Z [2mstorybook-static/[22m[2massets/[22m[36mview-collapse.stories-DFeoKWf4.js                       [39m[1m[2m    5.90 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+2026-09-12T09:16:23.7637527Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-A7G26iH-.js                               [39m[1m[2m    5.91 kB[22m[1m[22m[2m │ gzip:   2.22 kB[22m
+2026-09-12T09:16:23.7639272Z [2mstorybook-static/[22m[2massets/[22m[36mToast.docs-C-ANDZZo.js                                  [39m[1m[2m    6.03 kB[22m[1m[22m[2m │ gzip:   2.21 kB[22m
+2026-09-12T09:16:23.7641061Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryTree.stories-mtOz9yVO.js                        [39m[1m[2m    6.06 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-09-12T09:16:23.7642836Z [2mstorybook-static/[22m[2massets/[22m[36mBrandA.stories-UVo_JIRi.js                              [39m[1m[2m    6.12 kB[22m[1m[22m[2m │ gzip:   2.48 kB[22m
+2026-09-12T09:16:23.7644571Z [2mstorybook-static/[22m[2massets/[22m[36mLifecycle.docs-B4bHfLDo.js                              [39m[1m[2m    6.17 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+2026-09-12T09:16:23.7646429Z [2mstorybook-static/[22m[2massets/[22m[36mIntro-1zXh9lmc.js                                       [39m[1m[2m    6.29 kB[22m[1m[22m[2m │ gzip:   2.37 kB[22m
+2026-09-12T09:16:23.7648145Z [2mstorybook-static/[22m[2massets/[22m[36mSelect.stories-1bAS5s0S.js                              [39m[1m[2m    6.36 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+2026-09-12T09:16:23.7649897Z [2mstorybook-static/[22m[2massets/[22m[36mStatusChip.stories-rLSKDITz.js                          [39m[1m[2m    6.40 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-09-12T09:16:23.7651689Z [2mstorybook-static/[22m[2massets/[22m[36mUserDetail.stories-c9GHiH--.js                          [39m[1m[2m    6.42 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+2026-09-12T09:16:23.7653466Z [2mstorybook-static/[22m[2massets/[22m[36mScatterChart.stories-x60h5jWn.js                        [39m[1m[2m    6.48 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+2026-09-12T09:16:23.7655334Z [2mstorybook-static/[22m[2massets/[22m[36mEmptyState.docs-CXwdttnA.js                             [39m[1m[2m    6.56 kB[22m[1m[22m[2m │ gzip:   2.35 kB[22m
+2026-09-12T09:16:23.7657111Z [2mstorybook-static/[22m[2massets/[22m[36mTextField.stories-Bqg6tPfc.js                           [39m[1m[2m    6.60 kB[22m[1m[22m[2m │ gzip:   1.89 kB[22m
+2026-09-12T09:16:23.7658833Z [2mstorybook-static/[22m[2massets/[22m[36maddress-IO7OCl_P.js                                     [39m[1m[2m    6.85 kB[22m[1m[22m[2m │ gzip:   2.23 kB[22m
+2026-09-12T09:16:23.7660548Z [2mstorybook-static/[22m[2massets/[22m[36mScatterChart-C80wCXkF.js                                [39m[1m[2m    6.85 kB[22m[1m[22m[2m │ gzip:   2.23 kB[22m
+2026-09-12T09:16:23.7662253Z [2mstorybook-static/[22m[2massets/[22m[36mstatus-JQOYCq9x.js                                      [39m[1m[2m    7.10 kB[22m[1m[22m[2m │ gzip:   1.85 kB[22m
+2026-09-12T09:16:23.7664038Z [2mstorybook-static/[22m[2massets/[22m[36mTable.stories-De1IebUn.js                               [39m[1m[2m    7.24 kB[22m[1m[22m[2m │ gzip:   1.81 kB[22m
+2026-09-12T09:16:23.7666252Z [2mstorybook-static/[22m[2massets/[22m[36mHighContrast.Guardrails-hc.stories-BxlAB8Y9.js          [39m[1m[2m    7.36 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+2026-09-12T09:16:23.7668129Z [2mstorybook-static/[22m[2massets/[22m[36mtable-BUQEGXzW.js                                       [39m[1m[2m    7.39 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+2026-09-12T09:16:23.7669892Z [2mstorybook-static/[22m[2massets/[22m[36mUserPreferences.stories-rVgg99y7.js                     [39m[1m[2m    7.90 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+2026-09-12T09:16:23.7671920Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Typography-oS4dsokZ.js                      [39m[1m[2m    8.61 kB[22m[1m[22m[2m │ gzip:   2.66 kB[22m
+2026-09-12T09:16:23.7673694Z [2mstorybook-static/[22m[2massets/[22m[36mAreaChart.stories-DAjyq3NY.js                           [39m[1m[2m    8.62 kB[22m[1m[22m[2m │ gzip:   2.30 kB[22m
+2026-09-12T09:16:23.7675572Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Dark-Wi1w_Nyw.js                               [39m[1m[2m    8.69 kB[22m[1m[22m[2m │ gzip:   3.22 kB[22m
+2026-09-12T09:16:23.7677349Z [2mstorybook-static/[22m[2massets/[22m[36mHeatmap.stories-BhDD9rKz.js                             [39m[1m[2m    8.92 kB[22m[1m[22m[2m │ gzip:   2.50 kB[22m
+2026-09-12T09:16:23.7679088Z [2mstorybook-static/[22m[2massets/[22m[36mVizFacetGrid-JiHWGOs7.js                                [39m[1m[2m    9.03 kB[22m[1m[22m[2m │ gzip:   3.42 kB[22m
+2026-09-12T09:16:23.7680848Z [2mstorybook-static/[22m[2massets/[22m[36mMembershipManager-Dx37Hjst.js                           [39m[1m[2m    9.34 kB[22m[1m[22m[2m │ gzip:   2.70 kB[22m
+2026-09-12T09:16:23.7682633Z [2mstorybook-static/[22m[2massets/[22m[36mPreferenceForm.stories-B0WCXcW-.js                      [39m[1m[2m    9.41 kB[22m[1m[22m[2m │ gzip:   3.14 kB[22m
+2026-09-12T09:16:23.7684447Z [2mstorybook-static/[22m[2massets/[22m[36mUserWithAuthable.stories-BhwEhxrM.js                    [39m[1m[2m    9.51 kB[22m[1m[22m[2m │ gzip:   3.23 kB[22m
+2026-09-12T09:16:23.7686389Z [2mstorybook-static/[22m[2massets/[22m[36mLineChart.stories-_Pf-EVmf.js                           [39m[1m[2m    9.62 kB[22m[1m[22m[2m │ gzip:   2.67 kB[22m
+2026-09-12T09:16:23.7688219Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.ChannelPlanEditor.stories-DofSUVYc.js     [39m[1m[2m    9.66 kB[22m[1m[22m[2m │ gzip:   3.03 kB[22m
+2026-09-12T09:16:23.7690174Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryPicker.stories-BiYkWQ3u.js                      [39m[1m[2m    9.96 kB[22m[1m[22m[2m │ gzip:   2.99 kB[22m
+2026-09-12T09:16:23.7691950Z [2mstorybook-static/[22m[2massets/[22m[36m1-philosophy-iMuygS-Q.js                                [39m[1m[2m   10.05 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-09-12T09:16:23.7693725Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Motion-DT4C3-lt.js                          [39m[1m[2m   10.09 kB[22m[1m[22m[2m │ gzip:   3.32 kB[22m
+2026-09-12T09:16:23.7695632Z [2mstorybook-static/[22m[2massets/[22m[36msample-entitlements-BdR_uNzy.js                         [39m[1m[2m   10.11 kB[22m[1m[22m[2m │ gzip:   3.53 kB[22m
+2026-09-12T09:16:23.7697401Z [2mstorybook-static/[22m[2massets/[22m[36mBarChart.stories-DRu-4CGl.js                            [39m[1m[2m   10.52 kB[22m[1m[22m[2m │ gzip:   2.75 kB[22m
+2026-09-12T09:16:23.7699180Z [2mstorybook-static/[22m[2massets/[22m[36m4-getting-started-DNI2kBoF.js                           [39m[1m[2m   10.71 kB[22m[1m[22m[2m │ gzip:   3.08 kB[22m
+2026-09-12T09:16:23.7701001Z [2mstorybook-static/[22m[2massets/[22m[36mSubscriptionContexts.stories-Bu1MgREJ.js                [39m[1m[2m   10.92 kB[22m[1m[22m[2m │ gzip:   2.68 kB[22m
+2026-09-12T09:16:23.7702822Z [2mstorybook-static/[22m[2massets/[22m[36m7-token-architecture-CXvOs69s.js                        [39m[1m[2m   10.96 kB[22m[1m[22m[2m │ gzip:   2.92 kB[22m
+2026-09-12T09:16:23.7704976Z [2mstorybook-static/[22m[2massets/[22m[36mInvoice.lifecycle.stories-BgoiAAWh.js                   [39m[1m[2m   11.05 kB[22m[1m[22m[2m │ gzip:   3.05 kB[22m
+2026-09-12T09:16:23.7706828Z [2mstorybook-static/[22m[2massets/[22m[36m5-visualization-system-Bz9pV9mv.js                      [39m[1m[2m   11.24 kB[22m[1m[22m[2m │ gzip:   3.02 kB[22m
+2026-09-12T09:16:23.7708826Z [2mstorybook-static/[22m[2massets/[22m[36m6-accessibility-approach-Xaszg2Qy.js                    [39m[1m[2m   11.34 kB[22m[1m[22m[2m │ gzip:   3.19 kB[22m
+2026-09-12T09:16:23.7710532Z [2mstorybook-static/[22m[2massets/[22m[36mAreaChart-b-gZluZW.js                                   [39m[1m[2m   11.49 kB[22m[1m[22m[2m │ gzip:   4.28 kB[22m
+2026-09-12T09:16:23.7712208Z [2mstorybook-static/[22m[2massets/[22m[36mReactNucleus.stories-KufsDRX-.js                        [39m[1m[2m   11.63 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-09-12T09:16:23.7713964Z [2mstorybook-static/[22m[2massets/[22m[36mSubscription.lifecycle.stories-BIUU43SJ.js              [39m[1m[2m   12.25 kB[22m[1m[22m[2m │ gzip:   3.44 kB[22m
+2026-09-12T09:16:23.7715998Z [2mstorybook-static/[22m[2massets/[22m[36mRolePermissionMatrix.stories-dMtOQrQc.js                [39m[1m[2m   12.50 kB[22m[1m[22m[2m │ gzip:   4.48 kB[22m
+2026-09-12T09:16:23.7717820Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.stories-DxUSqAvH.js                                [39m[1m[2m   12.75 kB[22m[1m[22m[2m │ gzip:   3.64 kB[22m
+2026-09-12T09:16:23.7719550Z [2mstorybook-static/[22m[2massets/[22m[36mStatusChip-Be6ZEBII.js                                  [39m[1m[2m   13.08 kB[22m[1m[22m[2m │ gzip:   2.94 kB[22m
+2026-09-12T09:16:23.7721260Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Colors-_ekVMuqf.js                          [39m[1m[2m   13.39 kB[22m[1m[22m[2m │ gzip:   3.50 kB[22m
+2026-09-12T09:16:23.7723088Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.Form.stories-Ci5s1cFZ.js                       [39m[1m[2m   13.48 kB[22m[1m[22m[2m │ gzip:   3.75 kB[22m
+2026-09-12T09:16:23.7725055Z [2mstorybook-static/[22m[2massets/[22m[36mHeatmap-B9zjLZmH.js                                     [39m[1m[2m   14.00 kB[22m[1m[22m[2m │ gzip:   5.27 kB[22m
+2026-09-12T09:16:23.7726842Z [2mstorybook-static/[22m[2massets/[22m[36mpresentational-HF9xpQ5r.js                              [39m[1m[2m   14.10 kB[22m[1m[22m[2m │ gzip:   3.60 kB[22m
+2026-09-12T09:16:23.7728613Z [2mstorybook-static/[22m[2massets/[22m[36mStatusable.stories-BkO08hfr.js                          [39m[1m[2m   14.27 kB[22m[1m[22m[2m │ gzip:   3.72 kB[22m
+2026-09-12T09:16:23.7730394Z [2mstorybook-static/[22m[2massets/[22m[36mEmptyState.stories-DfLWEAJq.js                          [39m[1m[2m   14.56 kB[22m[1m[22m[2m │ gzip:   4.32 kB[22m
+2026-09-12T09:16:23.7732168Z [2mstorybook-static/[22m[2massets/[22m[36mBrownfield.adoption-DaUPtfOw.js                         [39m[1m[2m   15.29 kB[22m[1m[22m[2m │ gzip:   3.90 kB[22m
+2026-09-12T09:16:23.7733930Z [2mstorybook-static/[22m[2massets/[22m[36mSunburst.stories-D2cwRCWH.js                            [39m[1m[2m   15.42 kB[22m[1m[22m[2m │ gzip:   5.71 kB[22m
+2026-09-12T09:16:23.7735880Z [2mstorybook-static/[22m[2massets/[22m[36mPatternGalleryV2.stories-ZPmZuE-y.js                    [39m[1m[2m   15.50 kB[22m[1m[22m[2m │ gzip:   5.57 kB[22m
+2026-09-12T09:16:23.7737686Z [2mstorybook-static/[22m[2massets/[22m[36mTreemap.stories-CcDlQYGk.js                             [39m[1m[2m   15.94 kB[22m[1m[22m[2m │ gzip:   5.79 kB[22m
+2026-09-12T09:16:23.7739409Z [2mstorybook-static/[22m[2massets/[22m[36minvoice-DkkoBDm5.js                                     [39m[1m[2m   16.60 kB[22m[1m[22m[2m │ gzip:   4.71 kB[22m
+2026-09-12T09:16:23.7741367Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.MessageTimeline.stories-qiXRzX-w.js       [39m[1m[2m   17.00 kB[22m[1m[22m[2m │ gzip:   6.28 kB[22m
+2026-09-12T09:16:23.7743344Z [2mstorybook-static/[22m[2massets/[22m[36mProductCategoryBrowser.stories-BCwQ3tRY.js              [39m[1m[2m   17.20 kB[22m[1m[22m[2m │ gzip:   5.85 kB[22m
+2026-09-12T09:16:23.7745240Z [2mstorybook-static/[22m[2massets/[22m[36mPlan.stories-BixfdLcn.js                                [39m[1m[2m   18.79 kB[22m[1m[22m[2m │ gzip:   4.64 kB[22m
+2026-09-12T09:16:23.7747222Z [2mstorybook-static/[22m[2massets/[22m[36mPagination.stories-gL3n8-ww.js                          [39m[1m[2m   18.99 kB[22m[1m[22m[2m │ gzip:   5.18 kB[22m
+2026-09-12T09:16:23.7748982Z [2mstorybook-static/[22m[2massets/[22m[36mProgress.stories-CPJT81LO.js                            [39m[1m[2m   19.11 kB[22m[1m[22m[2m │ gzip:   3.90 kB[22m
+2026-09-12T09:16:23.7750709Z [2mstorybook-static/[22m[2massets/[22m[36mrenderer-selector-BX2xh7y9.js                           [39m[1m[2m   19.12 kB[22m[1m[22m[2m │ gzip:   6.70 kB[22m
+2026-09-12T09:16:23.7752530Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryTree-BfOT5WxP.js                                [39m[1m[2m   19.25 kB[22m[1m[22m[2m │ gzip:   5.31 kB[22m
+2026-09-12T09:16:23.7754260Z [2mstorybook-static/[22m[2massets/[22m[36mStepper.stories-D_Pd4iKe.js                             [39m[1m[2m   19.63 kB[22m[1m[22m[2m │ gzip:   5.13 kB[22m
+2026-09-12T09:16:23.7756211Z [2mstorybook-static/[22m[2massets/[22m[36mTemporalHygiene.stories-sO131r_q.js                     [39m[1m[2m   19.83 kB[22m[1m[22m[2m │ gzip:   4.15 kB[22m
+2026-09-12T09:16:23.7758000Z [2mstorybook-static/[22m[2massets/[22m[36mAuthable.stories-C6jGfUSD.js                            [39m[1m[2m   19.93 kB[22m[1m[22m[2m │ gzip:   4.42 kB[22m
+2026-09-12T09:16:23.7759772Z [2mstorybook-static/[22m[2massets/[22m[36mTimestampable.stories-Dbmb6lsA.js                       [39m[1m[2m   20.41 kB[22m[1m[22m[2m │ gzip:   4.35 kB[22m
+2026-09-12T09:16:23.7761552Z [2mstorybook-static/[22m[2massets/[22m[36mTagInput.stories-BvrTDOs_.js                            [39m[1m[2m   20.49 kB[22m[1m[22m[2m │ gzip:   6.98 kB[22m
+2026-09-12T09:16:23.7763368Z [2mstorybook-static/[22m[2massets/[22m[36mArticle.stories-BJHmeb4T.js                             [39m[1m[2m   20.89 kB[22m[1m[22m[2m │ gzip:   5.02 kB[22m
+2026-09-12T09:16:23.7765241Z [2mstorybook-static/[22m[2massets/[22m[36m3-trait-engine-BwViZEHM.js                              [39m[1m[2m   20.89 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+2026-09-12T09:16:23.7767008Z [2mstorybook-static/[22m[2massets/[22m[36m2-core-concepts-Ci1EPVF3.js                             [39m[1m[2m   20.93 kB[22m[1m[22m[2m │ gzip:   5.03 kB[22m
+2026-09-12T09:16:23.7768764Z [2mstorybook-static/[22m[2massets/[22m[36mTransaction.stories-BtjLV-1f.js                         [39m[1m[2m   20.97 kB[22m[1m[22m[2m │ gzip:   5.04 kB[22m
+2026-09-12T09:16:23.7770521Z [2mstorybook-static/[22m[2massets/[22m[36mAddressForm.stories-DRQ0aaeW.js                         [39m[1m[2m   21.36 kB[22m[1m[22m[2m │ gzip:   6.14 kB[22m
+2026-09-12T09:16:23.7772278Z [2mstorybook-static/[22m[2massets/[22m[36mMedia.stories-mgbwwKBe.js                               [39m[1m[2m   21.76 kB[22m[1m[22m[2m │ gzip:   5.45 kB[22m
+2026-09-12T09:16:23.7774027Z [2mstorybook-static/[22m[2massets/[22m[36mCancellable.stories-BuA7oDfQ.js                         [39m[1m[2m   21.76 kB[22m[1m[22m[2m │ gzip:   4.96 kB[22m
+2026-09-12T09:16:23.7775920Z [2mstorybook-static/[22m[2massets/[22m[36mTokensRoundtrip.stories-Cqn59EKv.js                     [39m[1m[2m   21.85 kB[22m[1m[22m[2m │ gzip:   6.21 kB[22m
+2026-09-12T09:16:23.7777699Z [2mstorybook-static/[22m[2massets/[22m[36mBillable.stories-mYZqhoN4.js                            [39m[1m[2m   22.01 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+2026-09-12T09:16:23.7779630Z [2mstorybook-static/[22m[2massets/[22m[36mArchivable.stories-DFBBiY6x.js                          [39m[1m[2m   22.26 kB[22m[1m[22m[2m │ gzip:   4.46 kB[22m
+2026-09-12T09:16:23.7781475Z [2mstorybook-static/[22m[2massets/[22m[36mStateful.stories-D6Qfywx8.js                            [39m[1m[2m   22.51 kB[22m[1m[22m[2m │ gzip:   5.28 kB[22m
+2026-09-12T09:16:23.7783269Z [2mstorybook-static/[22m[2massets/[22m[36mAccountArchetypes.stories-BP7-uftx.js                   [39m[1m[2m   22.92 kB[22m[1m[22m[2m │ gzip:   5.78 kB[22m
+2026-09-12T09:16:23.7785377Z [2mstorybook-static/[22m[2massets/[22m[36mBreadcrumbs.stories-1aVJNyN5.js                         [39m[1m[2m   23.34 kB[22m[1m[22m[2m │ gzip:   5.63 kB[22m
+2026-09-12T09:16:23.7787156Z [2mstorybook-static/[22m[2massets/[22m[36mForceGraph.stories-CgBjMLqO.js                          [39m[1m[2m   23.61 kB[22m[1m[22m[2m │ gzip:   7.49 kB[22m
+2026-09-12T09:16:23.7788946Z [2mstorybook-static/[22m[2massets/[22m[36mUsage.metered.stories-4RgSgAzb.js                       [39m[1m[2m   23.94 kB[22m[1m[22m[2m │ gzip:   4.64 kB[22m
+2026-09-12T09:16:23.7790726Z [2mstorybook-static/[22m[2massets/[22m[36mSankey.stories-CFsGE7ej.js                              [39m[1m[2m   24.12 kB[22m[1m[22m[2m │ gzip:   7.48 kB[22m
+2026-09-12T09:16:23.7792474Z [2mstorybook-static/[22m[2massets/[22m[36mSaaSBillingFlow.stories-unHmmB4Z.js                     [39m[1m[2m   25.24 kB[22m[1m[22m[2m │ gzip:   4.08 kB[22m
+2026-09-12T09:16:23.7794247Z [2mstorybook-static/[22m[2massets/[22m[36mcompliance.stories-CvBuhvcK.js                          [39m[1m[2m   25.43 kB[22m[1m[22m[2m │ gzip:   7.92 kB[22m
+2026-09-12T09:16:23.7796226Z [2mstorybook-static/[22m[2massets/[22m[36mPayable.stories-DZlBnktn.js                             [39m[1m[2m   25.65 kB[22m[1m[22m[2m │ gzip:   6.04 kB[22m
+2026-09-12T09:16:23.7798001Z [2mstorybook-static/[22m[2massets/[22m[36mTaggable.stories-BdGcB6ez.js                            [39m[1m[2m   26.37 kB[22m[1m[22m[2m │ gzip:   6.20 kB[22m
+2026-09-12T09:16:23.7799792Z [2mstorybook-static/[22m[2massets/[22m[36mDashboardContexts.stories-DGgQdmiQ.js                   [39m[1m[2m   27.39 kB[22m[1m[22m[2m │ gzip:   6.71 kB[22m
+2026-09-12T09:16:23.7801612Z [2mstorybook-static/[22m[2massets/[22m[36mMetered.stories-BsvRHBhL.js                             [39m[1m[2m   28.62 kB[22m[1m[22m[2m │ gzip:   6.41 kB[22m
+2026-09-12T09:16:23.7803338Z [2mstorybook-static/[22m[36mvite-inject-mocker-entry.js                                    [39m[1m[2m   29.18 kB[22m[1m[22m[2m │ gzip:  10.13 kB[22m
+2026-09-12T09:16:23.7805208Z [2mstorybook-static/[22m[2massets/[22m[36mColor-AVL7NMMY-CTUhYL8Z.js                              [39m[1m[2m   29.38 kB[22m[1m[22m[2m │ gzip:  11.05 kB[22m
+2026-09-12T09:16:23.7806960Z [2mstorybook-static/[22m[2massets/[22m[36mmatchers-7Z3WT2CE-T3xScrR7.js                           [39m[1m[2m   29.81 kB[22m[1m[22m[2m │ gzip:  10.30 kB[22m
+2026-09-12T09:16:23.7808746Z [2mstorybook-static/[22m[2massets/[22m[36mClassifiable.stories-CEoAcFZC.js                        [39m[1m[2m   30.37 kB[22m[1m[22m[2m │ gzip:   6.95 kB[22m
+2026-09-12T09:16:23.7810565Z [2mstorybook-static/[22m[2massets/[22m[36mbilling-acl.stories-B66LUQBK.js                         [39m[1m[2m   31.17 kB[22m[1m[22m[2m │ gzip:   7.15 kB[22m
+2026-09-12T09:16:23.7812418Z [2mstorybook-static/[22m[2massets/[22m[36mPreferenceable.stories-BRCiAuBj.js                      [39m[1m[2m   32.91 kB[22m[1m[22m[2m │ gzip:   7.61 kB[22m
+2026-09-12T09:16:23.7814167Z [2mstorybook-static/[22m[2massets/[22m[36mview-B3rI-rXm.js                                        [39m[1m[2m   33.47 kB[22m[1m[22m[2m │ gzip:   8.29 kB[22m
+2026-09-12T09:16:23.7816069Z [2mstorybook-static/[22m[2massets/[22m[36mCommunicable.stories-B7zwnZCC.js                        [39m[1m[2m   34.19 kB[22m[1m[22m[2m │ gzip:   7.63 kB[22m
+2026-09-12T09:16:23.7818055Z [2mstorybook-static/[22m[2massets/[22m[36mChartDescription-BdQjMhT-.js                            [39m[1m[2m   42.47 kB[22m[1m[22m[2m │ gzip:  14.61 kB[22m
+2026-09-12T09:16:23.7819881Z [2mstorybook-static/[22m[2massets/[22m[36mschemas-6mf_OlwC.js                                     [39m[1m[2m   54.25 kB[22m[1m[22m[2m │ gzip:  14.44 kB[22m
+2026-09-12T09:16:23.7821850Z [2mstorybook-static/[22m[2massets/[22m[36mAccessibility.ContractA11y-Dmof9pNh.js                  [39m[1m[2m   61.44 kB[22m[1m[22m[2m │ gzip:   5.74 kB[22m
+2026-09-12T09:16:23.7823651Z [2mstorybook-static/[22m[2massets/[22m[36mluxon-CMtWQ10C.js                                       [39m[1m[2m   71.39 kB[22m[1m[22m[2m │ gzip:  22.22 kB[22m
+2026-09-12T09:16:23.7825592Z [2mstorybook-static/[22m[2massets/[22m[36mtime-grid-heatmap.spec-CbiybTcR.js                      [39m[1m[2m  144.53 kB[22m[1m[22m[2m │ gzip:  27.15 kB[22m
+2026-09-12T09:16:23.7827404Z [2mstorybook-static/[22m[2massets/[22m[36mreact-18-UUJpkVUH.js                                    [39m[1m[2m  181.72 kB[22m[1m[22m[2m │ gzip:  57.19 kB[22m
+2026-09-12T09:16:23.7829123Z [2mstorybook-static/[22m[2massets/[22m[36mfields-Xa1-mKkV.js                                      [39m[1m[2m  224.21 kB[22m[1m[22m[2m │ gzip:  33.42 kB[22m
+2026-09-12T09:16:23.7830904Z [2mstorybook-static/[22m[2massets/[22m[36mPreferencePreview-BOv77xbE.js                           [39m[1m[2m  374.26 kB[22m[1m[22m[2m │ gzip: 120.83 kB[22m
+2026-09-12T09:16:23.7832651Z [2mstorybook-static/[22m[2massets/[22m[36maxe-iq8ItXhD.js                                         [39m[1m[2m  579.04 kB[22m[1m[22m[2m │ gzip: 159.54 kB[22m
+2026-09-12T09:16:23.7834373Z [2mstorybook-static/[22m[2massets/[22m[36mblocks-BnYcI1o8.js                                      [39m[1m[2m  664.17 kB[22m[1m[22m[2m │ gzip: 218.35 kB[22m
+2026-09-12T09:16:23.7836258Z [2mstorybook-static/[22m[2massets/[22m[36membed-Dp7LL1iq.js                                       [39m[1m[2m  831.21 kB[22m[1m[22m[2m │ gzip: 287.58 kB[22m
+2026-09-12T09:16:23.7837968Z [2mstorybook-static/[22m[2massets/[22m[36mindex-Uj8cbsTF.js                                       [39m[1m[2m1,047.47 kB[22m[1m[22m[2m │ gzip: 103.03 kB[22m
+2026-09-12T09:16:23.7839778Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DXW7qb_O.js                                       [39m[1m[2m1,128.32 kB[22m[1m[22m[2m │ gzip: 375.18 kB[22m
+2026-09-12T09:16:23.7841529Z [2mstorybook-static/[22m[2massets/[22m[36miframe-Y1-zaSh4.js                                      [39m[1m[2m1,284.22 kB[22m[1m[22m[2m │ gzip: 356.05 kB[22m
+2026-09-12T09:16:23.7842495Z [32m✓ built in 49.10s[39m
+2026-09-12T09:16:23.7843383Z info => Output directory: /home/runner/work/OODS-Forge/OODS-Forge/storybook-static
+2026-09-12T09:16:24.3901590Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:16:24.3902941Z ##[group]Run actions/cache@v4
+2026-09-12T09:16:24.3903208Z with:
+2026-09-12T09:16:24.3903424Z   path: ~/.cache/ms-playwright
+2026-09-12T09:16:24.3903920Z   key: Linux-playwright-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T09:16:24.3904430Z   restore-keys: Linux-playwright-
+
+2026-09-12T09:16:24.3904723Z   enableCrossOsArchive: false
+2026-09-12T09:16:24.3905987Z   fail-on-cache-miss: false
+2026-09-12T09:16:24.3906425Z   lookup-only: false
+2026-09-12T09:16:24.3906750Z   save-always: false
+2026-09-12T09:16:24.3906966Z env:
+2026-09-12T09:16:24.3907170Z   NODE_VERSION: 24
+2026-09-12T09:16:24.3907491Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:16:24.3907816Z ##[endgroup]
+2026-09-12T09:16:24.6146942Z (node:2484) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:16:24.6149126Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:16:24.6862311Z Cache hit for: Linux-playwright-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T09:16:24.7005511Z (node:2484) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T09:16:25.7560453Z Received 167772160 of 278992684 (60.1%), 158.9 MBs/sec
+2026-09-12T09:16:26.2856579Z Received 278992684 of 278992684 (100.0%), 173.1 MBs/sec
+2026-09-12T09:16:26.2895769Z Cache Size: ~266 MB (278992684 B)
+2026-09-12T09:16:26.2991074Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4772cb90-82ef-4f9a-b03f-a5fba328a910/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-12T09:16:28.2145597Z Cache restored successfully
+2026-09-12T09:16:28.9297912Z Cache restored from key: Linux-playwright-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T09:16:28.9462874Z ##[group]Run pnpm exec playwright install chromium
+2026-09-12T09:16:28.9463304Z [36;1mpnpm exec playwright install chromium[0m
+2026-09-12T09:16:28.9510874Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:16:28.9511159Z env:
+2026-09-12T09:16:28.9511377Z   NODE_VERSION: 24
+2026-09-12T09:16:28.9511678Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:16:28.9512023Z ##[endgroup]
+2026-09-12T09:16:30.0760080Z ##[group]Run pnpm --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build
+2026-09-12T09:16:30.0761760Z [36;1mpnpm --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build[0m
+2026-09-12T09:16:30.0811950Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:16:30.0812241Z env:
+2026-09-12T09:16:30.0812458Z   NODE_VERSION: 24
+2026-09-12T09:16:30.0812771Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:16:30.0813122Z ##[endgroup]
+2026-09-12T09:16:30.5585798Z Scope: 3 of 22 workspace projects
+2026-09-12T09:16:30.5614238Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+2026-09-12T09:16:30.9557208Z packages/component-styles build: [34mCLI[39m Building entry: src/index.ts, src/ported.ts
+2026-09-12T09:16:30.9576290Z packages/component-styles build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-12T09:16:30.9582279Z packages/component-styles build: [34mCLI[39m tsup v8.5.0
+2026-09-12T09:16:30.9599724Z packages/component-styles build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+2026-09-12T09:16:30.9626492Z packages/component-styles build: [34mCLI[39m Target: es2022
+2026-09-12T09:16:30.9647730Z packages/component-styles build: [34mESM[39m Build start
+2026-09-12T09:16:30.9649232Z packages/component-styles build: [34mCJS[39m Build start
+2026-09-12T09:16:31.1176904Z packages/component-styles build: [32mCJS[39m [1mdist/index.cjs  [22m[32m2.78 KB[39m
+2026-09-12T09:16:31.1196205Z packages/component-styles build: [32mCJS[39m [1mdist/ported.cjs [22m[32m2.73 KB[39m
+2026-09-12T09:16:31.1224919Z packages/component-styles build: [32mCJS[39m ⚡️ Build success in 149ms
+2026-09-12T09:16:31.1226598Z packages/component-styles build: [32mESM[39m [1mdist/index.js          [22m[32m143.00 B[39m
+2026-09-12T09:16:31.1228405Z packages/component-styles build: [32mESM[39m [1mdist/ported.js         [22m[32m513.00 B[39m
+2026-09-12T09:16:31.1230113Z packages/component-styles build: [32mESM[39m [1mdist/chunk-G34QIFQW.js [22m[32m2.63 KB[39m
+2026-09-12T09:16:31.1231595Z packages/component-styles build: [32mESM[39m ⚡️ Build success in 151ms
+2026-09-12T09:16:31.3916675Z packages/component-styles build: [34mDTS[39m Build start
+2026-09-12T09:16:34.4071483Z packages/component-styles build: [32mDTS[39m ⚡️ Build success in 3015ms
+2026-09-12T09:16:34.4092615Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m2.60 KB[39m
+2026-09-12T09:16:34.4094299Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m500.00 B[39m
+2026-09-12T09:16:34.4096116Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m2.60 KB[39m
+2026-09-12T09:16:34.4098136Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m500.00 B[39m
+2026-09-12T09:16:34.5052110Z packages/component-styles build: Done
+2026-09-12T09:16:34.5062055Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-12T09:16:34.5065202Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+2026-09-12T09:16:35.0819275Z packages/components-vue build: [34mCLI[39m Building entry: src/index.ts
+2026-09-12T09:16:35.0864379Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-12T09:16:35.0884947Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-12T09:16:35.0900425Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+2026-09-12T09:16:35.0950543Z packages/components-react build: [34mCLI[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+2026-09-12T09:16:35.0985440Z packages/components-react build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-12T09:16:35.1063904Z packages/components-react build: [34mCLI[39m tsup v8.5.0
+2026-09-12T09:16:35.1089255Z packages/components-react build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+2026-09-12T09:16:35.1137924Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-12T09:16:35.1146807Z packages/components-vue build: [34mCLI[39m Cleaning output folder
+2026-09-12T09:16:35.1204560Z packages/components-react build: [34mCLI[39m Target: es2022
+2026-09-12T09:16:35.1227839Z packages/components-vue build: [34mESM[39m Build start
+2026-09-12T09:16:35.1286007Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-12T09:16:35.1329617Z packages/components-react build: [34mCLI[39m Cleaning output folder
+2026-09-12T09:16:35.1373616Z packages/components-react build: [34mESM[39m Build start
+2026-09-12T09:16:35.1467183Z packages/components-react build: [34mCJS[39m Build start
+2026-09-12T09:16:35.6646380Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-12T09:16:36.1127136Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-12T09:16:36.4638621Z packages/components-vue build: [32mESM[39m [1mdist/index.js [22m[32m128.10 KB[39m
+2026-09-12T09:16:36.4916449Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 1328ms
+2026-09-12T09:16:37.3217125Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-12T09:16:37.3266244Z packages/components-vue build: [32mCJS[39m [1mdist/index.cjs [22m[32m133.19 KB[39m
+2026-09-12T09:16:37.3997346Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 2171ms
+2026-09-12T09:16:37.4879505Z packages/components-react build: [34mDTS[39m Build start
+2026-09-12T09:16:37.4895220Z packages/components-react build: [32mESM[39m [1mdist/ported.js         [22m[32m192.00 B[39m
+2026-09-12T09:16:37.5023792Z packages/components-react build: [32mESM[39m [1mdist/status.js         [22m[32m171.00 B[39m
+2026-09-12T09:16:37.5029193Z packages/components-react build: [32mESM[39m [1mdist/table.js          [22m[32m149.00 B[39m
+2026-09-12T09:16:37.5030873Z packages/components-react build: [32mESM[39m [1mdist/chunk-YCI5AEWL.js [22m[32m6.37 KB[39m
+2026-09-12T09:16:37.5037503Z packages/components-react build: [32mESM[39m [1mdist/chunk-G74PKSW3.js [22m[32m10.89 KB[39m
+2026-09-12T09:16:37.5039073Z packages/components-react build: [32mESM[39m [1mdist/types.js          [22m[32m1.00 B[39m
+2026-09-12T09:16:37.5058111Z packages/components-react build: [32mESM[39m [1mdist/chunk-XMIP5ZGO.js [22m[32m40.39 KB[39m
+2026-09-12T09:16:37.5059748Z packages/components-react build: [32mESM[39m [1mdist/index.js          [22m[32m87.14 KB[39m
+2026-09-12T09:16:37.5061233Z packages/components-react build: [32mESM[39m ⚡️ Build success in 2373ms
+2026-09-12T09:16:37.5063067Z packages/components-react build: [32mCJS[39m [1mdist/status.cjs [22m[32m11.08 KB[39m
+2026-09-12T09:16:37.5064593Z packages/components-react build: [32mCJS[39m [1mdist/table.cjs  [22m[32m17.07 KB[39m
+2026-09-12T09:16:37.5083844Z packages/components-react build: [32mCJS[39m [1mdist/types.cjs  [22m[32m15.00 B[39m
+2026-09-12T09:16:37.5085630Z packages/components-react build: [32mCJS[39m [1mdist/ported.cjs [22m[32m52.76 KB[39m
+2026-09-12T09:16:37.5087111Z packages/components-react build: [32mCJS[39m [1mdist/index.cjs  [22m[32m153.12 KB[39m
+2026-09-12T09:16:37.5088422Z packages/components-react build: [32mCJS[39m ⚡️ Build success in 2380ms
+2026-09-12T09:16:48.0131104Z packages/components-react build: [32mDTS[39m ⚡️ Build success in 11461ms
+2026-09-12T09:16:48.0151732Z packages/components-react build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m21.31 KB[39m
+2026-09-12T09:16:48.0155920Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m7.12 KB[39m
+2026-09-12T09:16:48.0157832Z packages/components-react build: [32mDTS[39m [1mdist/status.d.ts  [22m[32m1.39 KB[39m
+2026-09-12T09:16:48.0160058Z packages/components-react build: [32mDTS[39m [1mdist/table.d.ts   [22m[32m1.06 KB[39m
+2026-09-12T09:16:48.0162011Z packages/components-react build: [32mDTS[39m [1mdist/types.d.ts   [22m[32m23.79 KB[39m
+2026-09-12T09:16:48.0163811Z packages/components-react build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m21.31 KB[39m
+2026-09-12T09:16:48.0165874Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m7.12 KB[39m
+2026-09-12T09:16:48.0167598Z packages/components-react build: [32mDTS[39m [1mdist/status.d.cts [22m[32m1.39 KB[39m
+2026-09-12T09:16:48.0187069Z packages/components-react build: [32mDTS[39m [1mdist/table.d.cts  [22m[32m1.07 KB[39m
+2026-09-12T09:16:48.0206373Z packages/components-react build: [32mDTS[39m [1mdist/types.d.cts  [22m[32m23.79 KB[39m
+2026-09-12T09:16:48.0276283Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 11530ms
+2026-09-12T09:16:48.0486827Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m141.56 KB[39m
+2026-09-12T09:16:48.0505985Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.cts [22m[32m141.56 KB[39m
+2026-09-12T09:16:48.1342696Z packages/components-react build: Done
+2026-09-12T09:16:48.4427885Z packages/components-vue build: [34mCLI[39m Building entry: src/ported.ts
+2026-09-12T09:16:48.4440176Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-12T09:16:48.4443553Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-12T09:16:48.4445677Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+2026-09-12T09:16:48.4648593Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-12T09:16:48.4650633Z packages/components-vue build: [34mESM[39m Build start
+2026-09-12T09:16:48.4658346Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-12T09:16:49.0132561Z packages/components-vue build: [32mESM[39m [1mdist/ported.js [22m[32m46.06 KB[39m
+2026-09-12T09:16:49.0134014Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 557ms
+2026-09-12T09:16:49.0135697Z packages/components-vue build: [32mCJS[39m [1mdist/ported.cjs [22m[32m46.73 KB[39m
+2026-09-12T09:16:49.0137056Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 558ms
+2026-09-12T09:16:49.0367392Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-12T09:16:53.0084038Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 3972ms
+2026-09-12T09:16:53.0087303Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m20.67 KB[39m
+2026-09-12T09:16:53.0088932Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m20.67 KB[39m
+2026-09-12T09:16:53.0852716Z packages/components-vue build: Done
+2026-09-12T09:16:53.1009776Z ##[group]Run pnpm --filter @oods/components-react run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/react
+2026-09-12T09:16:53.1011856Z [36;1mpnpm --filter @oods/components-react run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/react[0m
+2026-09-12T09:16:53.1013872Z [36;1mpnpm --filter @oods/components-vue run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/vue[0m
+2026-09-12T09:16:53.1015829Z [36;1mpnpm --filter @oods/component-styles exec vitest run test/high-contrast.browser.spec.ts[0m
+2026-09-12T09:16:53.1056752Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:16:53.1057319Z env:
+2026-09-12T09:16:53.1057702Z   NODE_VERSION: 24
+2026-09-12T09:16:53.1058226Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:16:53.1058852Z ##[endgroup]
+2026-09-12T09:16:53.6049676Z 
+2026-09-12T09:16:53.6051310Z > @oods/components-react@0.1.0 test:visual /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react
+2026-09-12T09:16:53.6053589Z > node test/visual-evidence.mjs "--cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc" "--output=artifacts/component-proof/react"
+2026-09-12T09:16:53.6055160Z 
+2026-09-12T09:16:55.0212635Z 
+2026-09-12T09:16:55.0228769Z [1m[33mwarn[39m[22m - The `content` option in your Tailwind CSS configuration is missing or empty.
+2026-09-12T09:16:55.0280530Z [1m[33mwarn[39m[22m - Configure your content sources or your generated CSS will be missing styles.
+2026-09-12T09:16:55.0282172Z [1m[33mwarn[39m[22m - https://tailwindcss.com/docs/content-configuration
+2026-09-12T09:17:07.3076288Z react: 654 root-cells, 0 failures, 0 skipped
+2026-09-12T09:17:07.8677581Z 
+2026-09-12T09:17:07.8679121Z > @oods/components-vue@0.1.0 test:visual /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue
+2026-09-12T09:17:07.8681652Z > node test/visual-evidence.mjs "--cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc" "--output=artifacts/component-proof/vue"
+2026-09-12T09:17:07.8682973Z 
+2026-09-12T09:17:09.0952312Z 
+2026-09-12T09:17:09.0986892Z [1m[33mwarn[39m[22m - The `content` option in your Tailwind CSS configuration is missing or empty.
+2026-09-12T09:17:09.1012146Z [1m[33mwarn[39m[22m - Configure your content sources or your generated CSS will be missing styles.
+2026-09-12T09:17:09.1035791Z [1m[33mwarn[39m[22m - https://tailwindcss.com/docs/content-configuration
+2026-09-12T09:17:20.5956281Z vue: 654 root-cells, 0 failures, 0 skipped
+2026-09-12T09:17:21.4956946Z 
+2026-09-12T09:17:21.4977268Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles[39m
+2026-09-12T09:17:21.4995124Z 
+2026-09-12T09:17:25.4199955Z  [32m✓[39m test/high-contrast.browser.spec.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 3225[2mms[22m[39m
+2026-09-12T09:17:25.4445743Z 
+2026-09-12T09:17:25.4468326Z [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+2026-09-12T09:17:25.4479714Z [2m      Tests [22m [1m[32m27 passed[39m[22m[90m (27)[39m
+2026-09-12T09:17:25.4497431Z [2m   Start at [22m 09:17:21
+2026-09-12T09:17:25.4503881Z [2m   Duration [22m 3.95s[2m (transform 93ms, setup 0ms, collect 343ms, tests 3.23s, environment 0ms, prepare 85ms)[22m
+2026-09-12T09:17:25.4506166Z 
+2026-09-12T09:17:25.5947260Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:17:25.5948610Z ##[group]Run actions/upload-artifact@v4
+2026-09-12T09:17:25.5948905Z with:
+2026-09-12T09:17:25.5949129Z   name: component-theme-34685313203
+2026-09-12T09:17:25.5949439Z   path: artifacts/component-proof/
+2026-09-12T09:17:25.5949728Z   if-no-files-found: error
+2026-09-12T09:17:25.5949989Z   compression-level: 6
+2026-09-12T09:17:25.5950418Z   overwrite: false
+2026-09-12T09:17:25.5950654Z   include-hidden-files: false
+2026-09-12T09:17:25.5950904Z env:
+2026-09-12T09:17:25.5951107Z   NODE_VERSION: 24
+2026-09-12T09:17:25.5951378Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:17:25.5951709Z ##[endgroup]
+2026-09-12T09:17:25.7836881Z (node:3415) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:17:25.7838758Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:17:25.8262823Z With the provided path, there will be 14 files uploaded
+2026-09-12T09:17:25.8282630Z Artifact name is valid!
+2026-09-12T09:17:25.8283435Z Root directory input is valid!
+2026-09-12T09:17:26.0003796Z Beginning upload of artifact content to blob storage
+2026-09-12T09:17:26.3700819Z (node:3415) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T09:17:26.5497310Z Uploaded bytes 8388608
+2026-09-12T09:17:26.6198374Z Uploaded bytes 12594479
+2026-09-12T09:17:26.6379938Z Finished uploading artifact content to blob storage!
+2026-09-12T09:17:26.6381870Z SHA256 digest of uploaded artifact zip is 83bf3912504ed239aeff134239e4020a0491b125c875066a63998010de0535a1
+2026-09-12T09:17:26.6387314Z Finalizing artifact upload
+2026-09-12T09:17:26.8746630Z Artifact component-theme-34685313203.zip successfully finalized. Artifact ID 10294808517
+2026-09-12T09:17:26.8749417Z Artifact component-theme-34685313203 has been successfully uploaded! Final size is 12594479 bytes. Artifact ID is 10294808517
+2026-09-12T09:17:26.8755826Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34685313203/artifacts/10294808517
+2026-09-12T09:17:26.8919646Z ##[group]Run pnpm run verify:brand-cascade
+2026-09-12T09:17:26.8920812Z [36;1mpnpm run verify:brand-cascade[0m
+2026-09-12T09:17:26.8969502Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:17:26.8969999Z env:
+2026-09-12T09:17:26.8970390Z   NODE_VERSION: 24
+2026-09-12T09:17:26.8970932Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:17:26.8971353Z ##[endgroup]
+2026-09-12T09:17:27.3366119Z 
+2026-09-12T09:17:27.3382206Z > @oods/foundry-mcp@0.1.0 verify:brand-cascade /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:17:27.3383786Z > node scripts/quality/brand-cascade-browser-proof.mjs
+2026-09-12T09:17:27.3385225Z 
+2026-09-12T09:17:27.6431339Z sheet order: generated @oods/tokens/css → layers.css → motion.css → hc.css → explorer tokens.css
+2026-09-12T09:17:27.9546349Z A/base: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:27.9685877Z A/dark: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:27.9815219Z A/hc: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:28.0016002Z B/base: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:28.0165808Z B/dark: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:28.0296098Z B/hc: 41 bridged + 3 focus slots painted, all match
+2026-09-12T09:17:28.0715645Z 
+2026-09-12T09:17:28.0747437Z rendered-surface proof: 264 computed-style assertions across 6 cells (246 bridged + 18 focus), plus 9 derived cross-brand identity checks over those same values
+2026-09-12T09:17:28.0749827Z focus resolution, measured:
+2026-09-12T09:17:28.0751464Z   A/base: ring-outer=oklch(0.495 0.17 45)  ring-inner=oklch(0.967 0.03 86)  text=oklch(0.495 0.17 45)
+2026-09-12T09:17:28.0753089Z   A/dark: ring-outer=oklch(0.862 0.106 65)  ring-inner=oklch(0.18 0.05 45)  text=oklch(0.79 0.17 45)
+2026-09-12T09:17:28.0754577Z   A/hc: ring-outer=rgba(0, 65, 198, 0.8)  ring-inner=rgb(255, 255, 255)  text=rgb(255, 255, 255)
+2026-09-12T09:17:28.0756446Z   B/base: ring-outer=oklch(0.48 0.14 238)  ring-inner=oklch(0.97 0.015 230)  text=oklch(0.48 0.14 238)
+2026-09-12T09:17:28.0757984Z   B/dark: ring-outer=oklch(0.868 0.1 238.4)  ring-inner=oklch(0.19 0.032 232)  text=oklch(0.8 0.16 232)
+2026-09-12T09:17:28.0759812Z   B/hc: ring-outer=rgba(0, 65, 198, 0.8)  ring-inner=rgb(255, 255, 255)  text=rgb(255, 255, 255)
+2026-09-12T09:17:28.0762855Z ✔ every bridged slot resolves in a real browser to the value its token source declares, and every focus slot resolves from the generated bridge (brand-distinct in base and dark, system-keyword-identical in hc)
+2026-09-12T09:17:28.0988674Z ##[group]Run pnpm run a11y:diff
+2026-09-12T09:17:28.0989357Z [36;1mpnpm run a11y:diff[0m
+2026-09-12T09:17:28.1028961Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:17:28.1029247Z env:
+2026-09-12T09:17:28.1029462Z   NODE_VERSION: 24
+2026-09-12T09:17:28.1029770Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:17:28.1030124Z ##[endgroup]
+2026-09-12T09:17:28.5393913Z 
+2026-09-12T09:17:28.5395436Z > @oods/foundry-mcp@0.1.0 prea11y:diff /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:17:28.5396871Z > pnpm --filter @oods/tokens run build
+2026-09-12T09:17:28.5397587Z 
+2026-09-12T09:17:29.0282885Z 
+2026-09-12T09:17:29.0306394Z > @oods/tokens@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens
+2026-09-12T09:17:29.0311847Z > rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-12T09:17:29.0312671Z 
+2026-09-12T09:17:29.3976989Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-12T09:17:29.3978630Z Building design tokens with Style Dictionary…
+2026-09-12T09:17:29.4905450Z 
+2026-09-12T09:17:29.4920327Z Token collisions detected (9):
+2026-09-12T09:17:29.4921561Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:29.4922794Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:30.0036314Z 
+2026-09-12T09:17:30.0037060Z ios-swift
+2026-09-12T09:17:30.0038085Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-12T09:17:30.0046927Z 
+2026-09-12T09:17:30.0047353Z compose
+2026-09-12T09:17:30.0048206Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-12T09:17:30.1442677Z 
+2026-09-12T09:17:30.1443557Z ts
+2026-09-12T09:17:30.1444507Z ! dist/ts/tokens.ts, does not exist
+2026-09-12T09:17:30.1526913Z 
+2026-09-12T09:17:30.1527385Z tailwind
+2026-09-12T09:17:30.1528266Z ! dist/tailwind/tokens.json, does not exist
+2026-09-12T09:17:31.0585079Z 
+2026-09-12T09:17:31.0587606Z ios-swift
+2026-09-12T09:17:31.0588922Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-12T09:17:31.0589625Z 
+2026-09-12T09:17:31.0590017Z compose
+2026-09-12T09:17:31.0590825Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-12T09:17:31.1268856Z 
+2026-09-12T09:17:31.1269767Z ts
+2026-09-12T09:17:31.1270934Z ✔︎ dist/ts/tokens.ts
+2026-09-12T09:17:31.1271521Z 
+2026-09-12T09:17:31.1271941Z tailwind
+2026-09-12T09:17:31.1272727Z ✔︎ dist/tailwind/tokens.json
+2026-09-12T09:17:31.2097684Z 
+2026-09-12T09:17:31.2098599Z Token collisions detected (9):
+2026-09-12T09:17:31.2100035Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:31.2101342Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:31.4149220Z 
+2026-09-12T09:17:31.4149984Z css
+2026-09-12T09:17:31.4151131Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:31.4595611Z 
+2026-09-12T09:17:31.4596315Z Token collisions detected (9):
+2026-09-12T09:17:31.4597523Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:31.4598827Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:31.6132242Z 
+2026-09-12T09:17:31.6146172Z css
+2026-09-12T09:17:31.6166229Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:31.7677421Z 
+2026-09-12T09:17:31.7678314Z Token collisions detected (257):
+2026-09-12T09:17:31.7679572Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:31.7680883Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:31.9124272Z 
+2026-09-12T09:17:31.9125219Z css
+2026-09-12T09:17:31.9126319Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:32.0561615Z 
+2026-09-12T09:17:32.0575934Z Token collisions detected (234):
+2026-09-12T09:17:32.0595710Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:32.0596996Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:32.2043977Z 
+2026-09-12T09:17:32.2045109Z css
+2026-09-12T09:17:32.2046222Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:32.3558801Z 
+2026-09-12T09:17:32.3560231Z Token collisions detected (9):
+2026-09-12T09:17:32.3562114Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:32.3563412Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:32.5056879Z 
+2026-09-12T09:17:32.5059039Z css
+2026-09-12T09:17:32.5060102Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:32.6324115Z 
+2026-09-12T09:17:32.6325294Z Token collisions detected (257):
+2026-09-12T09:17:32.6326587Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:32.6327914Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:32.7743788Z 
+2026-09-12T09:17:32.7744524Z css
+2026-09-12T09:17:32.7745884Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:32.9025827Z 
+2026-09-12T09:17:32.9026806Z Token collisions detected (234):
+2026-09-12T09:17:32.9028063Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:32.9029298Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:33.0521580Z 
+2026-09-12T09:17:33.0522327Z css
+2026-09-12T09:17:33.0525365Z ✔︎ dist/css/tokens.css
+2026-09-12T09:17:33.1819721Z 
+2026-09-12T09:17:33.1820853Z Token collisions detected (9):
+2026-09-12T09:17:33.1822460Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-12T09:17:33.1823784Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-12T09:17:33.3330687Z ✔︎ tokens built successfully in 3.94s
+2026-09-12T09:17:33.3331977Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-12T09:17:33.3333212Z    types:    dist/ts/tokens.ts
+2026-09-12T09:17:33.3335959Z    tailwind: dist/tailwind/tokens.json
+2026-09-12T09:17:33.3336585Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-12T09:17:33.3337107Z    compose:  dist/compose/OodsTokens.kt
+2026-09-12T09:17:33.4478033Z 
+2026-09-12T09:17:33.4479436Z > @oods/foundry-mcp@0.1.0 a11y:diff /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:17:33.4480939Z > node tools/a11y/index.mjs diff
+2026-09-12T09:17:33.4481554Z 
+2026-09-12T09:17:47.5237525Z [a11y] No new accessibility guardrail, contrast, or contract violations detected.
+2026-09-12T09:17:47.5559449Z ##[group]Run # python3 + curl rather than `npx http-server`/`npx wait-on`: neither is a
+2026-09-12T09:17:47.5560644Z [36;1m# python3 + curl rather than `npx http-server`/`npx wait-on`: neither is a[0m
+2026-09-12T09:17:47.5561747Z [36;1m# dependency here, so npx would fetch them from the network on every run. Both of[0m
+2026-09-12T09:17:47.5562753Z [36;1m# these ship on the runner. Same mechanism the local run uses.[0m
+2026-09-12T09:17:47.5563747Z [36;1mpython3 -m http.server 6006 --bind 127.0.0.1 --directory storybook-static &[0m
+2026-09-12T09:17:47.5564611Z [36;1mfor _ in $(seq 1 60); do[0m
+2026-09-12T09:17:47.5565603Z [36;1m  curl -sf http://127.0.0.1:6006/index.json > /dev/null && break[0m
+2026-09-12T09:17:47.5566382Z [36;1m  sleep 1[0m
+2026-09-12T09:17:47.5566820Z [36;1mdone[0m
+2026-09-12T09:17:47.5567397Z [36;1mcurl -sf http://127.0.0.1:6006/index.json > /dev/null[0m
+2026-09-12T09:17:47.5568410Z [36;1mSTORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6006 pnpm run vrt:mobile[0m
+2026-09-12T09:17:47.5569562Z [36;1mSTORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6006 pnpm run vrt:desktop[0m
+2026-09-12T09:17:47.5623204Z shell: /usr/bin/bash -e {0}
+2026-09-12T09:17:47.5623503Z env:
+2026-09-12T09:17:47.5623717Z   NODE_VERSION: 24
+2026-09-12T09:17:47.5624029Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:17:47.5624371Z ##[endgroup]
+2026-09-12T09:17:48.6025886Z 127.0.0.1 - - [12/Sep/2026 09:17:48] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:48.6087943Z 127.0.0.1 - - [12/Sep/2026 09:17:48] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:49.0385668Z 
+2026-09-12T09:17:49.0386943Z > @oods/foundry-mcp@0.1.0 vrt:mobile /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:17:49.0388753Z > playwright test --config testkits/vrt/playwright.config.ts --project=mobile-375 --project=tablet-768
+2026-09-12T09:17:49.0389943Z 
+2026-09-12T09:17:52.4523675Z 
+2026-09-12T09:17:52.4546544Z Running 18 tests using 1 worker
+2026-09-12T09:17:53.3685804Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:53.3895978Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.3926055Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:53.3947423Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.3966024Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7083840Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:53.7085353Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7086766Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7106664Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7317797Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7319372Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7503967Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.7796634Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:53.9278276Z 127.0.0.1 - - [12/Sep/2026 09:17:53] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.4339022Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:54.4578654Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.4580419Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:54.4733523Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.4736092Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6460696Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:54.6686651Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6702971Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6888827Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6898479Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6906031Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.6947829Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.7235421Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:54.8639953Z 127.0.0.1 - - [12/Sep/2026 09:17:54] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.3366264Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:55.3569540Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.3571256Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.3582807Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:55.3585262Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5491033Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:55.5754127Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5766415Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5806238Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5846045Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5866933Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.5906173Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.6262203Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.7985950Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:55.8133838Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.8154054Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.8191661Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:55.8212391Z 127.0.0.1 - - [12/Sep/2026 09:17:55] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:56.0124293Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:56.0374235Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0395718Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0397267Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0398778Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0400465Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0402006Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.0980460Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.2612955Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:56.2730221Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.2759706Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.2803425Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.2805587Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:56.4738118Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:56.4908281Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.4922211Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.4958960Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.5010379Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.5028379Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.5030458Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:56.5539317Z 127.0.0.1 - - [12/Sep/2026 09:17:56] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:57.7767315Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:57.7897431Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:57.7949669Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:57.7983937Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:57.8013009Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:57.9880729Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:57.9992810Z 127.0.0.1 - - [12/Sep/2026 09:17:57] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0082567Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0095522Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0097808Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0099286Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0109458Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.0630380Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.2023260Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.5297417Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:58.5456175Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.5459857Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.5464674Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:58.5466820Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7404408Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:58.7618589Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7663858Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7694546Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7737910Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7746605Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.7747743Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.8189169Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:58.9606524Z 127.0.0.1 - - [12/Sep/2026 09:17:58] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.3056003Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:17:59.3151131Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.3199406Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.3236412Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:17:59.3262510Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5098901Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:17:59.5332804Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5392114Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5393376Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5394185Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5395190Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5395932Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.5772534Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:17:59.7430163Z 127.0.0.1 - - [12/Sep/2026 09:17:59] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.0525811Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:00.0673020Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.0707260Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:00.0709077Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.0736023Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2559807Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:00.2727618Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2783183Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2816111Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2817758Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2838764Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.2858768Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:00.3367220Z 127.0.0.1 - - [12/Sep/2026 09:18:00] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.3985145Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:01.4206740Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.4291895Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.4316225Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:01.4322780Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7225730Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:01.7522458Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7564230Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7594434Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7608651Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7646083Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.7665823Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.8123919Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:01.9540223Z 127.0.0.1 - - [12/Sep/2026 09:18:01] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.4666615Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:02.4726178Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.5046720Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:02.5056095Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.5146376Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.6743609Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:02.7098962Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7100599Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7102064Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7103942Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7106099Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7108118Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.7549602Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:02.8963352Z 127.0.0.1 - - [12/Sep/2026 09:18:02] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.5457323Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:03.5672448Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.5727179Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.5737906Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.5821635Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:03.8566234Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:03.8786661Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.8889371Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.8966113Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.9008037Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.9076019Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.9115865Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:03.9736311Z 127.0.0.1 - - [12/Sep/2026 09:18:03] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.2577562Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:04.2831212Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.2910740Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.2945213Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:04.2974433Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.5786791Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:04.6038548Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6074700Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6116256Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6135802Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6185829Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6209058Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.6821472Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.9317000Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /iframe.html?id=contexts-view-collapse--rail-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:04.9530952Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:04.9582205Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.9649933Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:04.9698606Z 127.0.0.1 - - [12/Sep/2026 09:18:04] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2217353Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:05.2463599Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2479772Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2587631Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2610226Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2626196Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.2686293Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.3221331Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:05.4801904Z 127.0.0.1 - - [12/Sep/2026 09:18:05] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.1409350Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:07.1574440Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:07.1638822Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.1673769Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.1755861Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4250669Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:07.4576979Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4605683Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4631781Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4689362Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4710349Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.4736554Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.5349661Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:07.6919285Z 127.0.0.1 - - [12/Sep/2026 09:18:07] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.3402539Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:08.3569137Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:08.3651228Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.3735893Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.3795835Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6387442Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:08.6630794Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6783729Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6798473Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6851277Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6906312Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.6955922Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.7530682Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:08.9184036Z 127.0.0.1 - - [12/Sep/2026 09:18:08] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.4180968Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:09.4387272Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.4447477Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.4478308Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.4524002Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:09.7056744Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:09.7460083Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.7516674Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.7565606Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.7634301Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.7668860Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.7706172Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.8299108Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:09.9804022Z 127.0.0.1 - - [12/Sep/2026 09:18:09] "GET /assets/axe-iq8ItXhD.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.4247012Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /iframe.html?id=contexts-view-collapse--drawer-at-wide-container&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:10.4396135Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:10.4421352Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.4465857Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.4535847Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7071929Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:10.7317538Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/view-collapse.stories-DFeoKWf4.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7356157Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/OverlayRoot-DFvDrTXj.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7412920Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7442631Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/hooks-sv7BQsVd.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7496359Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/index-Uj8cbsTF.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.7505785Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/Sheet-Dhwy0K1i.js HTTP/1.1" 200 -
+2026-09-12T09:18:10.8183721Z 127.0.0.1 - - [12/Sep/2026 09:18:10] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:11.0345807Z ··················
+2026-09-12T09:18:11.0355289Z   18 passed (21.0s)
+2026-09-12T09:18:11.7470717Z 
+2026-09-12T09:18:11.7497380Z > @oods/foundry-mcp@0.1.0 vrt:desktop /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:18:11.7509022Z > playwright test --config testkits/vrt/playwright.config.ts --project=chromium
+2026-09-12T09:18:11.7509960Z 
+2026-09-12T09:18:16.1381079Z 
+2026-09-12T09:18:16.1381754Z Running 2 tests using 1 worker
+2026-09-12T09:18:17.1548633Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:17.4869590Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /iframe.html?id=components-primitives-text-field--form-example&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:17.5096445Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.5116081Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.5152533Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:17.5204572Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.8672385Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:17.9071208Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.9174331Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/fields-Xa1-mKkV.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.9233670Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/status-JQOYCq9x.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.9299270Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/presentational-HF9xpQ5r.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.9317848Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/TextField.stories-Bqg6tPfc.js HTTP/1.1" 200 -
+2026-09-12T09:18:17.9601499Z 127.0.0.1 - - [12/Sep/2026 09:18:17] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.3296387Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:18.4301407Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /iframe.html?id=components-statusables-toast--default&viewMode=story HTTP/1.1" 200 -
+2026-09-12T09:18:18.4456670Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/iframe-BzLYzwXG.css HTTP/1.1" 200 -
+2026-09-12T09:18:18.4476082Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /vite-inject-mocker-entry.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.4486226Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/preload-helper-Dp1pzeXC.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.4527428Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/iframe-Y1-zaSh4.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.7360855Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /index.json HTTP/1.1" 200 -
+2026-09-12T09:18:18.7664313Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/Toast.stories-DtWlACKJ.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.7697526Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/jsx-runtime-D_zvdyIk.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.7715978Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/withPage-DAPUertW.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.7740666Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/Toast-DRtRBcuf.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.7763745Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/status-JQOYCq9x.js HTTP/1.1" 200 -
+2026-09-12T09:18:18.8171744Z 127.0.0.1 - - [12/Sep/2026 09:18:18] "GET /assets/react-18-UUJpkVUH.js HTTP/1.1" 200 -
+2026-09-12T09:18:19.1001670Z ··
+2026-09-12T09:18:19.1010776Z   2 passed (6.2s)
+2026-09-12T09:18:24.1829537Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:18:24.1832024Z ##[group]Run actions/upload-artifact@v4
+2026-09-12T09:18:24.1832571Z with:
+2026-09-12T09:18:24.1832971Z   name: a11y-guardrail-34685313203
+2026-09-12T09:18:24.1833509Z   path: tools/a11y/reports/
+2026-09-12T09:18:24.1834003Z   if-no-files-found: warn
+2026-09-12T09:18:24.1834467Z   compression-level: 6
+2026-09-12T09:18:24.1835177Z   overwrite: false
+2026-09-12T09:18:24.1835617Z   include-hidden-files: false
+2026-09-12T09:18:24.1836088Z env:
+2026-09-12T09:18:24.1836490Z   NODE_VERSION: 24
+2026-09-12T09:18:24.1837011Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T09:18:24.1837627Z ##[endgroup]
+2026-09-12T09:18:24.3695792Z (node:4461) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:18:24.3697677Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:18:24.3837254Z With the provided path, there will be 1 file uploaded
+2026-09-12T09:18:24.3868832Z Artifact name is valid!
+2026-09-12T09:18:24.3874676Z Root directory input is valid!
+2026-09-12T09:18:24.5985077Z Beginning upload of artifact content to blob storage
+2026-09-12T09:18:24.6229036Z (node:4461) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T09:18:24.6666797Z Uploaded bytes 6237
+2026-09-12T09:18:24.6859777Z Finished uploading artifact content to blob storage!
+2026-09-12T09:18:24.6861749Z SHA256 digest of uploaded artifact zip is 65731f6152834f8a59b70fcfe76964a48aa2c4fdbb4fa009fd72949907053c05
+2026-09-12T09:18:24.6863307Z Finalizing artifact upload
+2026-09-12T09:18:24.8676171Z Artifact a11y-guardrail-34685313203.zip successfully finalized. Artifact ID 10296060137
+2026-09-12T09:18:24.8678383Z Artifact a11y-guardrail-34685313203 has been successfully uploaded! Final size is 6237 bytes. Artifact ID is 10296060137
+2026-09-12T09:18:24.8684523Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34685313203/artifacts/10296060137
+2026-09-12T09:18:24.9439608Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:18:24.9440950Z Post job cleanup.
+2026-09-12T09:18:25.0687161Z Cache hit occurred on the primary key Linux-playwright-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1, not saving cache.
+2026-09-12T09:18:25.0692535Z (node:4486) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:18:25.0694116Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:18:25.0826143Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:18:25.0827637Z Post job cleanup.
+2026-09-12T09:18:25.2391545Z (node:4494) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T09:18:25.2399488Z Cache hit occurred on the primary key node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1, not saving cache.
+2026-09-12T09:18:25.2401617Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T09:18:25.2569468Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:18:25.2571871Z Post job cleanup.
+2026-09-12T09:18:25.4146504Z Pruning is unnecessary.
+2026-09-12T09:18:25.4441829Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T09:18:25.4444141Z Post job cleanup.
+2026-09-12T09:18:25.5641430Z [command]/usr/bin/git version
+2026-09-12T09:18:25.5695888Z git version 2.55.0
+2026-09-12T09:18:25.5796691Z Temporarily overriding HOME='/home/runner/work/_temp/03ee9a25-472a-4a3e-913e-eeb94ed8eb99' before making global git config changes
+2026-09-12T09:18:25.5798332Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T09:18:25.5799714Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T09:18:25.5846840Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T09:18:25.5907535Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T09:18:25.6358227Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T09:18:25.6405548Z http.https://github.com/.extraheader
+2026-09-12T09:18:25.6441681Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-12T09:18:25.6512692Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T09:18:25.6945893Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T09:18:25.7003417Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T09:18:25.7566839Z Cleaning up orphan processes
+2026-09-12T09:18:25.7947804Z Terminate orphan process: pid (3662) (python3)
+2026-09-12T09:18:25.7992467Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache@v4, actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
