@@ -1,6 +1,6 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -41,5 +41,31 @@ describe('packaged bridge health revision', () => {
       commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
       structuredDataManifestHash: `sha256:${createHash('sha256').update(readFileSync(path.join(root, 'artifacts/structured-data/manifest.json'))).digest('hex')}`,
     });
+  });
+  it('stamps assembly identity without git, a checkout, or host structured data', () => {
+    const extracted = temp();
+    const script = path.join(extracted, 'scripts/build-revision.mjs');
+    mkdirSync(path.dirname(script));
+    copyFileSync(path.join(root, 'scripts/build-revision.mjs'), script);
+    const output = path.join(extracted, 'packages/mcp-bridge/dist/build-revision.json');
+    const revision = { commit: 'd'.repeat(40), structuredDataManifestHash: `sha256:${'e'.repeat(64)}` };
+    execFileSync(process.execPath, [script, output, '--commit', revision.commit, '--structured-data-manifest-hash', revision.structuredDataManifestHash], {
+      cwd: extracted, env: { ...process.env, PATH: extracted },
+    });
+    expect(readBuildRevision(pathToFileURL(output))).toEqual(revision);
+  });
+  it.each([
+    ['--commit', 'a'.repeat(40)],
+    ['--structured-data-manifest-hash', `sha256:${'b'.repeat(64)}`],
+    ['--commit', 'HEAD', '--structured-data-manifest-hash', `sha256:${'b'.repeat(64)}`],
+    ['--commit', 'a'.repeat(40), '--structured-data-manifest-hash', 'wrong'],
+    ['--unknown', 'value'],
+    ['--commit', 'a'.repeat(40), '--commit', 'b'.repeat(40)],
+  ])('rejects incomplete or invalid explicit identity rather than mixing in host defaults (%j)', (...args) => {
+    const output = path.join(temp(), 'build-revision.json');
+    const result = spawnSync(process.execPath, [path.join(root, 'scripts/build-revision.mjs'), output, ...args], { encoding: 'utf8' });
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toMatch(/Expected --commit|Explicit build revision requires/);
+    expect(existsSync(output)).toBe(false);
   });
 });

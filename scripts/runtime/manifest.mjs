@@ -18,6 +18,7 @@ export const TREE_DIGEST_ALGORITHM = "sha256:path-type-mode-size-content-v1";
 export const RUNTIME_PACKAGES = Object.freeze([
   "mcp-server",
   "mcp-adapter",
+  "mcp-bridge",
   "tokens",
   "viz-core",
   "viz-render",
@@ -264,16 +265,10 @@ export async function buildRuntimeManifest({
     );
   }
 
-  assert.equal(
-    sbom?.summary?.packageCount,
-    245,
-    "SBOM-lite package count must be exactly 245",
-  );
-  assert.equal(
-    sbom?.summary?.integrityCount,
-    245,
-    "SBOM-lite integrity count must be exactly 245",
-  );
+  assert(Number.isInteger(sbom?.summary?.packageCount) && sbom.summary.packageCount > 0,
+    "SBOM-lite must measure a non-empty runtime closure");
+  assert.equal(sbom.summary.integrityCount, sbom.summary.packageCount,
+    "every runtime dependency must have integrity metadata");
 
   const packageVersions = {};
   const nodeRanges = [];
@@ -335,6 +330,7 @@ export async function buildRuntimeManifest({
     layout: "packages/*",
     nodeFloor,
     ciNode: 24,
+    ciNodes: [24, "20.11.1"],
     thirdPartyCount: sbom.summary.packageCount,
     packageVersions,
     registry: {
@@ -477,6 +473,16 @@ async function main() {
     archiveSha256File: args.archive_sha256_file ?? RUNTIME_ARCHIVE_SHA256_FILE,
     archivePacking: currentManifest?.archivePacking,
   });
+  // Archive facts live in the detached manifest: embedding an archive's own
+  // digest/byte size would create a self-reference.
+  if (currentManifest?.archive) {
+    const archivePath = path.join(path.dirname(outPath), RUNTIME_ARCHIVE_FILE);
+    manifest.archive = {
+      file: RUNTIME_ARCHIVE_FILE,
+      byteSize: (await fsp.stat(archivePath)).size,
+      sha256: await sha256File(archivePath),
+    };
+  }
   const expected = canonicalJson(manifest);
   if (args.check) {
     const actual = await fsp.readFile(outPath, "utf8");

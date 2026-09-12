@@ -166,8 +166,11 @@ class NativeOodsClient {
       const pending = this.pending.get(id);
       if (!pending) continue;
       this.pending.delete(id);
-      if (error) pending.reject(new Error(typeof error === 'string' ? error : error.message || 'Native error'));
-      else pending.resolve(result);
+      if (error) {
+        const failure = new Error(typeof error === 'string' ? error : error.message || 'Native error');
+        if (typeof error === 'object' && !Array.isArray(error)) failure.nativeError = error;
+        pending.reject(failure);
+      } else pending.resolve(result);
     }
   }
 
@@ -248,6 +251,20 @@ async function main() {
         ],
       };
     } catch (error) {
+      if (error?.nativeError) {
+        const native = error.nativeError;
+        // Preserve every native field. Current ToolErrors nest retryable/context in
+        // details; promote those for clients without dropping the original envelope.
+        const structured = {
+          ...native,
+          ...(typeof native.retryable === 'boolean' ? {} : typeof native.details?.retryable === 'boolean' ? { retryable: native.details.retryable } : {}),
+          ...('data' in native ? {} : native.details !== undefined ? { data: native.details?.context ?? native.details } : {}),
+        };
+        return {
+          isError: true,
+          content: [{ type: 'text', text: JSON.stringify({ error: structured }, null, 2) }],
+        };
+      }
       const message = error instanceof Error ? error.message : String(error);
       // Structured error with actionable guidance for server spawn failures
       const isSpawnError = message.includes('not built') || message.includes('server exited') || message.includes('ENOENT');

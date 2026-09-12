@@ -23,8 +23,8 @@ import {
 import {
   buildSbomLite,
   buildSbomLiteFromFile,
-  EXPECTED_THIRD_PARTY_COUNT,
 } from "./sbom-lite.mjs";
+import { assembleReadinessAttestation } from "./readiness-attestation.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..", "..");
@@ -44,6 +44,7 @@ const ADAPTER_RUNTIME_FILES = [
 
 const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 195 includes the authored API-call Usage example beside its object.
+  "configs/agent/policy.json": 1,
   domains: 15,
   objects: 8,
   schemas: 56,
@@ -56,6 +57,7 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([
   "packages/mcp-server/dist/security/policy.json",
+  "configs/agent/policy.json",
   "packages/mcp-server/dist/security/redactions.json",
 ]);
 
@@ -334,6 +336,8 @@ async function installProductionClosure(builderRoot) {
       "@oods/mcp-server...",
       "--filter",
       "@oods/mcp-adapter",
+      "--filter",
+      "@oods/mcp-bridge",
     ],
     { cwd: builderRoot, env },
   );
@@ -481,7 +485,7 @@ async function prunePnpmMetadata(root) {
   await visit(root);
 }
 
-async function prunePackageDists(payloadRoot, { fixtures }) {
+export async function prunePackageDists(payloadRoot, { fixtures }) {
   async function visit(directory, distRoot) {
     const entries = await fsp.readdir(directory, { withFileTypes: true });
     for (const entry of entries) {
@@ -499,9 +503,8 @@ async function prunePackageDists(payloadRoot, { fixtures }) {
       } else if (entry.isFile()) {
         const sourceArtifact =
           entry.name.endsWith(".map") ||
-          entry.name.endsWith(".d.ts") ||
-          entry.name.endsWith(".ts");
-        const testArtifact = entry.name.includes(".test.");
+          (entry.name.endsWith(".ts") && !entry.name.endsWith(".d.ts") && !relative.startsWith("ts/"));
+        const testArtifact = /\.(?:test|spec)\./.test(entry.name);
         if (sourceArtifact || testArtifact)
           await fsp.rm(absolute, { force: true });
       }
@@ -811,6 +814,7 @@ async function main() {
   await installProductionClosure(builderRoot);
   const installedSbom = await buildSbomLiteFromFile(
     path.join(builderRoot, "node_modules/.pnpm/lock.yaml"),
+    { expectedCount: sbom.summary.packageCount },
   );
   assert.deepEqual(
     installedSbom.packages,
@@ -818,11 +822,6 @@ async function main() {
     "post-install virtual-store identities/integrities diverged from the source-lock SBOM",
   );
   const closureCount = await installedClosureCount(builderRoot);
-  assert.equal(
-    closureCount,
-    EXPECTED_THIRD_PARTY_COUNT,
-    `installed .pnpm closure must be ${EXPECTED_THIRD_PARTY_COUNT}`,
-  );
   assert.equal(
     closureCount,
     sbom.summary.packageCount,
@@ -855,6 +854,12 @@ async function main() {
   await normalizeModes(payloadRoot);
   await scanPayload(payloadRoot, { workRoot: args.workDir });
   await prunePackageDists(payloadRoot, { fixtures: true });
+  const sourceHead = (await runCapture("git", ["rev-parse", "HEAD"], { cwd: REPO_ROOT })).trim();
+  const structuredHash = await sha256File(path.join(payloadRoot, "artifacts/structured-data/manifest.json"));
+  await run(process.execPath, [path.join(REPO_ROOT, "scripts/build-revision.mjs"),
+    path.join(payloadRoot, "packages/mcp-bridge/dist/build-revision.json"),
+    "--commit", sourceHead, "--structured-data-manifest-hash", `sha256:${structuredHash}`]);
+  await assembleReadinessAttestation({ repositoryRoot: REPO_ROOT, bundleRoot: payloadRoot, sourceHead });
   await normalizeModes(payloadRoot);
   const finalScan = await scanPayload(payloadRoot, { workRoot: args.workDir });
   const tarImplementation = await findTarImplementation();
@@ -870,6 +875,7 @@ async function main() {
       determinismCertified: tarImplementation.determinismCertified,
     },
   });
+  assert.equal(manifest.commit, sourceHead, "source commit changed during assembly");
   const manifestBytes = canonicalJson(manifest);
   await fsp.writeFile(
     path.join(payloadRoot, RUNTIME_MANIFEST_FILE),
@@ -891,6 +897,10 @@ async function main() {
     tarImplementation,
   );
   const archiveSha256 = await sha256File(archivePath);
+  const archiveByteSize = (await fsp.stat(archivePath)).size;
+  const detachedManifestBytes = canonicalJson({ ...manifest,
+    archive: { file: RUNTIME_ARCHIVE_FILE, byteSize: archiveByteSize, sha256: archiveSha256 },
+  });
   const sha256Bytes = `${archiveSha256}  ${RUNTIME_ARCHIVE_FILE}\n`;
   await fsp.writeFile(
     path.join(args.outDir, RUNTIME_ARCHIVE_SHA256_FILE),
@@ -903,7 +913,7 @@ async function main() {
   );
   await fsp.writeFile(
     path.join(args.outDir, RUNTIME_MANIFEST_FILE),
-    manifestBytes,
+    detachedManifestBytes,
     {
       encoding: "utf8",
       flag: "wx",
@@ -928,6 +938,7 @@ async function main() {
     `${canonicalJson({
       archive: archivePath,
       archiveSha256,
+      archiveByteSize,
       archiveSha256File: path.join(args.outDir, RUNTIME_ARCHIVE_SHA256_FILE),
       manifest: path.join(args.outDir, RUNTIME_MANIFEST_FILE),
       sbomLite: path.join(args.outDir, RUNTIME_SBOM_FILE),

@@ -194,10 +194,16 @@ describe("how Forge works narrative truth", () => {
     const sections = [...read("docs/mcp/Tool-Specs.md").matchAll(/^### `([^`]+)`$/gm)].map(match => match[1]);
     expect(sections).toEqual([...registry.auto, ...registry.onDemand]);
     const portable = read("docs/runtime/portable-runtime.md");
-    expect(portable).toContain("27 calls across all 19 advertised tools");
-    expect(portable).toContain("28 calls across two processes");
-    expect(portable).toContain("adapter drops native error codes");
-    expect(portable).toContain("even its dry-run returns a missing-source error");
+    // s196 binds prose to the executed release recipe, including preserved wire codes.
+    const ledger = JSON.parse(read("packages/mcp-server/registry/tool-capability-ledger.v1.json"));
+    const receipt = JSON.parse(read(ledger.portableExecution.path));
+    expect(portable).toContain(`${receipt.calls.primarySequenceCount} calls across all ${receipt.tools.count} advertised tools`);
+    expect(portable).toContain(`${receipt.calls.totalAcrossProcesses} adapter calls across two processes`);
+    for (const tool of ["brand.apply", "design.preview"]) {
+      expect(receipt.calls.outcomes[tool].outcome).toBe("typed");
+      expect(portable).toContain(receipt.calls.outcomes[tool].code);
+    }
+    expect(portable).toContain("the native code is preserved at `tools/call`");
   });
 
   it("Tool-Specs links resolve to existing grouped API pages", () => {

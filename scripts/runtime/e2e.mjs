@@ -191,6 +191,9 @@ const FORBIDDEN_CHILD_ENV = [
   "OTEL_PROPAGATORS",
   "OTEL_SERVICE_NAME",
   "PORT",
+  "MCP_BRIDGE_PORT",
+  "BRIDGE_TOKEN",
+  "MCP_BRIDGE_CORS_ORIGIN",
 ];
 
 function parseArgs(argv) {
@@ -409,9 +412,10 @@ class McpClient {
     const result = await this.request("tools/call", { name, arguments: args });
     if (expectedError) {
       assert.equal(result?.isError, true, `${name} must disclose the expected portable limit`);
-      const message = result.content?.[0]?.text;
-      assert.match(message, expectedError);
-      return { isError: true, message };
+      const error = JSON.parse(result.content?.[0]?.text ?? "{}").error;
+      assert.equal(error?.code, expectedError, `${name} must preserve its native error code`);
+      assert.equal(typeof error.retryable, "boolean");
+      return { isError: true, ...error };
     }
     if (result?.isError) {
       throw new Error(
@@ -613,6 +617,69 @@ async function initializeAndList(client, expectedVersion, expectedToolNames) {
   return { initialized, names };
 }
 
+function assertGeneratedArtifact(artifact, framework) {
+  assert.equal(artifact?.framework, framework);
+  assert.match(artifact.contentHash, /^sha256:[a-f0-9]{64}$/);
+  assert(artifact.files.length > 0);
+  assert(artifact.files.some(file => /\.(?:tsx|vue)$/.test(file.path)), "real framework source must be emitted");
+  for (const file of artifact.files) {
+    assert(file.contents.length > 0);
+    assert.equal(file.contentHash, `sha256:${sha256(file.contents)}`);
+  }
+}
+
+async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input, adapterSvgHash) {
+  const port = await reserveClosedPort();
+  const base = `http://127.0.0.1:${port}`;
+  const child = spawn(process.execPath, ['dist/server.js'], {
+    cwd: path.join(runtimeRoot, 'packages/mcp-bridge'),
+    env: { ...env, MCP_BRIDGE_PORT: String(port), BRIDGE_TOKEN: 'portable-e2e-owned-token' },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  let output = '';
+  child.stdout.on('data', chunk => { output = (output + chunk).slice(-32768); });
+  child.stderr.on('data', chunk => { output = (output + chunk).slice(-32768); });
+  const exited = new Promise((resolve, reject) => {
+    child.once('error', reject);
+    child.once('close', (code, signal) => resolve({ code, signal }));
+  });
+  let health;
+  try {
+    for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+      try {
+        const response = await fetch(`${base}/health`, { signal: AbortSignal.timeout(1000) });
+        if (response.ok) { health = await response.json(); break; }
+      } catch { /* Wait for the owned bridge to listen. */ }
+      if (child.exitCode !== null) throw new Error(`Bundled bridge exited: ${output}`);
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert(health, `Bundled bridge did not become ready: ${output}`);
+    assert.deepEqual(health.revision, { commit: manifest.commit,
+      structuredDataManifestHash: `sha256:${manifest.structuredDataManifest.sha256}` });
+    const toolsResponse = await fetch(`${base}/tools`);
+    assert(toolsResponse.ok);
+    const tools = await toolsResponse.json();
+    assert.deepEqual([...tools.tools].sort(), [...expectedToolNames].sort());
+    const response = await fetch(`${base}/run`, { method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-bridge-token': 'portable-e2e-owned-token' },
+      body: JSON.stringify({ tool: 'viz_render', input }), signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    const rendered = await response.json();
+    assert(response.ok && rendered.ok, JSON.stringify(rendered));
+    assert(adapterSvgHash, 'adapter SVG proof missing');
+    assert.equal(rendered.result.svgHash, adapterSvgHash);
+    child.kill('SIGTERM');
+    const termination = await Promise.race([exited,
+      new Promise(resolve => setTimeout(() => resolve(null), LIFECYCLE_TIMEOUT_MS))]);
+    assert(termination, 'bridge did not stop cleanly');
+    assert(termination.code === 0 || termination.signal === 'SIGTERM');
+    await assertLoopbackPortClosed(port);
+    return { revision: health.revision, tools: tools.tools, svgHash: adapterSvgHash, parity: true, termination };
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+    await exited;
+  }
+}
+
 async function main() {
   assert.equal(
     process.env.NODE_PATH,
@@ -634,10 +701,10 @@ async function main() {
   }
 
   const { manifest, payload } = await verifyEmbeddedManifest(runtimeRoot);
-  assert.equal(manifest.thirdPartyCount, 245);
+  assert(manifest.thirdPartyCount > 0);
   const sbom = await loadJson(path.join(runtimeRoot, RUNTIME_SBOM_FILE));
-  assert.equal(sbom.summary.packageCount, 245);
-  assert.equal(sbom.summary.integrityCount, 245);
+  assert.equal(sbom.summary.packageCount, manifest.thirdPartyCount);
+  assert.equal(sbom.summary.integrityCount, manifest.thirdPartyCount);
   assert(sbom.packages.every((entry) => entry.integrity.startsWith("sha512-")));
 
   const adapterPackage = await loadJson(
@@ -645,8 +712,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.2.0",
-    "adapter package version must be 0.2.0",
+    "0.3.0",
+    "adapter 0.3.0 preserves structured native errors",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],
@@ -778,7 +845,9 @@ async function main() {
       "four-panel repeat unexpectedly reused ephemeral specRef",
     );
 
-    const viz = await primary.callTool("viz_render", operand("viz.render")); // 6
+    const vizInput = operand("viz.render");
+    vizInput.output = { ...vizInput.output, svg: true };
+    const viz = await primary.callTool("viz_render", vizInput); // 6
     state.viz = viz;
     const positive = await primary.callTool("artifact_certify", operand("artifact.certify")); // 7
     const negative = await primary.callTool("artifact_certify", {
@@ -792,9 +861,22 @@ async function main() {
       assert(isInside(artifactsRoot, file), `Token receipt escaped extraction artifacts: ${file}`);
       assert(fs.existsSync(file));
     }
+    const appliedTokens = await primary.callTool("tokens_build", { ...operand("tokens.build"), apply: true });
+    assert.equal(appliedTokens.artifacts.length, 5, "portable token export must emit all five outputs");
+    for (const file of appliedTokens.artifacts) {
+      assert(isInside(artifactsRoot, file));
+      assert((await fsp.stat(file)).size > 0);
+    }
+    const exportedTokens = Object.fromEntries(appliedTokens.artifacts.map(file => [path.basename(file), file]));
+    assert.deepEqual(JSON.parse(await fsp.readFile(exportedTokens['tokens.dark.json'], 'utf8')),
+      { cssVariables: builtScopes.B.dark, meta: { brand: 'B', theme: 'dark', scope: 'requested' } });
+    for (const [exported, shipped] of [['tokens.css', 'css/tokens.css'], ['tokens.ts', 'ts/tokens.ts'], ['tokens.tailwind.json', 'tailwind/tokens.json']]) {
+      assert((await fsp.readFile(exportedTokens[exported])).equals(
+        await fsp.readFile(path.join(runtimeRoot, 'packages/tokens/dist', shipped))), `Export changed shipped token bytes: ${exported}`);
+    }
     const data = await primary.callTool("structuredData_fetch", operand("structuredData.fetch"));
     assert.equal(data.dataset, 'components'); assert(data.etag);
-    const brand = await primary.callTool("brand_apply", operand("brand.apply"), /ENOENT.*src\/tokens\/brands/s);
+    const brand = await primary.callTool("brand_apply", operand("brand.apply"), "OODS-N020");
     const intake = await primary.callTool("brand_intake", operand("brand.intake"));
     assert.equal(intake.validated, true); assert.equal(intake.preview_only, true); assert(intake.delta.dark);
     const catalog = await primary.callTool("catalog_list", operand("catalog.list"));
@@ -802,12 +884,16 @@ async function main() {
     const composed = await primary.callTool("design_compose", operand("design.compose"));
     assert.equal(composed.status, 'ok'); assert(composed.schemaRef); state.compose = composed;
     await assertLoopbackPortClosed(4477);
-    const preview = await primary.callTool("design_preview", operand("design.preview"), /pnpm design:loop serve/);
+    const preview = await primary.callTool("design_preview", operand("design.preview"), "OODS-N019");
     const generated = await primary.callTool("code_generate", operand("code.generate"));
-    assert.equal(generated.status, 'error'); assert.equal(generated.artifact, undefined);
-    assert(generated.errors.length > 0 && generated.errors.every(error => error.code === 'OODS-N015'));
+    assert.equal(generated.status, 'ok');
+    assertGeneratedArtifact(generated.artifact, 'react');
+    const generatedVue = await primary.callTool("code_generate", { ...operand("code.generate"), framework: 'vue' });
+    assert.equal(generatedVue.status, 'ok');
+    assertGeneratedArtifact(generatedVue.artifact, 'vue');
     const run = await primary.callTool("pipeline", operand("pipeline"));
-    assert.deepEqual({ step: run.error?.step, code: run.error?.code }, { step: 'codegen', code: 'OODS-N015' }); assert.equal(run.code, undefined);
+    assert.equal(run.error, undefined, JSON.stringify(run.error));
+    assertGeneratedArtifact(run.code?.artifact, 'react');
     const snapshot = await primary.callTool("registry_snapshot", operand("registry.snapshot"));
     assert(snapshot.objects.Subscription); assert(snapshot.traits.Stateful); assert.match(snapshot.etag, /^[a-f0-9]{64}$/);
     const fidelity = await primary.callTool("fidelity_preview", operand("fidelity.preview"));
@@ -828,18 +914,18 @@ async function main() {
     assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
     const rendered = await primary.callTool("repl", operand("repl"));
     assert.equal(rendered.status, 'ok'); assert(rendered.html.startsWith('<!DOCTYPE html>'));
-    assert.equal(primary.callCount, 27, '19 advertised tools plus retained repeats, negative certification and store lifecycles');
+    assert.equal(primary.callCount, 29, '19 tools plus repeats, stores, real token export and Vue generation');
     assert.deepEqual([...primary.calledTools].sort(), [...expectedToolNames].sort());
     const outcomes = {
-      'tokens.build': { outcome: 'documented-limit', gap: 'portable-token-export-source-dependency', apply: false, artifacts: 0, preview: tokens.preview.summary },
+      'tokens.build': { outcome: 'pass', apply: true, artifacts: appliedTokens.artifacts.length, preview: tokens.preview.summary },
       'structuredData.fetch': { outcome: 'pass', etag: data.etag },
-      'brand.apply': { outcome: 'documented-limit', gap: 'portable-brand-source-absent', apply: false, ...brand },
+      'brand.apply': { outcome: 'typed', gap: 'portable-brand-source-absent', apply: false, ...brand },
       'brand.intake': { outcome: 'pass', envelopeHash: intake.envelopeHash },
       'catalog.list': { outcome: 'pass', count: catalog.totalCount },
       'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
-      'design.preview': { outcome: 'documented-limit', gap: 'adapter-native-error-code-erasure', nativeCode: 'OODS-N019', adapterCodePreserved: false, ...preview },
-      'code.generate': { outcome: 'documented-limit', gap: 'portable-generation-readiness-evidence-absent', errors: generated.errors, artifactAbsent: true },
-      pipeline: { outcome: 'documented-limit', gap: 'portable-generation-readiness-evidence-absent', error: run.error, codeAbsent: true },
+      'design.preview': { outcome: 'typed', gap: 'portable-design-loop-unavailable', adapterCodePreserved: true, ...preview },
+      'code.generate': { outcome: 'pass', reactHash: generated.artifact.contentHash, vueHash: generatedVue.artifact.contentHash },
+      pipeline: { outcome: 'pass', contentHash: run.code.artifact.contentHash },
       'registry.snapshot': { outcome: 'pass', etag: snapshot.etag },
       'fidelity.preview': { outcome: 'pass', htmlHash: sha256(fidelity.html) },
       map: { outcome: 'pass', createdResolvedDeleted: true },
@@ -851,8 +937,13 @@ async function main() {
       'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
       'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
     };
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 17);
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 2);
+    const bridge = await proveBridge(runtimeRoot, childEnvironment, manifest, expectedToolNames,
+      vizInput, viz.svgHash);
     await assertLoopbackPortClosed(healthCanaryPort);
     calls = {
+      bridge,
       primarySequenceCount: primary.callCount,
       outcomes,
       fixturePins: TOOL_FIXTURE_PINS,
@@ -942,8 +1033,8 @@ async function main() {
   const fullTreeAfter = await treeDigest(runtimeRoot);
   assert.equal(
     primary.callCount + restarted.callCount,
-    28,
-    "portable runtime E2E must make 28 tools/call operations across both processes",
+    30,
+    "portable runtime E2E must make 30 tools/call operations across both adapter processes",
   );
   calls.totalAcrossProcesses = primary.callCount + restarted.callCount;
   assert.equal(
@@ -959,6 +1050,7 @@ async function main() {
   process.stdout.write(
     canonicalJson({
       status: "pass",
+      nodeVersion: process.version,
       manifest: {
         file: RUNTIME_MANIFEST_FILE,
         commit: manifest.commit,

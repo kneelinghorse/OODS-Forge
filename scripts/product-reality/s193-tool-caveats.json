@@ -5,12 +5,6 @@
       "file": "packages/mcp-server/src/tools/tokens.build.ts",
       "anchor": "recordArtifact(tsOut, 'tokens.ts'",
       "reason": "Requested-scope JSON and CSS resolve brand/theme. Full CSS retains every built scope; TypeScript and Tailwind artifacts explicitly retain legacy A/light defaults."
-    },
-    {
-      "kind": "documented-limit",
-      "file": "scripts/runtime/assemble.mjs",
-      "anchor": "entry.name.endsWith(\".ts\");",
-      "reason": "Bundle omits legacy tokens.ts; tokens.build apply:true consequently tries unavailable source build inputs. Portable proof calls apply:false and claims only preview/transcript, not export."
     }
   ],
   "brand.apply": [
@@ -23,8 +17,8 @@
     {
       "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/brand.apply.ts",
-      "anchor": ".readdirSync(path.join(tokenPackageRoot(), 'src/tokens/brands')",
-      "reason": "Portable bundle omits canonical brand source; even dry-run needs that source and returns a missing-source error. Host mutation remains separately proven."
+      "anchor": "throw new ToolError('OODS-N020', 'brand.apply: canonical brand source",
+      "reason": "Portable bundle omits canonical brand source; even dry-run returns dependency-specific OODS-N020 at the adapter wire. Host mutation remains separately proven."
     }
   ],
   "brand.intake": [
@@ -65,12 +59,6 @@
       "file": "packages/mcp-server/src/tools/design.preview.ts",
       "anchor": "const unavailable = () => new ToolError('OODS-N019'",
       "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019."
-    },
-    {
-      "kind": "documented-limit",
-      "file": "packages/mcp-adapter/index.js",
-      "anchor": "if (error) pending.reject(new Error(typeof error",
-      "reason": "The adapter strips native error codes and forwards message text. Native OODS-N019 remains available directly; portable transport code preservation is carried under #1927."
     }
   ],
   "code.generate": [
@@ -79,12 +67,6 @@
       "file": "packages/mcp-server/src/codegen/validation-profile.ts",
       "anchor": "const accepted = Array.isArray(evidence.accepted)",
       "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof."
-    },
-    {
-      "kind": "documented-limit",
-      "file": "packages/mcp-server/src/codegen/target-readiness.ts",
-      "anchor": "return { evidenceClass, referenceClass: classified, ref, reason: 'file-unavailable' };",
-      "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven."
     }
   ],
   "pipeline": [
@@ -93,12 +75,6 @@
       "file": "packages/mcp-server/src/codegen/validation-profile.ts",
       "anchor": "const accepted = Array.isArray(evidence.accepted)",
       "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof."
-    },
-    {
-      "kind": "documented-limit",
-      "file": "packages/mcp-server/src/codegen/target-readiness.ts",
-      "anchor": "return { evidenceClass, referenceClass: classified, ref, reason: 'file-unavailable' };",
-      "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven."
     }
   ],
   "registry.snapshot": [

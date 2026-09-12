@@ -128,6 +128,16 @@ describe('Error Registry', () => {
     });
   });
 
+  it('distinguishes canonical brand source absence from transient token build failures', () => {
+    expect(getDefinition('OODS-N020')).toEqual({
+      code: 'OODS-N020', category: 'not_found',
+      message: 'brand.apply: canonical brand source is not shipped in this runtime',
+      retryable: false,
+    });
+    expect(getDefinition('OODS-N011')).toMatchObject({ category: 'not_found', retryable: false });
+    expect(getDefinition('OODS-S019')).toMatchObject({ category: 'server_error' });
+  });
+
   // ── isRetryable ────────────────────────────────────────────────────────
   it('returns true for retryable codes', () => {
     expect(isRetryable('OODS-R001')).toBe(true);   // rate limit

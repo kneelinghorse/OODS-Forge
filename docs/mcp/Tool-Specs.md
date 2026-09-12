@@ -91,12 +91,12 @@ The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. 
 
 ### `tokens.build`
 
-Portable calls support dry-run preview/transcript only: apply:true needs omitted legacy tokens.ts and host build inputs.
+Portable calls support preview/transcript and `apply:true` export of five artifacts from shipped outputs, including `dist/ts/tokens.ts`, without rebuilding. Missing portable outputs return `OODS-N011` with `buildAttempted:false`.
 
 - **Input schema**: `packages/mcp-server/src/schemas/tokens.build.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
 - **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 60s | rate 30/min | concurrency 1
-- **Purpose**: Return requested-scope JSON and CSS for `brand`/`theme`, full compiled CSS, and explicitly labelled legacy A/light TypeScript and Tailwind artifacts. Missing build outputs trigger both real build stages; failures return `OODS-S019`. Always emit a transcript + bundle index on success.
+- **Purpose**: Return requested-scope JSON and CSS for `brand`/`theme`, full compiled CSS, and explicitly labelled legacy A/light TypeScript and Tailwind artifacts. In a host repository, missing build outputs trigger both real build stages; failures return `OODS-S019`. Always emit a transcript + bundle index on success.
 
 Example input:
 ```json
@@ -174,7 +174,7 @@ Notes:
 
 ### `brand.apply`
 
-Portable bundles omit canonical brand source; even apply:false returns a missing-source error.
+Portable bundles omit canonical brand source; even `apply:false` returns dependency-specific `OODS-N020` at the adapter wire.
 
 - **Input schema**: `packages/mcp-server/src/schemas/brand.apply.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/brand.apply.output.json`
@@ -276,7 +276,7 @@ Example input (explicit full detail):
 
 ### `code.generate`
 
-Portable React/Vue generation returns OODS-N015 because readiness source/test/declaration references are not shipped; host generation remains supported.
+Portable React/Vue generation emits real artifacts using an assembly-time readiness attestation bound to shipped package bytes. Source and test files remain outside the bundle; declarations ship as dist output. Missing or tampered readiness evidence returns `OODS-N015` without an artifact. Host generation retains direct readiness checks.
 
 Subscription detail declares a read-only `VizAreaPreview.chart` over
 `last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. Invoice adds
@@ -594,13 +594,13 @@ Override guidance:
 
 Capture an object/context (including workflow) using the running local design loop. Optional framework is react, vue or both; widths default to 390/820/1440. Preferences are the public compose preferences. The tool invokes the same render command and returns validated receipts with screenshot paths, accessibility text, layout measurements, browser errors and schema/artifact hashes. It writes isolated receipt files and never saves a schema.
 
-Start the loop in this checkout with `pnpm design:loop serve`. An unavailable or starting server returns retryable `OODS-N019` before creating partial output. See [the generated API contract](../api/design-preview.md) and [the runnable instructions](../../scripts/design-loop/README.md).
+Start the loop in this checkout with `pnpm design:loop serve`. An unavailable or starting server returns retryable `OODS-N019` before creating partial output. Adapter v0.3.0 preserves its native code, retryable flag and data as JSON error content at the `tools/call` wire. See [the generated API contract](../api/design-preview.md) and [the runnable instructions](../../scripts/design-loop/README.md).
 
 [Complete input/output reference](../api/design-preview.md).
 
 ### `pipeline`
 
-Portable React/Vue generation fails at codegen with OODS-N015 because readiness source/test/declaration references are not shipped; no artifact is claimed.
+Portable React/Vue pipelines emit real code artifacts using the same assembly-time readiness attestation as `code.generate`. The attestation binds readiness evidence to shipped package bytes; missing or tampered evidence returns `OODS-N015` without an artifact.
 
 Runs compose, validate, render and code generation, optionally saving by name. Fresh schema references are forwarded unchanged. Framework/profile/options follow the explicit/default precedence above. Release receipts say `evidenceVerification: "hash-bound-not-re-executed"`; supplied proof references are not independently executed.
 

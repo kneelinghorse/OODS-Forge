@@ -1,6 +1,6 @@
 # brand.apply
 
-> Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns a missing-source error; source writes/builds require the host repository.
+> Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns dependency-specific OODS-N020 at the adapter wire; source writes/builds require the host repository.
 
 **Registration:** auto
 

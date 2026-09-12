@@ -87,56 +87,36 @@ const CONFIG_DIR = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 const REPO_ROOT = path.resolve(CONFIG_DIR, '..', '..');
 const POLICY_PATH = path.resolve(REPO_ROOT, 'configs/agent/policy.json');
 
-const FALLBACK_POLICY: AgentPolicyDoc = {
-  version: 0,
-  docs: {
-    rules: 'docs/mcp/Policy-Rules.md',
-    ux: 'docs/mcp/Policy-UX.md',
-  },
-  approvals: {
-    header: 'X-Bridge-Approval',
-    tokens: { granted: 'granted', denied: 'denied' },
-  },
-  defaults: {
-    modes: ['dry-run'],
-    approval: 'optional',
-  },
-  tools: [
-    { name: 'a11y.scan', modes: ['dry-run'], approval: 'optional' },
-    { name: 'diag.snapshot', modes: ['dry-run'], approval: 'optional' },
-    { name: 'brand.apply', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'brand.intake', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'billing.reviewKit', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'billing.switchFixtures', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'release.tag', modes: ['dry-run', 'apply'], approval: 'required', allow: ['maintainer'] },
-    { name: 'tokens.build', modes: ['dry-run'], approval: 'optional' },
-    { name: 'structuredData.fetch', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'catalog.list', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'code.generate', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'design.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'pipeline', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'registry.snapshot', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'viz.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'dashboard.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    // Grouped action-parameter tools (s107-m01/m01b) — delegate to the
-    // per-action handlers; the per-action tool names were removed in m01b.
-    { name: 'map', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-    { name: 'schema', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-    { name: 'object', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'repl', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-  ],
-};
+export class BridgeStartupError extends Error {
+  readonly retryable = false;
 
-function loadAgentPolicyDoc(): AgentPolicyDoc {
+  constructor(
+    readonly code: 'BRIDGE_POLICY_MISSING' | 'BRIDGE_POLICY_INVALID',
+    readonly policyPath: string,
+    cause?: unknown,
+  ) {
+    super(`${code}: Agent policy ${policyPath} is ${code === 'BRIDGE_POLICY_MISSING' ? 'missing' : 'invalid'}; bridge startup refused.`, { cause });
+    this.name = 'BridgeStartupError';
+  }
+}
+
+export function loadAgentPolicyDoc(policyPath = POLICY_PATH): AgentPolicyDoc {
+  let raw: string;
   try {
-    const raw = fs.readFileSync(POLICY_PATH, 'utf8');
+    raw = fs.readFileSync(policyPath, 'utf8');
+  } catch (error) {
+    throw new BridgeStartupError(
+      (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'BRIDGE_POLICY_MISSING' : 'BRIDGE_POLICY_INVALID',
+      policyPath,
+      error,
+    );
+  }
+  try {
     const parsed = JSON.parse(raw) as AgentPolicyDoc;
-    if (!Array.isArray(parsed.tools)) {
-      parsed.tools = [];
-    }
+    if (!parsed || !Array.isArray(parsed.tools)) throw new Error('Agent policy must contain a tools array.');
     return parsed;
-  } catch {
-    return FALLBACK_POLICY;
+  } catch (error) {
+    throw new BridgeStartupError('BRIDGE_POLICY_INVALID', policyPath, error);
   }
 }
 

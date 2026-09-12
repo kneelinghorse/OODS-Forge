@@ -971,6 +971,10 @@ jobs:
     name: portable-runtime
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime-node: ['24', '20.11.1']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -1002,6 +1006,14 @@ jobs:
       - name: Build MCP server runtime
         run: pnpm --filter @oods/mcp-server run build
 
+      - name: Build portable bridge
+        run: pnpm --filter @oods/mcp-bridge run build
+
+      - name: Verify portable assembly and error contracts
+        run: |
+          node --test scripts/runtime/*.test.mjs packages/mcp-adapter/test-s196-native-errors.js
+          pnpm --filter @oods/mcp-server exec vitest run test/contracts/readiness-attestation.s196.spec.ts test/contracts/portable-token-dependencies.s196.spec.ts test/contracts/portable-claims.s196.spec.ts --reporter=verbose
+
       - name: Verify adapter EOF lifecycle
         run: node --test packages/mcp-adapter/test-s181-lifecycle.js
 
@@ -1025,7 +1037,12 @@ jobs:
           (cd "$RUNNER_TEMP/forge-runtime-out-2" && sha256sum --check forge-runtime.tar.gz.sha256)
           cmp "$RUNNER_TEMP/forge-runtime-out-1/forge-runtime.tar.gz.sha256" "$RUNNER_TEMP/forge-runtime-out-2/forge-runtime.tar.gz.sha256"
 
-      - name: Extract outside the checkout and run the adapter E2E
+      - name: Select runtime Node.js ${{ matrix.runtime-node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.runtime-node }}
+
+      - name: Extract outside the checkout and run adapter and bridge E2E
         run: |
           set -o pipefail
           extract_dir="$RUNNER_TEMP/forge-e2e-$RANDOM"
@@ -1039,8 +1056,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: portable-runtime-e2e
-          path: ${{ runner.temp }}/portable-runtime-e2e.json
+          name: portable-runtime-e2e-node-${{ matrix.runtime-node }}
+          path: |
+            ${{ runner.temp }}/portable-runtime-e2e.json
+            ${{ runner.temp }}/forge-runtime-out-1/forge-runtime.manifest.json
+            ${{ runner.temp }}/forge-runtime-out-1/runtime-sbom-lite.json
+            ${{ runner.temp }}/forge-runtime-out-1/forge-runtime.tar.gz.sha256
+            ${{ runner.temp }}/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json
           if-no-files-found: warn
 
       - name: Verify source lockfile is unchanged

@@ -1,6 +1,6 @@
 # tokens.build
 
-> Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only. Portable bundle limitation: apply:false returns a preview only. apply:true requires the omitted legacy TypeScript output and host build inputs, so token artifact export remains host-only.
+> Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures in a host repository; default dry-run returns preview only. Portable bundles ship all required token outputs, including dist/ts/tokens.ts: apply:true exports five artifacts without rebuilding; apply:false remains preview-only. Missing portable outputs return OODS-N011 with buildAttempted:false.
 
 **Registration:** auto
 
