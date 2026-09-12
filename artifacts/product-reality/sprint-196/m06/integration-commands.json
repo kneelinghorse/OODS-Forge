@@ -1,0 +1,72 @@
+[
+  {
+    "name": "integration-root",
+    "argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--project",
+      "core",
+      "tests/verification/release-publish-shape.s196.test.ts",
+      "tests/verification/gate2-decision-packet.s196.test.ts",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile.json=artifacts/product-reality/sprint-196/m06/integration-root.json"
+    ],
+    "exitCode": 0,
+    "seconds": 1.92,
+    "log": "artifacts/product-reality/sprint-196/m06/integration-root.log"
+  },
+  {
+    "name": "integration-generator",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "test/product-reality/release-readiness.s196.spec.ts",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile.json=../../artifacts/product-reality/sprint-196/m06/integration-generator.json"
+    ],
+    "exitCode": 0,
+    "seconds": 3.39,
+    "log": "artifacts/product-reality/sprint-196/m06/integration-generator.log"
+  },
+  {
+    "name": "integration-facts",
+    "argv": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s196-release-readiness.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "seconds": 0.5,
+    "log": "artifacts/product-reality/sprint-196/m06/integration-facts.log"
+  },
+  {
+    "name": "integration-docs",
+    "argv": [
+      "pnpm",
+      "docs:check"
+    ],
+    "exitCode": 0,
+    "seconds": 3.92,
+    "log": "artifacts/product-reality/sprint-196/m06/integration-docs.log"
+  },
+  {
+    "name": "integration-typecheck",
+    "argv": [
+      "pnpm",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "seconds": 11.07,
+    "log": "artifacts/product-reality/sprint-196/m06/integration-typecheck.log"
+  }
+]
