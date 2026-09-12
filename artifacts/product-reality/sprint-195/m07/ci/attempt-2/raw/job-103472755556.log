@@ -1,0 +1,598 @@
+﻿2026-09-12T01:14:28.5042669Z Current runner version: '2.337.0'
+2026-09-12T01:14:28.5098128Z ##[group]Runner Image Provisioner
+2026-09-12T01:14:28.5099453Z Hosted Compute Agent
+2026-09-12T01:14:28.5100538Z Version: 20260828.587
+2026-09-12T01:14:28.5122061Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-12T01:14:28.5123398Z Build Date: 2026-08-28T16:44:25Z
+2026-09-12T01:14:28.5124549Z Worker ID: {029a9416-9f8b-46e3-a01a-e958ef958d81}
+2026-09-12T01:14:28.5125784Z Azure Region: eastus2
+2026-09-12T01:14:28.5126694Z ##[endgroup]
+2026-09-12T01:14:28.5128816Z ##[group]Operating System
+2026-09-12T01:14:28.5129952Z Ubuntu
+2026-09-12T01:14:28.5130779Z 24.04.5
+2026-09-12T01:14:28.5131830Z LTS
+2026-09-12T01:14:28.5132777Z ##[endgroup]
+2026-09-12T01:14:28.5133634Z ##[group]Runner Image
+2026-09-12T01:14:28.5134630Z Image: ubuntu-24.04
+2026-09-12T01:14:28.5135592Z Version: 20260907.300.1
+2026-09-12T01:14:28.5137699Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-12T01:14:28.5140270Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-12T01:14:28.5162220Z ##[endgroup]
+2026-09-12T01:14:28.5164379Z ##[group]GITHUB_TOKEN Permissions
+2026-09-12T01:14:28.5167138Z Contents: read
+2026-09-12T01:14:28.5168060Z Metadata: read
+2026-09-12T01:14:28.5169089Z PullRequests: write
+2026-09-12T01:14:28.5169984Z ##[endgroup]
+2026-09-12T01:14:28.5173243Z Secret source: Actions
+2026-09-12T01:14:28.5174901Z Cache mode: write
+2026-09-12T01:14:28.5175930Z Prepare workflow directory
+2026-09-12T01:14:28.5801456Z Prepare all required actions
+2026-09-12T01:14:28.5869863Z Getting action download info
+2026-09-12T01:14:28.8693784Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-12T01:14:29.0048348Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-12T01:14:29.2579120Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-12T01:14:29.4463984Z Complete job name: lint
+2026-09-12T01:14:29.5390119Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:29.5399501Z ##[group]Run actions/checkout@v4
+2026-09-12T01:14:29.5400713Z with:
+2026-09-12T01:14:29.5401572Z   repository: kneelinghorse/OODS-Forge
+2026-09-12T01:14:29.5408520Z   token: ***
+2026-09-12T01:14:29.5408985Z   ssh-strict: true
+2026-09-12T01:14:29.5409436Z   ssh-user: git
+2026-09-12T01:14:29.5409884Z   persist-credentials: true
+2026-09-12T01:14:29.5410383Z   clean: true
+2026-09-12T01:14:29.5410926Z   sparse-checkout-cone-mode: true
+2026-09-12T01:14:29.5411926Z   fetch-depth: 1
+2026-09-12T01:14:29.5412526Z   fetch-tags: false
+2026-09-12T01:14:29.5413127Z   show-progress: true
+2026-09-12T01:14:29.5413747Z   lfs: false
+2026-09-12T01:14:29.5414455Z   submodules: false
+2026-09-12T01:14:29.5415032Z   set-safe-directory: true
+2026-09-12T01:14:29.5415690Z   allow-unsafe-pr-checkout: false
+2026-09-12T01:14:29.5416871Z env:
+2026-09-12T01:14:29.5417402Z   NODE_VERSION: 24
+2026-09-12T01:14:29.5418003Z ##[endgroup]
+2026-09-12T01:14:29.6709891Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-12T01:14:29.6713316Z ##[group]Getting Git version info
+2026-09-12T01:14:29.6731562Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T01:14:29.6733887Z [command]/usr/bin/git version
+2026-09-12T01:14:29.6735001Z git version 2.55.0
+2026-09-12T01:14:29.6738577Z ##[endgroup]
+2026-09-12T01:14:29.6745532Z Temporarily overriding HOME='/home/runner/work/_temp/d92140d9-9397-427f-862d-62dd804eb65d' before making global git config changes
+2026-09-12T01:14:29.6748158Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T01:14:29.6750265Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:14:29.6830542Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T01:14:29.6860073Z ##[group]Initializing the repository
+2026-09-12T01:14:29.6862036Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:14:29.6978089Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-12T01:14:29.6980379Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-12T01:14:29.6983225Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-12T01:14:29.6990071Z hint: call:
+2026-09-12T01:14:29.6990878Z hint:
+2026-09-12T01:14:29.6992008Z hint: 	git config --global init.defaultBranch <name>
+2026-09-12T01:14:29.6999778Z hint:
+2026-09-12T01:14:29.7001555Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-12T01:14:29.7006169Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-12T01:14:29.7010825Z hint:
+2026-09-12T01:14:29.7011821Z hint: 	git branch -m <name>
+2026-09-12T01:14:29.7012889Z hint:
+2026-09-12T01:14:29.7014099Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-12T01:14:29.7015945Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-12T01:14:29.7019069Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T01:14:29.7047860Z ##[endgroup]
+2026-09-12T01:14:29.7049658Z ##[group]Disabling automatic garbage collection
+2026-09-12T01:14:29.7050999Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-12T01:14:29.7110274Z ##[endgroup]
+2026-09-12T01:14:29.7112452Z ##[group]Setting up auth
+2026-09-12T01:14:29.7114797Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T01:14:29.7165279Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T01:14:29.7625755Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T01:14:29.7706056Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T01:14:29.8025231Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T01:14:29.8065207Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T01:14:29.8328750Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-12T01:14:29.8372274Z ##[endgroup]
+2026-09-12T01:14:29.8374587Z ##[group]Fetching the repository
+2026-09-12T01:14:29.8383502Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4787733b6bfd48aedde0d5f850a0e9d87643356f:refs/remotes/pull/101/merge
+2026-09-12T01:14:46.5789363Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T01:14:46.5791433Z  * [new ref]           4787733b6bfd48aedde0d5f850a0e9d87643356f -> pull/101/merge
+2026-09-12T01:14:46.5799767Z ##[endgroup]
+2026-09-12T01:14:46.5801353Z ##[group]Determining the checkout info
+2026-09-12T01:14:46.5802586Z ##[endgroup]
+2026-09-12T01:14:46.5803506Z [command]/usr/bin/git sparse-checkout disable
+2026-09-12T01:14:46.5858389Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-12T01:14:46.5895214Z ##[group]Checking out the ref
+2026-09-12T01:14:46.5898542Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/101/merge
+2026-09-12T01:14:47.6753301Z Updating files:  15% (9916/63292)
+2026-09-12T01:14:47.7392133Z Updating files:  16% (10127/63292)
+2026-09-12T01:14:47.8025697Z Updating files:  17% (10760/63292)
+2026-09-12T01:14:47.8624844Z Updating files:  18% (11393/63292)
+2026-09-12T01:14:47.9688784Z Updating files:  19% (12026/63292)
+2026-09-12T01:14:48.0723209Z Updating files:  20% (12659/63292)
+2026-09-12T01:14:48.1776037Z Updating files:  21% (13292/63292)
+2026-09-12T01:14:48.2672259Z Updating files:  22% (13925/63292)
+2026-09-12T01:14:48.3469081Z Updating files:  23% (14558/63292)
+2026-09-12T01:14:48.4532837Z Updating files:  24% (15191/63292)
+2026-09-12T01:14:48.5229764Z Updating files:  25% (15823/63292)
+2026-09-12T01:14:48.5954399Z Updating files:  26% (16456/63292)
+2026-09-12T01:14:48.6497466Z Updating files:  27% (17089/63292)
+2026-09-12T01:14:48.6578340Z Updating files:  27% (17642/63292)
+2026-09-12T01:14:48.7339920Z Updating files:  28% (17722/63292)
+2026-09-12T01:14:48.8453517Z Updating files:  29% (18355/63292)
+2026-09-12T01:14:48.9262633Z Updating files:  30% (18988/63292)
+2026-09-12T01:14:49.0207934Z Updating files:  31% (19621/63292)
+2026-09-12T01:14:49.1246520Z Updating files:  32% (20254/63292)
+2026-09-12T01:14:49.2097897Z Updating files:  33% (20887/63292)
+2026-09-12T01:14:49.3124376Z Updating files:  34% (21520/63292)
+2026-09-12T01:14:49.6021699Z Updating files:  35% (22153/63292)
+2026-09-12T01:14:49.6504950Z Updating files:  36% (22786/63292)
+2026-09-12T01:14:49.6522892Z Updating files:  36% (23417/63292)
+2026-09-12T01:14:49.6925369Z Updating files:  37% (23419/63292)
+2026-09-12T01:14:49.8325055Z Updating files:  38% (24051/63292)
+2026-09-12T01:14:49.9633539Z Updating files:  39% (24684/63292)
+2026-09-12T01:14:50.0780300Z Updating files:  40% (25317/63292)
+2026-09-12T01:14:50.1380419Z Updating files:  41% (25950/63292)
+2026-09-12T01:14:50.1884995Z Updating files:  42% (26583/63292)
+2026-09-12T01:14:50.2462228Z Updating files:  43% (27216/63292)
+2026-09-12T01:14:50.2954593Z Updating files:  44% (27849/63292)
+2026-09-12T01:14:50.3505285Z Updating files:  45% (28482/63292)
+2026-09-12T01:14:50.4164258Z Updating files:  46% (29115/63292)
+2026-09-12T01:14:50.4703689Z Updating files:  47% (29748/63292)
+2026-09-12T01:14:50.5217985Z Updating files:  48% (30381/63292)
+2026-09-12T01:14:50.6055541Z Updating files:  49% (31014/63292)
+2026-09-12T01:14:50.6496531Z Updating files:  50% (31646/63292)
+2026-09-12T01:14:50.6879808Z Updating files:  50% (31905/63292)
+2026-09-12T01:14:51.0375700Z Updating files:  51% (32279/63292)
+2026-09-12T01:14:51.1299022Z Updating files:  52% (32912/63292)
+2026-09-12T01:14:51.2164890Z Updating files:  53% (33545/63292)
+2026-09-12T01:14:51.3750639Z Updating files:  54% (34178/63292)
+2026-09-12T01:14:51.4405001Z Updating files:  55% (34811/63292)
+2026-09-12T01:14:51.5103970Z Updating files:  56% (35444/63292)
+2026-09-12T01:14:51.6052355Z Updating files:  57% (36077/63292)
+2026-09-12T01:14:51.6497029Z Updating files:  58% (36710/63292)
+2026-09-12T01:14:51.6586511Z Updating files:  58% (37224/63292)
+2026-09-12T01:14:51.7485336Z Updating files:  59% (37343/63292)
+2026-09-12T01:14:51.8844362Z Updating files:  60% (37976/63292)
+2026-09-12T01:14:51.9336397Z Updating files:  61% (38609/63292)
+2026-09-12T01:14:51.9902704Z Updating files:  62% (39242/63292)
+2026-09-12T01:14:52.0509915Z Updating files:  63% (39874/63292)
+2026-09-12T01:14:52.1528758Z Updating files:  64% (40507/63292)
+2026-09-12T01:14:52.2615089Z Updating files:  65% (41140/63292)
+2026-09-12T01:14:52.3139473Z Updating files:  66% (41773/63292)
+2026-09-12T01:14:52.4822013Z Updating files:  67% (42406/63292)
+2026-09-12T01:14:52.5722310Z Updating files:  68% (43039/63292)
+2026-09-12T01:14:52.6522823Z Updating files:  69% (43672/63292)
+2026-09-12T01:14:52.6651360Z Updating files:  69% (44120/63292)
+2026-09-12T01:14:52.7188257Z Updating files:  70% (44305/63292)
+2026-09-12T01:14:52.7801536Z Updating files:  71% (44938/63292)
+2026-09-12T01:14:52.8769195Z Updating files:  72% (45571/63292)
+2026-09-12T01:14:52.9722310Z Updating files:  73% (46204/63292)
+2026-09-12T01:14:53.0607815Z Updating files:  74% (46837/63292)
+2026-09-12T01:14:53.1113218Z Updating files:  75% (47469/63292)
+2026-09-12T01:14:53.1666158Z Updating files:  76% (48102/63292)
+2026-09-12T01:14:53.2637117Z Updating files:  77% (48735/63292)
+2026-09-12T01:14:53.3428169Z Updating files:  78% (49368/63292)
+2026-09-12T01:14:53.4093314Z Updating files:  79% (50001/63292)
+2026-09-12T01:14:53.5331572Z Updating files:  80% (50634/63292)
+2026-09-12T01:14:53.5948819Z Updating files:  81% (51267/63292)
+2026-09-12T01:14:53.6425774Z Updating files:  82% (51900/63292)
+2026-09-12T01:14:53.6502691Z Updating files:  83% (52533/63292)
+2026-09-12T01:14:53.9629647Z Updating files:  83% (52627/63292)
+2026-09-12T01:14:54.0506847Z Updating files:  84% (53166/63292)
+2026-09-12T01:14:54.1445124Z Updating files:  85% (53799/63292)
+2026-09-12T01:14:54.2456252Z Updating files:  86% (54432/63292)
+2026-09-12T01:14:54.3130971Z Updating files:  87% (55065/63292)
+2026-09-12T01:14:54.5598985Z Updating files:  88% (55697/63292)
+2026-09-12T01:14:54.6176588Z Updating files:  89% (56330/63292)
+2026-09-12T01:14:54.6528985Z Updating files:  90% (56963/63292)
+2026-09-12T01:14:54.6708360Z Updating files:  90% (57324/63292)
+2026-09-12T01:14:54.7537742Z Updating files:  91% (57596/63292)
+2026-09-12T01:14:54.8654377Z Updating files:  92% (58229/63292)
+2026-09-12T01:14:55.2758148Z Updating files:  93% (58862/63292)
+2026-09-12T01:14:55.3425961Z Updating files:  94% (59495/63292)
+2026-09-12T01:14:55.3883197Z Updating files:  95% (60128/63292)
+2026-09-12T01:14:55.4400004Z Updating files:  96% (60761/63292)
+2026-09-12T01:14:55.5722246Z Updating files:  97% (61394/63292)
+2026-09-12T01:14:55.6177271Z Updating files:  98% (62027/63292)
+2026-09-12T01:14:55.6501853Z Updating files:  99% (62660/63292)
+2026-09-12T01:14:55.6623912Z Updating files:  99% (63092/63292)
+2026-09-12T01:14:55.6624554Z Updating files: 100% (63292/63292)
+2026-09-12T01:14:55.6625084Z Updating files: 100% (63292/63292), done.
+2026-09-12T01:14:55.8474960Z Note: switching to 'refs/remotes/pull/101/merge'.
+2026-09-12T01:14:55.8491443Z 
+2026-09-12T01:14:55.8511707Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-12T01:14:55.8531920Z changes and commit them, and you can discard any commits you make in this
+2026-09-12T01:14:55.8532910Z state without impacting any branches by switching back to a branch.
+2026-09-12T01:14:55.8551398Z 
+2026-09-12T01:14:55.8571670Z If you want to create a new branch to retain commits you create, you may
+2026-09-12T01:14:55.8591601Z do so (now or later) by using -c with the switch command. Example:
+2026-09-12T01:14:55.8592261Z 
+2026-09-12T01:14:55.8611793Z   git switch -c <new-branch-name>
+2026-09-12T01:14:55.8631377Z 
+2026-09-12T01:14:55.8651482Z Or undo this operation with:
+2026-09-12T01:14:55.8652004Z 
+2026-09-12T01:14:55.8671686Z   git switch -
+2026-09-12T01:14:55.8681943Z 
+2026-09-12T01:14:55.8702024Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-12T01:14:55.8721640Z 
+2026-09-12T01:14:55.8742118Z HEAD is now at 4787733b Merge 39deb793a3161621b5a0893618f9d40201c22256 into 3872feaf4372fe66a10d1746537649df386c37f4
+2026-09-12T01:14:55.8772346Z ##[endgroup]
+2026-09-12T01:14:55.8785024Z [command]/usr/bin/git log -1 --format=%H
+2026-09-12T01:14:55.8822673Z 4787733b6bfd48aedde0d5f850a0e9d87643356f
+2026-09-12T01:14:55.9237343Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:55.9240136Z ##[group]Run pnpm/action-setup@v4
+2026-09-12T01:14:55.9240546Z with:
+2026-09-12T01:14:55.9240858Z   run_install: false
+2026-09-12T01:14:55.9241394Z   dest: ~/setup-pnpm
+2026-09-12T01:14:55.9241724Z   cache: false
+2026-09-12T01:14:55.9242077Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-12T01:14:55.9242552Z   package_json_file: package.json
+2026-09-12T01:14:55.9242960Z   standalone: false
+2026-09-12T01:14:55.9243276Z env:
+2026-09-12T01:14:55.9243557Z   NODE_VERSION: 24
+2026-09-12T01:14:55.9244094Z ##[endgroup]
+2026-09-12T01:14:56.1002948Z ##[group]Running self-installer...
+2026-09-12T01:14:56.7733394Z (node:2035) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T01:14:56.7735230Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:14:57.0142494Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T01:14:57.0371832Z Packages: +1
+2026-09-12T01:14:57.0394626Z +
+2026-09-12T01:14:57.4667566Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-12T01:14:57.5887761Z 
+2026-09-12T01:14:57.5891893Z dependencies:
+2026-09-12T01:14:57.5893503Z + pnpm 9.12.2 (12.4.1 is available)
+2026-09-12T01:14:57.5894063Z 
+2026-09-12T01:14:57.5943153Z Done in 1.1s
+2026-09-12T01:14:57.6133941Z ##[endgroup]
+2026-09-12T01:14:57.6157154Z Installation Completed!
+2026-09-12T01:14:57.6357453Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:57.6359390Z ##[group]Run actions/setup-node@v4
+2026-09-12T01:14:57.6359784Z with:
+2026-09-12T01:14:57.6360098Z   node-version: 24
+2026-09-12T01:14:57.6360425Z   cache: pnpm
+2026-09-12T01:14:57.6360734Z   always-auth: false
+2026-09-12T01:14:57.6361069Z   check-latest: false
+2026-09-12T01:14:57.6365928Z   token: ***
+2026-09-12T01:14:57.6366229Z env:
+2026-09-12T01:14:57.6366508Z   NODE_VERSION: 24
+2026-09-12T01:14:57.6366941Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:14:57.6367423Z ##[endgroup]
+2026-09-12T01:14:57.8442225Z (node:2049) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T01:14:57.8444099Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-12T01:14:57.8445641Z ##[group]Environment details
+2026-09-12T01:14:57.8465538Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:15:01.1230842Z node: v24.20.0
+2026-09-12T01:15:01.1236595Z npm: 11.19.0
+2026-09-12T01:15:01.1237144Z yarn: 1.22.22
+2026-09-12T01:15:01.1239068Z ##[endgroup]
+2026-09-12T01:15:01.1258858Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-12T01:15:01.5404177Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-12T01:15:01.6332458Z Cache hit for: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T01:15:01.6460882Z (node:2049) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T01:15:02.3470479Z Received 125400025 of 125400025 (100.0%), 175.9 MBs/sec
+2026-09-12T01:15:02.3471737Z Cache Size: ~120 MB (125400025 B)
+2026-09-12T01:15:02.3512641Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5257d2d9-0ce5-4ccc-ac27-00eefe43f402/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-12T01:15:04.6534893Z Cache restored successfully
+2026-09-12T01:15:04.6603129Z Cache restored from key: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T01:15:04.6909352Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-12T01:15:04.6909809Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-12T01:15:04.6959448Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:04.6959726Z env:
+2026-09-12T01:15:04.6959942Z   NODE_VERSION: 24
+2026-09-12T01:15:04.6960232Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:04.6960562Z ##[endgroup]
+2026-09-12T01:15:05.1636734Z Scope: all 22 workspace projects
+2026-09-12T01:15:05.2344735Z Lockfile is up to date, resolution step is skipped
+2026-09-12T01:15:05.3212803Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T01:15:05.5342875Z Packages: +946
+2026-09-12T01:15:05.5353643Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-12T01:15:06.3233068Z Progress: resolved 946, reused 563, downloaded 0, added 0
+2026-09-12T01:15:07.3223088Z Progress: resolved 946, reused 945, downloaded 0, added 241
+2026-09-12T01:15:08.3225522Z Progress: resolved 946, reused 945, downloaded 0, added 600
+2026-09-12T01:15:08.9680682Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-12T01:15:10.7677284Z 
+2026-09-12T01:15:10.7685826Z dependencies:
+2026-09-12T01:15:10.7695458Z + @radix-ui/react-slot 1.2.3
+2026-09-12T01:15:10.7696117Z + @rjsf/core 5.24.13
+2026-09-12T01:15:10.7696692Z + @rjsf/utils 5.24.13
+2026-09-12T01:15:10.7697296Z + @rjsf/validator-ajv8 5.24.13
+2026-09-12T01:15:10.7697907Z + @types/geojson 7946.0.16
+2026-09-12T01:15:10.7698521Z + @types/topojson-client 3.1.5
+2026-09-12T01:15:10.7699253Z + @types/topojson-specification 1.0.5
+2026-09-12T01:15:10.7699886Z + ajv 8.17.1
+2026-09-12T01:15:10.7700400Z + ajv-formats 3.0.1
+2026-09-12T01:15:10.7700911Z + d3-geo 3.1.1
+2026-09-12T01:15:10.7705282Z + d3-scale 4.0.2
+2026-09-12T01:15:10.7706234Z + echarts 6.0.0
+2026-09-12T01:15:10.7706747Z + js-yaml 4.1.0
+2026-09-12T01:15:10.7707249Z + luxon 3.7.2
+2026-09-12T01:15:10.7707742Z + pg 8.16.3
+2026-09-12T01:15:10.7708218Z + react 19.2.0
+2026-09-12T01:15:10.7708819Z + react-dom 19.2.0
+2026-09-12T01:15:10.7709374Z + react-window 1.8.11
+2026-09-12T01:15:10.7709942Z + topojson-client 3.1.0
+2026-09-12T01:15:10.7710467Z + vega 6.2.0
+2026-09-12T01:15:10.7710976Z + vega-embed 7.1.0
+2026-09-12T01:15:10.7711719Z + zod 4.1.12
+2026-09-12T01:15:10.7712064Z 
+2026-09-12T01:15:10.7712411Z devDependencies:
+2026-09-12T01:15:10.7713016Z + @chromatic-com/storybook 4.1.1
+2026-09-12T01:15:10.7713763Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-12T01:15:10.7714731Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-12T01:15:10.7715626Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-12T01:15:10.7716341Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-12T01:15:10.7717007Z + @playwright/test 1.56.1
+2026-09-12T01:15:10.7717644Z + @storybook/addon-a11y 9.1.10
+2026-09-12T01:15:10.7718272Z + @storybook/addon-docs 9.1.10
+2026-09-12T01:15:10.7718933Z + @storybook/addon-onboarding 9.1.10
+2026-09-12T01:15:10.7719587Z + @storybook/mdx2-csf 1.1.0
+2026-09-12T01:15:10.7720178Z + @storybook/react 9.1.10
+2026-09-12T01:15:10.7720801Z + @storybook/react-vite 9.1.10
+2026-09-12T01:15:10.7722352Z + @testing-library/dom 10.4.1
+2026-09-12T01:15:10.7722961Z + @testing-library/jest-dom 6.9.1
+2026-09-12T01:15:10.7723597Z + @testing-library/react 16.3.0
+2026-09-12T01:15:10.7724225Z + @testing-library/user-event 14.6.1
+2026-09-12T01:15:10.7724867Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-12T01:15:10.7725441Z + @types/d3-geo 3.1.0
+2026-09-12T01:15:10.7725971Z + @types/d3-scale 4.0.9
+2026-09-12T01:15:10.7726505Z + @types/js-yaml 4.0.9
+2026-09-12T01:15:10.7727033Z + @types/luxon 3.7.1
+2026-09-12T01:15:10.7727535Z + @types/node 20.19.21
+2026-09-12T01:15:10.7728030Z + @types/pg 8.15.6
+2026-09-12T01:15:10.7728528Z + @types/react 19.2.2
+2026-09-12T01:15:10.7729183Z + @types/react-dom 19.2.2
+2026-09-12T01:15:10.7810541Z + @types/react-window 1.8.8
+2026-09-12T01:15:10.7831860Z + @types/semver 7.7.1
+2026-09-12T01:15:10.7834564Z + @types/sql.js 1.4.9
+2026-09-12T01:15:10.7835738Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-12T01:15:10.7836620Z + @typescript-eslint/parser 6.21.0
+2026-09-12T01:15:10.7837345Z + @vitejs/plugin-react 5.0.4
+2026-09-12T01:15:10.7837979Z + @vitest/browser 3.2.4
+2026-09-12T01:15:10.7838572Z + @vitest/coverage-v8 3.2.4
+2026-09-12T01:15:10.7839172Z + axe-core 4.11.0
+2026-09-12T01:15:10.7839730Z + colorjs.io 0.5.2
+2026-09-12T01:15:10.7840254Z + dotenv 17.4.2
+2026-09-12T01:15:10.7840786Z + eslint 8.57.1
+2026-09-12T01:15:10.7841794Z + eslint-plugin-storybook 9.1.10
+2026-09-12T01:15:10.7842841Z + globals 17.6.0
+2026-09-12T01:15:10.7843360Z + jsdom 24.1.3
+2026-09-12T01:15:10.7843979Z + json-schema-to-typescript 13.1.2
+2026-09-12T01:15:10.7844662Z + markdown-to-jsx 7.7.15
+2026-09-12T01:15:10.7845293Z + pg-mem 3.0.5
+2026-09-12T01:15:10.7845830Z + playwright 1.56.1
+2026-09-12T01:15:10.7846370Z + postcss 8.5.28
+2026-09-12T01:15:10.7846894Z + prettier 3.6.2
+2026-09-12T01:15:10.7847390Z + rimraf 5.0.10
+2026-09-12T01:15:10.7847897Z + semver 7.7.3
+2026-09-12T01:15:10.7848424Z + sql.js 1.13.0
+2026-09-12T01:15:10.7849001Z + storybook 9.1.10
+2026-09-12T01:15:10.7849653Z + style-dictionary 4.4.0
+2026-09-12T01:15:10.7850289Z + tailwindcss 3.4.18
+2026-09-12T01:15:10.7850825Z + tsup 8.5.0
+2026-09-12T01:15:10.7852558Z + tsx 4.20.6
+2026-09-12T01:15:10.7854539Z + typescript 5.3.3
+2026-09-12T01:15:10.7855093Z + vega-lite 6.4.1
+2026-09-12T01:15:10.7855660Z + vite-tsconfig-paths 5.1.4
+2026-09-12T01:15:10.7856233Z + vitest 3.2.4
+2026-09-12T01:15:10.7856759Z + vitest-axe 0.1.0
+2026-09-12T01:15:10.7857144Z 
+2026-09-12T01:15:10.8710684Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-12T01:15:10.9320885Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-12T01:15:10.9384283Z . prepare: Done
+2026-09-12T01:15:10.9600818Z Done in 6.2s
+2026-09-12T01:15:11.0182212Z ##[group]Run pnpm run lint
+2026-09-12T01:15:11.0182702Z [36;1mpnpm run lint[0m
+2026-09-12T01:15:11.0237954Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:11.0238358Z env:
+2026-09-12T01:15:11.0238685Z   NODE_VERSION: 24
+2026-09-12T01:15:11.0239127Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:11.0239649Z ##[endgroup]
+2026-09-12T01:15:11.6791868Z 
+2026-09-12T01:15:11.6802539Z > @oods/foundry-mcp@0.1.0 lint /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:11.6803298Z > eslint "src/**/*.{ts,tsx}"
+2026-09-12T01:15:11.6805460Z 
+2026-09-12T01:15:18.1615550Z ##[group]Run pnpm run lint:enum-convergence
+2026-09-12T01:15:18.1615934Z [36;1mpnpm run lint:enum-convergence[0m
+2026-09-12T01:15:18.1657418Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:18.1657707Z env:
+2026-09-12T01:15:18.1657916Z   NODE_VERSION: 24
+2026-09-12T01:15:18.1658209Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:18.1658541Z ##[endgroup]
+2026-09-12T01:15:18.6326738Z 
+2026-09-12T01:15:18.6342667Z > @oods/foundry-mcp@0.1.0 lint:enum-convergence /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:18.6349986Z > tsx scripts/lint/enum-convergence.ts
+2026-09-12T01:15:18.6350524Z 
+2026-09-12T01:15:19.0420811Z ✔︎ Enum convergence lint passed (19 viz trait↔schema mirror pairs checked).
+2026-09-12T01:15:19.0822720Z ##[group]Run pnpm run lint:enum-to-token
+2026-09-12T01:15:19.0823093Z [36;1mpnpm run lint:enum-to-token[0m
+2026-09-12T01:15:19.0864982Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:19.0865261Z env:
+2026-09-12T01:15:19.0865470Z   NODE_VERSION: 24
+2026-09-12T01:15:19.0865759Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:19.0866088Z ##[endgroup]
+2026-09-12T01:15:19.5232222Z 
+2026-09-12T01:15:19.5233440Z > @oods/foundry-mcp@0.1.0 lint:enum-to-token /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:19.5234893Z > tsx scripts/lint/enum-to-token.ts
+2026-09-12T01:15:19.5235464Z 
+2026-09-12T01:15:19.7902599Z Enum→token mapping lint passed.
+2026-09-12T01:15:19.8392856Z ##[group]Run pnpm run lint:audit-log
+2026-09-12T01:15:19.8393213Z [36;1mpnpm run lint:audit-log[0m
+2026-09-12T01:15:19.8433270Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:19.8433550Z env:
+2026-09-12T01:15:19.8433764Z   NODE_VERSION: 24
+2026-09-12T01:15:19.8434059Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:19.8434389Z ##[endgroup]
+2026-09-12T01:15:20.2793134Z 
+2026-09-12T01:15:20.2794505Z > @oods/foundry-mcp@0.1.0 lint:audit-log /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:20.2795780Z > tsx scripts/lint/audit-immutability.ts
+2026-09-12T01:15:20.2796311Z 
+2026-09-12T01:15:20.5840895Z ##[group]Run pnpm run lint:brand-bleed
+2026-09-12T01:15:20.5842278Z [36;1mpnpm run lint:brand-bleed[0m
+2026-09-12T01:15:20.5894000Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:20.5894287Z env:
+2026-09-12T01:15:20.5894504Z   NODE_VERSION: 24
+2026-09-12T01:15:20.5894795Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:20.5895127Z ##[endgroup]
+2026-09-12T01:15:21.0319393Z 
+2026-09-12T01:15:21.0320549Z > @oods/foundry-mcp@0.1.0 lint:brand-bleed /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:21.0322308Z > tsx scripts/lint/brand-bleed.ts
+2026-09-12T01:15:21.0322905Z 
+2026-09-12T01:15:21.3017027Z ✔︎ Brand bleed lint passed (canary triggered, no additional violations).
+2026-09-12T01:15:21.3479669Z ##[group]Run pnpm run lint:tokens
+2026-09-12T01:15:21.3480196Z [36;1mpnpm run lint:tokens[0m
+2026-09-12T01:15:21.3524108Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:21.3524400Z env:
+2026-09-12T01:15:21.3524609Z   NODE_VERSION: 24
+2026-09-12T01:15:21.3524902Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:21.3525241Z ##[endgroup]
+2026-09-12T01:15:21.7712797Z 
+2026-09-12T01:15:21.7726710Z > @oods/foundry-mcp@0.1.0 lint:tokens /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:21.7727877Z > node tools/token-lint/index.mjs packages/tokens/src
+2026-09-12T01:15:21.7728548Z 
+2026-09-12T01:15:21.8525414Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.border.strong)
+2026-09-12T01:15:21.8526989Z     Token "brand.A.border.strong" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8528557Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8542611Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.border.subtle)
+2026-09-12T01:15:21.8547724Z     Token "brand.A.border.subtle" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8548992Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8553492Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.critical.surface)
+2026-09-12T01:15:21.8562260Z     Token "brand.A.status.critical.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8563366Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8564278Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.critical.text)
+2026-09-12T01:15:21.8565417Z     Token "brand.A.status.critical.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8566349Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8567212Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.info.surface)
+2026-09-12T01:15:21.8568219Z     Token "brand.A.status.info.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8569108Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8569999Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.info.text)
+2026-09-12T01:15:21.8570983Z     Token "brand.A.status.info.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8572215Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8573193Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.neutral.surface)
+2026-09-12T01:15:21.8574252Z     Token "brand.A.status.neutral.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8575168Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8576099Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.neutral.text)
+2026-09-12T01:15:21.8577106Z     Token "brand.A.status.neutral.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8578046Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8579002Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.success.surface)
+2026-09-12T01:15:21.8580299Z     Token "brand.A.status.success.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8592727Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8594365Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.success.text)
+2026-09-12T01:15:21.8595556Z     Token "brand.A.status.success.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8596751Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8597937Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.warning.surface)
+2026-09-12T01:15:21.8599032Z     Token "brand.A.status.warning.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8599826Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8600831Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.status.warning.text)
+2026-09-12T01:15:21.8616780Z     Token "brand.A.status.warning.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8617717Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8618656Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.surface.canvas)
+2026-09-12T01:15:21.8619584Z     Token "brand.A.surface.canvas" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8620471Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8621950Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.surface.interactivePrimary)
+2026-09-12T01:15:21.8623080Z     Token "brand.A.surface.interactivePrimary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8624098Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8625042Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.surface.raised)
+2026-09-12T01:15:21.8626007Z     Token "brand.A.surface.raised" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8627019Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8627873Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.surface.subtle)
+2026-09-12T01:15:21.8628755Z     Token "brand.A.surface.subtle" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8629659Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8630510Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.text.muted)
+2026-09-12T01:15:21.8631745Z     Token "brand.A.text.muted" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8632655Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8633577Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.text.onInteractive)
+2026-09-12T01:15:21.8634729Z     Token "brand.A.text.onInteractive" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8635664Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8636547Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.text.primary)
+2026-09-12T01:15:21.8637501Z     Token "brand.A.text.primary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8638379Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8639324Z [WARN] packages/tokens/src/tokens/aliases/brand-A.json (brand.A.text.secondary)
+2026-09-12T01:15:21.8640292Z     Token "brand.A.text.secondary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8641505Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8642458Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.border.strong)
+2026-09-12T01:15:21.8643401Z     Token "brand.B.border.strong" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8644309Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8645237Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.border.subtle)
+2026-09-12T01:15:21.8646181Z     Token "brand.B.border.subtle" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8647103Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8648093Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.critical.surface)
+2026-09-12T01:15:21.8649574Z     Token "brand.B.status.critical.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8650522Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8651765Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.critical.text)
+2026-09-12T01:15:21.8652678Z     Token "brand.B.status.critical.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8653537Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8654685Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.info.surface)
+2026-09-12T01:15:21.8655684Z     Token "brand.B.status.info.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8656595Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8657484Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.info.text)
+2026-09-12T01:15:21.8658448Z     Token "brand.B.status.info.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8659384Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8660275Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.neutral.surface)
+2026-09-12T01:15:21.8661447Z     Token "brand.B.status.neutral.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8662306Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8663179Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.neutral.text)
+2026-09-12T01:15:21.8664118Z     Token "brand.B.status.neutral.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8664934Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8665788Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.success.surface)
+2026-09-12T01:15:21.8666724Z     Token "brand.B.status.success.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8667574Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8668406Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.success.text)
+2026-09-12T01:15:21.8669312Z     Token "brand.B.status.success.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8670143Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8671009Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.warning.surface)
+2026-09-12T01:15:21.8672311Z     Token "brand.B.status.warning.surface" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8673192Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8674049Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.status.warning.text)
+2026-09-12T01:15:21.8674986Z     Token "brand.B.status.warning.text" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8675858Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8676733Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.surface.canvas)
+2026-09-12T01:15:21.8677612Z     Token "brand.B.surface.canvas" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8678449Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8679398Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.surface.interactivePrimary)
+2026-09-12T01:15:21.8680512Z     Token "brand.B.surface.interactivePrimary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8682029Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8682948Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.surface.raised)
+2026-09-12T01:15:21.8683880Z     Token "brand.B.surface.raised" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8684766Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8685562Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.surface.subtle)
+2026-09-12T01:15:21.8686708Z     Token "brand.B.surface.subtle" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8687498Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8688296Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.text.muted)
+2026-09-12T01:15:21.8689123Z     Token "brand.B.text.muted" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8689871Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8690678Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.text.onInteractive)
+2026-09-12T01:15:21.8692115Z     Token "brand.B.text.onInteractive" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8693064Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8693859Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.text.primary)
+2026-09-12T01:15:21.8694699Z     Token "brand.B.text.primary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8695585Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8696475Z [WARN] packages/tokens/src/tokens/aliases/brand-B.json (brand.B.text.secondary)
+2026-09-12T01:15:21.8697474Z     Token "brand.B.text.secondary" may not interpolate aliases inside strings.
+2026-09-12T01:15:21.8698381Z     ↳ String interpolation with aliases is not permitted.
+2026-09-12T01:15:21.8698747Z 
+2026-09-12T01:15:21.8699481Z ℹ 61 pre-existing issue(s) suppressed by baseline.json (refresh with --write-baseline).
+2026-09-12T01:15:21.8879660Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:21.8880835Z Post job cleanup.
+2026-09-12T01:15:22.0185893Z Cache hit occurred on the primary key node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1, not saving cache.
+2026-09-12T01:15:22.0187422Z (node:2412) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T01:15:22.0188201Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:15:22.0297606Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:22.0298773Z Post job cleanup.
+2026-09-12T01:15:22.1833980Z Pruning is unnecessary.
+2026-09-12T01:15:22.2058310Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:22.2060364Z Post job cleanup.
+2026-09-12T01:15:22.3247331Z [command]/usr/bin/git version
+2026-09-12T01:15:22.3393701Z git version 2.55.0
+2026-09-12T01:15:22.3514609Z Temporarily overriding HOME='/home/runner/work/_temp/5079edee-ecbe-4de5-a2ef-664d83c41852' before making global git config changes
+2026-09-12T01:15:22.3520500Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T01:15:22.3523024Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:22.3663222Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T01:15:22.3782969Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T01:15:22.4612698Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T01:15:22.4688348Z http.https://github.com/.extraheader
+2026-09-12T01:15:22.4732332Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-12T01:15:22.4865463Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T01:15:22.5712367Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T01:15:22.5862605Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T01:15:22.6705797Z Cleaning up orphan processes
+2026-09-12T01:15:22.7042312Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
