@@ -1,0 +1,116 @@
+object:
+  name: Chunk
+  version: 0.1.0
+  domain: research.data
+  description: 'TraceLab chunk: data in the research notebook. An excerpt shown inline within its source
+    document; no standalone page.'
+  tags:
+  - research
+  - tracelab
+  - data
+traits:
+- name: content/Labelled
+  parameters:
+    maxLabelLength: 255
+    maxDescriptionLength: 1000
+schema:
+  document_id:
+    type: uuid
+    required: true
+    description: Document id.
+    validation:
+      format: uuid
+  chunk_index:
+    type: number
+    required: true
+    description: Chunk index.
+  content:
+    type: string
+    required: true
+    description: Content.
+  embedding_id:
+    type: string
+    required: false
+    description: Embedding id.
+  token_count:
+    type: number
+    required: false
+    description: Token count.
+  start_char:
+    type: number
+    required: false
+    description: Start char.
+  end_char:
+    type: number
+    required: false
+    description: End char.
+  prev_chunk_id:
+    type: uuid
+    required: false
+    description: Prev chunk id.
+  next_chunk_id:
+    type: uuid
+    required: false
+    description: Next chunk id.
+  id:
+    type: uuid
+    required: true
+    description: Id.
+    validation:
+      format: uuid
+  created_at:
+    type: datetime
+    required: true
+    description: Created at.
+    validation:
+      format: date-time
+  label:
+    type: string
+    required: true
+    description: Display projection of content; retain the complete source field.
+semantics:
+  content:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  document_id:
+    semantic_type: research.chunk.document_id
+    token_mapping: tokenMap(text.body.*)
+  chunk_index:
+    semantic_type: research.chunk.chunk_index
+    token_mapping: tokenMap(text.body.*)
+  embedding_id:
+    semantic_type: research.chunk.embedding_id
+    token_mapping: tokenMap(text.body.*)
+  token_count:
+    semantic_type: research.chunk.token_count
+    token_mapping: tokenMap(text.body.*)
+  start_char:
+    semantic_type: research.chunk.start_char
+    token_mapping: tokenMap(text.body.*)
+  end_char:
+    semantic_type: research.chunk.end_char
+    token_mapping: tokenMap(text.body.*)
+  prev_chunk_id:
+    semantic_type: research.chunk.prev_chunk_id
+    token_mapping: tokenMap(text.body.*)
+  next_chunk_id:
+    semantic_type: research.chunk.next_chunk_id
+    token_mapping: tokenMap(text.body.*)
+  id:
+    semantic_type: research.chunk.id
+    token_mapping: tokenMap(text.body.*)
+  created_at:
+    semantic_type: research.chunk.created_at
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+  - TraceLab
+  references:
+  - https://github.com/kneelinghorse/TraceLab/blob/main/cmos/contracts/oods-object-model.md
+  changelog:
+  - version: 0.1.0
+    date: '2026-09-12'
+    description: UX-1 research model from TraceLab Pydantic responses.
+  supportedContexts:
+  - inline

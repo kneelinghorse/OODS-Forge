@@ -108,6 +108,16 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
         }]])),
       };
     }
+    // A job's cancellation is an event, not a scheduled billing-period summary.
+    const lifecycleStates = traits.find(trait => trait.name.split('/').pop() === 'Stateful')?.parameters?.states;
+    if (traitDef.trait.name === 'Cancellable' && Array.isArray(lifecycleStates) && lifecycleStates.includes('cancelled') && !lifecycleStates.includes('pending_cancellation')) {
+      traitDef = { ...traitDef, view_extensions: { ...traitDef.view_extensions, detail: [{
+        component: 'CancellationEvent', position: 'top', props: {
+          title: 'Cancellation', timestampField: 'cancellation_requested_at',
+          labelField: 'cancellation_reason', codeField: 'cancellation_reason_code',
+        },
+      }] } };
+    }
     resolvedTraits.push({ ref, definition: traitDef });
 
     // Merge trait schema fields (collision = last-trait-wins with warning)
@@ -170,6 +180,7 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
   //    Higher priority first; same priority → earlier trait declaration order first
   const viewExtensions: Record<string, ViewExtension[]> = {};
   for (const [context, ranked] of Object.entries(extensionsByContext)) {
+    if (objectDef.metadata?.supportedContexts && !objectDef.metadata.supportedContexts.includes(context)) continue;
     ranked.sort((a, b) => {
       const pA = a.extension.priority ?? 0;
       const pB = b.extension.priority ?? 0;

@@ -1,0 +1,215 @@
+object:
+  name: Project
+  version: 0.1.0
+  domain: research.container
+  description: 'TraceLab project: container in the research notebook. API provenance and unavailable trait
+    fields are specified in the TraceLab OODS mapping contract.'
+  tags:
+  - research
+  - tracelab
+  - container
+traits:
+- name: content/Labelled
+  parameters:
+    maxLabelLength: 255
+    maxDescriptionLength: 1000
+- name: lifecycle/Stateful
+  parameters:
+    states: &id001
+    - active
+    - archived
+    - completed
+    initialState: active
+- name: lifecycle/Timestampable
+  parameters:
+    recordedEvents:
+    - created
+    - updated
+    timezone: UTC
+- name: structural/Ownerable
+  parameters:
+    ownerTypes:
+    - user
+    primaryOwnerType: user
+    allowTransfer: false
+- name: behavioral/Taggable
+  parameters:
+    maxTags: 50
+    allowCustomTags: true
+    caseSensitive: true
+- name: behavioral/Searchable
+  parameters:
+    placeholder: Search projects
+- name: behavioral/Filterable
+- name: behavioral/Pageable
+  parameters:
+    defaultPageSize: 20
+    pageSizeOptions:
+    - 10
+    - 20
+    - 50
+    - 100
+schema:
+  name:
+    type: string
+    required: true
+    description: Name.
+  description:
+    type: string
+    required: false
+    description: Display projection of description; never truncates persisted content.
+  mission_protocol_id:
+    type: uuid
+    required: false
+    description: Mission protocol id.
+  research_type:
+    type: string
+    required: false
+    description: Research type.
+  methodology:
+    type: string
+    required: false
+    description: Methodology.
+  status:
+    type: string
+    required: true
+    description: Canonical research lifecycle. The API remains authoritative; do not coerce an unknown
+      server value.
+    validation:
+      enum: *id001
+  quality_score:
+    type: number
+    required: false
+    description: Quality score.
+  last_quality_check:
+    type: datetime
+    required: false
+    description: Last quality check.
+  id:
+    type: uuid
+    required: true
+    description: Id.
+    validation:
+      format: uuid
+  created_at:
+    type: datetime
+    required: true
+    description: Created at.
+    validation:
+      format: date-time
+  updated_at:
+    type: datetime
+    required: true
+    description: Updated at.
+    validation:
+      format: date-time
+  owner_id:
+    type: uuid
+    required: false
+    description: Authoritative nullable server owner_id. Present in this response.
+  user_id:
+    type: uuid
+    required: false
+    description: User id.
+  workspace_id:
+    type: uuid
+    required: false
+    description: Workspace id.
+  project_id:
+    type: uuid
+    required: true
+    description: Project id.
+    validation:
+      format: uuid
+  document_count:
+    type: number
+    required: true
+    description: Document count.
+  chunk_count:
+    type: number
+    required: true
+    description: Chunk count.
+  report_count:
+    type: number
+    required: true
+    description: Report count.
+  total_tokens:
+    type: number
+    required: true
+    description: Total tokens.
+  last_updated:
+    type: datetime
+    required: false
+    description: Last updated.
+  label:
+    type: string
+    required: true
+    description: Display projection of name; retain the complete source field.
+  owner_type:
+    type: string
+    required: false
+    description: user only when an authoritative owner_id is present.
+    validation:
+      enum:
+      - user
+  last_event:
+    type: string
+    required: false
+    description: Only from an explicit event or timestamp projection; absence is unknown, not a fabricated
+      audit event.
+semantics:
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  project_id:
+    semantic_type: research.project.project_id
+    token_mapping: tokenMap(text.body.*)
+  workspace_id:
+    semantic_type: research.project.workspace_id
+    token_mapping: tokenMap(text.body.*)
+  mission_protocol_id:
+    semantic_type: research.project.mission_protocol_id
+    token_mapping: tokenMap(text.body.*)
+  research_type:
+    semantic_type: research.project.research_type
+    token_mapping: tokenMap(text.body.*)
+  methodology:
+    semantic_type: research.project.methodology
+    token_mapping: tokenMap(text.body.*)
+  quality_score:
+    semantic_type: research.project.quality_score
+    token_mapping: tokenMap(text.body.*)
+  last_quality_check:
+    semantic_type: research.project.last_quality_check
+    token_mapping: tokenMap(text.body.*)
+  id:
+    semantic_type: research.project.id
+    token_mapping: tokenMap(text.body.*)
+  user_id:
+    semantic_type: research.project.user_id
+    token_mapping: tokenMap(text.body.*)
+  document_count:
+    semantic_type: research.project.document_count
+    token_mapping: tokenMap(text.body.*)
+  chunk_count:
+    semantic_type: research.project.chunk_count
+    token_mapping: tokenMap(text.body.*)
+  report_count:
+    semantic_type: research.project.report_count
+    token_mapping: tokenMap(text.body.*)
+  total_tokens:
+    semantic_type: research.project.total_tokens
+    token_mapping: tokenMap(text.body.*)
+  last_updated:
+    semantic_type: research.project.last_updated
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+  - TraceLab
+  references:
+  - https://github.com/kneelinghorse/TraceLab/blob/main/cmos/contracts/oods-object-model.md
+  changelog:
+  - version: 0.1.0
+    date: '2026-09-12'
+    description: UX-1 research model from TraceLab Pydantic responses.

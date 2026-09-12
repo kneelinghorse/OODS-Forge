@@ -29,8 +29,9 @@ export async function assembleWorkflow(
   const cancellation = parameters('Cancellable');
   const addressable = parameters('Addressable');
   const fields = first.schema.objectSchema ?? {};
-  const idField = Object.keys(fields).find((field) => field === `${object.object.name.toLowerCase()}_id`)
-    ?? Object.keys(fields).find((field) => field === 'id' || field.endsWith('_id'))
+  const idField = Object.keys(fields).find((field) => field === 'id')
+    ?? Object.keys(fields).find((field) => field === `${object.object.name.toLowerCase()}_id`)
+    ?? Object.keys(fields).find((field) => field.endsWith('_id'))
     ?? Object.keys(fields)[0]!;
   const screens: UiElement[] = [];
   const workflow: NonNullable<UiSchema['workflow']> = {
@@ -68,7 +69,9 @@ export async function assembleWorkflow(
     for (const action of Object.values(screen.bindings ?? {})) {
       const destination = {
         handleRowClick: ['detail', 'navigate'], handleEdit: ['form', 'navigate'],
-        handleSubmit: ['detail', 'save'], handleCancel: ['detail', 'pending_cancellation'],
+        handleSubmit: ['detail', 'save'],
+        // Jobs with immediate cancellation must never gain a billing-only state.
+        handleCancel: ['detail', workflow.data.lifecycleStates.includes('cancelled') && !workflow.data.lifecycleStates.includes('pending_cancellation') ? 'save' : 'pending_cancellation'],
         handleViewTimeline: ['timeline', 'navigate'], handleDelete: ['list', 'archive'],
       } as const;
       const transition = destination[action as keyof typeof destination];

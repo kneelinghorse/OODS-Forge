@@ -273,7 +273,7 @@ function reactBindingAttrs(
 }
 
 const SCREEN_ACTION_LABELS: Readonly<Record<string, string>> = {
-  onCancel: 'Cancel subscription',
+  onCancel: 'Cancel record',
   onViewTimeline: 'View timeline',
   onChange: 'Change',
   onDelete: 'Delete',
@@ -332,7 +332,8 @@ function reactScreenActionSurface(
 
   const buttons = occurrences.map((occurrence) => {
     const args = screenActionArgumentExpressions(occurrence, objectSchema).join(', ');
-    const label = SCREEN_ACTION_LABELS[occurrence.event] ?? occurrence.event;
+    const label = occurrence.event === 'onCancel' && !objectSchema?.status?.enum?.includes('cancelled')
+      ? 'Cancel subscription' : SCREEN_ACTION_LABELS[occurrence.event] ?? occurrence.event;
     return `<button type="button" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" onClick={() => ${occurrence.handlerName}(${args})}>${childValueToJsx(label)}</button>`;
   });
   return [

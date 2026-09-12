@@ -5,7 +5,7 @@ import { wire, retain } from '../helpers/wire-boundary.js';
 it('object discovers the real registry and exposes composed traits and context-filtered view extensions', async () => {
   const call = async (input: any): Promise<any> => { wire('object', 'input', input); const result = await object(input); wire('object', 'output', result); return result; };
   const listed = await call({ action: 'list' });
-  expect(listed.totalCount).toBe(11);
+  expect(listed.totalCount).toBe(18);
   const details = [];
   for (const entry of listed.objects) {
     const full = await call({ action: 'show', name: entry.name });
@@ -13,7 +13,7 @@ it('object discovers the real registry and exposes composed traits and context-f
     expect(Object.keys(full.schema).length).toBeGreaterThan(0);
     expect(Object.values(full.viewExtensions).flat().length).toBeGreaterThan(0);
     const detail = await call({ action: 'show', name: entry.name, context: 'detail' });
-    expect(detail.viewExtensions).toEqual({ detail: full.viewExtensions.detail ?? [] });
+    expect(detail.viewExtensions).toEqual(full.viewExtensions.detail ? { detail: full.viewExtensions.detail } : {});
     details.push({ name: full.name, traits: full.traits, viewExtensions: full.viewExtensions });
   }
   const subscription = listed.objects.find((entry: any) => entry.name === 'Subscription');
