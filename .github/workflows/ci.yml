@@ -525,6 +525,8 @@ jobs:
           node scripts/runtime/assemble.mjs --out-dir "$RUNNER_TEMP/release-runtime-out" --work-dir "$RUNNER_TEMP/release-runtime-work" --final
           mkdir -p "$RUNNER_TEMP/release-runtime-extracted"
           tar -xzf "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz" -C "$RUNNER_TEMP/release-runtime-extracted"
+          mkdir -p artifacts/product-reality/sprint-196/release-ci/archive
+          cp "$RUNNER_TEMP/release-runtime-out/forge-runtime.manifest.json" "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz.sha256" "$RUNNER_TEMP/release-runtime-out/runtime-sbom-lite.json" artifacts/product-reality/sprint-196/release-ci/archive/
       - name: Generate, build and run the 42 reference-app cells from bundled packages
         run: |
           pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-196/release-ci \
@@ -538,10 +540,7 @@ jobs:
         if: always()
         with:
           name: release-runtime
-          path: |
-            artifacts/product-reality/sprint-196/release-ci
-            ${{ runner.temp }}/release-runtime-out/forge-runtime.manifest.json
-            ${{ runner.temp }}/release-runtime-out/forge-runtime.tar.gz.sha256
+          path: artifacts/product-reality/sprint-196/release-ci
           if-no-files-found: warn
 
   a11y-contract:

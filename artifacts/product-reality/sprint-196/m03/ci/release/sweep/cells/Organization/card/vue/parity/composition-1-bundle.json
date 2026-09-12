@@ -1,0 +1,512 @@
+{
+  "layout": "card",
+  "meta": {
+    "intelligence": {
+      "compositionConfidence": 0.8,
+      "fieldAffinityUsed": true,
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true
+    },
+    "intentParsed": "Organization card view",
+    "intentSynthetic": true,
+    "layoutDetected": "context-inferred: card (from context=\"card\")",
+    "nodeCount": 11,
+    "slotCount": 3
+  },
+  "objectUsed": {
+    "fieldsComposed": 45,
+    "name": "Organization",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "structural/Ownerable",
+      "lifecycle/Timestampable",
+      "behavioral/Taggable",
+      "core/Addressable",
+      "core/Preferenceable",
+      "core/Authable",
+      "core/Communicable"
+    ],
+    "version": "1.2.0",
+    "viewExtensionsApplied": {
+      "card": 4,
+      "detail": 9,
+      "form": 7,
+      "inline": 1,
+      "list": 9,
+      "timeline": 7
+    }
+  },
+  "schema": {
+    "objectSchema": {
+      "address_roles": {
+        "description": "Ordered list of roles that currently have address entries.",
+        "required": true,
+        "semanticType": "location.address.roles",
+        "type": "string[]"
+      },
+      "addresses": {
+        "description": "Collection of { role, address, metadata } entries keyed by role.",
+        "required": false,
+        "semanticType": "location.address.collection",
+        "type": "AddressableEntry[]"
+      },
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "billing_contact_email": {
+        "description": "Primary contact email for invoicing and finance escalations.",
+        "required": false,
+        "type": "email"
+      },
+      "billing_status": {
+        "description": "Coarse account-level financial standing used by the billing subsystem. Intentionally coarser than the subscription lifecycle: this is a 4-state account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the 8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.",
+        "enum": [
+          "good_standing",
+          "past_due",
+          "unpaid",
+          "suspended"
+        ],
+        "required": true,
+        "semanticType": "billing.account.status",
+        "type": "string"
+      },
+      "channel_catalog": {
+        "description": "Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).",
+        "required": true,
+        "semanticType": "communication.channels",
+        "type": "Channel[]"
+      },
+      "conversations": {
+        "description": "Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).",
+        "required": false,
+        "semanticType": "communication.conversations",
+        "type": "Conversation[]"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "data_residency": {
+        "description": "Preferred data residency region selected during onboarding.",
+        "enum": [
+          "us",
+          "eu",
+          "apac",
+          "latam"
+        ],
+        "required": false,
+        "type": "string"
+      },
+      "default_address_role": {
+        "description": "Role surfaced in UI contexts when one address must be highlighted.",
+        "required": false,
+        "semanticType": "location.address.default_role",
+        "type": "string"
+      },
+      "delivery_policies": {
+        "description": "Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).",
+        "required": true,
+        "semanticType": "communication.delivery_policy",
+        "type": "DeliveryPolicy[]"
+      },
+      "description": {
+        "description": "Supporting description used in detail and card contexts.",
+        "required": false,
+        "semanticType": "text.description",
+        "type": "string"
+      },
+      "domain": {
+        "description": "Verified root domain associated with the organization.",
+        "required": true,
+        "semanticType": "organization.domain",
+        "type": "string"
+      },
+      "employee_count": {
+        "description": "Reported number of active employees.",
+        "required": false,
+        "semanticType": "organization.metrics.employee_count",
+        "type": "number"
+      },
+      "industry": {
+        "description": "Optional NAICS-derived industry tag.",
+        "required": false,
+        "type": "string"
+      },
+      "label": {
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "required": true,
+        "semanticType": "text.label",
+        "type": "string"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "membership_records": {
+        "description": "SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).",
+        "required": true,
+        "semanticType": "authorization.memberships",
+        "type": "AuthzMembershipDocument[]"
+      },
+      "message_statuses": {
+        "description": "Delivery state machine transitions (queued → sent → delivered → failed → retried → read).",
+        "required": false,
+        "type": "MessageStatusEntry[]"
+      },
+      "messages": {
+        "description": "Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).",
+        "required": false,
+        "semanticType": "communication.messages",
+        "type": "Message[]"
+      },
+      "organization_id": {
+        "description": "Primary identifier for the organization tenant.",
+        "required": true,
+        "semanticType": "organization.id",
+        "type": "uuid"
+      },
+      "owner_id": {
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "required": true,
+        "semanticType": "ownership.owner.id",
+        "type": "string"
+      },
+      "owner_type": {
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "required": true,
+        "semanticType": "ownership.owner.type",
+        "type": "string"
+      },
+      "ownership_role": {
+        "description": "Optional role name describing how the owner governs the entity.",
+        "required": false,
+        "semanticType": "ownership.owner.role",
+        "type": "string"
+      },
+      "ownership_transferred_at": {
+        "description": "Timestamp recording when ownership was last transferred.",
+        "required": false,
+        "semanticType": "ownership.owner.transferred_at",
+        "type": "datetime"
+      },
+      "permission_catalog": {
+        "description": "Atomic permissions following resource:action notation (TABLE 2).",
+        "required": true,
+        "semanticType": "authorization.permissions",
+        "type": "AuthzPermissionDocument[]"
+      },
+      "placeholder": {
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "required": false,
+        "semanticType": "text.placeholder",
+        "type": "string"
+      },
+      "plan_tier": {
+        "description": "Billing plan currently assigned to the organization.",
+        "enum": [
+          "free",
+          "growth",
+          "enterprise"
+        ],
+        "required": true,
+        "semanticType": "organization.plan.tier",
+        "type": "string"
+      },
+      "preference_document": {
+        "description": "Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).",
+        "required": true,
+        "semanticType": "preferences.document",
+        "type": "PreferenceDocument"
+      },
+      "preference_metadata": {
+        "description": "Tracks schema version, lastUpdated timestamp, migration records, and source.",
+        "required": true,
+        "semanticType": "preferences.metadata",
+        "type": "PreferenceMetadata"
+      },
+      "preference_mutations": {
+        "description": "Monotonic counter incremented whenever preferences mutate (invalidates caches).",
+        "required": false,
+        "type": "number"
+      },
+      "preference_namespaces": {
+        "description": "Materialized namespace list resolved from parameters/registry for auditing.",
+        "required": true,
+        "semanticType": "preferences.namespaces",
+        "type": "string[]"
+      },
+      "preference_version": {
+        "description": "SemVer mirror of preference_document.version for indexing and analytics.",
+        "required": true,
+        "semanticType": "preferences.version",
+        "type": "string"
+      },
+      "role_catalog": {
+        "description": "Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).",
+        "required": true,
+        "semanticType": "authorization.roles",
+        "type": "AuthzRoleDocument[]"
+      },
+      "role_hierarchy_edges": {
+        "description": "Parent→child adjacency list for hierarchical RBAC (Part 3.1).",
+        "required": false,
+        "type": "AuthzRoleHierarchyEdge[]"
+      },
+      "role_permissions": {
+        "description": "Junction map for role→permission edges (TABLE 3).",
+        "required": true,
+        "type": "Record<string, string[]>"
+      },
+      "session_roles": {
+        "description": "Materialized roles granted within the current session/token exchange.",
+        "required": false,
+        "type": "string[]"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "required": true,
+        "semanticType": "status.state",
+        "type": "string"
+      },
+      "tag_count": {
+        "description": "Computed number of tags assigned to the entity.",
+        "required": true,
+        "semanticType": "metric.collection.count",
+        "type": "number"
+      },
+      "tag_metadata": {
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "required": false,
+        "semanticType": "taxonomy.tag.governance",
+        "type": "object[]"
+      },
+      "tags": {
+        "description": "Ordered list of tags assigned to the entity.",
+        "required": false,
+        "semanticType": "taxonomy.tag.collection",
+        "type": "string[]"
+      },
+      "template_catalog": {
+        "description": "Localized template definitions with declared variables per R20.1 Part 2.3.",
+        "required": true,
+        "semanticType": "communication.templates",
+        "type": "Template[]"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      }
+    },
+    "screens": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "component": "CardHeader",
+                    "id": "ve-header-8",
+                    "props": {
+                      "supportingField": "description",
+                      "titleField": "label"
+                    }
+                  },
+                  {
+                    "component": "StatusBadge",
+                    "id": "ve-header-9",
+                    "props": {
+                      "field": "status",
+                      "label": "Status",
+                      "variant": "subtle"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "slot-header-2",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                },
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "card-header-1",
+            "layout": {
+              "align": "space-between",
+              "type": "inline"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            }
+          },
+          {
+            "children": [
+              {
+                "component": "Card",
+                "id": "slot-body-4",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "card-body-3",
+            "layout": {
+              "gapToken": "cluster-tight",
+              "type": "stack"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "component": "OwnershipMeta",
+                    "id": "ve-footer-10",
+                    "props": {
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role"
+                    }
+                  },
+                  {
+                    "component": "TagSummary",
+                    "id": "ve-footer-11",
+                    "props": {
+                      "countField": "tag_count",
+                      "field": "tags",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "slot-footer-6",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                },
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "card-footer-5",
+            "layout": {
+              "align": "end",
+              "type": "inline"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            }
+          }
+        ],
+        "component": "Card",
+        "id": "screen-card-7",
+        "layout": {
+          "gapToken": "cluster-default",
+          "type": "stack"
+        }
+      }
+    ],
+    "version": "2026.02"
+  },
+  "schemaRef": "compose-ce903901",
+  "schemaRefCreatedAt": "2026-09-12T06:12:17.027Z",
+  "schemaRefExpiresAt": "2026-09-12T06:42:17.027Z",
+  "selections": [
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "CardHeader",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "StatusBadge",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CardHeader was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "page-header",
+      "selectedComponent": "CardHeader",
+      "slotName": "header"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "OwnershipMeta",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "TagSummary",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "OwnershipMeta was selected for slot \"footer\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "action-button",
+      "selectedComponent": "OwnershipMeta",
+      "slotName": "footer"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.5,
+          "name": "Card",
+          "reason": "fallback placement"
+        }
+      ],
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"body\" because fallback placement. Confidence is medium (0.50).",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "slotName": "body"
+    }
+  ],
+  "status": "ok",
+  "validation": {
+    "errors": [],
+    "status": "ok",
+    "warnings": []
+  },
+  "warnings": []
+}

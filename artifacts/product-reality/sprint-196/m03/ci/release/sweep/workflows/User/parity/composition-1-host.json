@@ -1,0 +1,2437 @@
+{
+  "layout": "workflow",
+  "meta": {
+    "intelligence": {
+      "compositionConfidence": 0.86,
+      "fieldAffinityUsed": true,
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true
+    },
+    "intentParsed": "User list view",
+    "intentSynthetic": true,
+    "layoutDetected": "workflow",
+    "nodeCount": 87,
+    "slotCount": 32
+  },
+  "objectUsed": {
+    "fieldsComposed": 37,
+    "name": "User",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "behavioral/Taggable",
+      "core/Addressable",
+      "core/Preferenceable",
+      "core/Authable",
+      "core/Communicable"
+    ],
+    "version": "1.4.0",
+    "viewExtensionsApplied": {
+      "card": 2,
+      "detail": 7,
+      "form": 6,
+      "list": 7,
+      "timeline": 6
+    }
+  },
+  "schema": {
+    "objectSchema": {
+      "address_roles": {
+        "description": "Ordered list of roles that currently have address entries.",
+        "required": true,
+        "semanticType": "location.address.roles",
+        "type": "string[]"
+      },
+      "addresses": {
+        "description": "Collection of { role, address, metadata } entries keyed by role.",
+        "required": false,
+        "semanticType": "location.address.collection",
+        "type": "AddressableEntry[]"
+      },
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "channel_catalog": {
+        "description": "Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).",
+        "required": true,
+        "semanticType": "communication.channels",
+        "type": "Channel[]"
+      },
+      "conversations": {
+        "description": "Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).",
+        "required": false,
+        "semanticType": "communication.conversations",
+        "type": "Conversation[]"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "default_address_role": {
+        "description": "Role surfaced in UI contexts when one address must be highlighted.",
+        "required": false,
+        "semanticType": "location.address.default_role",
+        "type": "string"
+      },
+      "delivery_policies": {
+        "description": "Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).",
+        "required": true,
+        "semanticType": "communication.delivery_policy",
+        "type": "DeliveryPolicy[]"
+      },
+      "description": {
+        "description": "Supporting summary rendered in detail and card contexts.",
+        "required": false,
+        "semanticType": "identity.user.description",
+        "type": "string"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "membership_records": {
+        "description": "SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).",
+        "required": true,
+        "semanticType": "authorization.memberships",
+        "type": "AuthzMembershipDocument[]"
+      },
+      "message_statuses": {
+        "description": "Delivery state machine transitions (queued → sent → delivered → failed → retried → read).",
+        "required": false,
+        "type": "MessageStatusEntry[]"
+      },
+      "messages": {
+        "description": "Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).",
+        "required": false,
+        "semanticType": "communication.messages",
+        "type": "Message[]"
+      },
+      "name": {
+        "description": "Human-friendly name rendered in headers and list contexts.",
+        "required": true,
+        "semanticType": "identity.user.name",
+        "type": "string"
+      },
+      "permission_catalog": {
+        "description": "Atomic permissions following resource:action notation (TABLE 2).",
+        "required": true,
+        "semanticType": "authorization.permissions",
+        "type": "AuthzPermissionDocument[]"
+      },
+      "preference_document": {
+        "description": "Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).",
+        "required": true,
+        "semanticType": "preferences.document",
+        "type": "PreferenceDocument"
+      },
+      "preference_metadata": {
+        "description": "Tracks schema version, lastUpdated timestamp, migration records, and source.",
+        "required": true,
+        "semanticType": "preferences.metadata",
+        "type": "PreferenceMetadata"
+      },
+      "preference_mutations": {
+        "description": "Monotonic counter incremented whenever preferences mutate (invalidates caches).",
+        "required": false,
+        "type": "number"
+      },
+      "preference_namespaces": {
+        "description": "Materialized namespace list resolved from parameters/registry for auditing.",
+        "required": true,
+        "semanticType": "preferences.namespaces",
+        "type": "string[]"
+      },
+      "preference_version": {
+        "description": "SemVer mirror of preference_document.version for indexing and analytics.",
+        "required": true,
+        "semanticType": "preferences.version",
+        "type": "string"
+      },
+      "preferred_name": {
+        "description": "Preferred display name surfaced in collaborative tooling.",
+        "required": false,
+        "semanticType": "identity.user.name_preferred",
+        "type": "string"
+      },
+      "primary_email": {
+        "description": "Canonical login email address for the user.",
+        "required": true,
+        "semanticType": "identity.user.email",
+        "type": "email"
+      },
+      "role": {
+        "description": "Highest privilege role currently granted to the user.",
+        "enum": [
+          "end_user",
+          "admin",
+          "owner",
+          "billing"
+        ],
+        "required": true,
+        "semanticType": "identity.user.role",
+        "type": "string"
+      },
+      "role_catalog": {
+        "description": "Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).",
+        "required": true,
+        "semanticType": "authorization.roles",
+        "type": "AuthzRoleDocument[]"
+      },
+      "role_hierarchy_edges": {
+        "description": "Parent→child adjacency list for hierarchical RBAC (Part 3.1).",
+        "required": false,
+        "type": "AuthzRoleHierarchyEdge[]"
+      },
+      "role_permissions": {
+        "description": "Junction map for role→permission edges (TABLE 3).",
+        "required": true,
+        "type": "Record<string, string[]>"
+      },
+      "session_roles": {
+        "description": "Materialized roles granted within the current session/token exchange.",
+        "required": false,
+        "type": "string[]"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "required": true,
+        "semanticType": "status.state",
+        "type": "string"
+      },
+      "tag_count": {
+        "description": "Computed number of tags assigned to the entity.",
+        "required": true,
+        "semanticType": "metric.collection.count",
+        "type": "number"
+      },
+      "tag_metadata": {
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "required": false,
+        "semanticType": "taxonomy.tag.governance",
+        "type": "object[]"
+      },
+      "tags": {
+        "description": "Ordered list of tags assigned to the entity.",
+        "required": false,
+        "semanticType": "taxonomy.tag.collection",
+        "type": "string[]"
+      },
+      "template_catalog": {
+        "description": "Localized template definitions with declared variables per R20.1 Part 2.3.",
+        "required": true,
+        "semanticType": "communication.templates",
+        "type": "Template[]"
+      },
+      "timezone": {
+        "description": "Preferred timezone applied when rendering timestamps.",
+        "required": false,
+        "semanticType": "identity.user.timezone",
+        "type": "string"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      },
+      "user_id": {
+        "description": "Primary identifier used to correlate identity across services.",
+        "required": true,
+        "semanticType": "identity.user.id",
+        "type": "uuid"
+      }
+    },
+    "screens": [
+      {
+        "bindings": {
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange",
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "collectionControl": "search",
+                    "component": "SearchInput",
+                    "id": "list-primary-search-17",
+                    "props": {
+                      "clearable": true,
+                      "label": "Search",
+                      "placeholder": "Search records"
+                    }
+                  },
+                  {
+                    "collectionControl": "filter",
+                    "component": "Select",
+                    "id": "list-slot-filters-2",
+                    "meta": {
+                      "confidence": 0.67,
+                      "confidenceLevel": "low",
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "label": "All states",
+                          "value": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "collectionControl": "sort",
+                    "component": "Select",
+                    "id": "list-list-toolbar-4-sort",
+                    "props": {
+                      "field": "name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "label": "Name A–Z",
+                          "value": "asc"
+                        },
+                        {
+                          "label": "Name Z–A",
+                          "value": "desc"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-list-toolbar-4",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "component": "Text",
+                        "id": "list-list-items-5-title",
+                        "props": {
+                          "field": "name"
+                        }
+                      },
+                      {
+                        "component": "StatusBadge",
+                        "id": "list-ve-items-11",
+                        "props": {
+                          "statusField": "status",
+                          "tone": "lifecycle"
+                        }
+                      },
+                      {
+                        "component": "RelativeTimestamp",
+                        "id": "list-ve-items-12",
+                        "props": {
+                          "fallbackField": "created_at",
+                          "field": "updated_at",
+                          "timezoneParameter": "timezone"
+                        }
+                      },
+                      {
+                        "component": "TagPills",
+                        "id": "list-ve-items-13",
+                        "props": {
+                          "field": "tags",
+                          "label": "Tags",
+                          "maxVisible": 3,
+                          "overflowLabel": "+{{ tag_count }}"
+                        }
+                      },
+                      {
+                        "component": "MessageStatusBadge",
+                        "id": "list-ve-search-10",
+                        "props": {
+                          "statusesField": "message_statuses"
+                        }
+                      },
+                      {
+                        "component": "AddressSummaryBadge",
+                        "id": "list-ve-toolbar-actions-14",
+                        "props": {
+                          "field": "default_address_role",
+                          "label": "Default address role"
+                        }
+                      },
+                      {
+                        "component": "PreferenceSummaryBadge",
+                        "id": "list-ve-toolbar-actions-15",
+                        "props": {
+                          "namespacesField": "preference_namespaces",
+                          "versionField": "preference_version"
+                        }
+                      },
+                      {
+                        "component": "RoleBadgeList",
+                        "id": "list-ve-toolbar-actions-16",
+                        "props": {
+                          "fallbackRoleParameter": "defaultRoleId",
+                          "rolesField": "session_roles"
+                        }
+                      }
+                    ],
+                    "collectionControl": "open",
+                    "component": "Button",
+                    "id": "list-list-items-5-row",
+                    "layout": {
+                      "gapToken": "cluster-default",
+                      "type": "inline"
+                    },
+                    "props": {
+                      "field": "user_id"
+                    }
+                  },
+                  {
+                    "collectionControl": "empty",
+                    "component": "Banner",
+                    "id": "list-list-items-5-empty",
+                    "props": {
+                      "message": "No records found."
+                    }
+                  }
+                ],
+                "collection": {
+                  "keyField": "user_id",
+                  "labelField": "name",
+                  "source": "rows"
+                },
+                "component": "Stack",
+                "id": "list-list-items-5",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "collectionControl": "page",
+                    "component": "PaginationBar",
+                    "id": "list-slot-pagination-8",
+                    "meta": {
+                      "confidence": 0.77,
+                      "confidenceLevel": "low",
+                      "intent": "slot:pagination",
+                      "label": "pagination"
+                    },
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-list-pagination-7",
+                "layout": {
+                  "align": "center",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "list-screen-list-9-success",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "list-screen",
+        "route": "/"
+      },
+      {
+        "bindings": {
+          "onDelete": "handleDelete",
+          "onEdit": "handleEdit",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "detail-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "detail-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "detail-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "component": "StatusTimeline",
+                        "id": "detail-ve-header-28",
+                        "props": {
+                          "field": "status",
+                          "historyField": "state_history",
+                          "showActorId": true,
+                          "showReason": true,
+                          "statesParameter": "states"
+                        }
+                      },
+                      {
+                        "component": "TagSummary",
+                        "id": "detail-ve-header-29",
+                        "props": {
+                          "countField": "tag_count",
+                          "field": "tags",
+                          "label": "Tags"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "detail-slot-header-2",
+                    "layout": {
+                      "gapToken": "cluster-default",
+                      "type": "stack"
+                    },
+                    "meta": {
+                      "intent": "slot:header",
+                      "label": "header"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "detail-detail-header-1",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "component": "CommunicationDetailPanel",
+                            "id": "detail-slot-tab-0-4",
+                            "meta": {
+                              "intent": "slot:tab-0",
+                              "label": "tab-0"
+                            },
+                            "props": {
+                              "channelsField": "channel_catalog",
+                              "conversationsField": "conversations",
+                              "policiesField": "delivery_policies",
+                              "templatesField": "template_catalog"
+                            }
+                          },
+                          {
+                            "component": "MembershipPanel",
+                            "id": "detail-slot-tab-1-6",
+                            "meta": {
+                              "intent": "slot:tab-1",
+                              "label": "tab-1"
+                            },
+                            "props": {
+                              "hierarchyField": "role_hierarchy_edges",
+                              "membershipsField": "membership_records",
+                              "permissionField": "permission_catalog",
+                              "roleField": "role_catalog"
+                            }
+                          },
+                          {
+                            "component": "AddressCollectionPanel",
+                            "id": "detail-slot-tab-2-8",
+                            "meta": {
+                              "intent": "slot:tab-2",
+                              "label": "tab-2"
+                            },
+                            "props": {
+                              "defaultRoleField": "default_address_role",
+                              "field": "addresses",
+                              "roleField": "address_roles",
+                              "roleParameter": "roles"
+                            }
+                          },
+                          {
+                            "component": "PreferencePanel",
+                            "id": "detail-slot-tab-3-15",
+                            "meta": {
+                              "intent": "slot:tab-3",
+                              "label": "tab-3"
+                            },
+                            "props": {
+                              "metadataField": "preference_metadata",
+                              "namespaceField": "preference_namespaces",
+                              "preferencesField": "preference_document"
+                            }
+                          },
+                          {
+                            "component": "Text",
+                            "id": "detail-slot-tab-5-19",
+                            "meta": {
+                              "confidence": 0.77,
+                              "confidenceLevel": "low",
+                              "intent": "slot:tab-5",
+                              "label": "tab-5"
+                            },
+                            "props": {
+                              "field": "address_roles",
+                              "label": "Address roles"
+                            }
+                          }
+                        ],
+                        "component": "Stack",
+                        "id": "detail-detail-tab-panel-3",
+                        "layout": {
+                          "gapToken": "cluster-default",
+                          "type": "stack"
+                        },
+                        "props": {
+                          "label": "Details"
+                        }
+                      }
+                    ],
+                    "component": "Tabs",
+                    "id": "detail-detail-tabs-9",
+                    "props": {
+                      "ariaLabel": "Record details"
+                    }
+                  },
+                  {
+                    "children": [],
+                    "component": "Stack",
+                    "id": "detail-detail-meta-11",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    }
+                  }
+                ],
+                "component": "Card",
+                "id": "detail-detail-body-10",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "sidebar"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "detail-screen-detail-13",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "detail-screen",
+        "route": "/:id"
+      },
+      {
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "form-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "form-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "form-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    },
+                    "component": "StatusSelector",
+                    "id": "form-ve-title-26",
+                    "props": {
+                      "allowedTransitionsField": "allowed_transitions",
+                      "field": "status",
+                      "help": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+                      "initialParameter": "initialState",
+                      "label": "Status",
+                      "optionsParameter": "states",
+                      "requireReasonParameter": "requireTransitionReason"
+                    }
+                  },
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_tags"
+                    },
+                    "component": "TagInput",
+                    "id": "form-ve-title-27",
+                    "props": {
+                      "allowCustomParameter": "allowCustomTags",
+                      "allowListParameter": "allowedTags",
+                      "field": "tags",
+                      "label": "Tags",
+                      "maxLengthParameter": "tagMaxLength",
+                      "maxTagsParameter": "maxTags",
+                      "minLengthParameter": "tagMinLength",
+                      "placeholder": "Enter tags",
+                      "synonymParameter": "synonymResolution"
+                    }
+                  },
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_addresses"
+                    },
+                    "component": "AddressEditor",
+                    "id": "form-ve-title-28",
+                    "props": {
+                      "allowDynamicParameter": "allowDynamicRoles",
+                      "defaultRoleField": "default_address_role",
+                      "field": "addresses",
+                      "label": "Addresses",
+                      "roleParameter": "roles"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-title-1",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                },
+                "meta": {
+                  "intent": "slot:title",
+                  "label": "title"
+                },
+                "props": {
+                  "as": "h1"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "component": "PreferenceEditor",
+                            "id": "form-ve-field-0-29",
+                            "props": {
+                              "documentField": "preference_document",
+                              "namespacesField": "preference_namespaces",
+                              "registryNamespaceParameter": "registryNamespace"
+                            }
+                          },
+                          {
+                            "component": "RoleAssignmentForm",
+                            "id": "form-ve-field-0-30",
+                            "props": {
+                              "availableRolesField": "role_catalog",
+                              "defaultRoleParameter": "defaultRoleId",
+                              "membershipField": "membership_records"
+                            }
+                          },
+                          {
+                            "component": "TemplatePicker",
+                            "id": "form-ve-field-0-31",
+                            "props": {
+                              "channelsField": "channel_catalog",
+                              "templatesField": "template_catalog"
+                            }
+                          }
+                        ],
+                        "component": "Stack",
+                        "id": "form-slot-field-0-3",
+                        "layout": {
+                          "gapToken": "cluster-default",
+                          "type": "stack"
+                        },
+                        "meta": {
+                          "intent": "slot:field-0",
+                          "label": "field-0"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-2",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_created_at"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-1-5",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-1",
+                          "label": "field-1"
+                        },
+                        "props": {
+                          "field": "created_at",
+                          "help": "Timestamp recording when the entity was first created.",
+                          "label": "Created at",
+                          "type": "datetime-local"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-4",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_timezone"
+                        },
+                        "component": "DatePicker",
+                        "id": "form-slot-field-2-7",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-2",
+                          "label": "field-2"
+                        },
+                        "props": {
+                          "field": "timezone",
+                          "help": "Preferred timezone applied when rendering timestamps.",
+                          "label": "Timezone"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-6",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_role"
+                        },
+                        "component": "Select",
+                        "id": "form-slot-field-3-13",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-3",
+                          "label": "field-3"
+                        },
+                        "props": {
+                          "field": "role",
+                          "help": "Highest privilege role currently granted to the user.",
+                          "label": "Role",
+                          "options": [
+                            {
+                              "label": "end_user",
+                              "value": "end_user"
+                            },
+                            {
+                              "label": "admin",
+                              "value": "admin"
+                            },
+                            {
+                              "label": "owner",
+                              "value": "owner"
+                            },
+                            {
+                              "label": "billing",
+                              "value": "billing"
+                            }
+                          ],
+                          "placeholder": "Enter role"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-12",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_name"
+                        },
+                        "component": "Textarea",
+                        "id": "form-slot-field-4-15",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-4",
+                          "label": "field-4"
+                        },
+                        "props": {
+                          "field": "name",
+                          "help": "Human-friendly name rendered in headers and list contexts.",
+                          "label": "Name"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-14",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_primary_email"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-5-17",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-5",
+                          "label": "field-5"
+                        },
+                        "props": {
+                          "field": "primary_email",
+                          "help": "Canonical login email address for the user.",
+                          "label": "Primary email",
+                          "placeholder": "Enter primary email",
+                          "type": "email"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-16",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_last_event"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-6-19",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-6",
+                          "label": "field-6"
+                        },
+                        "props": {
+                          "field": "last_event",
+                          "help": "Lifecycle event associated with the most recent timestamp mutation.",
+                          "label": "Last event",
+                          "placeholder": "Enter last event"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-18",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_preference_version"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-7-21",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-7",
+                          "label": "field-7"
+                        },
+                        "props": {
+                          "field": "preference_version",
+                          "help": "SemVer mirror of preference_document.version for indexing and analytics.",
+                          "label": "Preference version",
+                          "placeholder": "Enter preference version"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-20",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_preference_mutations"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-8-23",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-8",
+                          "label": "field-8"
+                        },
+                        "props": {
+                          "field": "preference_mutations",
+                          "help": "Monotonic counter incremented whenever preferences mutate (invalidates caches).",
+                          "label": "Preference mutations",
+                          "placeholder": "Enter preference mutations",
+                          "type": "number"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-22",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_user_id"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-9-25",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-9",
+                          "label": "field-9"
+                        },
+                        "props": {
+                          "field": "user_id",
+                          "help": "Primary identifier used to correlate identity across services.",
+                          "label": "User id",
+                          "placeholder": "Enter user id"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-24",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-fields-8",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "component": "Button",
+                    "id": "form-form-submit-10",
+                    "props": {
+                      "label": "Save",
+                      "type": "submit"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-actions-9",
+                "layout": {
+                  "align": "end",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "form-screen-form-11",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success",
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          }
+        ],
+        "component": "Stack",
+        "id": "form-screen",
+        "route": "/:id/edit"
+      },
+      {
+        "children": [
+          {
+            "component": "Banner",
+            "id": "timeline-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "timeline-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "timeline-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "component": "Text",
+                    "id": "timeline-timeline-header-1-title",
+                    "props": {
+                      "field": "name"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "timeline-timeline-header-1",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "collectionControl": "event",
+                    "component": "Card",
+                    "id": "timeline-timeline-entries-13-entry"
+                  },
+                  {
+                    "collectionControl": "empty",
+                    "component": "Banner",
+                    "id": "timeline-timeline-entries-13-empty",
+                    "props": {
+                      "message": "No events yet."
+                    }
+                  }
+                ],
+                "collection": {
+                  "historyField": "state_history",
+                  "keyField": "id",
+                  "labelField": "title",
+                  "source": "events"
+                },
+                "component": "Stack",
+                "id": "timeline-timeline-entries-13",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "component": "StateTransitionEvent",
+                    "id": "timeline-slot-entry-0-4",
+                    "meta": {
+                      "intent": "slot:entry-0",
+                      "label": "entry-0"
+                    },
+                    "props": {
+                      "historyField": "state_history",
+                      "labelField": "status",
+                      "showActor": true,
+                      "showReason": true
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "timeline-timeline-entries-13-trait-events"
+              }
+            ],
+            "component": "Stack",
+            "id": "timeline-screen-timeline-14",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "timeline-screen",
+        "route": "/:id/timeline"
+      }
+    ],
+    "version": "2026.02",
+    "workflow": {
+      "data": {
+        "addressRoles": [
+          "home",
+          "billing",
+          "shipping"
+        ],
+        "billingIntervals": [],
+        "cancellationReasonCodes": [],
+        "cancellationRequiresReason": false,
+        "currency": "usd",
+        "defaultAddressRole": "home",
+        "idField": "user_id",
+        "lifecycleStates": [
+          "invited",
+          "active",
+          "suspended",
+          "deactivated"
+        ],
+        "minorUnits": 100,
+        "recordedEvents": [
+          "created",
+          "profile_updated",
+          "status_changed",
+          "role_updated"
+        ],
+        "sampleCount": 10,
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "behavioral/Taggable",
+          "core/Addressable",
+          "core/Preferenceable",
+          "core/Authable",
+          "core/Communicable"
+        ]
+      },
+      "object": "User",
+      "screens": [
+        {
+          "context": "list",
+          "id": "list-screen",
+          "route": "/"
+        },
+        {
+          "context": "detail",
+          "id": "detail-screen",
+          "route": "/:id"
+        },
+        {
+          "context": "form",
+          "id": "form-screen",
+          "route": "/:id/edit"
+        },
+        {
+          "context": "timeline",
+          "id": "timeline-screen",
+          "route": "/:id/timeline"
+        }
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "success"
+      ],
+      "transitions": [
+        {
+          "action": "handleRowClick",
+          "effect": "navigate",
+          "from": "list",
+          "to": "detail"
+        },
+        {
+          "action": "handleEdit",
+          "effect": "navigate",
+          "from": "detail",
+          "to": "form"
+        },
+        {
+          "action": "handleDelete",
+          "effect": "archive",
+          "from": "detail",
+          "to": "list"
+        },
+        {
+          "action": "handleViewTimeline",
+          "effect": "navigate",
+          "from": "detail",
+          "to": "timeline"
+        },
+        {
+          "action": "handleSubmit",
+          "effect": "save",
+          "from": "form",
+          "to": "detail"
+        }
+      ]
+    }
+  },
+  "schemaRef": "compose-93ebdb78",
+  "schemaRefCreatedAt": "2026-09-12T06:11:22.775Z",
+  "schemaRefExpiresAt": "2026-09-12T06:41:22.775Z",
+  "selections": [
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "SearchInput",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "MessageStatusBadge",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "slotName": "search"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StatusBadge",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "RelativeTimestamp",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "TagPills",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge was selected for slot \"items\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "data-list",
+      "selectedComponent": "StatusBadge",
+      "slotName": "items"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "AddressSummaryBadge",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "PreferenceSummaryBadge",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "RoleBadgeList",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "AddressSummaryBadge was selected for slot \"toolbar-actions\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "action-button",
+      "selectedComponent": "AddressSummaryBadge",
+      "slotName": "toolbar-actions"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar"
+        },
+        {
+          "confidence": 0.52,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "StatusBadge",
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar"
+        }
+      ],
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "slotName": "filters"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer"
+        },
+        {
+          "confidence": 0.75,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer"
+        },
+        {
+          "confidence": 0.65,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)"
+        }
+      ],
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "slotName": "pagination"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "CommunicationDetailPanel",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CommunicationDetailPanel was selected for slot \"tab-0\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "data-display",
+      "selectedComponent": "CommunicationDetailPanel",
+      "slotName": "tab-0"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "MembershipPanel",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "MembershipPanel was selected for slot \"tab-1\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "metadata-display",
+      "selectedComponent": "MembershipPanel",
+      "slotName": "tab-1"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "AddressCollectionPanel",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "AddressCollectionPanel was selected for slot \"tab-2\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "metadata-display",
+      "selectedComponent": "AddressCollectionPanel",
+      "slotName": "tab-2"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "PreferencePanel",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PreferencePanel was selected for slot \"tab-3\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "metadata-display",
+      "selectedComponent": "PreferencePanel",
+      "slotName": "tab-3"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StatusTimeline",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "TagSummary",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusTimeline was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "page-header",
+      "selectedComponent": "StatusTimeline",
+      "slotName": "header"
+    },
+    {
+      "alternativeCandidates": [
+        {
+          "confidence": 0.95,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "TagSummary",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "TagManager",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)"
+        }
+      ],
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "AuditTimeline",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)"
+        },
+        {
+          "confidence": 0.95,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "TagSummary",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "TagManager",
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)"
+        }
+      ],
+      "confidence": 0.4,
+      "confidenceLevel": "low",
+      "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagSummary (0.95), TagManager (0.90). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+      "intent": "metadata-display",
+      "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed.",
+      "selectedComponent": "AuditTimeline",
+      "slotName": "metadata"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab"
+        },
+        {
+          "confidence": 0.61,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab"
+        }
+      ],
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-4\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "slotName": "tab-4"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"email\" (rank 2); position affinity: Text fits well in tab"
+        },
+        {
+          "confidence": 0.93,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab"
+        },
+        {
+          "confidence": 0.57,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab"
+        }
+      ],
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-5\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"email\" (rank 2); position affinity: Text fits well in tab. Confidence is medium (0.77).",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "slotName": "tab-5"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab"
+        },
+        {
+          "confidence": 0.61,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Card",
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab"
+        }
+      ],
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-6\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "slotName": "tab-6"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Card",
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab"
+        },
+        {
+          "confidence": 0.66,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab"
+        }
+      ],
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "slotName": "tab-7"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StatusSelector",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "TagInput",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "AddressEditor",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusSelector was selected for slot \"title\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "page-header",
+      "selectedComponent": "StatusSelector",
+      "slotName": "title"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "PreferenceEditor",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "RoleAssignmentForm",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "TemplatePicker",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PreferenceEditor was selected for slot \"field-0\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "form-input",
+      "selectedComponent": "PreferenceEditor",
+      "slotName": "field-0"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-1\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "slotName": "field-1"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-2\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "slotName": "field-2"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.92,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.72,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "TagInput",
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\""
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-3\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "slotName": "field-3"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Textarea",
+          "reason": "preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"long-text-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Textarea was selected for slot \"field-4\" because preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main. Confidence is high (1.00).",
+      "intent": "long-text-input",
+      "selectedComponent": "Textarea",
+      "slotName": "field-4"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"email-input\" (rank 1); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"email-input\" (rank 1); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "email-input",
+      "selectedComponent": "Input",
+      "slotName": "field-5"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-6"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-7"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-8"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-9"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StateTransitionEvent",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StateTransitionEvent was selected for slot \"entry-0\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "timeline-entry",
+      "selectedComponent": "StateTransitionEvent",
+      "slotName": "entry-0"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.5,
+          "name": "Text",
+          "reason": "fallback placement"
+        }
+      ],
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"header\" because fallback placement. Confidence is medium (0.50).",
+      "intent": "page-header",
+      "selectedComponent": "Text",
+      "slotName": "header"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)"
+        },
+        {
+          "confidence": 0.86,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)"
+        },
+        {
+          "confidence": 0.5,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\""
+        }
+      ],
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "slotName": "entry-1"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)"
+        },
+        {
+          "confidence": 0.86,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)"
+        },
+        {
+          "confidence": 0.5,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\""
+        }
+      ],
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "slotName": "entry-2"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)"
+        },
+        {
+          "confidence": 0.86,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)"
+        },
+        {
+          "confidence": 0.5,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\""
+        }
+      ],
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "slotName": "entry-3"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)"
+        },
+        {
+          "confidence": 0.86,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)"
+        },
+        {
+          "confidence": 0.5,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "AuditTimeline",
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\""
+        }
+      ],
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "slotName": "entry-4"
+    }
+  ],
+  "status": "ok",
+  "validation": {
+    "errors": [],
+    "status": "ok",
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from core/Addressable/AddressValidationTimeline."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from core/Preferenceable/PreferenceTimeline."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from core/Authable/MembershipAuditTimeline."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from core/Communicable/MessageEventTimeline."
+    }
+  ]
+}
