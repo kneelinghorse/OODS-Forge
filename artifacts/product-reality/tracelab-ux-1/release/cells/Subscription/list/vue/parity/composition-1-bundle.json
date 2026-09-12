@@ -1,0 +1,808 @@
+{
+  "layout": "list",
+  "meta": {
+    "intelligence": {
+      "compositionConfidence": 0.87,
+      "fieldAffinityUsed": true,
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true
+    },
+    "intentParsed": "Subscription list view",
+    "intentSynthetic": true,
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "nodeCount": 20,
+    "slotCount": 5,
+    "warnings": [
+      "Object 'Subscription' has maturity 'beta' — composed output may change.",
+      "Field collision: \"status\" in object schema overrides trait definition",
+      "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_reason\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition",
+      "Field collision: \"amount\" in object schema overrides trait definition",
+      "Field collision: \"currency\" in object schema overrides trait definition",
+      "Field collision: \"billing_interval\" in object schema overrides trait definition",
+      "Field collision: \"current_period_start\" in object schema overrides trait definition",
+      "Field collision: \"current_period_end\" in object schema overrides trait definition",
+      "Field collision: \"current_period_progress\" in object schema overrides trait definition",
+      "Field collision: \"last_payment_at\" in object schema overrides trait definition",
+      "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+    ]
+  },
+  "objectUsed": {
+    "fieldsComposed": 36,
+    "name": "Subscription",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Cancellable",
+      "lifecycle/Timestampable",
+      "financial/Billable",
+      "lifecycle/Archivable",
+      "viz/MarkArea"
+    ],
+    "version": "2.0.0",
+    "viewExtensionsApplied": {
+      "card": 4,
+      "detail": 7,
+      "form": 4,
+      "list": 4,
+      "timeline": 5
+    }
+  },
+  "schema": {
+    "objectSchema": {
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "amount": {
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "required": true,
+        "semanticType": "billing.plan.amount",
+        "type": "integer"
+      },
+      "archive_metadata": {
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "required": false,
+        "semanticType": "status.archive.compliance",
+        "type": "object"
+      },
+      "archive_reason": {
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "required": false,
+        "semanticType": "status.archive.reason",
+        "type": "string"
+      },
+      "archived_at": {
+        "description": "Timestamp for when the entity entered the archived state.",
+        "required": false,
+        "semanticType": "status.archive.timestamp",
+        "type": "datetime?"
+      },
+      "archived_by": {
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "required": false,
+        "semanticType": "status.archive.actor",
+        "type": "string"
+      },
+      "billing_interval": {
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "required": false,
+        "semanticType": "billing.subscription.interval",
+        "type": "string"
+      },
+      "cancel_at_period_end": {
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "required": true,
+        "semanticType": "billing.subscription.cancel_at_period_end",
+        "type": "boolean"
+      },
+      "cancellation_reason": {
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_reason",
+        "type": "string"
+      },
+      "cancellation_reason_code": {
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "required": false,
+        "semanticType": "status.cancel.reason_code",
+        "type": "string"
+      },
+      "cancellation_requested_at": {
+        "description": "Timestamp when cancellation was initiated.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_requested_at",
+        "type": "datetime"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "currency": {
+        "description": "ISO 4217 currency code used for billing.",
+        "required": true,
+        "semanticType": "billing.plan.currency",
+        "type": "string"
+      },
+      "current_period_end": {
+        "description": "End timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_end",
+        "type": "datetime"
+      },
+      "current_period_progress": {
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "required": false,
+        "semanticType": "billing.subscription.current_period_progress",
+        "type": "number"
+      },
+      "current_period_start": {
+        "description": "Start timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_start",
+        "type": "datetime"
+      },
+      "customer_email": {
+        "description": "Billing contact email address.",
+        "required": false,
+        "semanticType": "customer.account.email",
+        "type": "email"
+      },
+      "customer_name": {
+        "description": "Customer or account name associated with the subscription.",
+        "required": false,
+        "semanticType": "customer.account.name",
+        "type": "string"
+      },
+      "is_archived": {
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "required": true,
+        "semanticType": "status.archive.state",
+        "type": "boolean"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "last_payment_at": {
+        "description": "Timestamp of the most recent successful payment.",
+        "required": false,
+        "semanticType": "billing.subscription.last_payment_at",
+        "type": "datetime"
+      },
+      "next_payment_due_at": {
+        "description": "Timestamp when the next payment attempt should occur.",
+        "required": false,
+        "semanticType": "billing.subscription.next_payment_due_at",
+        "type": "datetime"
+      },
+      "payment_method_type": {
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_method",
+        "type": "string"
+      },
+      "payment_status": {
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_status",
+        "type": "string"
+      },
+      "plan_code": {
+        "description": "Internal plan code or price identifier.",
+        "required": false,
+        "semanticType": "billing.plan.code",
+        "type": "string"
+      },
+      "plan_interval": {
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "required": false,
+        "semanticType": "billing.plan.interval",
+        "type": "string"
+      },
+      "plan_name": {
+        "description": "Human-readable plan label shown in headers.",
+        "required": true,
+        "semanticType": "billing.plan.name",
+        "type": "string"
+      },
+      "proration_amount": {
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration",
+        "type": "integer"
+      },
+      "proration_date": {
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration_timestamp",
+        "type": "integer"
+      },
+      "restoration_metadata": {
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "required": false,
+        "semanticType": "status.archive.restoration",
+        "type": "object"
+      },
+      "restored_at": {
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "required": false,
+        "semanticType": "status.archive.restore_timestamp",
+        "type": "datetime?"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "required": true,
+        "semanticType": "billing.subscription.status",
+        "type": "string"
+      },
+      "subscription_id": {
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "required": true,
+        "semanticType": "billing.subscription.id",
+        "type": "string"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      }
+    },
+    "screens": [
+      {
+        "bindings": {
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange",
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "screen-list-9-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "screen-list-9-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "screen-list-9-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "collectionControl": "search",
+                    "component": "SearchInput",
+                    "id": "slot-search-1",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "clearable": true,
+                      "label": "Search",
+                      "placeholder": "Search records"
+                    }
+                  },
+                  {
+                    "collectionControl": "filter",
+                    "component": "Select",
+                    "id": "slot-filters-2",
+                    "meta": {
+                      "confidence": 0.67,
+                      "confidenceLevel": "low",
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "label": "All states",
+                          "value": ""
+                        },
+                        {
+                          "label": "future",
+                          "value": "future"
+                        },
+                        {
+                          "label": "trialing",
+                          "value": "trialing"
+                        },
+                        {
+                          "label": "active",
+                          "value": "active"
+                        },
+                        {
+                          "label": "paused",
+                          "value": "paused"
+                        },
+                        {
+                          "label": "pending cancellation",
+                          "value": "pending_cancellation"
+                        },
+                        {
+                          "label": "past due",
+                          "value": "past_due"
+                        },
+                        {
+                          "label": "unpaid",
+                          "value": "unpaid"
+                        },
+                        {
+                          "label": "terminated",
+                          "value": "terminated"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "collectionControl": "sort",
+                    "component": "Select",
+                    "id": "list-toolbar-4-sort",
+                    "props": {
+                      "field": "plan_name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "label": "Name A–Z",
+                          "value": "asc"
+                        },
+                        {
+                          "label": "Name Z–A",
+                          "value": "desc"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-toolbar-4",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "component": "Text",
+                                "id": "list-items-5-title",
+                                "props": {
+                                  "field": "plan_name"
+                                }
+                              },
+                              {
+                                "component": "StatusBadge",
+                                "id": "ve-items-10",
+                                "props": {
+                                  "statusField": "status",
+                                  "tone": "lifecycle"
+                                }
+                              },
+                              {
+                                "component": "RelativeTimestamp",
+                                "id": "ve-items-11",
+                                "props": {
+                                  "fallbackField": "created_at",
+                                  "field": "updated_at",
+                                  "timezoneParameter": "timezone"
+                                }
+                              },
+                              {
+                                "component": "BillingSummaryBadge",
+                                "id": "slot-toolbar-actions-3",
+                                "meta": {
+                                  "intent": "slot:toolbar-actions",
+                                  "label": "toolbar-actions"
+                                },
+                                "props": {
+                                  "amountField": "amount",
+                                  "currencyField": "currency",
+                                  "intervalField": "billing_interval",
+                                  "minorUnits": 100,
+                                  "minorUnitsParameter": "minorUnits"
+                                }
+                              }
+                            ],
+                            "collectionControl": "open",
+                            "component": "Button",
+                            "id": "list-items-5-row",
+                            "layout": {
+                              "gapToken": "cluster-default",
+                              "type": "inline"
+                            },
+                            "props": {
+                              "field": "subscription_id"
+                            }
+                          }
+                        ],
+                        "component": "ArchivedRowOverlay",
+                        "id": "ve-items-13",
+                        "props": {
+                          "archivedField": "is_archived",
+                          "labelField": "plan_name",
+                          "separateTab": true,
+                          "showBadge": true,
+                          "style": "grayed",
+                          "tabLabel": "Archived"
+                        }
+                      },
+                      {
+                        "collectionControl": "empty",
+                        "component": "Banner",
+                        "id": "list-items-5-empty",
+                        "props": {
+                          "message": "No records found."
+                        }
+                      }
+                    ],
+                    "collection": {
+                      "keyField": "subscription_id",
+                      "labelField": "plan_name",
+                      "source": "rows"
+                    },
+                    "component": "Stack",
+                    "id": "list-items-5",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  }
+                ],
+                "collectionControl": "archive",
+                "component": "Tabs",
+                "id": "list-items-5-archive-tabs",
+                "props": {
+                  "ariaLabel": "Archive views",
+                  "items": [
+                    {
+                      "id": "active",
+                      "label": "Active",
+                      "panel": ""
+                    },
+                    {
+                      "id": "archived",
+                      "label": "Archived",
+                      "panel": ""
+                    }
+                  ]
+                }
+              },
+              {
+                "children": [
+                  {
+                    "collectionControl": "page",
+                    "component": "PaginationBar",
+                    "id": "slot-pagination-8",
+                    "meta": {
+                      "confidence": 0.77,
+                      "confidenceLevel": "low",
+                      "intent": "slot:pagination",
+                      "label": "pagination"
+                    },
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-pagination-7",
+                "layout": {
+                  "align": "center",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "screen-list-9-success",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "screen-list-9",
+        "layout": {
+          "gapToken": "cluster-default",
+          "type": "stack"
+        }
+      }
+    ],
+    "version": "2026.02"
+  },
+  "schemaRef": "compose-ac8b73e7",
+  "schemaRefCreatedAt": "2026-09-12T22:29:13.067Z",
+  "schemaRefExpiresAt": "2026-09-12T22:59:13.067Z",
+  "selections": [
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StatusBadge",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "RelativeTimestamp",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "ArchivedRowOverlay",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge was selected for slot \"items\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "data-list",
+      "selectedComponent": "StatusBadge",
+      "slotName": "items"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "BillingSummaryBadge",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "BillingSummaryBadge was selected for slot \"toolbar-actions\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "action-button",
+      "selectedComponent": "BillingSummaryBadge",
+      "slotName": "toolbar-actions"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "SearchInput",
+          "reason": "preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias"
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"search-input\" (rank 2); 1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"; position affinity: Input fits well in header"
+        },
+        {
+          "confidence": 0.47,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in header"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias. Confidence is high (1.00).",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "slotName": "search"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar"
+        },
+        {
+          "confidence": 0.52,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "StatusBadge",
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar"
+        }
+      ],
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "slotName": "filters"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer"
+        },
+        {
+          "confidence": 0.75,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer"
+        },
+        {
+          "confidence": 0.65,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)"
+        }
+      ],
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "slotName": "pagination"
+    }
+  ],
+  "status": "ok",
+  "validation": {
+    "errors": [],
+    "status": "ok",
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "hint": "Consider using stable objects for production compositions.",
+      "message": "Object 'Subscription' has maturity 'beta' — composed output may change."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"status\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_reason\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"amount\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"currency\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"billing_interval\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_start\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_progress\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_payment_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+    }
+  ]
+}
