@@ -113,3 +113,28 @@ it.each(['Project', 'Document', 'Collection', 'Report', 'Evidence'])('%s workflo
     expect(compilation.status, compilation.stdout + compilation.stderr).toBe(0);
   }
 }, 90_000);
+
+it.each([
+  { object: 'Evidence', field: 'disposition', value: 'contradicting', expected: 3 },
+  { object: 'Collection', field: 'owner_type', value: 'user', expected: 10 },
+])('$object filters the declared classification field without inventing lifecycle state', async ({ object, field, value, expected }) => {
+  const { schema } = await compose({ object, context: 'workflow' });
+  const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter')!;
+  filter.props = { ...filter.props, field };
+  const generated = await generate({ schema, framework: 'react', profile: 'build' });
+  expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'research-filter-store-'));
+  try {
+    for (const file of generated.artifact!.files.filter(file => /^src\/(store|sample-data|chart-assets)\.ts$/.test(file.path))) {
+      fs.writeFileSync(path.join(directory, path.basename(file.path, '.ts') + '.js'), ts.transpileModule(file.contents, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
+    }
+    fs.mkdirSync(path.join(directory, 'node_modules/@oods'), { recursive: true });
+    fs.symlinkSync(path.resolve(import.meta.dirname, '../../../component-contracts'), path.join(directory, 'node_modules/@oods/component-contracts'), 'junction');
+    const { createStore } = createRequire(path.join(directory, 'entry.cjs'))('./store.js');
+    const store = createStore();
+    const result = store.list({ status: value });
+    expect(result.total).toBe(expected);
+    expect(result.records.every((row: Record<string, unknown>) => row[field] === value)).toBe(true);
+    expect(store.list({ status: '' }).total).toBe(10);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});

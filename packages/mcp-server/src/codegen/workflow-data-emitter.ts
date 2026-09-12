@@ -105,6 +105,8 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
   const records = workflowSampleRecords(schema);
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
+  const declaredFilter = nodes(schema.screens).find(node => node.collectionControl === 'filter')?.props?.field;
+  const filterField = typeof declaredFilter === 'string' && Object.hasOwn(fields, declaredFilter) ? declaredFilter : 'status';
   const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
   const timelineNodes = nodes(timeline ? [timeline] : []);
   const eventCollection = timelineNodes.find(node => node.collection?.source === 'events')?.collection;
@@ -199,7 +201,7 @@ export function createStore(options: StoreOptions = {}) {
       const filtered = records.filter((record) => {
         const values = record as Record<string, unknown>;
         return Boolean(values.is_archived) === (query.archived ?? false)
-          && (!query.status || values.status === query.status)
+          && (!query.status || values${filterField === 'status' ? '.status' : `[${JSON.stringify(filterField)}]`} === query.status)
           && (!search || Object.values(record).some((value) => String(value).toLowerCase().includes(search)));
       });
       const sort = query.sort ?? titleField;

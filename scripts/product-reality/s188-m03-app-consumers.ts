@@ -318,17 +318,18 @@ export async function observeCollectionControls(page: Page, url: string, object 
   const rows: Row[] = [];
   const records = page.locator('[data-oods-collection="rows"] [data-record-id]');
   const total = await records.count();
-  const statusControl = page.getByRole('combobox', { name: 'Status', exact: true });
+  const filter = schema ? schemaNodes(schema).find(node => node.collectionControl === 'filter') : undefined;
+  const filterField = String(filter?.props?.field ?? 'status');
+  const statusControl = page.getByRole('combobox', { name: String(filter?.props?.label ?? 'Status'), exact: true });
   const options = await statusControl.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value));
   const selectedStatus = options.includes('active') ? 'active' : options.find(value => value !== '');
   if (schema) {
-    const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter');
     const declaredOptions = (filter?.props?.options as Array<{ value: string }>).map(option => option.value);
     const states = schema.workflow!.data.lifecycleStates;
-    const expectedOptions = declaredOptions.length === 1 && states.length ? ['', ...states] : declaredOptions;
+    const expectedOptions = schema.objectSchema!.status && declaredOptions.length === 1 && states.length ? ['', ...states] : declaredOptions;
     assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum or workflow lifecycle states');
   } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
-  const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record.status === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
+  const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record[filterField] === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
     : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
   await observe(rows, 'type-through-empty-results', async () => {
@@ -342,10 +343,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
     return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
   });
   if (selectedStatus) await observe(rows, 'filter-composed-rows', async () => {
-    await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption(selectedStatus);
+    await statusControl.selectOption(selectedStatus);
     assert.equal(await records.count(), expectedIds.length);
     assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), expectedIds);
-    await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('');
+    await statusControl.selectOption('');
     assert.equal(await records.count(), total);
     return { selectedStatus, selectedCount: expectedIds.length, expectedIds, restoredCount: total };
   });

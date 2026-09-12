@@ -61,7 +61,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
-        filter.props = { label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
+        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
       }
       if (sortIndicator) {
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };
