@@ -39,10 +39,10 @@ Implementation is frozen at `6e66d3f7` in draft PR #103. The hosted
 `portable-runtime` job passed, including the explicit fixture proof (one test,
 zero skips). Run `34674083968`, job `103500676755`, and its raw log are retained
 under `ci/`; the remaining workflow jobs were still running at this checkpoint.
-The three notices in `notices-prepared.json` are byte-identical
-to the frozen plan and unsent pending explicit authorization. This receipt
-does not mark the mission complete or certify Sprint 196;
-`builderSelfCertified:false`.
+The user authorized the three notices on 2026-09-12. Exactly three were sent;
+`notices-delivered.json` retains request hashes, message IDs and server readbacks
+whose bodies match the frozen plan byte-for-byte. All mission criteria passed.
+Sprint 196 remains uncertified; `builderSelfCertified:false`.
 
 The CI discovery premise in planning was too strong: existing root and package
 globs already include `portable-fixtures.s194.spec.ts`. The new explicit step
