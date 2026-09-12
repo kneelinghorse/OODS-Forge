@@ -1,0 +1,90 @@
+{
+  "mission": "s196-m04",
+  "scope": "component-docs",
+  "generatedPages": 109,
+  "generatedIndex": 1,
+  "measured": {
+    "ledgerIds": 109,
+    "catalogIds": 109,
+    "exportedContractIds": 109,
+    "exportedScenarios": 109,
+    "uniqueEvidenceReferences": 1464
+  },
+  "stalePremise": "The memo counted72 shared scenarios; imported public sharedScenarios covers109 governed IDs with109 scenarios.",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run --project core tests/verification/component-docs.contract.test.ts --reporter=verbose",
+      "exitCode": 0,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused-tests.log"
+    },
+    {
+      "command": "pnpm run docs:components -- --check",
+      "exitCode": 0,
+      "log": "generator-check.log"
+    },
+    {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --skipLibCheck --resolveJsonModule --esModuleInterop --types node scripts/docs/generate-component-docs.ts tests/verification/component-docs.contract.test.ts",
+      "exitCode": 0,
+      "log": "targeted-types.log"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "sources": [
+    {
+      "path": "packages/component-contracts/registry/component-capability-ledger.v1.json",
+      "sha256": "ac5ba7eb8c45c19f515af286a3f69457d260bd6255209193647e67dafa470072"
+    },
+    {
+      "path": "packages/component-contracts/src/contracts.ts",
+      "sha256": "8585814256b0c6ee3b25df92ee0198129769dcab8ebaa28aa3ffac32480f84cc"
+    },
+    {
+      "path": "packages/component-contracts/src/scenarios.ts",
+      "sha256": "8293f39ca171b19bdac502c9b71698a5c46cd677cfc520c9d863d52b4fdff49f"
+    },
+    {
+      "path": "artifacts/structured-data/manifest.json",
+      "sha256": "993644cc01a5f150ea42d2882a953577a0066a6cecb3f74032e1877d6e4e620d"
+    },
+    {
+      "path": "artifacts/structured-data/oods-components-2026-09-11-s193-m07.json",
+      "sha256": "20f2c2e732f77023174fcb209b11fdfb335f104cebbc7b6da3b59f48b9b785da"
+    }
+  ],
+  "migration": "legacy-migration.json",
+  "correctionsDuringVerification": [
+    "Nullable catalog trait position/priority render as Not recorded.",
+    "Corrected archived spatial guide relative path; all generated, historical and changed active reference links now resolve.",
+    "pnpm9 forwards a standalone -- separator; parser ignores it. The CLI regression invokes the actual docs:components package script for generation, clean check and stale rejection."
+  ],
+  "implementation": [
+    {
+      "path": "scripts/docs/generate-component-docs.ts",
+      "sha256": "efebf996f575168d0faf9203f46421a8f8a55bf2e0f18f74cf55d9882a3663d1"
+    },
+    {
+      "path": "tests/verification/component-docs.contract.test.ts",
+      "sha256": "6a83d43556c532569e8efe00732b0d9ad4702106d9038694afa2e7f48fe698a1"
+    }
+  ],
+  "logs": [
+    {
+      "path": "focused-tests.log",
+      "sha256": "c6ddcea8480a7d9b10ab0e614bd1180f9efcba5e1d85ff3d5abb87daf01cb1ae"
+    },
+    {
+      "path": "generator-check.log",
+      "sha256": "e7f84aa3fe0c72d6ac777f033c743442b81526b9d8ab696108e6d212206211fc"
+    },
+    {
+      "path": "targeted-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -54,7 +54,8 @@ describe('s193 runtime population accountability', () => {
     const ledger = population(); ledger.packCount = 2; ledger.browserImage = 'host-chromium';
     expect(validateRuntimeLedger(ledger)).toEqual(expect.arrayContaining(['exactly one package pack sweep is required', 'the pinned Linux browser image is required']));
   });
-  it('the canonical current sweep has all passing or explicitly unavailable cells with retained receipt provenance', () => {
+  // emitterBite selects this phrase; keep it stable so its real red report runs.
+  it('the retained current sweep has all passing or explicitly unavailable cells with retained receipt provenance', () => {
     // s196 separates the current canonical ledger from its sweep's artifact directory.
     // A CI-scoped report still resolves local evidence beside its supplied report file.
     const output = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');

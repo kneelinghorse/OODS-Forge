@@ -177,7 +177,7 @@ import { getStatusIntent } from '@oods/react-core';
 <Badge intent={getStatusIntent(status)} />
 ```
 
-See [Statusables Documentation](../components/statusables.md) for full API.
+See [Statusables Documentation](../history/components/statusables.md) for full API.
 
 ### 2.3 Layer in Contexts
 
@@ -773,7 +773,7 @@ Track these KPIs to measure adoption progress:
 - [Multi-Brand Theming](../theming/multi-brand.md)
 - [Compliance Core](../policies/compliance-core.md)
 - [Tenancy Guide](../tenancy/README.md)
-- [Component Documentation](../components/)
+- [Component Documentation](../components/README.md)
 - [Authoring Objects](../authoring-objects.md)
 - [Visual Regression Playbook](../testing/visual-regression.md)
 

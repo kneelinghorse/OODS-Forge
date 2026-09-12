@@ -74,39 +74,56 @@ Full schema and field reference: `docs/mcp/Tool-Specs.md` → "Project-level def
 
 ## Cross-tool semantics
 
+<!-- forge-claim:schema-ttl -->
 - `schemaRef` TTL: refs returned by `design.compose`, `design.preview`, `pipeline`, and `schema.load` last 30 minutes. Persist them with `schema.save` when the workflow spans sessions or multiple review loops.
+<!-- /forge-claim:schema-ttl -->
 - `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. For `repl` (`action: render`), HTML/fragments are returned only when `apply: true`.
 - `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl` (`action: render`) keeps full token CSS by default; opt into compact behavior with `output.compact: true`.
 - Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`.
 - Override escape hatch: when `design.compose` returns a low-confidence selection or `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object":"Subscription","context":"detail","preferences":{"componentOverrides":{"tab-0":"Card"}}}`.
 
+<!-- forge-claim:tool-surface -->
 ## MCP tool surface (24 tools)
 
-The counts and tool names below are derived from
-`packages/mcp-server/src/tools/registry.json`; use that file as the generation
-source whenever this hand-authored inventory is refreshed.
+Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and the tool capability ledger by `pnpm docs:claims`. Proof tiers describe source evidence location; they do not certify execution.
 
-**Auto-registered (19 tools)** — available by default. The four action families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
+**Auto-registered (19 tools)** — available by default. The four action families (`map`, `schema`, `object`, `repl`) use the top-level `action` parameter.
 
-| Group | Tools |
-|------|-------|
-| Core design/runtime | `tokens.build`, `structuredData.fetch`, `repl` (`render`/`validate`), `brand.apply`, `brand.intake`, `catalog.list`, `health` |
-| Composition + generation | `design.compose`, `design.preview`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview` |
-| Mapping + schema persistence | `map` (`create`/`list`/`resolve`/`update`/`delete`), `schema` (`save`/`load`/`list`/`delete`) |
-| Registry inspection | `object` (`list`/`show`), `registry.snapshot` |
-| Certification | `artifact.certify` |
+| Tool / actions | Source evidence tier |
+| --- | --- |
+| `tokens.build` | product-reality |
+| `structuredData.fetch` | product-reality |
+| `brand.apply` | product-reality |
+| `brand.intake` | product-reality |
+| `catalog.list` | product-reality |
+| `code.generate` | product-reality |
+| `design.compose` | product-reality |
+| `design.preview` | product-reality |
+| `pipeline` | product-reality |
+| `health` | product-reality |
+| `registry.snapshot` | product-reality |
+| `viz.render` | product-reality |
+| `dashboard.render` | product-reality |
+| `artifact.certify` | product-reality |
+| `fidelity.preview` | product-reality |
+| `map` (`create`/`list`/`resolve`/`update`/`delete`/`apply`) | product-reality |
+| `schema` (`save`/`load`/`list`/`delete`) | product-reality |
+| `object` (`list`/`show`) | product-reality |
+| `repl` (`render`/`validate`) | product-reality |
 
 **On-demand (5 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
 
-| Tool | Purpose |
-|------|---------|
-| `a11y.scan` | Standalone WCAG contrast scan against design tokens |
-| `diag.snapshot` | Diagnostics artifact bundle |
-| `billing.reviewKit` | Billing provider comparison kit |
-| `billing.switchFixtures` | Switch billing provider fixtures |
-| `release.tag` | Git tag creation (maintainer only) |
+| Tool | Source evidence tier |
+| --- | --- |
+| `diag.snapshot` | contract |
+| `billing.reviewKit` | contract |
+| `billing.switchFixtures` | contract |
+| `a11y.scan` | contract |
+| `release.tag` | contract |
 
-Full contracts: `docs/mcp/Tool-Specs.md` and `docs/api/README.md`
+Full contracts: `docs/mcp/Tool-Specs.md` and `docs/api/README.md`.
+
+<!-- /forge-claim:tool-surface -->
 
 ## Repo layout (agent-first)
 

@@ -13,7 +13,7 @@ Welcome to the entry point for OODS Foundry’s visualization system. Sprint 21
 | Topic | Docs |
 | --- | --- |
 | Specification & schema | [`normalized-viz-spec.md`](./normalized-viz-spec.md), `schemas/viz/normalized-viz-spec.schema.json`, `generated/types/viz/normalized-viz-spec.ts` |
-| Components & layouts | `docs/components/*` (Bar/Line/Scatter/Area/Heatmap), [`layout-adapter-guide.md`](./layout-adapter-guide.md) |
+| Components & layouts | [Historical component guides](../history/components/) (Bar/Line/Scatter/Area/Heatmap); [governed component contracts](../components/README.md), [`layout-adapter-guide.md`](./layout-adapter-guide.md) |
 | Patterns & decision support | [`pattern-library.md`](./pattern-library.md), [`chart-selection-guide.md`](./chart-selection-guide.md), [`cli-guide.md`](./cli-guide.md) |
 | Performance & renderer selection | [`performance-guide.md`](./performance-guide.md), [`renderer-selection-guide.md`](./renderer-selection-guide.md), `tools/perf/viz-budget.json` |
 | Accessibility & quality guardrails | [`anti-patterns.md`](./anti-patterns.md), [`responsive-strategies.md`](./responsive-strategies.md), tests under `tests/components/viz/**` |
