@@ -1,0 +1,2933 @@
+{
+  "listed": {
+    "objects": [
+      {
+        "name": "Article",
+        "domain": "content.publication",
+        "version": "1.0.0",
+        "maturity": null,
+        "description": "Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "core/Classifiable"
+        ],
+        "fieldCount": 10,
+        "tags": [
+          "content",
+          "article",
+          "hybrid",
+          "classifiable"
+        ]
+      },
+      {
+        "name": "Invoice",
+        "domain": "saas.billing",
+        "version": "1.0.0",
+        "maturity": "beta",
+        "description": "Canonical SaaS invoice object normalizing payment terms, status, and refund posture.",
+        "traits": [
+          "SaaSBillingPayable",
+          "SaaSBillingRefundable",
+          "lifecycle/Timestampable"
+        ],
+        "fieldCount": 14,
+        "tags": [
+          "billing",
+          "invoice",
+          "finance"
+        ]
+      },
+      {
+        "name": "Media",
+        "domain": "content.asset",
+        "version": "1.0.0",
+        "maturity": null,
+        "description": "Canonical digital asset metadata powering media library, DAM, and CMS integrations.",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "core/Classifiable"
+        ],
+        "fieldCount": 12,
+        "tags": [
+          "content",
+          "media",
+          "asset",
+          "classifiable"
+        ]
+      },
+      {
+        "name": "Organization",
+        "domain": "core.account",
+        "version": "1.2.0",
+        "maturity": null,
+        "description": "Canonical account record for tenant and workspace governance across the platform.",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "structural/Ownerable",
+          "lifecycle/Timestampable",
+          "behavioral/Taggable",
+          "core/Addressable",
+          "core/Preferenceable",
+          "core/Authable",
+          "core/Communicable"
+        ],
+        "fieldCount": 8,
+        "tags": [
+          "universal",
+          "organization",
+          "tenant"
+        ]
+      },
+      {
+        "name": "Plan",
+        "domain": "saas.billing",
+        "version": "1.0.0",
+        "maturity": "beta",
+        "description": "Normalized plan definition capturing pricing, packaging, and entitlement metadata.",
+        "traits": [
+          "SaaSBillingBillable",
+          "SaaSBillingMetered",
+          "structural/Ownerable"
+        ],
+        "fieldCount": 8,
+        "tags": [
+          "billing",
+          "plan",
+          "packaging"
+        ]
+      },
+      {
+        "name": "Product",
+        "domain": "core.catalog",
+        "version": "1.1.0",
+        "maturity": null,
+        "description": "Canonical catalog entry combining pricing, lifecycle, and merchandising metadata.",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "financial/Priceable",
+          "core/Classifiable",
+          "behavioral/Searchable",
+          "behavioral/Filterable",
+          "behavioral/Pageable"
+        ],
+        "fieldCount": 7,
+        "tags": [
+          "universal",
+          "product",
+          "commerce",
+          "taxonomy"
+        ]
+      },
+      {
+        "name": "Relationship",
+        "domain": "core.graph",
+        "version": "1.0.0",
+        "maturity": null,
+        "description": "Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "structural/Ownerable",
+          "behavioral/Taggable"
+        ],
+        "fieldCount": 8,
+        "tags": [
+          "universal",
+          "relationship",
+          "graph"
+        ]
+      },
+      {
+        "name": "Subscription",
+        "domain": "core.billing",
+        "version": "2.0.0",
+        "maturity": "beta",
+        "description": "Canonical subscription record composing lifecycle, billing, and cancellation semantics.",
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Cancellable",
+          "lifecycle/Timestampable",
+          "financial/Billable",
+          "lifecycle/Archivable",
+          "viz/MarkArea"
+        ],
+        "fieldCount": 18,
+        "tags": [
+          "billing",
+          "lifecycle",
+          "monetization"
+        ]
+      },
+      {
+        "name": "Transaction",
+        "domain": "core.commerce",
+        "version": "1.0.0",
+        "maturity": null,
+        "description": "Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.",
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "financial/Priceable",
+          "lifecycle/Cancellable",
+          "lifecycle/Archivable"
+        ],
+        "fieldCount": 8,
+        "tags": [
+          "universal",
+          "transaction",
+          "commerce"
+        ]
+      },
+      {
+        "name": "Usage",
+        "domain": "saas.billing",
+        "version": "1.0.0",
+        "maturity": "beta",
+        "description": "Metered usage snapshot for consumption based billing supporting trend analysis and overage forecasting.",
+        "traits": [
+          "SaaSBillingMetered",
+          "lifecycle/Timestampable"
+        ],
+        "fieldCount": 9,
+        "tags": [
+          "billing",
+          "usage",
+          "analytics"
+        ]
+      },
+      {
+        "name": "User",
+        "domain": "core.identity",
+        "version": "1.4.0",
+        "maturity": "stable",
+        "description": "Canonical identity record representing a platform user across lifecycle contexts.",
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "behavioral/Taggable",
+          "core/Addressable",
+          "core/Preferenceable",
+          "core/Authable",
+          "core/Communicable"
+        ],
+        "fieldCount": 7,
+        "tags": [
+          "universal",
+          "identity",
+          "core"
+        ]
+      }
+    ],
+    "totalCount": 11,
+    "filters": {
+      "domain": null,
+      "maturity": null,
+      "trait": null
+    }
+  },
+  "filtered": {
+    "objects": [
+      {
+        "name": "Subscription",
+        "domain": "core.billing",
+        "version": "2.0.0",
+        "maturity": "beta",
+        "description": "Canonical subscription record composing lifecycle, billing, and cancellation semantics.",
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Cancellable",
+          "lifecycle/Timestampable",
+          "financial/Billable",
+          "lifecycle/Archivable",
+          "viz/MarkArea"
+        ],
+        "fieldCount": 18,
+        "tags": [
+          "billing",
+          "lifecycle",
+          "monetization"
+        ]
+      }
+    ],
+    "totalCount": 1,
+    "filters": {
+      "domain": "core.billing",
+      "maturity": null,
+      "trait": null
+    }
+  },
+  "details": [
+    {
+      "name": "Article",
+      "traits": [
+        {
+          "name": "content/Labelled",
+          "alias": "ArticleHeadline",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Stateful",
+          "alias": "ArticleWorkflow",
+          "parameters": {
+            "states": [
+              "draft",
+              "in_review",
+              "scheduled",
+              "published",
+              "archived"
+            ],
+            "initialState": "draft"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "ArticleTimestamps",
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "scheduled",
+              "published",
+              "updated",
+              "archived"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "core/Classifiable",
+          "alias": "ArticleClassification",
+          "parameters": {
+            "classification_mode": "hybrid",
+            "hierarchy_storage_model": "materialized_path",
+            "tag_policy": "moderated",
+            "max_tags": 24,
+            "require_primary_category": true
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "LabelCell",
+            "priority": 100,
+            "props": {
+              "field": "label",
+              "descriptionField": "description",
+              "truncate": true,
+              "maxLengthParameter": "maxLabelLength"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "ClassificationBadge",
+            "position": "after",
+            "props": {
+              "mode": "{classification_mode}",
+              "primaryCategoryField": "primary_category_id",
+              "tagPreviewField": "tag_preview"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "DetailHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "subtitleField": "description",
+              "headingLevel": 1
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "ClassificationPanel",
+            "position": "sidebar",
+            "priority": 40,
+            "props": {
+              "categoriesField": "categories",
+              "tagsField": "tags",
+              "metadataField": "classification_metadata",
+              "modeParameter": "classification_mode"
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "FormLabelGroup",
+            "position": "before",
+            "priority": 100,
+            "props": {
+              "labelField": "label",
+              "descriptionField": "description",
+              "placeholderField": "placeholder",
+              "maxLabelLengthParameter": "maxLabelLength",
+              "maxDescriptionLengthParameter": "maxDescriptionLength",
+              "requireDescriptionParameter": "requireDescription"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "ClassificationEditor",
+            "position": "main",
+            "props": {
+              "modeParameter": "classification_mode",
+              "tagPolicyParameter": "tag_policy",
+              "maxTagsParameter": "max_tags"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "CardHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "supportingField": "description"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "TimelineEntryLabel",
+            "props": {
+              "field": "label",
+              "compact": true
+            }
+          },
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "inline": [
+          {
+            "component": "InlineLabel",
+            "props": {
+              "field": "label",
+              "maxLength": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Invoice",
+      "traits": [
+        {
+          "name": "SaaSBillingPayable",
+          "alias": "InvoiceTerms",
+          "parameters": null
+        },
+        {
+          "name": "SaaSBillingRefundable",
+          "alias": "CreditWindow",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "AuditTrail",
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "posted",
+              "payment_initiated",
+              "payment_cleared",
+              "payment_failed",
+              "voided",
+              "written_off"
+            ],
+            "timezone": "UTC",
+            "allowNullUpdatedAt": true
+          }
+        }
+      ],
+      "viewExtensions": {
+        "detail": [
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "list": [
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Media",
+      "traits": [
+        {
+          "name": "content/Labelled",
+          "alias": "MediaLabel",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Stateful",
+          "alias": "MediaLifecycle",
+          "parameters": {
+            "states": [
+              "ingested",
+              "processing",
+              "available",
+              "deprecated"
+            ],
+            "initialState": "ingested"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "MediaTimestamps",
+          "parameters": {
+            "recordedEvents": [
+              "ingested",
+              "transcoded",
+              "published",
+              "archived"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "core/Classifiable",
+          "alias": "MediaClassification",
+          "parameters": {
+            "classification_mode": "tag",
+            "tag_policy": "open",
+            "max_tags": 32
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "LabelCell",
+            "priority": 100,
+            "props": {
+              "field": "label",
+              "descriptionField": "description",
+              "truncate": true,
+              "maxLengthParameter": "maxLabelLength"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "ClassificationBadge",
+            "position": "after",
+            "props": {
+              "mode": "{classification_mode}",
+              "primaryCategoryField": "primary_category_id",
+              "tagPreviewField": "tag_preview"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "DetailHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "subtitleField": "description",
+              "headingLevel": 1
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "ClassificationPanel",
+            "position": "sidebar",
+            "priority": 40,
+            "props": {
+              "categoriesField": "categories",
+              "tagsField": "tags",
+              "metadataField": "classification_metadata",
+              "modeParameter": "classification_mode"
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "FormLabelGroup",
+            "position": "before",
+            "priority": 100,
+            "props": {
+              "labelField": "label",
+              "descriptionField": "description",
+              "placeholderField": "placeholder",
+              "maxLabelLengthParameter": "maxLabelLength",
+              "maxDescriptionLengthParameter": "maxDescriptionLength",
+              "requireDescriptionParameter": "requireDescription"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "ClassificationEditor",
+            "position": "main",
+            "props": {
+              "modeParameter": "classification_mode",
+              "tagPolicyParameter": "tag_policy",
+              "maxTagsParameter": "max_tags"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "CardHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "supportingField": "description"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "TimelineEntryLabel",
+            "props": {
+              "field": "label",
+              "compact": true
+            }
+          },
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "inline": [
+          {
+            "component": "InlineLabel",
+            "props": {
+              "field": "label",
+              "maxLength": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Organization",
+      "traits": [
+        {
+          "name": "content/Labelled",
+          "alias": "OrganizationLabel",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Stateful",
+          "alias": null,
+          "parameters": {
+            "states": [
+              "prospect",
+              "onboarding",
+              "active",
+              "churned"
+            ],
+            "initialState": "prospect"
+          }
+        },
+        {
+          "name": "structural/Ownerable",
+          "alias": null,
+          "parameters": {
+            "ownerTypes": [
+              "parent_organization",
+              "reseller",
+              "platform"
+            ],
+            "primaryOwnerType": "parent_organization",
+            "allowTransfer": true
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": null,
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "plan_upgraded",
+              "plan_downgraded",
+              "ownership_transferred"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "behavioral/Taggable",
+          "alias": null,
+          "parameters": {
+            "maxTags": 16,
+            "allowCustomTags": false,
+            "allowedTags": [
+              "enterprise",
+              "smb",
+              "nonprofit",
+              "startup",
+              "strategic"
+            ],
+            "caseSensitive": false
+          }
+        },
+        {
+          "name": "core/Addressable",
+          "alias": "OrganizationLocations",
+          "parameters": {
+            "roles": [
+              "headquarters",
+              "office",
+              "warehouse",
+              "branch"
+            ],
+            "defaultRole": "headquarters"
+          }
+        },
+        {
+          "name": "core/Preferenceable",
+          "alias": "OrganizationPreferences",
+          "parameters": {
+            "namespaces": [
+              "notifications",
+              "display",
+              "privacy"
+            ],
+            "schemaVersion": "2.0.0",
+            "registryNamespace": "org-preferences"
+          }
+        },
+        {
+          "name": "core/Authable",
+          "alias": "OrganizationAuthz",
+          "parameters": {
+            "hierarchyDepthLimit": 5
+          }
+        },
+        {
+          "name": "core/Communicable",
+          "alias": "OrganizationCommunications",
+          "parameters": null
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "LabelCell",
+            "priority": 100,
+            "props": {
+              "field": "label",
+              "descriptionField": "description",
+              "truncate": true,
+              "maxLengthParameter": "maxLabelLength"
+            }
+          },
+          {
+            "component": "MessageStatusBadge",
+            "position": "before",
+            "priority": 90,
+            "props": {
+              "statusesField": "message_statuses"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "OwnerBadge",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "TagPills",
+            "props": {
+              "field": "tags",
+              "maxVisible": 3,
+              "overflowLabel": "+{{ tag_count }}"
+            }
+          },
+          {
+            "component": "AddressSummaryBadge",
+            "position": "after",
+            "props": {
+              "field": "default_address_role"
+            }
+          },
+          {
+            "component": "PreferenceSummaryBadge",
+            "position": "after",
+            "props": {
+              "namespacesField": "preference_namespaces",
+              "versionField": "preference_version"
+            }
+          },
+          {
+            "component": "RoleBadgeList",
+            "position": "after",
+            "props": {
+              "rolesField": "session_roles",
+              "fallbackRoleParameter": "defaultRoleId"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "DetailHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "subtitleField": "description",
+              "headingLevel": 1
+            }
+          },
+          {
+            "component": "CommunicationDetailPanel",
+            "position": "main",
+            "priority": 80,
+            "props": {
+              "channelsField": "channel_catalog",
+              "templatesField": "template_catalog",
+              "policiesField": "delivery_policies",
+              "conversationsField": "conversations"
+            }
+          },
+          {
+            "component": "MembershipPanel",
+            "position": "main",
+            "priority": 75,
+            "props": {
+              "membershipsField": "membership_records",
+              "hierarchyField": "role_hierarchy_edges",
+              "roleField": "role_catalog",
+              "permissionField": "permission_catalog"
+            }
+          },
+          {
+            "component": "AddressCollectionPanel",
+            "position": "main",
+            "priority": 60,
+            "props": {
+              "field": "addresses",
+              "roleField": "address_roles",
+              "defaultRoleField": "default_address_role",
+              "roleParameter": "roles"
+            }
+          },
+          {
+            "component": "PreferencePanel",
+            "position": "main",
+            "priority": 55,
+            "props": {
+              "preferencesField": "preference_document",
+              "metadataField": "preference_metadata",
+              "namespaceField": "preference_namespaces"
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "OwnershipSummary",
+            "position": "top",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role",
+              "transferredAtField": "ownership_transferred_at",
+              "allowTransferParameter": "allowTransfer"
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "FormLabelGroup",
+            "position": "before",
+            "priority": 100,
+            "props": {
+              "labelField": "label",
+              "descriptionField": "description",
+              "placeholderField": "placeholder",
+              "maxLabelLengthParameter": "maxLabelLength",
+              "maxDescriptionLengthParameter": "maxDescriptionLength",
+              "requireDescriptionParameter": "requireDescription"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "TagInput",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "maxTagsParameter": "maxTags",
+              "allowCustomParameter": "allowCustomTags",
+              "allowListParameter": "allowedTags",
+              "minLengthParameter": "tagMinLength",
+              "maxLengthParameter": "tagMaxLength",
+              "synonymParameter": "synonymResolution"
+            }
+          },
+          {
+            "component": "AddressEditor",
+            "position": "top",
+            "props": {
+              "field": "addresses",
+              "roleParameter": "roles",
+              "allowDynamicParameter": "allowDynamicRoles",
+              "defaultRoleField": "default_address_role"
+            }
+          },
+          {
+            "component": "PreferenceEditor",
+            "position": "main",
+            "props": {
+              "namespacesField": "preference_namespaces",
+              "documentField": "preference_document",
+              "registryNamespaceParameter": "registryNamespace"
+            }
+          },
+          {
+            "component": "RoleAssignmentForm",
+            "position": "main",
+            "props": {
+              "availableRolesField": "role_catalog",
+              "membershipField": "membership_records",
+              "defaultRoleParameter": "defaultRoleId"
+            }
+          },
+          {
+            "component": "TemplatePicker",
+            "position": "main",
+            "props": {
+              "templatesField": "template_catalog",
+              "channelsField": "channel_catalog"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "CardHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "supportingField": "description"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "OwnershipMeta",
+            "position": "after",
+            "props": {
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "after",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "TimelineEntryLabel",
+            "props": {
+              "field": "label",
+              "compact": true
+            }
+          },
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "AddressValidationTimeline",
+            "props": {
+              "field": "addresses"
+            }
+          },
+          {
+            "component": "PreferenceTimeline",
+            "props": {
+              "metadataField": "preference_metadata"
+            }
+          },
+          {
+            "component": "MembershipAuditTimeline",
+            "props": {
+              "field": "membership_records"
+            }
+          },
+          {
+            "component": "MessageEventTimeline",
+            "props": {
+              "messagesField": "messages",
+              "statusesField": "message_statuses"
+            }
+          }
+        ],
+        "inline": [
+          {
+            "component": "InlineLabel",
+            "props": {
+              "field": "label",
+              "maxLength": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Plan",
+      "traits": [
+        {
+          "name": "SaaSBillingBillable",
+          "alias": "Pricing",
+          "parameters": null
+        },
+        {
+          "name": "SaaSBillingMetered",
+          "alias": "IncludedUsage",
+          "parameters": {
+            "unit": "seats",
+            "rolloverStrategy": "none",
+            "sampleWindowDays": 30
+          }
+        },
+        {
+          "name": "structural/Ownerable",
+          "alias": "PlanOwnership",
+          "parameters": {
+            "owners": [
+              "product",
+              "billing"
+            ]
+          }
+        }
+      ],
+      "viewExtensions": {
+        "detail": [
+          {
+            "component": "OwnershipSummary",
+            "position": "top",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role",
+              "transferredAtField": "ownership_transferred_at",
+              "allowTransferParameter": "allowTransfer"
+            }
+          }
+        ],
+        "list": [
+          {
+            "component": "OwnerBadge",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "OwnershipMeta",
+            "position": "after",
+            "props": {
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Product",
+      "traits": [
+        {
+          "name": "content/Labelled",
+          "alias": "ProductLabel",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Stateful",
+          "alias": null,
+          "parameters": {
+            "states": [
+              "draft",
+              "in_review",
+              "active",
+              "retired"
+            ],
+            "initialState": "draft"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": null,
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "spec_updated",
+              "price_changed",
+              "retired"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "financial/Priceable",
+          "alias": null,
+          "parameters": {
+            "supportedCurrencies": [
+              "USD",
+              "EUR",
+              "GBP",
+              "AUD"
+            ],
+            "defaultCurrency": "USD",
+            "pricingModels": [
+              "one_time",
+              "subscription",
+              "usage_based"
+            ],
+            "billingIntervals": [
+              "one_time",
+              "month",
+              "year"
+            ],
+            "taxBehavior": "exclusive"
+          }
+        },
+        {
+          "name": "core/Classifiable",
+          "alias": "ProductClassification",
+          "parameters": {
+            "classification_mode": "taxonomy",
+            "hierarchy_storage_model": "materialized_path",
+            "tag_policy": "locked",
+            "max_tags": 8,
+            "require_primary_category": true
+          }
+        },
+        {
+          "name": "behavioral/Searchable",
+          "alias": null,
+          "parameters": {
+            "placeholder": "Search products...",
+            "debounceMs": 300
+          }
+        },
+        {
+          "name": "behavioral/Filterable",
+          "alias": null,
+          "parameters": {
+            "filterMode": "immediate",
+            "showFilterCount": true
+          }
+        },
+        {
+          "name": "behavioral/Pageable",
+          "alias": null,
+          "parameters": {
+            "defaultPageSize": 25,
+            "pageSizeOptions": [
+              10,
+              25,
+              50,
+              100
+            ]
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "LabelCell",
+            "priority": 100,
+            "props": {
+              "field": "label",
+              "descriptionField": "description",
+              "truncate": true,
+              "maxLengthParameter": "maxLabelLength"
+            }
+          },
+          {
+            "component": "SearchInput",
+            "position": "header",
+            "priority": 10,
+            "props": {
+              "field": "searchQuery",
+              "placeholderParameter": "placeholder",
+              "debounceParameter": "debounceMs",
+              "minQueryLengthParameter": "minQueryLength",
+              "clearableParameter": "clearable"
+            }
+          },
+          {
+            "component": "PaginationBar",
+            "position": "footer",
+            "priority": 10,
+            "props": {
+              "pageField": "page",
+              "pageSizeField": "pageSize",
+              "totalItemsField": "totalItems",
+              "totalPagesField": "totalPages",
+              "pageSizeOptionsParameter": "pageSizeOptions",
+              "showPageSizeSelectorParameter": "showPageSizeSelector",
+              "showGotoPageParameter": "showGotoPage",
+              "showItemRangeParameter": "showItemRange"
+            }
+          },
+          {
+            "component": "FilterPanel",
+            "position": "sidebar",
+            "priority": 8,
+            "props": {
+              "field": "filters",
+              "activeField": "activeFilters",
+              "modeParameter": "filterMode",
+              "maxActiveParameter": "maxActiveFilters",
+              "collapsibleParameter": "collapsible"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "PriceBadge",
+            "props": {
+              "amountField": "unit_amount_cents",
+              "currencyField": "currency"
+            }
+          },
+          {
+            "component": "ClassificationBadge",
+            "position": "after",
+            "props": {
+              "mode": "{classification_mode}",
+              "primaryCategoryField": "primary_category_id",
+              "tagPreviewField": "tag_preview"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "DetailHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "subtitleField": "description",
+              "headingLevel": 1
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "ClassificationPanel",
+            "position": "sidebar",
+            "priority": 40,
+            "props": {
+              "categoriesField": "categories",
+              "tagsField": "tags",
+              "metadataField": "classification_metadata",
+              "modeParameter": "classification_mode"
+            }
+          },
+          {
+            "component": "SearchInput",
+            "position": "header",
+            "priority": 10,
+            "props": {
+              "field": "searchQuery",
+              "placeholderParameter": "placeholder",
+              "clearableParameter": "clearable"
+            }
+          },
+          {
+            "component": "FilterPanel",
+            "position": "sidebar",
+            "priority": 8,
+            "props": {
+              "field": "filters",
+              "activeField": "activeFilters",
+              "modeParameter": "filterMode",
+              "collapsibleParameter": "collapsible"
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "PriceSummary",
+            "position": "top",
+            "props": {
+              "amountField": "unit_amount_cents",
+              "currencyField": "currency",
+              "modelField": "pricing_model",
+              "intervalField": "billing_interval",
+              "taxBehaviorField": "tax_behavior"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "FormLabelGroup",
+            "position": "before",
+            "priority": 100,
+            "props": {
+              "labelField": "label",
+              "descriptionField": "description",
+              "placeholderField": "placeholder",
+              "maxLabelLengthParameter": "maxLabelLength",
+              "maxDescriptionLengthParameter": "maxDescriptionLength",
+              "requireDescriptionParameter": "requireDescription"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "ClassificationEditor",
+            "position": "main",
+            "props": {
+              "modeParameter": "classification_mode",
+              "tagPolicyParameter": "tag_policy",
+              "maxTagsParameter": "max_tags"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "CardHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "supportingField": "description"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "PriceCardMeta",
+            "position": "after",
+            "props": {
+              "modelField": "pricing_model",
+              "intervalField": "billing_interval"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "TimelineEntryLabel",
+            "props": {
+              "field": "label",
+              "compact": true
+            }
+          },
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "inline": [
+          {
+            "component": "InlineLabel",
+            "props": {
+              "field": "label",
+              "maxLength": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Relationship",
+      "traits": [
+        {
+          "name": "content/Labelled",
+          "alias": "RelationshipLabel",
+          "parameters": null
+        },
+        {
+          "name": "lifecycle/Stateful",
+          "alias": null,
+          "parameters": {
+            "states": [
+              "proposed",
+              "active",
+              "paused",
+              "completed",
+              "terminated"
+            ],
+            "initialState": "proposed"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": null,
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "activated",
+              "paused",
+              "terminated",
+              "reactivated"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "structural/Ownerable",
+          "alias": null,
+          "parameters": {
+            "ownerTypes": [
+              "organization",
+              "team",
+              "platform"
+            ],
+            "primaryOwnerType": "organization",
+            "allowTransfer": true
+          }
+        },
+        {
+          "name": "behavioral/Taggable",
+          "alias": null,
+          "parameters": {
+            "maxTags": 10,
+            "allowCustomTags": true,
+            "allowedTags": [
+              "primary",
+              "secondary",
+              "inferred",
+              "manual",
+              "pending_review"
+            ],
+            "caseSensitive": false
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "LabelCell",
+            "priority": 100,
+            "props": {
+              "field": "label",
+              "descriptionField": "description",
+              "truncate": true,
+              "maxLengthParameter": "maxLabelLength"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "OwnerBadge",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type"
+            }
+          },
+          {
+            "component": "TagPills",
+            "props": {
+              "field": "tags",
+              "maxVisible": 3,
+              "overflowLabel": "+{{ tag_count }}"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "DetailHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "subtitleField": "description",
+              "headingLevel": 1
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "OwnershipSummary",
+            "position": "top",
+            "props": {
+              "ownerIdField": "owner_id",
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role",
+              "transferredAtField": "ownership_transferred_at",
+              "allowTransferParameter": "allowTransfer"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "FormLabelGroup",
+            "position": "before",
+            "priority": 100,
+            "props": {
+              "labelField": "label",
+              "descriptionField": "description",
+              "placeholderField": "placeholder",
+              "maxLabelLengthParameter": "maxLabelLength",
+              "maxDescriptionLengthParameter": "maxDescriptionLength",
+              "requireDescriptionParameter": "requireDescription"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "TagInput",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "maxTagsParameter": "maxTags",
+              "allowCustomParameter": "allowCustomTags",
+              "allowListParameter": "allowedTags",
+              "minLengthParameter": "tagMinLength",
+              "maxLengthParameter": "tagMaxLength",
+              "synonymParameter": "synonymResolution"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "CardHeader",
+            "position": "top",
+            "priority": 100,
+            "props": {
+              "titleField": "label",
+              "supportingField": "description"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "OwnershipMeta",
+            "position": "after",
+            "props": {
+              "ownerTypeField": "owner_type",
+              "roleField": "ownership_role"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "after",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "TimelineEntryLabel",
+            "props": {
+              "field": "label",
+              "compact": true
+            }
+          },
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "inline": [
+          {
+            "component": "InlineLabel",
+            "props": {
+              "field": "label",
+              "maxLength": 40
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Subscription",
+      "traits": [
+        {
+          "name": "lifecycle/Stateful",
+          "alias": "SubscriptionLifecycle",
+          "parameters": {
+            "states": [
+              "future",
+              "trialing",
+              "active",
+              "paused",
+              "pending_cancellation",
+              "past_due",
+              "unpaid",
+              "terminated"
+            ],
+            "initialState": "future"
+          }
+        },
+        {
+          "name": "lifecycle/Cancellable",
+          "alias": "SubscriptionCancellation",
+          "parameters": {
+            "allowCancellationAfterStart": true,
+            "requireReason": false
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "BillingCycleTimeline",
+          "parameters": {
+            "recordedEvents": [
+              "billing_cycle_started",
+              "billing_cycle_completed",
+              "payment_received",
+              "cancellation_requested"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "financial/Billable",
+          "alias": "SubscriptionBilling",
+          "parameters": {
+            "defaultCurrency": "usd",
+            "billingIntervals": [
+              "monthly",
+              "yearly"
+            ],
+            "minorUnits": 100
+          }
+        },
+        {
+          "name": "lifecycle/Archivable",
+          "alias": "SubscriptionArchive",
+          "parameters": {
+            "gracePeriodDays": 30,
+            "retainHistory": true,
+            "restoreWindowDays": 30
+          }
+        },
+        {
+          "name": "viz/MarkArea",
+          "alias": null,
+          "parameters": {
+            "chart": {
+              "chartType": "area",
+              "source": "payment-events",
+              "dateFields": [
+                "last_payment_at",
+                "next_payment_due_at"
+              ],
+              "amountField": "amount",
+              "minorUnits": 100,
+              "currencyField": "currency"
+            }
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "BillingSummaryBadge",
+            "position": "after",
+            "props": {
+              "amountField": "amount",
+              "currencyField": "currency",
+              "intervalField": "billing_interval",
+              "minorUnitsParameter": "minorUnits"
+            }
+          },
+          {
+            "component": "ArchivedRowOverlay",
+            "props": {
+              "archivedField": "is_archived",
+              "style": "grayed",
+              "showBadge": true,
+              "separateTab": true,
+              "tabLabel": "Archived"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "CycleProgressCard",
+            "position": "main",
+            "priority": 70,
+            "props": {
+              "progressField": "current_period_progress",
+              "periodStartField": "current_period_start",
+              "periodEndField": "current_period_end",
+              "intervalField": "billing_interval"
+            }
+          },
+          {
+            "component": "PaymentTimeline",
+            "position": "main",
+            "priority": 60,
+            "props": {
+              "lastPaymentField": "last_payment_at",
+              "nextPaymentField": "next_payment_due_at",
+              "paymentStatusField": "payment_status",
+              "paymentMethodField": "payment_method_type",
+              "amountField": "amount",
+              "currencyField": "currency"
+            }
+          },
+          {
+            "component": "VizAreaPreview",
+            "position": "top",
+            "priority": 55,
+            "props": {
+              "chart": {
+                "chartType": "area",
+                "source": "payment-events",
+                "dateFields": [
+                  "last_payment_at",
+                  "next_payment_due_at"
+                ],
+                "amountField": "amount",
+                "minorUnits": 100,
+                "currencyField": "currency"
+              },
+              "title": "Payment amounts",
+              "description": "Recorded sample payments in major currency units."
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "CancellationSummary",
+            "position": "top",
+            "props": {
+              "cancelAtPeriodEndField": "cancel_at_period_end",
+              "reasonField": "cancellation_reason",
+              "codeField": "cancellation_reason_code",
+              "requestedAtField": "cancellation_requested_at"
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "ArchiveSummary",
+            "position": "top",
+            "props": {
+              "archivedField": "is_archived",
+              "archivedAtField": "archived_at",
+              "restoredAtField": "restored_at",
+              "reasonField": "archive_reason",
+              "archivedByField": "archived_by",
+              "metadataField": "archive_metadata",
+              "retainHistoryParameter": "retainHistory",
+              "restoreWindowParameter": "restoreWindowDays",
+              "allowPartialRestoreParameter": "allowPartialRestore"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "BillingIntervalSelector",
+            "position": "main",
+            "priority": 80,
+            "props": {
+              "intervalField": "billing_interval",
+              "intervalsParameter": "billingIntervals"
+            }
+          },
+          {
+            "component": "BillingAmountInput",
+            "position": "main",
+            "priority": 75,
+            "props": {
+              "amountField": "amount",
+              "currencyField": "currency",
+              "minorUnitsParameter": "minorUnits"
+            }
+          },
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "CancellationForm",
+            "position": "top",
+            "props": {
+              "reasonField": "cancellation_reason",
+              "codeField": "cancellation_reason_code",
+              "requireReasonParameter": "requireReason",
+              "allowedReasonsParameter": "allowedReasons",
+              "windowParameter": "cancellationWindowHours"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "CancellationEvent",
+            "props": {
+              "timestampField": "cancellation_requested_at",
+              "labelField": "cancellation_reason",
+              "codeField": "cancellation_reason_code"
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "PaymentEventTimeline",
+            "props": {
+              "lastPaymentField": "last_payment_at",
+              "nextPaymentField": "next_payment_due_at",
+              "paymentStatusField": "payment_status",
+              "amountField": "amount",
+              "currencyField": "currency"
+            }
+          },
+          {
+            "component": "ArchiveEvent",
+            "props": {
+              "archivedAtField": "archived_at",
+              "restoredAtField": "restored_at",
+              "reasonField": "archive_reason",
+              "archivedByField": "archived_by",
+              "metadataField": "archive_metadata",
+              "restorationMetadataField": "restoration_metadata"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "CancellationBadge",
+            "position": "before",
+            "props": {
+              "field": "cancel_at_period_end"
+            }
+          },
+          {
+            "component": "BillingCardMeta",
+            "position": "after",
+            "props": {
+              "amountField": "amount",
+              "currencyField": "currency",
+              "intervalField": "billing_interval",
+              "minorUnitsParameter": "minorUnits"
+            }
+          },
+          {
+            "component": "ArchivePill",
+            "position": "before",
+            "props": {
+              "field": "is_archived",
+              "archivedAtField": "archived_at"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Transaction",
+      "traits": [
+        {
+          "name": "lifecycle/Stateful",
+          "alias": null,
+          "parameters": {
+            "states": [
+              "pending",
+              "authorized",
+              "settled",
+              "failed",
+              "refunded"
+            ],
+            "initialState": "pending"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": null,
+          "parameters": {
+            "recordedEvents": [
+              "initiated",
+              "authorized",
+              "settled",
+              "refunded",
+              "failed"
+            ],
+            "timezone": "UTC"
+          }
+        },
+        {
+          "name": "financial/Priceable",
+          "alias": null,
+          "parameters": {
+            "supportedCurrencies": [
+              "USD",
+              "EUR",
+              "GBP",
+              "JPY",
+              "AUD"
+            ],
+            "defaultCurrency": "USD",
+            "pricingModels": [
+              "one_time",
+              "usage_based"
+            ],
+            "billingIntervals": [
+              "one_time"
+            ],
+            "taxBehavior": "exclusive"
+          }
+        },
+        {
+          "name": "lifecycle/Cancellable",
+          "alias": null,
+          "parameters": {
+            "allowCancellationAfterStart": false,
+            "cancellationWindowHours": 24,
+            "requireReason": true,
+            "allowedReasons": [
+              "customer_request",
+              "suspected_fraud",
+              "duplicate_charge",
+              "payment_method_error"
+            ]
+          }
+        },
+        {
+          "name": "lifecycle/Archivable",
+          "alias": null,
+          "parameters": {
+            "gracePeriodDays": 365,
+            "retainHistory": true,
+            "restoreWindowDays": 30
+          }
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "PriceBadge",
+            "props": {
+              "amountField": "unit_amount_cents",
+              "currencyField": "currency"
+            }
+          },
+          {
+            "component": "ArchivedRowOverlay",
+            "props": {
+              "archivedField": "is_archived",
+              "style": "grayed",
+              "showBadge": true,
+              "separateTab": true,
+              "tabLabel": "Archived"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "PriceSummary",
+            "position": "top",
+            "props": {
+              "amountField": "unit_amount_cents",
+              "currencyField": "currency",
+              "modelField": "pricing_model",
+              "intervalField": "billing_interval",
+              "taxBehaviorField": "tax_behavior"
+            }
+          },
+          {
+            "component": "CancellationSummary",
+            "position": "top",
+            "props": {
+              "cancelAtPeriodEndField": "cancel_at_period_end",
+              "reasonField": "cancellation_reason",
+              "codeField": "cancellation_reason_code",
+              "requestedAtField": "cancellation_requested_at"
+            }
+          },
+          {
+            "component": "ArchiveSummary",
+            "position": "top",
+            "props": {
+              "archivedField": "is_archived",
+              "archivedAtField": "archived_at",
+              "restoredAtField": "restored_at",
+              "reasonField": "archive_reason",
+              "archivedByField": "archived_by",
+              "metadataField": "archive_metadata",
+              "retainHistoryParameter": "retainHistory",
+              "restoreWindowParameter": "restoreWindowDays",
+              "allowPartialRestoreParameter": "allowPartialRestore"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "CancellationForm",
+            "position": "top",
+            "props": {
+              "reasonField": "cancellation_reason",
+              "codeField": "cancellation_reason_code",
+              "requireReasonParameter": "requireReason",
+              "allowedReasonsParameter": "allowedReasons",
+              "windowParameter": "cancellationWindowHours"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "CancellationEvent",
+            "props": {
+              "timestampField": "cancellation_requested_at",
+              "labelField": "cancellation_reason",
+              "codeField": "cancellation_reason_code"
+            }
+          },
+          {
+            "component": "ArchiveEvent",
+            "props": {
+              "archivedAtField": "archived_at",
+              "restoredAtField": "restored_at",
+              "reasonField": "archive_reason",
+              "archivedByField": "archived_by",
+              "metadataField": "archive_metadata",
+              "restorationMetadataField": "restoration_metadata"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "PriceCardMeta",
+            "position": "after",
+            "props": {
+              "modelField": "pricing_model",
+              "intervalField": "billing_interval"
+            }
+          },
+          {
+            "component": "CancellationBadge",
+            "position": "before",
+            "props": {
+              "field": "cancel_at_period_end"
+            }
+          },
+          {
+            "component": "ArchivePill",
+            "position": "before",
+            "props": {
+              "field": "is_archived",
+              "archivedAtField": "archived_at"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Usage",
+      "traits": [
+        {
+          "name": "SaaSBillingMetered",
+          "alias": "MeterReading",
+          "parameters": {
+            "unit": "api_calls",
+            "rolloverStrategy": "expire",
+            "sampleWindowDays": 7
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "UsageAudit",
+          "parameters": {
+            "recordedEvents": [
+              "reading_captured",
+              "anomaly_detected",
+              "reset"
+            ],
+            "timezone": "UTC",
+            "allowNullUpdatedAt": true
+          }
+        }
+      ],
+      "viewExtensions": {
+        "detail": [
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ],
+        "list": [
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "User",
+      "traits": [
+        {
+          "name": "lifecycle/Stateful",
+          "alias": "UserLifecycle",
+          "parameters": {
+            "states": [
+              "invited",
+              "active",
+              "suspended",
+              "deactivated"
+            ],
+            "initialState": "active"
+          }
+        },
+        {
+          "name": "lifecycle/Timestampable",
+          "alias": "AuditTrail",
+          "parameters": {
+            "recordedEvents": [
+              "created",
+              "profile_updated",
+              "status_changed",
+              "role_updated"
+            ],
+            "timezone": "UTC",
+            "allowNullUpdatedAt": false
+          }
+        },
+        {
+          "name": "behavioral/Taggable",
+          "alias": "AffinityTags",
+          "parameters": {
+            "maxTags": 12,
+            "allowCustomTags": false,
+            "allowedTags": [
+              "admin",
+              "beta_tester",
+              "vip",
+              "suspended"
+            ],
+            "caseSensitive": false
+          }
+        },
+        {
+          "name": "core/Addressable",
+          "alias": "UserAddresses",
+          "parameters": {
+            "roles": [
+              "home",
+              "billing",
+              "shipping"
+            ],
+            "defaultRole": "home"
+          }
+        },
+        {
+          "name": "core/Preferenceable",
+          "alias": "UserPreferences",
+          "parameters": {
+            "namespaces": [
+              "theme",
+              "notifications",
+              "display",
+              "privacy"
+            ],
+            "schemaVersion": "2.0.0",
+            "registryNamespace": "user-preferences"
+          }
+        },
+        {
+          "name": "core/Authable",
+          "alias": "UserAuthz",
+          "parameters": {
+            "hierarchyDepthLimit": 5
+          }
+        },
+        {
+          "name": "core/Communicable",
+          "alias": "UserCommunications",
+          "parameters": null
+        }
+      ],
+      "viewExtensions": {
+        "list": [
+          {
+            "component": "MessageStatusBadge",
+            "position": "before",
+            "priority": 90,
+            "props": {
+              "statusesField": "message_statuses"
+            }
+          },
+          {
+            "component": "StatusBadge",
+            "props": {
+              "field": "status",
+              "tone": "lifecycle"
+            }
+          },
+          {
+            "component": "RelativeTimestamp",
+            "props": {
+              "field": "updated_at",
+              "fallbackField": "created_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "TagPills",
+            "props": {
+              "field": "tags",
+              "maxVisible": 3,
+              "overflowLabel": "+{{ tag_count }}"
+            }
+          },
+          {
+            "component": "AddressSummaryBadge",
+            "position": "after",
+            "props": {
+              "field": "default_address_role"
+            }
+          },
+          {
+            "component": "PreferenceSummaryBadge",
+            "position": "after",
+            "props": {
+              "namespacesField": "preference_namespaces",
+              "versionField": "preference_version"
+            }
+          },
+          {
+            "component": "RoleBadgeList",
+            "position": "after",
+            "props": {
+              "rolesField": "session_roles",
+              "fallbackRoleParameter": "defaultRoleId"
+            }
+          }
+        ],
+        "detail": [
+          {
+            "component": "CommunicationDetailPanel",
+            "position": "main",
+            "priority": 80,
+            "props": {
+              "channelsField": "channel_catalog",
+              "templatesField": "template_catalog",
+              "policiesField": "delivery_policies",
+              "conversationsField": "conversations"
+            }
+          },
+          {
+            "component": "MembershipPanel",
+            "position": "main",
+            "priority": 75,
+            "props": {
+              "membershipsField": "membership_records",
+              "hierarchyField": "role_hierarchy_edges",
+              "roleField": "role_catalog",
+              "permissionField": "permission_catalog"
+            }
+          },
+          {
+            "component": "AddressCollectionPanel",
+            "position": "main",
+            "priority": 60,
+            "props": {
+              "field": "addresses",
+              "roleField": "address_roles",
+              "defaultRoleField": "default_address_role",
+              "roleParameter": "roles"
+            }
+          },
+          {
+            "component": "PreferencePanel",
+            "position": "main",
+            "priority": 55,
+            "props": {
+              "preferencesField": "preference_document",
+              "metadataField": "preference_metadata",
+              "namespaceField": "preference_namespaces"
+            }
+          },
+          {
+            "component": "StatusTimeline",
+            "position": "top",
+            "priority": 40,
+            "props": {
+              "field": "status",
+              "historyField": "state_history",
+              "statesParameter": "states",
+              "showActorId": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditTimeline",
+            "position": "bottom",
+            "props": {
+              "createdField": "created_at",
+              "updatedField": "updated_at",
+              "eventField": "last_event",
+              "eventTimestampField": "last_event_at",
+              "eventOptionsParameter": "recordedEvents"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ],
+        "form": [
+          {
+            "component": "StatusSelector",
+            "position": "top",
+            "props": {
+              "field": "status",
+              "optionsParameter": "states",
+              "initialParameter": "initialState",
+              "allowedTransitionsField": "allowed_transitions",
+              "requireReasonParameter": "requireTransitionReason"
+            }
+          },
+          {
+            "component": "TagInput",
+            "position": "top",
+            "props": {
+              "field": "tags",
+              "maxTagsParameter": "maxTags",
+              "allowCustomParameter": "allowCustomTags",
+              "allowListParameter": "allowedTags",
+              "minLengthParameter": "tagMinLength",
+              "maxLengthParameter": "tagMaxLength",
+              "synonymParameter": "synonymResolution"
+            }
+          },
+          {
+            "component": "AddressEditor",
+            "position": "top",
+            "props": {
+              "field": "addresses",
+              "roleParameter": "roles",
+              "allowDynamicParameter": "allowDynamicRoles",
+              "defaultRoleField": "default_address_role"
+            }
+          },
+          {
+            "component": "PreferenceEditor",
+            "position": "main",
+            "props": {
+              "namespacesField": "preference_namespaces",
+              "documentField": "preference_document",
+              "registryNamespaceParameter": "registryNamespace"
+            }
+          },
+          {
+            "component": "RoleAssignmentForm",
+            "position": "main",
+            "props": {
+              "availableRolesField": "role_catalog",
+              "membershipField": "membership_records",
+              "defaultRoleParameter": "defaultRoleId"
+            }
+          },
+          {
+            "component": "TemplatePicker",
+            "position": "main",
+            "props": {
+              "templatesField": "template_catalog",
+              "channelsField": "channel_catalog"
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "component": "StateTransitionEvent",
+            "props": {
+              "historyField": "state_history",
+              "labelField": "status",
+              "showActor": true,
+              "showReason": true
+            }
+          },
+          {
+            "component": "AuditEvent",
+            "props": {
+              "typeField": "last_event",
+              "timestampField": "last_event_at",
+              "timezoneParameter": "timezone"
+            }
+          },
+          {
+            "component": "AddressValidationTimeline",
+            "props": {
+              "field": "addresses"
+            }
+          },
+          {
+            "component": "PreferenceTimeline",
+            "props": {
+              "metadataField": "preference_metadata"
+            }
+          },
+          {
+            "component": "MembershipAuditTimeline",
+            "props": {
+              "field": "membership_records"
+            }
+          },
+          {
+            "component": "MessageEventTimeline",
+            "props": {
+              "messagesField": "messages",
+              "statusesField": "message_statuses"
+            }
+          }
+        ],
+        "card": [
+          {
+            "component": "StatusBadge",
+            "position": "before",
+            "props": {
+              "field": "status",
+              "variant": "subtle"
+            }
+          },
+          {
+            "component": "TagSummary",
+            "position": "after",
+            "props": {
+              "field": "tags",
+              "countField": "tag_count"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

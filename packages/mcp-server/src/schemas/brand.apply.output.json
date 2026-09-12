@@ -2,6 +2,116 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "sourceWritten": {
+          "type": "boolean"
+        },
+        "sourceFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256Before": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sha256After": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytesBefore": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "bytesAfter": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "path",
+              "sha256Before",
+              "sha256After",
+              "bytesBefore",
+              "bytesAfter"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "build": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "exitCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "commands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "command": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "exitCode": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "stdout": {
+                        "type": "string"
+                      },
+                      "stderr": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "command",
+                      "exitCode",
+                      "stdout",
+                      "stderr"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "durationMs": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "exitCode",
+                "commands",
+                "durationMs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sourceWritten",
+        "sourceFiles",
+        "build"
+      ],
+      "additionalProperties": false
+    },
     "artifacts": {
       "type": "array",
       "items": { "type": "string" }
@@ -33,7 +143,7 @@
       "items": { "$ref": "#/$defs/artifactDetail" }
     }
   },
-  "required": ["artifacts", "transcriptPath", "bundleIndexPath"],
+  "required": ["artifacts", "transcriptPath", "bundleIndexPath", "receipt"],
   "additionalProperties": false,
   "$defs": {
     "planDiffChange": {

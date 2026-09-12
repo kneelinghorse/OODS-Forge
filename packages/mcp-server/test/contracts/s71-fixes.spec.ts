@@ -123,7 +123,6 @@ describe('Sprint 71 fixes', () => {
     it('documents schemaRef TTL for compose tools', () => {
       expect(descriptions['design.compose']).toMatch(/TTL|expires|30/i);
       expect(descriptions['pipeline']).toMatch(/TTL|expires|30/i);
-      expect(descriptions['viz.compose']).toMatch(/TTL|expires|30/i);
     });
 
     it('documents schema (action=save) as persistence path', () => {

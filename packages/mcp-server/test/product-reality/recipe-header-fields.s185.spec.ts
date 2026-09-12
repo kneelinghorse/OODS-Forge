@@ -67,7 +67,7 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     const result = await pipeline({ object: 'Product', context: 'card', framework: 'html', profile: 'release' });
     expect(result.error).toEqual({
       step: 'codegen', code: 'OODS-V162',
-      message: 'Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance.',
+      message: 'Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance. References are format-checked and hash-bound, not re-executed.',
     });
     expect(result.code).toBeUndefined();
     expect(result.saved).toBeUndefined();

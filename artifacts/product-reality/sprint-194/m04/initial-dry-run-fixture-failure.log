@@ -1,0 +1,106 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s194/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/release.tag.s194.spec.ts (1 test | 1 failed) 56ms
+   × release.tag actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 55ms
+     → Tag is required.
+ ❯ test/contracts/diag.snapshot.s194.spec.ts (1 test | 1 failed) 54ms
+   × diag.snapshot actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 54ms
+     → Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/billing.reviewKit.s194.spec.ts (1 test | 1 failed) 46ms
+   × billing.reviewKit actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 45ms
+     → Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/release.verify.s194.spec.ts (1 test | 1 failed) 29802ms
+   × release.verify actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 29801ms
+     → Cannot read properties of undefined (reading 'results')
+ ❯ test/contracts/billing.switchFixtures.s194.spec.ts (1 test | 1 failed) 43ms
+   × billing.switchFixtures actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 42ms
+     → Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/a11y.scan.s194.spec.ts (1 test | 1 failed) 40ms
+   × a11y.scan actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root 40ms
+     → Cannot read properties of undefined (reading 'artifacts')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/a11y.scan.s194.spec.ts > a11y.scan actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+TypeError: Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/a11y.scan.s194.spec.ts:11:19
+      9|     const input = wire('a11y.scan', 'input', { apply: false });
+     10|     const output = wire('a11y.scan', 'output', await handle(input));
+     11|     expect(output.artifacts).toEqual([]);
+       |                   ^
+     12|     expect(output.preview?.summary).toMatch(/A11y scan: [1-9]\d* check…
+     13|     expect(output.preview?.notes?.length).toBeGreaterThan(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  test/contracts/billing.reviewKit.s194.spec.ts > billing.reviewKit actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+TypeError: Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/billing.reviewKit.s194.spec.ts:11:19
+      9|     const input = wire('billing.reviewKit', 'input', { apply: false, o…
+     10|     const output = wire('billing.reviewKit', 'output', await handle(in…
+     11|     expect(output.artifacts).toEqual([]);
+       |                   ^
+     12|     expect(output.preview?.specimens).toHaveLength(2);
+     13|     expect(output.preview?.diffs?.length).toBeGreaterThan(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/contracts/billing.switchFixtures.s194.spec.ts > billing.switchFixtures actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+TypeError: Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/billing.switchFixtures.s194.spec.ts:11:19
+      9|     const input = wire('billing.switchFixtures', 'input', { apply: fal…
+     10|     const output = wire('billing.switchFixtures', 'output', await hand…
+     11|     expect(output.artifacts).toEqual([]);
+       |                   ^
+     12|     expect(output.preview?.summary).toBe('Switch billing fixtures from…
+     13|     expect(output.preview?.diffs).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/contracts/diag.snapshot.s194.spec.ts > diag.snapshot actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+TypeError: Cannot read properties of undefined (reading 'artifacts')
+ ❯ test/contracts/diag.snapshot.s194.spec.ts:13:19
+     11|     const input = wire('diag.snapshot', 'input', { apply: false });
+     12|     const output = wire('diag.snapshot', 'output', await handle(input)…
+     13|     expect(output.artifacts).toHaveLength(1);
+       |                   ^
+     14|     const diagnostics = JSON.parse(fs.readFileSync(output.diagnosticsP…
+     15|     const catalog = await catalogList({});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  test/contracts/release.tag.s194.spec.ts > release.tag actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+ToolError: Tag is required.
+ ❯ handle src/tools/release.tag.ts:16:11
+     14| export async function handle(input: ReleaseTagInput): Promise<ReleaseT…
+     15|   if (!input || !input.tag || typeof input.tag !== 'string') {
+     16|     throw new ToolError('OODS-V003', 'Tag is required.', { field: 'tag…
+       |           ^
+     17|   }
+     18|   const tag = input.tag.trim();
+ ❯ test/contracts/release.tag.s194.spec.ts:15:56
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  test/contracts/release.verify.s194.spec.ts > release.verify actual dry-run wire (s194-m04) > performs its documented read/preview and confines receipts to the temporary artifact root
+TypeError: Cannot read properties of undefined (reading 'results')
+ ❯ test/contracts/release.verify.s194.spec.ts:11:19
+      9|     const input = wire('release.verify', 'input', { apply: false, pack…
+     10|     const output = wire('release.verify', 'output', await handle(input…
+     11|     expect(output.results).toHaveLength(1);
+       |                   ^
+     12|     expect(output.results[0].name).toBe('@oods/tw-variants');
+     13|     expect(output.results[0].identical).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  6 failed (6)
+      Tests  6 failed (6)
+   Start at  11:00:20
+   Duration  31.71s (transform 332ms, setup 28ms, collect 814ms, tests 30.04s, environment 0ms, prepare 257ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s194/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/a11y.scan.s194.spec.ts test/contracts/diag.snapshot.s194.spec.ts test/contracts/billing.reviewKit.s194.spec.ts test/contracts/billing.switchFixtures.s194.spec.ts test/contracts/release.verify.s194.spec.ts test/contracts/release.tag.s194.spec.ts

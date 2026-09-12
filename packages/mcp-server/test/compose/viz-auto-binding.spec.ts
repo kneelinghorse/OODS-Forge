@@ -1,11 +1,10 @@
 /**
  * Viz object auto-binding tests (s74-m06).
  *
- * Verifies that viz.compose with an object auto-binds schema fields
+ * Verifies that internal trait inference binds schema fields
  * to chart data encodings based on field types and semantics.
  */
 import { describe, it, expect } from 'vitest';
-import { handle } from '../../src/tools/viz.compose.js';
 import { inferDataBindings } from '../../src/compose/viz-trait-resolver.js';
 import type { FieldDefinition } from '../../src/objects/types.js';
 
@@ -81,71 +80,3 @@ describe('inferDataBindings', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
-/*  viz.compose integration — object auto-binding                      */
-/* ------------------------------------------------------------------ */
-
-describe('viz.compose — object auto-binding', () => {
-  it('Transaction line chart: temporal x, numeric y', async () => {
-    const result = await handle({
-      object: 'Transaction',
-      chartType: 'line',
-    });
-    expect(result.status).toBe('ok');
-    expect(result.meta?.traitsResolved.length).toBeGreaterThan(0);
-    expect(result.meta?.encodingsApplied.length).toBeGreaterThan(0);
-
-    // Should have auto-bound temporal field to x-axis
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBeDefined();
-    expect(chartSlot?.props.yField).toBeDefined();
-  });
-
-  it('Product bar chart: auto-binds numeric and categorical fields', async () => {
-    const result = await handle({
-      object: 'Product',
-      chartType: 'bar',
-    });
-    expect(result.status).toBe('ok');
-    expect(result.meta?.traitsResolved.length).toBeGreaterThan(0);
-    expect(result.meta?.encodingsApplied.length).toBeGreaterThan(0);
-
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBeDefined();
-    expect(chartSlot?.props.yField).toBeDefined();
-  });
-
-  it('Organization bar chart: auto-binds employee_count to y-axis', async () => {
-    const result = await handle({
-      object: 'Organization',
-      chartType: 'bar',
-    });
-    expect(result.status).toBe('ok');
-    expect(result.meta?.traitsResolved.length).toBeGreaterThan(0);
-
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.yField).toBeDefined();
-  });
-
-  it('explicit dataBindings override auto-binding', async () => {
-    const result = await handle({
-      object: 'Transaction',
-      chartType: 'line',
-      dataBindings: { x: 'custom_date', y: 'custom_amount' },
-    });
-    expect(result.status).toBe('ok');
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBe('custom_date');
-    expect(chartSlot?.props.yField).toBe('custom_amount');
-  });
-
-  it('without object, no auto-binding occurs', async () => {
-    const result = await handle({
-      chartType: 'bar',
-    });
-    expect(result.status).toBe('ok');
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBeUndefined();
-    expect(chartSlot?.props.yField).toBeUndefined();
-  });
-});

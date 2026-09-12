@@ -127,17 +127,17 @@ The counts and tool names below are derived from
 `packages/mcp-server/src/tools/registry.json`; use that file as the generation
 source whenever this hand-authored inventory is refreshed.
 
-Auto-registered (21 tools):
+Auto-registered (19 tools):
 
 - Core design/runtime: `tokens.build`, `structuredData.fetch`, `brand.apply`, `brand.intake`, `catalog.list`, `health`
-- Composition + generation: `design.compose`, `design.preview`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview`
+- Composition + generation: `design.compose`, `design.preview`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview`
 - Certification + inspection: `artifact.certify`, `registry.snapshot`
-- Action families: `map`, `schema`, `object`, `repl`, `review`
+- Action families: `map`, `schema`, `object`, `repl`
 
-On-demand (6 tools):
+On-demand (5 tools):
 
 - `diag.snapshot`, `billing.reviewKit`, `billing.switchFixtures`
-- `a11y.scan`, `release.verify`, `release.tag`
+- `a11y.scan`, `release.tag`
 
 Enable on-demand tools:
 
@@ -227,12 +227,8 @@ derivable from span data via the OTel collector's spanmetrics processor.
 
 1. Read `README.md` for repo identity and links.
 2. Connect an MCP client via `docs/mcp/Connections.md`.
-3. Compose a chart scaffold with `viz.compose`. This legacy tool remains available for compatibility; use its resolved chart type and field bindings as planning input, not as a certifiable artifact.
-4. Render the real, data-bound chart with `viz.render`, passing matching rows and encodings and setting `output.includeNormalizedSpec: true`.
-5. Pass the returned `normalizedSpec` to `artifact.certify`. For an ECharts-primary chart, also pass the same data operand used by `viz.render`.
-
-For new work that does not need the compatibility scaffold, start directly with
-`viz.render` in structured-intent or explicit mode, then certify its returned IR.
+3. Render a data-bound chart with `viz.render`, passing matching rows and encodings and setting `output.includeNormalizedSpec: true`.
+4. Pass the returned `normalizedSpec` to `artifact.certify`. For an ECharts-primary chart, also pass the same data operand used by `viz.render`.
 
 ## Context Loading Strategy
 

@@ -1,0 +1,18 @@
+import { describe, expect, it } from 'vitest';
+import { handle } from '../../src/tools/release.verify.js';
+import { wire } from '../helpers/wire-boundary.js';
+import { dryRunBoundary } from '../helpers/dry-run-boundary.js';
+
+const retain = dryRunBoundary();
+describe('release.verify actual dry-run wire (s194-m04)', () => {
+  it('performs its documented read/preview and confines receipts to the temporary artifact root', async () => {
+    const input = wire('release.verify', 'input', { apply: false, packages: ['@oods/tw-variants'] });
+    const output = wire('release.verify', 'output', await handle(input));
+    expect(output.results).toHaveLength(1);
+    expect(output.results[0].name).toBe('@oods/tw-variants');
+    expect(output.results[0].identical).toBe(true);
+    expect(output.results[0].sha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(output.results[0].files.length).toBeGreaterThan(0);
+    retain('release.verify', output);
+  }, 120_000);
+});

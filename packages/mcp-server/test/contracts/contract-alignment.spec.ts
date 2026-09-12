@@ -11,11 +11,9 @@ import { describe, it, expect } from 'vitest';
 import { getAjv } from '../../src/lib/ajv.js';
 import validateInputSchema from '../../src/schemas/repl.validate.input.json' assert { type: 'json' };
 import renderInputSchema from '../../src/schemas/repl.render.input.json' assert { type: 'json' };
-import vizInputSchema from '../../src/schemas/viz.compose.input.json' assert { type: 'json' };
 import pipelineInputSchema from '../../src/schemas/pipeline.input.json' assert { type: 'json' };
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
-import { handle as vizHandle } from '../../src/tools/viz.compose.js';
 import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
 import { handle as schemaListHandle } from '../../src/tools/schema/list.js';
 import { handle as schemaLoadHandle } from '../../src/tools/schema/load.js';
@@ -88,48 +86,6 @@ describe('repl.render — schemaRef-only contract', () => {
     // No ref resolution errors
     const refErrors = result.errors.filter(e => e.code === 'OODS-N003' || e.code === 'OODS-N004' || e.code === 'OODS-V009');
     expect(refErrors).toHaveLength(0);
-  });
-});
-
-/* ------------------------------------------------------------------ */
-/*  viz.compose — data alias for dataBindings                         */
-/* ------------------------------------------------------------------ */
-
-describe('viz.compose — data alias contract', () => {
-  const validate = ajv.compile(vizInputSchema);
-
-  it('schema accepts { chartType, data } with data alias', () => {
-    const input = { chartType: 'bar', data: { x: 'date', y: 'revenue' } };
-    const valid = validate(input);
-    expect(validate.errors).toBeNull();
-    expect(valid).toBe(true);
-  });
-
-  it('schema still accepts { chartType, dataBindings }', () => {
-    const input = { chartType: 'bar', dataBindings: { x: 'date', y: 'revenue' } };
-    expect(validate(input)).toBe(true);
-  });
-
-  it('handler uses data alias for dataBindings', async () => {
-    const result = await vizHandle({
-      chartType: 'bar',
-      data: { x: 'category', y: 'amount' },
-    });
-    expect(result.status).toBe('ok');
-    // Verify the data bindings were applied via the alias
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBe('category');
-    expect(chartSlot?.props.yField).toBe('amount');
-  });
-
-  it('dataBindings takes precedence over data when both provided', async () => {
-    const result = await vizHandle({
-      chartType: 'bar',
-      dataBindings: { x: 'real_x', y: 'real_y' },
-      data: { x: 'alias_x', y: 'alias_y' },
-    });
-    const chartSlot = result.slots.find(s => s.slotName === 'chart-area');
-    expect(chartSlot?.props.xField).toBe('real_x');
   });
 });
 

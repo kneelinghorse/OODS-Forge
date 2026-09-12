@@ -183,11 +183,13 @@
       "type": "object",
       "additionalProperties": false,
       "allOf": [
+        { "if": { "properties": { "profile": { "const": "release" } }, "required": ["profile"] }, "then": { "required": ["evidenceVerification"] } },
         { "$ref": "#/$defs/validationReceiptPartition" },
         { "$ref": "#/$defs/validationProfilePolicy" }
       ],
       "required": ["profile", "defaulted", "rationale", "axes", "checks", "notChecked", "evidence"],
       "properties": {
+        "evidenceVerification": { "const": "hash-bound-not-re-executed", "description": "Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed." },
         "profile": { "type": "string", "enum": ["draft", "build", "release"] },
         "defaulted": {
           "type": "boolean",

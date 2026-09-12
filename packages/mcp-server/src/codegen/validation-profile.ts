@@ -80,6 +80,7 @@ export function createValidationReceipt(
   const policy = CODEGEN_VALIDATION_PROFILES[profile];
   return {
     profile,
+    ...(profile === 'release' ? { evidenceVerification: 'hash-bound-not-re-executed' as const } : {}),
     defaulted: requestedProfile === undefined,
     rationale: policy.rationale,
     axes: {
@@ -195,7 +196,7 @@ export function bindReleaseEvidence(
   if (missing.length > 0) {
     errors.push({
       code: 'OODS-V162',
-      message: `Release profile is missing required evidence: ${missing.join(', ')}.`,
+      message: `Release profile is missing required evidence: ${missing.join(', ')}. References are format-checked and hash-bound, not re-executed.`,
     });
   }
   if (mismatched.length > 0) {
@@ -203,7 +204,7 @@ export function bindReleaseEvidence(
       code: 'OODS-V163',
       message:
         `Release evidence is not bound to generated artifact ${artifactContentHash}: `
-        + `${mismatched.join(', ')}.`,
+        + `${mismatched.join(', ')}. References are format-checked and hash-bound, not re-executed.`,
     });
   }
 
@@ -242,6 +243,7 @@ export function validationReceiptIntegrityIssues(
   if (receipt.profile !== expected.profile) {
     issues.push(`profile ${JSON.stringify(receipt.profile)} does not match ${JSON.stringify(expected.profile)}`);
   }
+  if (expected.profile === 'release' && receipt.evidenceVerification !== 'hash-bound-not-re-executed') issues.push('release evidence verification limit is missing');
   if (receipt.defaulted !== expected.defaulted) {
     issues.push(`defaulted=${String(receipt.defaulted)} does not match ${String(expected.defaulted)}`);
   }

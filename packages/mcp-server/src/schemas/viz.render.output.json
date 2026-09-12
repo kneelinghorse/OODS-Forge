@@ -2,9 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/viz.render.output.json",
   "title": "Viz render output",
-  "description": "A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The Vega-Lite spec is always present; the ECharts option is opt-in (output.echarts).",
+  "description": "A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The five Cartesian families return spec (Vega-Lite) and optional echartsSpec; the eight ECharts-primary families omit spec and always return echartsSpec with output.echarts true and reason echarts-primary-family.",
   "type": "object",
-  "required": ["status", "spec", "warnings"],
+  "required": ["status", "warnings"],
+  "allOf": [{ "if": { "properties": { "status": { "const": "ok" }, "chartType": { "enum": ["bar", "line", "area", "scatter", "heatmap"] } }, "required": ["status", "chartType"] }, "then": { "required": ["spec"] } }, {
+    "if": { "properties": { "status": { "const": "ok" }, "chartType": { "enum": ["treemap", "sunburst", "sankey", "force_graph", "chord", "choropleth", "bubble_map", "flow_map"] } }, "required": ["status", "chartType"] },
+    "then": { "required": ["echartsSpec", "output"], "not": { "required": ["spec"] }, "properties": { "output": { "required": ["echarts", "reason"], "properties": { "echarts": { "const": true } } } } }
+  }],
   "properties": {
     "status": {
       "type": "string",
@@ -13,7 +17,7 @@
     },
     "chartType": {
       "type": "string",
-      "description": "Resolved chart type (bar, line, area, scatter, heatmap; empty on error)."
+      "description": "Resolved registered chart type; omitted on error."
     },
     "mode": {
       "type": "string",
@@ -146,7 +150,7 @@
     "render": {"type": "object", "required": ["engine", "width", "height", "theme", "brand"], "properties": {"engine": {"enum": ["vega-lite", "echarts"]}, "width": {"type": "number", "exclusiveMinimum": 0}, "height": {"type": "number", "exclusiveMinimum": 0}, "theme": {"enum": ["light", "dark"]}, "brand": {"enum": ["A", "B"]}}, "additionalProperties": false, "description": "Actual SVG dimensions, primary engine and rendered scope."},
     "specRef": {
       "type": "string",
-      "description": "Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef)."
+      "description": "Temporary reference to the produced spec for pipeline reuse (mirrors the retired chart scaffold schemaRef)."
     },
     "specRefCreatedAt": {
       "type": "string",
@@ -174,6 +178,7 @@
         "height": {"type": "integer", "minimum": 1},
         "compact": { "type": "boolean" },
         "echarts": { "type": "boolean" },
+        "reason": { "const": "echarts-primary-family", "description": "This chart family requires ECharts, so output.echarts is forced true even when omitted or false." },
         "includeNormalizedSpec": { "type": "boolean" },
         "includeA11y": { "type": "boolean" }
       },
@@ -195,7 +200,7 @@
         "renderer": {
           "type": "string",
           "enum": ["vega-lite", "echarts"],
-          "description": "Primary renderer for the spec payload (always vega-lite in Phase 0)."
+          "description": "Primary renderer for the returned payload."
         },
         "mark": {
           "type": "string",

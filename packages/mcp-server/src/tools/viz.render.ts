@@ -2,7 +2,7 @@
 //
 // Turns inline rows (or a cached datasetRef) into a REAL, data-bound Vega-Lite
 // spec (ECharts opt-in) via the headless @oods/viz-core engine. This replaces
-// the field-names-only viz.compose placeholder: it imports ONLY from
+// the retired field-names-only scaffold: it imports ONLY from
 // @oods/viz-core and never touches the placeholder compose/viz-trait-resolver.
 //
 // Input is AJV-validated against viz.render.input.json before dispatch; output
@@ -585,7 +585,7 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
       }
     }
 
-    // specRef for downstream pipeline reuse (mirrors viz.compose schemaRef).
+    // specRef for downstream pipeline reuse.
     const record = createValueRef(spec, 'viz.render');
     const ref = describeSchemaRef(record);
     out.specRef = ref.ref;
@@ -759,16 +759,14 @@ function renderEChartsPrimary(
       status: 'ok',
       chartType,
       mode: 'explicit',
-      // No Vega-Lite equivalent: `spec` (Vega-Lite) is the empty placeholder and
-      // the ECharts option is auto-promoted as the primary renderable payload —
-      // returned WITHOUT the caller opting into output.echarts.
-      spec: {},
+      // ECharts is the only renderable payload for this family; omit Vega-Lite spec.
       echartsSpec: echartsOption as unknown as VizRenderOutput['echartsSpec'],
       a11yDescription: spec.a11y.description,
       warnings: [...geoWarnings, ...cycleWarnings, ...duplicateLinkWarnings],
       output: {
         compact,
         echarts: true,
+        reason: 'echarts-primary-family',
         ...(includeNormalized ? { includeNormalizedSpec: true } : {}),
         ...(includeA11y ? { includeA11y: true } : {}),
       },

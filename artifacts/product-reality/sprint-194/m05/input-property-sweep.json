@@ -1,0 +1,4169 @@
+{
+  "missionId": "s194-m05",
+  "methodology": "Explicit public request properties, action branches and nested option controls. Typed/freeform data operands are inventoried at their consuming boundary. Runtime property accesses and object bindings in each handler and its relative-import consumer graph; type-only declarations/comments do not count. Static read sites are discovery evidence, not an execution verdict; boundary specs separately prove named behavior.",
+  "rows": [
+    {
+      "tool": "tokens.build",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/tokens.build.input.json",
+      "description": "Selects resolved values in the requested-scope JSON and CSS. Full CSS also includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/tokens.build.ts",
+          "line": 89,
+          "expression": "input.brand"
+        }
+      ]
+    },
+    {
+      "tool": "tokens.build",
+      "property": "theme",
+      "schema": "packages/mcp-server/src/schemas/tokens.build.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/tokens.build.ts",
+          "line": 90,
+          "expression": "input.theme"
+        }
+      ]
+    },
+    {
+      "tool": "tokens.build",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/tokens.build.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/tokens.build.ts",
+          "line": 95,
+          "expression": "input.apply"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/tokens.build.ts",
+          "line": 152,
+          "expression": "input.apply"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "dataset",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 393,
+          "expression": "input.dataset"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 401,
+          "expression": "input.dataset"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "kind",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 297,
+          "expression": "payload.kind"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 297,
+          "expression": "payload.kind"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 351,
+          "expression": "input.kind"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "runPath",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 352,
+          "expression": "input.runPath"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 363,
+          "expression": "input.runPath"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "ifNoneMatch",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "Return matched=true without payload when the ETag matches.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 367,
+          "expression": "input.ifNoneMatch"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 367,
+          "expression": "input.ifNoneMatch"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 459,
+          "expression": "input.ifNoneMatch"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "includePayload",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "When false, omit payload even if no ETag match occurs.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 362,
+          "expression": "input.includePayload"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 402,
+          "expression": "input.includePayload"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "version",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest. Applies to dataset mode only.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 358,
+          "expression": "input.version"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 412,
+          "expression": "manifestInfo.manifest?.version"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 428,
+          "expression": "input.version"
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "property": "listVersions",
+      "schema": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+      "description": "When true, return available version dates instead of payload.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 355,
+          "expression": "input.listVersions"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/structuredData.fetch.ts",
+          "line": 407,
+          "expression": "input.listVersions"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "Target brand identifier. Must name a brand directory under packages/tokens/src/tokens/brands.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 542,
+          "expression": "input.brand"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "delta",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 534,
+          "expression": "input.delta"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 534,
+          "expression": "input.delta"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 544,
+          "expression": "input.delta"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "strategy",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "Alias strategy rewrites token values; patch applies the supported add/remove/replace subset of RFC 6902.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 544,
+          "expression": "input.strategy"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "preview",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "Preview response controls (apply=false).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 590,
+          "expression": "input.preview"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "preview.verbosity",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "full includes structured before/after payloads; compact returns summary + hunks only.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 590,
+          "expression": "input.preview?.verbosity"
+        }
+      ]
+    },
+    {
+      "tool": "brand.apply",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/brand.apply.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 612,
+          "expression": "input.apply"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 689,
+          "expression": "input.apply"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "line": 693,
+          "expression": "input.apply"
+        }
+      ]
+    },
+    {
+      "tool": "brand.intake",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/brand.intake.input.json",
+      "description": "",
+      "status": "documented-bridge-parity",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 42,
+          "expression": "preview_only: true,"
+        }
+      ]
+    },
+    {
+      "tool": "brand.intake",
+      "property": "brand_id",
+      "schema": "packages/mcp-server/src/schemas/brand.intake.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 39,
+          "expression": "receipt.requested.brand_id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 39,
+          "expression": "receipt.requested.brand_id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 47,
+          "expression": "request.brand_id"
+        }
+      ]
+    },
+    {
+      "tool": "brand.intake",
+      "property": "profile",
+      "schema": "packages/mcp-server/src/schemas/brand.intake.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/lib/dtcg-intake/index.ts",
+          "line": 194,
+          "expression": "input.profile"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/dtcg-intake/index.ts",
+          "line": 199,
+          "expression": "input.profile"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/dtcg-intake/index.ts",
+          "line": 702,
+          "expression": "inputRecord?.profile"
+        }
+      ]
+    },
+    {
+      "tool": "brand.intake",
+      "property": "theme_documents",
+      "schema": "packages/mcp-server/src/schemas/brand.intake.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 33,
+          "expression": "receipt.theme_documents"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 37,
+          "expression": "receipt.theme_documents"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/brand.intake.ts",
+          "line": 45,
+          "expression": "request.theme_documents"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "category",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Filter components by category (e.g., 'core', 'data')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 913,
+          "expression": "input.category"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 914,
+          "expression": "input.category"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 954,
+          "expression": "input.category"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "trait",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Filter components by trait (e.g., 'Editable', 'Searchable')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 137,
+          "expression": "a.trait"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 137,
+          "expression": "b.trait"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 139,
+          "expression": "entry.trait"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Filter components by context (e.g., 'detail', 'list')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 921,
+          "expression": "input.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 922,
+          "expression": "input.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 954,
+          "expression": "input.context"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "status",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Filter by legacy static-HTML status only: 'stable' = mapped HTML renderer; 'planned' = HTML fallback. Consult productReality.surfaces for React/Vue, generated-consumer and maturity evidence.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 925,
+          "expression": "input.status"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 926,
+          "expression": "c.status"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 926,
+          "expression": "input.status"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "detail",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Response detail level. Defaults to summary for unfiltered calls, full when filters are provided.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 955,
+          "expression": "input.detail"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 957,
+          "expression": "input.detail"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "page",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "1-based page index for pagination.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 956,
+          "expression": "input.page"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 961,
+          "expression": "input.page"
+        }
+      ]
+    },
+    {
+      "tool": "catalog.list",
+      "property": "pageSize",
+      "schema": "packages/mcp-server/src/schemas/catalog.list.input.json",
+      "description": "Number of components per page.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 956,
+          "expression": "input.pageSize"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/catalog.list.ts",
+          "line": 967,
+          "expression": "input.pageSize"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "schema",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "A structurally valid UiSchema tree to generate code from. UiElement.state branches are checked against the canonical workflow-state vocabulary by the state-contract gate.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 90,
+          "expression": "input.schema"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 95,
+          "expression": "resolved.schema"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 373,
+          "expression": "prepared.schema"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "schemaRef",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Reference to a cached UiSchema returned by design.compose.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 92,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 93,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 109,
+          "expression": "input.schemaRef"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "framework",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 87,
+          "expression": "framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 390,
+          "expression": "result.framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 405,
+          "expression": "result.framework"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "profile",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Validation profile. draft reports non-structural target/contract gaps, including workflow-state contract gaps, as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 89,
+          "expression": "input.profile"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "releaseEvidence",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 442,
+          "expression": "input.releaseEvidence"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "options",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 245,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 246,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 248,
+          "expression": "input.options"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "options.theme",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 248,
+          "expression": "input.options?.theme"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "options.brand",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 249,
+          "expression": "input.options?.brand"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "options.typescript",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 245,
+          "expression": "input.options?.typescript"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 245,
+          "expression": "rc.typescript"
+        }
+      ]
+    },
+    {
+      "tool": "code.generate",
+      "property": "options.styling",
+      "schema": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "description": "React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 246,
+          "expression": "input.options?.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 246,
+          "expression": "rc.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/code.generate.ts",
+          "line": 252,
+          "expression": "options.styling"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "intent",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Natural-language description of the desired UI (e.g., 'dashboard with metrics and sidebar', 'user registration form').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 518,
+          "expression": "slot.intent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 541,
+          "expression": "slot.intent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 556,
+          "expression": "slot.intent"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "object",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1272,
+          "expression": "composed.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1273,
+          "expression": "composed.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1368,
+          "expression": "input.object"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1358,
+          "expression": "input.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1358,
+          "expression": "rc.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1359,
+          "expression": "rc.context"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "layout",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 692,
+          "expression": "el.layout"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1361,
+          "expression": "input.layout"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1361,
+          "expression": "rc.layout"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1351,
+          "expression": "rc.preferences"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1352,
+          "expression": "rc.preferences"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1352,
+          "expression": "input.preferences"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.brand",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Brand scope for data-bound charts; defaults to A.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1917,
+          "expression": "input.preferences?.brand"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1919,
+          "expression": "node.chart.brand"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1919,
+          "expression": "input.preferences!.brand"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.theme",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Theme token (e.g., 'light', 'dark').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 443,
+          "expression": "preferences?.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 449,
+          "expression": "preferences?.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 455,
+          "expression": "preferences?.theme"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.metricColumns",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Number of metric columns for dashboard layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 441,
+          "expression": "preferences?.metricColumns"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.fieldGroups",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Number of field groups for form layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 447,
+          "expression": "preferences?.fieldGroups"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1502,
+          "expression": "input.preferences?.fieldGroups"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1542,
+          "expression": "expansionResult?.fieldGroups"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.tabCount",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Number of tabs for detail layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 453,
+          "expression": "preferences?.tabCount"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.tabLabels",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Custom tab labels for detail layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 454,
+          "expression": "preferences?.tabLabels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1533,
+          "expression": "input.preferences?.tabLabels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1795,
+          "expression": "input.preferences?.tabLabels"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "preferences.componentOverrides",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' }).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1756,
+          "expression": "input.preferences?.componentOverrides"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1792,
+          "expression": "input.preferences?.componentOverrides"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1811,
+          "expression": "input.preferences?.componentOverrides"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "options",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 392,
+          "expression": "categories['options']"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 392,
+          "expression": "categories['options']"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1642,
+          "expression": "input.options"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "options.validate",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Auto-validate the generated schema via the `repl` tool's `validate` action.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1927,
+          "expression": "input.options?.validate"
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "property": "options.topN",
+      "schema": "packages/mcp-server/src/schemas/design.compose.input.json",
+      "description": "Number of component candidates to return per slot.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1642,
+          "expression": "input.options?.topN"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "object",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.object"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.context"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "framework",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.framework"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "widths",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.widths"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.preferences"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "input.preferences"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.theme",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Theme token (e.g., 'light', 'dark').",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 443,
+          "expression": "preferences?.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 449,
+          "expression": "preferences?.theme"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.metricColumns",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Number of metric columns for dashboard layout.",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 441,
+          "expression": "preferences?.metricColumns"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 88,
+          "expression": "prefs.metricColumns"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.fieldGroups",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Number of field groups for form layout.",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 447,
+          "expression": "preferences?.fieldGroups"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1502,
+          "expression": "input.preferences?.fieldGroups"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.tabCount",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Number of tabs for detail layout.",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 453,
+          "expression": "preferences?.tabCount"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 94,
+          "expression": "prefs.tabCount"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.tabLabels",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Custom tab labels for detail layout.",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 454,
+          "expression": "preferences?.tabLabels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1533,
+          "expression": "input.preferences?.tabLabels"
+        }
+      ]
+    },
+    {
+      "tool": "design.preview",
+      "property": "preferences.componentOverrides",
+      "schema": "packages/mcp-server/src/schemas/design.preview.input.json",
+      "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' }).",
+      "status": "serialized-forwarding",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.preview.ts",
+          "line": 25,
+          "expression": "await fs.writeFile(inputPath, JSON.stringify({ compose: { object: input.object, context: input.context, ...(input.preferences ? { preferences: input.preferences } : {}) }, framework: input.framework ?? 'both', widths: input.widths ?? [390, 820, 1440], output }));"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1756,
+          "expression": "input.preferences?.componentOverrides"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1792,
+          "expression": "input.preferences?.componentOverrides"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "object",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Object name from the OODS registry (e.g., Subscription, User).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 198,
+          "expression": "input.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 198,
+          "expression": "input.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 252,
+          "expression": "input.object"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "intent",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Natural-language description of the desired UI.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 305,
+          "expression": "input.intent"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "View context for object-aware composition.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 199,
+          "expression": "input.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 199,
+          "expression": "input.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 253,
+          "expression": "input.context"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "layout",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 254,
+          "expression": "input.layout"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 307,
+          "expression": "input.layout"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 326,
+          "expression": "composeResult.layout"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 308,
+          "expression": "input.preferences"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.theme",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Theme token (e.g., 'light', 'dark').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 443,
+          "expression": "preferences?.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 449,
+          "expression": "preferences?.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 455,
+          "expression": "preferences?.theme"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.metricColumns",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Number of metric columns for dashboard layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 441,
+          "expression": "preferences?.metricColumns"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 88,
+          "expression": "prefs.metricColumns"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 88,
+          "expression": "prefs.metricColumns"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.fieldGroups",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Number of field groups for form layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 447,
+          "expression": "preferences?.fieldGroups"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1502,
+          "expression": "input.preferences?.fieldGroups"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1542,
+          "expression": "expansionResult?.fieldGroups"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.tabCount",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Number of tabs for detail layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 453,
+          "expression": "preferences?.tabCount"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 94,
+          "expression": "prefs.tabCount"
+        },
+        {
+          "file": "packages/mcp-server/src/lib/oodsrc.ts",
+          "line": 94,
+          "expression": "prefs.tabCount"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.tabLabels",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Custom tab labels for detail layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 454,
+          "expression": "preferences?.tabLabels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1533,
+          "expression": "input.preferences?.tabLabels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1795,
+          "expression": "input.preferences?.tabLabels"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "preferences.componentOverrides",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Slot-name to component-name overrides (e.g., { 'items': 'Table' }).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1756,
+          "expression": "input.preferences?.componentOverrides"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1792,
+          "expression": "input.preferences?.componentOverrides"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/design.compose.ts",
+          "line": 1811,
+          "expression": "input.preferences?.componentOverrides"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "actionMappings",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Sprint 88: Stage1 BridgeSummary action_mappings, flat verb-keyed entries. See docs/integration/stage1-oods-contract.md §2c.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 309,
+          "expression": "input.actionMappings"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 309,
+          "expression": "input.actionMappings"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "framework",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Target framework for code generation.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 229,
+          "expression": "input.framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 230,
+          "expression": "input.framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 230,
+          "expression": "input.framework"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "styling",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Styling strategy for code generation.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "input.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "input.options?.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "rc.styling"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "profile",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Validation profile forwarded unchanged to code.generate, including its workflow-state contract gate. build is the default runnable-artifact gate.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 247,
+          "expression": "input.profile"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 449,
+          "expression": "input.profile"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 449,
+          "expression": "input.profile"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "releaseEvidence",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Hash-bound release evidence forwarded unchanged to code.generate.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 450,
+          "expression": "input.releaseEvidence"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 450,
+          "expression": "input.releaseEvidence"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "save",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Optional schema save config. String for name-only, or { name, tags } for full control.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 526,
+          "expression": "input.save"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 527,
+          "expression": "input.save"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 528,
+          "expression": "input.save"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 231,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 233,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 234,
+          "expression": "input.options"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.skipValidation",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Skip the validate step (default false).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 242,
+          "expression": "input.options?.skipValidation"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.skipRender",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Skip the render step (default false).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 243,
+          "expression": "input.options?.skipRender"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.checkA11y",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Enable a11y contrast checks in validate (default false).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 244,
+          "expression": "input.options?.checkA11y"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 244,
+          "expression": "rc.pipeline?.checkA11y"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.renderApply",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Render with apply=true to include HTML output (default true).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 245,
+          "expression": "input.options?.renderApply"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.compact",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "When true (default), omit token CSS from render output and return tokenCssRef instead. Reduces response size by ~40%.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 246,
+          "expression": "input.options?.compact"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 246,
+          "expression": "rc.pipeline?.compact"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.typescript",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Alias: enable TypeScript output in code generation.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 445,
+          "expression": "input.options?.typescript"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.styling",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Alias: styling strategy. Overridden by top-level styling if both provided.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "input.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "input.options?.styling"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 241,
+          "expression": "rc.styling"
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "property": "options.framework",
+      "schema": "packages/mcp-server/src/schemas/pipeline.input.json",
+      "description": "Alias: target framework. Overridden by top-level framework if both provided.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 229,
+          "expression": "input.framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 230,
+          "expression": "input.framework"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/pipeline.ts",
+          "line": 230,
+          "expression": "input.framework"
+        }
+      ]
+    },
+    {
+      "tool": "health",
+      "property": "includeChangelog",
+      "schema": "packages/mcp-server/src/schemas/health.input.json",
+      "description": "When true, include DSL version changelog in the response.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/health.ts",
+          "line": 230,
+          "expression": "input?.includeChangelog"
+        }
+      ]
+    },
+    {
+      "tool": "health",
+      "property": "sinceVersion",
+      "schema": "packages/mcp-server/src/schemas/health.input.json",
+      "description": "When provided with includeChangelog, only return changelog entries since this version.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/health.ts",
+          "line": 231,
+          "expression": "input.sinceVersion"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "theme",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 257,
+          "expression": "input.theme"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "CSS token brand for chart pixels. Omission resolves light/A.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 257,
+          "expression": "input.brand"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "opacity",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 271,
+          "expression": "input.opacity"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 271,
+          "expression": "input.opacity"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 271,
+          "expression": "input.opacity"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "rows",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 299,
+          "expression": "input.rows"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 299,
+          "expression": "input.rows"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 300,
+          "expression": "input.rows"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "datasetRef",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 301,
+          "expression": "input.datasetRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 301,
+          "expression": "input.datasetRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 302,
+          "expression": "input.datasetRef"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "hierarchy",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Hierarchy data for chartType 'treemap' or 'sunburst' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A discriminated union on 'type': 'adjacency_list' (flat nodes linked by parentId; a node whose parent is missing becomes its own root) or 'nested' (a single root node with children).",
+      "status": "discriminated-data-branch",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 631,
+          "expression": "const branchData = (input as Record<string, unknown>)[config.dataBranch];"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "sankey",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Flow data for chartType 'sankey' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes plus value-weighted links; every link MUST carry a numeric 'value' (the link width IS the flow magnitude) and reference existing node names.",
+      "status": "discriminated-data-branch",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 631,
+          "expression": "const branchData = (input as Record<string, unknown>)[config.dataBranch];"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "chord",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "status": "discriminated-data-branch",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 631,
+          "expression": "const branchData = (input as Record<string, unknown>)[config.dataBranch];"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "network",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). Every link MUST reference existing node ids — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "status": "discriminated-data-branch",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 631,
+          "expression": "const branchData = (input as Record<string, unknown>)[config.dataBranch];"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "geo",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "",
+      "status": "discriminated-data-branch",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 631,
+          "expression": "const branchData = (input as Record<string, unknown>)[config.dataBranch];"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "chartType",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth', 'bubble_map', and 'flow_map' take the 'geo' data branch (inline geometry + per-type encoding — flow_map draws origin→destination arcs); 'chord' takes the 'chord' data branch (sankey-shaped nodes + value-weighted links — a ring of category arcs joined by ribbons whose width is the value). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 237,
+          "expression": "input.chartType"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 271,
+          "expression": "input.chartType"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 279,
+          "expression": "input.chartType"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "encodings",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 330,
+          "expression": "input.encodings"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 393,
+          "expression": "input.encodings"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 414,
+          "expression": "input.encodings"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "id",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Optional stable identifier for the produced spec.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 386,
+          "expression": "input.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 394,
+          "expression": "input.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 482,
+          "expression": "rule.id"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "name",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Optional human-friendly chart title.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 387,
+          "expression": "input.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 395,
+          "expression": "input.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 603,
+          "expression": "err.name"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "description",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 388,
+          "expression": "input.description"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 396,
+          "expression": "input.description"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 516,
+          "expression": "built.spec.a11y.description"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "strictFields",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 329,
+          "expression": "input.strictFields"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 745,
+          "expression": "input.strictFields"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "a11yEquivalence",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-A11Y-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-A11Y-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02), so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 471,
+          "expression": "input.a11yEquivalence"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 233,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 236,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 258,
+          "expression": "out.output"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.svg",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 233,
+          "expression": "input.output?.svg"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 253,
+          "expression": "out.svg"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.width",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 236,
+          "expression": "width"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 243,
+          "expression": "ECHARTS_SSR_DIMENSIONS.width"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.height",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 236,
+          "expression": "height"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 244,
+          "expression": "ECHARTS_SSR_DIMENSIONS.height"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.compact",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 261,
+          "expression": "input.output?.compact"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 266,
+          "expression": "input.output?.compact"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.echarts",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 261,
+          "expression": "input.output?.echarts"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 267,
+          "expression": "input.output?.echarts"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.includeNormalizedSpec",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 268,
+          "expression": "input.output?.includeNormalizedSpec"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "output.includeA11y",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). For a heatmap (MarkRect grid, where X and Y are both dimensions) the accessible narrative describes the COLOR-channel measure — its maxima/minima/total — when color is a real quantitative measure; when color is categorical or absent the narrative falls back to the Y measure (sprint-150). DEFAULT false keeps the wire byte-identical (only a11yDescription).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 269,
+          "expression": "input.output?.includeA11y"
+        }
+      ]
+    },
+    {
+      "tool": "viz.render",
+      "property": "intent",
+      "schema": "packages/mcp-server/src/schemas/viz.render.input.json",
+      "description": "STRUCTURED (typed, NOT free-text) visualization intent — the deterministic half of the NL→viz hand-off (sprint-131). Supply it INSTEAD of chartType/encodings (mutually exclusive with chartType): the named measures/dimensions drive ENCODING, `goal` + the data drive the recommender's chartType pick, an optional `chartFamily` post-filters that pick, and an optional governed `measureRef` lights the governed-measure narrative overlay (only when output.includeA11y=true). Requires `rows` (or a `datasetRef`).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 279,
+          "expression": "input.intent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 346,
+          "expression": "input.intent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/viz.render.ts",
+          "line": 356,
+          "expression": "input.intent"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "theme",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 88,
+          "expression": "input.theme"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 783,
+          "expression": "input.theme"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "schemaVersion",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "IR version discriminant (V01 convention). A future template/shape change bumps to v0.2.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 765,
+          "expression": "input.schemaVersion"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "id",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Stable identifier for the dashboard instance.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 112,
+          "expression": "dataset.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 144,
+          "expression": "panel.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 144,
+          "expression": "panel.id"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "title",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Human-friendly dashboard title surfaced in UI + narration.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 183,
+          "expression": "panel.title"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 183,
+          "expression": "panel.title"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 189,
+          "expression": "panel.title"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "datasets",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "SEAM (a) cross-panel DATA-SHARING. Shared, named tabular datasets. Tabular chart panels and KPI panels reference one by `datasetId`; sharing a dataset is what makes cross-filter possible (panels filter the same dimensional space).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 111,
+          "expression": "input.datasets"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 787,
+          "expression": "input.datasets"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "panels",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or kpi tiles.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 143,
+          "expression": "input.panels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 151,
+          "expression": "input.panels"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 806,
+          "expression": "input.panels"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "layout",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 719,
+          "expression": "input.layout"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 818,
+          "expression": "input.layout"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "links",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Cross-filter wiring: a selection on a source panel filters a target panel. Declared in v1 (schema-frozen) so m04 adds only a reducer, not a schema change.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 768,
+          "expression": "input.links"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "crossFilter",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 94,
+          "expression": "input.crossFilter"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "onPanelError",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 95,
+          "expression": "input.onPanelError"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "resolveMeasures",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 98,
+          "expression": "input.resolveMeasures"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "strictFields",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Field-presence STRICT switch (sprint-118 m05). When true, a referenced field absent from EVERY resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). DEFAULT false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence ONLY — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 101,
+          "expression": "input.strictFields"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "strictDatasets",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Unknown-datasetId STRICT switch (sprint-122 m03). When true, a KPI panel whose datasetId is NOT present in datasets[] fails through onPanelError (OODS-V139). A KNOWN dataset that filters/cross-filters to zero rows STILL renders value:0 (unchanged). Does NOT affect chart panels (their missing-datasetId path keeps OODS-V123). Default false = the legacy frozen-D6 silent-empty behavior, byte-identical.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 106,
+          "expression": "input.strictDatasets"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "a11yEquivalence",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-A11Y-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-A11Y-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02); set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 86,
+          "expression": "input.a11yEquivalence"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "a11y",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 720,
+          "expression": "input.a11y"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 731,
+          "expression": "input.a11y"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 731,
+          "expression": "input.a11y"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "tokenCssRef",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). When supplied, this exact reference is returned in compact output. KPI threshold colors are NOT resolved inline.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 794,
+          "expression": "result.tokenCssRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 794,
+          "expression": "input.tokenCssRef"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "CSS token brand for the dashboard document and chart pixels; defaults to A. The contrast scan grades the same scoped document tokens.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 87,
+          "expression": "input.brand"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "selection",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + AND-across-sources) before render/KPI compute; absent -> the unfiltered dashboard.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 107,
+          "expression": "input.selection"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Optional render output controls (mirrors viz.render).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 75,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 76,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 77,
+          "expression": "input.output"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.compact",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "When true, omit full token CSS and return a tokenCssRef instead.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 75,
+          "expression": "input.output?.compact"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.echarts",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "When true, also include the ECharts option for tabular panels (ECharts-primary panels always include it).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 76,
+          "expression": "input.output?.echarts"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.includeNormalizedSpec",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "When true, also return each successfully rendered chart panel's intermediate NormalizedVizSpec IR on panels[].normalizedSpec. This is one call-level opt-in mirroring viz.render; KPI and error panels are unchanged, and the emitted IR sits outside the dashboard contentHash projection.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 77,
+          "expression": "input.output?.includeNormalizedSpec"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.html",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent/false leaves the output byte-identical to the compact/echarts payload.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 79,
+          "expression": "input.output?.html"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 813,
+          "expression": "result.html"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 855,
+          "expression": "result.html"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.dataTable",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "A11y completeness (sprint-118 m07). When true AND output.html is set, append a screen-reader-only data-table inside each tabular chart <figure> whose cells equal the charted rows (the chart's encoding columns). DEFAULT false keeps the HTML byte-identical.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 91,
+          "expression": "input.output?.dataTable"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.contrastScan",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "A11y completeness (sprint-118 m07). When true, run the four-pair token contrast preflight over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below its WCAG threshold. This is a token preflight, not whole-dashboard WCAG certification. DEFAULT false emits nothing.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 92,
+          "expression": "input.output?.contrastScan"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.dataQualityField",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "A11y completeness (sprint-118 m07). When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no Forge-side fetch.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 93,
+          "expression": "input.output?.dataQualityField"
+        }
+      ]
+    },
+    {
+      "tool": "dashboard.render",
+      "property": "output.includeA11y",
+      "schema": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+      "description": "When true, attach a STRUCTURED two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the SAME data source the panel renders from (Forge-Demos FD#10) — for cartesian and non-cartesian panels alike. DEFAULT false keeps the wire byte-identical (panels carry only a11yDescription).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/dashboard.render.ts",
+          "line": 78,
+          "expression": "input.output?.includeA11y"
+        }
+      ]
+    },
+    {
+      "tool": "artifact.certify",
+      "property": "spec",
+      "schema": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+      "description": "A Forge NormalizedVizSpec intermediate representation — the same IR viz.render emits as normalizedSpec. Validated authoritatively by the handler's assertNormalizedVizSpec.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/artifact.certify.ts",
+          "line": 776,
+          "expression": "input?.spec"
+        }
+      ]
+    },
+    {
+      "tool": "artifact.certify",
+      "property": "data",
+      "schema": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+      "description": "OPTIONAL operand for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord): the SAME data branch viz.render takes, so certify re-emits the option the render path would emit for this (spec, data) pair. EXACTLY ONE branch, and it must be the branch the IR's mark trait requires (MarkTreemap/MarkSunburst -> hierarchy, MarkSankey -> sankey, MarkChord -> chord, MarkGraph -> network, MarkChoropleth/MarkBubble/MarkFlow -> geo); a mismatch is a structured error. Supplying `data` alongside a CARTESIAN IR (MarkBar/MarkLine/MarkPoint/MarkArea/MarkRect) or an unmodeled mark is also a structured error — those paths compile from the IR itself, so the operand would be dead input. Omitting `data` is always valid: the verdict is then the pre-s172 one with determinism and accuracy honestly 'unchecked' and a note saying why.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/artifact.certify.ts",
+          "line": 795,
+          "expression": "input?.data"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/artifact.certify.ts",
+          "line": 796,
+          "expression": "input.data"
+        }
+      ]
+    },
+    {
+      "tool": "artifact.certify",
+      "property": "theme",
+      "schema": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+      "description": "CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/artifact.certify.ts",
+          "line": 757,
+          "expression": "input?.theme"
+        }
+      ]
+    },
+    {
+      "tool": "artifact.certify",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+      "description": "CSS brand scope, matching viz.render for the same normalized spec and data operand.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/artifact.certify.ts",
+          "line": 757,
+          "expression": "input?.brand"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "fidelityKind",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Which HTML fidelity emitter to invoke.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 119,
+          "expression": "fidelityKind"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "fixture",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001. Mutually exclusive with `manifest`.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 90,
+          "expression": "input.fixture"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 90,
+          "expression": "input.fixture"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 108,
+          "expression": "input.fixture"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "manifest",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Inline Object Catalog manifest to render — an alternative to `fixture`. Data only; no file path is accepted, so this does not reopen the traversal surface the fixture allow-list closes. Must contain an `entities` array. Mutually exclusive with `fixture`. Malformed input returns OODS-FP-005.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 91,
+          "expression": "input.manifest"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 91,
+          "expression": "input.manifest"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 99,
+          "expression": "input.manifest"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "options",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 119,
+          "expression": "options = {}"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "options.variant",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Projection-variant selector passed through to the emitter (see s100-m03 selectVariant() / runPreEmit()).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 157,
+          "expression": "options.variant"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "options.brandOverlay",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Built A/B light-scope brand for branded-mockup fidelity. Ignored by other fidelities. brand-a/brand-b are deprecated one-release aliases; unknown names return OODS-BM-002.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 194,
+          "expression": "options.brandOverlay"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 199,
+          "expression": "options.brandOverlay"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "options.reviewThreshold",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Threshold below which entities are flagged for review. Default 0.7. Ignored by non-review fidelities.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 184,
+          "expression": "options.reviewThreshold"
+        }
+      ]
+    },
+    {
+      "tool": "fidelity.preview",
+      "property": "options.includeStyles",
+      "schema": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+      "description": "Inline <style> block toggle. Default true; set false to receive markup without CSS.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/fidelity.preview.ts",
+          "line": 158,
+          "expression": "options.includeStyles"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "action",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.ts",
+          "line": 57,
+          "expression": "(input as { action?: MapAction }).action"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Accepted for bridge dry-run/apply mode parity (this tool is apply-capable); ignored by this action.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 69,
+          "expression": "input.apply"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 21,
+          "expression": "input.apply"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "minConfidence",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Candidates below this threshold are routed to queued instead of being applied.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 68,
+          "expression": "input.minConfidence"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "reportPath",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Filesystem path to a reconciliation_report.json artifact.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 203,
+          "expression": "input.reportPath"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 206,
+          "expression": "input.reportPath"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 212,
+          "expression": "input.reportPath"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "report",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 203,
+          "expression": "input.report"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 205,
+          "expression": "input.report"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 210,
+          "expression": "input.report"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "externalSystem",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "External design system name (e.g., 'material').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 422,
+          "expression": "mapping.externalSystem"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 24,
+          "expression": "input.externalSystem"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 29,
+          "expression": "m.externalSystem"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "externalComponent",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Component name in the external system (e.g., 'Button').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 423,
+          "expression": "mapping.externalComponent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 24,
+          "expression": "input.externalComponent"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 30,
+          "expression": "m.externalComponent"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "oodsTraits",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "OODS trait names this component maps to.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 243,
+          "expression": "existing.oodsTraits"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 384,
+          "expression": "existing.oodsTraits"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 385,
+          "expression": "updates.oodsTraits"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "propMappings",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Property translations from external to OODS prop names.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 74,
+          "expression": "input.propMappings"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.resolve.ts",
+          "line": 33,
+          "expression": "mapping.propMappings"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.update.ts",
+          "line": 37,
+          "expression": "input.updates.propMappings"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "confidence",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "'auto' for machine-generated, 'manual' for human-curated.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 78,
+          "expression": "candidate.confidence"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 83,
+          "expression": "candidate.confidence"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 95,
+          "expression": "candidate.confidence"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "metadata",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 389,
+          "expression": "existing.metadata"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 82,
+          "expression": "input.metadata"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 82,
+          "expression": "input.metadata"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "disambiguation_decisions",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 101,
+          "expression": "input.disambiguation_decisions"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 112,
+          "expression": "doc.disambiguation_decisions"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 113,
+          "expression": "doc.disambiguation_decisions"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "preferred_terms",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 102,
+          "expression": "input.preferred_terms"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 118,
+          "expression": "doc.preferred_terms"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 119,
+          "expression": "doc.preferred_terms"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "capabilities",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 103,
+          "expression": "input.capabilities"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 124,
+          "expression": "doc.capabilities"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.create.ts",
+          "line": 125,
+          "expression": "doc.capabilities"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "projection_variants",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 279,
+          "expression": "candidate.projection_variants"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 279,
+          "expression": "candidate.projection_variants"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 280,
+          "expression": "candidate.projection_variants"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "cursor",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Pagination cursor. Use the previous page's nextCursor to continue. When cursor or limit is provided, pagination defaults to 100 items per page.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.list.ts",
+          "line": 18,
+          "expression": "input.cursor"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.list.ts",
+          "line": 25,
+          "expression": "input.cursor"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.list.ts",
+          "line": 26,
+          "expression": "input.cursor"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "limit",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Page size for pagination. Omitting both cursor and limit preserves the legacy full-list response.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.list.ts",
+          "line": 18,
+          "expression": "input.limit"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.list.ts",
+          "line": 24,
+          "expression": "input.limit"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "id",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Mapping ID to delete (e.g., 'material-button').",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 137,
+          "expression": "mapping.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 230,
+          "expression": "report.target.id"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 251,
+          "expression": "existing.id"
+        }
+      ]
+    },
+    {
+      "tool": "map",
+      "property": "updates",
+      "schema": "packages/mcp-server/src/schemas/map.input.json",
+      "description": "Fields to update. Only provided fields are changed.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/map.apply.ts",
+          "line": 350,
+          "expression": "plan.updates"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.update.ts",
+          "line": 27,
+          "expression": "input.updates"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/map.update.ts",
+          "line": 28,
+          "expression": "input.updates"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "action",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/index.ts",
+          "line": 21,
+          "expression": "input?.action"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/index.ts",
+          "line": 35,
+          "expression": "input?.action"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "name",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 89,
+          "expression": "record.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 110,
+          "expression": "input.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 113,
+          "expression": "input.name"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "schemaRef",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "Reference to an in-memory schema produced by design.compose.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 116,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 120,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 123,
+          "expression": "input.schemaRef"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "tags",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 93,
+          "expression": "record.tags"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 130,
+          "expression": "input.tags"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/load.ts",
+          "line": 39,
+          "expression": "record.tags"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "author",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "Optional author metadata.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 96,
+          "expression": "record.author"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 96,
+          "expression": "record.author"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 131,
+          "expression": "input.author"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "Accepted for bridge dry-run/apply mode parity (this tool is apply-capable); ignored by this action.",
+      "status": "documented-bridge-parity",
+      "refs": []
+    },
+    {
+      "tool": "schema",
+      "property": "object",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 94,
+          "expression": "record.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 94,
+          "expression": "record.object"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 132,
+          "expression": "input.object"
+        }
+      ]
+    },
+    {
+      "tool": "schema",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/schema.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 95,
+          "expression": "record.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/save.ts",
+          "line": 95,
+          "expression": "record.context"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/schema/load.ts",
+          "line": 41,
+          "expression": "record.context"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "action",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.ts",
+          "line": 26,
+          "expression": "input?.action"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.ts",
+          "line": 38,
+          "expression": "input?.action"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "domain",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "Filter to objects in a specific domain (e.g. 'core.identity', 'saas.billing')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 40,
+          "expression": "def.object.domain"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 60,
+          "expression": "input.domain"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 61,
+          "expression": "input.domain"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "maturity",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "Filter by metadata maturity level",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 42,
+          "expression": "def.metadata?.maturity"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 67,
+          "expression": "input.maturity"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 68,
+          "expression": "input.maturity"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "trait",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "Filter to objects composing a given trait (e.g. 'Priceable', 'lifecycle/Stateful')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 74,
+          "expression": "input.trait"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 75,
+          "expression": "input.trait"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 91,
+          "expression": "input.trait"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "name",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "Object name to look up (e.g. 'User', 'Product', 'Invoice')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 36,
+          "expression": "t.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.list.ts",
+          "line": 39,
+          "expression": "def.object.name"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/object.show.ts",
+          "line": 83,
+          "expression": "name"
+        }
+      ]
+    },
+    {
+      "tool": "object",
+      "property": "context",
+      "schema": "packages/mcp-server/src/schemas/object.input.json",
+      "description": "Optional: filter view_extensions to a single context (e.g. 'detail', 'list', 'form', 'timeline', 'card', 'inline')",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/object.show.ts",
+          "line": 83,
+          "expression": "context"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "action",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.ts",
+          "line": 27,
+          "expression": "input.action"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.ts",
+          "line": 37,
+          "expression": "input.action"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "mode",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 126,
+          "expression": "input.mode"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 29,
+          "expression": "input.mode"
+        },
+        {
+          "file": "packages/mcp-server/src/render/component-map.ts",
+          "line": 937,
+          "expression": "props.mode"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "schema",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 137,
+          "expression": "input.schema"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 138,
+          "expression": "input.schema"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 142,
+          "expression": "resolved.schema"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "schemaRef",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Reference to a cached UiSchema returned by design.compose.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 139,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 140,
+          "expression": "input.schemaRef"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 147,
+          "expression": "input.schemaRef"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "patch",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Required when mode='patch'. Accepts JSON Patch array or node patch object(s).",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 159,
+          "expression": "input.patch"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 160,
+          "expression": "input.patch"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 80,
+          "expression": "input.patch"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "baseTree",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Required when mode='patch' to provide the base UiSchema to patch.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 155,
+          "expression": "input.baseTree"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 58,
+          "expression": "input.baseTree"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 59,
+          "expression": "input.baseTree"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "researchContext",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Optional research bundle from Stage1 discovery to influence rendering.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 199,
+          "expression": "input.researchContext"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "brand",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand=\"default\". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so fragments diagnose an ignored brand with OODS-W001.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 178,
+          "expression": "input.brand"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 332,
+          "expression": "input.brand"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 332,
+          "expression": "input.brand"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "options",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 215,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 101,
+          "expression": "input.options"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 108,
+          "expression": "input.options"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "options.includeTree",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 215,
+          "expression": "input.options?.includeTree"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Optional render output controls. Omitting this object preserves full-document behavior.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 36,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 40,
+          "expression": "input.output"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 50,
+          "expression": "input.output"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.format",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 36,
+          "expression": "input.output?.format"
+        },
+        {
+          "file": "packages/mcp-server/src/render/component-map.ts",
+          "line": 1302,
+          "expression": "field.format"
+        },
+        {
+          "file": "packages/mcp-server/src/render/component-map.ts",
+          "line": 1303,
+          "expression": "field.format"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.strict",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 40,
+          "expression": "input.output?.strict"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.includeCss",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 54,
+          "expression": "input.output?.includeCss"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.compact",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Reduces response size by ~40%. Defaults to true to keep MCP responses within result-size caps.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 50,
+          "expression": "input.output?.compact"
+        },
+        {
+          "file": "packages/mcp-server/src/render/document.ts",
+          "line": 232,
+          "expression": "input.compact"
+        },
+        {
+          "file": "packages/mcp-server/src/render/component-map.ts",
+          "line": 1228,
+          "expression": "compact = true"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.showConfidence",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "When true, emit data-oods-confidence and data-confidence-level attributes on rendered components that carry composition confidence metadata. Low-confidence components (below confidenceThreshold) also receive an oods-low-confidence CSS class. Default false.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 76,
+          "expression": "input.output?.showConfidence"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.confidenceThreshold",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Confidence threshold for low-confidence affordance. Components with confidence below this value receive the oods-low-confidence CSS class. Only effective when showConfidence is true. Default 0.5.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 80,
+          "expression": "input.output?.confidenceThreshold"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.tokenOverlay",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity.preview.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 58,
+          "expression": "input.output?.tokenOverlay"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 178,
+          "expression": "input.output?.tokenOverlay"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "output.skinOverlay",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Inline measured-COLOUR delta resolved against the Forge-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 65,
+          "expression": "input.output?.skinOverlay"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 178,
+          "expression": "input.output?.skinOverlay"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "apply",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "Accepted for bridge dry-run/apply mode parity (this tool is apply-capable); ignored by this action.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 186,
+          "expression": "input.apply"
+        },
+        {
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "line": 229,
+          "expression": "input.apply"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "options.includeNormalized",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 133,
+          "expression": "input.options?.includeNormalized"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "options.checkComponents",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 101,
+          "expression": "input.options?.checkComponents"
+        }
+      ]
+    },
+    {
+      "tool": "repl",
+      "property": "options.checkA11y",
+      "schema": "packages/mcp-server/src/schemas/repl.input.json",
+      "description": "When true, run WCAG contrast checks against design tokens and surface failures as A11Y_CONTRAST warnings.",
+      "status": "read-site",
+      "refs": [
+        {
+          "file": "packages/mcp-server/src/tools/repl.validate.ts",
+          "line": 108,
+          "expression": "input.options?.checkA11y"
+        }
+      ]
+    }
+  ],
+  "unresolved": []
+}

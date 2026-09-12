@@ -1,6 +1,33 @@
 {
   "schemaVersion": "1.0.0",
-  "head": "2030b4c9faefe78b74338e362907c672ec5b55f2",
+  "mode": "s194",
+  "retired": [
+    {
+      "name": "viz.compose",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Deprecated field-names-only scaffold; viz.render is the data-bound chart tool."
+    },
+    {
+      "name": "review",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Evaluation emits labels without target field/value edits; RFC6902 patch semantics cannot be derived. Internal evaluation and fidelity emitters remain unregistered."
+    },
+    {
+      "name": "release.verify",
+      "decisionIds": [
+        1916,
+        1923
+      ],
+      "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
+    }
+  ],
+  "head": "a70d8c5c1677502a82e5422875907e5ef4b6b1b3",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -8,43 +35,49 @@
     "portableE2E": "Literal callTool names in scripts/runtime/e2e.mjs; source coverage only, not a claim this census executed the portable E2E."
   },
   "summary": {
-    "entries": 27,
-    "auto": 21,
-    "onDemand": 6,
+    "entries": 24,
+    "auto": 19,
+    "onDemand": 5,
     "byTier": {
-      "product-reality": 7,
-      "contract": 12,
-      "unit": 4,
-      "none": 4
+      "product-reality": 19,
+      "contract": 5,
+      "unit": 0,
+      "none": 0
     },
     "autoByTier": {
-      "product-reality": 7,
-      "contract": 11,
-      "unit": 3,
+      "product-reality": 19,
+      "contract": 0,
+      "unit": 0,
       "none": 0
     },
     "onDemandByTier": {
       "product-reality": 0,
-      "contract": 1,
-      "unit": 1,
-      "none": 4
+      "contract": 5,
+      "unit": 0,
+      "none": 0
     },
-    "portableE2E": 4
+    "portableE2E": 19
   },
   "rows": [
     {
       "name": "tokens.build",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Run the design-token build and return the compiled CSS variables and token artifacts. The build emits every brand and theme; the brand and theme inputs label the returned payload, they do not filter it. Use apply=true to write output files (default: dry-run, returns preview only).",
+        "description": "Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only. Portable bundle limitation: apply:false returns a preview only. apply:true requires the omitted legacy TypeScript output and host build inputs, so token artifact export remains host-only.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:e1c68b226561497e8182c9c3d83c248d5b1fc3497bbb9fd05fd0f9f2a5c29ea6",
+      "claimHash": "sha256:d43ae83ea2a99ba7d58df2edb3c27b82c85a3e26f7abacffc6cad7e5715b810b",
       "inputSchemaPath": "packages/mcp-server/src/schemas/tokens.build.input.json",
-      "inputSchemaHash": "sha256:8a868b007d2893078366a86da9e76e3bd9e36b06c1d2490925a1b17b1b83fc96",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:d3824aa7ba54660a2c953bee5b830ef3c938b7ded14f71cdada8deaafeef7539",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/tokens.build.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/preview.compaction.spec.ts",
@@ -59,15 +92,50 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 28,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 782
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-token-export-source-dependency",
+          "tool": "tokens.build",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Assembler strips dist/ts/tokens.ts, so apply:true treats outputs as missing and attempts an unavailable host build script.",
+          "transportOutcome": "apply:false returns preview and transcript only; no token artifact export is claimed. apply:true failed with native S019 build error, whose code is stripped by adapter.",
+          "resolution": "A follow-on publish/export contract must decouple source-only legacy TS output or admit it to the bundle."
+        }
+      ],
       "caveats": [
         {
-          "kind": "inert-option",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/tokens.build.ts",
-          "reason": "brand/theme label the returned context; copied compiled CSS includes all built scopes and is not filtered by those inputs.",
-          "line": 141
+          "reason": "Requested-scope JSON and CSS resolve brand/theme. Full CSS retains every built scope; TypeScript and Tailwind artifacts explicitly retain legacy A/light defaults.",
+          "line": 128
+        },
+        {
+          "kind": "documented-limit",
+          "file": "scripts/runtime/assemble.mjs",
+          "reason": "Bundle omits legacy tokens.ts; tokens.build apply:true consequently tries unavailable source build inputs. Portable proof calls apply:false and claims only preview/transcript, not export.",
+          "line": 502
         }
       ]
     },
@@ -75,15 +143,21 @@
       "name": "structuredData.fetch",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode.",
-        "inputSchemaDescription": ""
+        "description": "Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode. listVersions and version are dataset-only; supplying them in kind mode returns structuredData.fetch-specific OODS-V202.",
+        "inputSchemaDescription": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202."
       },
-      "claimHash": "sha256:99cdb110dbd57fcfc4d2fb79f7d0c255079ea2e5dbfbaf728de36511512e4119",
+      "claimHash": "sha256:71d184454b01e10ea403dd4798bbda1c03391d151c505637fae8a57a5f507e4b",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
-      "inputSchemaHash": "sha256:1acc9adf45e9f395030eae92c3f28c0f35afde48da552b13d5d81eed2cf87a79",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:833c1bb6f2247d0177e2f4cd4459ecb0e63893570328a872e546eac4e0aedf3a",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/structured-data.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/structuredData.fetch.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
@@ -125,25 +199,49 @@
           "line": 26,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 9,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 21,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 789
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "brand.apply",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Apply brand token overlays using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. Use apply=true to write changes to disk (default: dry-run, returns preview only).",
+        "description": "Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns a missing-source error; source writes/builds require the host repository.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:920900f7b975143f874c5e448fdc07005c6de914c20a713c31c154b99fb3380a",
+      "claimHash": "sha256:62fabdc1b311037fde1a51fec4e5aa0ac47e4285617fe132e58fd2564e1e69b7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.apply.input.json",
       "inputSchemaHash": "sha256:02124d32e9d408030323ccfa8058abef60c463f7b23e5954b2d5983822b5d99a",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/brand.apply.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/brand.apply.cross-brand-delta.spec.ts",
@@ -173,21 +271,50 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": [
+      "receiptRefs": [
         {
-          "kind": "no-op",
-          "file": "packages/mcp-server/src/tools/brand.apply.ts",
-          "reason": "The verification subprocess ignores stdio and resolves both close and error without checking success; build duration is not proof of a successful build.",
-          "line": 461
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         },
         {
-          "kind": "no-op",
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 791
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-brand-source-absent",
+          "tool": "brand.apply",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Gate1 deliberately excludes canonical brand source and build inputs. Even dry-run requires reading that source.",
+          "transportOutcome": "adapter isError with missing-source ENOENT message; no native dependency-specific OODS code",
+          "resolution": "Requires a separately scoped publish-boundary decision or dependency-specific failure behavior."
+        }
+      ],
+      "caveats": [
+        {
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.apply.ts",
-          "reason": "apply writes snapshots in the artifacts run directory, not canonical brand token source.",
-          "line": 622
+          "reason": "A failed real token build returns OODS-S019 with captured output and receipts. Source writes are deliberately left in place for inspection and repair; no automatic rollback is claimed.",
+          "line": 699
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/brand.apply.ts",
+          "reason": "Portable bundle omits canonical brand source; even dry-run needs that source and returns a missing-source error. Host mutation remains separately proven.",
+          "line": 55
         }
       ]
     },
@@ -195,15 +322,21 @@
       "name": "brand.intake",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Validate a preview-only DTCG brand intake envelope in memory. Each theme document supplies one of two document_operand kinds: `inline-document` or `authorized-content-addressed-reference`. The latter is schema-valid but intentionally unresolved and returns a typed `unresolved-content-reference` not-accepted outcome. `apply` is forced false; the tool never writes files, applies tokens, creates a brand, or emits build artifacts.",
+        "description": "Validate a preview-only DTCG intake envelope in memory and return its envelopeHash. Fully accepted brand-relative inline documents for existing A/B with unique mapped target themes return a delta consumable by brand.apply alias strategy. authorized-content-addressed-reference is schema-valid but intentionally unresolved with typed unresolved-content-reference outcomes. apply is forced false; no writes, token application, brand creation or build artifacts.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:bf7732efed9f406ca57f3678fe127f5afc7931254bbfe40afc0006273e741044",
+      "claimHash": "sha256:515f89586cb50d969c2a7ff8e4bb9147bbb213e7c2c95b6b4680f17f3c848036",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.intake.input.json",
       "inputSchemaHash": "sha256:987e16449041abb797e17295517887cd01ca5babc8024bc4fcc7ebba9c26e472",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
@@ -213,15 +346,28 @@
         ],
         "unit": []
       },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 792
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "no-op",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.intake.ts",
-          "reason": "Explicit preview-only validation: no persistence, brand creation or token application. This is an accurately documented limit.",
-          "line": 8
+          "reason": "Read-only intake emits an envelopeHash and a consumable delta only for fully accepted inline A/B documents with unique mapped themes. No brand creation, persistence or content-reference resolver is claimed.",
+          "line": 9
         }
       ]
     },
@@ -239,6 +385,11 @@
       "testImports": {
         "product-reality": [
           {
+            "path": "packages/mcp-server/test/product-reality/catalog.list.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/catalog.list.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/workflow-runtime.s193.spec.ts",
             "line": 7,
             "handler": "packages/mcp-server/src/tools/catalog.list.ts"
@@ -253,6 +404,11 @@
           {
             "path": "packages/mcp-server/test/contracts/diag.snapshot-counts.spec.ts",
             "line": 3,
+            "handler": "packages/mcp-server/src/tools/catalog.list.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/diag.snapshot.s194.spec.ts",
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/catalog.list.ts"
           },
           {
@@ -281,20 +437,26 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 794
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "code.generate",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires.",
+        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable bundle limitation: React/Vue readiness requires omitted source/test/declaration files; generated targets return OODS-N015 without an artifact until that packaging contract is reconciled. Host repository generation remains supported.",
         "inputSchemaDescription": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:96af7fff5199e4ee71ddff12a38122c489e598003e842723d63864ddefd2990d",
+      "claimHash": "sha256:29c7dd73a795d36e74f306a1a02cb9a88e96bdfde7a6bf54d685e8591f01a7a7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
-      "inputSchemaHash": "sha256:6763c8aa9e71e7f9ed1897ece41208e8d53b92352f71e9f162fcacb07ab8fd40",
+      "inputSchemaHash": "sha256:3b9f8ac91e4d6c2d3c7a0c05f633cfb1e4d5d5a43a9f4ae04ed5fb54123e6149",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -331,6 +493,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/billing.s188.spec.ts",
             "line": 11,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -400,6 +567,11 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/local-behavior-guards.s185.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
             "line": 11,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
@@ -538,11 +710,6 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 5,
-            "handler": "packages/mcp-server/src/tools/code.generate.ts"
-          },
-          {
             "path": "packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts",
             "line": 11,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -602,16 +769,50 @@
           "line": 16,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 17,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 800
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "code.generate",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ],
       "caveats": [
         {
-          "kind": "trusts-caller",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof.",
-          "line": 297
+          "line": 299
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/codegen/target-readiness.ts",
+          "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven.",
+          "line": 177
         }
       ]
     },
@@ -624,7 +825,7 @@
       },
       "claimHash": "sha256:9daeb71fb6c86c13fb1c43b68991a59f154edfe0ece31555ecf230e4dbeb0cce",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.compose.input.json",
-      "inputSchemaHash": "sha256:8a8604c76ae7408203594144707ddf1b9184bf723d00f570e30d2adaf96fbfc5",
+      "inputSchemaHash": "sha256:e25e8b5e43d5271105f0486112410c651140c1c01d30317c0b36fdc757fb39c0",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -641,6 +842,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/billing-placement.s188.spec.ts",
             "line": 3,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -669,6 +875,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts",
             "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -676,6 +887,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts",
             "line": 9,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -718,6 +934,11 @@
           {
             "path": "packages/mcp-server/test/contracts/layout-single-source.spec.ts",
             "line": 22,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/portable-fixtures.s194.spec.ts",
+            "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -848,23 +1069,35 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 796
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "design.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification.",
+        "description": "Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied. The native server retains OODS-N019; the current adapter forwards message text only and drops native error codes.",
         "inputSchemaDescription": "Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve."
       },
-      "claimHash": "sha256:02d440eae49b1d0a9b07b0c16c7759e4ec017b79c60da7a8f807c976ccec6654",
+      "claimHash": "sha256:e8f26f207c257d6087df1985b3bed0e25b6983899e07ca2f3459f294175bedfa",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
       "inputSchemaHash": "sha256:bbad1535c7d66c9b8a17f5d450849deb9a25f4f3a07742da2a8a212f5c33720e",
-      "proofTier": "unit",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/design.preview.ts"
+          }
+        ],
         "contract": [],
         "unit": [
           {
@@ -880,16 +1113,50 @@
           "line": 11,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m05/README.md",
+          "line": 3,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m06/README.md",
+          "line": 7,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 799
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "adapter-native-error-code-erasure",
+          "tool": "design.preview",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "NativeOodsClient turns structured native errors into Error(message), dropping OODS-N019 and retry metadata.",
+          "transportOutcome": "adapter isError with pnpm design:loop serve guidance; native N019 remains proven directly",
+          "resolution": "Preserve structured native errors through the adapter in a follow-on transport contract mission."
+        }
+      ],
       "caveats": [
         {
-          "kind": "external-dependency",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.preview.ts",
           "reason": "Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019.",
           "line": 12
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-adapter/index.js",
+          "reason": "The adapter strips native error codes and forwards message text. Native OODS-N019 remains available directly; portable transport code preservation is carried under #1927.",
+          "line": 169
         }
       ]
     },
@@ -897,18 +1164,23 @@
       "name": "pipeline",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema.",
+        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable bundle limitation: React/Vue readiness requires omitted source/test/declaration files; generated targets return OODS-N015 without an artifact until that packaging contract is reconciled. Host repository generation remains supported.",
         "inputSchemaDescription": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:e85ae74b80d42ff2edab1dd3e917542a92dd0ad98cc1eced0c4e6da8a52ef828",
+      "claimHash": "sha256:12634ab0b2f6394ae07029c6b872ce2579c0eadc343feb3310086c28bf867369",
       "inputSchemaPath": "packages/mcp-server/src/schemas/pipeline.input.json",
-      "inputSchemaHash": "sha256:92b4ebb8815bd472769abe2a7817522cc429039f0b382bdf9b9710fb4c7a8100",
+      "inputSchemaHash": "sha256:e0eeb8d65a6decf167f743cae1651be1d6873c7db11a0781cb60b658e80cd6d3",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
           {
             "path": "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -930,7 +1202,7 @@
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 19,
+            "line": 17,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -968,14 +1240,36 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 803
+        }
+      ],
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "pipeline",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ],
       "caveats": [
         {
-          "kind": "trusts-caller",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
           "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof.",
-          "line": 297
+          "line": 299
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/codegen/target-readiness.ts",
+          "reason": "Portable bundle omits source/test/declaration readiness references; React/Vue emission refuses with OODS-N015 and no artifact. Host generation is independently proven.",
+          "line": 177
         }
       ]
     },
@@ -983,15 +1277,20 @@
       "name": "health",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Check MCP server readiness and subsystem status, including registry counts, token artifact availability, and schema store state.",
+        "description": "Read server readiness, live registry/store counts and retained proof summaries. tokens lists brands, themes and scopes from the built css-variables-by-scope.json, plus defaultScope {brand, theme, source: env|default}; this is configured default metadata, never an observed consumer scope. Missing built scopes are reported as unavailable. includeChangelog and sinceVersion select the reported DSL changelog; request-level DSL version selection is not supported.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:cb9bafd661f67f5d3b445f4cbe5e3c1578d7ce455d1e5cd05680a3c64509fcc9",
+      "claimHash": "sha256:63f8098e7a731d63112d95a35c45a5fb1b31c3ae197a266784e0cfcafc1d4e50",
       "inputSchemaPath": "packages/mcp-server/src/schemas/health.input.json",
       "inputSchemaHash": "sha256:5f9681a9aea550f2e7a162c36b75f262c82c9e39a85257f101af3256bae6fe07",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/health.ts"
+          },
           {
             "path": "packages/mcp-server/test/product-reality/workflow-runtime.s193.spec.ts",
             "line": 6,
@@ -1023,19 +1322,20 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 547
+          "line": 701
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 680
+          "line": 901
         }
       ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "inert-option",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/health.ts",
-          "reason": "Token theme/brand fields report environment defaults, not an observed active consumer scope.",
-          "line": 133
+          "reason": "Health lists built token scopes and labels configured defaults; it does not observe a consumer scope.",
+          "line": 148
         }
       ]
     },
@@ -1043,15 +1343,21 @@
       "name": "registry.snapshot",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve.",
-        "inputSchemaDescription": "Bulk-read the current OODS registry state (maps, traits, objects) in a single call."
+        "description": "Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation.",
+        "inputSchemaDescription": "Bulk-read the current OODS registry state (maps, traits, objects) in a single call. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation."
       },
-      "claimHash": "sha256:c344fc71d7fb9cca8e223ac5803d0d8021f8dfe1e1b29c15637a0d14312216ac",
+      "claimHash": "sha256:47b846c6173bb4beef355f2451a199d5a3ed24511fd6b1120dfa04a4bdc88840",
       "inputSchemaPath": "packages/mcp-server/src/schemas/registry.snapshot.input.json",
-      "inputSchemaHash": "sha256:7a94a435e0193bd6ac76342ebb6d1235c33b7b95b4ff87ddb0e49f9794a2377e",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:f25a2c6a58099b56a010e50ba0f5ec9af323593e683171e397b5ff39dfa4fc9e",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/registry.snapshot.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/registry-snapshot.spec.ts",
@@ -1060,7 +1366,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/registry-v14-roundtrip.spec.ts",
-            "line": 40,
+            "line": 41,
             "handler": "packages/mcp-server/src/tools/registry.snapshot.ts"
           }
         ],
@@ -1072,53 +1378,28 @@
           }
         ]
       },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": []
-    },
-    {
-      "name": "viz.compose",
-      "registration": "auto",
-      "advertisedClaim": {
-        "description": "(Deprecated; use viz.render) Compose a visualization schema from chart type, data bindings, and/or object viz traits. Returns schemaRef for pipeline reuse. schemaRef includes createdAt/expiresAt (default TTL: 30 minutes). Supports bar, line, area, and point chart types with axis, color, and size encodings. Deprecated in favor of viz.render, which compiles inline data rows into a real, renderable Vega-Lite/ECharts spec; viz.compose returns only a field-name component scaffold and remains callable for back-compat.",
-        "inputSchemaDescription": "Compose a visualization schema from chart type, data bindings, and/or object viz traits. Provide at least one of 'chartType', 'object', or 'traits'."
-      },
-      "claimHash": "sha256:d2c7afcf49ad7eb986324bb90b9c4d3d451c62fcf11250baddf5add6d2acbd0b",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/viz.compose.input.json",
-      "inputSchemaHash": "sha256:cf9dc8ee20b4b51e063d5c0e227321c347cffcab990fd8bf4bb76efa8ef4d07e",
-      "proofTier": "contract",
-      "testImports": {
-        "product-reality": [],
-        "contract": [
-          {
-            "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 18,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          }
-        ],
-        "unit": [
-          {
-            "path": "packages/mcp-server/test/compose/viz-auto-binding.spec.ts",
-            "line": 8,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 2,
-            "handler": "packages/mcp-server/src/tools/viz.compose.ts"
-          }
-        ]
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m03/README.md",
+          "line": 8,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 805
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "placeholder",
-          "file": "packages/mcp-server/src/tools/viz.render.ts",
-          "reason": "Deprecated field-name scaffold; it is not the real data-bound renderer or a certifiable artifact.",
-          "line": 5
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/registry.snapshot.ts",
+          "reason": "Draft preferred terms, review decisions and capabilities are surfaced losslessly, not consumed by mapping resolution or generation.",
+          "line": 34
         }
       ]
     },
@@ -1126,15 +1407,30 @@
       "name": "viz.render",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns a compiled Vega-Lite spec (ECharts opt-in via output.echarts) with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.",
+        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Three input modes: supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette.",
         "inputSchemaDescription": "Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option."
       },
-      "claimHash": "sha256:be93edde5cd7b35f2c8d836303477cdd61fb52b4651b4c93998589dd35e0843a",
+      "claimHash": "sha256:39c262bd1e338af36802a2af6a3cc078dbc71652a261857e715dede4cbd5a8d7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/viz.render.input.json",
-      "inputSchemaHash": "sha256:227ca301124c92eec88804620f83d4d0a55f00f40ac04837ceee13e91bf0e0b6",
+      "inputSchemaHash": "sha256:6457540f97f0e54c1c4b8fd157a13583477a66ebcb1912940b01dbfd2746d18d",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 8,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
           {
             "path": "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts",
             "line": 7,
@@ -1146,7 +1442,13 @@
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           }
         ],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/portable-fixtures.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          }
+        ],
         "unit": [
           {
             "path": "packages/mcp-server/test/tools/artifact.certify.data-operand.spec.ts",
@@ -1309,30 +1611,43 @@
           "line": 9,
           "kind": "readme-reference",
           "verifiedReceipt": false
+        },
+        {
+          "path": "artifacts/product-reality/sprint-194/m05/README.md",
+          "line": 3,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
         }
       ],
       "portableE2E": true,
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 616
+          "line": 775
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "dashboard.render",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo map) from a declarative DashboardSpec of shared datasets + panels. Composes each panel through the in-process viz engine with deterministic auto-layout, headless KPI compute, and cross-filter linking. Returns the resolved layout, per-panel compiled specs (Vega-Lite or ECharts, geo registration preserved), KPI values, a dashboard-level a11y block, and one specRef for pipeline reuse.\n\nPANEL IDENTITY. Every successful chart panel returns the contentHash produced by its in-process viz.render call; it therefore matches a standalone viz.render call with the identical spec and data. Set the call-level output.includeNormalizedSpec flag to also return each successful chart panel's NormalizedVizSpec. That IR can be passed to artifact.certify as {spec} alone for a cartesian chart, or as {spec,data} with exactly the matching hierarchy, sankey, chord, network, or geo branch for an ECharts-primary chart. These per-panel identity fields are attached after the dashboard's canonical {panels,layout} projection is cached and hashed, so they do not feed the dashboard contentHash.\n\nHTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG; placeholders are reserved for error panels. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.\n\nBRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document.",
+        "description": "Render a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo map) from a declarative DashboardSpec of shared datasets + panels. Composes each panel through the in-process viz engine with deterministic auto-layout, headless KPI compute, and cross-filter linking. Returns the resolved layout, per-panel compiled specs (Vega-Lite or ECharts, geo registration preserved), KPI values, a dashboard-level a11y block, and one specRef for pipeline reuse.\n\nPANEL IDENTITY. Every successful chart panel returns the contentHash produced by its in-process viz.render call; it therefore matches a standalone viz.render call with the identical spec and data. Set the call-level output.includeNormalizedSpec flag to also return each successful chart panel's NormalizedVizSpec. That IR can be passed to artifact.certify as {spec} alone for a cartesian chart, or as {spec,data} with exactly the matching hierarchy, sankey, chord, network, or geo branch for an ECharts-primary chart. These per-panel identity fields are attached after the dashboard's canonical {panels,layout} projection is cached and hashed, so they do not feed the dashboard contentHash.\n\nHTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG; placeholders are reserved for error panels. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.\n\nBRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.\n\nSCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document. Governed measureRef resolution defaults to true: KPI refs bind field/aggregate, chart refs decorate narrative only. Unknown refs produce OODS-V130; missing resolved fields produce OODS-V137 through the panel error policy. Explicit resolveMeasures:false opts out of ref resolution; inputs without refs retain their rendered bytes.",
         "inputSchemaDescription": "Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only, decision #881), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout (m02), computes KPIs (m03), and applies any active cross-filter selection (m03/m04). Option C: per-chart specs are unchanged; this IR sits above them."
       },
-      "claimHash": "sha256:26d4c67be536fe2c11435c63a5cb0c0047d4ed253faa22b7d0d7614bf359aa96",
+      "claimHash": "sha256:a2ff3fd55460a730dad4b2d2a566dacdb364e9f0ce9683bcb932e15a4193f245",
       "inputSchemaPath": "packages/mcp-server/src/schemas/dashboard.render.input.json",
-      "inputSchemaHash": "sha256:c65380aa472d8b91c087fcc1c06d72eb86a61aea52591e9f9885f39fc50ca777",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:a46bf263eca396aa57230a97bae6aa9bd6b83bd63385fa550a904ecaecb44415",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/dashboard.render.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/dashboard.render.duplicate-panel-id.s181.spec.ts",
@@ -1416,21 +1731,22 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 570
+          "line": 729
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 574
+          "line": 733
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 578
+          "line": 737
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 582
+          "line": 741
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -1443,9 +1759,15 @@
       "claimHash": "sha256:b8f2b91d6689e109db46846b7ee4ba0cbe44db032f3aba764d36ed9a74a35689",
       "inputSchemaPath": "packages/mcp-server/src/schemas/artifact.certify.input.json",
       "inputSchemaHash": "sha256:0297eeb1f60bdb060f0cfe2af93aaec5f5e5c6aefa015397226924af8344b340",
-      "proofTier": "unit",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+            "line": 3,
+            "handler": "packages/mcp-server/src/tools/artifact.certify.ts"
+          }
+        ],
         "contract": [],
         "unit": [
           {
@@ -1586,28 +1908,35 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 617
+          "line": 777
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 620
+          "line": 778
         }
       ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "fidelity.preview",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block.",
+        "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back. Portable callers must provide inline manifest data because named fixtures are not shipped.",
         "inputSchemaDescription": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (resolved against a vetted allow-list — no caller-supplied paths), or an inline `manifest` object (data only — also never a path). The inline path lets an agent render a manifest it authored in its own repo without committing a fixture here."
       },
-      "claimHash": "sha256:9ad122b170620965960644a4cd357594736c26e4bef806a2f289e8fab5e3015b",
+      "claimHash": "sha256:5c84243f779e6deb86407964f4f2973b259c744bcc17ece1f6d418f43995a356",
       "inputSchemaPath": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
-      "inputSchemaHash": "sha256:5fabeb30a9fe753a13817422590f99efee9cba244ccaff3ec89616fc4a5818c4",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:0854e6d23973fc2ff14ccf73d683399c62189a97ccc557372a2976e00de293ae",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 12,
+            "handler": "packages/mcp-server/src/tools/fidelity.preview.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/pragmatic-role-ia.spec.ts",
@@ -1623,15 +1952,28 @@
           }
         ]
       },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "receiptRefs": [
+        {
+          "path": "artifacts/product-reality/sprint-194/m02/README.md",
+          "line": 30,
+          "kind": "readme-reference",
+          "verifiedReceipt": false
+        }
+      ],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 807
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "placeholder",
+          "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/branded-mockup-emitter.ts",
-          "reason": "The non-production branded mockup uses a hard-coded hex token table, not the canonical brand-token build.",
-          "line": 78
+          "reason": "Non-production branded mockups resolve canonical built A/B light tokens. brand-a/brand-b aliases are deprecated for one release; unknown brands fail explicitly.",
+          "line": 107
         }
       ]
     },
@@ -1639,15 +1981,21 @@
       "name": "map",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior.",
-        "inputSchemaDescription": "Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property."
+        "description": "Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.",
+        "inputSchemaDescription": "Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution."
       },
-      "claimHash": "sha256:404c1cd9bf499a7db00d3a31e10d1ac0a13b73a18da16c5afa83c0113d07b7be",
+      "claimHash": "sha256:a8afb11eac72c2e0e5167996398f4936a9f89f1028b7433fdf119fec59ddf3a8",
       "inputSchemaPath": "packages/mcp-server/src/schemas/map.input.json",
-      "inputSchemaHash": "sha256:ba4928bd3d37cd05244c052c9ea07c3d8680e64bd2ea0b9568f03db2870c96d6",
-      "proofTier": "contract",
+      "inputSchemaHash": "sha256:caf2dd1c09c8c6c13bc0ea4fc5db34ffd03bfbd4316785be6d57bf554d8c414e",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/map.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/map-apply.spec.ts",
@@ -1681,7 +2029,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/registry-v14-roundtrip.spec.ts",
-            "line": 39,
+            "line": 40,
             "handler": "packages/mcp-server/src/tools/map.create.ts"
           },
           {
@@ -1759,13 +2107,27 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 809
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 811
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 813
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "no-op",
+          "kind": "documented-limit",
           "file": "docs/how-forge-works.html",
-          "reason": "Mappings resolve an external vocabulary to traits; no composer/codegen consumer targets the mapped external library.",
+          "reason": "Map records and resolves mappings for external consumers. No composer/codegen consumer; preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution.",
           "line": 316
         }
       ]
@@ -1774,24 +2136,30 @@
       "name": "schema",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL.",
+        "description": "Grouped schema-store tool. Set `action` to one of save|load|list|delete. Consolidates the former schema.* tools with identical per-action behavior. Use action=save to persist a composed UiSchema beyond the 30-minute schemaRef TTL. Saved schemas expose monotonic versions and schemaRef identity, not ETags or conditional requests.",
         "inputSchemaDescription": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Mirrors the established review.chain discriminated-union precedent using plain JSON-Schema if/then (no AJV discriminator keyword)."
       },
-      "claimHash": "sha256:ed3f82625a92a8a7383a74d3546afd00c318051ae60be2636f338e20c5241e57",
+      "claimHash": "sha256:959c0a7efd522dafe5f5872a0bc6c44b3671547e9a296ebc8f72ccc132933c06",
       "inputSchemaPath": "packages/mcp-server/src/schemas/schema.input.json",
       "inputSchemaHash": "sha256:2138884d58e43d1b37a1649b1d26d1643072fc0bf04d578e98dacbb3c9c43778",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/schema/index.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 20,
+            "line": 18,
             "handler": "packages/mcp-server/src/tools/schema/list.ts"
           },
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 21,
+            "line": 19,
             "handler": "packages/mcp-server/src/tools/schema/load.ts"
           },
           {
@@ -1869,8 +2237,22 @@
         ]
       },
       "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 815
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 817
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 819
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -1883,9 +2265,15 @@
       "claimHash": "sha256:f52c74aeb35963a4d8b297dc994110d55a811f6f11773a3b999cbd0b5981b231",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
       "inputSchemaHash": "sha256:f57410cd145f0e7aee63c31472c0f66e20867e55b12ab34c42646999cda14c94",
-      "proofTier": "contract",
+      "proofTier": "product-reality",
       "testImports": {
-        "product-reality": [],
+        "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/object.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/object.ts"
+          }
+        ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/error-observability.contract.spec.ts",
@@ -1960,20 +2348,26 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 821
+        }
+      ],
+      "portableLimits": [],
       "caveats": []
     },
     {
       "name": "repl",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand.",
+        "description": "Grouped Design Lab REPL tool. Set `action` to validate (check a UiSchema/patch against the DSL+registry) or render (produce HTML/CSS preview; apply=true to emit). Consolidates the former repl.* tools with identical per-action behavior. BRAND (s169 m04): pass brand:'A'|'B' to render a specific brand's palette; omit it for the previous behaviour, byte-identical. On dashboard.render the brand drives both the tokens inlined into the output.html export and the palette output.contrastScan grades, so what is painted and what is checked are always the same brand. Fragment output diagnoses ignored brand/output.tokenOverlay/output.skinOverlay with OODS-W001. Non-strict fragments expose OODS-W002 when OODS-V006 is reclassified per node. Document output applies scope options. validate.apply is an ignored bridge-parity key. Fragment depth and request-level dslVersion are not supported.",
         "inputSchemaDescription": "Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on."
       },
-      "claimHash": "sha256:ceeb99ada3f30110fdf2d3c00370e36c5d4a04eed2fc90d83dbcfe403d7acf6d",
+      "claimHash": "sha256:697e9bc768efec1d2204f053a5db34cec34b5cdfe3a114fa1269b00b311414a6",
       "inputSchemaPath": "packages/mcp-server/src/schemas/repl.input.json",
-      "inputSchemaHash": "sha256:214462f0a3beb934599cefbfd41e4e8e62f3f77c20d3b22131a59eb7c60a6ce6",
+      "inputSchemaHash": "sha256:5f7898d84de425889f54f77dfd77a603e7dbef8f76266247ec4c31f4f3e7e279",
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
@@ -1981,17 +2375,22 @@
             "path": "packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts",
             "line": 27,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/repl.ts"
           }
         ],
         "contract": [
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 16,
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/repl.validate.ts"
           },
           {
             "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
-            "line": 17,
+            "line": 16,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
           },
           {
@@ -2069,16 +2468,6 @@
           {
             "path": "packages/mcp-server/test/compose/templates.spec.ts",
             "line": 14,
-            "handler": "packages/mcp-server/src/tools/repl.render.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 3,
-            "handler": "packages/mcp-server/src/tools/repl.validate.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/compose/viz-compose.spec.ts",
-            "line": 4,
             "handler": "packages/mcp-server/src/tools/repl.render.ts"
           },
           {
@@ -2171,77 +2560,20 @@
           "verifiedReceipt": false
         }
       ],
-      "portableE2E": false,
-      "portableE2ERefs": [],
-      "caveats": []
-    },
-    {
-      "name": "review",
-      "registration": "auto",
-      "advertisedClaim": {
-        "description": "Grouped reconciliation-review tool. Set `action` to resolve (apply a policy bundle to an Object Catalog manifest) or chain (compose the full review-queue → resolve → conflict-detail → apply-summary artifacts). Consolidates the former review.* tools with identical per-action behavior.",
-        "inputSchemaDescription": "Grouped action-parameter tool consolidating the review family (resolve, chain) into one MCP tool. The `action` discriminator selects the per-action body; each branch reproduces the exact per-action input schema (review.resolve.input.json / review.chain.input.json) with `action` added to its allowed properties. Per-action handlers and their behaviour are unchanged — this is a zero-functionality-loss consolidation."
-      },
-      "claimHash": "sha256:786589c6e774f2c5a6792466a86cd11d3bac67560dc97e17c13cb384b227fb11",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/review.input.json",
-      "inputSchemaHash": "sha256:5437c86f72aa8de0a42702c3117b83a2faa718a5c9d26b922813ff7f9aa9aa32",
-      "proofTier": "unit",
-      "testImports": {
-        "product-reality": [],
-        "contract": [],
-        "unit": [
-          {
-            "path": "packages/mcp-server/test/e2e/apply-summary-q3.e2e.spec.ts",
-            "line": 38,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/e2e/review-resolve-q3.e2e.spec.ts",
-            "line": 42,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/codegen/apply-summary-emitter.test.ts",
-            "line": 29,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.chain.test.ts",
-            "line": 2,
-            "handler": "packages/mcp-server/src/tools/review.chain.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.group.test.ts",
-            "line": 31,
-            "handler": "packages/mcp-server/src/tools/review.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.group.test.ts",
-            "line": 32,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/review.resolve.test.ts",
-            "line": 22,
-            "handler": "packages/mcp-server/src/tools/review.resolve.ts"
-          }
-        ]
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 823
+        }
+      ],
+      "portableLimits": [],
       "caveats": [
         {
-          "kind": "placeholder",
-          "file": "packages/mcp-server/src/tools/review.chain.ts",
-          "reason": "The chain accepts only server-resident allow-listed fixtures.",
-          "line": 14
-        },
-        {
-          "kind": "no-op",
-          "file": "packages/mcp-server/src/codegen/review-policy.ts",
-          "reason": "patch is a policy decision label; this label alone is not evidence of applying a patch to canonical source.",
-          "line": 31
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/repl.render.ts",
+          "reason": "Fragment output emits typed warnings for ignored document scope controls. Non-strict unknown-component errors remain visible per node with OODS-W002; validate.apply is bridge parity.",
+          "line": 179
         }
       ]
     },
@@ -2249,10 +2581,10 @@
       "name": "diag.snapshot",
       "registration": "on-demand",
       "advertisedClaim": {
-        "description": "Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility.",
+        "description": "Capture a diagnostic snapshot bundle of the current design system state for debugging and reproducibility. Always writes diagnostic receipt artifacts; apply is an ignored bridge-parity key. Does not rebuild tokens or run browser tests.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:2fd20bae146f52ad06ce5fcbbc2dda09f57646cdb8903d2df8f34afe3050579b",
+      "claimHash": "sha256:bbb6089f97ede831d53efe9cbae5492e561f5b76d117dd66efa3bdf6d1c758fc",
       "inputSchemaPath": "packages/mcp-server/src/schemas/generic.input.json",
       "inputSchemaHash": "sha256:c39167851540568dfcbc0981f53277ac12c5084d5a88ec39d74d428ed9170a71",
       "proofTier": "contract",
@@ -2263,6 +2595,11 @@
             "path": "packages/mcp-server/test/contracts/diag.snapshot-counts.spec.ts",
             "line": 4,
             "handler": "packages/mcp-server/src/tools/diag.snapshot.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/diag.snapshot.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/diag.snapshot.ts"
           }
         ],
         "unit": []
@@ -2270,6 +2607,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2282,15 +2620,22 @@
       "claimHash": "sha256:1fb9e53f03ce080e52a10fbf59da980cbf08a34a7b41e019433c7f825ad05697",
       "inputSchemaPath": "packages/mcp-server/src/schemas/billing.reviewKit.input.json",
       "inputSchemaHash": "sha256:44e59451d89ddd75a795aef321597e27d6dfdf90e0b7d465b593b532e2a0218e",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/billing.reviewKit.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/billing.reviewKit.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2303,15 +2648,22 @@
       "claimHash": "sha256:3c3f1485bc775fcf4f6d6c3b9b6eb963c7e0e2ee64f7f2a0e7406fd53215aa2f",
       "inputSchemaPath": "packages/mcp-server/src/schemas/billing.switchFixtures.input.json",
       "inputSchemaHash": "sha256:c829f274ec2b3c601a77a604f77c2541d51859c9022d78f473aed3eb28fd3e3c",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/billing.switchFixtures.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/billing.switchFixtures.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2324,10 +2676,16 @@
       "claimHash": "sha256:46b89ffe6694530d069c6c964fca532185018de7e21c527f03c0e655884a1df6",
       "inputSchemaPath": "packages/mcp-server/src/schemas/a11y.scan.input.json",
       "inputSchemaHash": "sha256:091cfb2613612a40a94fee0190e8da5c632de8ab36b10d4d0ed88e3143e161f2",
-      "proofTier": "unit",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/a11y.scan.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/a11y.scan.ts"
+          }
+        ],
         "unit": [
           {
             "path": "packages/mcp-server/test/a11y/a11y.contract.spec.ts",
@@ -2339,27 +2697,7 @@
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
-      "caveats": []
-    },
-    {
-      "name": "release.verify",
-      "registration": "on-demand",
-      "advertisedClaim": {
-        "description": "Verify release readiness for specified packages. Checks changelogs, versions, and build artifacts.",
-        "inputSchemaDescription": ""
-      },
-      "claimHash": "sha256:6738cc78270d4f9424312fd5bf165338fe357d97f586162b5c026aeaf0541f10",
-      "inputSchemaPath": "packages/mcp-server/src/schemas/release.verify.input.json",
-      "inputSchemaHash": "sha256:47b4841f09ce133b8775c99d6112bab50794e81ffb71d0d68de43c5f190c280a",
-      "proofTier": "none",
-      "testImports": {
-        "product-reality": [],
-        "contract": [],
-        "unit": []
-      },
-      "receiptRefs": [],
-      "portableE2E": false,
-      "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     },
     {
@@ -2372,15 +2710,22 @@
       "claimHash": "sha256:a1ade4fe04e816bbb3635cf133d8a34c4eecc28997178f54655e0efc174e29b5",
       "inputSchemaPath": "packages/mcp-server/src/schemas/release.tag.input.json",
       "inputSchemaHash": "sha256:f47607da0f879b272d102d900cbf80734af019cf506124944c1e62c64f8012b2",
-      "proofTier": "none",
+      "proofTier": "contract",
       "testImports": {
         "product-reality": [],
-        "contract": [],
+        "contract": [
+          {
+            "path": "packages/mcp-server/test/contracts/release.tag.s194.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/release.tag.ts"
+          }
+        ],
         "unit": []
       },
       "receiptRefs": [],
       "portableE2E": false,
       "portableE2ERefs": [],
+      "portableLimits": [],
       "caveats": []
     }
   ]

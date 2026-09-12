@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { tokenPackageRoot, runTokenBuild, refreshTokenBundle, type TokenBuildReceipt } from '../lib/token-build.js';
+import { resetTokensCssCache } from '../render/document.js';
 import { todayDir, loadPolicy, withinAllowed, type Policy } from '../lib/security.js';
 import { isUnsafeKey } from '../lib/safety.js';
 import { emitRootBlock, type OverlayDeclaration } from '../render/brand-overlay.js';
@@ -50,7 +52,7 @@ export const BRAND_ROOT = path.join(TOKENS_DIR, 'brands');
  */
 function listAllowedBrands(): string[] {
   return fs
-    .readdirSync(BRAND_ROOT, { withFileTypes: true })
+    .readdirSync(path.join(tokenPackageRoot(), 'src/tokens/brands'), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name);
 }
@@ -94,8 +96,9 @@ function assertBrandAllowed(brand: unknown): string {
  * therefore not covered by either layer.
  */
 export function resolveBrandThemeFile(brand: string, theme: Theme): string {
-  const file = path.join(BRAND_ROOT, brand, `${theme}.json`);
-  if (!withinAllowed(BRAND_ROOT, file)) {
+  const sourceRoot = path.join(tokenPackageRoot(), 'src/tokens/brands');
+  const file = path.join(sourceRoot, brand, `${theme}.json`);
+  if (!withinAllowed(sourceRoot, file)) {
     throw new ToolError('OODS-S015', `Path not allowed: ${file}`, { brand, theme, path: file });
   }
   return file;
@@ -335,7 +338,7 @@ function toPlanDiff(
 ): PlanDiff {
   const additions = changes.filter((change) => change.before === undefined).length;
   const deletions = changes.filter((change) => change.after === undefined).length;
-  const pathLabel = `packages/tokens/src/tokens/brands/${brand}/${theme}.json`;
+  const pathLabel = path.relative(REPO_ROOT, resolveBrandThemeFile(brand, theme));
   const hunks = changes.map((change, index): { header: string; changes: PlanDiffChange[] } => {
     const header = `@@ theme=${theme} change=${index} @@`;
     const mutation: PlanDiffChange[] = [];
@@ -458,25 +461,6 @@ async function generateCssSnapshot(
   });
 }
 
-async function runTokensBuildSimulation(): Promise<number> {
-  const start = Date.now();
-  // Lightweight verification by invoking pnpm in check mode if available.
-  // Silently swallow errors to keep the tool resilient in sandboxed runs.
-  try {
-    await new Promise<void>((resolve) => {
-      const child = spawn('pnpm', ['run', 'check:tokens'], {
-        cwd: REPO_ROOT,
-        stdio: 'ignore',
-      });
-      child.on('close', () => resolve());
-      child.on('error', () => resolve());
-    });
-  } catch {
-    // Best effort only.
-  }
-  return Date.now() - start;
-}
-
 function buildPreview(
   brand: string,
   changes: ChangeRecord[],
@@ -537,7 +521,13 @@ function allowWriteFactory(policy: Policy): (candidate: string) => void {
   };
 }
 
-export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
+export interface BrandApplyReceipt {
+  sourceWritten: boolean;
+  sourceFiles: Array<{ path: string; sha256Before: string; sha256After: string; bytesBefore: number; bytesAfter: number }>;
+  build: TokenBuildReceipt | null;
+}
+
+export async function handle(input: BrandApplyInput): Promise<GenericOutput & { receipt: BrandApplyReceipt }> {
   if (!input || typeof input !== 'object') {
     throw new ToolError('OODS-V003', 'Input is required.');
   }
@@ -616,8 +606,18 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
   let diagnosticsPath: string | undefined;
 
   const startedAt = new Date();
+  const receipt: BrandApplyReceipt = { sourceWritten: false, sourceFiles: [], build: null };
+  const sourceHash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 
   if (input.apply) {
+    for (const theme of THEMES.filter(theme => changeRecords.some(change => change.theme === theme))) {
+      const file = resolveBrandThemeFile(brand, theme);
+      const before = fs.readFileSync(file);
+      fs.writeFileSync(file, stringifyStable(updated[theme]) + '\n', 'utf8');
+      const after = fs.readFileSync(file);
+      receipt.sourceWritten = true;
+      receipt.sourceFiles.push({ path: file, sha256Before: sourceHash(before), sha256After: sourceHash(after), bytesBefore: before.length, bytesAfter: after.length });
+    }
     for (const theme of THEMES) {
       const snapshotPath = path.join(runDir, `tokens.${brand}.${theme}.json`);
       ensureAllowed(snapshotPath);
@@ -654,7 +654,11 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
 
     await generateCssSnapshot(brand, changeRecords, runDir, artifacts, details, ensureAllowed);
 
-    const buildMs = await runTokensBuildSimulation();
+    receipt.build = await runTokenBuild();
+    if (receipt.build.exitCode === 0) {
+      await refreshTokenBundle();
+      resetTokensCssCache();
+    }
     const diagnostics = {
       brand,
       strategy: requestedStrategy,
@@ -662,11 +666,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
       themesTouched: Array.from(new Set(changeRecords.map((change) => change.theme))),
       runStarted: startedAt.toISOString(),
       runEnded: new Date().toISOString(),
-      build: {
-        durationMs: buildMs,
-        command: 'pnpm run check:tokens',
-        notes: buildMs === 0 ? 'Build completed instantaneously (cached).' : undefined,
-      },
+      receipt,
     };
     const diagnosticsFile = path.join(runDir, 'diagnostics.json');
     ensureAllowed(diagnosticsFile);
@@ -690,10 +690,16 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
     artifacts,
     startTime: startedAt,
     endTime: new Date(),
+    exitCode: receipt.build?.exitCode ?? (input.apply ? 1 : 0),
   });
   const bundleIndexPath = writeBundleIndex(runDir, [transcriptPath, ...artifacts]);
 
-  const result: GenericOutput = {
+  if (receipt.build && receipt.build.exitCode !== 0) {
+    const tail = receipt.build.commands.map(command => command.stdout + command.stderr).join('\n').split('\n').slice(-40).join('\n');
+    throw new ToolError('OODS-S019', `Token build failed (exit ${receipt.build.exitCode}); source writes remain in place.\n${tail}`, { receipt, diagnosticsPath, transcriptPath, bundleIndexPath });
+  }
+  const result = {
+    receipt,
     artifacts,
     transcriptPath,
     bundleIndexPath,

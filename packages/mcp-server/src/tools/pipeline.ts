@@ -27,7 +27,6 @@ import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 type PipelineStep = 'compose' | 'validate' | 'render' | 'codegen' | 'save';
 
 export type PipelineInput = {
-  dslVersion?: string;
   object?: string;
   intent?: string;
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';

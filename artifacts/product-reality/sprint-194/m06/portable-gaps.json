@@ -1,0 +1,56 @@
+{
+  "missionId": "s194-m06",
+  "decisionId": 1927,
+  "gaps": [
+    {
+      "id": "portable-brand-source-absent",
+      "tool": "brand.apply",
+      "status": "carried",
+      "kind": "documented-limit",
+      "blocker": "Gate1 deliberately excludes canonical brand source and build inputs. Even dry-run requires reading that source.",
+      "transportOutcome": "adapter isError with missing-source ENOENT message; no native dependency-specific OODS code",
+      "resolution": "Requires a separately scoped publish-boundary decision or dependency-specific failure behavior."
+    },
+    {
+      "id": "adapter-native-error-code-erasure",
+      "tool": "design.preview",
+      "status": "carried",
+      "kind": "documented-limit",
+      "blocker": "NativeOodsClient turns structured native errors into Error(message), dropping OODS-N019 and retry metadata.",
+      "transportOutcome": "adapter isError with pnpm design:loop serve guidance; native N019 remains proven directly",
+      "resolution": "Preserve structured native errors through the adapter in a follow-on transport contract mission."
+    },
+    {
+      "id": "portable-token-export-source-dependency",
+      "tool": "tokens.build",
+      "status": "carried",
+      "kind": "documented-limit",
+      "blocker": "Assembler strips dist/ts/tokens.ts, so apply:true treats outputs as missing and attempts an unavailable host build script.",
+      "transportOutcome": "apply:false returns preview and transcript only; no token artifact export is claimed. apply:true failed with native S019 build error, whose code is stripped by adapter.",
+      "resolution": "A follow-on publish/export contract must decouple source-only legacy TS output or admit it to the bundle."
+    },
+    {
+      "id": "portable-generation-readiness-evidence-absent",
+      "tool": "code.generate",
+      "status": "carried",
+      "kind": "documented-limit",
+      "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+      "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+      "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+    },
+    {
+      "id": "portable-generation-readiness-evidence-absent",
+      "tool": "pipeline",
+      "status": "carried",
+      "kind": "documented-limit",
+      "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+      "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+      "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+    }
+  ],
+  "decisionIds": [
+    1927,
+    1928,
+    1929
+  ]
+}

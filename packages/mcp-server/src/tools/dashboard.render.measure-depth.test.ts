@@ -79,7 +79,7 @@ describe('dashboard.render — M1 KpiPanel field→oneOf (sprint-122, OODS-V137)
   });
 
   it('measureRef-only + resolveMeasures OFF -> OODS-V137 error panel (NOT silent value:0); sibling renders', async () => {
-    const out = await handle(measureRefOnly()); // resolveMeasures defaults OFF -> field never filled
+    const out = await handle(measureRefOnly({ resolveMeasures: false })); // resolveMeasures defaults OFF -> field never filled
     expect(validateOutput(out)).toBe(true);
     expect(out.status).toBe('ok'); // siblings not voided
     const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
@@ -94,7 +94,7 @@ describe('dashboard.render — M1 KpiPanel field→oneOf (sprint-122, OODS-V137)
   });
 
   it('measureRef-only + resolveMeasures OFF + onPanelError:"omit" -> V137 warning + dropped; sibling unaffected', async () => {
-    const out = await handle(measureRefOnly({ onPanelError: 'omit' }));
+    const out = await handle(measureRefOnly({ resolveMeasures: false, onPanelError: 'omit' }));
     expect(out.panels.find((p) => p.id === 'kpi')).toBeUndefined(); // dropped
     expect(
       (out.warnings ?? []).some((w) => w.code === 'OODS-V137' && w.severity === 'warning' && w.message.includes('kpi')),
@@ -105,7 +105,7 @@ describe('dashboard.render — M1 KpiPanel field→oneOf (sprint-122, OODS-V137)
   it('the V137 guard fires UNCONDITIONALLY — a field-less panel fails even with strictFields OFF', async () => {
     // strictFields is the field-PRESENCE check; V137 is the field-ABSENCE (no field at all) guard.
     // They are distinct: a measureRef-only unresolved panel has no field to even check presence on.
-    const out = await handle(measureRefOnly({ strictFields: false }));
+    const out = await handle(measureRefOnly({ resolveMeasures: false, strictFields: false }));
     const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
     expect(err.kind).toBe('error');
     expect(err.error.code).toBe('OODS-V137');
@@ -534,7 +534,7 @@ describe('dashboard.render — EXPLICIT chart-panel measure narrative (sprint-13
   });
 
   it('flag-OFF (resolveMeasures off) is byte-identical — no measure finding even with measureRef + includeA11y', async () => {
-    const withRef = await handle(chartMeasureDash({ output: { includeA11y: true } }, { measureRef: 'gm.export.value.total' }));
+    const withRef = await handle(chartMeasureDash({ resolveMeasures: false, output: { includeA11y: true } }, { measureRef: 'gm.export.value.total' }));
     const noRef = await handle(chartMeasureDash({ output: { includeA11y: true } }));
     expect(chartOf(withRef).a11y?.narrative?.keyFindings?.[0]).not.toContain('Measure:');
     expect(chartOf(withRef).a11y?.narrative).toEqual(chartOf(noRef).a11y?.narrative); // narrative byte-identical

@@ -67,18 +67,6 @@
       "concurrency": 4
     },
     {
-      "tool": "release.verify",
-      "allow": [
-        "maintainer"
-      ],
-      "writes": [
-        "${BASE}/${DATE}/**"
-      ],
-      "timeoutMs": 180000,
-      "ratePerMinute": 6,
-      "concurrency": 1
-    },
-    {
       "tool": "release.tag",
       "allow": [
         "maintainer"
@@ -179,17 +167,6 @@
     },
     {
       "tool": "health",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "viz.compose",
       "allow": [
         "designer",
         "maintainer"
@@ -312,17 +289,6 @@
       "writes": [
         "${BASE}/${DATE}/**"
       ],
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "review",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
       "concurrency": 4

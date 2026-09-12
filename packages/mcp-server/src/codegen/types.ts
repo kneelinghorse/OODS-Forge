@@ -64,6 +64,7 @@ export type CodegenAcceptedReleaseEvidence = CodegenReleaseEvidenceItem & {
 };
 
 export type CodegenValidationReceipt = {
+  evidenceVerification?: 'hash-bound-not-re-executed';
   profile: CodegenValidationProfile;
   defaulted: boolean;
   rationale: string;

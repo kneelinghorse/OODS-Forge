@@ -1,0 +1,209 @@
+{
+  "missionId": "s194-m06",
+  "builderSelfCertified": false,
+  "advertised": 19,
+  "rows": [
+    {
+      "tool": "tokens.build",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-tokens-build.json",
+      "portableLimits": [
+        {
+          "id": "portable-token-export-source-dependency",
+          "tool": "tokens.build",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Assembler strips dist/ts/tokens.ts, so apply:true treats outputs as missing and attempts an unavailable host build script.",
+          "transportOutcome": "apply:false returns preview and transcript only; no token artifact export is claimed. apply:true failed with native S019 build error, whose code is stripped by adapter.",
+          "resolution": "A follow-on publish/export contract must decouple source-only legacy TS output or admit it to the bundle."
+        }
+      ]
+    },
+    {
+      "tool": "structuredData.fetch",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/structured-data.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/structured-data.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-structuredData-fetch.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "brand.apply",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-brand-apply.json",
+      "portableLimits": [
+        {
+          "id": "portable-brand-source-absent",
+          "tool": "brand.apply",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Gate1 deliberately excludes canonical brand source and build inputs. Even dry-run requires reading that source.",
+          "transportOutcome": "adapter isError with missing-source ENOENT message; no native dependency-specific OODS code",
+          "resolution": "Requires a separately scoped publish-boundary decision or dependency-specific failure behavior."
+        }
+      ]
+    },
+    {
+      "tool": "brand.intake",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-brand-intake.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "catalog.list",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/catalog.list.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/catalog.list.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-catalog-list.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "code.generate",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-code-generate.json",
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "code.generate",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ]
+    },
+    {
+      "tool": "design.compose",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-design-compose.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "design.preview",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/design-preview-unavailable.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-design-preview.json",
+      "portableLimits": [
+        {
+          "id": "adapter-native-error-code-erasure",
+          "tool": "design.preview",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "NativeOodsClient turns structured native errors into Error(message), dropping OODS-N019 and retry metadata.",
+          "transportOutcome": "adapter isError with pnpm design:loop serve guidance; native N019 remains proven directly",
+          "resolution": "Preserve structured native errors through the adapter in a follow-on transport contract mission."
+        }
+      ]
+    },
+    {
+      "tool": "pipeline",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/release-evidence.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-pipeline.json",
+      "portableLimits": [
+        {
+          "id": "portable-generation-readiness-evidence-absent",
+          "tool": "pipeline",
+          "status": "carried",
+          "kind": "documented-limit",
+          "blocker": "Target readiness verifies source/test/declaration files omitted by Gate1 packing.",
+          "transportOutcome": "Typed OODS-N015 for React declaration-unbuilt; no generated artifact. Pipeline labels the codegen failure step.",
+          "resolution": "Reconcile portable readiness evidence with the published runtime boundary in follow-on scope."
+        }
+      ]
+    },
+    {
+      "tool": "health",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/health.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-health.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "registry.snapshot",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/map.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-registry-snapshot.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "viz.render",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/s193-scope-identities.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-viz-render.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "dashboard.render",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/measure-resolution.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-dashboard-render.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "artifact.certify",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/artifact.certify.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/artifact.certify.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-artifact-certify.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "fidelity.preview",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m02/README.md",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-fidelity-preview.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "map",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/map.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-map.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "schema",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/schema.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-schema.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "object",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/object.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m06/object.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-object.json",
+      "portableLimits": []
+    },
+    {
+      "tool": "repl",
+      "nativeWireSpec": "packages/mcp-server/test/product-reality/options.s194.spec.ts",
+      "nativeReceipt": "artifacts/product-reality/sprint-194/m05/repl-limits.json",
+      "boundary": "registered JSON/AJV schemas, real handler, no mocks; native ToolError asserted for missing preview dependency",
+      "portableRecipe": "packages/mcp-server/test/fixtures/portable-runtime/s194-repl.json",
+      "portableLimits": []
+    }
+  ]
+}

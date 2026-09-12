@@ -814,6 +814,26 @@ export type BrandApplyInput = BrandApplyInputSchema.BrandApplyInput;
 // Source: brand.apply.output.json
 export namespace BrandApplyOutputSchema {
   export interface BrandApplyOutput {
+    receipt: {
+      sourceWritten: boolean;
+      sourceFiles: {
+        path: string;
+        sha256Before: string;
+        sha256After: string;
+        bytesBefore: number;
+        bytesAfter: number;
+      }[];
+      build: {
+        exitCode: number | null;
+        commands: {
+          command: string[];
+          exitCode: number | null;
+          stdout: string;
+          stderr: string;
+        }[];
+        durationMs: number;
+      } | null;
+    };
     artifacts: string[];
     diagnosticsPath?: string;
     transcriptPath: string;
@@ -909,9 +929,20 @@ export type BrandIntakeInput = BrandIntakeInputSchema.BrandIntakeInput;
 // Source: brand.intake.output.json
 export namespace BrandIntakeOutputSchema {
   /**
-   * A read-only DTCG validation receipt. The result is preview-only, applies no tokens, creates no brand, and persists no artifact.
+   * Read-only DTCG receipt with envelopeHash and an optional directly consumable brand.apply delta. No writes, token application or brand creation.
    */
   export interface BrandIntakeOutput {
+    /**
+     * SHA256 of source-order compact JSON of the complete intake envelope.
+     */
+    envelopeHash: string;
+    /**
+     * Fully accepted inline brand-relative documents, wrapped for brand.apply alias strategy. Only existing A/B and unique mapped themes qualify.
+     */
+    delta?: {
+      [k: string]: any;
+    };
+    deltaUnavailableReason?: string;
     mode: 'PREVIEW-ONLY';
     /**
      * Always true: brand.intake validates and receipts without persistence.
@@ -1225,10 +1256,6 @@ export namespace CodeGenerateInputSchema {
   };
 
   export interface CodeGenerateInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     schema?: AgenticREPLUISchema;
     /**
      * Reference to a cached UiSchema returned by design.compose.
@@ -1465,7 +1492,14 @@ export namespace CodeGenerateOutputSchema {
   /**
    * Mandatory disclosure of the applied profile, independent policy axes, checks performed, and checks not reached. When generation reaches an artifact, the receipt names its content hash; release receipts retain accepted caller-supplied evidence envelopes for auditability.
    */
-  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+  export type ValidationReceipt = ({
+    [k: string]: any;
+  } & ValidationReceiptPartition &
+    ValidationProfilePolicy) & {
+    /**
+     * Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed.
+     */
+    evidenceVerification?: 'hash-bound-not-re-executed';
     profile: 'draft' | 'build' | 'release';
     /**
      * True only when the caller omitted profile and the build default was applied.
@@ -2180,7 +2214,7 @@ export namespace DashboardRenderInputSchema {
      */
     onPanelError?: 'placeholder' | 'omit';
     /**
-     * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT false keeps measureRef fully inert and the output byte-identical to s116. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
+     * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
      */
     resolveMeasures?: boolean;
     /**
@@ -2839,10 +2873,6 @@ export namespace DesignComposeInputSchema {
 
   export interface DesignComposeInput2 {
     /**
-     * DSL version to use for this request. Defaults to the current version (1.0). Controls feature availability and deprecation behavior.
-     */
-    dslVersion?: string;
-    /**
      * Natural-language description of the desired UI (e.g., 'dashboard with metrics and sidebar', 'user registration form').
      */
     intent?: string;
@@ -3402,7 +3432,7 @@ export namespace FidelityPreviewInputSchema {
        */
       variant?: string;
       /**
-       * Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02.
+       * Built A/B light-scope brand for branded-mockup fidelity. Ignored by other fidelities. brand-a/brand-b are deprecated one-release aliases; unknown names return OODS-BM-002.
        */
       brandOverlay?: string;
       /**
@@ -3550,7 +3580,7 @@ export namespace HealthOutputSchema {
        * Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.
        */
       tools: {
-        entries: 27;
+        entries: 24;
         byTier: {
           'product-reality': number;
           contract: number;
@@ -3583,8 +3613,19 @@ export namespace HealthOutputSchema {
     };
     tokens: {
       built: boolean;
-      theme: string;
-      brand: string;
+      brands: string[];
+      themes: string[];
+      scopes: {
+        [k: string]: string[];
+      };
+      /**
+       * Configured default chosen from built scopes; never an observed active consumer scope. Null when no scopes are built.
+       */
+      defaultScope: {
+        brand: string;
+        theme: string;
+        source: 'env' | 'default';
+      } | null;
     };
     schemas: {
       savedCount: number;
@@ -4302,7 +4343,7 @@ export type MapDeleteOutput = MapDeleteOutputSchema.MapDeleteOutput;
 // Source: map.input.json
 export namespace MapInputSchema {
   /**
-   * Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property.
+   * Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are surfaced, not consumed by resolution.
    */
   export type MapInput = MapInput1 & MapInput2;
   export type MapInput1 = {
@@ -4978,10 +5019,6 @@ export namespace PipelineInputSchema {
    */
   export interface PipelineInput {
     /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
-    /**
      * Object name from the OODS registry (e.g., Subscription, User).
      */
     object?: string;
@@ -5134,7 +5171,14 @@ export namespace PipelineOutputSchema {
   /**
    * Mandatory generation-profile disclosure. Pipeline preserves code.generate checks and accepted caller-supplied evidence envelopes, verifies the child receipt against the requested profile and artifact, and records target resolution provenance.
    */
-  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+  export type ValidationReceipt = ({
+    [k: string]: any;
+  } & ValidationReceiptPartition &
+    ValidationProfilePolicy) & {
+    /**
+     * Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed.
+     */
+    evidenceVerification?: 'hash-bound-not-re-executed';
     profile: 'draft' | 'build' | 'release';
     defaulted: boolean;
     rationale: string;
@@ -5401,7 +5445,7 @@ export type PipelineOutput = PipelineOutputSchema.PipelineOutput;
 // Source: registry.snapshot.input.json
 export namespace RegistrySnapshotInputSchema {
   /**
-   * Bulk-read the current OODS registry state (maps, traits, objects) in a single call.
+   * Bulk-read the current OODS registry state (maps, traits, objects) in a single call. Draft preferred_terms, disambiguation_decisions and capabilities are surfaced, not consumed by mapping resolution, composition or generation.
    */
   export interface RegistrySnapshotInput {}
 }
@@ -5523,45 +5567,6 @@ export namespace ReleaseTagOutputSchema {
   }
 }
 export type ReleaseTagOutput = ReleaseTagOutputSchema.ReleaseTagOutput;
-
-// Source: release.verify.input.json
-export namespace ReleaseVerifyInputSchema {
-  export interface ReleaseVerifyInput {
-    apply?: boolean;
-    /**
-     * @minItems 1
-     */
-    packages?: [
-      '@oods/tokens' | '@oods/tw-variants' | '@oods/a11y-tools',
-      ...('@oods/tokens' | '@oods/tw-variants' | '@oods/a11y-tools')[]
-    ];
-    fromTag?: string;
-  }
-}
-export type ReleaseVerifyInput = ReleaseVerifyInputSchema.ReleaseVerifyInput;
-
-// Source: release.verify.output.json
-export namespace ReleaseVerifyOutputSchema {
-  export interface ReleaseVerifyOutput {
-    artifacts: string[];
-    diagnosticsPath?: string;
-    transcriptPath: string;
-    bundleIndexPath: string;
-    results: {
-      name: string;
-      version: string;
-      identical: boolean;
-      sha256: string;
-      sizeBytes: number;
-      warnings?: string[];
-      files?: string[];
-    }[];
-    changelogPath: string;
-    summary: string;
-    warnings?: string[];
-  }
-}
-export type ReleaseVerifyOutput = ReleaseVerifyOutputSchema.ReleaseVerifyOutput;
 
 // Source: repl.input.json
 export namespace ReplInputSchema {
@@ -5923,10 +5928,6 @@ export namespace ReplRenderInputSchema {
   export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
 
   export interface ReplRenderInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     mode?: 'full' | 'patch';
     schema?: AgenticREPLUISchema;
     /**
@@ -5942,7 +5943,7 @@ export namespace ReplRenderInputSchema {
       [k: string]: any;
     };
     /**
-     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand="default". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so a brand supplied alongside fragments is ignored.
+     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand="default". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so fragments diagnose an ignored brand with OODS-W001.
      */
     brand?: 'A' | 'B';
     options?: {
@@ -5960,10 +5961,6 @@ export namespace ReplRenderInputSchema {
        */
       compact?: boolean;
       /**
-       * Reserved for v2 fragment-depth controls; currently ignored.
-       */
-      depth?: number;
-      /**
        * When true, emit data-oods-confidence and data-confidence-level attributes on rendered components that carry composition confidence metadata. Low-confidence components (below confidenceThreshold) also receive an oods-low-confidence CSS class. Default false.
        */
       showConfidence?: boolean;
@@ -5972,7 +5969,7 @@ export namespace ReplRenderInputSchema {
        */
       confidenceThreshold?: number;
       /**
-       * Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), ignored for fragments; distinct from the FS-resolved named brandOverlay on fidelity.preview.
+       * Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity.preview.
        */
       tokenOverlay?: {
         [k: string]: any;
@@ -6623,10 +6620,6 @@ export namespace ReplValidateInputSchema {
   export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
 
   export interface ReplValidateInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     mode?: 'full' | 'patch';
     schema?: AgenticREPLUISchema;
     /**
@@ -7189,391 +7182,6 @@ export namespace ReviewQueueOutputSchema {
 }
 export type ReviewQueueOutput = ReviewQueueOutputSchema.ReviewQueueOutput;
 
-// Source: review.chain.input.json
-export namespace ReviewChainInputSchema {
-  export type Predicate = PredicateConfidenceThreshold | PredicateSignalTypeFloor | PredicateEntityUrnMatch;
-  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
-
-  /**
-   * Compose the four C5-reframed surfaces (review-queue → review.resolve → conflict-detail → apply-summary) against a server-resident Object Catalog fixture and a policy bundle. Primary consumer is the playground Reconcile view (s105-m04). Fixture name resolved against the same allow-list as fidelity.preview — no caller-supplied paths.
-   */
-  export interface ReviewChainInput {
-    /**
-     * Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-RC-001.
-     */
-    fixture: string;
-    policies: PolicyBundle;
-    options?: {
-      /**
-       * Threshold below which entities are flagged for review by the queue and detail emitters. Default 0.7.
-       */
-      reviewThreshold?: number;
-      /**
-       * Top-N selector for per-entry lowestSignals in the queue artifact. Default 3.
-       */
-      lowestSignalsN?: number;
-      /**
-       * Signal-level threshold used by conflict-detail to classify signal gaps. Default 0.5.
-       */
-      evidenceGapThreshold?: number;
-      /**
-       * Decision applied by review.resolve when no policy matches. Default 'defer'.
-       */
-      defaultAction?: 'accept' | 'patch' | 'defer' | 'dismiss';
-    };
-  }
-  /**
-   * Ordered policy bundle. First match wins per entity; no-match falls to options.defaultAction.
-   */
-  export interface PolicyBundle {
-    /**
-     * Optional bundle identifier echoed in diagnostics.policyBundleId for reproducibility.
-     */
-    id?: string;
-    policies: Policy[];
-  }
-  export interface Policy {
-    id: string;
-    when: Predicate;
-    then: Decision;
-    reason?: string;
-  }
-  export interface PredicateConfidenceThreshold {
-    kind: 'confidence_threshold';
-    threshold: number;
-    matchUnknown?: boolean;
-  }
-  export interface PredicateSignalTypeFloor {
-    kind: 'signal_type_floor';
-    signal: string;
-    floor: number;
-  }
-  export interface PredicateEntityUrnMatch {
-    kind: 'entity_urn_match';
-    urn?: string;
-    pattern?: string;
-  }
-}
-export type ReviewChainInput = ReviewChainInputSchema.ReviewChainInput;
-
-// Source: review.chain.output.json
-export namespace ReviewChainOutputSchema {
-  /**
-   * Composite C5 chain output: queue + resolutions + auditTrail + per-flagged conflictDetails + apply-summary artifact + chain diagnostics. Each artifact's deep shape is validated separately at the per-emitter level (review-queue.output.json, conflict-detail.output.json, apply-summary.output.json). This schema enforces the top-level chain shape only.
-   */
-  export interface ReviewChainOutput {
-    /**
-     * Review-queue artifact. Deep shape validated by review-queue.output.json.
-     */
-    queue: {
-      [k: string]: any;
-    };
-    /**
-     * Per-entity policy resolutions from review.resolve.
-     */
-    resolutions: {
-      urn: string;
-      decision: 'accept' | 'patch' | 'defer' | 'dismiss';
-      reason: string;
-      policyId: string;
-      evaluatedScore?: number | null;
-      evaluatedTier?: 'high' | 'medium' | 'low' | 'unknown';
-      [k: string]: any;
-    }[];
-    /**
-     * review.resolve audit trail echoed verbatim.
-     */
-    auditTrail: {
-      [k: string]: any;
-    };
-    /**
-     * One entry per flaggedForReview entry in queue.entries. detail deep shape validated by conflict-detail.output.json.
-     */
-    conflictDetails: {
-      urn: string;
-      detail: {
-        [k: string]: any;
-      };
-    }[];
-    /**
-     * Apply-summary artifact. Deep shape validated by apply-summary.output.json.
-     */
-    summary: {
-      [k: string]: any;
-    };
-    diagnostics: {
-      fixture: string;
-      fixtureSource: 'allow-list';
-      policyBundleId?: string;
-      entityCount: number;
-      flaggedCount: number;
-    };
-  }
-}
-export type ReviewChainOutput = ReviewChainOutputSchema.ReviewChainOutput;
-
-// Source: review.input.json
-export namespace ReviewInputSchema {
-  /**
-   * Grouped action-parameter tool consolidating the review family (resolve, chain) into one MCP tool. The `action` discriminator selects the per-action body; each branch reproduces the exact per-action input schema (review.resolve.input.json / review.chain.input.json) with `action` added to its allowed properties. Per-action handlers and their behaviour are unchanged — this is a zero-functionality-loss consolidation.
-   */
-  export type ReviewInput = ReviewInput1 & ReviewInput2;
-  export type ReviewInput1 = {
-    [k: string]: any;
-  };
-
-  export interface ReviewInput2 {
-    /**
-     * Which review operation to perform. resolve: apply a policy bundle to a manifest, producing per-entity decisions + audit trail. chain: compose the four C5 surfaces (queue → resolve → conflict-detail → apply-summary) against a server-resident fixture.
-     */
-    action: 'resolve' | 'chain';
-    [k: string]: any;
-  }
-}
-export type ReviewInput = ReviewInputSchema.ReviewInput;
-
-// Source: review.output.json
-export namespace ReviewOutputSchema {
-  /**
-   * Grouped output schema for the review family. anyOf (NOT oneOf) of each per-action output body: per-action outputs share fields (e.g. resolutions/auditTrail/diagnostics) and would match more than one oneOf branch. Each action's exact output schema body is reproduced under $defs and referenced here, so a result valid under the old per-action output schema is valid under this grouped schema, and vice versa for the union.
-   */
-  export type ReviewOutput = ResolveOutput | ChainOutput;
-  export type ResolveOutputDecision = 'accept' | 'patch' | 'defer' | 'dismiss';
-  export type ResolveOutputTier = 'high' | 'medium' | 'low' | 'unknown';
-
-  export interface ResolveOutput {
-    resolutions: ResolveOutputResolution[];
-    auditTrail: {
-      /**
-       * ISO timestamp of evaluation. Echoed for reproducibility.
-       */
-      evaluatedAt: string;
-      defaultAction: ResolveOutputDecision;
-      /**
-       * Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings).
-       */
-      entityCount: number;
-      /**
-       * Verbatim echo of the input policy bundle for reproducibility.
-       */
-      policyBundle: {
-        [k: string]: any;
-      };
-      /**
-       * Sorted unique policy IDs that matched at least one entity.
-       */
-      matchedPolicyIds: string[];
-    };
-    warnings: string[];
-    diagnostics: {
-      source: 'inline' | 'file';
-      /**
-       * Resolved manifest path when source=file. Always relative to projectRoot.
-       */
-      manifestPath: string | null;
-    };
-  }
-  export interface ResolveOutputResolution {
-    urn: string;
-    decision: ResolveOutputDecision;
-    reason: string;
-    /**
-     * ID of the matching policy, or 'default' when no policy matched.
-     */
-    policyId: string;
-    /**
-     * Total score from confidence_decomposition. Null when the field is absent.
-     */
-    evaluatedScore: number | null;
-    evaluatedTier: ResolveOutputTier;
-  }
-  export interface ChainOutput {
-    /**
-     * Review-queue artifact. Deep shape validated by review-queue.output.json.
-     */
-    queue: {
-      [k: string]: any;
-    };
-    /**
-     * Per-entity policy resolutions from review.resolve.
-     */
-    resolutions: {
-      urn: string;
-      decision: 'accept' | 'patch' | 'defer' | 'dismiss';
-      reason: string;
-      policyId: string;
-      evaluatedScore?: number | null;
-      evaluatedTier?: 'high' | 'medium' | 'low' | 'unknown';
-      [k: string]: any;
-    }[];
-    /**
-     * review.resolve audit trail echoed verbatim.
-     */
-    auditTrail: {
-      [k: string]: any;
-    };
-    /**
-     * One entry per flaggedForReview entry in queue.entries. detail deep shape validated by conflict-detail.output.json.
-     */
-    conflictDetails: {
-      urn: string;
-      detail: {
-        [k: string]: any;
-      };
-    }[];
-    /**
-     * Apply-summary artifact. Deep shape validated by apply-summary.output.json.
-     */
-    summary: {
-      [k: string]: any;
-    };
-    diagnostics: {
-      fixture: string;
-      fixtureSource: 'allow-list';
-      policyBundleId?: string;
-      entityCount: number;
-      flaggedCount: number;
-    };
-  }
-}
-export type ReviewOutput = ReviewOutputSchema.ReviewOutput;
-
-// Source: review.resolve.input.json
-export namespace ReviewResolveInputSchema {
-  /**
-   * Resolve low-confidence reconciliation conflicts in an Object Catalog manifest by applying a policy bundle. Each entity gets one decision (accept|patch|defer|dismiss) plus an audit trail. Agent-callable; no playground UI required. Provide either an inline `manifest` object OR a relative `manifestPath`. Exactly one of the two is required.
-   */
-  export type ReviewResolveInput = ReviewResolveInput1 & ReviewResolveInput2;
-  export type Predicate = PredicateConfidenceThreshold | PredicateSignalTypeFloor | PredicateEntityUrnMatch;
-  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
-  export type ReviewResolveInput2 = {
-    [k: string]: any;
-  };
-
-  export interface ReviewResolveInput1 {
-    /**
-     * Inline Object Catalog manifest object. Mutually exclusive with manifestPath.
-     */
-    manifest?: {
-      [k: string]: any;
-    };
-    /**
-     * Project-relative path to a manifest JSON file. Absolute paths and parent-directory traversal (..) are rejected.
-     */
-    manifestPath?: string;
-    /**
-     * Optional override for the project root used to resolve manifestPath. Defaults to process.cwd().
-     */
-    projectRoot?: string;
-    policies: PolicyBundle;
-    /**
-     * Decision applied when no policy matches an entity. Defaults to 'defer' so unmatched items surface for follow-up rather than being silently accepted.
-     */
-    defaultAction?: 'accept' | 'patch' | 'defer' | 'dismiss';
-  }
-  /**
-   * Ordered policy bundle. First match wins per entity; no-match falls to defaultAction.
-   */
-  export interface PolicyBundle {
-    /**
-     * Optional bundle identifier echoed in the audit trail for reproducibility.
-     */
-    id?: string;
-    policies: Policy[];
-  }
-  export interface Policy {
-    id: string;
-    when: Predicate;
-    then: Decision;
-    /**
-     * Human-readable reason surfaced verbatim in the resolution when this policy matches.
-     */
-    reason?: string;
-  }
-  /**
-   * Match when entity.oods.confidence_decomposition.total < threshold. With matchUnknown=true, also matches entities with no confidence_decomposition.
-   */
-  export interface PredicateConfidenceThreshold {
-    kind: 'confidence_threshold';
-    threshold: number;
-    matchUnknown?: boolean;
-  }
-  /**
-   * Match when a named signal's score < floor. Does not match when the signal is absent or when confidence_decomposition is absent.
-   */
-  export interface PredicateSignalTypeFloor {
-    kind: 'signal_type_floor';
-    signal: string;
-    floor: number;
-  }
-  /**
-   * Match by entity URN. Provide exactly one of `urn` (exact string match) or `pattern` (glob with * and ?).
-   */
-  export interface PredicateEntityUrnMatch {
-    kind: 'entity_urn_match';
-    urn?: string;
-    pattern?: string;
-  }
-}
-export type ReviewResolveInput = ReviewResolveInputSchema.ReviewResolveInput;
-
-// Source: review.resolve.output.json
-export namespace ReviewResolveOutputSchema {
-  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
-  export type Tier = 'high' | 'medium' | 'low' | 'unknown';
-
-  /**
-   * Per-entity resolutions + audit trail produced by applying a policy bundle to an Object Catalog manifest.
-   */
-  export interface ReviewResolveOutput {
-    resolutions: Resolution[];
-    auditTrail: {
-      /**
-       * ISO timestamp of evaluation. Echoed for reproducibility.
-       */
-      evaluatedAt: string;
-      defaultAction: Decision;
-      /**
-       * Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings).
-       */
-      entityCount: number;
-      /**
-       * Verbatim echo of the input policy bundle for reproducibility.
-       */
-      policyBundle: {
-        [k: string]: any;
-      };
-      /**
-       * Sorted unique policy IDs that matched at least one entity.
-       */
-      matchedPolicyIds: string[];
-    };
-    warnings: string[];
-    diagnostics: {
-      source: 'inline' | 'file';
-      /**
-       * Resolved manifest path when source=file. Always relative to projectRoot.
-       */
-      manifestPath: string | null;
-    };
-  }
-  export interface Resolution {
-    urn: string;
-    decision: Decision;
-    reason: string;
-    /**
-     * ID of the matching policy, or 'default' when no policy matched.
-     */
-    policyId: string;
-    /**
-     * Total score from confidence_decomposition. Null when the field is absent.
-     */
-    evaluatedScore: number | null;
-    evaluatedTier: Tier;
-  }
-}
-export type ReviewResolveOutput = ReviewResolveOutputSchema.ReviewResolveOutput;
-
 // Source: schema.delete.input.json
 export namespace SchemaDeleteInputSchema {
   export interface SchemaDeleteInput {
@@ -7984,6 +7592,9 @@ export type Stage1ProjectionVariant = Stage1ProjectionVariantSchema.Stage1Projec
 
 // Source: structuredData.fetch.input.json
 export namespace StructuredDataFetchInputSchema {
+  /**
+   * Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202.
+   */
   export type StructuredDataFetchInput = StructuredDataFetchInput1 & StructuredDataFetchInput2;
   export type StructuredDataFetchInput2 = {
     [k: string]: any;
@@ -8136,7 +7747,7 @@ export type StructuredDataFetchOutput = StructuredDataFetchOutputSchema.Structur
 export namespace TokensBuildInputSchema {
   export interface TokensBuildInput {
     /**
-     * Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette.
+     * Selects resolved values in the requested-scope JSON and CSS. Full CSS also includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults.
      */
     brand?: 'A' | 'B';
     theme?: 'light' | 'dark' | 'hc';
@@ -8144,195 +7755,6 @@ export namespace TokensBuildInputSchema {
   }
 }
 export type TokensBuildInput = TokensBuildInputSchema.TokensBuildInput;
-
-// Source: viz.compose.input.json
-export namespace VizComposeInputSchema {
-  /**
-   * Compose a visualization schema from chart type, data bindings, and/or object viz traits. Provide at least one of 'chartType', 'object', or 'traits'.
-   */
-  export type VizComposeInput = VizComposeInput1 & VizComposeInput2;
-  export type VizComposeInput1 = {
-    [k: string]: any;
-  };
-
-  export interface VizComposeInput2 {
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
-    /**
-     * Object name from the OODS registry. When provided, viz traits are resolved automatically to determine chart type and encodings.
-     */
-    object?: string;
-    /**
-     * Explicit viz trait names (e.g., 'mark-bar', 'encoding-position-x'). Used when composing without an object.
-     *
-     * @minItems 1
-     */
-    traits?: [string, ...string[]];
-    /**
-     * Chart type to compose. Maps to mark traits: bar→mark-bar, line→mark-line, area→mark-area, point→mark-point, scatter→mark-scatter, heatmap→mark-heatmap.
-     */
-    chartType?: 'bar' | 'line' | 'area' | 'point' | 'scatter' | 'heatmap';
-    dataBindings?: {
-      /**
-       * Field name for the x-axis encoding.
-       */
-      x?: string;
-      /**
-       * Field name for the y-axis encoding.
-       */
-      y?: string;
-      /**
-       * Field name for color encoding.
-       */
-      color?: string;
-      /**
-       * Field name for size encoding.
-       */
-      size?: string;
-      /**
-       * Field name for opacity encoding.
-       */
-      opacity?: string;
-      /**
-       * Field name for shape encoding.
-       */
-      shape?: string;
-    };
-    /**
-     * Alias for dataBindings. Maps field names to encoding channels.
-     */
-    data?: {
-      /**
-       * Field name for the x-axis encoding.
-       */
-      x?: string;
-      /**
-       * Field name for the y-axis encoding.
-       */
-      y?: string;
-      /**
-       * Field name for color encoding.
-       */
-      color?: string;
-      /**
-       * Field name for size encoding.
-       */
-      size?: string;
-      /**
-       * Field name for opacity encoding.
-       */
-      opacity?: string;
-      /**
-       * Field name for shape encoding.
-       */
-      shape?: string;
-    };
-    /**
-     * Theme token (e.g., 'light', 'dark').
-     */
-    theme?: string;
-    options?: {
-      /**
-       * Auto-validate the generated schema.
-       */
-      validate?: boolean;
-    };
-  }
-}
-export type VizComposeInput = VizComposeInputSchema.VizComposeInput;
-
-// Source: viz.compose.output.json
-export namespace VizComposeOutputSchema {
-  /**
-   * Visualization schema with component tree, slots, props, and token mappings.
-   */
-  export interface VizComposeOutput {
-    /**
-     * Whether the composition succeeded.
-     */
-    status: 'ok' | 'error';
-    /**
-     * Resolved chart type (bar, line, area, point, scatter, heatmap, or empty on error).
-     */
-    chartType: string;
-    /**
-     * The composed UiSchema tree with viz components.
-     */
-    schema: {
-      [k: string]: any;
-    };
-    /**
-     * Temporary schema reference for pipeline reuse in validate/render/codegen.
-     */
-    schemaRef?: string;
-    /**
-     * ISO timestamp when the schemaRef was created.
-     */
-    schemaRefCreatedAt?: string;
-    /**
-     * ISO timestamp when the schemaRef expires.
-     */
-    schemaRefExpiresAt?: string;
-    /**
-     * Slot assignments mapping viz components to chart regions.
-     */
-    slots: SlotEntry[];
-    /**
-     * Non-fatal issues encountered during composition.
-     */
-    warnings: Issue[];
-    /**
-     * Fatal errors (present when status is 'error').
-     */
-    errors?: Issue[];
-    meta?: {
-      /**
-       * Viz traits that were resolved during composition.
-       */
-      traitsResolved?: string[];
-      /**
-       * Encoding traits applied to axis/scale config.
-       */
-      encodingsApplied?: string[];
-      /**
-       * Number of viz components placed in the schema.
-       */
-      componentCount?: number;
-      /**
-       * Object name if object-based composition was used.
-       */
-      objectUsed?: string;
-      /**
-       * Layout composition strategy: single, layer, facet, or concat.
-       */
-      layoutStrategy?: string;
-      /**
-       * Scale traits resolved (e.g., scale-linear, scale-temporal).
-       */
-      scalesResolved?: string[];
-      /**
-       * Interaction traits resolved (e.g., interaction-tooltip, interaction-highlight).
-       */
-      interactionsResolved?: string[];
-    };
-  }
-  export interface SlotEntry {
-    slotName: string;
-    component: string;
-    props: {
-      [k: string]: any;
-    };
-  }
-  export interface Issue {
-    code: string;
-    message: string;
-    path?: string;
-    hint?: string;
-  }
-}
-export type VizComposeOutput = VizComposeOutputSchema.VizComposeOutput;
 
 // Source: viz.render.input.json
 export namespace VizRenderInputSchema {
@@ -8410,10 +7832,6 @@ export namespace VizRenderInputSchema {
      * Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families.
      */
     opacity?: number;
-    /**
-     * DSL version to use for this request. Defaults to the current version (1.0).
-     */
-    dslVersion?: string;
     /**
      * Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.
      *
@@ -8805,15 +8223,20 @@ export type VizRenderInput = VizRenderInputSchema.VizRenderInput;
 // Source: viz.render.output.json
 export namespace VizRenderOutputSchema {
   /**
-   * A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The Vega-Lite spec is always present; the ECharts option is opt-in (output.echarts).
+   * A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The five Cartesian families return spec (Vega-Lite) and optional echartsSpec; the eight ECharts-primary families omit spec and always return echartsSpec with output.echarts true and reason echarts-primary-family.
    */
-  export interface VizRenderOutput {
+  export type VizRenderOutput = VizRenderOutput1 & VizRenderOutput2;
+  export type VizRenderOutput1 = {
+    [k: string]: any;
+  };
+
+  export interface VizRenderOutput2 {
     /**
      * Whether rendering succeeded.
      */
     status: 'ok' | 'error';
     /**
-     * Resolved chart type (bar, line, area, scatter, heatmap; empty on error).
+     * Resolved registered chart type; omitted on error.
      */
     chartType?: string;
     /**
@@ -8823,7 +8246,7 @@ export namespace VizRenderOutputSchema {
     /**
      * Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes.
      */
-    spec: {
+    spec?: {
       [k: string]: any;
     };
     /**
@@ -8925,7 +8348,7 @@ export namespace VizRenderOutputSchema {
       brand: 'A' | 'B';
     };
     /**
-     * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).
+     * Temporary reference to the produced spec for pipeline reuse (mirrors the retired chart scaffold schemaRef).
      */
     specRef?: string;
     /**
@@ -8953,6 +8376,10 @@ export namespace VizRenderOutputSchema {
       height?: number;
       compact: boolean;
       echarts?: boolean;
+      /**
+       * This chart family requires ECharts, so output.echarts is forced true even when omitted or false.
+       */
+      reason?: 'echarts-primary-family';
       includeNormalizedSpec?: boolean;
       includeA11y?: boolean;
     };
@@ -8966,7 +8393,7 @@ export namespace VizRenderOutputSchema {
     warnings: Issue[];
     meta?: {
       /**
-       * Primary renderer for the spec payload (always vega-lite in Phase 0).
+       * Primary renderer for the returned payload.
        */
       renderer?: 'vega-lite' | 'echarts';
       /**

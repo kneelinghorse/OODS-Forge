@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
+import { tokenPackageRoot, runTokenBuild, readTokenScopes } from '../lib/token-build.js';
 import { todayDir, loadPolicy, withinAllowed } from '../lib/security.js';
 import { writeTranscript, writeBundleIndex, sha256File } from '../lib/transcript.js';
 import type { TokensBuildInput, GenericOutput, ToolPreview, ArtifactDetail } from './types.js';
@@ -13,11 +12,6 @@ type TokensBuildOutputs = {
   tailwind: string;
 };
 
-const MCP_SERVER_DIR = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const REPO_ROOT = path.resolve(MCP_SERVER_DIR, '..', '..');
-const TOKENS_DIST_DIR = path.join(REPO_ROOT, 'packages', 'tokens', 'dist');
-const TOKENS_BUILD_SCRIPT = path.join(REPO_ROOT, 'packages', 'tokens', 'scripts', 'build.mjs');
-
 function isNonEmptyFile(filePath: string): boolean {
   try {
     const stat = fs.statSync(filePath);
@@ -27,38 +21,21 @@ function isNonEmptyFile(filePath: string): boolean {
   }
 }
 
-async function runTokensBuild(): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
-    const child = spawn('node', [TOKENS_BUILD_SCRIPT], {
-      cwd: REPO_ROOT,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    let stderr = '';
-    child.stderr?.on('data', (chunk) => {
-      stderr += chunk.toString();
-    });
-    child.on('error', (error) => reject(error));
-    child.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        const message = stderr.trim();
-        reject(new Error(`tokens build failed (exit ${code})${message ? `: ${message}` : ''}`));
-      }
-    });
-  });
-}
-
 async function ensureTokensBuildOutputs(): Promise<TokensBuildOutputs> {
+  const TOKENS_DIST_DIR = path.join(tokenPackageRoot(), 'dist');
   const outputs: TokensBuildOutputs = {
     css: path.join(TOKENS_DIST_DIR, 'css', 'tokens.css'),
     ts: path.join(TOKENS_DIST_DIR, 'ts', 'tokens.ts'),
     tailwind: path.join(TOKENS_DIST_DIR, 'tailwind', 'tokens.json'),
   };
 
-  const missing = Object.values(outputs).some((filePath) => !isNonEmptyFile(filePath));
+  const missing = [...Object.values(outputs), path.join(TOKENS_DIST_DIR, 'css-variables-by-scope.json')].some((filePath) => !isNonEmptyFile(filePath));
   if (missing) {
-    await runTokensBuild();
+    const build = await runTokenBuild();
+    if (build.exitCode !== 0) {
+      const tail = build.commands.map(command => command.stdout + command.stderr).join('\n').split('\n').slice(-40).join('\n');
+      throw new ToolError('OODS-S019', `Token build failed (exit ${build.exitCode}).\n${tail}`, { build });
+    }
   }
 
   const stillMissing = Object.values(outputs).some((filePath) => !isNonEmptyFile(filePath));
@@ -111,19 +88,17 @@ export async function handle(input: TokensBuildInput = {}): Promise<GenericOutpu
 
   const brand = input.brand ?? 'A';
   const theme = input.theme ?? 'dark';
+  if (!['A', 'B'].includes(brand) || !['light', 'dark', 'hc'].includes(theme)) {
+    throw new ToolError('OODS-V001', `Unknown token scope ${brand}/${theme}.`, { brand, theme });
+  }
 
   if (input.apply) {
     const outputs = await ensureTokensBuildOutputs();
 
-    const tailwindPayload = JSON.parse(fs.readFileSync(outputs.tailwind, 'utf8')) as Record<string, unknown>;
-    const tokensPayload = {
-      ...tailwindPayload,
-      meta: {
-        ...(typeof tailwindPayload.meta === 'object' && tailwindPayload.meta ? tailwindPayload.meta : {}),
-        brand,
-        theme,
-      },
-    };
+    const scopes = readTokenScopes();
+    const variables = scopes[brand]?.[theme];
+    if (!variables) throw new ToolError('OODS-V001', `Token scope ${brand}/${theme} was not built.`, { brand, theme });
+    const tokensPayload = { cssVariables: variables, meta: { brand, theme, scope: 'requested' } };
 
     const themeFile = path.join(outDir, `tokens.${theme}.json`);
     ensureAllowed(policy.artifactsBase, themeFile);
@@ -131,10 +106,16 @@ export async function handle(input: TokensBuildInput = {}): Promise<GenericOutpu
     recordArtifact(
       themeFile,
       `tokens.${theme}.json`,
-      'Compiled token payload (brand + theme context).',
+      'Resolved variables for the requested brand and theme.',
       artifacts,
       details,
     );
+
+    const scopeCss = `[data-brand='${brand}'][data-theme='${theme}'] {\n${Object.entries(variables).map(([name, value]) => `  ${name.replace(/^--oods-(sys|theme|ref|cmp)-/, '--$1-')}: ${value};`).join('\n')}\n}\n`;
+    const scopeOut = path.join(outDir, 'tokens.scope.css');
+    ensureAllowed(policy.artifactsBase, scopeOut);
+    fs.writeFileSync(scopeOut, scopeCss, 'utf8');
+    recordArtifact(scopeOut, 'tokens.scope.css', 'Resolved CSS variables for only the requested brand and theme.', artifacts, details);
 
     const cssOut = path.join(outDir, 'tokens.css');
     ensureAllowed(policy.artifactsBase, cssOut);
@@ -144,21 +125,22 @@ export async function handle(input: TokensBuildInput = {}): Promise<GenericOutpu
     const tsOut = path.join(outDir, 'tokens.ts');
     ensureAllowed(policy.artifactsBase, tsOut);
     fs.copyFileSync(outputs.ts, tsOut);
-    recordArtifact(tsOut, 'tokens.ts', 'Compiled TypeScript token map.', artifacts, details);
+    recordArtifact(tsOut, 'tokens.ts', 'Legacy default-scope TypeScript token map (A/light).', artifacts, details);
 
     const tailwindOut = path.join(outDir, 'tokens.tailwind.json');
     ensureAllowed(policy.artifactsBase, tailwindOut);
     fs.copyFileSync(outputs.tailwind, tailwindOut);
-    recordArtifact(tailwindOut, 'tokens.tailwind.json', 'Tailwind-compatible token JSON.', artifacts, details);
+    recordArtifact(tailwindOut, 'tokens.tailwind.json', 'Legacy default-scope Tailwind token JSON (A/light).', artifacts, details);
   } else {
     const expected = [
       `tokens.${theme}.json`,
       'tokens.css',
+      'tokens.scope.css',
       'tokens.ts',
       'tokens.tailwind.json',
     ];
     preview = {
-      summary: `Preview only: would build ${expected.length} token artifact${expected.length === 1 ? '' : 's'} for brand ${brand} (${theme} theme).`,
+      summary: `Preview only: would return ${expected.length} token artifact${expected.length === 1 ? '' : 's'} for brand ${brand} (${theme} theme).`,
       notes: expected.map((name) => `artifact: ${name}`),
       specimens: expected.map((name) => path.join(outDir, name)),
     };

@@ -5,14 +5,10 @@ import { formatSchemaInputError } from '../../src/security/schema-errors.js';
 import brandApplyInputSchema from '../../src/schemas/brand.apply.input.json' assert { type: 'json' };
 import tokensBuildInputSchema from '../../src/schemas/tokens.build.input.json' assert { type: 'json' };
 import genericOutputSchema from '../../src/schemas/generic.output.json' assert { type: 'json' };
-import releaseVerifyInputSchema from '../../src/schemas/release.verify.input.json' assert { type: 'json' };
-import releaseVerifyOutputSchema from '../../src/schemas/release.verify.output.json' assert { type: 'json' };
 import replValidateInputSchema from '../../src/schemas/repl.validate.input.json' assert { type: 'json' };
 import type {
   BrandApplyInput,
   GenericOutput,
-  ReleaseVerifyInput,
-  ReleaseVerifyOutput,
 } from '../../src/schemas/generated.js';
 
 const ajv = getAjv();
@@ -20,8 +16,6 @@ const ajv = getAjv();
 const validateBrandApplyInput = ajv.compile<BrandApplyInput>(brandApplyInputSchema);
 const validateTokensBuildInput = ajv.compile(tokensBuildInputSchema);
 const validateGenericOutput = ajv.compile<GenericOutput>(genericOutputSchema);
-const validateReleaseVerifyInput = ajv.compile<ReleaseVerifyInput>(releaseVerifyInputSchema);
-const validateReleaseVerifyOutput = ajv.compile<ReleaseVerifyOutput>(releaseVerifyOutputSchema);
 
 describe('schema contracts', () => {
   it('accepts valid brand.apply input payloads', () => {
@@ -173,64 +167,9 @@ describe('schema contracts', () => {
     expect(validateGenericOutput.errors).not.toBeNull();
   });
 
-  it('accepts release.verify input payloads', () => {
-    const payload: ReleaseVerifyInput = {
-      packages: ['@oods/tokens'],
-      fromTag: 'v1.2.3',
-      apply: false,
-    };
 
-    expect(validateReleaseVerifyInput(payload)).toBe(true);
-    expect(validateReleaseVerifyInput.errors).toBeNull();
-  });
 
-  it('flags release.verify inputs with empty packages array', () => {
-    const invalidPayload = {
-      packages: [],
-    } as unknown;
 
-    expect(validateReleaseVerifyInput(invalidPayload)).toBe(false);
-    expect(validateReleaseVerifyInput.errors).not.toBeNull();
-  });
-
-  it('accepts release.verify output payloads', () => {
-    const payload: ReleaseVerifyOutput = {
-      artifacts: ['/tmp/output/diagnostics.json'],
-      diagnosticsPath: '/tmp/output/diagnostics.json',
-      transcriptPath: '/tmp/output/transcript.json',
-      bundleIndexPath: '/tmp/output/bundle.json',
-      results: [
-        {
-          name: '@oods/tokens',
-          version: '1.2.3',
-          identical: true,
-          sha256: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-          sizeBytes: 2048,
-          warnings: ['sanity check warning'],
-          files: ['dist/index.js'],
-        },
-      ],
-      changelogPath: '/tmp/output/CHANGELOG.md',
-      summary: 'Packages verified successfully.',
-      warnings: ['Minor warnings recorded.'],
-    };
-
-    expect(validateReleaseVerifyOutput(payload)).toBe(true);
-    expect(validateReleaseVerifyOutput.errors).toBeNull();
-  });
-
-  it('rejects release.verify outputs missing results', () => {
-    const invalidPayload = {
-      artifacts: ['/tmp/output/diagnostics.json'],
-      transcriptPath: '/tmp/output/transcript.json',
-      bundleIndexPath: '/tmp/output/bundle.json',
-      changelogPath: '/tmp/output/CHANGELOG.md',
-      summary: 'Incomplete payload',
-    } as unknown;
-
-    expect(validateReleaseVerifyOutput(invalidPayload)).toBe(false);
-    expect(validateReleaseVerifyOutput.errors).not.toBeNull();
-  });
 });
 
 // ---------------------------------------------------------------------------

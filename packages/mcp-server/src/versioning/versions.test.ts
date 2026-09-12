@@ -21,7 +21,6 @@ describe('DSL Version Registry', () => {
     expect(entry).toBeDefined();
     expect(entry!.features).toEqual({
       composeViewExtensions: true,
-      vizCompose: true,
       tailwindCva: true,
       fragmentMode: true,
       deprecationWarnings: true,

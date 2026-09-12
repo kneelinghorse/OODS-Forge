@@ -1,6 +1,6 @@
 # brand.intake
 
-> Validate a preview-only DTCG brand intake envelope in memory. Each theme document supplies one of two document_operand kinds: `inline-document` or `authorized-content-addressed-reference`. The latter is schema-valid but intentionally unresolved and returns a typed `unresolved-content-reference` not-accepted outcome. `apply` is forced false; the tool never writes files, applies tokens, creates a brand, or emits build artifacts.
+> Validate a preview-only DTCG intake envelope in memory and return its envelopeHash. Fully accepted brand-relative inline documents for existing A/B with unique mapped target themes return a delta consumable by brand.apply alias strategy. authorized-content-addressed-reference is schema-valid but intentionally unresolved with typed unresolved-content-reference outcomes. apply is forced false; no writes, token application, brand creation or build artifacts.
 
 **Registration:** auto
 
@@ -17,6 +17,9 @@
 
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
+| `envelopeHash` | string | Yes | SHA256 of source-order compact JSON of the complete intake envelope. |
+| `delta` | object | No | Fully accepted inline brand-relative documents, wrapped for brand.apply alias strategy. Only existing A/B and unique mapped themes qualify. |
+| `deltaUnavailableReason` | string | No |  |
 | `mode` | any | Yes |  |
 | `preview_only` | any | Yes | Always true: brand.intake validates and receipts without persistence. |
 | `grammar_profile` | any | Yes |  |

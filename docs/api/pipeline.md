@@ -1,6 +1,6 @@
 # pipeline
 
-> Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema.
+> Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable bundle limitation: React/Vue readiness requires omitted source/test/declaration files; generated targets return OODS-N015 without an artifact until that packaging contract is reconciled. Host repository generation remains supported.
 
 **Registration:** auto
 
@@ -8,7 +8,6 @@
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `object` | string | No |  | Object name from the OODS registry (e.g., Subscription, User). |
 | `intent` | string | No |  | Natural-language description of the desired UI. |
 | `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` \| `workflow` | No |  | View context for object-aware composition. |

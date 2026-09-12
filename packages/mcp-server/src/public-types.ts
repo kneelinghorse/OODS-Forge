@@ -13,16 +13,6 @@ export type {
   ObjectUsedInfo,
 } from "./tools/design.compose.js";
 
-// -- viz.compose --
-export type {
-  VizComposeInput,
-  VizComposeOutput,
-  VizSlotEntry,
-  VizIssue,
-  ChartType,
-  DataBindings,
-} from "./tools/viz.compose.js";
-
 // -- pipeline --
 export type { PipelineInput, PipelineOutput } from "./tools/pipeline.js";
 

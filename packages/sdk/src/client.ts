@@ -9,8 +9,6 @@ import { createTransport, type Transport, type TransportOptions } from './transp
 import type {
   DesignComposeInput,
   DesignComposeOutput,
-  VizComposeInput,
-  VizComposeOutput,
   PipelineInput,
   PipelineOutput,
   CodeGenerateInput,
@@ -77,11 +75,6 @@ export class OodsClient {
   /** Compose a UI schema from intent, object, and layout preferences. */
   async compose(input: DesignComposeInput): Promise<DesignComposeOutput> {
     return this.call<DesignComposeOutput>('design.compose', input as Record<string, unknown>);
-  }
-
-  /** Compose a visualization schema from chart type and data bindings. */
-  async vizCompose(input: VizComposeInput): Promise<VizComposeOutput> {
-    return this.call<VizComposeOutput>('viz.compose', input as Record<string, unknown>);
   }
 
   /** Run the full pipeline: compose -> validate -> render -> codegen -> save. */

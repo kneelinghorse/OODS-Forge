@@ -1,6 +1,6 @@
 # Grouped action-parameter tools — consumer migration guide
 
-The five CRUD-shaped MCP tool families have been consolidated into single
+The four CRUD-shaped MCP tool families have been consolidated into single
 **action-parameter** tools, following the established grouping pattern. This
 cuts the default-exposed tool surface without changing any behavior.
 
@@ -10,13 +10,12 @@ cuts the default-exposed tool surface without changing any behavior.
 | `schema` | `save` · `load` · `list` · `delete` | `schema.save` `schema.load` `schema.list` `schema.delete` |
 | `object` | `list` · `show` | `object.list` `object.show` |
 | `repl`   | `render` · `validate` | `repl.render` `repl.validate` |
-| `review` | `resolve` · `chain` | `review.resolve` `review.chain` |
 
 Each grouped tool routes the validated payload to the **same per-action
 handler** as before. The input is the old per-action body plus one extra field,
 `action`; the response is byte-identical to the old per-action tool.
 
-Generation verbs (`design.compose`, `viz.compose`, `code.generate`,
+Generation verbs (`design.compose`, `code.generate`,
 `fidelity.preview`, `pipeline`, `brand.apply`, `tokens.build`) and the
 standalone reads (`catalog.list`, `registry.snapshot`, `structuredData.fetch`,
 `health`) are **unchanged** — the action-parameter pattern only fits CRUD
@@ -24,10 +23,8 @@ families.
 
 ## What this means for you right now
 
-**Nothing breaks.** The old per-action tool names remain registered as
-deprecated aliases and behave exactly as before. You can migrate at your own
-pace within the deprecation window. The old names will be removed in a
-follow-up mission **after** all consumers have migrated.
+The grouped names are the registered surface. Use the action-parameter form;
+legacy per-action wire aliases are no longer registered.
 
 > Operator note: the grouped tools only appear to live agents after a
 > `npm run build` (dist rebuild) **and** an adapter restart — the aquex hub
@@ -67,7 +64,7 @@ Over the MCP bridge the external names use underscores, so `map.apply` is
   adapter restart so the renamed surface is live before the old names are
   removed.
 - **Bridge / connector policy** — the grouped names (`map`, `schema`, `object`,
-  `repl`, `review`) are already added to `configs/agent/policy.json`
+  `repl`) are already added to `configs/agent/policy.json`
   (`tools[]` + both connector allow-lists) and the server security policy, so
   they are reachable as soon as the surface is rebuilt.
 
@@ -80,4 +77,4 @@ writes to the shared `component-mappings.json` / `.oods/schemas` serialized.
 The previously read-only actions (`map.list`, `map.resolve`, `schema.load`,
 `schema.list`) therefore run at the write tier's concurrency. These are
 low-volume design-time reads, so the effect is negligible; `object`, `repl`,
-and `review` keep their original caps.
+and `repl` keep their original caps.

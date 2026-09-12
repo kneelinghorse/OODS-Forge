@@ -13,13 +13,6 @@ export type {
   SlotSelectionEntry,
   ObjectUsedInfo,
 
-  // viz.compose
-  VizComposeInput,
-  VizComposeOutput,
-  VizSlotEntry,
-  VizIssue,
-  ChartType,
-  DataBindings,
 
   // pipeline
   PipelineInput,

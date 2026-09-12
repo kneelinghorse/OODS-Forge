@@ -47,6 +47,9 @@ export interface StructuredError {
 
 const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefinition>([
 
+  ['OODS-W001', { code: 'OODS-W001', category: 'validation', message: 'Fragment output ignores document scope options', retryable: false }],
+  ['OODS-W002', { code: 'OODS-W002', category: 'validation', message: 'Non-strict fragments reclassify unknown-component errors per node', retryable: false }],
+
   // ── Validation: Input & Schema ──────────────────────────────────────────
   ['OODS-V001', { code: 'OODS-V001', category: 'validation', message: 'Input validation failed', retryable: true }],
   ['OODS-V002', { code: 'OODS-V002', category: 'validation', message: 'Output validation failed', retryable: false }],
@@ -291,14 +294,15 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // while V161 fires precisely when the agent supplied none. Threshold is read from the
   // APPLIED compiled scale.range, never a hardcoded 6. WARN — the chart still renders.
   ['OODS-V161', { code: 'OODS-V161', category: 'validation', message: 'Baked categorical palette recycles: more distinct series than palette slots', retryable: true }],
-  ['OODS-V162', { code: 'OODS-V162', category: 'validation', message: 'Required release evidence is missing', retryable: true }],
-  ['OODS-V163', { code: 'OODS-V163', category: 'validation', message: 'Release evidence artifact hash mismatch', retryable: true }],
+  ['OODS-V162', { code: 'OODS-V162', category: 'validation', message: 'Required hash-bound release evidence is missing; references are not re-executed', retryable: true }],
+  ['OODS-V163', { code: 'OODS-V163', category: 'validation', message: 'Release evidence artifact hash mismatch; references are not re-executed', retryable: true }],
   ['OODS-V164', { code: 'OODS-V164', category: 'validation', message: 'Unknown UI workflow state', retryable: true }],
   ['OODS-V165', { code: 'OODS-V165', category: 'validation', message: 'SVG rendering failed', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],
+  ['OODS-V202', { code: 'OODS-V202', category: 'validation', message: 'structuredData.fetch input invalid', retryable: true }],
 
   // ── Not Found ───────────────────────────────────────────────────────────
   ['OODS-N001', { code: 'OODS-N001', category: 'not_found', message: 'Unknown tool', retryable: false }],
@@ -346,6 +350,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-S016', { code: 'OODS-S016', category: 'server_error', message: 'Artifact filename empty', retryable: false }],
   ['OODS-S017', { code: 'OODS-S017', category: 'server_error', message: 'Artifact filename unsafe', retryable: false }],
   ['OODS-S018', { code: 'OODS-S018', category: 'server_error', message: 'Fixture provider mismatch', retryable: false }],
+
+  ['OODS-S019', { code: 'OODS-S019', category: 'server_error', message: 'Token build failed; source writes remain in place', retryable: true }],
 
   // ── Rate Limit ──────────────────────────────────────────────────────────
   ['OODS-R001', { code: 'OODS-R001', category: 'rate_limit', message: 'Rate limit exceeded', retryable: true }],

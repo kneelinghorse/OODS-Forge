@@ -1,6 +1,6 @@
 # brand.apply
 
-> Apply brand token overlays using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. Use apply=true to write changes to disk (default: dry-run, returns preview only).
+> Apply brand token overlays to canonical A/B source using alias strategy or the supported add/remove/replace subset of RFC 6902. Requires a delta object. apply=true writes source, runs both real token-build stages, and returns before/after SHA256, byte counts and captured build results. Build failure returns OODS-S019 with the last 40 output lines; source writes remain in place. Default dry-run changes no source. Portable bundle limit: canonical brand source is omitted, so even apply:false returns a missing-source error; source writes/builds require the host repository.
 
 **Registration:** auto
 
@@ -19,6 +19,7 @@
 
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
+| `receipt` | object | Yes |  |
 | `artifacts` | string[] | Yes |  |
 | `diagnosticsPath` | string | No |  |
 | `transcriptPath` | string | Yes |  |

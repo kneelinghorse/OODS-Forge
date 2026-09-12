@@ -1,0 +1,92 @@
+[
+  {
+    "step": "fast-forward",
+    "command": [
+      "git",
+      "merge",
+      "--ff-only",
+      "origin/OODS-pro"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:05.968195+00:00",
+    "finishedAt": "2026-09-11T14:36:15.866364+00:00"
+  },
+  {
+    "step": "install",
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:15.867091+00:00",
+    "finishedAt": "2026-09-11T14:36:16.957879+00:00"
+  },
+  {
+    "step": "build-tokens",
+    "command": [
+      "pnpm",
+      "run",
+      "build:tokens"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:16.958314+00:00",
+    "finishedAt": "2026-09-11T14:36:19.583008+00:00"
+  },
+  {
+    "step": "build-packages",
+    "command": [
+      "pnpm",
+      "run",
+      "build:packages"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:19.583731+00:00",
+    "finishedAt": "2026-09-11T14:36:42.265210+00:00"
+  },
+  {
+    "step": "build-bridge",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-bridge",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:42.266045+00:00",
+    "finishedAt": "2026-09-11T14:36:43.426656+00:00"
+  },
+  {
+    "step": "pkg-build",
+    "command": [
+      "pnpm",
+      "run",
+      "pkg:build"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:43.427155+00:00",
+    "finishedAt": "2026-09-11T14:36:51.610277+00:00"
+  },
+  {
+    "step": "pm2-restart",
+    "command": [
+      "pm2",
+      "restart",
+      "oods-forge-bridge"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:51.611030+00:00",
+    "finishedAt": "2026-09-11T14:36:51.991055+00:00"
+  },
+  {
+    "step": "pm2-save",
+    "command": [
+      "pm2",
+      "save"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T14:36:51.991427+00:00",
+    "finishedAt": "2026-09-11T14:36:52.123881+00:00"
+  }
+]

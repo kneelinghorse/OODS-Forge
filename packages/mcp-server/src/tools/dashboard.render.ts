@@ -93,9 +93,9 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const dataQualityField = input.output?.dataQualityField;
   const ignoreSelfSource = input.crossFilter?.ignoreSelfSource ?? true;
   const onPanelError = input.onPanelError ?? 'placeholder';
-  // Phase-3 governed-measure resolution (sprint-117) — gated, default OFF so the
-  // absent/false path is byte-identical to s116 (measureRef stays inert).
-  const resolveMeasures = input.resolveMeasures ?? false;
+  // s194-m05: resolve governed references by default. Explicit false opts out.
+  // Inputs without a reference retain their previous rendered bytes.
+  const resolveMeasures = input.resolveMeasures ?? true;
   // Field-presence strict check (sprint-118 m05) — gated, default OFF so the absent/false
   // path is byte-identical (the frozen-D6 silent-empty asymmetry preserved).
   const strictFields = input.strictFields ?? false;

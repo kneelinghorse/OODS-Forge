@@ -1,6 +1,6 @@
 # fidelity.preview
 
-> Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block.
+> Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (allow-listed — no caller-supplied paths) or an inline `manifest` object (data only, never a path; must contain an `entities` array). Returns complete HTML ready to insert into a preview surface; `options` control the projection variant, brand overlay (branded-mockup only), review threshold, and the inline <style> block. Branded mockups resolve built A/B light-scope tokens; brand-a/brand-b are deprecated aliases supported for one release. Unknown brands return OODS-BM-002 instead of falling back. Portable callers must provide inline manifest data because named fixtures are not shipped.
 
 **Registration:** auto
 
@@ -14,7 +14,7 @@
 | `manifest.entities` | unknown[] | Yes |  | Object Catalog entities to render. |
 | `options` | object | No |  |  |
 | `options.variant` | string | No |  | Projection-variant selector passed through to the emitter (see s100-m03 selectVariant() / runPreEmit()). |
-| `options.brandOverlay` | string | No |  | Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02. |
+| `options.brandOverlay` | string | No |  | Built A/B light-scope brand for branded-mockup fidelity. Ignored by other fidelities. brand-a/brand-b are deprecated one-release aliases; unknown names return OODS-BM-002. |
 | `options.reviewThreshold` | number | No |  | Threshold below which entities are flagged for review. Default 0.7. Ignored by non-review fidelities. |
 | `options.includeStyles` | boolean | No | `true` | Inline <style> block toggle. Default true; set false to receive markup without CSS. |
 

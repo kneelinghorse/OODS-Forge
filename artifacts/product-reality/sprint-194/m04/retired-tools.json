@@ -1,0 +1,44 @@
+{
+  "missionId": "s194-m04",
+  "decisionIds": [
+    1916,
+    1922,
+    1923
+  ],
+  "before": {
+    "auto": 21,
+    "onDemand": 6,
+    "total": 27
+  },
+  "after": {
+    "auto": 19,
+    "onDemand": 5,
+    "total": 24
+  },
+  "retired": [
+    {
+      "name": "viz.compose",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Deprecated field-names-only scaffold; viz.render is the data-bound chart tool."
+    },
+    {
+      "name": "review",
+      "decisionIds": [
+        1916,
+        1922
+      ],
+      "reason": "Evaluation emits labels without target field/value edits; RFC6902 patch semantics cannot be derived. Internal evaluation and fidelity emitters remain unregistered."
+    },
+    {
+      "name": "release.verify",
+      "decisionIds": [
+        1916,
+        1923
+      ],
+      "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
+    }
+  ]
+}

@@ -36,18 +36,59 @@ describe("how Forge works narrative truth", () => {
   const nearRoadmap = read("cmos/foundational-docs/roadmap/near.md");
   const normalizedNear = nearRoadmap.replace(/\s+/g, " ");
 
+  it("pins the source-writing brand seam and the explicitly bounded token consumers (s194)", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(html).toContain("writes canonical brand source and runs both token-build stages");
+    expect(html).toContain("leaves source writes in place");
+    expect(html).toContain("requested-scope JSON and CSS");
+    expect(html).toContain("legacy A/light TypeScript and Tailwind artifacts");
+    expect(html).toContain("using built A/B light tokens");
+    expect(descriptions["brand.apply"]).toContain("OODS-S019");
+    expect(descriptions["brand.intake"]).toContain("delta consumable by brand.apply");
+    expect(descriptions["tokens.build"]).not.toContain("inputs label");
+    expect(descriptions["fidelity.preview"]).toContain("Unknown brands return OODS-BM-002");
+    expect(read("packages/mcp-server/src/codegen/branded-mockup-emitter.ts")).not.toContain("const BRAND_TOKENS");
+  });
+
+  it("pins the accepted mapping descope and distinguishes surfaced draft data from runtime behavior", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const limit = "records and resolves mappings for external consumers; no composer or generator consumes them";
+    expect(html).toContain(limit);
+    expect(descriptions.map.toLowerCase()).toContain(limit);
+    expect(descriptions["registry.snapshot"]).toContain("surfaced, not consumed");
+    expect(descriptions["structuredData.fetch"]).toContain("dataset-only");
+    expect(descriptions["structuredData.fetch"]).toContain("OODS-V202");
+    expect(descriptions.schema).toContain("not ETags or conditional requests");
+  });
+
+  it("pins the observable option limits in narrative, descriptors and generated API pages (s194)", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const pins: Record<string, string[]> = {
+      health: ["defaultScope"], "dashboard.render": ["OODS-V130", "OODS-V137"],
+      "viz.render": ["echarts-primary-family"], repl: ["OODS-W001", "OODS-W002"],
+      "code.generate": ["hash-bound-not-re-executed"], pipeline: ["hash-bound-not-re-executed"],
+      "design.preview": ["127.0.0.1:4477", "OODS-N019"],
+    };
+    for (const [tool, phrases] of Object.entries(pins)) for (const phrase of phrases) {
+      expect(html).toContain(phrase);
+      expect(descriptions[tool]).toContain(phrase);
+      expect(read(`docs/api/${tool.replaceAll(".", "-")}.md`)).toContain(phrase);
+    }
+    expect(html).toContain("Request dslVersion and repl.output.depth were removed");
+  });
+
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
       read("packages/mcp-server/src/tools/registry.json"),
     ) as ToolRegistry;
 
-    expect(registry.auto).toHaveLength(21);
-    expect(registry.onDemand).toHaveLength(6);
+    expect(registry.auto).toHaveLength(19);
+    expect(registry.onDemand).toHaveLength(5);
     expect(html).toContain(
-      "27 registered tools (21 auto + 6 on demand), as defined by",
+      "24 registered tools (19 auto + 5 on demand), as defined by",
     );
     expect(html).toContain(
-      "packages/mcp-server/src/tools/registry.json</span>: 21 tools register by default and 6 more",
+      "packages/mcp-server/src/tools/registry.json</span>: 19 tools register by default and 5 more",
     );
     expect(html).toContain(
       `The ${registry.auto.length + registry.onDemand.length}-tool roster comes from`,
@@ -62,7 +103,7 @@ describe("how Forge works narrative truth", () => {
     }
     expect(onDemandRow).not.toContain("review (resolve, chain)");
     expect(html).toContain(
-      "map (create, list, resolve, update, delete, apply) · review (resolve, chain)",
+      "map (create, list, resolve, update, delete, apply)",
     );
   });
 
@@ -84,6 +125,17 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("takes no brand input");
     expect(html).not.toContain("light theme, brand-independent");
     expect(html).not.toContain("Light theme only.");
+  });
+
+  it("Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes", () => {
+    const registry = JSON.parse(read("packages/mcp-server/src/tools/registry.json"));
+    const sections = [...read("docs/mcp/Tool-Specs.md").matchAll(/^### `([^`]+)`$/gm)].map(match => match[1]);
+    expect(sections).toEqual([...registry.auto, ...registry.onDemand]);
+    const portable = read("docs/runtime/portable-runtime.md");
+    expect(portable).toContain("27 calls across all 19 advertised tools");
+    expect(portable).toContain("28 calls across two processes");
+    expect(portable).toContain("adapter drops native error codes");
+    expect(portable).toContain("even its dry-run returns a missing-source error");
   });
 
   it("Tool-Specs links resolve to existing grouped API pages", () => {
@@ -323,6 +375,10 @@ describe("how Forge works narrative truth", () => {
       "## Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED",
     );
     expect(nearRoadmap).not.toContain("Runtime at scale — BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
+      "## Increment 13 — Sprint 194: Tools truthful — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Tools truthful — BUILT, REVIEW PENDING");
     expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );

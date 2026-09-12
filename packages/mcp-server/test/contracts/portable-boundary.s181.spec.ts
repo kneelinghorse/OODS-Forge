@@ -226,6 +226,7 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(response.result).toMatchObject({
       status: 'degraded',
       registry: { components: 0, traits: 0, objects: 0 },
+      tokens: { built: false, brands: [], themes: [], scopes: {}, defaultScope: null },
       warnings: expect.arrayContaining([
         expect.stringContaining('registry subsystem unavailable'),
         expect.stringContaining('tokens subsystem unavailable'),

@@ -116,7 +116,7 @@ This is the Gate 1 disposition of the eight requirements accepted in request
 | 3. Adapter-only operation                         | **Satisfied by construction.** `packages/mcp-bridge` is not in the closure. The E2E launches only `packages/mcp-adapter`, which lazily starts the native server over stdio.                                                                                                                                                                                                                                                                        |
 | 4. Runtime data and planning/token assets         | **Satisfied under the publish boundary below.** Runtime registry data, built token output, and structured data ship. Planning means the relocated compiled component schema, not `cmos/`. Brand source, named fidelity fixtures, and stories do not ship.                                                                                                                                                                                          |
 | 5. Path portability                               | **Satisfied.** CI extracts below `$RUNNER_TEMP`, outside `$GITHUB_WORKSPACE`, starts from that arbitrary location, rejects developer absolute paths, and does not rely on Node walking up into the checkout for dependencies.                                                                                                                                                                                                                      |
-| 6. Consumer E2E                                   | **Satisfied and extended.** The primary process initializes, derives the advertised count from the registry, then performs the exact eight-`tools/call` consumer sequence across four tool families. A restarted process makes one additional native `health` call, for nine tool calls across both processes. The E2E verifies render hashes, certification, the negative error, a closed loopback health port, and an unchanged extraction tree. |
+| 6. Consumer E2E                                   | **Satisfied and extended.** The primary process initializes, derives the advertised roster, and makes 27 calls across all 19 tools. A restarted process adds health, for 28 total calls. The E2E checks per-tool outcomes including five disclosed limits, render hashes, certification, scoped persistence, lifecycle and the restored extraction tree. |
 | 7. Lifecycle, persistence, and environment        | **Satisfied with the corrections below.** Readiness is the first successful `health` `tools/call`, not `tools/list`. The E2E measures shutdown on stdin close and restart/termination behavior. Persistent writers and all 21 operational environment variables are explicit below.                                                                                                                                                                |
 | 8. Freshness metadata                             | **Satisfied.** `forge-runtime.manifest.json` is a bundle-root file and an adjacent inspection copy. It is not a `health` response field. A future public distribution may expose a different Gate 2 freshness surface.                                                                                                                                                                                                                             |
 
@@ -201,7 +201,7 @@ The runtime's root-relative reads and their Gate 1 disposition are:
 
 ## Tool surface and host-only calls
 
-The default adapter advertises the 20 auto tools, in registry order:
+The default adapter advertises 19 auto tools in the order of `registry.auto`; five on-demand tools remain outside this default surface. The tool ledger contains 24 live entries and the three recorded retirements.
 
 ```text
 tokens.build
@@ -211,10 +211,10 @@ brand.intake
 catalog.list
 code.generate
 design.compose
+design.preview
 pipeline
 health
 registry.snapshot
-viz.compose
 viz.render
 dashboard.render
 artifact.certify
@@ -223,56 +223,19 @@ map
 schema
 object
 repl
-review
 ```
 
-Advertisement is not a promise that every host-repository mutation is
-portable. `brand.apply`, `tokens.build`, and `fidelity.preview` are
-**host-repository-only** because Gate 1 intentionally omits brand source, the
-token build script/source inputs, and fidelity's named fixtures. The archive
-does include compiled tokens, so render and certification calls consume the
-built result. `catalog.list` remains available, but its unshipped `stories/`
-facet returns an empty list.
+Advertisement includes disclosed host limits. `brand.apply` requires canonical brand source, which Gate 1 omits; even its dry-run returns a missing-source error in the bundle. `tokens.build` returns a dry-run preview and transcript. Applying export requires the omitted legacy TypeScript output and consequently tries unavailable host build scripts; no portable export is claimed. `fidelity.preview` works with inline manifests; named fixtures are host-only. The optional catalog stories facet remains empty when stories are absent.
 
-On-demand tools are not part of the 20-tool default surface. Setting
-`MCP_TOOLSET=all` advertises them, but Gate 1 does not certify their host-only
-fixture and release workflows.
+`design.preview` requires the local design-loop server. The native boundary returns OODS-N019; the current adapter drops native error codes and forwards only message text. The portable receipt records this transport gap explicitly. React/Vue `code.generate` and `pipeline` also refuse with OODS-N015 and no artifact because their source/test/declaration readiness references are omitted. These five per-tool limits (four underlying conditions) are recorded under CMOS #1927–1929; call coverage is not a claim that every host operation succeeds portably.
 
 ## E2E sequence and lifecycle
 
-`scripts/runtime/e2e.mjs` talks to the bundled adapter using MCP stdio. It
-performs `initialize`, then `tools/list`, whose count is derived from
-`registry.auto` instead of duplicating a 20-name pin. The first readiness
-probe is the `health` tool call because the adapter serves `tools/list` before
-it lazily spawns the native server.
+`scripts/runtime/e2e.mjs` initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary process makes 27 calls across all 19 advertised tools. It retains the four two/four-panel dashboard renders, positive and negative chart certification, and adds a content-pinned recipe per advertised tool. Dynamic schema/spec references bind directly to prior tool output without editing schemas. Map create/resolve/delete and schema save/load/delete prove scoped persistence. Token dry-run confirms B/dark metadata and writes only a transcript/index; health separately checks the built scopes. Brand-source absence and unavailable preview are asserted as documented limits.
 
-The primary process then makes exactly eight `tools/call` operations across
-four tool families:
+Every dashboard HTML hash covers returned bytes; repeats compare deterministic response projections while excluding only the three ephemeral reference fields. Certification retains all four positive pillars and the HTML-negative OODS-V126 control. Health reports exact built scopes and a configured A/light default. The test checks token transcript paths inside the extraction artifact root and directs map/schema writes to a fresh extraction-local root. It removes only those owned roots, then requires the complete extracted tree digest to match its pre-test value.
 
-1. `health` once, requiring an OK registry with no warnings.
-2. `dashboard_render` with the two-panel fixture and an exact repeat.
-3. `dashboard_render` with the four-panel fixture and an exact repeat.
-4. `viz_render` once, returning a normalized spec.
-5. `artifact_certify` once with that normalized spec and once with the
-   negative HTML-only operand, which must return `OODS-V126`.
-
-That is one health call, four dashboard calls, one visualization call, and two
-certification calls. The render checks require each `outputHtmlHash` to equal
-the SHA-256 of its HTML. Every response must carry the three ephemeral
-`specRef`, `specRefCreatedAt`, and `specRefExpiresAt` fields; the script excludes
-only those fields from its deterministic response projection, then requires
-the projected response, HTML bytes, and HTML hash to repeat identically. It
-also requires the repeated `specRef` handles to differ. The positive
-certification must pass all four pillars. The loopback health port remains
-closed because `MCP_HEALTH_PORT` defaults to `0`, and the extraction tree hash
-must remain unchanged during this read-only E2E.
-
-The lifecycle checks are observations made by the E2E, not conclusions from
-reading `index.js`: closing adapter stdin must end the adapter and its native
-child cleanly. A fresh adapter process must start, make an additional native
-`health` call, and then exit on SIGTERM without a SIGKILL fallback. This makes
-nine `tools/call` operations across both processes while preserving the exact
-eight-call primary consumer sequence.
+Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 28 calls across two processes. Per-tool outcomes, fixture hashes, lifecycle results and restored tree hashes are retained in CI's `portable-runtime-e2e` artifact. The source-derived ledger counts literal calls; the separate E2E receipt proves execution.
 
 ## Persistence contract
 
@@ -287,8 +250,7 @@ state changes use these real locations:
 | `tokens.build`                               | Policy run bundles plus a possible rewrite of `packages/tokens/dist` when applying a build. The source/build script required for that rewrite is intentionally host-only in Gate 1. |
 | Legacy file telemetry                        | `MCP_TELEMETRY_DIR` selects a JSONL destination, but `packages/mcp-server/src/telemetry/log.ts` has zero production importers. It performs no runtime writes today.                 |
 
-The E2E intentionally exercises none of these writers and proves that the
-extracted tree is unchanged.
+The E2E exercises token transcript, mapping and saved-schema writers inside owned extraction roots, cleans up, and proves the complete tree is restored.
 
 ## Environment contract
 
@@ -299,12 +261,12 @@ disabled.
 
 | Variable                    | Purpose / default                                                                  |
 | --------------------------- | ---------------------------------------------------------------------------------- |
-| `MCP_TOOLSET`               | `default` selects the 20 auto tools; `all` adds all on-demand tools.               |
+| `MCP_TOOLSET`               | `default` selects the 19 auto tools; `all` adds all on-demand tools.               |
 | `MCP_EXTRA_TOOLS`           | Comma-separated on-demand tools added to the default surface.                      |
 | `MCP_ROLE`                  | Policy role; default `designer`.                                                   |
 | `MCP_USER`                  | Transcript identity; default `system`.                                             |
 | `MCP_HEALTH_PORT`           | Optional loopback health listener; default `0` disables it.                        |
-| `MCP_BRAND`                 | Health/token context brand; default `A`.                                           |
+| `MCP_BRAND`                 | Configured default token brand metadata; default `A`.                                           |
 | `MCP_THEME`                 | Health/token context theme; default `light`.                                       |
 | `MCP_CODE_CONNECT_PATH`     | Optional code-connect artifact override.                                           |
 | `MCP_STRUCTURED_DATA_DIR`   | Optional structured-data root override.                                            |

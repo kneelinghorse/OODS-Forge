@@ -16,4 +16,10 @@ export default defineConfig({
   // normalized-viz-spec.schema.json is a local file and is inlined by esbuild,
   // keeping the package self-contained at runtime with no JSON file dependency.
   skipNodeModulesBundle: true,
+  // tsup's external plugin skips the inherited @oods/* path alias before
+  // checking its own external list. Native esbuild externalization keeps the
+  // adapters on the same runtime bundle that brand.apply refreshes.
+  esbuildOptions(options) {
+    options.external = [...(options.external ?? []), '@oods/tokens'];
+  },
 });

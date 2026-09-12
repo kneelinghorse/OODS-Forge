@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { UiSchema } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
+import { tokenPackageRoot } from '../lib/token-build.js';
 
 export type RenderDocumentInput = {
   screenHtml: string;
@@ -175,12 +176,15 @@ const DARK_THEME_OVERRIDES = `
 `.trim();
 
 let cachedTokensCss: string | null = null;
+let cachedTokensPath: string | null = null;
 
 function loadTokensCss(): string {
+  const tokensPath = process.env.MCP_BRAND_SOURCE_ROOT ? path.join(tokenPackageRoot(), 'dist/css/tokens.css') : TOKENS_CSS_PATH;
+  if (cachedTokensPath !== tokensPath) { cachedTokensCss = null; cachedTokensPath = tokensPath; }
   if (cachedTokensCss !== null) return cachedTokensCss;
   let content: string;
   try {
-    content = fs.readFileSync(TOKENS_CSS_PATH, 'utf8');
+    content = fs.readFileSync(tokensPath, 'utf8');
   } catch {
     // Genuine missing file (tokens never built) — a STABLE absence, so cache ''
     // and stop re-stat'ing on every render.
@@ -198,9 +202,9 @@ function loadTokensCss(): string {
 }
 
 /**
- * Test-only seam: clears the module-level tokens.css cache so a unit test can
+ * Clears the module-level tokens.css cache after brand.apply, or so a unit test can
  * exercise the #554 empty-read race guard (assert that a zero-length read is NOT
- * cached). Not used by the render path.
+ * cached).
  */
 export function resetTokensCssCache(): void {
   cachedTokensCss = null;

@@ -61,11 +61,6 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/generic.input.json',
     outputSchema: './schemas/generic.output.json',
   },
-  'release.verify': {
-    modulePath: './tools/release.verify.js',
-    inputSchema: './schemas/release.verify.input.json',
-    outputSchema: './schemas/release.verify.output.json',
-  },
   'release.tag': {
     modulePath: './tools/release.tag.js',
     inputSchema: './schemas/release.tag.input.json',
@@ -110,11 +105,6 @@ const toolSpecs: Record<string, ToolSpec> = {
     modulePath: './tools/registry.snapshot.js',
     inputSchema: './schemas/registry.snapshot.input.json',
     outputSchema: './schemas/registry.snapshot.output.json',
-  },
-  'viz.compose': {
-    modulePath: './tools/viz.compose.js',
-    inputSchema: './schemas/viz.compose.input.json',
-    outputSchema: './schemas/viz.compose.output.json',
   },
   'viz.render': {
     modulePath: './tools/viz.render.js',
@@ -166,11 +156,6 @@ const toolSpecs: Record<string, ToolSpec> = {
     modulePath: './tools/repl.js',
     inputSchema: './schemas/repl.input.json',
     outputSchema: './schemas/repl.output.json',
-  },
-  'review': {
-    modulePath: './tools/review.js',
-    inputSchema: './schemas/review.input.json',
-    outputSchema: './schemas/review.output.json',
   },
 };
 

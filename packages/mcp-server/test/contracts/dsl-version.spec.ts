@@ -10,23 +10,22 @@ function readSchema(name: string): Record<string, unknown> {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
-describe('dslVersion parameter', () => {
-  const toolsWithDslVersion = [
+describe('request version removal (s194-m05)', () => {
+  const toolsWithoutDslVersion = [
     'design.compose.input.json',
     'repl.validate.input.json',
     'repl.render.input.json',
     'code.generate.input.json',
     'pipeline.input.json',
-    'viz.compose.input.json',
   ];
 
-  for (const schemaFile of toolsWithDslVersion) {
-    it(`${schemaFile} includes dslVersion property`, () => {
+  for (const schemaFile of toolsWithoutDslVersion) {
+    it(`${schemaFile} does not advertise the unconsumed dslVersion request knob`, () => {
       const schema = readSchema(schemaFile) as {
         properties?: Record<string, unknown>;
       };
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.dslVersion).toBeDefined();
+      expect(schema.properties!.dslVersion).toBeUndefined();
     });
   }
 

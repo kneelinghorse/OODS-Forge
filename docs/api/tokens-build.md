@@ -1,6 +1,6 @@
 # tokens.build
 
-> Run the design-token build and return the compiled CSS variables and token artifacts. The build emits every brand and theme; the brand and theme inputs label the returned payload, they do not filter it. Use apply=true to write output files (default: dry-run, returns preview only).
+> Return built design-token artifacts. brand/theme select resolved requested-scope JSON and CSS. Full CSS includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. Use apply=true to write artifacts, building missing outputs with captured failures; default dry-run returns preview only. Portable bundle limitation: apply:false returns a preview only. apply:true requires the omitted legacy TypeScript output and host build inputs, so token artifact export remains host-only.
 
 **Registration:** auto
 
@@ -8,7 +8,7 @@
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `brand` | `A` \| `B` | No | `"A"` | Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette. |
+| `brand` | `A` \| `B` | No | `"A"` | Selects resolved values in the requested-scope JSON and CSS. Full CSS also includes every built scope; TypeScript and Tailwind artifacts retain legacy A/light defaults. |
 | `theme` | `light` \| `dark` \| `hc` | No | `"dark"` |  |
 | `apply` | boolean | No | `false` |  |
 

@@ -1,0 +1,103 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s194/OODS-Forge/packages/mcp-server
+
+ ✓ src/tools/viz.render.test.ts (113 tests) 47ms
+ ❯ test/product-reality/options.s194.spec.ts (8 tests | 1 failed) 610ms
+   ✓ remaining options do what their public wire says (s194-m05) > health reports actual built scopes and identifies configured defaults without implying a consumer 53ms
+   ✓ remaining options do what their public wire says (s194-m05) > resolves governed KPI refs by default and preserves V130 unknown / V137 missing-field identities 35ms
+   ✓ remaining options do what their public wire says (s194-m05) > keeps both portable dashboard HTML identities and their repeats unchanged 276ms
+   ✓ remaining options do what their public wire says (s194-m05) > omits the Vega placeholder for every primary ECharts sample without moving SVG bytes 70ms
+   × remaining options do what their public wire says (s194-m05) > preserves every Sprint 190 public SVG and the eleven-panel dashboard bytes 9ms
+     → expected 'ea214e684eb170265227dd09ea52f2851203b…' to be '2c330a2479876a628d2b9f1594538e6cd0790…' // Object.is equality
+   ✓ remaining options do what their public wire says (s194-m05) > diagnoses every ignored document-only option in fragments and describes validate.apply parity 77ms
+   ✓ remaining options do what their public wire says (s194-m05) > discloses hash-only release evidence validation for generate and pipeline, including missing and mismatched cases 83ms
+   ✓ remaining options do what their public wire says (s194-m05) > returns the documented typed dependency error with the local design loop absent 7ms
+ ✓ src/tools/dashboard.render.measure-depth.test.ts (33 tests) 22ms
+ ✓ test/contracts/tool-truth.s193.spec.ts (8 tests) 759ms
+   ✓ tool truth derives claims without upgrading source references to runtime proof > reproduces every byte from current source using the recorded census head  685ms
+ ✓ src/tools/__tests__/health.test.ts (4 tests) 53ms
+ ✓ test/tools/repl.render.fragment.spec.ts (4 tests) 9ms
+ ❯ test/contracts/dsl-version.spec.ts (8 tests | 1 failed) 6ms
+   ✓ request version removal (s194-m05) > design.compose.input.json does not advertise the unconsumed dslVersion request knob 1ms
+   ✓ request version removal (s194-m05) > repl.validate.input.json does not advertise the unconsumed dslVersion request knob 0ms
+   ✓ request version removal (s194-m05) > repl.render.input.json does not advertise the unconsumed dslVersion request knob 0ms
+   ✓ request version removal (s194-m05) > code.generate.input.json does not advertise the unconsumed dslVersion request knob 0ms
+   ✓ request version removal (s194-m05) > pipeline.input.json does not advertise the unconsumed dslVersion request knob 0ms
+   ✓ request version removal (s194-m05) > health.input.json includes includeChangelog and sinceVersion 0ms
+   × request version removal (s194-m05) > health.output.json includes dslVersion and changelog fields 3ms
+     → expected { type: 'string', …(1) } to be undefined
+   ✓ deprecated_since field > catalog.list.output.json includes deprecated_since in component items 0ms
+ ❯ test/render/render-preview-messaging.spec.ts (3 tests | 1 failed) 10ms
+   ✓ repl.render preview messaging > uses a ready summary for valid schemas 6ms
+   × repl.render preview messaging > reports non-strict V006 reclassification explicitly using the existing invalid fixture 4ms
+     → expected true to be false // Object.is equality
+   ✓ repl.render preview messaging > uses a blocked summary for invalid schemas 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/dsl-version.spec.ts > request version removal (s194-m05) > health.output.json includes dslVersion and changelog fields
+AssertionError: expected { type: 'string', …(1) } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+{
+  "description": "Current DSL version of this server.",
+  "type": "string",
+}
+
+ ❯ test/contracts/dsl-version.spec.ts:46:43
+     44|     };
+     45|     expect(schema.properties).toBeDefined();
+     46|     expect(schema.properties!.dslVersion).toBeUndefined();
+       |                                           ^
+     47|     expect(schema.properties!.changelog).toBeDefined();
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/render/render-preview-messaging.spec.ts > repl.render preview messaging > reports non-strict V006 reclassification explicitly using the existing invalid fixture
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/render/render-preview-messaging.spec.ts:41:69
+     39|     const result = await handle({ schema: INVALID_SCHEMA, apply: true,…
+     40|     expect(result.warnings.some(issue => issue.code === 'OODS-W002' &&…
+     41|     expect(result.errors.some(issue => issue.code === 'OODS-V006')).to…
+       |                                                                     ^
+     42|     const strict = await handle({ schema: INVALID_SCHEMA, apply: true,…
+     43|     expect(strict.status).toBe('error');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/product-reality/options.s194.spec.ts > remaining options do what their public wire says (s194-m05) > preserves every Sprint 190 public SVG and the eleven-panel dashboard bytes
+AssertionError: expected 'ea214e684eb170265227dd09ea52f2851203b…' to be '2c330a2479876a628d2b9f1594538e6cd0790…' // Object.is equality
+
+Expected: "2c330a2479876a628d2b9f1594538e6cd07901e1bfec61d2cb8d9b36b4503151"
+Received: "ea214e684eb170265227dd09ea52f2851203b358e9117fa9568ad8aaebad9390"
+
+ ❯ test/product-reality/options.s194.spec.ts:99:30
+     97|     for (const input of inputs) {
+     98|       const output = wire('viz.render', 'output', await render(wire('v…
+     99|       expect(output.svgHash).toBe(prior.table.find((row: any) => row.c…
+       |                              ^
+    100|       rows.push({ chartType: input.chartType, svgHash: output.svgHash …
+    101|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 5 passed (8)
+      Tests  3 failed | 178 passed (181)
+   Start at  11:25:03
+   Duration  4.67s (transform 767ms, setup 32ms, collect 2.13s, tests 1.52s, environment 1ms, prepare 272ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s194/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/options.s194.spec.ts src/tools/__tests__/health.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/viz.render.test.ts test/tools/repl.render.fragment.spec.ts test/render/render-preview-messaging.spec.ts test/contracts/dsl-version.spec.ts test/contracts/tool-truth.s193.spec.ts test/codegen/validation-profiles.spec.ts

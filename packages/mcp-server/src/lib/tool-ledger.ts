@@ -7,8 +7,8 @@ import registry from '../tools/registry.json' with { type: 'json' };
 const TIERS = ['product-reality', 'contract', 'unit', 'none'] as const;
 type Tier = typeof TIERS[number];
 type ImportRef = { path: string; line: number; handler: string };
-type ToolRow = { name: string; registration: 'auto' | 'on-demand'; proofTier: Tier; testImports: Record<Exclude<Tier, 'none'>, ImportRef[]>; advertisedClaim: { description: string; inputSchemaDescription: string }; claimHash: string };
-type ToolLedger = { schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
+type ToolRow = { portableE2E: boolean; caveats: Array<{ kind: string }>; name: string; registration: 'auto' | 'on-demand'; proofTier: Tier; testImports: Record<Exclude<Tier, 'none'>, ImportRef[]>; advertisedClaim: { description: string; inputSchemaDescription: string }; claimHash: string };
+type ToolLedger = { mode?: 's194'; schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
 export type ToolSummary = { entries: number; byTier: Record<Tier, number>; head: string };
 const counts = (rows: ToolRow[]) => Object.fromEntries(TIERS.map(tier => [tier, rows.filter(row => row.proofTier === tier).length])) as Record<Tier, number>;
 
@@ -27,6 +27,11 @@ export function projectToolSummary(value: unknown): ToolSummary {
     }
     const derived = TIERS.find(tier => tier !== 'none' && row.testImports[tier].length) ?? 'none';
     if (derived !== row.proofTier) reject(`${row.name}: tier differs from test imports`);
+    if (ledger.mode === 's194') {
+      if (!Array.isArray(row.caveats) || row.caveats.some(caveat => caveat.kind !== 'documented-limit')) reject(`${row.name}: unresolved claim`);
+      if (row.registration === 'auto' && (row.proofTier !== 'product-reality' || row.portableE2E !== true)) reject(`${row.name}: advertised boundary coverage missing`);
+      if (row.registration === 'on-demand' && !['contract', 'product-reality'].includes(row.proofTier)) reject(`${row.name}: on-demand boundary coverage missing`);
+    }
     const claim = row.advertisedClaim;
     if (!claim || typeof claim.description !== 'string' || typeof claim.inputSchemaDescription !== 'string') reject(`${row.name}: missing claim`);
     const hash = `sha256:${createHash('sha256').update(JSON.stringify(claim, null, 2) + '\n').digest('hex')}`;
@@ -35,6 +40,7 @@ export function projectToolSummary(value: unknown): ToolSummary {
   const byTier = counts(ledger.rows);
   const summary = ledger.summary;
   if (!summary || summary.entries !== expected.length || summary.auto !== registry.auto.length || summary.onDemand !== registry.onDemand.length || JSON.stringify(summary.byTier) !== JSON.stringify(byTier) || JSON.stringify(summary.autoByTier) !== JSON.stringify(counts(ledger.rows.filter(row => row.registration === 'auto'))) || JSON.stringify(summary.onDemandByTier) !== JSON.stringify(counts(ledger.rows.filter(row => row.registration === 'on-demand')))) reject('summary differs from registered rows');
+  if (summary.portableE2E !== ledger.rows.filter(row => row.portableE2E).length) reject('portable summary differs from rows');
   return { entries: ledger.rows.length, byTier, head: ledger.head };
 }
 

@@ -1,6 +1,6 @@
 # map
 
-> Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior.
+> Grouped mapping-registry tool. Set `action` to one of apply|create|list|resolve|update|delete to select the operation; the remaining fields match that action's contract. Consolidates the former map.* tools with identical per-action behavior. Records and resolves mappings for external consumers; no composer or generator consumes them. preferred_terms and disambiguation_decisions are preserved and surfaced, not consumed by resolution.
 
 **Registration:** auto
 

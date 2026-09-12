@@ -1,3 +1,4 @@
+// s194-m04 / CMOS #1922: unregistered historical helper; not an MCP tool.
 /**
  * review.resolve — agent-callable C3 conflict-resolution MCP tool (sprint-103 m01).
  *

@@ -191,7 +191,7 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       step: "codegen",
       code: "OODS-V162",
       message:
-        "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance.",
+        "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance. References are format-checked and hash-bound, not re-executed.",
     });
     expect(result.code).toBeUndefined();
     expect(result.saved).toBeUndefined();
@@ -431,7 +431,12 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
           expect(result.error, outcome.id).toBeUndefined();
           expect(result.code, outcome.id).toBeDefined();
         } else {
-          expect(result.error, outcome.id).toEqual(expected.error);
+          // Historical receipts stay immutable; Sprint194 adds the explicit
+          // hash-only disclosure without changing the refusal code or operand.
+          const expectedNow = expected.error?.code === "OODS-V162"
+            ? { ...expected.error, message: expected.error.message + " References are format-checked and hash-bound, not re-executed." }
+            : expected.error;
+          expect(result.error, outcome.id).toEqual(expectedNow);
           expect(result.code, outcome.id).toBeUndefined();
         }
         expect(result.validationReceipt.profile, outcome.id).toBe(

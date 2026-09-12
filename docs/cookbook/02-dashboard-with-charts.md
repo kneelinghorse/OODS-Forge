@@ -5,10 +5,6 @@ dashboard layout. Each `viz.render` call returns a **compiled, renderable
 Vega-Lite spec** (ECharts opt-in) with your data bound into `data.values` — a
 consumer (e.g. Workbench) draws it; the server does not render HTML.
 
-> **Note:** `viz.render` replaces the older `viz.compose`, which returned a
-> field-names-only component scaffold (no data, nothing drawable). `viz.compose`
-> is deprecated but still callable for back-compat.
-
 ## Problem
 
 You want a subscription analytics dashboard with a bar chart of monthly revenue
@@ -164,5 +160,3 @@ independent artifacts you assemble at the rendering layer.
   opt into ECharts with `output.echarts: true`.
 - `viz.render` is spec-only (no SSR) — the consumer draws the chart and lays it
   into a `design.compose` dashboard shell.
-- `viz.compose` is **deprecated**; prefer `viz.render` for anything that needs to
-  actually render.
