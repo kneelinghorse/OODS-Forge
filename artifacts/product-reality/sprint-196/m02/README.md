@@ -10,7 +10,20 @@ adapter SVG hash, and exits cleanly. The extraction tree is restored.
 `e2e-host.json` is an immutable development proof at base `d0ae4bdf` with
 `dirty:true`; it binds the current ledger without claiming a clean release.
 `development-manifest.json` and `assembly-development.log` identify that archive.
-The clean commit/CI proofs are retained separately before mission completion.
+The clean commit/CI proofs are retained separately at implementation head
+`2d80ae017184b6a28d4b2d7a2bb02649a5c33718`. Two clean assemblies are byte-identical:
+32,448,215 bytes, SHA-256
+`4ff4aeb05e5ba937b61d2062fcce2eb4d0d41fc1b3001ae07b472cb2c2663bba`.
+`clean-archive/` retains the detached manifest, SBOM, attestation and comparison.
+`e2e-clean-node24.json` and `e2e-clean-node20.json` passed on Node 24.6.0 and
+20.11.1. Both hosted portable-runtime jobs passed in CI run `34675795732`:
+Node 24 job `103505339562`; Node 20.11.1 job `103505339594`. Their uploaded
+receipts, manifests, SBOMs and attestations are under `ci/`; `ci-jobs.json`
+records job-level conclusions without claiming the whole workflow passed.
+The hosted jobs checked out synthetic PR merge `b2e425f19c6f453137a4a3f713e93a2b3d57dc6b`,
+whose Git tree is identical to implementation `2d80ae01`; `ci/provenance.json`
+retains both remote commit records and the parent relationship. CI manifests
+and bridge revisions correctly identify that synthetic merge.
 
 The bridge is the thirteenth package. `dependency-count-migration.json` records
 245 → 283 dependencies, with installed identities and integrity values checked.
