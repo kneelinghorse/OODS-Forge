@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { sha256 } from '../../packages/artifacts/dist/index.js';
+const { sha256 } = await import(new URL('../../packages/artifacts/dist/index.js', import.meta.url).href) as typeof import('../../packages/artifacts/src/index.js');
 import { resolveTokenToColor } from '@oods/viz-core';
 import { toHex } from '../../packages/viz-core/src/tokens/categorical-palette.js';
 import { handle as render } from '../../packages/mcp-server/src/tools/viz.render.js';

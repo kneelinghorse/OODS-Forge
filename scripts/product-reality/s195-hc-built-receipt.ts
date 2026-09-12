@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getAjv } from '../../packages/mcp-server/dist/lib/ajv.js';
-import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
-import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
-import { handle as dashboard } from '../../packages/mcp-server/dist/tools/dashboard.render.js';
-import { handle as generate } from '../../packages/mcp-server/dist/tools/code.generate.js';
+const { getAjv } = await import(new URL('../../packages/mcp-server/dist/lib/ajv.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/lib/ajv.js');
+const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
+const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
+const { handle: dashboard } = await import(new URL('../../packages/mcp-server/dist/tools/dashboard.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/dashboard.render.js');
+const { handle: generate } = await import(new URL('../../packages/mcp-server/dist/tools/code.generate.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/code.generate.js');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const directory = path.join(root, 'artifacts/product-reality/sprint-195/m05/hc');

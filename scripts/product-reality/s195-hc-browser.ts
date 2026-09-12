@@ -8,6 +8,7 @@ import { handle as render } from '../../packages/mcp-server/src/tools/viz.render
 import { handle as dashboard } from '../../packages/mcp-server/src/tools/dashboard.render.js';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
+import type { VizRenderInput, DashboardRenderInput } from '../../packages/mcp-server/src/schemas/generated.js';
 import { SALES, CASES } from '../../packages/mcp-server/src/tools/__fixtures__/cartesian-render.js';
 import { createConsumerFiles } from './s184-m06-live-consumers.js';
 import { deriveConsumerModel } from './s185-m04-consumer-contract.js';
@@ -29,16 +30,21 @@ try {
   for (const brand of ['A', 'B'] as const) {
     for (const chart of CASES.slice(0, 2)) {
       const id = `${chart.chartType}-${brand}-hc`;
-      const request = { chartType: chart.chartType, encodings: chart.encodings, rows: [...SALES], theme: 'hc' as const, brand, output: { svg: true, includeNormalizedSpec: true } };
+      const request: VizRenderInput = { chartType: chart.chartType, encodings: chart.encodings, rows: [...SALES], theme: 'hc' as const, brand, output: { svg: true, includeNormalizedSpec: true } };
       const result = await render(request); assert.equal(result.status, 'ok', JSON.stringify(result.errors));
       const html = `<!doctype html><html data-brand="${brand}" data-theme="hc"><head><style>${tokenCss}</style></head><body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">${result.svg}</body></html>`;
       await write(`${id}.json`, { request, result }); await write(`${id}.html`, html);
       cases.push({ id, brand, svgCount: 1, mount: async page => { await page.setContent(html); } });
     }
     const id = `dashboard-${brand}-hc`;
-    const request = { schemaVersion: 'v0.1' as const, theme: 'hc' as const, brand,
+    const [firstPanel, ...remainingPanels] = CASES.slice(0, 2).map(({ chartType, encodings }) => {
+      assert(chartType === 'bar' || chartType === 'line', 'HC dashboard uses the existing bar and line fixtures');
+      return { id: chartType, kind: 'chart' as const, chartType, encodings, datasetId: 'sales' };
+    });
+    assert(firstPanel, 'HC dashboard needs at least one chart panel');
+    const request: DashboardRenderInput = { schemaVersion: 'v0.1', theme: 'hc', brand,
       datasets: [{ id: 'sales', rows: [...SALES] }],
-      panels: CASES.slice(0, 2).map(({ chartType, encodings }) => ({ id: chartType, kind: 'chart' as const, chartType, encodings, datasetId: 'sales' })),
+      panels: [firstPanel, ...remainingPanels],
       a11y: { description: 'Sales by region and month, rendered with the high-contrast scope.' }, output: { html: true, contrastScan: true } };
     const result = await dashboard(request); assert.equal(result.status, 'ok', JSON.stringify(result.errors));
     assert(result.html); await write(`${id}.json`, { request, result }); await write(`${id}.html`, result.html);

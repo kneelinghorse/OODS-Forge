@@ -1,0 +1,52 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { getAjv } from '../lib/ajv.js';
+import { handle as render } from './viz.render.js';
+import { handle as certify } from './artifact.certify.js';
+import { CASES, SALES } from './__fixtures__/cartesian-render.js';
+import { SANKEY_BRANCH } from '../../test/tools/s172-echarts-operands.js';
+
+const validateInput = getAjv().compile(JSON.parse(readFileSync(new URL('../schemas/artifact.certify.input.json', import.meta.url), 'utf8')));
+const validateOutput = getAjv().compile(JSON.parse(readFileSync(new URL('../schemas/artifact.certify.output.json', import.meta.url), 'utf8')));
+
+describe('certification describes the pixels at the requested scope', () => {
+  it('default certification bytes equal explicit light/A, including after dark/B calls', async () => {
+    const rendered = await render({ chartType: 'line', rows: [...SALES], encodings: CASES[1]!.encodings as never, output: { svg: true, includeNormalizedSpec: true } });
+    const input = { spec: rendered.normalizedSpec! };
+    const omitted = await certify(input);
+    expect(JSON.stringify(await certify({ ...input, theme: 'light', brand: 'A' }))).toBe(JSON.stringify(omitted));
+    for (const brand of ['A', 'B'] as const) {
+      const light = await certify({ ...input, theme: 'light', brand });
+      const dark = await certify({ ...input, theme: 'dark', brand });
+      expect(light.contrastResults).toEqual([{ theme: 'light', brand, verdict: 'pass', measured: true, evidence: 'render', note: light.contrastNote }]);
+      // s191 dark token overrides now clear Role-C; differing hashes still prove scope isolation.
+      expect(dark.contrastResults).toEqual([{ theme: 'dark', brand, verdict: 'pass', measured: true, evidence: 'render', note: dark.contrastNote }]);
+      expect(dark.conformant).toBe(true);
+      expect(dark.contrastNote).toContain(`Scope: dark/${brand}.`);
+      expect(dark.determinism?.renderHash).not.toBe(light.determinism?.renderHash);
+      expect(validateOutput(dark), JSON.stringify(validateOutput.errors)).toBe(true);
+    }
+    expect(JSON.stringify(await certify(input))).toBe(JSON.stringify(omitted));
+  });
+
+  it('an ECharts canvas override is graded against the rendered background, while spec-only evidence stays reconstructed', async () => {
+    const rendered = await render({ chartType: 'sankey', sankey: SANKEY_BRANCH, output: { includeNormalizedSpec: true } });
+    const spec = { ...rendered.normalizedSpec!, config: { tokens: { '--oods-sys-surface-canvas': '#416CDA' } } };
+    const backed = await certify({ spec, data: { sankey: SANKEY_BRANCH } });
+    expect(backed.contrastResults?.[0]).toMatchObject({ verdict: 'fail', measured: true, evidence: 'render' });
+    expect(backed.contrastNote).toContain('#416CD9');
+    expect(backed.coverage).toBe('uncertified'); expect(backed.conformant).toBeNull();
+    const specOnly = await certify({ spec, theme: 'dark', brand: 'B' });
+    expect(specOnly.contrastResults?.[0]).toMatchObject({ theme: 'dark', brand: 'B', measured: false, evidence: 'baked-palette' });
+    expect(specOnly.determinism).toBeUndefined();
+  });
+
+  it.each([{ theme: 'hc' }, { theme: 'sepia' }, { brand: 'C' }])('rejects unsupported scope %j before creating measurement rows', async scope => {
+    const rendered = await render({ chartType: 'area', rows: [...SALES], encodings: CASES[2]!.encodings as never, output: { includeNormalizedSpec: true } });
+    const input = { spec: rendered.normalizedSpec!, ...scope };
+    expect(validateInput(input)).toBe(false);
+    const out = await certify(input as never);
+    expect(out.status).toBe('error'); expect(out.contrastResults).toBeUndefined();
+    expect(validateOutput(out)).toBe(true);
+  });
+});

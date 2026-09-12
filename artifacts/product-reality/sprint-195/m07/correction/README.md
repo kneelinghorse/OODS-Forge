@@ -1,0 +1,9 @@
+Sprint 195 corrective preparation
+
+The complete initial five-suite capture at `54def3aa88683d81f1f942558a24715c064021e9` is retained under `../five-suite-closeout-attempt-1/`: 16,365 passed, 17 failed and 32 historical skips, with clean before/after checks. Its 17 failing executions represent 11 unique assertions because the MCP and root projects overlap. The original full B population remains immutable in that commit; it has not been relabeled.
+
+Five test files contained old palette, certification, HC or roadmap expectations. The affected whole-file checks now pass: adapter 11, worker 31 and MCP contract files 23, with zero skips. The worker correction reproduces the original and m05-qualified SVGs by changing only the authorized palette leaf; geometry changes through the whole-option RNG seed, while convergence and renderer code remain unchanged. An additional focused MCP attempt initially over-assumed accessibility success for an unnamed Sankey; its native A11Y-R-09 failure is preserved and now asserted.
+
+Clean-checkout CI also exposed proof-script type declarations, compiled import typing, nonempty fixture tuples and the missing portable admission for `domains/saas-billing/examples/usage-api-calls.json`. Root TypeScript passes with all three referenced dist trees absent; all 870 restored files match. Viz-core and story type checks, six exact HC request comparisons and nine compiled-module bindings pass. The actual coverage prerequisite build and a dirty, non-final portable assembly preflight pass. No thresholds, test projects or exclusions changed.
+
+`pre-freeze.json` binds the complete correction sources and raw results. New public proof-script and assembler bytes require a new frozen implementation and fresh population proof before the one permitted corrective capture. No final closeout success, fresh portable E2E or independent approval is claimed here.

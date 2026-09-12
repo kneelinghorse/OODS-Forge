@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { renderEChartsToSvg } from "../../packages/viz-render/dist/index.js";
+const { renderEChartsToSvg } = await import(new URL('../../packages/viz-render/dist/index.js', import.meta.url).href) as typeof import('../../packages/viz-render/src/index.js');
 import {
   ECHARTS_OPERAND_CASES,
   type EChartsOperandCase,

@@ -35,13 +35,35 @@ describe('certification describes the pixels at the requested scope', () => {
     const backed = await certify({ spec, data: { sankey: SANKEY_BRANCH } });
     expect(backed.contrastResults?.[0]).toMatchObject({ verdict: 'fail', measured: true, evidence: 'render' });
     expect(backed.contrastNote).toContain('#416CD9');
-    expect(backed.coverage).toBe('uncertified'); expect(backed.conformant).toBeNull();
+    // The declared operand profile is evaluated even when rendered contrast fails.
+    expect(backed.coverage).toBe('certified'); expect(backed.conformant).toBe(false);
+    // This unchanged unnamed fixture also retains its native missing-name a11y failure.
+    expect(backed.pillars).toMatchObject({ a11yEquivalence: 'fail', contrast: 'fail', determinism: 'pass', accuracy: 'pass' });
+    expect(backed.findings).toContainEqual(expect.objectContaining({ code: 'OODS-A11Y-A11Y-R-09', severity: 'error' }));
+    expect(validateOutput(backed), JSON.stringify(validateOutput.errors)).toBe(true);
     const specOnly = await certify({ spec, theme: 'dark', brand: 'B' });
     expect(specOnly.contrastResults?.[0]).toMatchObject({ theme: 'dark', brand: 'B', measured: false, evidence: 'baked-palette' });
+    expect(specOnly.coverage).toBe('uncertified'); expect(specOnly.conformant).toBeNull();
     expect(specOnly.determinism).toBeUndefined();
+    expect(validateOutput(specOnly), JSON.stringify(validateOutput.errors)).toBe(true);
   });
 
-  it.each([{ theme: 'hc' }, { theme: 'sepia' }, { brand: 'C' }])('rejects unsupported scope %j before creating measurement rows', async scope => {
+  it.each(['A', 'B'] as const)('HC/%s is admitted with forced-colors contrast exemption and the other pillars still evaluated', async brand => {
+    const rendered = await render({ chartType: 'area', rows: [...SALES], encodings: CASES[2]!.encodings as never, output: { includeNormalizedSpec: true } });
+    const input = { spec: rendered.normalizedSpec!, theme: 'hc', brand };
+    expect(validateInput(input), JSON.stringify(validateInput.errors)).toBe(true);
+    const out = await certify({ ...input, theme: 'hc' });
+    const light = await certify({ spec: input.spec, theme: 'light', brand });
+    expect(out).toMatchObject({ status: 'ok', coverage: 'certified', conformant: true, pillars: { contrast: 'exempt', a11yEquivalence: 'pass', determinism: 'pass', accuracy: 'pass' }, determinism: { stable: true } });
+    expect(out.contrastResults).toEqual([{ theme: 'hc', brand, verdict: 'exempt', measured: false, evidence: 'render', reason: 'forced-colors', note: out.contrastNote }]);
+    expect(out.contrastNote).toContain('No numeric server-side contrast grade is claimed.');
+    for (const pillar of ['a11yEquivalence', 'determinism', 'accuracy'] as const) expect(out.pillars?.[pillar]).toBe(light.pillars?.[pillar]);
+    expect(out.accuracySummary).toEqual(light.accuracySummary);
+    expect(out.determinism?.renderHash).not.toBe(light.determinism?.renderHash);
+    expect(validateOutput(out), JSON.stringify(validateOutput.errors)).toBe(true);
+  });
+
+  it.each([{ theme: 'sepia' }, { brand: 'C' }])('rejects unsupported scope %j before creating measurement rows', async scope => {
     const rendered = await render({ chartType: 'area', rows: [...SALES], encodings: CASES[2]!.encodings as never, output: { includeNormalizedSpec: true } });
     const input = { spec: rendered.normalizedSpec!, ...scope };
     expect(validateInput(input)).toBe(false);

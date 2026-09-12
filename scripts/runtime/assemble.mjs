@@ -43,7 +43,8 @@ const ADAPTER_RUNTIME_FILES = [
 ];
 
 const TRACKED_BOUNDARY_COUNTS = Object.freeze({
-  domains: 14,
+  // Sprint 195 includes the authored API-call Usage example beside its object.
+  domains: 15,
   objects: 8,
   schemas: 56,
   traits: 76,

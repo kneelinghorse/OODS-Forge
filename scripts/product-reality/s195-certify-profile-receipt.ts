@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
-import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
+const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
+const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
 import { ECHARTS_OPERAND_CASES, renderInputFor } from '../../packages/mcp-server/test/tools/s172-echarts-operands.js';
 
 const phase = process.argv[2];

@@ -1,0 +1,20 @@
+--- a/packages/viz-render/test/echarts-render-worker.spec.ts
++++ b/packages/viz-render/test/echarts-render-worker.spec.ts
+@@ -25,12 +25,12 @@
+ type ProjectedOption = Record<string, unknown>;
+ 
+ // The synchronous, layoutAnimation:false snapshot under oods-echarts-lcg-v1.
+-// A same-seed immediate first frame hashes to
+-// fa27909961c5ab8acab6769e9ffb15a61227e47ce0b21ac754394b17cbf6a40c instead,
+-// so this pin bites removal of convergence policy, not merely seeded equality.
+-// s191 light slot 04 changes categorical paint only; force geometry remains deterministic.
++// The full projected option seeds the force layout. s195-m05's light slot 05
++// palette change therefore changed geometry, even though that color is unused
++// by this operand. This exact replacement hash is retained in the qualified m05
++// force_graph/A/light matrix; keep the convergence and intervening-RNG assertions.
+ const CONVERGED_CANONICAL_FORCE_HASH =
+-  "3b947d90250a98838aad801be4f98ea8e5095528618296083b8644075ff6a331";
++  "df5261688594d5f845960170d643c35518954198cda607a598e069beed7e53df";
+ 
+ const optionFor = (chartType: string): ProjectedOption => {
+   const operand = ECHARTS_OPERAND_CASES.find(
