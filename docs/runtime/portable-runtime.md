@@ -124,7 +124,7 @@ This is the Gate 1 disposition of the eight requirements accepted in request
 | 4. Runtime data and planning/token assets         | **Satisfied under the publish boundary below.** Runtime registry data, built token output, and structured data ship. Planning means the relocated compiled component schema, not `cmos/`. Brand source, named fidelity fixtures, and stories do not ship.                                                                                                                                                                                          |
 | 5. Path portability                               | **Satisfied.** CI extracts below `$RUNNER_TEMP`, outside `$GITHUB_WORKSPACE`, starts from that arbitrary location, rejects developer absolute paths, and does not rely on Node walking up into the checkout for dependencies.                                                                                                                                                                                                                      |
 | 6. Consumer E2E                                   | **Satisfied and extended.** The primary adapter makes 29 calls across all 19 tools. Restart adds health, for 30 adapter calls. Outcomes are 17 executed passes and two typed limits. Separate bridge checks cover `/health`, `/tools`, `/run` render parity and clean shutdown. |
-| 7. Lifecycle, persistence, and environment        | **Satisfied with the corrections below.** Readiness is the first successful `health` `tools/call`, not `tools/list`. The E2E measures shutdown on stdin close and restart/termination behavior. Persistent writers and all 24 operational environment variables are explicit below.                                                                                                                                                                |
+| 7. Lifecycle, persistence, and environment        | **Satisfied with the corrections below.** Readiness is the first successful `health` `tools/call`, not `tools/list`. The E2E measures shutdown on stdin close and restart/termination behavior. Persistent writers and 26 documented operational environment variables are explicit below.                                                                                                                                                                |
 | 8. Freshness metadata                             | **Satisfied.** `forge-runtime.manifest.json` is a bundle-root file and an adjacent inspection copy. It is not a `health` response field. A future public distribution may expose a different Gate 2 freshness surface.                                                                                                                                                                                                                             |
 
 ## Publish boundary
@@ -255,6 +255,58 @@ Every dashboard HTML hash covers returned bytes; repeats compare deterministic r
 
 Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 30 adapter calls across two processes. The E2E separately launches the bundled bridge on an ephemeral port, checks `/health` revision against the manifest commit and structured-data hash, checks the 19-name `/tools` roster, compares a `/run` `viz.render` svgHash to the same adapter operand, and stops the bridge and its child cleanly. Per-tool outcomes, fixture hashes, lifecycle results and restored tree hashes are retained in CI's `portable-runtime-e2e` artifact. The source-derived ledger counts literal calls; the separate E2E receipt proves execution.
 
+## Reference applications from the bundle
+
+The runtime-cell harness has a bundle mode for 42 fixed cells: Organization,
+Subscription and User × card, detail, form, inline, list, timeline and workflow
+× React and Vue. Supply both the extracted directory and its original archive;
+the extraction must be outside the repository. Use the pinned Linux Playwright
+browser environment required by the host runtime sweep.
+
+```sh
+pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts \
+  artifacts/product-reality/sprint-196/m03/bootstrap-runtime \
+  --bundle-dir "$forge_extract_tmp" \
+  --bundle-archive "$forge_runtime_tmp/out/forge-runtime.tar.gz"
+```
+
+Bundle mode fixes the application/context/framework scope, including workflows.
+It verifies the extracted payload against the archive and checks host product
+sources against the manifest's recorded commit before and after execution.
+Documentation and proof-ledger updates may follow that commit; product-source
+changes fail the comparison. The current checkout's HEAD never replaces the
+recorded bundle identity.
+
+One packing phase per sweep runs `npm pack --ignore-scripts` for the five
+foundation packages directly from the extracted bundle: tokens,
+component-contracts, component-styles, components-react and components-vue.
+Every isolated consumer installs those same five tarballs. Composition and code
+generation run through the bundled adapter, then the generated applications
+undergo typechecking, production builds and the existing browser gates for
+mounting, accessibility trees, screenshots, context states and chart themes.
+
+For each operand, the harness retains host and bundle composition responses,
+generation requests, complete generated artifacts and comparison receipts.
+Composition schemas must match on the JSON wire; successful generation requires
+exact `contentHash` equality with host output from the same recorded source.
+An unequal artifact remains a retained failure. Passing rows bind their artifact
+hash, host hash, browser gates, bundle commit and archive SHA-256.
+
+The canonical host census is
+`packages/mcp-server/registry/runtime-cells.v1.json`; a valid bundle sweep writes
+`packages/mcp-server/registry/release-cells.v1.json` and retains a copy under its
+receipt directory. The build copies both available ledgers into the server's
+`dist/registry/`. `health.productReality.runtime` reports the host census, while
+`health.productReality.release` reports the 42-cell release summary with the
+executed `bundleHead` and `archiveSha256`. Those fields identify the measured
+archive, even when a later bundle carries the evidence. Missing or invalid
+release evidence yields `release: null` and a warning.
+
+The first s196-m03 sweep passed all 42 cells with host artifact hash equality.
+Its bootstrap archive predates the first release ledger. Recorded identity and retained evidence are
+in the [m03 receipt index](../../artifacts/product-reality/sprint-196/m03/README.md);
+neither a complete 42-cell result nor a hosted CI pass is claimed yet.
+
 ## Bridge entry point
 
 From any working directory, start the bridge from its extracted package:
@@ -287,7 +339,7 @@ The E2E exercises token transcript, mapping and saved-schema writers inside owne
 ## Environment contract
 
 The native server and bridge load `<bundle-root>/.env` through dotenv when the
-file is present. None of these 24 operational variables is required for the Gate 1
+file is present. None of these 26 operational variables is required for the Gate 1
 E2E; an absent variable uses the stated default or leaves the optional feature
 disabled.
 
@@ -309,6 +361,8 @@ disabled.
 | `MCP_SCHEMA_STORE_DIR`      | Schema-store directory, relative to its root unless absolute.                      |
 | `MCP_SCHEMA_REF_TTL_MS`     | In-memory schema/value-ref lifetime; default 30 minutes.                           |
 | `MCP_SCHEMA_REF_MAX`        | Maximum in-memory schema/value refs; default 250.                                  |
+| `MCP_RUNTIME_CELLS_PATH`    | Optional path to a validated 154-cell runtime ledger; default is the canonical registry, then shipped dist registry. |
+| `MCP_RELEASE_CELLS_PATH`    | Optional path to a validated 42-cell release ledger; default is the canonical registry, then shipped dist registry. Invalid or absent proof degrades health. |
 | `MCP_MAPPINGS_PATH`         | Mapping-document path; relative values resolve from the bundle root.               |
 | `MCP_TELEMETRY_DIR`         | Legacy JSONL path; its writer currently has no production importer.                |
 | `OODS_NODE_PATH`            | Node executable used by the adapter; default `process.execPath`.                   |
