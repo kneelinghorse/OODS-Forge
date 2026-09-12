@@ -13,7 +13,10 @@ import { ECHARTS_OPERAND_CASES, renderInputFor } from '../../packages/mcp-server
 import type { VizRenderInput, DashboardRenderInput } from '../../packages/mcp-server/src/schemas/generated.js';
 
 const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
-const out = pathToFileURL(resolve(root, 'artifacts/product-reality/sprint-195/m05/golden-migration/matrix') + '/');
+const args = process.argv.slice(2);
+assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && args[1] === 's196'), 'Supported option: --mode s196');
+const sprint = args[1] === 's196' ? 196 : 195;
+const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/m05/golden-migration/matrix`) + '/');
 const inputs = [
   ...CASES.map(({ chartType, encodings }) => ({ chartType, rows: [...SALES], encodings })),
   ...ECHARTS_OPERAND_CASES.map(renderInputFor),
@@ -59,6 +62,7 @@ for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] a
   const file = `dashboard-${brand}-${theme}.html`; await fs.writeFile(new URL(file, out), first.html!);
   dashboards.push({ brand, theme, file, svgCount: 11, canvasChecks: 11, expectedCanvas, outputHtmlHash: first.outputHtmlHash, secondHash: second.outputHtmlHash });
 }
-const head = '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
-await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState: 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt', builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
+const head = sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
+const sourceState = sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
+await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState, builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
 console.log(JSON.stringify({ publicSvg: table.length, canvasChecks: table.length, omittedScopeIdentities: 13, dashboardScopes: dashboards.length, dashboardDrawnPerScope: 11 }));

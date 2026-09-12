@@ -1,0 +1,38 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s196/OODS-Forge/packages/mcp-server
+
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 14ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > same input -> byte-identical composed payload (determinism gate) 3ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render render-fidelity goldens (sprint-113 m06) > period-axis: same input -> byte-identical composed payload (determinism gate) 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative) 672ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > output.html=true -> byte-identical HTML run-to-run (rendered-output determinism gate) 84ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > R-B: outputHtmlHash identifies the exact HTML bytes and is stable across a no-op rerender 33ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > R-B: outputHtmlHash is absent without HTML output 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > R-B: brand changes HTML and chart identity because the CSS scope changes rendered chrome 39ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > R-B: a panel-data edit moves HTML identity 27ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > ECharts-primary HTML draws normalized SVG with an accessible figure 12ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: output.html ABSENT is byte-identical to the s114 baseline (no leaked export surface) 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: resolveMeasures=false leaves the inert KPI measureRef payload byte-identical (sprint-116) 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render output.html export goldens (sprint-115 m05) > additivity parity: resolveMeasures=true + a KNOWN measureRef ("gm.revenue.total") leaves the composed payload byte-identical to the baseline (sprint-117) 3ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render a11yContrast output block (sprint-119 m03) > additivity: contrastScan ABSENT leaves a11yContrast undefined + output echo unchanged (byte-identical) 1ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render a11yContrast output block (sprint-119 m03) > contrastScan=true emits a structured block whose findings mirror the OODS-V135 warning pairs 2ms
+ ✓ src/tools/dashboard.render.fidelity.test.ts > dashboard.render a11yContrast output block (sprint-119 m03) > contrastScan=true -> byte-identical a11yContrast block run-to-run (determinism gate) 1ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 57ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 21ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 7ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 16ms
+stderr | src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary
+WARN Channel "color" does not work with "band" scale. We are using "ordinal" scale instead.
+
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 14ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 14ms
+ ✓ src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 12ms
+
+  Snapshots  5 updated 
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  07:23:39
+   Duration  2.44s (transform 398ms, setup 16ms, collect 909ms, tests 1.04s, environment 0ms, prepare 74ms)
+
+JSON report written to /Users/systemsystems/.codex/worktrees/s196/OODS-Forge/artifacts/product-reality/sprint-196/m05/snapshot-migration.json

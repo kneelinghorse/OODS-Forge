@@ -1,0 +1,11 @@
+# Hosted followthrough for m03/m04 integration repairs
+
+Run [34679856153](https://github.com/kneelinghorse/OODS-Forge/actions/runs/34679856153) executed synthetic merge `d8b6b052d2a1ac896279005ba62b9384b9f22c01`. Its tree `e3ce31d9ecb730898ed8a56ef3551a483a5813b7` equals source `944f4dda5f784e266310978b31f65b3d452e6387`; the source is the second merge parent. Remote commit responses and exact commands are retained.
+
+The release job succeeded with 42/42 actual cells and 26/26 contract tests. Its original upload now contains all three previously omitted files: runtime manifest, SBOM, and archive checksum sidecar. `release/archive/` retains those downloaded bytes unchanged. Archive SHA-256 `c7a5d97c12fc24d5f57ee8b27be24a023a92deaaa0f9a193d16b740d4216f922` and size **29,804,565 bytes** agree with the manifest and hosted assembler stdout; the hash and merge head also agree with all 42 ledger rows and the bundle identity. The original runtime tarball itself was not uploaded.
+
+The coverage job succeeded with **7,011 passed, 16 skipped** tests across **620 passed, one skipped** files. The repaired closeout checklist file ran all eight tests; runtime placement ran all three tests, covering the two previously stale path expectations; generated-docs CI ran both tests. Exact log lines and source hashes are recorded in `verification.json`. This is followthrough on the hosted integration repairs, not the m07 five-suite capture.
+
+The separate runtime job was still measuring cells at the last retained snapshot. Its eventual outcome and restored selector proof remain pending; no overall CI pass is claimed here.
+
+`verify-downloaded.py` independently checks source/tree identity, metadata integrity, all row identities and generation parity, 120 declared screenshot/accessibility hashes, and the six workflow accessibility files that have no declared hash. Compact original metadata and the complete release ledger are retained here. The full downloaded 42-cell tree remains at `/tmp/forge-s196-ci-34679856153-release` and in GitHub artifact **10292973606**, whose download URL and digest are recorded in `artifacts.json` and `verification.json`. No missing evidence was reconstructed. `builderSelfCertified:false`.

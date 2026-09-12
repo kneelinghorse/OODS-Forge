@@ -1,0 +1,63 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s196/OODS-Forge/packages/viz-core
+
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item #16 datasets slot resolves Mark.from > builds a multi-dataset array so a from-referenced series datasetId resolves (fails at HEAD: single dataset) 3ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item #16 datasets slot resolves Mark.from > binds a from-referenced series by field NAME, not column order (dimensions preserve names + encode references names) 0ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item #16 datasets slot resolves Mark.from > primary (inline) series is byte-UNCHANGED by the datasets slot (mixed-spec contract) 1ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item #16 datasets slot resolves Mark.from > OMITS the extra datasets when spec.datasets is absent → byte-identical single-dataset array (gate-leak guard) 0ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > emits a log y-axis when the binding co-declares type:quantitative AND scale:log (fails at HEAD: value) 0ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > matches Vega parity — the same spec compiles to encoding.y.scale.type:log in Vega 3ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > emits a continuous visualMap for a MarkRect measure heatmap (fails at HEAD: no visualMap) 1ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the OODS sequential range (resolved colors) as inRange.color 1ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the visualMap tick label onto chrome (textStyle.color = chrome.visualMapLabel) 1ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > OMITS the visualMap for a non-heatmap (bar) spec — gate-leak guard 0ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > centers a diverging heatmap visualMap at 0 (symmetric domain == Vega domainMid) 2ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s159 m5 aggregated heatmap dual-output parity > visualMap extent + dataset == AGGREGATED cells == narrative (not the raw color extent) 6ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s159 m5 aggregated heatmap dual-output parity > a single-row-per-cell heatmap (no multi-row) is byte-unchanged (extent == the cell values) 1ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > FACETED aggregated heatmap: cells stay per-panel, carry the facet field, and panel filters match 11ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > DETAIL-grouped aggregated heatmap: per-group cells survive (visualMap == narrative, not 40/40) 5ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > multi-row-per-(x,y,detail) discriminator: cells re-reduce PER GROUP (the fail-safe posture stays dishonest here — full spine does not) 2ms
+ ✓ src/adapters/echarts-adapter.spec.ts > echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > LOCK: a plain (no facet/detail/size) aggregated heatmap emits cells with EXACTLY the [x,y,measure] shape 1ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > pins inferred and explicit temporal binding {"type":"temporal"} without relying on process TZ 7ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > pins inferred and explicit temporal binding {"scale":"temporal"} without relying on process TZ 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > pins inferred and explicit temporal binding {"timeUnit":"month"} without relying on process TZ 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized year to the valid Vega UTC bucket utcyear 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized quarter to the valid Vega UTC bucket utcquarter 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized month to the valid Vega UTC bucket utcmonth 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized week to the valid Vega UTC bucket utcweek 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized day to the valid Vega UTC bucket utcday 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized hour to the valid Vega UTC bucket utchours 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized minute to the valid Vega UTC bucket utcminutes 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > maps normalized second to the valid Vega UTC bucket utcseconds 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > pins a temporal Y axis and mark-local bindings, including layout projections 1ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > leaves categorical and quantitative output free of temporal options 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > temporal adapters select UTC by construction (s196 m05) > parses adapter-owned date formats in UTC without rewriting caller-authored expressions 0ms
+ ✓ src/adapters/temporal-utc.s196.spec.ts > ECharts numeric tooltips do not inherit host locale > formats hierarchy and small Sankey values in en-US even under a hostile default locale 4ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03) > multi-series: a nominal color encoding bakes the fixed-6 OODS palette into encoding.color.scale.range 6ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03) > s149 #853a: an EMPTY range:[] on a nominal color channel still bakes the palette (no dead-zone) 0ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03) > single-series: NO color encoding bakes categorical-01 as mark.color 1ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03) > a continuous (quantitative) color channel is a gradient — NOT baked (role-B exempt) 1ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guard s144 m03) > a cartesian spec carries the OODS chrome config (background/axis/font/gridlines/view) 1ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guard s144 m03) > chrome-only guardrail: the bake emits NO series-color surface (config.mark / config.range) 15ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guard s144 m03) > backward-compat (#84): a caller's config.mark survives the merge alongside the chrome 0ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — item #16 datasets slot resolves Mark.from (s151 m03) > emits the top-level datasets map + the layer data:{name} that resolves against it (fails at HEAD: no top-level datasets) 2ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — item #16 datasets slot resolves Mark.from (s151 m03) > primary (inline) layer data path is byte-UNCHANGED by the datasets slot (mixed-spec contract) 1ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — item #16 datasets slot resolves Mark.from (s151 m03) > OMITS top-level datasets when spec.datasets is absent → no datasets key (gate-leak guard) 0ms
+ ✓ src/adapters/vega-lite-adapter.spec.ts > vega-lite-adapter — diverging color scale (s156 m04) > bakes the OODS diverging range + domainMid:0 and types the color quantitative (fails at HEAD: nominal, no range) 0ms
+ ✓ test/sankey-adapter.spec.ts > validateSankeyInput — flow quantities are mandatory > accepts a well-formed flow 1ms
+ ✓ test/sankey-adapter.spec.ts > validateSankeyInput — flow quantities are mandatory > rejects a link without a finite value (the width encodes the flow — it cannot be absent) 0ms
+ ✓ test/sankey-adapter.spec.ts > validateSankeyInput — flow quantities are mandatory > rejects a link referencing a non-existent node (no dangling edges) 0ms
+ ✓ test/sankey-adapter.spec.ts > transformNodes — node value is total throughput = max(incoming, outgoing) > computes throughput from the surrounding links 0ms
+ ✓ test/sankey-adapter.spec.ts > transformNodes — node value is total throughput = max(incoming, outgoing) > honours an explicit node value over the computed throughput 0ms
+ ✓ test/sankey-adapter.spec.ts > transformNodes — node value is total throughput = max(incoming, outgoing) > assigns a palette colour to each node 0ms
+ ✓ test/sankey-adapter.spec.ts > adaptSankeyToECharts > builds a sankey series from the nodes+links input (decoupled from the IR) 1ms
+ ✓ test/sankey-adapter.spec.ts > adaptSankeyToECharts > emits RESOLVED palette colours (rgb/hex), never `var(--token)` 1ms
+ ✓ test/sankey-adapter.spec.ts > adaptSankeyToECharts > propagates SankeyValidationError for invalid input (the handler maps it to an error code) 0ms
+ ✓ test/sankey-adapter.spec.ts > adaptSankeyToECharts > flows a11y into aria + carries usermeta provenance 0ms
+ ✓ test/sankey-adapter.spec.ts > adaptSankeyToECharts > is DETERMINISTIC — identical (spec, input) yields a byte-identical serialized option 0ms
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  02:19:22
+   Duration  1.83s (transform 1.27s, setup 0ms, collect 3.43s, tests 91ms, environment 1ms, prepare 525ms)
+

@@ -1,0 +1,376 @@
+{
+  "status": "ok",
+  "chartType": "line",
+  "mode": "explicit",
+  "spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "title": "Line chart",
+    "description": "Line chart of sum of revenue by quarter, split by region.",
+    "data": {
+      "values": [
+        {
+          "region": "North",
+          "quarter": "2024-01",
+          "revenue": 120000,
+          "units": 340
+        },
+        {
+          "region": "South",
+          "quarter": "2024-01",
+          "revenue": 135000,
+          "units": 410
+        },
+        {
+          "region": "North",
+          "quarter": "2024-02",
+          "revenue": 128000,
+          "units": 360
+        },
+        {
+          "region": "South",
+          "quarter": "2024-02",
+          "revenue": 142000,
+          "units": 430
+        },
+        {
+          "region": "North",
+          "quarter": "2024-03",
+          "revenue": 131000,
+          "units": 372
+        },
+        {
+          "region": "South",
+          "quarter": "2024-03",
+          "revenue": 150000,
+          "units": 455
+        }
+      ]
+    },
+    "config": {
+      "background": "#041620",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "title": {
+        "color": "#DBE6F2",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+        "anchor": "start"
+      },
+      "axis": {
+        "titleColor": "#DBE6F2",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "labelColor": "#C8D2DE",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "gridColor": "#465862",
+        "domainColor": "#414C58",
+        "tickColor": "#414C58"
+      },
+      "axisX": {
+        "grid": false
+      },
+      "axisY": {
+        "grid": true
+      },
+      "legend": {
+        "titleColor": "#DBE6F2",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "labelColor": "#C8D2DE",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+      },
+      "view": {
+        "stroke": null
+      }
+    },
+    "usermeta": {
+      "oods": {
+        "specId": "viz:line",
+        "name": "Line chart",
+        "portability": {
+          "tableColumnOrder": [
+            "quarter",
+            "revenue",
+            "region",
+            "units"
+          ]
+        },
+        "a11y": {
+          "description": "Line chart of sum of revenue by quarter, split by region.",
+          "ariaLabel": "Line chart of Revenue by Quarter"
+        }
+      }
+    },
+    "mark": {
+      "type": "line"
+    },
+    "encoding": {
+      "x": {
+        "field": "quarter",
+        "type": "temporal",
+        "scale": {
+          "type": "utc"
+        },
+        "title": "Quarter"
+      },
+      "y": {
+        "field": "revenue",
+        "type": "quantitative",
+        "aggregate": "sum",
+        "title": "Revenue"
+      },
+      "color": {
+        "field": "region",
+        "type": "nominal",
+        "scale": {
+          "range": [
+            "#517FED",
+            "#4C57D2",
+            "#3FA97B",
+            "#CC9C40",
+            "#DF5B59",
+            "#B25215"
+          ]
+        },
+        "title": "Region"
+      }
+    }
+  },
+  "a11yDescription": "Line chart of sum of revenue by quarter, split by region.",
+  "warnings": [],
+  "output": {
+    "compact": true,
+    "echarts": true,
+    "includeNormalizedSpec": true,
+    "svg": true
+  },
+  "meta": {
+    "renderer": "vega-lite",
+    "mark": "MarkLine",
+    "rowCount": 6,
+    "fields": [
+      "region",
+      "quarter",
+      "revenue",
+      "units"
+    ]
+  },
+  "normalizedSpec": {
+    "$schema": "https://oods.dev/viz-spec/v1",
+    "id": "viz:line",
+    "name": "Line chart",
+    "data": {
+      "values": [
+        {
+          "region": "North",
+          "quarter": "2024-01",
+          "revenue": 120000,
+          "units": 340
+        },
+        {
+          "region": "South",
+          "quarter": "2024-01",
+          "revenue": 135000,
+          "units": 410
+        },
+        {
+          "region": "North",
+          "quarter": "2024-02",
+          "revenue": 128000,
+          "units": 360
+        },
+        {
+          "region": "South",
+          "quarter": "2024-02",
+          "revenue": 142000,
+          "units": 430
+        },
+        {
+          "region": "North",
+          "quarter": "2024-03",
+          "revenue": 131000,
+          "units": 372
+        },
+        {
+          "region": "South",
+          "quarter": "2024-03",
+          "revenue": 150000,
+          "units": 455
+        }
+      ]
+    },
+    "marks": [
+      {
+        "trait": "MarkLine"
+      }
+    ],
+    "encoding": {
+      "x": {
+        "field": "quarter",
+        "trait": "EncodingPositionX",
+        "channel": "x",
+        "scale": "temporal",
+        "title": "Quarter"
+      },
+      "y": {
+        "field": "revenue",
+        "trait": "EncodingPositionY",
+        "channel": "y",
+        "aggregate": "sum",
+        "title": "Revenue"
+      },
+      "color": {
+        "field": "region",
+        "trait": "EncodingColor",
+        "channel": "color",
+        "type": "nominal",
+        "title": "Region"
+      }
+    },
+    "a11y": {
+      "description": "Line chart of sum of revenue by quarter, split by region.",
+      "ariaLabel": "Line chart of Revenue by Quarter"
+    },
+    "portability": {
+      "tableColumnOrder": [
+        "quarter",
+        "revenue",
+        "region",
+        "units"
+      ]
+    }
+  },
+  "echartsSpec": {
+    "dataset": [
+      {
+        "id": "viz:line:dataset",
+        "source": [
+          {
+            "region": "North",
+            "quarter": "2024-01",
+            "revenue": 120000,
+            "units": 340
+          },
+          {
+            "region": "South",
+            "quarter": "2024-01",
+            "revenue": 135000,
+            "units": 410
+          },
+          {
+            "region": "North",
+            "quarter": "2024-02",
+            "revenue": 128000,
+            "units": 360
+          },
+          {
+            "region": "South",
+            "quarter": "2024-02",
+            "revenue": 142000,
+            "units": 430
+          },
+          {
+            "region": "North",
+            "quarter": "2024-03",
+            "revenue": 131000,
+            "units": 372
+          },
+          {
+            "region": "South",
+            "quarter": "2024-03",
+            "revenue": 150000,
+            "units": 455
+          }
+        ],
+        "dimensions": [
+          "region",
+          "quarter",
+          "revenue",
+          "units"
+        ]
+      }
+    ],
+    "series": [
+      {
+        "type": "line",
+        "datasetId": "viz:line:dataset",
+        "encode": {
+          "x": "quarter",
+          "y": "revenue",
+          "itemName": "region",
+          "tooltip": [
+            "quarter",
+            "revenue",
+            "region"
+          ]
+        },
+        "colorBy": "data",
+        "showSymbol": false
+      }
+    ],
+    "xAxis": {
+      "type": "time",
+      "name": "Quarter",
+      "nameLocation": "end",
+      "boundaryGap": true
+    },
+    "yAxis": {
+      "type": "value",
+      "name": "Revenue",
+      "nameLocation": "end"
+    },
+    "useUTC": true,
+    "legend": {
+      "show": true
+    },
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "description": "Line chart of sum of revenue by quarter, split by region.",
+      "label": {
+        "enabled": true,
+        "description": "Line chart of Revenue by Quarter"
+      }
+    },
+    "title": {
+      "text": "Line chart"
+    },
+    "usermeta": {
+      "oods": {
+        "specId": "viz:line",
+        "name": "Line chart",
+        "a11y": {
+          "description": "Line chart of sum of revenue by quarter, split by region.",
+          "ariaLabel": "Line chart of Revenue by Quarter"
+        },
+        "portability": {
+          "tableColumnOrder": [
+            "quarter",
+            "revenue",
+            "region",
+            "units"
+          ]
+        }
+      }
+    }
+  },
+  "tokenCssRef": "tokens.build",
+  "specRef": "viz.render-39c9474a",
+  "specRefCreatedAt": "2026-09-12T07:24:58.574Z",
+  "specRefExpiresAt": "2026-09-12T07:54:58.574Z",
+  "contentHash": "a1b1164cd85b1d64c6e8e111491870f3c6777bcb15f1d013056cc9ca584d3f2d",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"464\" height=\"375\" viewBox=\"0 0 464 375\"><rect width=\"464\" height=\"375\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h300v300h-300Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,300)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,263)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,188)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,113)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,75)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,38)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"300\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Quarter' for a utc scale with values from Monday, 01 January 2024, 12:00:00 AM UTC to Friday, 01 March 2024, 12:00:00 AM UTC\"><g transform=\"translate(0.5,300.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(30,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(65,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(100,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(135,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(170,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(205,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(240,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(275,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(30,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jan 07</text><text text-anchor=\"middle\" transform=\"translate(65,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jan 14</text><text text-anchor=\"middle\" transform=\"translate(100,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jan 21</text><text text-anchor=\"middle\" transform=\"translate(135,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jan 28</text><text text-anchor=\"middle\" transform=\"translate(170,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Feb 04</text><text text-anchor=\"middle\" transform=\"translate(205,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Feb 11</text><text text-anchor=\"middle\" transform=\"translate(240,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Feb 18</text><text text-anchor=\"middle\" transform=\"translate(275,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Feb 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"300\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(150,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Quarter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue' for a linear scale with values from 0 to 160,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,300)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,263)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,188)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,113)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,75)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,38)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,303)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,265.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">20,000</text><text text-anchor=\"end\" transform=\"translate(-7,228)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">40,000</text><text text-anchor=\"end\" transform=\"translate(-7,190.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">60,000</text><text text-anchor=\"end\" transform=\"translate(-7,153)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">80,000</text><text text-anchor=\"end\" transform=\"translate(-7,115.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">100,000</text><text text-anchor=\"end\" transform=\"translate(-7,78)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">120,000</text><text text-anchor=\"end\" transform=\"translate(-7,40.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">140,000</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">160,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,300)\" x2=\"0\" y2=\"-300\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,150) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h300v300h-300Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Quarter: Jan 01, 2024; Revenue: 120000; Region: North\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,75L155,60L300,54.375\" stroke=\"#517FED\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h300v300h-300Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Quarter: Jan 01, 2024; Revenue: 135000; Region: South\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,46.875L155,33.75L300,18.75\" stroke=\"#4C57D2\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Region' for stroke color with 2 values: North, South\"><g transform=\"translate(320,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v40h-56Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v11h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#517FED\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">North</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h56v11h-56Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#4C57D2\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">South</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-78,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Line chart'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Line chart</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+  "svgHash": "86a09a203f97c8051ab0438948d96c9f3700529de6e876020ef99b84ea8948ae",
+  "svgBytes": 12505,
+  "svgRef": "viz.render-e16c1876",
+  "render": {
+    "engine": "vega-lite",
+    "width": 464,
+    "height": 375,
+    "theme": "dark",
+    "brand": "B"
+  }
+}

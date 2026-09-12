@@ -128,7 +128,7 @@ function formatPath(treePathInfo: HierarchyTooltipParams['treePathInfo'], fallba
 
 function formatValue(value: unknown): string {
   if (typeof value === 'number' && Number.isFinite(value)) {
-    return value.toLocaleString();
+    return value.toLocaleString('en-US');
   }
   if (value === null || value === undefined) {
     return 'n/a';

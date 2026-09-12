@@ -1,0 +1,16 @@
+# All commands ran from the sprint worktree; no checkout, build, or runtime test was performed.
+gh run view 34679856153 --json databaseId,headSha,headBranch,event,status,conclusion,url,jobs
+gh api repos/kneelinghorse/OODS-Forge/actions/runs/34679856153/artifacts
+gh run download 34679856153 --name release-runtime --dir /tmp/forge-s196-ci-34679856153-release
+gh run download 34679856153 --name coverage-34679856153 --dir /tmp/forge-s196-ci-34679856153-coverage
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340942/logs
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340942
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340987/logs
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340987
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340989
+gh api repos/kneelinghorse/OODS-Forge/git/commits/d8b6b052d2a1ac896279005ba62b9384b9f22c01
+gh api repos/kneelinghorse/OODS-Forge/git/commits/944f4dda5f784e266310978b31f65b3d452e6387
+git show 944f4dda5f784e266310978b31f65b3d452e6387:tests/verification/closeout-checklist.contract.test.ts
+git show 944f4dda5f784e266310978b31f65b3d452e6387:tests/verification/runtime-placement-ci.s195.test.ts
+git show 944f4dda5f784e266310978b31f65b3d452e6387:tests/verification/generated-docs-ci.s196.test.ts
+python3 artifacts/product-reality/sprint-196/m05/ci-followthrough/verify-downloaded.py

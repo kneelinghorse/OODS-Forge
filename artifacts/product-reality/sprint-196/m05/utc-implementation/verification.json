@@ -1,0 +1,50 @@
+{
+  "mission": "s196-m05",
+  "scope": "UTC adapter implementation and focused intent tests",
+  "baseline": "../golden-migration/baseline.json",
+  "commands": [
+    {
+      "command": "pnpm --filter @oods/viz-core exec vitest run src/adapters/temporal-utc.s196.spec.ts src/adapters/vega-lite-adapter.spec.ts src/adapters/echarts-adapter.spec.ts test/sankey-adapter.spec.ts --coverage.enabled=false --reporter=verbose",
+      "result": "54 passed across 4 files; no skipped tests",
+      "log": "focused-viz-core.log",
+      "logSha256": "6d2a7edb59145b107b681937a8710bb9e601b4f3e7f2b8a8f40fd52918e63377"
+    },
+    {
+      "command": "pnpm exec vitest run --project core tests/traits/viz/scale-temporal.test.ts tests/traits/viz/authoring-recipes.s193.test.ts tests/viz/vega-lite-adapter.test.ts --reporter=verbose",
+      "result": "28 passed across 3 files; no skipped tests",
+      "log": "focused-root.log",
+      "logSha256": "3c1193150f90100d84c73826a3f5652f78b6543e74878e2658e1a1c0575d9795"
+    },
+    {
+      "command": "pnpm --filter @oods/viz-core run typecheck",
+      "result": "passed",
+      "log": "typecheck-viz-core.log",
+      "logSha256": "d1b48cbbf5fb20bf4b2b007e4c7c6875476b0ecd825a6f792b005ec233b8a096"
+    }
+  ],
+  "sourceSha256": {
+    "packages/viz-core/src/adapters/vega-lite-adapter.ts": "1810415c2661a1206ddad1e494fcf8fe026007958d52c38c37096fbac9782a35",
+    "packages/viz-core/src/adapters/echarts-adapter.ts": "41d200f67da2b73920539c92ffe6f6d126c532ee27f309022fd99b680f854b5b",
+    "packages/viz-core/src/adapters/echarts/hierarchy-utils.ts": "79afcc9ead93048f4958936d78052ff5b98915b8293d415ae9fa3a40856b6899",
+    "packages/viz-core/src/adapters/echarts/sankey-adapter.ts": "997292f82ba2cdb367449b2a2bec3658b93b08daeb8eeeca3a0cf737de0994c2",
+    "packages/viz-core/src/adapters/temporal-utc.s196.spec.ts": "c1d2a1b5f45a66508f53d6527a1c636f5390ad0486a2633904e7e49a91c2af3d",
+    "traits/viz/scale-temporal.trait.ts": "3b1d090040be16c3b26ca9668ca64a6621fc3f47f7e3c5ccb3178d980f3521f8",
+    "traits/viz/scale-temporal.trait.yaml": "4059aabaf4985c5d01ca734181e77b97184573d060971bf4eacb6a21e9e121ae",
+    "schemas/traits/scale-temporal.parameters.schema.json": "4c04598880905d5dd08c7fba266cf2286edc45a5992d9492ec3bcb02317b9ab1",
+    "tests/traits/viz/scale-temporal.test.ts": "4dbc54cdac419b8e02330906a73f7e849bdf5200cdf80dddf18190d992dde2fa",
+    "tests/viz/vega-lite-adapter.test.ts": "d6b8634443bb4d0500e5be058c4aeead46fc20ae5ceb89de9e45f03ac23d9fb8"
+  },
+  "changes": [
+    "Temporal Vega-Lite binding scales use utc; all eight normalized time units map to valid UTC Vega units, including plural sub-day names.",
+    "Adapter-generated date format calculations use utcParse; arbitrary authored expressions are preserved.",
+    "ECharts emits useUTC:true only when a resolved Cartesian axis is time; facet projections retain it.",
+    "Hierarchy and Sankey numeric locale formatting explicitly selects en-US.",
+    "ScaleTemporal TS/YAML and parameter-schema declarations disclose retained display metadata and UTC renderer boundary; accepted authoring timezone cannot enter normalized bindings.",
+    "Removed four test-suite America/Chicago stubs."
+  ],
+  "limits": [
+    "No builds, snapshot writes, historical artifact rewrites, CMOS changes, or commits in this slice.",
+    "Root owns shared builds, golden attribution, current matrix migrations, cross-timezone sweeps and downstream verification.",
+    "Caller-authored arbitrary date expressions remain caller-owned; the adapter does not rewrite them."
+  ]
+}
