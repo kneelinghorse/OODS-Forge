@@ -1104,7 +1104,12 @@ async function withStaticServer<T>(directory: string, callback: (url: string) =>
   try {
     return await callback(`http://127.0.0.1:${address.port}`);
   } finally {
-    await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+    await new Promise<void>((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+      // Proof work is finished; forwarded browser connections may still hold
+      // an incomplete request open. Stop accepting first, then release them.
+      server.closeAllConnections();
+    });
   }
 }
 

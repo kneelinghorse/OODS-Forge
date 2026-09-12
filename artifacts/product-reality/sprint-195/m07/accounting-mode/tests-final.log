@@ -1,0 +1,44 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/suite-accounting.s195.spec.ts (9 tests | 1 failed) 2902ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > uses Sprint 194 by default and validates all five final comparisons, skips, and final golden bytes  525ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > retains one failed initial capture without substituting it into final comparisons  396ms
+   × Sprint 195 accounting keeps five-suite identities and historical evidence separate > uses the same Sprint 195 defaults through the CLI and rejects stale derived output 291ms
+     → expected '' to contain 'passed: 10 distinct retained receipts'
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > rejects an incomplete or duplicated suite roster: {"missingSuite":true} 284ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > rejects an incomplete or duplicated suite roster: {"duplicateSuite":true} 290ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > does not call a final assertion failure successful accounting  410ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > requires one final run and no third attempt or borrowed historical exception 295ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > allows only added closeout/capture/CI evidence after the execution head 2ms
+   ✓ Sprint 195 accounting keeps five-suite identities and historical evidence separate > rejects a relabeled final execution head or post-capture source edit  406ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/suite-accounting.s195.spec.ts > Sprint 195 accounting keeps five-suite identities and historical evidence separate > uses the same Sprint 195 defaults through the CLI and rejects stale derived output
+AssertionError: expected '' to contain 'passed: 10 distinct retained receipts'
+
+- Expected
++ Received
+
+- passed: 10 distinct retained receipts
+
+ ❯ test/product-reality/suite-accounting.s195.spec.ts:119:112
+    117|     copyFileSync(new URL('../../../../scripts/product-reality/s185-sui…
+    118|     const args = ['--sprint', 'sprint-195', '--execution-head', value.…
+    119|     expect(execFileSync(process.execPath, [entry, '--write', ...args],…
+       |                                                                                                                ^
+    120|     const output = path.join(value.root, base, 'closeout/suite-account…
+    121|     expect(JSON.parse(readFileSync(output, 'utf8')).mission).toBe('s19…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  18:13:18
+   Duration  3.24s (transform 69ms, setup 28ms, collect 54ms, tests 2.90s, environment 0ms, prepare 116ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/suite-accounting.s195.spec.ts

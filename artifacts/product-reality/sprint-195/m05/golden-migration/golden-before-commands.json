@@ -1,0 +1,45 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/viz-core",
+      "exec",
+      "vitest",
+      "run",
+      "test/golden-echarts-options.spec.ts"
+    ],
+    "exitCode": 1,
+    "log": "core-before.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/viz-render",
+      "exec",
+      "vitest",
+      "run",
+      "test/emitter.spec.ts",
+      "test/echarts-normalized-hash-matrix.s179.spec.ts"
+    ],
+    "exitCode": 1,
+    "log": "render-before.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "src/tools/viz.render.fidelity.test.ts",
+      "src/tools/viz.render.geo-fidelity.test.ts",
+      "src/tools/viz.render.network-fidelity.test.ts",
+      "src/tools/dashboard.render.fidelity.test.ts"
+    ],
+    "exitCode": 1,
+    "log": "mcp-before.log"
+  }
+]

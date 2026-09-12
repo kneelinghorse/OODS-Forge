@@ -1,0 +1,36 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/tool-truth.s193.spec.ts [ test/contracts/tool-truth.s193.spec.ts ]
+Error: Failed to resolve entry for package "@oods/tokens". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server/src/lib/token-build.ts:48:49
+  41 |  }
+  42 |  export async function refreshTokenBundle() {
+  43 |    const { default: tokensBundle } = await import("@oods/tokens");
+     |                                                   ^
+  44 |    Object.assign(tokensBundle.cssVariablesByScope, readTokenScopes());
+  45 |    const defaults = JSON.parse(fs.readFileSync(path.join(tokenPackageRoot(), "dist/tailwind/tokens.json"), "utf8"));
+ ❯ packageEntryFailure ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:16198:15
+ ❯ resolvePackageEntry ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:16195:3
+ ❯ tryNodeResolve ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:16060:18
+ ❯ ResolveIdContext.resolveId ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:15831:19
+ ❯ EnvironmentPluginContainer.resolveId ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42242:17
+ ❯ TransformPluginContext.resolve ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42449:15
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:40492:26
+ ❯ ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:40623:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  17:26:14
+   Duration  1.07s (transform 440ms, setup 15ms, collect 0ms, tests 0ms, environment 0ms, prepare 102ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/tool-truth.s193.spec.ts

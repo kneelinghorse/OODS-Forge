@@ -1,0 +1,501 @@
+{
+  "request": {
+    "chartType": "choropleth",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "state": "CA",
+          "sales": 580
+        },
+        {
+          "state": "NV",
+          "sales": 96
+        }
+      ],
+      "join": {
+        "dataKey": "state",
+        "featureProperty": "region"
+      },
+      "valueField": "sales",
+      "colorScale": "linear"
+    },
+    "name": "State sales",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "hc",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "choropleth",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "geo": {
+        "map": "map-viz:choropleth",
+        "nameProperty": "region",
+        "roam": false,
+        "label": {
+          "show": false
+        },
+        "itemStyle": {
+          "areaColor": "#f2f2f2",
+          "borderColor": "CanvasText"
+        },
+        "emphasis": {
+          "itemStyle": {
+            "areaColor": "Canvas"
+          }
+        }
+      },
+      "visualMap": {
+        "type": "continuous",
+        "min": 96,
+        "max": 580,
+        "calculable": true,
+        "inRange": {
+          "color": [
+            "oklch(0.94 0.025 250)",
+            "oklch(0.54 0.09 250)",
+            "oklch(0.34 0.13 250)"
+          ]
+        },
+        "textStyle": {
+          "color": "CanvasText"
+        }
+      },
+      "series": [
+        {
+          "type": "map",
+          "map": "map-viz:choropleth",
+          "geoIndex": 0,
+          "name": "State sales",
+          "data": [
+            {
+              "name": "CA",
+              "value": 580,
+              "rawProperties": {
+                "region": "CA",
+                "state_name": "California",
+                "state": "CA",
+                "sales": 580
+              }
+            },
+            {
+              "name": "NV",
+              "value": 96,
+              "rawProperties": {
+                "region": "NV",
+                "state_name": "Nevada",
+                "state": "NV",
+                "sales": 96
+              }
+            }
+          ],
+          "emphasis": {
+            "focus": "self"
+          }
+        }
+      ],
+      "tooltip": {
+        "trigger": "item"
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Choropleth map of State sales."
+      },
+      "title": {
+        "text": "State sales"
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:choropleth",
+          "name": "State sales",
+          "a11y": {
+            "description": "Choropleth map of State sales."
+          },
+          "dimensions": {
+            "width": 860,
+            "height": 520
+          }
+        }
+      },
+      "__registration": {
+        "name": "map-viz:choropleth",
+        "geoJson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California",
+                "state": "CA",
+                "sales": 580
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada",
+                "state": "NV",
+                "sales": 96
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "a11yDescription": "Choropleth map of State sales.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkChoropleth",
+      "rowCount": 2,
+      "fields": []
+    },
+    "a11y": {
+      "narrative": {
+        "summary": "State sales covers 2 data points totaling 676 sales.",
+        "keyFindings": [
+          "High sales: sales 580 (CA)",
+          "Low sales: sales 96 (NV)",
+          "Total sales: 676"
+        ]
+      },
+      "table": {
+        "caption": "Data table for State sales",
+        "columns": [
+          {
+            "field": "feature",
+            "label": "Feature",
+            "isNumeric": false
+          },
+          {
+            "field": "state",
+            "label": "State",
+            "isNumeric": false
+          },
+          {
+            "field": "sales",
+            "label": "Sales",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "feature",
+                "text": "CA"
+              },
+              {
+                "field": "state",
+                "text": "CA"
+              },
+              {
+                "field": "sales",
+                "text": "580"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "feature",
+                "text": "NV"
+              },
+              {
+                "field": "state",
+                "text": "NV"
+              },
+              {
+                "field": "sales",
+                "text": "96"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:choropleth",
+      "name": "State sales",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkChoropleth"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Choropleth map of State sales."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-806ad4c0",
+    "specRefCreatedAt": "2026-09-11T21:27:26.565Z",
+    "specRefExpiresAt": "2026-09-11T21:57:26.565Z",
+    "contentHash": "e347703d72709f169415b888e04c443be23d19bae763b5ff4a769303cc7e8a7c",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M180 360L420 360L420 40L180 40L180 360Z\" fill=\"rgb(0,0,0)\" stroke=\"CanvasText\" stroke-width=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M276 264L420 264L420 40L276 40L276 264Z\" fill=\"rgb(0,0,0)\" stroke=\"CanvasText\" stroke-width=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M-18 -161l87.2 0l0 182l-87.2 0Z\" transform=\"translate(18 379)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#cfd2d7\" stroke-width=\"0\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" x=\"34\" transform=\"translate(18 379)\" fill=\"CanvasText\">96</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" x=\"34\" y=\"-140\" transform=\"translate(18 379)\" fill=\"CanvasText\">580</text>\n<g clip-path=\"url(#oods-zr-2)\">\n<polygon points=\"0 0 20 0 20 140 0 140\" transform=\"matrix(1,0,0,-1,18,379)\" fill=\"url(#oods-zr-3)\" class=\"oods-zr-4\"></polygon>\n<polygon points=\"0 0 20 0 20 140 0 140\" transform=\"matrix(1,0,0,-1,18,379)\" fill=\"url(#oods-zr-5)\" class=\"oods-zr-6\"></polygon>\n</g>\n<path d=\"M12 0A2.9 2.9 0 0 1 9.1 2.9L-9.1 2.9A2.9 2.9 0 0 1 -12 0L-12 0A2.9 2.9 0 0 1 -9.1 -2.9L9.1 -2.9A2.9 2.9 0 0 1 12 0Z\" transform=\"matrix(1,0,0,-1,28,379)\" fill=\"rgb(0,0,0)\" stroke=\"#fff\" stroke-width=\"2\" paint-order=\"stroke\" class=\"oods-zr-7\"></path>\n<path d=\"M12 0A2.9 2.9 0 0 1 9.1 2.9L-9.1 2.9A2.9 2.9 0 0 1 -12 0L-12 0A2.9 2.9 0 0 1 -9.1 -2.9L9.1 -2.9A2.9 2.9 0 0 1 12 0Z\" transform=\"matrix(1,0,0,-1,28,239)\" fill=\"rgb(0,0,0)\" stroke=\"#fff\" stroke-width=\"2\" paint-order=\"stroke\" class=\"oods-zr-7\"></path>\n<path d=\"M-49.7 -5l99.5 0l0 28l-99.5 0Z\" transform=\"translate(300 20)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#3c3c41\" stroke-width=\"0\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"#3c3c41\">State sales</text>\n<defs >\n<clipPath id=\"oods-zr-2\">\n<path d=\"M3 0L17 0A3 3 0 0 1 20 3L20 137A3 3 0 0 1 17 140L3 140A3 3 0 0 1 0 137L0 3A3 3 0 0 1 3 0\" transform=\"matrix(1,0,0,-1,18,379)\" fill=\"#000\" class=\"oods-zr-7\"></path>\n</clipPath>\n<linearGradient gradientUnits=\"objectBoundingBox\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\" id=\"oods-zr-3\">\n<stop offset=\"0%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"1%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"2%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"3%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"4%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"5%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"6%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"7.000000000000001%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"8%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"9%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"10%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"11%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"12%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"13%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"14.000000000000002%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"15%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"16%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"17%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"18%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"19%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"20%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"21%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"22%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"23%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"24%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"25%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"26%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"27%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"28.000000000000004%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"28.999999999999996%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"30%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"31%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"32%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"33%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"34%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"35%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"36%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"37%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"38%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"39%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"40%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"41%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"42%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"43%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"44%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"45%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"46%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"47%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"48%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"49%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"50%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"51%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"52%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"53%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"54%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"55.00000000000001%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"56.00000000000001%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"56.99999999999999%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"57.99999999999999%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"59%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"60%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"61%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"62%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"63%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"64%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"65%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"66%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"67%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"68%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"69%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"70%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"71%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"72%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"73%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"74%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"75%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"76%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"77%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"78%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"79%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"80%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"81%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"82%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"83%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"84%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"85%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"86%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"87%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"88%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"89%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"90%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"91%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"92%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"93%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"94%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"95%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"96%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"97%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"98%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"99%\" stop-color=\"rgb(207,210,215)\"></stop>\n<stop offset=\"100%\" stop-color=\"rgb(207,210,215)\"></stop>\n</linearGradient>\n<linearGradient gradientUnits=\"objectBoundingBox\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\" id=\"oods-zr-5\">\n<stop offset=\"0%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"1%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"2%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"3%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"4%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"5%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"6%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"7.000000000000001%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"8%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"9%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"10%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"11%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"12%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"13%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"14.000000000000002%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"15%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"16%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"17%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"18%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"19%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"20%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"21%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"22%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"23%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"24%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"25%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"26%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"27%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"28.000000000000004%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"28.999999999999996%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"30%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"31%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"32%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"33%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"34%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"35%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"36%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"37%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"38%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"39%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"40%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"41%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"42%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"43%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"44%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"45%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"46%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"47%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"48%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"49%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"50%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"51%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"52%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"53%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"54%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"55.00000000000001%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"56.00000000000001%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"56.99999999999999%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"57.99999999999999%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"59%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"60%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"61%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"62%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"63%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"64%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"65%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"66%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"67%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"68%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"69%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"70%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"71%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"72%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"73%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"74%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"75%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"76%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"77%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"78%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"79%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"80%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"81%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"82%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"83%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"84%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"85%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"86%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"87%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"88%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"89%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"90%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"91%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"92%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"93%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"94%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"95%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"96%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"97%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"98%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"99%\" stop-color=\"rgb(0,0,0)\"></stop>\n<stop offset=\"100%\" stop-color=\"rgb(0,0,0)\"></stop>\n</linearGradient>\n</defs>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nfill:Canvas;\n}\n.oods-zr-1:hover {\npointer-events:none;\n}\n.oods-zr-7:hover {\ncursor:pointer;\nfill:rgba(0,0,0,1);\n}\n.oods-zr-4:hover {\ncursor:pointer;\nfill:[object Object];\n}\n.oods-zr-6:hover {\ncursor:pointer;\nfill:[object Object];\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "9a92c08a6d2bb93b2ae7c98d957c62db9a2579652a628120dccbc65295445b30",
+    "svgBytes": 14224,
+    "svgRef": "viz.render-7fd8179c",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "A"
+    }
+  },
+  "certification": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V159"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "e347703d72709f169415b888e04c443be23d19bae763b5ff4a769303cc7e8a7c",
+      "renderHash": "9a92c08a6d2bb93b2ae7c98d957c62db9a2579652a628120dccbc65295445b30"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkChoropleth is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  },
+  "paints": [
+    "Canvas",
+    "rgb(0,0,0)",
+    "CanvasText",
+    "#cfd2d7",
+    "url(#oods-zr-3)",
+    "url(#oods-zr-5)",
+    "#fff",
+    "#3c3c41",
+    "#000"
+  ]
+}

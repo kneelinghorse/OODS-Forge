@@ -24,6 +24,7 @@ import { getContentStrategy, type ContentStrategy } from '../codegen/content-str
 import { inferSlotPosition, type SlotPosition } from './position-affinity.js';
 import type { FieldHint } from './field-affinity.js';
 import { isTraitRecipe } from './trait-recipes.js';
+import { isChartPreview } from '../codegen/chart-declaration.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -337,7 +338,10 @@ export function fillSlotsWithObject(
   // ---- Phase 3: Fallback for unfilled required slots ----
   for (const slot of template.slots) {
     if (!filledSlots.has(slot.name)) continue;
-    if (!PRIMARY_SLOT_INTENTS.has(slot.intent)) continue;
+    // A new domain chart supplements the record identity; its top position
+    // must not consume the required header's fallback component.
+    const chartHeader = slot.name === 'header' && slotChildren.get(slot.name)?.some(child => child.chart?.source === 'record-array');
+    if (!PRIMARY_SLOT_INTENTS.has(slot.intent) && !chartHeader) continue;
     // Optional action-or-metadata slots already have their authored content.
     // Adding a default button here invents an empty, unbound action.
     if (!slot.required && slot.intent === 'action-button') continue;
@@ -1016,7 +1020,7 @@ function buildElement(
   };
   if (Object.keys(props).length > 0) {
     el.props = { ...props };
-    if (component === 'VizAreaPreview' && props.chart) {
+    if (isChartPreview(component) && props.chart) {
       el.chart = structuredClone(props.chart) as UiElement['chart'];
       delete el.props.chart;
     }

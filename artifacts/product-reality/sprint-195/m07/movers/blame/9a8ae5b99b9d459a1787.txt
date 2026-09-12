@@ -1,0 +1,73 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31 4
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/tokens/scripts/collision-guard.mjs
+filename packages/tokens/scripts/collision-guard.mjs
+	 * only viz.scale.categorical.01..06 from src/viz-scales.json into one brand's
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	 * base/dark chain (base added in s195), plus slot 04 in hc.json to retain its old
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	 * bytes. Both globally loaded brand-base categorical overrides must agree exactly.
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	 * Other mixed shared/brand or
+52b0da991705c4c565987bc9faf7738ba00d885e 125 125 7
+	/**
+52b0da991705c4c565987bc9faf7738ba00d885e 126 126
+	 * The six categorical slots may overlay shared -> base -> one theme. Both brand
+52b0da991705c4c565987bc9faf7738ba00d885e 127 127
+	 * bases load in every scope for global alias resolution: their common categorical
+52b0da991705c4c565987bc9faf7738ba00d885e 128 128
+	 * overrides must be IDENTICAL, otherwise merge order would silently choose a brand.
+52b0da991705c4c565987bc9faf7738ba00d885e 129 129
+	 * Distinct brand-base values and mixed-theme chains still fail. HC permits only
+52b0da991705c4c565987bc9faf7738ba00d885e 130 130
+	 * the previously declared slot04 retention.
+52b0da991705c4c565987bc9faf7738ba00d885e 131 131
+	 */
+52b0da991705c4c565987bc9faf7738ba00d885e 133 133 20
+	  if (!/^viz\.scale\.categorical\.0[1-6]$/.test(tokenPath)
+52b0da991705c4c565987bc9faf7738ba00d885e 134 134
+	    || declarations[0]?.file !== 'src/viz-scales.json'
+52b0da991705c4c565987bc9faf7738ba00d885e 135 135
+	    || declarations.length < 2 || declarations.length > 4) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 136 136
+	  const overlays = declarations.slice(1).map(({ file, value }) => {
+52b0da991705c4c565987bc9faf7738ba00d885e 137 137
+	    const match = /^src\/tokens\/brands\/([AB])\/(base|dark|hc)\.json$/.exec(file);
+52b0da991705c4c565987bc9faf7738ba00d885e 138 138
+	    return match ? { brand: match[1], theme: match[2], value, file } : null;
+52b0da991705c4c565987bc9faf7738ba00d885e 139 139
+	  });
+52b0da991705c4c565987bc9faf7738ba00d885e 140 140
+	  if (overlays.some(item => !item)) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 141 141
+	  if (new Set(overlays.map(item => item.file)).size !== overlays.length) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 142 142
+	  const bases = overlays.filter(item => item.theme === 'base');
+52b0da991705c4c565987bc9faf7738ba00d885e 143 143
+	  const themes = overlays.filter(item => item.theme !== 'base');
+52b0da991705c4c565987bc9faf7738ba00d885e 144 144
+	  if (themes.length > 1 || bases.length > 2) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 145 145
+	  if (bases.length === 2 && JSON.stringify(bases[0].value) !== JSON.stringify(bases[1].value)) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 146 146
+	  if (themes.length === 1) {
+52b0da991705c4c565987bc9faf7738ba00d885e 147 147
+	    const theme = themes[0];
+52b0da991705c4c565987bc9faf7738ba00d885e 148 148
+	    if (overlays.at(-1) !== theme) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 149 149
+	    if (theme.theme === 'hc' && tokenPath !== 'viz.scale.categorical.04') return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 150 150
+	    if (bases.length === 1 && bases[0].brand !== theme.brand) return false;
+52b0da991705c4c565987bc9faf7738ba00d885e 151 151
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 152 152
+	  return true;

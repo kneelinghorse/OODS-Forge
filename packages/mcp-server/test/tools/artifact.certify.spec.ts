@@ -492,8 +492,8 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
         'touching-mark/adjacency contrast not graded; relies on the separating stroke',
       );
       expect(out.contrastNote).toContain('Per-node data-color overrides are ungraded');
-      // s191 minimal lightness repair gives ΔE00 9.88: pass with the existing caution.
-      expect(out.contrastNote).toContain('Distinguishability caution');
+      // s195 measured hue revision gives ΔE00 10.01756: the caution is no longer warranted.
+      expect(out.contrastNote).not.toContain('Distinguishability caution');
       // The pre-s141 "contrast not checked" note is dropped; only the a11y note remains.
       expect(out.notes?.some((n) => n.includes(trait))).toBe(true);
       expect(out.notes?.some((n) => /contrast is not checked/i.test(n))).toBe(false);
@@ -573,7 +573,8 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
   };
 
   it('certify reconstructs the fixed default OODS 6-slot categorical palette', () => {
-    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00']);
+    // s195: light slot05 hue -0.08 degrees moves its blue channel by one byte.
+    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4949', '#993B00']);
   });
 
   // s191 repairs the gold slot against the actual CSS light/A canvas.

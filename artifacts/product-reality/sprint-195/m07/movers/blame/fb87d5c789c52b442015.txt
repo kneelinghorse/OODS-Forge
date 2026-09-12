@@ -1,0 +1,89 @@
+a3158282bba25713171d7216181bde28b69a80a1 195 195 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c docs/how-forge-works.html
+filename docs/how-forge-works.html
+	      <tr><td>MarkBar · MarkLine · MarkArea · MarkPoint · MarkRect</td><td>The five tabular chart marks (bars, lines, areas, points, heatmaps). Bound charts project existing object data through a passive preview.</td><td>viz_mark_type, orientation / curve / shape …, viz_mark_a11y_label</td><td>Viz&lt;Mark&gt;Preview, Viz&lt;Mark&gt;Controls, VizRoleBadge</td></tr>
+a3158282bba25713171d7216181bde28b69a80a1 259 259 1
+	      <tr><td>Subscription</td><td>Recurring subscription with billing and cancellation.</td><td>Stateful (future, trialing, active, paused, pending_cancellation, past_due, unpaid, terminated), Cancellable, Timestampable, Billable (monthly / yearly), Archivable, MarkArea (payment chart)</td><td>subscription_id, plan_name, plan_code, customer_name, customer_email, amount, currency, current_period_start/end …</td></tr>
+a3158282bba25713171d7216181bde28b69a80a1 263 263 1
+	      <tr><td>Invoice <small>(saas-billing)</small></td><td>SaaS invoice: terms, status, refunds.</td><td>SaaSBillingPayable, SaaSBillingRefundable, Timestampable, MarkBar (line-item amounts)</td><td>invoice_id, subscription_id, provider, tax_minor, discount_minor, subtotal_minor, line_items, dunning_step, payment_source …</td></tr>
+a3158282bba25713171d7216181bde28b69a80a1 265 265 1
+	      <tr><td>Usage <small>(saas-billing)</small></td><td>Metered usage snapshot for consumption billing.</td><td>SaaSBillingMetered (api_calls), Timestampable, MarkLine (usage samples)</td><td>usage_id, subscription_id, meter_id, provider, status, trend_percent, variance_minor, last_reported_at, anomalies</td></tr>
+a3158282bba25713171d7216181bde28b69a80a1 272 272 1
+	  <div class="def"><b>Context</b><p>The kind of screen an object is being shown in. A trait's view extension names the context it targets, so the same object produces a different — but consistent — screen for each. Traits contribute to <b>list</b>, <b>detail</b>, <b>form</b>, <b>timeline</b>, <b>card</b> and <b>inline</b>. Bound bar and line traits also author <b>dashboard</b> contributions, selected through the public dashboard layout. The <b>chart</b> view remains a shell.</p></div>
+52b0da991705c4c565987bc9faf7738ba00d885e 288 288 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e docs/how-forge-works.html
+filename docs/how-forge-works.html
+	  <p><b>Themes</b> are light, dark and high-contrast (the last maps to the operating system's forced colours). <b>Brands</b> are sets of values for the brand colour roles — surfaces, text, interactive, borders, status and focus — one JSON file per brand per theme (the base files contain 45 leaves each, under <span class="k">brands/&lt;X&gt;/{base,dark,hc}.json</span>). The build emits a block per brand × theme that re-assigns 41 shared theme slots to that brand's values:</p>
+ffcdc29ef225d28e54f094e2b430b707f85d1167 324 324 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+previous 5f71d0818a913830812e05dca123b628e0d83abe docs/how-forge-works.html
+filename docs/how-forge-works.html
+	  <p>The <a href="viz/taxonomy.md">versioned taxonomy</a> classifies 34 chart identities (13 types and 21 patterns) across eight families and records each Core Analytics Profile cell as surface-complete or a typed gap.</p>
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 325 325 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 docs/how-forge-works.html
+filename docs/how-forge-works.html
+	  <p><span class="k">viz.render</span> takes data and returns a chart specification. Thirteen chart types: <b>bar, line, area, scatter, heatmap</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The five Cartesian families return spec; the eight ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The 16 chart traits (marks, encodings, scales, layouts, interactions) are the vocabulary the spec is normalised into.</p>
+a3158282bba25713171d7216181bde28b69a80a1 326 326 1
+	  <p><b>Charts inside generated objects.</b> Subscription keeps its payment-area chart in detail. Invoice declares a bar chart over line_items, preserving minor currency units and summing matching descriptions. Usage declares a temporal line chart over samples; its generated examples are explicitly synthetic API-call counts, consistent with the object's api_calls unit. Invoice and Usage author detail and dashboard placements. Trait title and description parameters travel with the chart. React and Vue application generation and HTML chart-node generation use actual renderer SVG; full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs normalization limit. These passive sample assets stay fixed when a local record is edited, and consumers can supply a replacement SVG. The capability inventory observes composed declarations; generated-application runtime proof is recorded separately. Other chart types remain unplaced. ECharts placement is carried under decision #1944 because no corresponding object operand and governed preview trait is authored; Relationship's scalar edges need an explicit directed nodes/links transformation before a force-graph placement.</p>
+52b0da991705c4c565987bc9faf7738ba00d885e 326 327 1
+	  <p><span class="k">dashboard.render</span> composes a metric overview — KPI tiles, a trend panel, a breakdown panel, optional geo — from shared datasets and panel definitions, with deterministic auto-layout and cross-filter linking, and can export one self-contained HTML file with server-rendered SVG for its 11 admitted chart types in light and dark: Vega-Lite for the five Cartesian families and ECharts for six primary families. Chord and flow_map remain excluded from the public dashboard panel schema (#881). Governed measureRef resolution defaults to true; unknown refs return OODS-V130 and missing fields return OODS-V137. Explicit resolveMeasures:false disables that resolution. Failed panels retain explicit error placeholders; a successful chart panel must have a renderable specification.</p>
+86b44639489552329a627219fe527918a6c08420 330 331 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+previous a10afdffe708055fa241e110eb1881bbd16c2968 docs/how-forge-works.html
+filename docs/how-forge-works.html
+	  <div class="def"><b>Certify</b><p><span class="k">artifact.certify</span> takes a chart specification back (and, for the advanced types, its data) and returns a per-check scorecard plus a combined conformance result on the declared certification path. Its four core certification pillars are accessibility equivalence, determinism, contrast and accuracy.</p></div>
+86b44639489552329a627219fe527918a6c08420 334 335 2
+	      <tr><td>Accessibility equivalence</td><td>16 structural rules over the chart and its text alternative: colour encodings carry a second cue and size differences are perceptible; an accessible table exists, captioned to the chart title, with declared column order; axis titles, an accessible name and a description over 25 characters are present; bar/stacked charts narrate extrema, trend charts narrate the trend, area charts describe their baseline/range; datasets with 3+ rows surface at least two findings and dense ones aggregate; every encoded field is present in every row; the narrative generator reports ready; interactions describe their announcements. Each rule names its precondition; absent preconditions remain visible as not applicable. On the data-backed ECharts path, error-severity failures fail the accessibility pillar and conformance; warning-severity findings remain visible without failing the pillar.</td></tr>
+86b44639489552329a627219fe527918a6c08420 335 336
+	      <tr><td>Determinism</td><td>Two independent compiled or projected specifications are canonicalised and byte-compared, then independently rendered SVGs are compared. Content and render hashes identify the corresponding <span class="k">viz.render</span> output for the same operand and scope; notes retain any rendering limitation and the certified runtime boundary.</td></tr>
+52b0da991705c4c565987bc9faf7738ba00d885e 336 337 1
+	      <tr><td>Contrast</td><td>The colour values actually baked into the spec are graded: every mark at least 3:1 against the requested light or dark theme canvas (WCAG 1.4.11); categorical palettes checked for distinguishability under normal vision and three colour-vision-deficiency simulations; gradient scales reported as exempt, not passed. The requested A/B brand and light/dark/hc theme are retained. High-contrast returns an exempt contrast result with reason forced-colors and no numeric grade; the browser resolves the declared system colours.</td></tr>
+86b44639489552329a627219fe527918a6c08420 337 338 1
+	      <tr><td>Accuracy</td><td>16 reader-only structural-distortion rules: bar baseline not at zero (or on log/sqrt); dual y-axes in one frame; area on a non-linear scale; a row-merging aggregation not disclosed in title, description or axis; negative treemap/sunburst values; a parent not equal to the sum of its children; negative sankey/chord links; sankey node height inconsistent with its flows; duplicate sankey links; conflicting values joined to one map region; invalid bubble sizes and flow strengths, radius-based bubble scaling, duplicate geographic operands, and overlapping duplicate directed force-graph links. Reciprocal links remain distinct. "Pass" means no offered rule detected its distortion, and the count of rules that actually ran is reported. ECharts accuracy requires at least one evaluated rule; missing preconditions never count as a pass.</td></tr>
+52b0da991705c4c565987bc9faf7738ba00d885e 340 341 1
+	  <p><b>Coverage, stated plainly.</b> The five Cartesian types certify from their IR. Advanced types use the declared operand profile with the same data supplied to rendering: conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and evaluated-and-clean accuracy. Certified coverage can carry a measured false conformance result. Spec-only ECharts calls remain uncertified with null conformance and a missing-operand explanation; this path adds no Vega-Lite compile. Certification covers chart specs, not pages or components. It accepts brand A or B and theme light, dark or hc (defaults A/light), matching rendering and contrast grading. High-contrast SVG proof covers bar, line, area and scatter. Heatmap and the eight ECharts types retain typed undeclared-paint failures; their render failure fails determinism and conformance. HC contrast alone is exempt with reason forced-colors. Forced-colours browser evidence covers chart SVGs, dashboard HTML and the React/Vue Subscription detail preview.</p>
+52b0da991705c4c565987bc9faf7738ba00d885e 379 380 1
+	    <li>Certification covers chart specs only, scoped to the requested A/B brand and light/dark/hc theme (HC contrast is forced-colors exempt); ECharts calls without the matching data operand remain uncertified with null conformance; pages and components get contrast rules and CI audits, not certificates.</li>

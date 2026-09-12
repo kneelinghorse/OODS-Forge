@@ -1,0 +1,72 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/tools/viz.render.ts
+filename packages/mcp-server/src/tools/viz.render.ts
+	import { assertHcSvgPaints } from './hc-svg-paints.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 18 19 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 packages/mcp-server/src/tools/viz.render.ts
+filename packages/mcp-server/src/tools/viz.render.ts
+	  applyPatternPresentation,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 28 1
+	  translatePattern,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 36 37 1
+	  type PatternPresentation,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 235 236 14
+	  let presentation: PatternPresentation | undefined;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 236 237
+	  if (Object.hasOwn(input, 'pattern')) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 237 238
+	    const conflicts = ['chartType', 'encodings', 'rows', 'datasetRef', 'intent', 'hierarchy', 'sankey', 'chord', 'network', 'geo', 'id', 'name', 'description', 'opacity']
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 238 239
+	      .filter(field => Object.hasOwn(input, field));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 239 240
+	    if (conflicts.length) return errorOut('OODS-V166', `viz.render: pattern cannot be combined with ${conflicts.join(', ')}; the source identity, data and presentation must remain intact.`, input.output?.compact ?? true, input.output?.echarts ?? false);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 240 241
+	    let translated: ReturnType<typeof translatePattern>;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 241 242
+	    try { translated = translatePattern(input.pattern!); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 242 243
+	    catch (error) { return errorOut('OODS-V123', `viz.render: ${error instanceof Error ? error.message : String(error)}`, input.output?.compact ?? true, input.output?.echarts ?? false); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 243 244
+	    if (translated.status === 'authoring-only') return errorOut('OODS-V167', `viz.render: pattern "${input.pattern}" is authoring-only: ${translated.reasons.join('; ')}`, input.output?.compact ?? true, input.output?.echarts ?? false);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 244 245
+	    const { pattern: _pattern, ...controls } = input;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 245 246
+	    input = { ...controls, ...translated.explicitInput } as VizRenderInput;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 246 247
+	    presentation = translated.presentation;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 247 248
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 248 249
+	  const out = await renderSpec(input, presentation);
+52b0da991705c4c565987bc9faf7738ba00d885e 264 264 1
+	    assertHcSvgPaints(svg, input);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 281 283 1
+	async function renderSpec(input: VizRenderInput, presentation?: PatternPresentation): Promise<VizRenderOutput> {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 398 400 1
+	    const rawBuilt = input.intent
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 415 417 4
+	    // The source presentation is applied to fresh builder IR and validated by
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 416 418
+	    // viz-core before adapters, a11y gates, hashes and certification observe it.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 417 419
+	    const built = presentation ? { ...rawBuilt, spec: applyPatternPresentation(rawBuilt.spec, presentation) } : rawBuilt;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 418 420
+	

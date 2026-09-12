@@ -494,41 +494,31 @@ describe('the ECharts accuracy engine (s172 m03)', () => {
       sunburst: ['OODS-V154', 'OODS-V155'],
       sankey: ['OODS-V156', 'OODS-V157', 'OODS-V158'],
       chord: ['OODS-V156'],
-      force_graph: [],
+      force_graph: ['OODS-V173'],
       choropleth: ['OODS-V159'],
-      bubble_map: [],
-      flow_map: [],
+      bubble_map: ['OODS-V168', 'OODS-V169', 'OODS-V170'],
+      flow_map: ['OODS-V171', 'OODS-V172'],
     });
   });
 
   it.each(['force_graph', 'bubble_map', 'flow_map'] as const)(
-    '%s offers nothing: rulesEvaluated 0, no findings, and a note that says the SET is empty (not that a rule failed)',
+    '%s offers rules but an unresolved operand stays unevaluated',
     (chartType) => {
-      const result = evaluateEChartsAccuracyRules(operand(chartType, { nodes: [], links: [] }));
+      const result = evaluateEChartsAccuracyRules(operand(chartType, undefined));
+      expect(echartsAccuracyRulesFor(chartType).length).toBeGreaterThan(0);
       expect(result.rulesEvaluated).toBe(0);
       expect(result.findings).toEqual([]);
-      expect(result.notes).toEqual([emptyOfferedSetNote(chartType)]);
-      expect(result.notes[0]).toContain('offered set is empty');
+      expect(result.notes.length).toBeGreaterThan(0);
+      expect(result.notes.join(' ')).not.toContain('offered set is empty');
     },
   );
 
-  it('force_graph names adapter constants; the geo types name a SCOPE DECISION, never an impossibility', () => {
-    expect(emptyOfferedSetNote('force_graph')).toContain('adapter constants');
-
-    // s173 m01 (s172 review, defect 5). The geo note used to say the branch "expresses field
-    // names rather than scales", so the distortions "are not authorable through it". Both
-    // halves are false: bubble_map's branch carries `colorScale` (ordinal palettes cycle) and
-    // flow_map's carries `strengthField` (arc width). A false IMPOSSIBILITY claim is worse
-    // than an admitted gap — it tells the reading agent there is nothing to look for. The
-    // note must now say a rule has not been WRITTEN, and must name what IS authorable, so
-    // the claim stays falsifiable by anyone reading the input schema.
-    for (const note of [emptyOfferedSetNote('bubble_map'), emptyOfferedSetNote('flow_map')]) {
-      expect(note).toContain('scope decision');
-      expect(note).toContain('colorScale');
-      expect(note).toContain('strengthField');
-      expect(note).not.toContain('field names rather than scales');
-      expect(note).not.toContain('not authorable');
-    }
+  it('an injected empty set describes a coverage limit, never an impossibility', () => {
+    const result = evaluateEChartsAccuracyRules(operand('force_graph', { links: [] }), []);
+    expect(result).toEqual({ findings: [], rulesEvaluated: 0, notes: [emptyOfferedSetNote('force_graph')] });
+    expect(result.notes[0]).toContain('offered set is empty');
+    expect(result.notes[0]).toContain('not a claim that its data cannot be invalid');
+    expect(result.notes[0]).not.toContain('adapter constants');
   });
 
   it('rulesEvaluated counts RESOLVED rules, not offered ones', () => {
@@ -540,7 +530,7 @@ describe('the ECharts accuracy engine (s172 m03)', () => {
     expect(result.notes.length).toBeGreaterThan(0);
   });
 
-  it('every rule code is unique and sequential V154..V159', () => {
+  it('every rule code is unique and preserves V154..V159 plus the s195 V168..V173 allocation', () => {
     expect(ECHARTS_ACCURACY_RULES.map((r) => r.code)).toEqual([
       'OODS-V154',
       'OODS-V155',
@@ -548,6 +538,12 @@ describe('the ECharts accuracy engine (s172 m03)', () => {
       'OODS-V157',
       'OODS-V158',
       'OODS-V159',
+      'OODS-V168',
+      'OODS-V169',
+      'OODS-V170',
+      'OODS-V171',
+      'OODS-V172',
+      'OODS-V173',
     ]);
   });
 

@@ -1,0 +1,195 @@
+{
+  "mission": "s195-m06",
+  "slice": "chart declaration and code generation",
+  "baseHead": "22c674c548b6f3859c462e150a4601222366c25c",
+  "sourceSnapshotSha256": {
+    "scripts/product-reality/s195-chart-declaration-schema.ts": "sha256:e77a323d6a64c5d830395d66e395de75426112ac3654d4fac1c788198a0ff5ac",
+    "packages/mcp-server/src/schemas/repl.ui.schema.json": "sha256:ce6492f66aecd5c2a648e2b7f69945531ecae3f1f12bf09e0db85c6243ceb81c",
+    "packages/mcp-server/src/schemas/generated.ts": "sha256:051e4916b43103a8674afe57f559a061ab8d9986ff8c40236483a0c65230c40f",
+    "packages/mcp-server/src/codegen/chart-assets.ts": "sha256:30117b475c1bc170a196f36ec54278254de371e54a61922bb22376f90d3ea270",
+    "packages/mcp-server/src/codegen/chart-declaration.ts": "sha256:8dc34d502513e032601afc57a81e92516530c5968bcfbf254c296ba77e9eddb8",
+    "packages/mcp-server/src/codegen/workflow-data-emitter.ts": "sha256:fca2fcb32f1e139af4f3376ba68569bd900367880a86e4cda6b90d77fb5047a2",
+    "packages/mcp-server/src/render/component-map.ts": "sha256:49c9ea0480bfbaede41217606d8f5f006cc86c9d1fd2f2b3204ef0671d606600",
+    "packages/mcp-server/src/tools/types.ts": "sha256:127b0b425d9b38020c20609aa44ed2d5d0e7de5224d3b85e6f3a3d0277f1e4a3",
+    "packages/mcp-server/src/objects/trait-composer.ts": "sha256:b1cd936f7acde8ddaa3aae6619ee7d14475780760d35c44cb1d378148a213b8f",
+    "packages/mcp-server/src/compose/object-slot-filler.ts": "sha256:10759b77769e3bd64ee358fdaf3212fce7cbee5eb6779ffbb8013dae9d81f13d",
+    "packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts": "sha256:293122b87ce724072e1a4a33d18b217a18bd31217c6a7d38a9a38d5fbf5a3b4e",
+    "packages/mcp-server/test/product-reality/payment-chart.s190.spec.ts": "sha256:fb2224946d6373cd4448591c10e5df7f32ea4d0b5a56e17ffa51d9230fb300ee",
+    "packages/mcp-server/src/render/component-map.test.ts": "sha256:49dee89954e38860661a77b0af55cccde1acac20e5c08283a1f4ab4377cc87c9",
+    "packages/mcp-server/test/objects/trait-composer.spec.ts": "sha256:9a2d238e9b16026c9703bc650c41a0c3ef20cbb2157311211ab7093c1afee532"
+  },
+  "checks": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/chart-placement-codegen.s195.spec.ts test/product-reality/payment-chart.s190.spec.ts",
+      "log": "boundary-header-retained.log",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 35,
+      "passed": 35,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run src/render/component-map.test.ts",
+      "log": "html-map.log",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 114,
+      "passed": 114,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/objects/trait-composer.spec.ts",
+      "log": "composer-direct.log",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 21,
+      "passed": 21,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-chart-declaration-schema.ts --check",
+      "log": "schema-check.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/schemas-tools run generate:check",
+      "log": "types-check.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc -p ../../artifacts/product-reality/sprint-195/m06/codegen/tsconfig.boundary.json",
+      "log": "boundary-package-resolution-typecheck.log",
+      "exitCode": 0,
+      "scope": "New boundary file; NodeNext package resolution"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "log": "server-header-retained-build.log",
+      "exitCode": 0,
+      "scope": "Final server build includes strict production TypeScript check"
+    },
+    {
+      "command": "node artifacts/product-reality/sprint-195/m06/codegen/verify-built.mjs",
+      "log": "built-header-retained.log",
+      "exitCode": 0,
+      "scope": "Compiled handlers and compiled registered AJV schemas"
+    }
+  ],
+  "latestUniqueTestAccounting": {
+    "files": 4,
+    "tests": 170,
+    "passed": 170,
+    "failed": 0,
+    "skipped": 0
+  },
+  "earlierFailedAttempts": [
+    {
+      "log": "boundary-initial.log",
+      "exitCode": 1,
+      "tests": 35,
+      "passed": 24,
+      "failed": 11,
+      "reason": "Public MCP composer still area-only (10 object failures), test schema-id typo (1). Fixed."
+    },
+    {
+      "log": "boundary-final.log",
+      "exitCode": 1,
+      "tests": 35,
+      "passed": 34,
+      "failed": 1,
+      "reason": "Negative test mutated shared CASES.encodings; cloned fixture. Production object/workflow/legacy cases passed."
+    },
+    {
+      "log": "typecheck-initial.log",
+      "exitCode": 2,
+      "reason": "Root TypeScript5.3.3 versus package5.9.3; two existing dtcg-intake narrowing errors. Package production check and build pass."
+    },
+    {
+      "log": "boundary-typecheck-initial.log",
+      "exitCode": 2,
+      "reason": "Initial isolated test check found test fixture/literal/tuple typing issues, stale handwritten HC theme type, and unrelated source imports. New/legacy test typing and HC type repaired."
+    },
+    {
+      "log": "boundary-typecheck-final.log",
+      "exitCode": 2,
+      "reason": "Bundler source alias resolution reaches existing viz-core interaction-scorer readonly union narrowing error."
+    },
+    {
+      "log": "boundary-only-typecheck.log",
+      "exitCode": 2,
+      "reason": "Same source alias narrowing error; isolated boundary NodeNext package-resolution check then passed."
+    }
+  ],
+  "buildCount": 2,
+  "additionalBuildReason": "Root comparison census identified lost detail headers; after source retention fix reran35tests and rebuilt server. Earlier compiled captures kept separately.",
+  "compiled": {
+    "newChartCells": 6,
+    "sourceAndRepeatSvgParity": true,
+    "legacyHcAssetCells": 2,
+    "legacyM05AssetBytesUnchanged": true,
+    "fullHtml": [
+      {
+        "object": "Invoice",
+        "status": "error",
+        "errors": [
+          {
+            "code": "OODS-V007",
+            "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record.",
+            "nodeId": "detail-tab-panel-3",
+            "component": "Stack"
+          },
+          {
+            "code": "OODS-V007",
+            "message": "Tabs child \"detail-tab-panel-3\" uses layout, which cannot be preserved in the normalized item record.",
+            "nodeId": "detail-tab-panel-3",
+            "component": "Stack"
+          }
+        ],
+        "hasSvg": false
+      },
+      {
+        "object": "Usage",
+        "status": "error",
+        "errors": [
+          {
+            "code": "OODS-V007",
+            "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record.",
+            "nodeId": "detail-tab-panel-3",
+            "component": "Stack"
+          },
+          {
+            "code": "OODS-V007",
+            "message": "Tabs child \"detail-tab-panel-3\" uses layout, which cannot be preserved in the normalized item record.",
+            "nodeId": "detail-tab-panel-3",
+            "component": "Stack"
+          }
+        ],
+        "hasSvg": false
+      }
+    ]
+  },
+  "movers": [
+    "Generated UiSchema adds record-array chart union with shared public encoding vocabulary and authored sampleRows; matching parameter schemas for five canonical marks.",
+    "Static chart assets and generated workflow sample arrays for Invoice bar and Usage line.",
+    "HTML passive previews use family-specific accessible defaults; existing area default retained.",
+    "Handwritten CodeGenerateInput theme type now references generated schema, correcting m05-only type drift without runtime/schema change.",
+    "Root-owned public composition retains detail headers alongside new record-array charts."
+  ],
+  "limitations": [
+    "Full Invoice/Usage detail HTML remains typed OODS-V007 at existing Tabs normalization; proof uses actual composed chart nodes with original object schema.",
+    "Workflow assets are static per seed record; consumers can supply the existing svg prop. No automatic runtime chart recomputation is claimed.",
+    "Generated unit_label placeholders are an existing sample metadata limitation; Usage chart rows/title/axis explicitly declare synthetic API-call examples, and no generalized record override was added."
+  ],
+  "delegatedCmosCaptures": {
+    "decisions": [
+      1944,
+      1945,
+      1946
+    ],
+    "learnings": [
+      586
+    ]
+  },
+  "noFullSuiteCapture": true,
+  "builderSelfCertified": false
+}

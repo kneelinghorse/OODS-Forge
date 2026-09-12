@@ -1,0 +1,63 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/chart-placement-codegen.s195.spec.ts (25 tests | 1 failed) 12577ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Invoice detail html carries authored rows and unchanged public pixels  419ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Invoice detail react carries authored rows and unchanged public pixels  593ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Invoice detail vue carries authored rows and unchanged public pixels  825ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Invoice workflow react keys static SVG to real seeded records  1699ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Invoice workflow vue keys static SVG to real seeded records  3157ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Usage detail html carries authored rows and unchanged public pixels 39ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Usage detail react carries authored rows and unchanged public pixels  492ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Usage detail vue carries authored rows and unchanged public pixels  745ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Usage workflow react keys static SVG to real seeded records  1453ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > Usage workflow vue keys static SVG to real seeded records  3034ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > all admitted 'bar' record arrays draw the canonical mark 10ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > all admitted 'line' record arrays draw the canonical mark 14ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > all admitted 'area' record arrays draw the canonical mark 9ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > all admitted 'scatter' record arrays draw the canonical mark 11ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > all admitted 'heatmap' record arrays draw the canonical mark 10ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > repeated identical detail/dashboard projections share one render and presentation 11ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'missing object field' without publishing placeholder pixels 1ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'scalar data field' without publishing placeholder pixels 0ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'missing encoded field' without publishing placeholder pixels 0ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'mismatched preview' without publishing placeholder pixels 0ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'different declarations' without publishing placeholder pixels 1ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > rejects 'different presentation' without publishing placeholder pixels 0ms
+   × declared charts use actual records and public SVG (s195-m06) > rejects invented operands at AJV and renderer failures at the handler 5ms
+     → expected 'must have required property \'dateFie…' to contain 'OODS-V165'
+   ✓ declared charts use actual records and public SVG (s195-m06) > legacy Subscription react HC asset bytes match the retained m05 public output 25ms
+   ✓ declared charts use actual records and public SVG (s195-m06) > legacy Subscription vue HC asset bytes match the retained m05 public output 23ms
+ ✓ test/product-reality/payment-chart.s190.spec.ts (10 tests) 6349ms
+   ✓ Subscription payment chart is an actual public render > emits repeatable, strictly typed react workflow assets keyed by seed identity  1749ms
+   ✓ Subscription payment chart is an actual public render > emits repeatable, strictly typed vue workflow assets keyed by seed identity  3150ms
+   ✓ Subscription payment chart is an actual public render > single detail react has a hashed seed asset and unchanged public SVG bytes  511ms
+   ✓ Subscription payment chart is an actual public render > single detail vue has a hashed seed asset and unchanged public SVG bytes  777ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/chart-placement-codegen.s195.spec.ts > declared charts use actual records and public SVG (s195-m06) > rejects invented operands at AJV and renderer failures at the handler
+AssertionError: expected 'must have required property \'dateFie…' to contain 'OODS-V165'
+
+Expected: "OODS-V165"
+Received: "must have required property 'dateFields'"
+
+ ❯ test/product-reality/chart-placement-codegen.s195.spec.ts:163:41
+    161|     expect(result.status).toBe('error');
+    162|     expect(result.artifact).toBeUndefined();
+    163|     expect(result.errors?.[0]?.message).toContain('OODS-V165');
+       |                                         ^
+    164|   });
+    165| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 34 passed (35)
+   Start at  17:06:14
+   Duration  20.79s (transform 673ms, setup 16ms, collect 1.51s, tests 18.93s, environment 0ms, prepare 109ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/chart-placement-codegen.s195.spec.ts test/product-reality/payment-chart.s190.spec.ts

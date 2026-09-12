@@ -1,13 +1,53 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { composeObject } from '../../src/objects/trait-composer.js';
 import { clearObjectCache, listObjects, loadObject } from '../../src/objects/object-loader.js';
 import { clearTraitCache } from '../../src/objects/trait-loader.js';
+import * as traitLoader from '../../src/objects/trait-loader.js';
 import type { ObjectDefinition } from '../../src/objects/types.js';
 
 describe('trait-composer', () => {
   afterEach(() => {
+    vi.restoreAllMocks();
     clearObjectCache();
     clearTraitCache();
+  });
+
+  it.each([
+    ['MarkArea', 'area', 'VizAreaPreview'],
+    ['MarkBar', 'bar', 'VizMarkPreview'],
+    ['MarkLine', 'line', 'VizLinePreview'],
+    ['MarkPoint', 'scatter', 'VizPointPreview'],
+    ['MarkRect', 'heatmap', 'VizHeatmapPreview'],
+  ])('projects bound %s without standalone controls or encoding fields', (mark, chartType, component) => {
+    const object = structuredClone(loadObject('Invoice'));
+    const chart = { source: 'record-array', chartType, dataField: 'measurements', sampleRows: [{ x: 1, y: 2 }], encodings: { x: 'x', y: 'y' } };
+    object.traits = [{ name: `viz/${mark}`, parameters: { chart, title: 'Recorded measurements', description: 'A declared example series.' } }];
+    const composed = composeObject(object);
+    const definition = composed.traits[0]!.definition;
+    expect(definition.schema).toEqual({});
+    expect(definition.semantics).toEqual({});
+    expect(definition.dependencies).toEqual([]);
+    expect(Object.keys(composed.schema).filter(field => field.startsWith('viz_'))).toEqual([]);
+    expect(composed.viewExtensions.detail).toEqual([{ component, position: 'top', priority: 55, props: { chart, title: 'Recorded measurements', description: 'A declared example series.' } }]);
+    expect(composed.viewExtensions.form).toBeUndefined();
+    if (mark === 'MarkBar' || mark === 'MarkLine') expect(composed.viewExtensions.dashboard).toEqual(composed.viewExtensions.detail);
+    else expect(composed.viewExtensions.dashboard).toBeUndefined();
+    expect(composed.viewExtensions.detail![0]!.props!.chart).not.toBe(chart);
+  });
+
+  it('rejects a mismatched chart type instead of rendering the wrong mark', () => {
+    const object = structuredClone(loadObject('Invoice'));
+    object.traits = [{ name: 'viz/MarkBar', parameters: { chart: { chartType: 'line' } } }];
+    expect(() => composeObject(object)).toThrow('requires chartType "bar"');
+  });
+
+  it('rejects a loaded but unknown bound Mark instead of leaking editor controls', () => {
+    const object = structuredClone(loadObject('Invoice'));
+    object.traits = [{ name: 'viz/MarkBar', parameters: { chart: { chartType: 'bar' } } }];
+    const unknown = structuredClone(traitLoader.loadTrait('viz/MarkBar'));
+    unknown.trait.name = 'MarkUnknown';
+    vi.spyOn(traitLoader, 'loadTrait').mockReturnValueOnce(unknown);
+    expect(() => composeObject(object)).toThrow('has no supported preview projection');
   });
 
   it('composes a real object (User) with merged schema', () => {

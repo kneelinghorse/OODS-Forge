@@ -1,0 +1,48 @@
+{
+  "input": {
+    "pattern": "pattern:viz:simple-bar",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "chord": {
+      "nodes": [
+        {
+          "name": "a"
+        },
+        {
+          "name": "b"
+        }
+      ],
+      "links": [
+        {
+          "source": "a",
+          "target": "b",
+          "value": 1
+        }
+      ]
+    },
+    "theme": "light",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "error",
+    "spec": {},
+    "warnings": [],
+    "errors": [
+      {
+        "code": "OODS-V166",
+        "message": "viz.render: pattern cannot be combined with chord; the source identity, data and presentation must remain intact.",
+        "severity": "error"
+      }
+    ],
+    "output": {
+      "compact": true
+    }
+  }
+}

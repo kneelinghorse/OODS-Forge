@@ -1,0 +1,63 @@
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 23 23 24
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 scripts/product-reality/s185-reconnect.mjs
+filename scripts/product-reality/s185-reconnect.mjs
+	  if (movers.missionId === 's195-m07') {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 24 24
+	    const head = movers.s195.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 25 25
+	    const read = file => JSON.parse(source(head, file, root));
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 26 26
+	    const tools = read('packages/mcp-server/registry/tool-capability-ledger.v1.json');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 27 27
+	    const registry = read('packages/viz-core/src/registry/viz-recipes.v1.json');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 28 28
+	    const patterns = read('packages/viz-core/src/registry/viz-patterns.v1.json');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 29 29
+	    const taxonomy = read('packages/viz-core/src/registry/viz-taxonomy.v1.json');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 30 30
+	    assert(tools.summary.auto === 19 && tools.summary.onDemand === 5 && tools.summary.autoByTier['product-reality'] === 19, 'Sprint195 reconnect requires the current 19 advertised tool proofs.');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 31 31
+	    const hc = registry.filter(row => row.themes.hc).map(row => row.chartType);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 32 32
+	    const body = [
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 33 33
+	      `Sprint 195 candidate ${head}; prepared for Sprint 196 after independent review and delivery. Refresh discovery after delivery: 19 advertised tools and five on-demand tools remain.`,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 34 34
+	      `viz.render accepts pattern using the full pattern:viz:* identity. ${patterns.filter(row => row.publicSvg).length} of ${patterns.length} patterns have public SVG; the remainder are authoring-only with typed reasons. Conflicting pattern operands fail with OODS-V166; structural authoring-only patterns return OODS-V167.`,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 35 35
+	      `theme:'hc' is admitted on viz.render, dashboard.render and artifact.certify. HC chart pixels are measured for ${hc.join(', ')}; ${registry.length - hc.length} types retain typed renderer deferrals. HC uses declared system colours; contrast is exempt with a forced-colors note, not a numeric contrast pass.`,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 36 36
+	      'artifact.certify now certifies the eight ECharts types when supplied the matching data operand. A11y, accuracy and determinism remain graded; a real failing verdict stays conformant:false. Spec-only ECharts remain coverage:uncertified/conformant:null. Bubble radius scaling currently yields a measured accuracy failure; certification coverage is not a promise of conformance.',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 37 37
+	      `health.productReality.viz reports ${taxonomy.summary.types} types, ${taxonomy.summary.patterns} patterns, ${taxonomy.summary.families} families and ${taxonomy.summary.classified} classified identities; ${taxonomy.summary.coreSurfaceComplete} core cells have public surfaces and ${taxonomy.summary.typedGaps} remain typed gaps. Financial and scientific gaps remain explicit.`,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 38 38
+	      'Invoice line_items now supplies bar SVG and Usage samples supplies line SVG in generated React/Vue detail and dashboard views, with authored titles. Usage example rows are explicitly synthetic API-call counts. Existing Subscription area stays. ECharts object placement carries under decision1944; full Invoice/Usage detail HTML remains limited by Tabs normalization, while chart-node HTML contains real SVG.',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 39 39
+	      'The categorical palette meets the measured Role-A target with Role-C retained. Historical SVG and matrix evidence remains immutable with the m05 migration receipt. The strict soak result remains OODS-SOAK-1442 observation, not retention certification.',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 40 40
+	      'The five Sprint194 portable limits remain carried to Sprint196; current source boundary tiers do not promote those historical outcomes to passing portable execution. Classification and application craft approval remain pending.',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 41 41
+	      'Primary delivery remains the certified Sprint194 delivery recorded by s195-m01. This candidate is BUILT, REVIEW PENDING; builderSelfCertified:false. These notices are prepared only; candidate delivery and sends have not occurred.',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 42 42
+	      `Advertised/public movers from ${movers.s195.base}..${head}:\n${movers.s195.publicPaths.join('\n')}`,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 43 43
+	    ].join('\n\n');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 44 44
+	    return { missionId: 's195-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-196', targets,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 45 45
+	      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint195 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 46 46
+	  }
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 271 271 2
+	  const rederived = sprintId === 'sprint-195'
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 272 272
+	    ? deriveMovers(movers.s195.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's195-m07', base: movers.s195.base }) : sprintId === 'sprint-187'

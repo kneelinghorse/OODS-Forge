@@ -1,0 +1,82 @@
+- text: Consumer label Consumer placeholder Status
+- combobox "Status":
+  - option "draft" [selected]
+  - option "active"
+  - option "inactive"
+- paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+- group "Tags":
+  - text: Tags Tag
+  - textbox "Tag":
+    - /placeholder: Enter tags
+- banner:
+  - heading "Addresses" [level=3]
+- text: Street
+- textbox "Street"
+- text: City
+- textbox "City"
+- text: Region
+- textbox "Region"
+- text: Postal Code
+- textbox "Postal Code"
+- banner:
+  - heading "Preference Editor" [level=3]
+- text: Namespace
+- combobox "Namespace":
+  - option "Select..." [selected]
+- text: Preference Document
+- textbox "Preference Document"
+- banner:
+  - heading "Role Assignment" [level=3]
+- text: Role
+- combobox "Role":
+  - option "Select..." [selected]
+- text: Assignee
+- textbox "Assignee"
+- group "Template Picker":
+  - text: Template Picker Template
+  - combobox "Template":
+    - option "Select..." [selected]
+  - text: Channel
+  - combobox "Channel":
+    - option "Select..." [selected]
+- text: Plan tier
+- combobox "Plan tier":
+  - option "Enter plan tier" [disabled]
+  - option "free" [selected]
+  - option "growth"
+  - option "enterprise"
+- paragraph: Billing plan currently assigned to the organization.
+- text: Ownership transferred at
+- textbox "Ownership transferred at":
+  - /placeholder: Timestamp recording when ownership was last transferred.
+  - text: 2026-09-05T12:00
+- paragraph: Timestamp recording when ownership was last transferred.
+- text: Tag count
+- spinbutton "Tag count": "0"
+- paragraph: Computed number of tags assigned to the entity.
+- text: Billing contact email
+- textbox "Billing contact email":
+  - /placeholder: Enter billing contact email
+  - text: consumer@example.test
+- paragraph: Primary contact email for invoicing and finance escalations.
+- text: Label
+- textbox "Label":
+  - /placeholder: Enter label
+  - text: Consumer label
+- paragraph: Human-readable display name rendered in primary surfaces.
+- text: Placeholder
+- textbox "Placeholder":
+  - /placeholder: Enter placeholder
+  - text: Consumer placeholder
+- paragraph: Hint copy surfaced in form fields when the label is empty.
+- text: Owner id
+- textbox "Owner id":
+  - /placeholder: Enter owner id
+  - text: consumer-owner-id
+- paragraph: Identifier of the owning principal scoped by owner_type.
+- text: Owner type
+- textbox "Owner type":
+  - /placeholder: Enter owner type
+  - text: Consumer owner type
+- paragraph: Categorical owner type sourced from the ownerTypes parameter.
+- button "Save"

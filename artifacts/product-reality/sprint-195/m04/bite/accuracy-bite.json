@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m04",
+  "builderSelfCertified": false,
+  "mutation": {
+    "path": "packages/viz-core/src/accuracy/echarts-index.ts",
+    "code": "OODS-V171",
+    "before": "evaluate: evaluateFlowMapNegativeStrength,",
+    "after": "evaluate: () => { void evaluateFlowMapNegativeStrength; return { evaluated: true }; },",
+    "sourceSha256Before": "1b6f91e6e9e0c43c2fc1e748dc995136135a4a481105b255065240293f59b268",
+    "sourceSha256Disabled": "e5998a4f5863cb4814f4b0616366c36d0818056e9af20f66c30c696a366f058f",
+    "invariant": "The offered rule list and evaluated count remain intact; only the negative-strength predicate is disabled."
+  },
+  "commands": [
+    {
+      "name": "disabled-build",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "log": "disabled-build.log"
+    },
+    {
+      "name": "disabled-census",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s190-viz-census.ts",
+        "--check"
+      ],
+      "exitCode": 1,
+      "log": "disabled-census.log"
+    },
+    {
+      "name": "restored-build",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "log": "restored-build.log"
+    },
+    {
+      "name": "restored-census",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s190-viz-census.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "restored-census.log"
+    }
+  ],
+  "restoredByteIdentically": true,
+  "status": "passed"
+}

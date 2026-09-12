@@ -1,0 +1,163 @@
+a3158282bba25713171d7216181bde28b69a80a1 8 8 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c scripts/product-reality/s193-runtime-cells.ts
+filename scripts/product-reality/s193-runtime-cells.ts
+	import { chromium, type Browser, type Page } from 'playwright';
+a3158282bba25713171d7216181bde28b69a80a1 12 12 4
+	import { handle as renderChart } from '../../packages/mcp-server/src/tools/viz.render.js';
+a3158282bba25713171d7216181bde28b69a80a1 13 13
+	import { handle as certifyChart } from '../../packages/mcp-server/src/tools/artifact.certify.js';
+a3158282bba25713171d7216181bde28b69a80a1 14 14
+	import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	import { runVizThemeProof } from './component-theme-proof.mjs';
+a3158282bba25713171d7216181bde28b69a80a1 126 126 1
+	async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser, layout?: 'dashboard'): Promise<RuntimeCell> {
+a3158282bba25713171d7216181bde28b69a80a1 135 135 3
+	    const request = layout ? { object, layout } : { object, context };
+a3158282bba25713171d7216181bde28b69a80a1 136 136
+	    await write(path.join(cellRoot, 'composition-request.json'), request);
+a3158282bba25713171d7216181bde28b69a80a1 137 137
+	    const composition = await compose(request);
+a3158282bba25713171d7216181bde28b69a80a1 217 217 45
+	    const chartNode = schemaNodes(schema).find(node => node.chart?.source === 'record-array');
+a3158282bba25713171d7216181bde28b69a80a1 218 218
+	    if (context === 'detail' && chartNode?.chart?.source === 'record-array') {
+a3158282bba25713171d7216181bde28b69a80a1 219 219
+	      await gate('chart-theme-scopes', async () => {
+a3158282bba25713171d7216181bde28b69a80a1 220 220
+	        const chart = chartNode.chart!;
+a3158282bba25713171d7216181bde28b69a80a1 221 221
+	        assert.equal(chart.source, 'record-array');
+a3158282bba25713171d7216181bde28b69a80a1 222 222
+	        if (chart.source !== 'record-array') throw new Error('Expected the declared record-array chart');
+a3158282bba25713171d7216181bde28b69a80a1 223 223
+	        const themedOutput = path.join(cellRoot, 'chart-themes');
+a3158282bba25713171d7216181bde28b69a80a1 224 224
+	        const cases = [];
+a3158282bba25713171d7216181bde28b69a80a1 225 225
+	        for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark', 'hc'] as const) {
+a3158282bba25713171d7216181bde28b69a80a1 226 226
+	          const id = `${brand}-${theme}`;
+a3158282bba25713171d7216181bde28b69a80a1 227 227
+	          const request = { schema, framework, profile: 'build' as const, options: { styling: 'tokens' as const, typescript: true, brand, theme } };
+a3158282bba25713171d7216181bde28b69a80a1 228 228
+	          const generated = await generate(request);
+a3158282bba25713171d7216181bde28b69a80a1 229 229
+	          await write(path.join(themedOutput, `${id}-generation.json`), { request, response: generated });
+a3158282bba25713171d7216181bde28b69a80a1 230 230
+	          assert.equal(generated.status, 'ok', JSON.stringify(generated.errors));
+a3158282bba25713171d7216181bde28b69a80a1 231 231
+	          const rows = workflowSampleRecords(schema)[0]![chart.dataField] as [Record<string, unknown>, ...Record<string, unknown>[]];
+a3158282bba25713171d7216181bde28b69a80a1 232 232
+	          const renderRequest = { chartType: chart.chartType, rows, encodings: chart.encodings, brand, theme,
+a3158282bba25713171d7216181bde28b69a80a1 233 233
+	            name: String(chartNode.props?.title ?? `${chart.chartType} chart`),
+a3158282bba25713171d7216181bde28b69a80a1 234 234
+	            ...(typeof chartNode.props?.description === 'string' ? { description: chartNode.props.description } : {}),
+a3158282bba25713171d7216181bde28b69a80a1 235 235
+	            output: { svg: true, width: 360, height: 200, includeNormalizedSpec: true } };
+a3158282bba25713171d7216181bde28b69a80a1 236 236
+	          const rendered = await renderChart(renderRequest);
+a3158282bba25713171d7216181bde28b69a80a1 237 237
+	          assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
+a3158282bba25713171d7216181bde28b69a80a1 238 238
+	          assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');
+a3158282bba25713171d7216181bde28b69a80a1 239 239
+	          const certification = await certifyChart({ spec: rendered.normalizedSpec!, brand, theme });
+a3158282bba25713171d7216181bde28b69a80a1 240 240
+	          await write(path.join(themedOutput, `${id}-certification.json`), { renderRequest, rendered, certification });
+a3158282bba25713171d7216181bde28b69a80a1 241 241
+	          assert.equal(certification.conformant, true, JSON.stringify(certification));
+a3158282bba25713171d7216181bde28b69a80a1 242 242
+	          cases.push({ id, brand, theme, svgCount: 1, expectedSvg: rendered.svg, accessibleName: chartNode.props?.title,
+a3158282bba25713171d7216181bde28b69a80a1 243 243
+	            selector: `[data-oods-component="${chartNode.component}"] svg`, mount: async (page: Page) => {
+a3158282bba25713171d7216181bde28b69a80a1 244 244
+	            const themedFiles = createConsumerFiles({ framework, source: generated.code, actions: generated.artifact!.actions,
+a3158282bba25713171d7216181bde28b69a80a1 245 245
+	              schemaName: `fresh-${object}-${context}`, model, mission: 's195-m06' });
+a3158282bba25713171d7216181bde28b69a80a1 246 246
+	            mountEntry(framework, themedFiles);
+a3158282bba25713171d7216181bde28b69a80a1 247 247
+	            themedFiles['index.html'] = themedFiles['index.html']!.replace('data-brand="A" data-theme="dark"', `data-brand="${brand}" data-theme="${theme}"`);
+a3158282bba25713171d7216181bde28b69a80a1 248 248
+	            for (const [name, content] of Object.entries(themedFiles)) await fs.writeFile(path.join(consumer!, name), content);
+a3158282bba25713171d7216181bde28b69a80a1 249 249
+	            await command(`chart-themes/${id}-build`, ['exec', '--', 'vite', 'build']);
+a3158282bba25713171d7216181bde28b69a80a1 250 250
+	            await withStaticServer(path.join(consumer!, 'dist'), async url => {
+a3158282bba25713171d7216181bde28b69a80a1 251 251
+	              await page.goto(url, { waitUntil: 'networkidle' });
+a3158282bba25713171d7216181bde28b69a80a1 252 252
+	              const target = page.locator(`[data-oods-component="${chartNode.component}"] svg`);
+a3158282bba25713171d7216181bde28b69a80a1 253 253
+	              if (!await target.isVisible()) for (const tab of await page.getByRole('tab').all()) { await tab.click(); if (await target.isVisible()) break; }
+a3158282bba25713171d7216181bde28b69a80a1 254 254
+	              await target.waitFor({ state: 'visible' });
+a3158282bba25713171d7216181bde28b69a80a1 255 255
+	            });
+a3158282bba25713171d7216181bde28b69a80a1 256 256
+	          } });
+a3158282bba25713171d7216181bde28b69a80a1 257 257
+	        }
+a3158282bba25713171d7216181bde28b69a80a1 258 258
+	        const report = await runVizThemeProof({ cases, output: themedOutput, chromium, mission: 's195-m06' });
+a3158282bba25713171d7216181bde28b69a80a1 259 259
+	        return { cells: report.selected, failed: report.failed, skipped: report.skipped, report: `${relative}/chart-themes/report.json`, reusedSweepTarballs: true };
+a3158282bba25713171d7216181bde28b69a80a1 260 260
+	      });
+a3158282bba25713171d7216181bde28b69a80a1 261 261
+	    }
+a3158282bba25713171d7216181bde28b69a80a1 282 282 1
+	export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string, layout?: 'dashboard'): Promise<RuntimeCell> {
+a3158282bba25713171d7216181bde28b69a80a1 284 284 1
+	  if (layout) args.push(layout);
+a3158282bba25713171d7216181bde28b69a80a1 331 331 1
+	export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false, dashboardObjects: readonly string[] = []) {
+a3158282bba25713171d7216181bde28b69a80a1 365 365 15
+	  // Layout variants share this sweep's immutable packages, revision and run id.
+a3158282bba25713171d7216181bde28b69a80a1 366 366
+	  // Keep them separate so they cannot inflate the canonical 154-cell health ratio.
+a3158282bba25713171d7216181bde28b69a80a1 367 367
+	  if (dashboardObjects.length) {
+a3158282bba25713171d7216181bde28b69a80a1 368 368
+	    const layoutOutput = path.join(output, 'layouts/dashboard');
+a3158282bba25713171d7216181bde28b69a80a1 369 369
+	    const rows: RuntimeCell[] = [];
+a3158282bba25713171d7216181bde28b69a80a1 370 370
+	    for (const object of dashboardObjects) for (const framework of FRAMEWORKS) {
+a3158282bba25713171d7216181bde28b69a80a1 371 371
+	      rows.push(await cellProcess(layoutOutput, output, object, 'detail', framework, head, ledger.runId, 'dashboard'));
+a3158282bba25713171d7216181bde28b69a80a1 372 372
+	    }
+a3158282bba25713171d7216181bde28b69a80a1 373 373
+	    const scoped = { ...ledger, rows, summary: summarize(rows), scope: { layout: 'dashboard', objects: dashboardObjects } };
+a3158282bba25713171d7216181bde28b69a80a1 374 374
+	    const expected = dashboardObjects.flatMap(object => FRAMEWORKS.map(framework => `${object}/detail/${framework}`));
+a3158282bba25713171d7216181bde28b69a80a1 375 375
+	    const issues = validateRuntimeLedger(scoped, false, expected);
+a3158282bba25713171d7216181bde28b69a80a1 376 376
+	    await write(path.join(layoutOutput, 'runtime-cells.v1.json'), scoped);
+a3158282bba25713171d7216181bde28b69a80a1 377 377
+	    await write(path.join(layoutOutput, 'validation.json'), { issues, reusedSweepTarballs: true });
+a3158282bba25713171d7216181bde28b69a80a1 378 378
+	    assert.deepEqual(issues, [], 'Dashboard layout cells must pass in the same package sweep');
+a3158282bba25713171d7216181bde28b69a80a1 379 379
+	  }
+a3158282bba25713171d7216181bde28b69a80a1 391 391 1
+	    const [, , , output, packages, object, context, framework, head, runId, layout] = process.argv;
+a3158282bba25713171d7216181bde28b69a80a1 393 393 1
+	    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser, layout as 'dashboard' | undefined); }
+a3158282bba25713171d7216181bde28b69a80a1 400 400 2
+	  const dashboardObjects = process.argv.find(value => value.startsWith('--dashboard-objects='))?.split('=')[1]?.split(',') ?? [];
+a3158282bba25713171d7216181bde28b69a80a1 401 401
+	  runRuntimeCells(output, objects, contexts, workflows, dashboardObjects).then(ledger => { if (validateRuntimeLedger(ledger, workflows).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,0 +1,69 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts (11 tests | 1 failed) 3452ms
+   ✓ s181 portable-runtime publish boundary > keeps the runtime component schema byte-identical to the planning producer output 2ms
+   × s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data 703ms
+     → expected { status: 'degraded', …(8) } to match object { status: 'degraded', …(4) }
+(18 matching properties omitted from actual)
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-taxonomy.v1.json is absent  495ms
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-classification.v1.json is absent  494ms
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-patterns.v1.json is absent  508ms
+   ✓ s181 portable-runtime publish boundary > s195 serves the same generated viz summary through the staged MCP adapter  660ms
+   ✓ s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist  460ms
+   ✓ s181 portable-runtime publish boundary > allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript 10ms
+   ✓ s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership 20ms
+   ✓ s181 portable-runtime publish boundary > B-19 keeps the runtime data schema out of generated.ts 2ms
+   ✓ s181 portable-runtime publish boundary > derives the adapter wire version from package.json and no longer stages planning files for fresh installs 98ms
+ ✓ test/contracts/viz-pattern-registry.s195.spec.ts (19 tests) 1419ms
+   ✓ the generated pattern registry retains exact source identity and public pixel evidence (s195 m03) > remeasures all supported scopes and every authoring-only rejection through the real handlers  872ms
+   ✓ the generated pattern registry retains exact source identity and public pixel evidence (s195 m03) > reproduces registry and documentation from frozen observations with --check  433ms
+ ✓ test/product-reality/health-viz.s195.spec.ts (28 tests) 366ms
+ ✓ test/contracts/viz-taxonomy.s195.spec.ts (21 tests) 315ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/portable-boundary.s181.spec.ts > s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data
+AssertionError: expected { status: 'degraded', …(8) } to match object { status: 'degraded', …(4) }
+(18 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -1,14 +1,14 @@
+  {
+    "productReality": {
+      "viz": {
+        "classified": 34,
+        "coreCells": 20,
+-       "coreSurfaceComplete": 11,
++       "coreSurfaceComplete": 13,
+        "families": 8,
+        "patterns": 21,
+-       "typedGaps": 9,
++       "typedGaps": 7,
+        "types": 13,
+      },
+    },
+    "registry": {
+      "components": 0,
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts:235:29
+    233|     expect(aliveAtResponse).toBe(true);
+    234|     expect(response.error).toBeUndefined();
+    235|     expect(response.result).toMatchObject({
+       |                             ^
+    236|       status: 'degraded',
+    237|       registry: { components: 0, traits: 0, objects: 0 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 78 passed (79)
+   Start at  15:58:19
+   Duration  7.01s (transform 418ms, setup 25ms, collect 913ms, tests 5.55s, environment 0ms, prepare 164ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/viz-pattern-registry.s195.spec.ts test/contracts/viz-taxonomy.s195.spec.ts test/product-reality/health-viz.s195.spec.ts test/contracts/portable-boundary.s181.spec.ts

@@ -26,6 +26,23 @@ traits:
         - written_off
       timezone: UTC
       allowNullUpdatedAt: true
+  - name: viz/MarkBar
+    parameters:
+      title: Invoice line item amounts
+      description: Line-item amounts in minor currency units; matching descriptions are summed.
+      chart:
+        chartType: bar
+        source: record-array
+        dataField: line_items
+        encodings:
+          x: {field: description, title: Line item}
+          y: {field: amount_minor, aggregate: sum, title: Amount (minor units)}
+        # Copied from domains/saas-billing/examples/stripe.json invoice.line_items.
+        sampleRows:
+          - description: Scale plan
+            quantity: 1
+            amount_minor: 284000
+            unit_amount_minor: 284000
 
 schema:
   invoice_id:

@@ -1,0 +1,641 @@
+{
+  "status": "ok",
+  "layout": "list",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "screen-list-9-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "search",
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    }
+                  },
+                  {
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:filters",
+                      "label": "filters",
+                      "confidence": 0.67,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "value": "",
+                          "label": "All states"
+                        },
+                        {
+                          "value": "active",
+                          "label": "active"
+                        },
+                        {
+                          "value": "deprecated",
+                          "label": "deprecated"
+                        },
+                        {
+                          "value": "private_beta",
+                          "label": "private beta"
+                        },
+                        {
+                          "value": "legacy",
+                          "label": "legacy"
+                        }
+                      ]
+                    },
+                    "collectionControl": "filter"
+                  },
+                  {
+                    "id": "list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "plan_name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "plan_id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "plan_name"
+                        }
+                      },
+                      {
+                        "id": "slot-items-6",
+                        "component": "OwnerBadge",
+                        "meta": {
+                          "intent": "slot:items",
+                          "label": "items"
+                        },
+                        "props": {
+                          "ownerIdField": "owner_id",
+                          "ownerTypeField": "owner_type"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-items-5-empty",
+                    "component": "Banner",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "plan_id",
+                  "labelField": "plan_name"
+                }
+              },
+              {
+                "id": "list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        }
+      }
+    ],
+    "objectSchema": {
+      "plan_code": {
+        "type": "string",
+        "required": true,
+        "description": "Provider specific identifier for the plan or price.",
+        "semanticType": "billing.plan.code"
+      },
+      "plan_name": {
+        "type": "string",
+        "required": true,
+        "description": "Human readable plan label rendered in list and detail contexts.",
+        "semanticType": "billing.plan.name"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": true,
+        "description": "Billing cadence name selected from supportedIntervals.",
+        "semanticType": "billing.plan.interval"
+      },
+      "interval_count": {
+        "type": "integer",
+        "required": false,
+        "description": "Multiplier for interval (ex: 12 with monthly => yearly cadence).",
+        "semanticType": "billing.plan.interval_count"
+      },
+      "amount_minor": {
+        "type": "integer",
+        "required": true,
+        "description": "Contract value expressed in minor currency units.",
+        "semanticType": "billing.plan.amount_minor"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency for the plan price.",
+        "semanticType": "billing.plan.currency"
+      },
+      "trial_period_days": {
+        "type": "integer",
+        "required": false,
+        "description": "Length of introductory trial period in days.",
+        "semanticType": "billing.plan.trial_period_days"
+      },
+      "collection_method": {
+        "type": "string",
+        "required": false,
+        "description": "How billing is collected (charge_automatically, send_invoice).",
+        "semanticType": "billing.plan.collection_method"
+      },
+      "billing_anchor_day": {
+        "type": "integer",
+        "required": false,
+        "description": "Day of month used to anchor renewals when prorating.",
+        "semanticType": "billing.plan.billing_anchor_day"
+      },
+      "pricing_model": {
+        "type": "string",
+        "required": false,
+        "description": "Price strategy (flat, per_unit, tiered, package).",
+        "semanticType": "billing.plan.pricing_model"
+      },
+      "meter_name": {
+        "type": "string",
+        "required": true,
+        "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+        "semanticType": "billing.usage.meter_name"
+      },
+      "included_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Quantity included in base plan before overages.",
+        "semanticType": "billing.usage.included_quantity"
+      },
+      "consumed_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Actual quantity consumed in the active period.",
+        "semanticType": "billing.usage.consumed_quantity"
+      },
+      "unit_label": {
+        "type": "string",
+        "required": true,
+        "description": "Label for display, defaults to the unit parameter.",
+        "semanticType": "billing.usage.unit_label"
+      },
+      "period_start": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window began.",
+        "semanticType": "billing.usage.period_start"
+      },
+      "period_end": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window ends.",
+        "semanticType": "billing.usage.period_end"
+      },
+      "rollover_strategy": {
+        "type": "string",
+        "required": false,
+        "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+        "semanticType": "billing.usage.rollover_strategy"
+      },
+      "overage_rate_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cost per additional unit expressed in minor currency units.",
+        "semanticType": "billing.usage.overage_rate_minor"
+      },
+      "projected_overage_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Forecasted overage spend derived from consumption trends.",
+        "semanticType": "billing.usage.projected_overage_minor"
+      },
+      "samples": {
+        "type": "UsageSample[]",
+        "required": false,
+        "description": "Rolling usage measurements for charts or anomaly detection.",
+        "semanticType": "billing.usage.samples"
+      },
+      "owner_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": true,
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "plan_id": {
+        "type": "string",
+        "required": true,
+        "description": "Stable identifier for the plan within the billing domain.",
+        "semanticType": "billing.plan.id"
+      },
+      "product_family": {
+        "type": "string",
+        "required": true,
+        "description": "High level product family grouping for analytics and reporting.",
+        "semanticType": "billing.plan.product_family"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Availability state of the plan (active, deprecated, private_beta).",
+        "enum": [
+          "active",
+          "deprecated",
+          "private_beta",
+          "legacy"
+        ],
+        "semanticType": "billing.plan.status"
+      },
+      "feature_matrix": {
+        "type": "FeatureDescriptor[]",
+        "required": false,
+        "description": "Array of feature descriptors listing entitlement tiers.",
+        "semanticType": "billing.plan.feature_matrix"
+      },
+      "add_on_ids": {
+        "type": "string[]",
+        "required": false,
+        "description": "Identifiers for add-ons commonly sold with this plan.",
+        "semanticType": "billing.plan.add_on_ids"
+      },
+      "upgrade_targets": {
+        "type": "string[]",
+        "required": false,
+        "description": "Plans presented as upgrade destinations.",
+        "semanticType": "billing.plan.upgrade_targets"
+      },
+      "downgrade_targets": {
+        "type": "string[]",
+        "required": false,
+        "description": "Plans that can be downgraded to from this plan.",
+        "semanticType": "billing.plan.downgrade_targets"
+      },
+      "notes": {
+        "type": "string",
+        "required": false,
+        "description": "Internal commentary for packaging or finance teams.",
+        "semanticType": "billing.plan.notes"
+      }
+    }
+  },
+  "schemaRef": "compose-88574991",
+  "schemaRefCreatedAt": "2026-09-11T22:14:57.516Z",
+  "schemaRefExpiresAt": "2026-09-11T22:44:57.516Z",
+  "selections": [
+    {
+      "slotName": "items",
+      "intent": "data-list",
+      "selectedComponent": "OwnerBadge",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "OwnerBadge was selected for slot \"items\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "OwnerBadge",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "search",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "SearchInput",
+          "confidence": 1,
+          "reason": "preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"search-input\" (rank 2); 1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"; position affinity: Input fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "DatePicker",
+          "confidence": 0.47,
+          "reason": "1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "filters",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "candidates": [
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.9,
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "StatusBadge",
+          "confidence": 0.52,
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "toolbar-actions",
+      "intent": "action-button",
+      "selectedComponent": "Button",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Button was selected for slot \"toolbar-actions\" because preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Button",
+          "confidence": 1,
+          "reason": "preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "DatePicker",
+          "confidence": 0.15,
+          "reason": "1 tag match(es); 1 category match(es); position affinity: DatePicker fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.15,
+          "reason": "1 tag match(es); 1 category match(es); position affinity: Input fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "pagination",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "candidates": [
+        {
+          "name": "PaginationBar",
+          "confidence": 1,
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Button",
+          "confidence": 0.75,
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.65,
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Plan' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    }
+  ],
+  "objectUsed": {
+    "name": "Plan",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingBillable",
+      "SaaSBillingMetered",
+      "structural/Ownerable"
+    ],
+    "fieldsComposed": 32,
+    "viewExtensionsApplied": {
+      "detail": 1,
+      "list": 1,
+      "card": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Plan list view",
+    "layoutDetected": "context-inferred: list (from context=\"list\")",
+    "slotCount": 5,
+    "nodeCount": 16,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Plan' has maturity 'beta' — composed output may change."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.88
+    }
+  }
+}

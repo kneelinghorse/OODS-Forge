@@ -1,0 +1,138 @@
+{
+  "request": {
+    "chartType": "treemap",
+    "hierarchy": {
+      "type": "nested",
+      "data": {
+        "name": "Total",
+        "value": 100,
+        "children": [
+          {
+            "name": "Alpha",
+            "value": 40
+          },
+          {
+            "name": "Beta",
+            "value": 35
+          },
+          {
+            "name": "Gamma",
+            "value": 25
+          }
+        ]
+      }
+    },
+    "name": "Revenue split",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "hc",
+    "brand": "A",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "error",
+    "spec": {},
+    "warnings": [],
+    "errors": [
+      {
+        "code": "OODS-V165",
+        "message": "SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "error"
+      }
+    ],
+    "output": {
+      "compact": true
+    }
+  },
+  "certification": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": false,
+    "accuracyRules": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "fail",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": false,
+      "contentHash": "ef0f6ede0ff6b03b8fcef43a92799dc023f528ac97a7a2a1cf7fc637a3ad9bbe"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 2,
+      "failing": 0
+    },
+    "notes": [
+      "MarkTreemap is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "The first ECharts render failed (HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.); renderHash is absent, HC contrast remains forced-colors exempt, and stable is false."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "none",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  },
+  "paints": []
+}

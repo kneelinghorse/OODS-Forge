@@ -5,10 +5,14 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Browser, Page } from 'playwright';
+import { chromium, type Browser, type Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { handle as listObjects } from '../../packages/mcp-server/src/tools/object.list.js';
+import { handle as renderChart } from '../../packages/mcp-server/src/tools/viz.render.js';
+import { handle as certifyChart } from '../../packages/mcp-server/src/tools/artifact.certify.js';
+import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
+import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
@@ -119,7 +123,7 @@ async function contextProof(page: Page, url: string, context: Context, schema: U
   return { declaredStates: nodes.flatMap(node => node.state ? [node.state] : []), seeded: true };
 }
 
-async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser): Promise<RuntimeCell> {
+async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser, layout?: 'dashboard'): Promise<RuntimeCell> {
   const relative = `cells/${object}/${context}/${framework}`;
   const cellRoot = path.join(output, relative);
   const row: RuntimeCell = { object, context, framework, head, runId, status: 'fail', gates: [], artifactHash: null, components: [], report: `${relative}/receipt.json` };
@@ -128,7 +132,9 @@ async function runCell(output: string, object: string, context: Context, framewo
   const gate = async (name: string, action: () => Promise<unknown>) => { active = name; const detail = await action(); row.gates.push({ name, status: 'pass', detail }); return detail; };
   try {
     await fs.mkdir(cellRoot, { recursive: true });
-    const composition = await compose({ object, context });
+    const request = layout ? { object, layout } : { object, context };
+    await write(path.join(cellRoot, 'composition-request.json'), request);
+    const composition = await compose(request);
     await write(path.join(cellRoot, 'composition.json'), composition);
     assert.equal(composition.status, 'ok');
     const schema = composition.schema;
@@ -208,6 +214,51 @@ async function runCell(output: string, object: string, context: Context, framewo
         assert.deepEqual(errors, []);
       } finally { await page.close(); }
     });
+    const chartNode = schemaNodes(schema).find(node => node.chart?.source === 'record-array');
+    if (context === 'detail' && chartNode?.chart?.source === 'record-array') {
+      await gate('chart-theme-scopes', async () => {
+        const chart = chartNode.chart!;
+        assert.equal(chart.source, 'record-array');
+        if (chart.source !== 'record-array') throw new Error('Expected the declared record-array chart');
+        const themedOutput = path.join(cellRoot, 'chart-themes');
+        const cases = [];
+        for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark', 'hc'] as const) {
+          const id = `${brand}-${theme}`;
+          const request = { schema, framework, profile: 'build' as const, options: { styling: 'tokens' as const, typescript: true, brand, theme } };
+          const generated = await generate(request);
+          await write(path.join(themedOutput, `${id}-generation.json`), { request, response: generated });
+          assert.equal(generated.status, 'ok', JSON.stringify(generated.errors));
+          const rows = workflowSampleRecords(schema)[0]![chart.dataField] as [Record<string, unknown>, ...Record<string, unknown>[]];
+          const renderRequest = { chartType: chart.chartType, rows, encodings: chart.encodings, brand, theme,
+            name: String(chartNode.props?.title ?? `${chart.chartType} chart`),
+            ...(typeof chartNode.props?.description === 'string' ? { description: chartNode.props.description } : {}),
+            output: { svg: true, width: 360, height: 200, includeNormalizedSpec: true } };
+          const rendered = await renderChart(renderRequest);
+          assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
+          assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');
+          const certification = await certifyChart({ spec: rendered.normalizedSpec!, brand, theme });
+          await write(path.join(themedOutput, `${id}-certification.json`), { renderRequest, rendered, certification });
+          assert.equal(certification.conformant, true, JSON.stringify(certification));
+          cases.push({ id, brand, theme, svgCount: 1, expectedSvg: rendered.svg, accessibleName: chartNode.props?.title,
+            selector: `[data-oods-component="${chartNode.component}"] svg`, mount: async (page: Page) => {
+            const themedFiles = createConsumerFiles({ framework, source: generated.code, actions: generated.artifact!.actions,
+              schemaName: `fresh-${object}-${context}`, model, mission: 's195-m06' });
+            mountEntry(framework, themedFiles);
+            themedFiles['index.html'] = themedFiles['index.html']!.replace('data-brand="A" data-theme="dark"', `data-brand="${brand}" data-theme="${theme}"`);
+            for (const [name, content] of Object.entries(themedFiles)) await fs.writeFile(path.join(consumer!, name), content);
+            await command(`chart-themes/${id}-build`, ['exec', '--', 'vite', 'build']);
+            await withStaticServer(path.join(consumer!, 'dist'), async url => {
+              await page.goto(url, { waitUntil: 'networkidle' });
+              const target = page.locator(`[data-oods-component="${chartNode.component}"] svg`);
+              if (!await target.isVisible()) for (const tab of await page.getByRole('tab').all()) { await tab.click(); if (await target.isVisible()) break; }
+              await target.waitFor({ state: 'visible' });
+            });
+          } });
+        }
+        const report = await runVizThemeProof({ cases, output: themedOutput, chromium, mission: 's195-m06' });
+        return { cells: report.selected, failed: report.failed, skipped: report.skipped, report: `${relative}/chart-themes/report.json`, reusedSweepTarballs: true };
+      });
+    }
     row.status = 'pass';
   } catch (error) {
     row.gates.push({ name: active, status: 'fail', reason: error instanceof Error ? error.message : String(error) });
@@ -228,8 +279,9 @@ async function submittedPackages(output: string): Promise<PackedPackageRecord[]>
   });
 }
 
-export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string): Promise<RuntimeCell> {
+export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string, layout?: 'dashboard'): Promise<RuntimeCell> {
   const args = ['--import', 'tsx', fileURLToPath(import.meta.url), context === 'workflow' ? '--workflow' : '--cell', output, packages, object, context, framework, head, runId];
+  if (layout) args.push(layout);
   const relative = `cells/${object}/${context}/${framework}`;
   const log: string[] = [];
   const exitCode = await new Promise<number>((resolve, reject) => {
@@ -276,7 +328,7 @@ async function emitterBite(output: string, ledger: RuntimeLedger) {
   await write(path.join(output, 'emitter-bite.json'), { source: 'packages/mcp-server/src/codegen/react-emitter.ts', operation: 'Omit the emitted JSX screen while retaining the original schema', beforeHash: hash(original), mutatedHash: hash(mutated), restoredHash: hash(await fs.readFile(emitter)), red, ledgerIssues: issues, redSpecExitCode: redSpec.exitCode, restored, sourceRestoredByteIdentical: true, reusedSweepTarballs: true });
 }
 
-export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false) {
+export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false, dashboardObjects: readonly string[] = []) {
   await fs.mkdir(output, { recursive: true });
   assert.deepEqual((await listObjects({})).objects.map(object => object.name).sort(), [...OBJECTS]);
   const head = commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim();
@@ -310,6 +362,21 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
   ledger.rows.sort((a, b) => identity(a).localeCompare(identity(b)));
   ledger.summary = summarize(ledger.rows);
   await write(path.join(output, 'runtime-cells.v1.json'), ledger);
+  // Layout variants share this sweep's immutable packages, revision and run id.
+  // Keep them separate so they cannot inflate the canonical 154-cell health ratio.
+  if (dashboardObjects.length) {
+    const layoutOutput = path.join(output, 'layouts/dashboard');
+    const rows: RuntimeCell[] = [];
+    for (const object of dashboardObjects) for (const framework of FRAMEWORKS) {
+      rows.push(await cellProcess(layoutOutput, output, object, 'detail', framework, head, ledger.runId, 'dashboard'));
+    }
+    const scoped = { ...ledger, rows, summary: summarize(rows), scope: { layout: 'dashboard', objects: dashboardObjects } };
+    const expected = dashboardObjects.flatMap(object => FRAMEWORKS.map(framework => `${object}/detail/${framework}`));
+    const issues = validateRuntimeLedger(scoped, false, expected);
+    await write(path.join(layoutOutput, 'runtime-cells.v1.json'), scoped);
+    await write(path.join(layoutOutput, 'validation.json'), { issues, reusedSweepTarballs: true });
+    assert.deepEqual(issues, [], 'Dashboard layout cells must pass in the same package sweep');
+  }
   if (validateRuntimeLedger(ledger, workflows).length === 0) await emitterBite(output, ledger);
   await write(path.join(output, 'validation.json'), { issues: validateRuntimeLedger(ledger, workflows) });
   return ledger;
@@ -321,15 +388,16 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const { runWorkflowCells } = await import('./s193-workflow-cells.js');
     await runWorkflowCells(output!, object!, head!, runId!, await submittedPackages(packages!));
   } else if (process.argv[2] === '--cell') {
-    const [, , , output, packages, object, context, framework, head, runId] = process.argv;
+    const [, , , output, packages, object, context, framework, head, runId, layout] = process.argv;
     const browser = await launchProofBrowser();
-    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser); }
+    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser, layout as 'dashboard' | undefined); }
     finally { await browser.close(); }
   } else {
   const output = path.resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-193/m02');
   const objects = process.env.OODS_RUNTIME_OBJECTS?.split(',') ?? OBJECTS;
   const contexts = (process.env.OODS_RUNTIME_CONTEXTS?.split(',') ?? CONTEXTS) as Context[];
   const workflows = process.argv.includes('--workflows');
-  runRuntimeCells(output, objects, contexts, workflows).then(ledger => { if (validateRuntimeLedger(ledger, workflows).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
+  const dashboardObjects = process.argv.find(value => value.startsWith('--dashboard-objects='))?.split('=')[1]?.split(',') ?? [];
+  runRuntimeCells(output, objects, contexts, workflows, dashboardObjects).then(ledger => { if (validateRuntimeLedger(ledger, workflows).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
   }
 }

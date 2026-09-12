@@ -1,0 +1,166 @@
+a3158282bba25713171d7216181bde28b69a80a1 1 1 78
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+filename scripts/product-reality/s195-viz-mutation-bites.mjs
+	#!/usr/bin/env node
+a3158282bba25713171d7216181bde28b69a80a1 2 2
+	/** Three bounded physical mutations, adapted from the m04 accuracy bite. */
+a3158282bba25713171d7216181bde28b69a80a1 3 3
+	import assert from 'node:assert/strict';
+a3158282bba25713171d7216181bde28b69a80a1 4 4
+	import { createHash } from 'node:crypto';
+a3158282bba25713171d7216181bde28b69a80a1 5 5
+	import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+a3158282bba25713171d7216181bde28b69a80a1 6 6
+	import { dirname, resolve } from 'node:path';
+a3158282bba25713171d7216181bde28b69a80a1 7 7
+	import { spawnSync } from 'node:child_process';
+a3158282bba25713171d7216181bde28b69a80a1 8 8
+	import { fileURLToPath } from 'node:url';
+a3158282bba25713171d7216181bde28b69a80a1 9 9
+	
+a3158282bba25713171d7216181bde28b69a80a1 10 10
+	assert(process.argv.includes('--execute'), 'Use --execute only during the agreed exclusive source/build window');
+a3158282bba25713171d7216181bde28b69a80a1 11 11
+	const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
+a3158282bba25713171d7216181bde28b69a80a1 12 12
+	const output = resolve(process.env.OODS_VIZ_BITES_OUTPUT ?? resolve(root, 'artifacts/product-reality/sprint-195/m06/bites'));
+a3158282bba25713171d7216181bde28b69a80a1 13 13
+	const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+a3158282bba25713171d7216181bde28b69a80a1 14 14
+	const records = [];
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	function run(record, name, args, extraEnv = {}) {
+a3158282bba25713171d7216181bde28b69a80a1 16 16
+	  const result = spawnSync('pnpm', args, { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, env: { ...process.env, ...extraEnv } });
+a3158282bba25713171d7216181bde28b69a80a1 17 17
+	  const text = `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ?? ''}`;
+a3158282bba25713171d7216181bde28b69a80a1 18 18
+	  const log = `${record.id}/${name}.log`;
+a3158282bba25713171d7216181bde28b69a80a1 19 19
+	  writeFileSync(resolve(output, log), text);
+a3158282bba25713171d7216181bde28b69a80a1 20 20
+	  record.commands.push({ command: ['pnpm', ...args], exitCode: result.status, log });
+a3158282bba25713171d7216181bde28b69a80a1 21 21
+	  return { exitCode: result.status, text };
+a3158282bba25713171d7216181bde28b69a80a1 22 22
+	}
+a3158282bba25713171d7216181bde28b69a80a1 23 23
+	async function bite(id, relative, mutate, exercise, restoreChecks) {
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	  const file = resolve(root, relative), before = readFileSync(file, 'utf8'), disabled = mutate(before);
+a3158282bba25713171d7216181bde28b69a80a1 25 25
+	  assert.notEqual(disabled, before, `${id}: mutation did not change source`);
+a3158282bba25713171d7216181bde28b69a80a1 26 26
+	  mkdirSync(resolve(output, id), { recursive: true });
+a3158282bba25713171d7216181bde28b69a80a1 27 27
+	  const record = { id, path: relative, beforeSha256: hash(before), disabledSha256: hash(disabled), commands: [], restoredByteIdentically: false };
+a3158282bba25713171d7216181bde28b69a80a1 28 28
+	  let failure;
+a3158282bba25713171d7216181bde28b69a80a1 29 29
+	  try { writeFileSync(file, disabled); await exercise(record); }
+a3158282bba25713171d7216181bde28b69a80a1 30 30
+	  catch (error) { failure = error; record.failure = String(error); }
+a3158282bba25713171d7216181bde28b69a80a1 31 31
+	  finally {
+a3158282bba25713171d7216181bde28b69a80a1 32 32
+	    assert.equal(readFileSync(file, 'utf8'), disabled, `${id}: unrelated source edit during the exclusive window; manual reconciliation required`);
+a3158282bba25713171d7216181bde28b69a80a1 33 33
+	    writeFileSync(file, before);
+a3158282bba25713171d7216181bde28b69a80a1 34 34
+	    record.restoredByteIdentically = readFileSync(file, 'utf8') === before;
+a3158282bba25713171d7216181bde28b69a80a1 35 35
+	    try { await restoreChecks(record); } catch (error) { failure ??= error; record.restoreFailure = String(error); }
+a3158282bba25713171d7216181bde28b69a80a1 36 36
+	    record.status = !failure && record.restoredByteIdentically ? 'passed' : 'failed';
+a3158282bba25713171d7216181bde28b69a80a1 37 37
+	    records.push(record);
+a3158282bba25713171d7216181bde28b69a80a1 38 38
+	    writeFileSync(resolve(output, 'bites.json'), JSON.stringify({ schemaVersion: 1, missionId: 's195-m06', builderSelfCertified: false, records }, null, 2) + '\n');
+a3158282bba25713171d7216181bde28b69a80a1 39 39
+	  }
+a3158282bba25713171d7216181bde28b69a80a1 40 40
+	  if (failure) throw failure;
+a3158282bba25713171d7216181bde28b69a80a1 41 41
+	}
+a3158282bba25713171d7216181bde28b69a80a1 42 42
+	const census = ['exec', 'tsx', 'scripts/product-reality/s190-viz-census.ts', '--check'];
+a3158282bba25713171d7216181bde28b69a80a1 43 43
+	const build = ['--filter', '@oods/viz-core', 'run', 'build'];
+a3158282bba25713171d7216181bde28b69a80a1 44 44
+	const registryContract = ['--filter', '@oods/mcp-server', 'exec', 'vitest', 'run', 'test/contracts/viz-recipes.s190.spec.ts'];
+a3158282bba25713171d7216181bde28b69a80a1 45 45
+	const patternContract = ['--filter', '@oods/mcp-server', 'exec', 'vitest', 'run', 'test/contracts/viz-pattern-registry.s195.spec.ts'];
+a3158282bba25713171d7216181bde28b69a80a1 46 46
+	await bite('palette', 'packages/viz-core/src/adapters/vega-lite-adapter.ts', before => {
+a3158282bba25713171d7216181bde28b69a80a1 47 47
+	  const original = 'const categoricalPalette = resolveCategoricalPalette(spec, scope);';
+a3158282bba25713171d7216181bde28b69a80a1 48 48
+	  assert.equal(before.split(original).length, 2, 'Expected one real categorical bake');
+a3158282bba25713171d7216181bde28b69a80a1 49 49
+	  return before.replace(original, 'const categoricalPalette: readonly string[] = []; void resolveCategoricalPalette;');
+a3158282bba25713171d7216181bde28b69a80a1 50 50
+	}, async record => {
+a3158282bba25713171d7216181bde28b69a80a1 51 51
+	  assert.equal(run(record, 'disabled-build', build).exitCode, 0);
+a3158282bba25713171d7216181bde28b69a80a1 52 52
+	  assert.equal(run(record, 'disabled-contrast', ['exec', 'tsx', 'scripts/product-reality/s195-viz-bite-probe.ts', '--expect-fail'], { OODS_VIZ_BITE_PROBE_OUTPUT: resolve(output, 'palette/disabled-proof.json') }).exitCode, 0, 'The real certify contrast pillar must fail');
+a3158282bba25713171d7216181bde28b69a80a1 53 53
+	  const red = run(record, 'disabled-census', census);
+a3158282bba25713171d7216181bde28b69a80a1 54 54
+	  assert.notEqual(red.exitCode, 0, 'Missing palette bake must make the full live census red');
+a3158282bba25713171d7216181bde28b69a80a1 55 55
+	  assert.match(red.text, /Measured viz registry differs from canonical source/);
+a3158282bba25713171d7216181bde28b69a80a1 56 56
+	}, async record => {
+a3158282bba25713171d7216181bde28b69a80a1 57 57
+	  assert.equal(run(record, 'restored-build', build).exitCode, 0);
+a3158282bba25713171d7216181bde28b69a80a1 58 58
+	  assert.equal(run(record, 'restored-contrast', ['exec', 'tsx', 'scripts/product-reality/s195-viz-bite-probe.ts', '--expect-pass'], { OODS_VIZ_BITE_PROBE_OUTPUT: resolve(output, 'palette/restored-proof.json') }).exitCode, 0);
+a3158282bba25713171d7216181bde28b69a80a1 59 59
+	  assert.equal(run(record, 'restored-census', census).exitCode, 0);
+a3158282bba25713171d7216181bde28b69a80a1 60 60
+	});
+a3158282bba25713171d7216181bde28b69a80a1 61 61
+	if (!process.argv.includes('--palette-only')) {
+a3158282bba25713171d7216181bde28b69a80a1 62 62
+	await bite('registry', 'packages/viz-core/src/registry/viz-recipes.v1.json', before => {
+a3158282bba25713171d7216181bde28b69a80a1 63 63
+	  const rows = JSON.parse(before); assert.equal(rows.length, 13); assert.equal(rows[0].publicSvg, true);
+a3158282bba25713171d7216181bde28b69a80a1 64 64
+	  rows[0].publicSvg = false;
+a3158282bba25713171d7216181bde28b69a80a1 65 65
+	  return JSON.stringify(rows, null, 2) + '\n';
+a3158282bba25713171d7216181bde28b69a80a1 66 66
+	}, async record => {
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	  const red = run(record, 'disabled-contract', registryContract);
+a3158282bba25713171d7216181bde28b69a80a1 68 68
+	  assert.notEqual(red.exitCode, 0); assert.match(red.text, /the exported registry equals every live census cell/);
+a3158282bba25713171d7216181bde28b69a80a1 69 69
+	}, async record => { assert.equal(run(record, 'restored-contract', registryContract).exitCode, 0); });
+a3158282bba25713171d7216181bde28b69a80a1 70 70
+	const sources = JSON.parse(readFileSync(resolve(root, 'packages/viz-core/src/registry/viz-patterns.v1.json'), 'utf8'));
+a3158282bba25713171d7216181bde28b69a80a1 71 71
+	const source = sources.find(row => row.id === 'pattern:viz:simple-bar');
+a3158282bba25713171d7216181bde28b69a80a1 72 72
+	assert(source?.specPath, 'Exact authored pattern must exist');
+a3158282bba25713171d7216181bde28b69a80a1 73 73
+	await bite('pattern-sha', source.specPath, before => before + '\n', async record => {
+a3158282bba25713171d7216181bde28b69a80a1 74 74
+	  const red = run(record, 'disabled-contract', patternContract);
+a3158282bba25713171d7216181bde28b69a80a1 75 75
+	  assert.notEqual(red.exitCode, 0); assert.match(red.text, /bundled source SHA is stale|specSha256|source hashes/);
+a3158282bba25713171d7216181bde28b69a80a1 76 76
+	}, async record => { assert.equal(run(record, 'restored-contract', patternContract).exitCode, 0); });
+a3158282bba25713171d7216181bde28b69a80a1 77 77
+	}
+a3158282bba25713171d7216181bde28b69a80a1 78 78
+	console.log(JSON.stringify({ bites: records.length, passed: records.filter(record => record.status === 'passed').length, restored: records.every(record => record.restoredByteIdentically) }));

@@ -1,0 +1,286 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ✓ src/tools/dashboard.render.fidelity.test.ts (17 tests) 737ms
+   ✓ dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative)  516ms
+ ❯ src/tools/viz.render.fidelity.test.ts (7 tests | 3 failed) 94ms
+   ✓ viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 44ms
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 7ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   ✓ viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 11ms
+   × viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 3ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+   ✓ viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 10ms
+   ✓ viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 14ms
+   × viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 4ms
+     → Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1` mismatched
+ ✓ src/tools/viz.render.geo-fidelity.test.ts (6 tests) 10ms
+ ❯ src/tools/viz.render.network-fidelity.test.ts (10 tests | 5 failed) 25ms
+   × viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 11ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > treemap: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 3ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > sunburst: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > sankey: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 3ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > force_graph: same input -> byte-identical echartsSpec (determinism gate) 1ms
+   × viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1ms
+     → Snapshot `viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1` mismatched
+   ✓ viz.render network/hierarchy render-fidelity goldens > chord: same input -> byte-identical echartsSpec (determinism gate) 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -83,11 +83,11 @@
+          "range": [
+            "#416CD9",
+            "#3E44BE",
+            "#279669",
+            "#B58525",
+-           "#CA4948",
++           "#CA4949",
+            "#993B00",
+          ],
+        },
+        "title": "Region",
+        "type": "nominal",
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 1` mismatched
+
+- Expected
++ Received
+
+@@ -83,11 +83,11 @@
+          "range": [
+            "#416CD9",
+            "#3E44BE",
+            "#279669",
+            "#B58525",
+-           "#CA4948",
++           "#CA4949",
+            "#993B00",
+          ],
+        },
+        "title": "Region",
+        "type": "nominal",
+
+ ❯ src/tools/viz.render.fidelity.test.ts:69:20
+     67|       // Golden: lock the pristine handler payload. Snapshot BEFORE re…
+     68|       // the golden reflects the emitted spec, not vega's runtime-muta…
+     69|       expect(spec).toMatchSnapshot();
+       |                    ^
+     70| 
+     71|       // Renderable: the real renderer pipeline actually draws the dat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/tools/viz.render.fidelity.test.ts > viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary
+Error: Snapshot `viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1` mismatched
+
+- Expected
++ Received
+
+@@ -86,11 +86,11 @@
+            "range": [
+              "#416CD9",
+              "#3E44BE",
+              "#279669",
+              "#B58525",
+-             "#CA4948",
++             "#CA4949",
+              "#993B00",
+            ],
+            "type": "band",
+          },
+          "title": "Region",
+
+ ❯ src/tools/viz.render.fidelity.test.ts:123:70
+    121|     // change surfaces as a snapshot diff at the render boundary (the …
+    122|     // are all explicit chartType; this is the suggest-mode fidelity c…
+    123|     expect({ chartType: out.chartType, mark: out.meta?.mark, spec }).t…
+       |                                                                      ^
+    124| 
+    125|     // Renderable: the recommended chart compiles, parses, and draws r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(181, 133, 37)",
+-     "rgb(202, 73, 72)",
++     "rgb(202, 73, 73)",
+      "rgb(153, 59, 0)",
+    ],
+    "series": [
+      {
+        "breadcrumb": {
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(181, 133, 37)",
+-     "rgb(202, 73, 72)",
++     "rgb(202, 73, 73)",
+      "rgb(153, 59, 0)",
+    ],
+    "series": [
+      {
+        "data": [
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(181, 133, 37)",
+-     "rgb(202, 73, 72)",
++     "rgb(202, 73, 73)",
+      "rgb(153, 59, 0)",
+    ],
+    "series": [
+      {
+        "data": [
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(181, 133, 37)",
+-     "rgb(202, 73, 72)",
++     "rgb(202, 73, 73)",
+      "rgb(153, 59, 0)",
+    ],
+    "legend": {
+      "data": [
+        "backend",
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/tools/viz.render.network-fidelity.test.ts > viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden
+Error: Snapshot `viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -7,11 +7,11 @@
+    "color": [
+      "rgb(65, 108, 217)",
+      "rgb(62, 68, 190)",
+      "rgb(39, 150, 105)",
+      "rgb(181, 133, 37)",
+-     "rgb(202, 73, 72)",
++     "rgb(202, 73, 73)",
+      "rgb(153, 59, 0)",
+    ],
+    "series": [
+      {
+        "clockwise": true,
+
+ ❯ src/tools/viz.render.network-fidelity.test.ts:78:31
+     76|       // The renderable payload is the ECharts option; pin it (specRef…
+     77|       // per-call unique, so snapshot only the payload).
+     78|       expect(out.echartsSpec).toMatchSnapshot();
+       |                               ^
+     79|     });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+  Snapshots  8 failed
+ Test Files  2 failed | 2 passed (4)
+      Tests  8 failed | 32 passed (40)
+   Start at  16:35:29
+   Duration  2.90s (transform 364ms, setup 21ms, collect 1.40s, tests 865ms, environment 0ms, prepare 151ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/viz.render.fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/dashboard.render.fidelity.test.ts

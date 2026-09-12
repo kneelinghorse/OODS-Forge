@@ -95,7 +95,6 @@ const CODE_ALIASES: Record<string, string> = {
 };
 
 const APPLY_CAPABLE_TOOLS: ReadonlySet<ToolName> = new Set<ToolName>([
-  'reviewKit.create',
   'brand.apply',
   'billing.reviewKit',
   'billing.switchFixtures',
@@ -524,10 +523,7 @@ const SRStatus = styled.div`
 
 const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   'a11y.scan': 'Run accessibility scan diagnostics (read-only).',
-  'purity.audit': 'Run purity guard audit against tokens usage.',
-  'vrt.run': 'Trigger visual regression summary capture.',
   'diag.snapshot': 'Collect project diagnostics snapshot.',
-  'reviewKit.create': 'Generate review kit artifacts (write-capable).',
   'brand.apply': 'Preview and apply brand palette updates via alias or patch strategies.',
   'billing.reviewKit': 'Generate billing review kit bundles across provider fixtures.',
   'billing.switchFixtures': 'Preview and apply billing fixture switches for Storybook contexts.',
@@ -570,17 +566,8 @@ function buildDescriptor(tool: ToolName): ToolDescriptor {
     case 'a11y.scan':
       label = 'Accessibility Scan';
       break;
-    case 'purity.audit':
-      label = 'Purity Audit';
-      break;
-    case 'vrt.run':
-      label = 'Visual Regression';
-      break;
     case 'diag.snapshot':
       label = 'Diagnostics Snapshot';
-      break;
-    case 'reviewKit.create':
-      label = 'Review Kit';
       break;
     case 'billing.reviewKit':
       label = 'Billing Review Kit';

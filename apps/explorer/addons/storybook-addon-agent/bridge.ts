@@ -84,10 +84,7 @@ export async function fetchToolNames(): Promise<ToolName[]> {
   // Narrow down to known tools only
   const tools = data.tools.filter((tool): tool is ToolName =>
     tool === 'a11y.scan' ||
-    tool === 'purity.audit' ||
-    tool === 'vrt.run' ||
     tool === 'diag.snapshot' ||
-    tool === 'reviewKit.create' ||
     tool === 'brand.apply' ||
     tool === 'billing.reviewKit' ||
     tool === 'billing.switchFixtures'

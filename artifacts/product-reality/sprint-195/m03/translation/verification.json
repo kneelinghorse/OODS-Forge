@@ -1,0 +1,70 @@
+{
+  "mission": "s195-m03",
+  "builderSelfCertified": false,
+  "scope": "Pure authored-pattern translation, generated package-owned source bundle and focused verification; public handler/render census belongs to sibling slices.",
+  "sourceRows": 21,
+  "translationStatus": {
+    "renderable": 8,
+    "authoring-only": 13
+  },
+  "sourceHashes": {
+    "packages/viz-core/src/patterns/translate-pattern.ts": "2cd9cc77698b9b764184df09025ea890fc599ee85c9a5ea6fa936b90a32010ff",
+    "packages/viz-core/src/patterns/translate-pattern.spec.ts": "31ec3de3dd591be10d56b529371d243fc4db570373211baf68c10086085bf8a4",
+    "packages/viz-core/src/patterns/viz-pattern-sources.v1.json": "8738dba582d82d80a386952af6d62a1e85f762d8ccff4bc8e3822e44ab50a37b",
+    "packages/viz-core/test/pattern-sources.spec.ts": "36886c72b660a17561e61b46428c9a174d4b4039da633e807e3a096cc753381f",
+    "scripts/product-reality/s195-pattern-sources.ts": "83140167dab01fa023d78d629c34c7add9b006edd841d3eade8cbd2e1b82740a"
+  },
+  "checks": [
+    {
+      "command": "pnpm --filter @oods/viz-core exec vitest run src/patterns/translate-pattern.spec.ts test/pattern-sources.spec.ts --coverage.enabled=false",
+      "log": "translation-tests.log",
+      "exitCode": 0,
+      "files": 2,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/viz-core run typecheck",
+      "log": "typecheck-final.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-pattern-sources.ts --check",
+      "log": "generator-check.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsc --noEmit --strict --module ESNext --moduleResolution bundler --target ES2022 --resolveJsonModule --esModuleInterop --skipLibCheck scripts/product-reality/s195-pattern-sources.ts",
+      "log": "generator-typecheck.log",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/viz-core run build",
+      "log": "viz-core-build.log",
+      "exitCode": 0
+    },
+    {
+      "command": "Node ESM import of built package from a temporary working directory with authored-source read guard; enumerate21sources, translate all, apply8presentations",
+      "log": "package-runtime.log",
+      "exitCode": 0,
+      "sourceFileReads": 0
+    }
+  ],
+  "retainedIntermediateFailures": [
+    {
+      "log": "translator-tests-attempt-1.log",
+      "reason": "A synthetic point-selection fixture omitted required fields; fixed the test fixture, no production relaxation."
+    },
+    {
+      "log": "typecheck.log",
+      "reason": "Concurrent registry validator had narrowing errors; its owning agent fixed them before the coordinated build and final successful typecheck."
+    }
+  ],
+  "notes": [
+    "No full-suite capture or critic executed.",
+    "Coverage collection disabled for targeted unit runs; no skipped tests.",
+    "One coordinated viz-core dist rebuild completed; handler/census agents notified before and after.",
+    "No CMOS mutations or commits performed by this slice."
+  ]
+}

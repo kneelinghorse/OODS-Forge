@@ -1,0 +1,118 @@
+{
+  "mission": "s195-m01",
+  "builderSelfCertified": false,
+  "baseCommit": "c36eadc5e3fd03dfea8d960b86ca11f4653e170e",
+  "gateSourceSha256": "e2a93b8c523cd90b1042d8251c5a2bd034f0539d1f992a93d8258e142d6a2299",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "packages/mcp-adapter/test-s55-m02.js"
+      ],
+      "exitCode": 0,
+      "log": "adapter-registration.log",
+      "testsPassed": 19
+    },
+    {
+      "command": [
+        "node",
+        "packages/mcp-adapter/test-s55-m04.js"
+      ],
+      "exitCode": 0,
+      "log": "adapter-annotations.log",
+      "testsPassed": 17
+    },
+    {
+      "command": [
+        "node",
+        "packages/mcp-bridge/test-s75-m09.js"
+      ],
+      "exitCode": 0,
+      "log": "bridge-surface.log",
+      "testsPassed": 3
+    },
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--project",
+        "core",
+        "tests/mcp/agent-panel-tool-surface.test.ts",
+        "tests/mcp/bridge-policy-and-tool-names.test.ts",
+        "tests/verification/how-forge-works.contract.test.ts"
+      ],
+      "exitCode": 0,
+      "log": "focused-tests.log",
+      "testsPassed": 16
+    },
+    {
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "exitCode": 0,
+      "log": "server-typecheck.log",
+      "testsPassed": null
+    },
+    {
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/contracts/tool-truth.s193.spec.ts"
+      ],
+      "exitCode": 0,
+      "testsPassed": 11,
+      "result": "11/11 pass; current ledger reproduces byte-for-byte at its recorded head; executed 15:29:19 local as tool output."
+    }
+  ],
+  "bite": {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "test/contracts/doc-retirement-gate.spec.ts"
+    ],
+    "scratchPath": "tests/s195-retirement-gate-bite.tmp.md",
+    "scratchContent": "Call `release.verify` to verify the release.\n",
+    "redExitCode": 1,
+    "redTests": {
+      "passed": 9,
+      "failed": 1,
+      "skipped": 0
+    },
+    "greenExitCode": 0,
+    "greenTests": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    "redLog": "retirement-gate-red.log",
+    "greenLog": "retirement-gate-green.log",
+    "scratchRemoved": true
+  },
+  "archivedSource": {
+    "originalPath": "packages/mcp-server/src/tools/release.verify.ts",
+    "path": "retired-source/release.verify.ts",
+    "sha256": "332aa3220550544f88a3b63bbf06e64db31396c3cc6a8be8bf34c492bb568bb0",
+    "byteIdenticalToBase": true
+  },
+  "notes": [
+    "No full-suite capture, critic, CMOS mutation, or commit performed by the gate subtask.",
+    "The read/write adapter smoke test baseline had 14 passing and 3 failing tests due to 32 stale action-level names versus 24 registered tools; current manually named rosters restore all 17 tests."
+  ]
+}

@@ -14,20 +14,11 @@
 // operand". These six rules are decidable from the data BRANCH, which no cartesian rule can
 // see and which is the only place an ECharts-primary chart's data exists.
 //
-// PER-TYPE OFFERED SETS, and the empty ones. Three of the eight types offer NO rule, and
-// that is a finding rather than a gap:
-//   - force_graph: its distortion candidates (node sizing, edge curvature, layout
-//     repulsion) are ADAPTER CONSTANTS, not authoring choices. There is nothing in the
-//     branch a caller could get wrong that the option would then misdraw.
-//   - bubble_map / flow_map: a SCOPE DECISION, corrected in s173 m01. The original wording
-//     here claimed the branch "expresses field names, not scales" so the distortions were
-//     not authorable — that is FALSE on both types: bubble_map's branch carries `colorScale`
-//     (including 'ordinal', whose palette CYCLES once the categories outnumber it, so two
-//     categories can be drawn the same hue), and flow_map's `strengthField` drives arc width
-//     through a continuous visualMap. Both distortions ARE authorable. No rule is offered
-//     for them YET — a recorded scope decision in the s141 pattern, not an impossibility.
-// For those three, `rulesEvaluated` is 0 and a note names the empty set, so an agent can
-// tell "we looked and offered nothing" apart from "we did not look".
+// s195 m04 widens the offered sets to every ECharts-primary type. The graph
+// branch CAN carry invalid relationships: duplicate directed links are now checked.
+// Geo magnitude, scale and coordinate identity rules follow the public builder's
+// actual inputs. A missing precondition stays unevaluated; an empty offered set
+// (including a test-injected one) never claims that invalid data is impossible.
 
 import type { EChartsAccuracyFinding, EChartsAccuracyResult } from './echarts-types.js';
 import {
@@ -40,6 +31,14 @@ import {
   evaluateSankeyNodeValueOverride,
 } from './echarts-flow-rules.js';
 import { evaluateChoroplethJoinConflict } from './echarts-geo-rules.js';
+import {
+  evaluateBubbleNegativeSize,
+  evaluateBubbleRadiusScaling,
+  evaluateBubbleCoordinateConflict,
+  evaluateFlowMapNegativeStrength,
+  evaluateFlowMapDuplicateFlow,
+} from './echarts-spatial-rules.js';
+import { evaluateForceGraphDuplicateLink } from './echarts-graph-rules.js';
 import type {
   EChartsAccuracyChartType,
   EChartsAccuracyOperand,
@@ -104,8 +103,50 @@ const V159: EChartsAccuracyRule = {
   evaluate: evaluateChoroplethJoinConflict,
 };
 
-/** All six, in code order. The registry is the commitment not to rename or reassign them. */
-export const ECHARTS_ACCURACY_RULES: readonly EChartsAccuracyRule[] = [V154, V155, V156, V157, V158, V159];
+const V168: EChartsAccuracyRule = {
+  id: 'bubble-negative-size',
+  code: 'OODS-V168',
+  summary: 'Encoded bubble sizes must resolve to finite non-negative magnitudes. Renderer-accepted numeric strings are checked after the same coercion; unresolved cells are not passes.',
+  evaluate: evaluateBubbleNegativeSize,
+};
+
+const V169: EChartsAccuracyRule = {
+  id: 'bubble-radius-scaling',
+  code: 'OODS-V169',
+  summary: 'The public bubble renderer uses default linear symbol diameter, not area. Varying non-negative magnitudes expose this scale distortion; a constant domain does not.',
+  evaluate: evaluateBubbleRadiusScaling,
+};
+
+const V170: EChartsAccuracyRule = {
+  id: 'bubble-coordinate-conflict',
+  code: 'OODS-V170',
+  summary: 'Bubble rows at the same emitted longitude/latitude must agree on encoded size and colour. Unused geo.join metadata is not point identity; agreeing duplicates do not fire.',
+  evaluate: evaluateBubbleCoordinateConflict,
+};
+
+const V171: EChartsAccuracyRule = {
+  id: 'flow-map-negative-strength',
+  code: 'OODS-V171',
+  summary: 'An encoded flow-map strength must be finite and non-negative because it drives line width. Missing field or values remain unevaluated.',
+  evaluate: evaluateFlowMapNegativeStrength,
+};
+
+const V172: EChartsAccuracyRule = {
+  id: 'flow-map-duplicate-flow',
+  code: 'OODS-V172',
+  summary: 'A flow-map ordered pair of geographic endpoints occurs at most once. Repeated directed routes overdraw; reciprocal routes remain distinct.',
+  evaluate: evaluateFlowMapDuplicateFlow,
+};
+
+const V173: EChartsAccuracyRule = {
+  id: 'force-graph-duplicate-link',
+  code: 'OODS-V173',
+  summary: 'A public force-graph directed endpoint pair occurs at most once. Reciprocal edges and single self-loops are valid; no claim is made about force-layout physics or unencoded weights.',
+  evaluate: evaluateForceGraphDuplicateLink,
+};
+
+/** Stable registered codes, in code order. */
+export const ECHARTS_ACCURACY_RULES: readonly EChartsAccuracyRule[] = [V154, V155, V156, V157, V158, V159, V168, V169, V170, V171, V172, V173];
 
 /**
  * The rules OFFERED for a chart type. Explicit and exhaustive: an empty set is a stated
@@ -116,10 +157,10 @@ const OFFERED: Readonly<Record<EChartsAccuracyChartType, readonly EChartsAccurac
   sunburst: [V154, V155],
   sankey: [V156, V157, V158],
   chord: [V156],
-  force_graph: [],
+  force_graph: [V173],
   choropleth: [V159],
-  bubble_map: [],
-  flow_map: [],
+  bubble_map: [V168, V169, V170],
+  flow_map: [V171, V172],
 };
 
 export function echartsAccuracyRulesFor(chartType: EChartsAccuracyChartType): readonly EChartsAccuracyRule[] {
@@ -131,11 +172,7 @@ export function echartsAccuracyRulesFor(chartType: EChartsAccuracyChartType): re
  * `rulesEvaluated: 0` reads as "nothing was offered" rather than "nothing resolved".
  */
 export function emptyOfferedSetNote(chartType: EChartsAccuracyChartType): string {
-  const reason =
-    chartType === 'force_graph'
-      ? 'its distortion candidates (node sizing, edge curvature, layout repulsion) are adapter constants rather than authoring choices, so there is nothing in the data branch a caller could get wrong'
-      : 'no rule has been WRITTEN for its authorable distortions yet — a recorded scope decision, not a limit of the branch. bubble_map takes a colorScale (an ordinal palette CYCLES once the categories outnumber it, drawing two categories the same hue) and flow_map takes a strengthField that drives arc width, so both distortions are expressible here and a future rule could read them';
-  return `No accuracy rule is offered for ${chartType}: ${reason}. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand.`;
+  return `No accuracy rule is offered for ${chartType} in this evaluation. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand. This is a coverage limit, not a claim that its data cannot be invalid.`;
 }
 
 /**

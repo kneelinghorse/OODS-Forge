@@ -1,0 +1,97 @@
+{
+  "rules": [
+    {
+      "id": "hierarchy-negative-value",
+      "code": "OODS-V154",
+      "summary": "Every treemap/sunburst node value is a finite non-negative number, so area and angle can encode it. Unauthored values never fire — a renderer-computed parent has nothing to contradict."
+    },
+    {
+      "id": "hierarchy-non-additive-parent",
+      "code": "OODS-V155",
+      "summary": "An EXPLICIT treemap/sunburst parent value equals the sum of its children, under a relative 1e-9 tolerance. Fires only where the parent has an authored value AND every child has one — a partly-valueless set has no computable sum and is reported unevaluated, never guessed."
+    },
+    {
+      "id": "flow-negative-link-value",
+      "code": "OODS-V156",
+      "summary": "Every sankey/chord link value is a finite non-negative number, so ribbon width can encode it. sankey rejects non-finite upstream (V126) but not negatives; chord validates neither."
+    },
+    {
+      "id": "sankey-node-value-override",
+      "code": "OODS-V157",
+      "summary": "A sankey node's drawn height is the flow its ribbons carry. Two causes: an explicit node.value that disagrees with max(incoming, outgoing), and an INTERMEDIATE node (incoming>0 AND outgoing>0) whose sides disagree. Sources and sinks are endpoints and never fire; both comparisons use the relative 1e-9 tolerance."
+    },
+    {
+      "id": "sankey-duplicate-link",
+      "code": "OODS-V158",
+      "summary": "A directed (source, target) pair appears at most once in a sankey. Duplicates stack into one merged ribbon whose width is their sum. A deliberate certify-side reopen of the s148 F4 sankey exclusion — render is untouched — and error-severity, unlike F4's warning."
+    },
+    {
+      "id": "choropleth-join-conflict",
+      "code": "OODS-V159",
+      "summary": "Where a choropleth join matches several rows to one region, the rows that CARRY the value field agree on it. Benign multiplicity (agreeing rows, duplicate rows, or sparse rows that omit the field entirely — the merge spreads records, so an absent key cannot change the shade) NEVER fires — one-to-many is supported; only CONFLICTING carried values fire, because then the shade is last-record-wins arbitrary."
+    },
+    {
+      "id": "bubble-negative-size",
+      "code": "OODS-V168",
+      "summary": "Encoded bubble sizes must resolve to finite non-negative magnitudes. Renderer-accepted numeric strings are checked after the same coercion; unresolved cells are not passes."
+    },
+    {
+      "id": "bubble-radius-scaling",
+      "code": "OODS-V169",
+      "summary": "The public bubble renderer uses default linear symbol diameter, not area. Varying non-negative magnitudes expose this scale distortion; a constant domain does not."
+    },
+    {
+      "id": "bubble-coordinate-conflict",
+      "code": "OODS-V170",
+      "summary": "Bubble rows at the same emitted longitude/latitude must agree on encoded size and colour. Unused geo.join metadata is not point identity; agreeing duplicates do not fire."
+    },
+    {
+      "id": "flow-map-negative-strength",
+      "code": "OODS-V171",
+      "summary": "An encoded flow-map strength must be finite and non-negative because it drives line width. Missing field or values remain unevaluated."
+    },
+    {
+      "id": "flow-map-duplicate-flow",
+      "code": "OODS-V172",
+      "summary": "A flow-map ordered pair of geographic endpoints occurs at most once. Repeated directed routes overdraw; reciprocal routes remain distinct."
+    },
+    {
+      "id": "force-graph-duplicate-link",
+      "code": "OODS-V173",
+      "summary": "A public force-graph directed endpoint pair occurs at most once. Reciprocal edges and single self-loops are valid; no claim is made about force-layout physics or unencoded weights."
+    }
+  ],
+  "offered": {
+    "treemap": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "sunburst": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "sankey": [
+      "OODS-V156",
+      "OODS-V157",
+      "OODS-V158"
+    ],
+    "chord": [
+      "OODS-V156"
+    ],
+    "force_graph": [
+      "OODS-V173"
+    ],
+    "choropleth": [
+      "OODS-V159"
+    ],
+    "bubble_map": [
+      "OODS-V168",
+      "OODS-V169",
+      "OODS-V170"
+    ],
+    "flow_map": [
+      "OODS-V171",
+      "OODS-V172"
+    ]
+  }
+}

@@ -1,0 +1,402 @@
+86b44639489552329a627219fe527918a6c08420 1 1 196
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+filename packages/viz-core/src/accuracy/echarts-spatial-rules.ts
+	// s195 m04 — accuracy over the PUBLIC geo operand. The public builder declares
+86b44639489552329a627219fe527918a6c08420 2 2
+	// coordinates, size/strength fields and colorScale; it does not forward geo.join
+86b44639489552329a627219fe527918a6c08420 3 3
+	// for bubbles, nor expose a sizeScale. Match those actual read sites, not unused
+86b44639489552329a627219fe527918a6c08420 4 4
+	// properties that happen to share the geo schema. No rendering or operand mutation.
+86b44639489552329a627219fe527918a6c08420 5 5
+	
+86b44639489552329a627219fe527918a6c08420 6 6
+	import type { AccuracyRuleOutcome } from './types.js';
+86b44639489552329a627219fe527918a6c08420 7 7
+	import { differsBeyondTolerance, type EChartsAccuracyOperand } from './echarts-types.js';
+86b44639489552329a627219fe527918a6c08420 8 8
+	
+86b44639489552329a627219fe527918a6c08420 9 9
+	type Row = Record<string, unknown>;
+86b44639489552329a627219fe527918a6c08420 10 10
+	
+86b44639489552329a627219fe527918a6c08420 11 11
+	function record(value: unknown): value is Row {
+86b44639489552329a627219fe527918a6c08420 12 12
+	  return value !== null && typeof value === 'object' && !Array.isArray(value);
+86b44639489552329a627219fe527918a6c08420 13 13
+	}
+86b44639489552329a627219fe527918a6c08420 14 14
+	
+86b44639489552329a627219fe527918a6c08420 15 15
+	function branchOf(operand: EChartsAccuracyOperand): Row {
+86b44639489552329a627219fe527918a6c08420 16 16
+	  return record(operand.branchData) ? operand.branchData : {};
+86b44639489552329a627219fe527918a6c08420 17 17
+	}
+86b44639489552329a627219fe527918a6c08420 18 18
+	
+86b44639489552329a627219fe527918a6c08420 19 19
+	function rowsOf(branch: Row): Row[] | undefined {
+86b44639489552329a627219fe527918a6c08420 20 20
+	  return Array.isArray(branch.rows) && branch.rows.length > 0 && branch.rows.every(record)
+86b44639489552329a627219fe527918a6c08420 21 21
+	    ? branch.rows
+86b44639489552329a627219fe527918a6c08420 22 22
+	    : undefined;
+86b44639489552329a627219fe527918a6c08420 23 23
+	}
+86b44639489552329a627219fe527918a6c08420 24 24
+	
+86b44639489552329a627219fe527918a6c08420 25 25
+	function fieldOf(branch: Row, key: string): string | undefined {
+86b44639489552329a627219fe527918a6c08420 26 26
+	  const field = branch[key];
+86b44639489552329a627219fe527918a6c08420 27 27
+	  return typeof field === 'string' && field.length > 0 ? field : undefined;
+86b44639489552329a627219fe527918a6c08420 28 28
+	}
+86b44639489552329a627219fe527918a6c08420 29 29
+	
+86b44639489552329a627219fe527918a6c08420 30 30
+	// The bubble and route adapters accept finite numbers and parseFloat strings.
+86b44639489552329a627219fe527918a6c08420 31 31
+	// Keep this boundary pinned against both real adapters in the proof spec: Number()
+86b44639489552329a627219fe527918a6c08420 32 32
+	// would invent different coordinates for empty strings and reject accepted suffixes.
+86b44639489552329a627219fe527918a6c08420 33 33
+	function numeric(value: unknown): number | undefined {
+86b44639489552329a627219fe527918a6c08420 34 34
+	  const parsed = typeof value === 'string' ? Number.parseFloat(value) : value;
+86b44639489552329a627219fe527918a6c08420 35 35
+	  return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : undefined;
+86b44639489552329a627219fe527918a6c08420 36 36
+	}
+86b44639489552329a627219fe527918a6c08420 37 37
+	
+86b44639489552329a627219fe527918a6c08420 38 38
+	function unresolved(subject: string): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 39 39
+	  return { evaluated: false, note: `${subject} could not be resolved from the public geo operand; accuracy was not evaluated.` };
+86b44639489552329a627219fe527918a6c08420 40 40
+	}
+86b44639489552329a627219fe527918a6c08420 41 41
+	
+86b44639489552329a627219fe527918a6c08420 42 42
+	function magnitude(operand: EChartsAccuracyOperand, fieldKey: 'sizeField' | 'strengthField'): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 43 43
+	  const branch = branchOf(operand);
+86b44639489552329a627219fe527918a6c08420 44 44
+	  const rows = rowsOf(branch);
+86b44639489552329a627219fe527918a6c08420 45 45
+	  const field = fieldOf(branch, fieldKey);
+86b44639489552329a627219fe527918a6c08420 46 46
+	  const subject = fieldKey === 'sizeField' ? 'bubble size' : 'flow strength';
+86b44639489552329a627219fe527918a6c08420 47 47
+	  if (!rows || !field) return unresolved(`The ${subject} field and rows`);
+86b44639489552329a627219fe527918a6c08420 48 48
+	
+86b44639489552329a627219fe527918a6c08420 49 49
+	  const bad: string[] = [];
+86b44639489552329a627219fe527918a6c08420 50 50
+	  let missing = false;
+86b44639489552329a627219fe527918a6c08420 51 51
+	  rows.forEach((row, index) => {
+86b44639489552329a627219fe527918a6c08420 52 52
+	    if (!(field in row)) {
+86b44639489552329a627219fe527918a6c08420 53 53
+	      missing = true;
+86b44639489552329a627219fe527918a6c08420 54 54
+	      return;
+86b44639489552329a627219fe527918a6c08420 55 55
+	    }
+86b44639489552329a627219fe527918a6c08420 56 56
+	    const value = numeric(row[field]);
+86b44639489552329a627219fe527918a6c08420 57 57
+	    if (value === undefined || value < 0) bad.push(`row ${index} (${String(row[field])})`);
+86b44639489552329a627219fe527918a6c08420 58 58
+	  });
+86b44639489552329a627219fe527918a6c08420 59 59
+	  if (bad.length > 0) {
+86b44639489552329a627219fe527918a6c08420 60 60
+	    return {
+86b44639489552329a627219fe527918a6c08420 61 61
+	      evaluated: true,
+86b44639489552329a627219fe527918a6c08420 62 62
+	      message: `artifact.certify: ${bad.length} ${operand.chartType} ${subject} value(s) in "${field}" are negative or non-finite: ${bad.slice(0, 3).join(', ')}. A drawn magnitude cannot represent these values; supply finite non-negative values.`,
+86b44639489552329a627219fe527918a6c08420 63 63
+	    };
+86b44639489552329a627219fe527918a6c08420 64 64
+	  }
+86b44639489552329a627219fe527918a6c08420 65 65
+	  return missing ? unresolved(`Some ${subject} values in "${field}"`) : { evaluated: true };
+86b44639489552329a627219fe527918a6c08420 66 66
+	}
+86b44639489552329a627219fe527918a6c08420 67 67
+	
+86b44639489552329a627219fe527918a6c08420 68 68
+	/** OODS-V168 — size is a magnitude; accepted numeric strings follow renderer coercion. */
+86b44639489552329a627219fe527918a6c08420 69 69
+	export function evaluateBubbleNegativeSize(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 70 70
+	  return magnitude(operand, 'sizeField');
+86b44639489552329a627219fe527918a6c08420 71 71
+	}
+86b44639489552329a627219fe527918a6c08420 72 72
+	
+86b44639489552329a627219fe527918a6c08420 73 73
+	/**
+86b44639489552329a627219fe527918a6c08420 74 74
+	 * OODS-V169 — the public builder passes size:{field}, without a scale. The adapter
+86b44639489552329a627219fe527918a6c08420 75 75
+	 * consequently interpolates DIAMETER linearly across the value domain; visible area
+86b44639489552329a627219fe527918a6c08420 76 76
+	 * squares that interpolation. A constant finite domain has no relative size contrast
+86b44639489552329a627219fe527918a6c08420 77 77
+	 * to distort. Missing/invalid magnitudes do not establish this precondition (V168
+86b44639489552329a627219fe527918a6c08420 78 78
+	 * owns invalid values). An unrecognized sizeScale property cannot bypass this rule:
+86b44639489552329a627219fe527918a6c08420 79 79
+	 * the public builder does not consume it either.
+86b44639489552329a627219fe527918a6c08420 80 80
+	 */
+86b44639489552329a627219fe527918a6c08420 81 81
+	export function evaluateBubbleRadiusScaling(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 82 82
+	  const branch = branchOf(operand);
+86b44639489552329a627219fe527918a6c08420 83 83
+	  const rows = rowsOf(branch);
+86b44639489552329a627219fe527918a6c08420 84 84
+	  const field = fieldOf(branch, 'sizeField');
+86b44639489552329a627219fe527918a6c08420 85 85
+	  if (!rows || !field) return unresolved('The bubble size scale and values');
+86b44639489552329a627219fe527918a6c08420 86 86
+	  const values = rows.map((row) => numeric(row[field]));
+86b44639489552329a627219fe527918a6c08420 87 87
+	  const finite = values.filter((value): value is number => value !== undefined && value >= 0);
+86b44639489552329a627219fe527918a6c08420 88 88
+	  const first = finite[0];
+86b44639489552329a627219fe527918a6c08420 89 89
+	  // The adapter's degenerate-domain check is exact. Even an epsilon-sized source
+86b44639489552329a627219fe527918a6c08420 90 90
+	  // difference expands to its full diameter range, so tolerance here would hide
+86b44639489552329a627219fe527918a6c08420 91 91
+	  // precisely the most exaggerated size contrast.
+86b44639489552329a627219fe527918a6c08420 92 92
+	  if (first !== undefined && finite.some((value) => first !== value)) {
+86b44639489552329a627219fe527918a6c08420 93 93
+	    return {
+86b44639489552329a627219fe527918a6c08420 94 94
+	      evaluated: true,
+86b44639489552329a627219fe527918a6c08420 95 95
+	      message: `artifact.certify: bubble_map encodes varying "${field}" values with the public renderer's default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override.`,
+86b44639489552329a627219fe527918a6c08420 96 96
+	    };
+86b44639489552329a627219fe527918a6c08420 97 97
+	  }
+86b44639489552329a627219fe527918a6c08420 98 98
+	  if (finite.length !== rows.length) return unresolved(`Some bubble size values in "${field}"`);
+86b44639489552329a627219fe527918a6c08420 99 99
+	  return { evaluated: true };
+86b44639489552329a627219fe527918a6c08420 100 100
+	}
+86b44639489552329a627219fe527918a6c08420 101 101
+	
+86b44639489552329a627219fe527918a6c08420 102 102
+	function coordinates(row: Row, fields: readonly string[]): number[] | undefined {
+86b44639489552329a627219fe527918a6c08420 103 103
+	  const values = fields.map((field) => numeric(row[field]));
+86b44639489552329a627219fe527918a6c08420 104 104
+	  return values.every((value): value is number => value !== undefined) ? values : undefined;
+86b44639489552329a627219fe527918a6c08420 105 105
+	}
+86b44639489552329a627219fe527918a6c08420 106 106
+	
+86b44639489552329a627219fe527918a6c08420 107 107
+	/**
+86b44639489552329a627219fe527918a6c08420 108 108
+	 * OODS-V170 — public bubbles are point rows, not the choropleth's region join.
+86b44639489552329a627219fe527918a6c08420 109 109
+	 * Rows at the same emitted coordinate overlap. Conflicting encoded size/colour
+86b44639489552329a627219fe527918a6c08420 110 110
+	 * values cannot all be read there; unrelated labels, unused join keys and agreeing
+86b44639489552329a627219fe527918a6c08420 111 111
+	 * duplicates are not conflicts. Sparse/invalid comparisons remain unevaluated.
+86b44639489552329a627219fe527918a6c08420 112 112
+	 */
+86b44639489552329a627219fe527918a6c08420 113 113
+	export function evaluateBubbleCoordinateConflict(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 114 114
+	  const branch = branchOf(operand);
+86b44639489552329a627219fe527918a6c08420 115 115
+	  const rows = rowsOf(branch);
+86b44639489552329a627219fe527918a6c08420 116 116
+	  const longitude = fieldOf(branch, 'longitudeField');
+86b44639489552329a627219fe527918a6c08420 117 117
+	  const latitude = fieldOf(branch, 'latitudeField');
+86b44639489552329a627219fe527918a6c08420 118 118
+	  const size = fieldOf(branch, 'sizeField');
+86b44639489552329a627219fe527918a6c08420 119 119
+	  const color = fieldOf(branch, 'colorField');
+86b44639489552329a627219fe527918a6c08420 120 120
+	  if (!rows || !longitude || !latitude) return unresolved('The bubble coordinates and rows');
+86b44639489552329a627219fe527918a6c08420 121 121
+	  const fields = [...new Set([size, color].filter((field): field is string => field !== undefined))];
+86b44639489552329a627219fe527918a6c08420 122 122
+	  const groups = new Map<string, Row[]>();
+86b44639489552329a627219fe527918a6c08420 123 123
+	  let incomplete = false;
+86b44639489552329a627219fe527918a6c08420 124 124
+	  for (const row of rows) {
+86b44639489552329a627219fe527918a6c08420 125 125
+	    const point = coordinates(row, [longitude, latitude]);
+86b44639489552329a627219fe527918a6c08420 126 126
+	    if (!point) {
+86b44639489552329a627219fe527918a6c08420 127 127
+	      incomplete = true;
+86b44639489552329a627219fe527918a6c08420 128 128
+	      continue;
+86b44639489552329a627219fe527918a6c08420 129 129
+	    }
+86b44639489552329a627219fe527918a6c08420 130 130
+	    const key = JSON.stringify(point);
+86b44639489552329a627219fe527918a6c08420 131 131
+	    groups.set(key, [...(groups.get(key) ?? []), row]);
+86b44639489552329a627219fe527918a6c08420 132 132
+	  }
+86b44639489552329a627219fe527918a6c08420 133 133
+	  const conflicts: string[] = [];
+86b44639489552329a627219fe527918a6c08420 134 134
+	  for (const [point, matches] of groups) {
+86b44639489552329a627219fe527918a6c08420 135 135
+	    if (matches.length < 2) continue;
+86b44639489552329a627219fe527918a6c08420 136 136
+	    for (const field of fields) {
+86b44639489552329a627219fe527918a6c08420 137 137
+	      const categorical = field === color && branch.colorScale === 'ordinal';
+86b44639489552329a627219fe527918a6c08420 138 138
+	      const values: Array<string | number> = [];
+86b44639489552329a627219fe527918a6c08420 139 139
+	      for (const row of matches) {
+86b44639489552329a627219fe527918a6c08420 140 140
+	        if (!(field in row) || row[field] === null || row[field] === undefined) {
+86b44639489552329a627219fe527918a6c08420 141 141
+	          incomplete = true;
+86b44639489552329a627219fe527918a6c08420 142 142
+	          continue;
+86b44639489552329a627219fe527918a6c08420 143 143
+	        }
+86b44639489552329a627219fe527918a6c08420 144 144
+	        const value = categorical ? String(row[field]) : numeric(row[field]);
+86b44639489552329a627219fe527918a6c08420 145 145
+	        if (value === undefined) incomplete = true;
+86b44639489552329a627219fe527918a6c08420 146 146
+	        else values.push(value);
+86b44639489552329a627219fe527918a6c08420 147 147
+	      }
+86b44639489552329a627219fe527918a6c08420 148 148
+	      const first = values[0];
+86b44639489552329a627219fe527918a6c08420 149 149
+	      if (values.slice(1).some((value) =>
+86b44639489552329a627219fe527918a6c08420 150 150
+	        typeof first === 'number' && typeof value === 'number'
+86b44639489552329a627219fe527918a6c08420 151 151
+	          ? differsBeyondTolerance(first, value)
+86b44639489552329a627219fe527918a6c08420 152 152
+	          : first !== value,
+86b44639489552329a627219fe527918a6c08420 153 153
+	      )) conflicts.push(`${point} has conflicting "${field}" values`);
+86b44639489552329a627219fe527918a6c08420 154 154
+	    }
+86b44639489552329a627219fe527918a6c08420 155 155
+	  }
+86b44639489552329a627219fe527918a6c08420 156 156
+	  if (conflicts.length > 0) {
+86b44639489552329a627219fe527918a6c08420 157 157
+	    return {
+86b44639489552329a627219fe527918a6c08420 158 158
+	      evaluated: true,
+86b44639489552329a627219fe527918a6c08420 159 159
+	      message: `artifact.certify: bubble_map rows overlap at the same geographic point with conflicting encoded values: ${conflicts.slice(0, 3).join('; ')}. The public renderer draws every row at that coordinate, so one measurement can obscure another. Aggregate to one measurement per point or use distinct coordinates.`,
+86b44639489552329a627219fe527918a6c08420 160 160
+	    };
+86b44639489552329a627219fe527918a6c08420 161 161
+	  }
+86b44639489552329a627219fe527918a6c08420 162 162
+	  return incomplete ? unresolved('Some bubble coordinates or duplicate-point encoded values') : { evaluated: true };
+86b44639489552329a627219fe527918a6c08420 163 163
+	}
+86b44639489552329a627219fe527918a6c08420 164 164
+	
+86b44639489552329a627219fe527918a6c08420 165 165
+	/** OODS-V171 — route strength controls visualMap line width and must be a magnitude. */
+86b44639489552329a627219fe527918a6c08420 166 166
+	export function evaluateFlowMapNegativeStrength(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 167 167
+	  return magnitude(operand, 'strengthField');
+86b44639489552329a627219fe527918a6c08420 168 168
+	}
+86b44639489552329a627219fe527918a6c08420 169 169
+	
+86b44639489552329a627219fe527918a6c08420 170 170
+	/** OODS-V172 — repeated ordered endpoint coordinates overdraw one directed route. */
+86b44639489552329a627219fe527918a6c08420 171 171
+	export function evaluateFlowMapDuplicateFlow(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
+86b44639489552329a627219fe527918a6c08420 172 172
+	  const branch = branchOf(operand);
+86b44639489552329a627219fe527918a6c08420 173 173
+	  const rows = rowsOf(branch);
+86b44639489552329a627219fe527918a6c08420 174 174
+	  const fields = ['originLongitudeField', 'originLatitudeField', 'destinationLongitudeField', 'destinationLatitudeField']
+86b44639489552329a627219fe527918a6c08420 175 175
+	    .map((key) => fieldOf(branch, key));
+86b44639489552329a627219fe527918a6c08420 176 176
+	  if (!rows || !fields.every((field): field is string => field !== undefined)) return unresolved('The directed flow endpoints and rows');
+86b44639489552329a627219fe527918a6c08420 177 177
+	  const counts = new Map<string, number>();
+86b44639489552329a627219fe527918a6c08420 178 178
+	  let incomplete = false;
+86b44639489552329a627219fe527918a6c08420 179 179
+	  for (const row of rows) {
+86b44639489552329a627219fe527918a6c08420 180 180
+	    const endpoints = coordinates(row, fields);
+86b44639489552329a627219fe527918a6c08420 181 181
+	    if (!endpoints) {
+86b44639489552329a627219fe527918a6c08420 182 182
+	      incomplete = true;
+86b44639489552329a627219fe527918a6c08420 183 183
+	      continue;
+86b44639489552329a627219fe527918a6c08420 184 184
+	    }
+86b44639489552329a627219fe527918a6c08420 185 185
+	    const key = JSON.stringify(endpoints);
+86b44639489552329a627219fe527918a6c08420 186 186
+	    counts.set(key, (counts.get(key) ?? 0) + 1);
+86b44639489552329a627219fe527918a6c08420 187 187
+	  }
+86b44639489552329a627219fe527918a6c08420 188 188
+	  const duplicates = [...counts].filter(([, count]) => count > 1);
+86b44639489552329a627219fe527918a6c08420 189 189
+	  if (duplicates.length > 0) {
+86b44639489552329a627219fe527918a6c08420 190 190
+	    return {
+86b44639489552329a627219fe527918a6c08420 191 191
+	      evaluated: true,
+86b44639489552329a627219fe527918a6c08420 192 192
+	      message: `artifact.certify: ${duplicates.length} flow_map directed route(s) appear more than once: ${duplicates.slice(0, 3).map(([pair, count]) => `${pair} x${count}`).join('; ')}. Identical ordered endpoints overdraw the same arc, concealing separate flows. Aggregate each directed route; reciprocal routes are distinct.`,
+86b44639489552329a627219fe527918a6c08420 193 193
+	    };
+86b44639489552329a627219fe527918a6c08420 194 194
+	  }
+86b44639489552329a627219fe527918a6c08420 195 195
+	  return incomplete ? unresolved('Some directed flow endpoint coordinates') : { evaluated: true };
+86b44639489552329a627219fe527918a6c08420 196 196
+	}

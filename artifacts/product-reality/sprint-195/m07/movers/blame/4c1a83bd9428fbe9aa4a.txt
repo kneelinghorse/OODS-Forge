@@ -1,0 +1,65 @@
+a3158282bba25713171d7216181bde28b69a80a1 28 28 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c packages/mcp-server/src/tools/certify-contrast.ts
+filename packages/mcp-server/src/tools/certify-contrast.ts
+	//   role-B (WCAG-EXEMPT)           — a continuous/default color channel without a
+a3158282bba25713171d7216181bde28b69a80a1 29 29
+	//                                     categorical palette (a sequential/diverging gradient,
+a3158282bba25713171d7216181bde28b69a80a1 30 30
+	//                                     or a divergence/mistype compiled quantitative)
+a3158282bba25713171d7216181bde28b69a80a1 66 66 2
+	  /** Internal: a structural failure cannot claim a completed contrast measurement. */
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	  readonly contrastMeasured?: false;
+a3158282bba25713171d7216181bde28b69a80a1 126 126 2
+	// A continuous/default color channel exists but the adapter baked NO categorical
+a3158282bba25713171d7216181bde28b69a80a1 127 127
+	// palette: the chart renders as a continuous/default color
+a3158282bba25713171d7216181bde28b69a80a1 137 137 4
+	const MISSING_CATEGORICAL_PALETTE_NOTE =
+a3158282bba25713171d7216181bde28b69a80a1 138 138
+	  'Categorical color encoding is missing its baked palette; the renderer default cannot ' +
+a3158282bba25713171d7216181bde28b69a80a1 139 139
+	  'establish categorical contrast conformance. No categorical canvas ratio is graded ' +
+a3158282bba25713171d7216181bde28b69a80a1 140 140
+	  'for the missing-palette unit.';
+a3158282bba25713171d7216181bde28b69a80a1 404 404 2
+	 *   CASE 3 (categorical color, no palette)   -> 'missing-palette' (contrast fail)
+a3158282bba25713171d7216181bde28b69a80a1 405 405
+	 *   CASE 3 (continuous/default color)        -> 'exempt' (gradient essential exception)
+a3158282bba25713171d7216181bde28b69a80a1 411 411 1
+	  | { readonly kind: 'missing-palette' }
+a3158282bba25713171d7216181bde28b69a80a1 447 447 8
+	  // s195-m06: absent bake is not evidence of a gradient. A compiled discrete
+a3158282bba25713171d7216181bde28b69a80a1 448 448
+	  // color channel must carry its categorical range even if a mark also has a
+a3158282bba25713171d7216181bde28b69a80a1 449 449
+	  // decorative fallback color. The physical palette-removal bite exposed the
+a3158282bba25713171d7216181bde28b69a80a1 450 450
+	  // previous false exemption (and conformant:true) here.
+a3158282bba25713171d7216181bde28b69a80a1 451 451
+	  if (colorEnc?.type === 'nominal' || colorEnc?.type === 'ordinal') {
+a3158282bba25713171d7216181bde28b69a80a1 452 452
+	    return { kind: 'missing-palette' };
+a3158282bba25713171d7216181bde28b69a80a1 453 453
+	  }
+a3158282bba25713171d7216181bde28b69a80a1 454 454
+	
+a3158282bba25713171d7216181bde28b69a80a1 471 471 1
+	  // CASE 3 — a continuous/default color channel has no categorical palette (gradient,
+a3158282bba25713171d7216181bde28b69a80a1 619 619 4
+	    .filter((c) => c.kind === 'exempt' || c.kind === 'missing-palette')
+a3158282bba25713171d7216181bde28b69a80a1 620 620
+	    .map((c) => c.kind === 'missing-palette'
+a3158282bba25713171d7216181bde28b69a80a1 621 621
+	      ? { contrast: 'fail', contrastNote: MISSING_CATEGORICAL_PALETTE_NOTE, contrastMeasured: false }
+a3158282bba25713171d7216181bde28b69a80a1 622 622
+	      : { contrast: 'exempt', contrastNote: EXEMPT_NOTE });

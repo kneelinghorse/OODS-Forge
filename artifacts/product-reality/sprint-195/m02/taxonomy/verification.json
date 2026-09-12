@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m02",
+  "checkedAt": "2026-09-11T20:39:02.933094+00:00",
+  "baselineHead": "5f71d0818a913830812e05dca123b628e0d83abe",
+  "builderSelfCertified": false,
+  "summary": {
+    "types": 13,
+    "patterns": 21,
+    "families": 8,
+    "classified": 34,
+    "coreCells": 20,
+    "coreSurfaceComplete": 11,
+    "typedGaps": 9
+  },
+  "checks": [
+    {
+      "name": "contract",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/contracts/viz-taxonomy.s195.spec.ts"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m02/taxonomy/contract.log"
+    },
+    {
+      "name": "check",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s195-viz-taxonomy.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m02/taxonomy/check.log"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "--skipLibCheck",
+        "--esModuleInterop",
+        "--strict",
+        "--module",
+        "nodenext",
+        "--moduleResolution",
+        "nodenext",
+        "--target",
+        "es2022",
+        "scripts/product-reality/s195-viz-taxonomy.ts"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-195/m02/taxonomy/typecheck.log"
+    }
+  ],
+  "files": [
+    {
+      "path": "packages/viz-core/src/registry/viz-classification.v1.json",
+      "sha256": "05987a3f485eac4ef09feeae959fc868791e67179550f5af0054e8e425fe0b0f"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-classification.v1.schema.json",
+      "sha256": "4ebbbcf654ab38d0190cdc7d546f738ec1239eabffa8b82c7f41925766bd57e1"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-taxonomy.v1.json",
+      "sha256": "d4e0420fce76a99c190d6dc638102062657218c315fe9ce13a09538bfbbe6aaf"
+    },
+    {
+      "path": "scripts/product-reality/s195-viz-taxonomy.ts",
+      "sha256": "2b89c3b54c7388537d228d1c668e68fecd6aa6158d1613c120d0d987bd55de7a"
+    },
+    {
+      "path": "docs/viz/taxonomy.md",
+      "sha256": "50445e1dbd3a08b35d360ca014404a5cb18957f78c25100bdea23ecfd63e010f"
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-taxonomy.s195.spec.ts",
+      "sha256": "7d9ad7e44515b505be03d5cf4373f2aa8c84168c265cb1ebdf7fb374089ff87a"
+    }
+  ]
+}

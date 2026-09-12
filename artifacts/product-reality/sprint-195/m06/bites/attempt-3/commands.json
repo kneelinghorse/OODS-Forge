@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "node",
+      "scripts/product-reality/s195-viz-mutation-bites.mjs",
+      "--execute",
+      "--palette-only"
+    ],
+    "environment": {
+      "OODS_VIZ_BITES_OUTPUT": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/artifacts/product-reality/sprint-195/m06/bites/attempt-3"
+    },
+    "exitCode": 0,
+    "log": "harness.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "test/tools/artifact.certify.spec.ts"
+    ],
+    "environment": {},
+    "exitCode": 0,
+    "log": "certify-regression.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "run",
+      "build"
+    ],
+    "environment": {},
+    "exitCode": 0,
+    "log": "final-server-build.log"
+  }
+]

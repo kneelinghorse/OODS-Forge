@@ -1,0 +1,222 @@
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 1 1 106
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+filename packages/viz-core/src/patterns/translate-pattern.ts
+	import sources from './viz-pattern-sources.v1.json' with { type: 'json' };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 2 2
+	import { assertNormalizedVizSpec, type EncodingMap, type NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 3 3
+	import type { BuildVizSpecInput, EncodingChannel, EncodingInput } from '../builder/spec-builder.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 4 4
+	import type { ChartType } from './index.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 5 5
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 6 6
+	export interface VizPatternSource {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 7 7
+	  readonly id: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 8 8
+	  readonly specPath: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 9 9
+	  readonly specSha256: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 10 10
+	  readonly baseChartType: ChartType;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 11 11
+	  readonly portability?: NormalizedVizSpec['portability'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 12 12
+	  readonly spec: NormalizedVizSpec;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 13 13
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 14 14
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 15 15
+	/** Generated from authored bytes; bundled by tsup with no repository-path reads. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 16 16
+	export const VIZ_PATTERN_SOURCES: ReadonlyArray<VizPatternSource> = sources as unknown as VizPatternSource[];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 17 17
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 18 18
+	export interface PatternPresentation {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 19 19
+	  readonly config?: NormalizedVizSpec['config'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 20 20
+	  readonly a11y: NormalizedVizSpec['a11y'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 21 21
+	  readonly portability?: NormalizedVizSpec['portability'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 22 22
+	  readonly encodings: EncodingMap;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 23 23
+	  readonly markOptions?: NormalizedVizSpec['marks'][number]['options'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 24 24
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 25 25
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 26 26
+	export type PatternTranslation =
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 27
+	  | { readonly status: 'renderable'; readonly baseChartType: ChartType; readonly explicitInput: BuildVizSpecInput; readonly presentation: PatternPresentation }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 28 28
+	  | { readonly status: 'authoring-only'; readonly baseChartType: ChartType; readonly reasons: ReadonlyArray<string> };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 29 29
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 30 30
+	export class PatternTranslationError extends Error {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 31 31
+	  constructor(message: string) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 32 32
+	    super(message);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 33 33
+	    this.name = 'PatternTranslationError';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 34 34
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 35 35
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 36 36
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 37 37
+	const MARK_TYPES: Readonly<Record<string, ChartType>> = {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 38 38
+	  MarkBar: 'bar', MarkLine: 'line', MarkArea: 'area', MarkPoint: 'scatter', MarkRect: 'heatmap',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 39 39
+	};
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 40 40
+	const CHANNELS: ReadonlyArray<EncodingChannel> = ['x', 'y', 'color', 'size', 'shape', 'detail'];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 41 41
+	const INPUT_BINDING_KEYS = ['field', 'aggregate', 'scale', 'timeUnit', 'sort', 'title', 'type', 'range'] as const;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 42 42
+	// These authored option keys have existing Vega-Lite translations. Unknown keys
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 43 43
+	// remain authoring-only instead of inheriting the adapter's silent option drop.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 44 44
+	const MARK_OPTIONS = new Set(['baseline', 'curve', 'opacity', 'fillOpacity', 'strokeWidth', 'strokeDash']);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 45 45
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 46 46
+	/** Translate the single-scene public subset; never flatten a richer source to its first mark. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 47 47
+	export function translatePattern(input: NormalizedVizSpec | string): PatternTranslation {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 48 48
+	  const record = VIZ_PATTERN_SOURCES.find(source => source.id === (typeof input === 'string' ? input : input.id));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 49 49
+	  if (typeof input === 'string' && !record) throw new PatternTranslationError(`Unknown pattern identity: ${input}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 50 50
+	  const spec = assertNormalizedVizSpec(structuredClone(typeof input === 'string' ? record!.spec : input));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 51 51
+	  const baseChartType = (spec.marks.length === 1 ? MARK_TYPES[spec.marks[0].trait] : undefined)
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 52 52
+	    ?? record?.baseChartType ?? MARK_TYPES[spec.marks[0].trait];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 53 53
+	  if (!baseChartType) throw new PatternTranslationError(`Pattern has no supported Cartesian base mark: ${spec.marks[0].trait}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 54 54
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 55 55
+	  const reasons: string[] = [];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 56 56
+	  if (spec.marks.length !== 1) reasons.push(`marks: ${spec.marks.length} independently bound marks require multi-mark composition; the public pattern translation supports one mark.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 57 57
+	  if (spec.layout) reasons.push(`layout: ${spec.layout.trait} requires layout composition that the public single-scene pattern translation cannot preserve.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 58 58
+	  if (spec.interactions?.length) reasons.push(`interactions: ${spec.interactions.map(interaction => `${interaction.select.type}/${interaction.select.on}/${interaction.rule.bindTo}`).join(', ')} require interaction composition that the public pattern translation cannot preserve.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 59 59
+	  if (spec.transforms?.length) reasons.push('transforms: authored transforms require a transform-aware translation; rows must not be silently substituted for transformed data.');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 60 60
+	  if (spec.datasets && Object.keys(spec.datasets).length) reasons.push('datasets: named datasets are outside the inline single-scene pattern translation.');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 61 61
+	  if (!spec.data.values?.length || spec.data.values.length > 5000 || spec.data.url || spec.data.name) reasons.push('data: the public pattern translation requires 1–5000 inline rows with no external or named data reference.');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 62 62
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 63 63
+	  for (const mark of spec.marks) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 64 64
+	    if (!MARK_TYPES[mark.trait]) reasons.push(`marks.trait: ${mark.trait} has no public Cartesian chart type.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 65 65
+	    if (mark.from) reasons.push(`marks.from: ${mark.from} references a separate dataset that the public pattern translation cannot preserve.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 66 66
+	    for (const key of Object.keys(mark.options ?? {}).sort()) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 67 67
+	      if (!MARK_OPTIONS.has(key)) reasons.push(`marks.options.${key}: no preserved option mapping in the public pattern translation.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 68 68
+	    }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 69 69
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 70 70
+	  const encodings = { ...spec.encoding, ...spec.marks[0].encodings };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 71 71
+	  for (const channel of Object.keys(encodings)) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 72 72
+	    if (!CHANNELS.includes(channel as EncodingChannel)) reasons.push(`encoding.${channel}: secondary positional channels require a multi-bound mark translation.`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 73 73
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 74 74
+	  if (!encodings.x || !encodings.y) reasons.push('encoding: the public explicit translation requires both x and y bindings.');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 75 75
+	  if (reasons.length) return { status: 'authoring-only', baseChartType, reasons: [...new Set(reasons)] };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 76 76
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 77 77
+	  const explicitEncodings: Partial<Record<EncodingChannel, EncodingInput>> = {};
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 78 78
+	  for (const channel of CHANNELS) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 79 79
+	    const binding = encodings[channel];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 80 80
+	    if (binding) explicitEncodings[channel] = Object.fromEntries(INPUT_BINDING_KEYS.filter(key => binding[key] !== undefined).map(key => [key, structuredClone(binding[key])])) as unknown as EncodingInput;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 81 81
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 82 82
+	  return { status: 'renderable', baseChartType,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 83 83
+	    explicitInput: { chartType: baseChartType, rows: structuredClone(spec.data.values!), encodings: explicitEncodings,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 84 84
+	      ...(spec.id !== undefined ? { id: spec.id } : {}), ...(spec.name !== undefined ? { name: spec.name } : {}), description: spec.a11y.description },
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 85 85
+	    presentation: { ...(spec.config ? { config: spec.config } : {}), a11y: spec.a11y,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 86 86
+	      ...(spec.portability ? { portability: spec.portability } : {}), encodings,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 87 87
+	      ...(spec.marks[0].options ? { markOptions: spec.marks[0].options } : {}) } };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 88 88
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 89 89
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 90 90
+	/** Preserve authored presentation on fresh builder IR before adapters and a11y/certification. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 91 91
+	export function applyPatternPresentation(built: NormalizedVizSpec, presentation: PatternPresentation): NormalizedVizSpec {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 92 92
+	  if (built.marks.length !== 1) throw new PatternTranslationError('Pattern presentation requires the fresh single-mark explicit builder result.');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 93 93
+	  const spec = structuredClone(built);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 94 94
+	  const source = structuredClone(presentation);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 95 95
+	  for (const channel of CHANNELS) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 96 96
+	    const binding = source.encodings[channel];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 97 97
+	    // Keep builder-inferred types and accessible default titles; authored values,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 98 98
+	    // including legends/binning and mark-specific overrides, remain authoritative.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 99 99
+	    if (binding) spec.encoding[channel] = { ...spec.encoding[channel], ...binding };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 100 100
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 101 101
+	  if (source.config) spec.config = source.config;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 102 102
+	  spec.a11y = { ...spec.a11y, ...source.a11y };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 103 103
+	  if (source.portability) spec.portability = { ...spec.portability, ...source.portability };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 104 104
+	  if (source.markOptions) spec.marks[0].options = { ...spec.marks[0].options, ...source.markOptions };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 105 105
+	  return assertNormalizedVizSpec(spec);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 106 106
+	}

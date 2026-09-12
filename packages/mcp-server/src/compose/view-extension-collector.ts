@@ -241,9 +241,12 @@ export function collectDashboardViewExtensions(
   composed: ComposedObject,
 ): CollectResult {
   const direct = collectViewExtensions(composed, 'dashboard');
-  if (direct.plan.length > 0) {
+  if (direct.plan.some(entry => !entry.props.chart)) {
     return direct;
   }
+  // A bound chart adds a projection to the existing object dashboard. It does
+  // not replace the compact metric and domain panels inferred from other views.
+  const chartPlan = direct.plan.map(entry => ({ ...entry, targetSlot: 'main-content' }));
 
   const projected: ProjectedDashboardEntry[] = [];
 
@@ -266,7 +269,7 @@ export function collectDashboardViewExtensions(
   }
 
   if (projected.length === 0) {
-    return direct;
+    return { ...direct, plan: chartPlan };
   }
 
   const projectedPlan: SlotPlan[] = [];
@@ -295,7 +298,7 @@ export function collectDashboardViewExtensions(
   }
 
   return {
-    plan: projectedPlan,
+    plan: [...chartPlan, ...projectedPlan],
     warnings: [],
   };
 }

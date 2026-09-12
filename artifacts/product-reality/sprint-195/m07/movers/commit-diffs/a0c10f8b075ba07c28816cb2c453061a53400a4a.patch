@@ -1,0 +1,124 @@
+diff --git a/packages/mcp-server/src/tools/artifact.certify.scope.test.ts b/packages/mcp-server/src/tools/artifact.certify.scope.test.ts
+index f5470e20..5801d0f5 100644
+--- a/packages/mcp-server/src/tools/artifact.certify.scope.test.ts
++++ b/packages/mcp-server/src/tools/artifact.certify.scope.test.ts
+@@ -38 +38,6 @@ describe('certification describes the pixels at the requested scope', () => {
+-    expect(backed.coverage).toBe('uncertified'); expect(backed.conformant).toBeNull();
++    // The declared operand profile is evaluated even when rendered contrast fails.
++    expect(backed.coverage).toBe('certified'); expect(backed.conformant).toBe(false);
++    // This unchanged unnamed fixture also retains its native missing-name a11y failure.
++    expect(backed.pillars).toMatchObject({ a11yEquivalence: 'fail', contrast: 'fail', determinism: 'pass', accuracy: 'pass' });
++    expect(backed.findings).toContainEqual(expect.objectContaining({ code: 'OODS-A11Y-A11Y-R-09', severity: 'error' }));
++    expect(validateOutput(backed), JSON.stringify(validateOutput.errors)).toBe(true);
+@@ -40,0 +46 @@ describe('certification describes the pixels at the requested scope', () => {
++    expect(specOnly.coverage).toBe('uncertified'); expect(specOnly.conformant).toBeNull();
+@@ -41,0 +48 @@ describe('certification describes the pixels at the requested scope', () => {
++    expect(validateOutput(specOnly), JSON.stringify(validateOutput.errors)).toBe(true);
+@@ -44 +51,16 @@ describe('certification describes the pixels at the requested scope', () => {
+-  it.each([{ theme: 'hc' }, { theme: 'sepia' }, { brand: 'C' }])('rejects unsupported scope %j before creating measurement rows', async scope => {
++  it.each(['A', 'B'] as const)('HC/%s is admitted with forced-colors contrast exemption and the other pillars still evaluated', async brand => {
++    const rendered = await render({ chartType: 'area', rows: [...SALES], encodings: CASES[2]!.encodings as never, output: { includeNormalizedSpec: true } });
++    const input = { spec: rendered.normalizedSpec!, theme: 'hc', brand };
++    expect(validateInput(input), JSON.stringify(validateInput.errors)).toBe(true);
++    const out = await certify({ ...input, theme: 'hc' });
++    const light = await certify({ spec: input.spec, theme: 'light', brand });
++    expect(out).toMatchObject({ status: 'ok', coverage: 'certified', conformant: true, pillars: { contrast: 'exempt', a11yEquivalence: 'pass', determinism: 'pass', accuracy: 'pass' }, determinism: { stable: true } });
++    expect(out.contrastResults).toEqual([{ theme: 'hc', brand, verdict: 'exempt', measured: false, evidence: 'render', reason: 'forced-colors', note: out.contrastNote }]);
++    expect(out.contrastNote).toContain('No numeric server-side contrast grade is claimed.');
++    for (const pillar of ['a11yEquivalence', 'determinism', 'accuracy'] as const) expect(out.pillars?.[pillar]).toBe(light.pillars?.[pillar]);
++    expect(out.accuracySummary).toEqual(light.accuracySummary);
++    expect(out.determinism?.renderHash).not.toBe(light.determinism?.renderHash);
++    expect(validateOutput(out), JSON.stringify(validateOutput.errors)).toBe(true);
++  });
++
++  it.each([{ theme: 'sepia' }, { brand: 'C' }])('rejects unsupported scope %j before creating measurement rows', async scope => {
+diff --git a/packages/viz-core/src/adapters/vega-lite-adapter.spec.ts b/packages/viz-core/src/adapters/vega-lite-adapter.spec.ts
+index 36079da1..193ddfe7 100644
+--- a/packages/viz-core/src/adapters/vega-lite-adapter.spec.ts
++++ b/packages/viz-core/src/adapters/vega-lite-adapter.spec.ts
+@@ -34 +34,2 @@ const ROWS = [
+-const OODS_CATEGORICAL_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00'];
++// Sprint 195 m05's qualified Role-A revision changes light slot05 by one blue unit.
++const OODS_CATEGORICAL_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4949', '#993B00'];
+diff --git a/packages/viz-render/test/echarts-render-worker.spec.ts b/packages/viz-render/test/echarts-render-worker.spec.ts
+index 23440e61..f83ca329 100644
+--- a/packages/viz-render/test/echarts-render-worker.spec.ts
++++ b/packages/viz-render/test/echarts-render-worker.spec.ts
+@@ -28,4 +28,4 @@ type ProjectedOption = Record<string, unknown>;
+-// A same-seed immediate first frame hashes to
+-// fa27909961c5ab8acab6769e9ffb15a61227e47ce0b21ac754394b17cbf6a40c instead,
+-// so this pin bites removal of convergence policy, not merely seeded equality.
+-// s191 light slot 04 changes categorical paint only; force geometry remains deterministic.
++// The full projected option seeds the force layout. s195-m05's light slot 05
++// palette change therefore changed geometry, even though that color is unused
++// by this operand. This exact replacement hash is retained in the qualified m05
++// force_graph/A/light matrix; keep the convergence and intervening-RNG assertions.
+@@ -33 +33 @@ const CONVERGED_CANONICAL_FORCE_HASH =
+-  "3b947d90250a98838aad801be4f98ea8e5095528618296083b8644075ff6a331";
++  "df5261688594d5f845960170d643c35518954198cda607a598e069beed7e53df";
+diff --git a/scripts/product-reality/s195-certify-profile-receipt.ts b/scripts/product-reality/s195-certify-profile-receipt.ts
+index f8fc9d39..7404a4a9 100644
+--- a/scripts/product-reality/s195-certify-profile-receipt.ts
++++ b/scripts/product-reality/s195-certify-profile-receipt.ts
+@@ -4,2 +4,2 @@ import { fileURLToPath } from 'node:url';
+-import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
+-import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
++const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
++const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
+diff --git a/scripts/product-reality/s195-hc-browser.ts b/scripts/product-reality/s195-hc-browser.ts
+index 10de664a..5dfde00f 100644
+--- a/scripts/product-reality/s195-hc-browser.ts
++++ b/scripts/product-reality/s195-hc-browser.ts
+@@ -10,0 +11 @@ import { handle as generate } from '../../packages/mcp-server/src/tools/code.gen
++import type { VizRenderInput, DashboardRenderInput } from '../../packages/mcp-server/src/schemas/generated.js';
+@@ -32 +33 @@ try {
+-      const request = { chartType: chart.chartType, encodings: chart.encodings, rows: [...SALES], theme: 'hc' as const, brand, output: { svg: true, includeNormalizedSpec: true } };
++      const request: VizRenderInput = { chartType: chart.chartType, encodings: chart.encodings, rows: [...SALES], theme: 'hc' as const, brand, output: { svg: true, includeNormalizedSpec: true } };
+@@ -39 +40,6 @@ try {
+-    const request = { schemaVersion: 'v0.1' as const, theme: 'hc' as const, brand,
++    const [firstPanel, ...remainingPanels] = CASES.slice(0, 2).map(({ chartType, encodings }) => {
++      assert(chartType === 'bar' || chartType === 'line', 'HC dashboard uses the existing bar and line fixtures');
++      return { id: chartType, kind: 'chart' as const, chartType, encodings, datasetId: 'sales' };
++    });
++    assert(firstPanel, 'HC dashboard needs at least one chart panel');
++    const request: DashboardRenderInput = { schemaVersion: 'v0.1', theme: 'hc', brand,
+@@ -41 +47 @@ try {
+-      panels: CASES.slice(0, 2).map(({ chartType, encodings }) => ({ id: chartType, kind: 'chart' as const, chartType, encodings, datasetId: 'sales' })),
++      panels: [firstPanel, ...remainingPanels],
+diff --git a/scripts/product-reality/s195-hc-built-receipt.ts b/scripts/product-reality/s195-hc-built-receipt.ts
+index bdbf5c40..acebaf83 100644
+--- a/scripts/product-reality/s195-hc-built-receipt.ts
++++ b/scripts/product-reality/s195-hc-built-receipt.ts
+@@ -5,5 +5,5 @@ import { fileURLToPath } from 'node:url';
+-import { getAjv } from '../../packages/mcp-server/dist/lib/ajv.js';
+-import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
+-import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
+-import { handle as dashboard } from '../../packages/mcp-server/dist/tools/dashboard.render.js';
+-import { handle as generate } from '../../packages/mcp-server/dist/tools/code.generate.js';
++const { getAjv } = await import(new URL('../../packages/mcp-server/dist/lib/ajv.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/lib/ajv.js');
++const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
++const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
++const { handle: dashboard } = await import(new URL('../../packages/mcp-server/dist/tools/dashboard.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/dashboard.render.js');
++const { handle: generate } = await import(new URL('../../packages/mcp-server/dist/tools/code.generate.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/code.generate.js');
+diff --git a/scripts/product-reality/s195-qualify-viz-matrix.ts b/scripts/product-reality/s195-qualify-viz-matrix.ts
+index 5dfa0bce..bcb0193c 100644
+--- a/scripts/product-reality/s195-qualify-viz-matrix.ts
++++ b/scripts/product-reality/s195-qualify-viz-matrix.ts
+@@ -7 +7 @@ import { fileURLToPath } from "node:url";
+-import { renderEChartsToSvg } from "../../packages/viz-render/dist/index.js";
++const { renderEChartsToSvg } = await import(new URL('../../packages/viz-render/dist/index.js', import.meta.url).href) as typeof import('../../packages/viz-render/src/index.js');
+diff --git a/scripts/product-reality/s195-viz-matrix.ts b/scripts/product-reality/s195-viz-matrix.ts
+index 4f92bd65..9b4fa34e 100644
+--- a/scripts/product-reality/s195-viz-matrix.ts
++++ b/scripts/product-reality/s195-viz-matrix.ts
+@@ -6 +6 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
+-import { sha256 } from '../../packages/artifacts/dist/index.js';
++const { sha256 } = await import(new URL('../../packages/artifacts/dist/index.js', import.meta.url).href) as typeof import('../../packages/artifacts/src/index.js');
+diff --git a/scripts/runtime/assemble.mjs b/scripts/runtime/assemble.mjs
+index 061dc390..a70f9cf3 100644
+--- a/scripts/runtime/assemble.mjs
++++ b/scripts/runtime/assemble.mjs
+@@ -46 +46,2 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
+-  domains: 14,
++  // Sprint 195 includes the authored API-call Usage example beside its object.
++  domains: 15,

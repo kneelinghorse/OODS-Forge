@@ -134,7 +134,7 @@ test('Adapter uses MCP_EXTRA_TOOLS env var', () => {
 
 test('MCP_EXTRA_TOOLS adds specific on-demand tools to auto set', () => {
   const toolset = 'default';
-  const extras = 'a11y.scan,vrt.run';
+  const extras = 'a11y.scan,diag.snapshot';
   const extraList = extras.split(/[,\s]+/).filter(Boolean);
   const enabled = toolset === 'all'
     ? [...REGISTRY.auto, ...REGISTRY.onDemand]
@@ -145,7 +145,7 @@ test('MCP_EXTRA_TOOLS adds specific on-demand tools to auto set', () => {
     `Expected ${EXPECTED_AUTO} auto + 2 extra = ${EXPECTED_AUTO + 2}, got ${enabled.length}`
   );
   assert.ok(enabled.includes('a11y.scan'), 'a11y.scan should be in enabled list');
-  assert.ok(enabled.includes('vrt.run'), 'vrt.run should be in enabled list');
+  assert.ok(enabled.includes('diag.snapshot'), 'diag.snapshot should be in enabled list');
 });
 
 test('MCP_EXTRA_TOOLS ignores unknown tool names', () => {

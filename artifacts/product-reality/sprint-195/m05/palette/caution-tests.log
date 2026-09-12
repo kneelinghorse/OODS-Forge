@@ -1,0 +1,122 @@
+Command: pnpm --filter @oods/mcp-server exec vitest run test/tools/certify-contrast.spec.ts test/tools/artifact.certify.contrast-fault.spec.ts test/tools/artifact.certify.spec.ts test/tools/artifact.certify.spec-only-bytes.spec.ts test/tools/certify-contrast.echarts-caveat-pin.spec.ts
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ test/tools/artifact.certify.spec.ts (72 tests | 1 failed) 967ms
+   ✓ artifact.certify — conformance verdict (cartesian) > a conformant cartesian IR → certified, conformant:true, no findings, stable contentHash 287ms
+   ✓ artifact.certify — conformance verdict (cartesian) > a non-conformant IR (encoding field absent from rows → R-12) → conformant:false + OODS-A11Y-A11Y-R-12 15ms
+   ✓ artifact.certify — coverage-honest routing > an ECharts-primary IR (MarkSankey) → uncertified, conformant:null, no determinism 5ms
+   ✓ artifact.certify — determinism (contentHash) > same input → identical contentHash across two calls (pure verdict) 27ms
+   ✓ artifact.certify — determinism (contentHash) > a one-field mutation → different contentHash 26ms
+   ✓ artifact.certify — invalid input > an invalid IR → structured error (status:error, OODS-V126), never a throw 0ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > a default cartesian IR → pillars all pass + a rendered-contrast contrastNote 10ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > [B] the primary conformant-rollup lock — a low-contrast config.tokens override → contrast:fail PULLS conformant false, while a11yEquivalence stays DECOUPLED at pass 21ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > [B] exempt keeps conformant a11y-driven — a divergence IR (contrast:exempt) stays conformant:true 15ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > bakes the resolved OODS palette into the compiled cartesian spec (s138 rendered-reality — the inversion of the s137 colorless tripwire, and the planned #564 cartesian-color change) 0ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > an ECharts-primary categorical IR (MarkSankey) → contrast graded (s191 light/A Role-C repair); a11yEquivalence + determinism STAY unchecked, coverage still uncertified 3ms
+   ✓ artifact.certify — fall-through routing (review #1004 item 2) > MarkBar → certified (a modeled cartesian-Vega trait) 16ms
+   ✓ artifact.certify — fall-through routing (review #1004 item 2) > MarkTreemap → uncertified (ECharts-primary), never status:error 7ms
+   ✓ artifact.certify — fall-through routing (review #1004 item 2) > MarkHeatmap → an HONEST certified verdict via the MarkRect alias — NOT the opaque V127 it used to be 21ms
+   ✓ artifact.certify — fall-through routing (review #1004 item 2) > an unmodeled non-primary trait (MarkPie) → uncertified, never status:error V127 0ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > viz.render.contentHash === certify.contentHash on viz.render's RETURNED normalizedSpec (multi-series, baked scale.range) 15ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > single-series: viz.render.contentHash === certify.contentHash on the returned normalizedSpec (baked mark.color) 8ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > F5 (s147): an explicit agent color range hashes in lockstep — viz.render.contentHash === certify.contentHash 13ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > #853c (s149): a provably-failing gray agent range → certify HONEST-FAIL (conformant:false, contrast:'fail') on viz.render's own normalizedSpec 13ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a EncodingDetail color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 11ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a EncodingColour (typo) color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 10ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a bare Color color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 12ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a EncodingDetail + timeUnit color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 15ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a EncodingDetail + aggregate color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 16ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > divergence lock — a EncodingSize on color color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass 10ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > legit categorical twin (EncodingColor, palette baked) → contrast:pass — unchanged 12ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > invariance — a divergence IR shares conformant/a11yEquivalence/determinism with its EncodingColor twin; only contrast moves 22ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > contentHash is the untouched compile hash — the contrast pillar does not feed it 10ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > MarkTreemap → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 4ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > MarkSunburst → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 3ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > MarkSankey → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 3ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > MarkGraph → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 3ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > MarkChord → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 3ms
+   ✓ artifact.certify — ECharts categorical contrast (s141 m02) > the categorical grade is INPUT-INVARIANT — a config.tokens grey override does NOT move the verdict (the spec-only fallback excludes config.tokens; the grade is the fixed default palette, NOT resolveCategoricalPalette) 5ms
+   × artifact.certify — ECharts categorical consistency lock (s141 m02) > certify reconstructs the fixed default OODS 6-slot categorical palette 8ms
+     → expected [ '#416CD9', '#3E44BE', …(4) ] to deeply equal [ '#416CD9', '#3E44BE', …(4) ]
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > pins the light/A Role-C repair — every slot clears 3:1 (s191) 1ms
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > treemap bakes exactly certify’s grade palette (rgb→hex normalized) 1ms
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > sunburst bakes exactly certify’s grade palette (rgb→hex normalized) 0ms
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > sankey bakes exactly certify’s grade palette (rgb→hex normalized) 1ms
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > force_graph bakes exactly certify’s grade palette (rgb→hex normalized) 1ms
+   ✓ artifact.certify — ECharts categorical consistency lock (s141 m02) > chord bakes exactly certify’s grade palette (rgb→hex normalized) 0ms
+   ✓ artifact.certify — ECharts geo contrast (s141 m03) > MarkChoropleth → contrast:exempt (WCAG role-B gradient exception); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 0ms
+   ✓ artifact.certify — ECharts geo contrast (s141 m03) > MarkFlow → contrast:exempt (WCAG role-B gradient exception); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 0ms
+   ✓ artifact.certify — ECharts geo contrast (s141 m03) > MarkBubble → contrast:exempt (WCAG role-B gradient exception); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash 0ms
+   ✓ artifact.certify — ECharts geo contrast (s141 m03) > bubble_map exempt note rests on the exempt-all-geo RULING, not on invisibility — s172 made the range reachable 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render sankey → emitted normalizedSpec.encoding is {} + trait MarkSankey → certify returns contrast:'pass', status:ok (was OODS-V126 at HEAD) 8ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render choropleth → emitted normalizedSpec.encoding is {} + trait MarkChoropleth → certify returns contrast:'exempt', status:ok (was OODS-V126 at HEAD) 2ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'treemap' → emitted normalizedSpec.encoding is {} + trait 'MarkTreemap' → certify contrast:'pass', status:ok (2/8→8/8, s143 m02) 2ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'sunburst' → emitted normalizedSpec.encoding is {} + trait 'MarkSunburst' → certify contrast:'pass', status:ok (2/8→8/8, s143 m02) 2ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'force_graph' → emitted normalizedSpec.encoding is {} + trait 'MarkGraph' → certify contrast:'pass', status:ok (2/8→8/8, s143 m02) 2ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'chord' → emitted normalizedSpec.encoding is {} + trait 'MarkChord' → certify contrast:'pass', status:ok (2/8→8/8, s143 m02) 2ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'bubble_map' → emitted normalizedSpec.encoding is {} + trait 'MarkBubble' → certify contrast:'exempt', status:ok (2/8→8/8, s143 m02) 1ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a REAL viz.render 'flow_map' → emitted normalizedSpec.encoding is {} + trait 'MarkFlow' → certify contrast:'exempt', status:ok (2/8→8/8, s143 m02) 1ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkBar) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkLine) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkPoint) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkArea) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkRect) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > a hand-authored CARTESIAN IR (MarkHeatmap) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard) 0ms
+   ✓ artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02) > the guard is minProperties (empty-only), not a blanket cartesian reject — the SAME IR WITH its encoding certifies 10ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R1 non-zero bar baseline' → pillars.accuracy fail + 'OODS-V150' in findings + conformant false + the FAIL path still validates 9ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R2 dual axis' → pillars.accuracy fail + 'OODS-V151' in findings + conformant false + the FAIL path still validates 20ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R3 area encodes linear' → pillars.accuracy fail + 'OODS-V152' in findings + conformant false + the FAIL path still validates 44ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R4 aggregation hiding' → pillars.accuracy fail + 'OODS-V153' in findings + conformant false + the FAIL path still validates 9ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > each red is keyed to its OWN rule — no red trips a rule it does not name 42ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > every accuracy code a red emits is a REGISTERED code 40ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > a clean cartesian IR → accuracy pass with all four rules evaluated, and no accuracy findings 9ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > the uncertified (ECharts-primary) path → accuracy unchecked, no accuracySummary, conformant still null 3ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'unchecked' (nothing to grade) does NOT pull the rollup — only 'fail' and 'ungradeable' do (s175 m04 closed #781) 50ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > accuracy findings sit ALONGSIDE a11y findings, told apart by code — findings[] is no longer a11y-only 9ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > HASH IDENTITY: evaluating the accuracy pillar does not move contentHash 24ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > is DETERMINISTIC: the same IR certifies to the same verdict twice 19ms
+ ✓ test/tools/certify-contrast.spec.ts (27 tests) 392ms
+ ✓ test/tools/artifact.certify.spec-only-bytes.spec.ts (32 tests) 312ms
+ ✓ test/tools/artifact.certify.contrast-fault.spec.ts (3 tests) 203ms
+ ✓ test/tools/certify-contrast.echarts-caveat-pin.spec.ts (2 tests) 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/tools/artifact.certify.spec.ts > artifact.certify — ECharts categorical consistency lock (s141 m02) > certify reconstructs the fixed default OODS 6-slot categorical palette
+AssertionError: expected [ '#416CD9', '#3E44BE', …(4) ] to deeply equal [ '#416CD9', '#3E44BE', …(4) ]
+
+- Expected
++ Received
+
+  [
+    "#416CD9",
+    "#3E44BE",
+    "#279669",
+    "#B58525",
+-   "#CA4948",
++   "#CA4949",
+    "#993B00",
+  ]
+
+ ❯ test/tools/artifact.certify.spec.ts:576:29
+    574| 
+    575|   it('certify reconstructs the fixed default OODS 6-slot categorical p…
+    576|     expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', …
+       |                             ^
+    577|   });
+    578| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 135 passed (136)
+   Start at  16:35:43
+   Duration  4.92s (transform 902ms, setup 188ms, collect 1.98s, tests 1.88s, environment 0ms, prepare 227ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/tools/certify-contrast.spec.ts test/tools/artifact.certify.contrast-fault.spec.ts test/tools/artifact.certify.spec.ts test/tools/artifact.certify.spec-only-bytes.spec.ts test/tools/certify-contrast.echarts-caveat-pin.spec.ts
+
+Exit: 1

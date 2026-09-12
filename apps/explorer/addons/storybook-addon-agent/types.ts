@@ -1,9 +1,6 @@
 export type ToolName =
   | 'a11y.scan'
-  | 'purity.audit'
-  | 'vrt.run'
   | 'diag.snapshot'
-  | 'reviewKit.create'
   | 'brand.apply'
   | 'billing.reviewKit'
   | 'billing.switchFixtures';

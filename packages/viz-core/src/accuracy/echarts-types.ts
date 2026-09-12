@@ -23,14 +23,20 @@
 
 import type { AccuracyRuleOutcome } from './types.js';
 
-/** The six rule ids. Stable — they key the registered OODS-V15x codes. */
+/** Stable rule ids key the registered OODS-V154..V159 and V168..V173 codes. */
 export type EChartsAccuracyRuleId =
   | 'hierarchy-negative-value'
   | 'hierarchy-non-additive-parent'
   | 'flow-negative-link-value'
   | 'sankey-node-value-override'
   | 'sankey-duplicate-link'
-  | 'choropleth-join-conflict';
+  | 'choropleth-join-conflict'
+  | 'bubble-negative-size'
+  | 'bubble-radius-scaling'
+  | 'bubble-coordinate-conflict'
+  | 'flow-map-negative-strength'
+  | 'flow-map-duplicate-flow'
+  | 'force-graph-duplicate-link';
 
 /** The 8 ECharts-primary chart types, as the accuracy engine names them. */
 export type EChartsAccuracyChartType =

@@ -1,0 +1,145 @@
+{
+  "request": {
+    "schema": {
+      "version": "2026.02",
+      "objectSchema": {
+        "measurements": {
+          "type": "array",
+          "required": true
+        }
+      },
+      "screens": [
+        {
+          "id": "chart",
+          "component": "VizLinePreview",
+          "props": {
+            "title": "bar measurements",
+            "description": "Recorded sales measurements."
+          },
+          "chart": {
+            "chartType": "bar",
+            "source": "record-array",
+            "dataField": "measurements",
+            "encodings": {
+              "x": {
+                "field": "region",
+                "scale": "band"
+              },
+              "y": {
+                "field": "revenue",
+                "aggregate": "sum"
+              }
+            },
+            "sampleRows": [
+              {
+                "region": "North",
+                "quarter": "2024-01",
+                "revenue": 120000,
+                "units": 340
+              },
+              {
+                "region": "South",
+                "quarter": "2024-01",
+                "revenue": 135000,
+                "units": 410
+              },
+              {
+                "region": "North",
+                "quarter": "2024-02",
+                "revenue": 128000,
+                "units": 360
+              },
+              {
+                "region": "South",
+                "quarter": "2024-02",
+                "revenue": 142000,
+                "units": 430
+              },
+              {
+                "region": "North",
+                "quarter": "2024-03",
+                "revenue": 131000,
+                "units": 372
+              },
+              {
+                "region": "South",
+                "quarter": "2024-03",
+                "revenue": 150000,
+                "units": 455
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "framework": "react",
+    "profile": "build",
+    "options": {
+      "typescript": true,
+      "styling": "tokens"
+    }
+  },
+  "result": {
+    "status": "error",
+    "framework": "react",
+    "code": "",
+    "fileExtension": "",
+    "imports": [],
+    "warnings": [],
+    "validationReceipt": {
+      "profile": "build",
+      "defaulted": false,
+      "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+      "axes": {
+        "scope": "generated-artifact",
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "target": {
+          "requested": "react",
+          "resolved": "react",
+          "source": "explicit"
+        }
+      },
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract"
+      ],
+      "notChecked": [
+        "dependency-closure",
+        "fallback-policy",
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+        "performance-evidence",
+        "certification-evidence"
+      ],
+      "evidence": {
+        "required": [],
+        "provided": [],
+        "missing": [],
+        "mismatched": [],
+        "accepted": [],
+        "notApplicable": []
+      }
+    },
+    "meta": {
+      "nodeCount": 1,
+      "componentCount": 1
+    },
+    "errors": [
+      {
+        "code": "OODS-N016",
+        "message": "Chart type 'bar' does not match preview 'VizLinePreview'."
+      }
+    ]
+  }
+}

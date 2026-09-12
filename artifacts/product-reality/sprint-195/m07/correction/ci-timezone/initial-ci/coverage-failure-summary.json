@@ -1,0 +1,84 @@
+{
+  "head": "39deb793a3161621b5a0893618f9d40201c22256",
+  "runId": 34664204863,
+  "jobId": 103472755567,
+  "status": "completed",
+  "conclusion": "failure",
+  "exitCode": 1,
+  "causeClass": "test assertions",
+  "thresholdFailureObserved": false,
+  "testFiles": {
+    "failed": 4,
+    "passed": 603,
+    "skipped": 1,
+    "total": 608
+  },
+  "tests": {
+    "failed": 5,
+    "passed": 6844,
+    "skipped": 16,
+    "total": 6865
+  },
+  "failures": [
+    {
+      "file": "testing/a11y/brand-description-truth.spec.ts",
+      "test": "every numeric ratio claim has a declared pair (no silent gaps)",
+      "count": 1,
+      "rawLines": [
+        1952,
+        1978
+      ],
+      "details": [
+        "A/base viz.scale.categorical.05",
+        "A/dark viz.scale.categorical.04",
+        "B/base viz.scale.categorical.05",
+        "B/dark viz.scale.categorical.04"
+      ],
+      "diagnosisOwner": "m01_gate"
+    },
+    {
+      "file": "packages/mcp-server/test/contracts/viz-pattern-registry.s195.spec.ts",
+      "test": "remeasures all supported scopes and every authoring-only rejection through the real handlers",
+      "count": 1,
+      "rawLines": [
+        1980,
+        1997
+      ],
+      "recursiveDiff": "patterns-registry-diff.json",
+      "cause": "timezone-sensitive temporal rendering; exact CI hashes reproduced by UTC, retained hashes by America/Chicago, with identical request and normalized spec bytes"
+    },
+    {
+      "file": "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "test": "exported registry equals every live census cell after canonicalization",
+      "count": 1,
+      "rawLines": [
+        1999,
+        2016
+      ],
+      "recursiveDiff": "types-registry-diff.json",
+      "cause": "same exact timezone causal reproduction for line and area six scopes each; raw assertion Expected is live UTC, Received is retained Chicago"
+    },
+    {
+      "file": "packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts",
+      "test": "legacy Subscription react / vue HC asset bytes match retained m05 public output",
+      "count": 2,
+      "rawLines": [
+        2018,
+        2043
+      ],
+      "recursiveDiff": "subscription-svg-diff.json",
+      "cause": "independent m02 probe reproduces exact two SVG hashes solely by timezone; identical request and build",
+      "independentProbe": "/tmp/oods-s195-tz-probe/comparison.json"
+    }
+  ],
+  "rawLog": {
+    "path": "/tmp/oods-s195-ci/raw/job-103472755567.log",
+    "sha256": "11b83a0bd0210cde651be211e7baa7425654ef33c691647e50001780b3dcd818"
+  },
+  "completeFailureBlock": {
+    "path": "/tmp/oods-s195-ci/ci/b2-coverage-diagnosis/coverage-failures.log",
+    "sha256": "aaddc46d2fca2b5fb43662eef6f8ee4210c98f87813efa667982f72704ccece5"
+  },
+  "registryCausalComparison": "registry-tz-comparison.json",
+  "limits": "No production source correction, SVG normalization, golden update, coverage threshold change, workflow rerun, or suite execution performed by this diagnosis."
+}

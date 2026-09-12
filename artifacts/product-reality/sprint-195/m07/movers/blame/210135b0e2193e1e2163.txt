@@ -1,0 +1,213 @@
+ffcdc29ef225d28e54f094e2b430b707f85d1167 1 1 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+filename packages/mcp-server/src/lib/viz-taxonomy.ts
+	import fs from 'node:fs';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 2 2
+	import path from 'node:path';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 3 3
+	import { fileURLToPath } from 'node:url';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 4 4 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 packages/mcp-server/src/lib/viz-taxonomy.ts
+filename packages/mcp-server/src/lib/viz-taxonomy.ts
+	import { VIZ_PATTERN_SOURCES, VIZ_RECIPES, validateVizPatternRegistry } from '@oods/viz-core';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 5 5 22
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 6 6
+	type Assignment = { id: string; family: string; role: 'core' | 'extension'; coreCell: string | null };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 7 7
+	type CellDefinition = { cell: string; definition: string; gapReason: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 8 8
+	type Classification = { schemaVersion: 1; families: Array<{ id: string; definition: string; coreCells: CellDefinition[] }>; assignments: Assignment[] };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 9 9
+	type VizIdentity = Assignment & { kind: 'type' | 'pattern'; publicSvg: boolean; specPath?: string; specSha256?: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 10 10
+	type CoreCell = { family: string; cell: string; definition: string; status: 'surface-complete' | 'typed-gap'; identities: string[]; reason?: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 11 11
+	export type VizSummary = { types: number; patterns: number; families: number; classified: number; coreCells: number; coreSurfaceComplete: number; typedGaps: number };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 12 12
+	export type VizTaxonomy = { schemaVersion: 1; families: Array<{ id: string; definition: string }>; identities: VizIdentity[]; coreCells: CoreCell[]; summary: VizSummary };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 13 13
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 14 14
+	const directory = path.dirname(fileURLToPath(import.meta.url));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 15 15
+	const cellKey = (family: string, cell: string) => `${family}/${cell}`;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 16 16
+	const same = (left: string[], right: string[]) => JSON.stringify([...left].sort()) === JSON.stringify([...right].sort());
+ffcdc29ef225d28e54f094e2b430b707f85d1167 17 17
+	const text = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 18 18
+	const reject = (reason: string): never => { throw new Error(`Viz taxonomy rejected: ${reason}`); };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 19 19
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 20 20
+	function readRegistry(name: string, override?: string): unknown {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 21 21
+	  const bundled = path.resolve(directory, '../registry', name);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 22 22
+	  const source = path.resolve(directory, '../../../viz-core/src/registry', name);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 23 23
+	  return JSON.parse(fs.readFileSync(override ?? (fs.existsSync(bundled) ? bundled : source), 'utf8'));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 24 24
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 25 25
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 26 26
+	/** Reconcile the complete declared profile and measured type population before serving counts. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 27 1
+	export function projectVizSummary(value: unknown, classificationValue: unknown, patternRegistryValue: unknown): VizSummary {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 28 28 6
+	  const taxonomy = value as VizTaxonomy;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 29 29
+	  const classification = classificationValue as Classification;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 30 30
+	  if (!taxonomy || taxonomy.schemaVersion !== 1 || !Array.isArray(taxonomy.families) || !Array.isArray(taxonomy.identities) || !Array.isArray(taxonomy.coreCells)) reject('invalid version or population');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 31 31
+	  if (!classification || classification.schemaVersion !== 1 || !Array.isArray(classification.families) || !classification.families.length || !Array.isArray(classification.assignments)) reject('invalid classification authority');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 32 32
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 33 33
+	  const recipes = new Map(VIZ_RECIPES.map(recipe => [recipe.chartType, recipe]));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 34 34 1
+	  const patterns = new Map(VIZ_PATTERN_SOURCES.map(source => [source.id, source]));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 40 35 3
+	  const expectedIds = [...recipes.keys(), ...patterns.keys()];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 41 36
+	  if (!same(classification.assignments.map(row => row?.id), expectedIds)) reject('classification differs from registered identities');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 42 37
+	  if (!same(taxonomy.identities.map(row => row?.id), expectedIds)) reject('exact distinct registered identities required');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 38 38 4
+	  let measuredPatterns;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 39 39
+	  try { measuredPatterns = validateVizPatternRegistry(patternRegistryValue, VIZ_PATTERN_SOURCES, classification.assignments, [...recipes.keys()]); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 40 40
+	  catch (error) { reject((error as Error).message); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 41 41
+	  const patternProof = new Map(measuredPatterns!.map(pattern => [pattern.id, pattern]));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 43 42 19
+	  const families = new Map(classification.families.map(family => [family.id, family]));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 44 43
+	  if (families.size !== classification.families.length || !same(taxonomy.families.map(family => family?.id), [...families.keys()])) reject('exact distinct declared families required');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 45 44
+	  for (const family of taxonomy.families) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 46 45
+	    const authored = families.get(family.id)!;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 47 46
+	    if (!text(authored.definition) || !Array.isArray(authored.coreCells) || !authored.coreCells.length || family.definition !== authored.definition) reject(`${family.id}: invalid family definition`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 48 47
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 49 48
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 50 49
+	  const assignments = new Map(classification.assignments.map(row => [row.id, row]));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 51 50
+	  const declaredCells = new Map(classification.families.flatMap(family => family.coreCells.map(cell => [cellKey(family.id, cell.cell), cell] as const)));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 52 51
+	  if (declaredCells.size !== classification.families.reduce((count, family) => count + family.coreCells.length, 0)) reject('duplicate declared core cell');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 53 52
+	  for (const identity of taxonomy.identities) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 54 53
+	    const assignment = assignments.get(identity.id)!;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 55 54
+	    const recipe = recipes.get(identity.id);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 56 55
+	    if (!families.has(identity.family) || identity.family !== assignment.family || identity.role !== assignment.role || identity.coreCell !== assignment.coreCell) reject(`${identity.id}: classification mismatch`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 57 56
+	    if (!['core', 'extension'].includes(identity.role) || (identity.role === 'core' && identity.coreCell === null) || (identity.coreCell !== null && !declaredCells.has(cellKey(identity.family, identity.coreCell)))) reject(`${identity.id}: invalid core assignment`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 58 57
+	    if (identity.kind !== (recipe ? 'type' : 'pattern') || typeof identity.publicSvg !== 'boolean') reject(`${identity.id}: invalid identity kind or public SVG proof`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 59 58
+	    if (recipe) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 60 59
+	      if (identity.publicSvg !== recipe.publicSvg) reject(`${identity.id}: public SVG differs from measured recipe`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 61 60
+	    } else {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 61 61 3
+	      const source = patterns.get(identity.id)!;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 62 62
+	      if (identity.specPath !== source.specPath || identity.specSha256 !== source.specSha256) reject(`${identity.id}: invalid pattern provenance`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 63 63
+	      if (identity.publicSvg !== patternProof.get(identity.id)!.publicSvg) reject(`${identity.id}: public SVG differs from exact measured pattern`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 66 64 30
+	    }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 67 65
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 68 66
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 69 67
+	  if (!same(taxonomy.coreCells.map(cell => cellKey(cell?.family, cell?.cell)), [...declaredCells.keys()])) reject('exact distinct declared core cells required');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 70 68
+	  for (const cell of taxonomy.coreCells) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 71 69
+	    const declared = declaredCells.get(cellKey(cell.family, cell.cell))!;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 72 70
+	    const backing = taxonomy.identities.filter(identity => identity.family === cell.family && identity.coreCell === cell.cell);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 73 71
+	    if (!text(declared.definition) || cell.definition !== declared.definition || !Array.isArray(cell.identities) || !same(cell.identities, backing.map(identity => identity.id))) reject(`${cell.family}/${cell.cell}: invalid cell definition or backing`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 74 72
+	    const complete = backing.some(identity => identity.publicSvg);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 75 73
+	    if (cell.status !== (complete ? 'surface-complete' : 'typed-gap')) reject(`${cell.family}/${cell.cell}: status differs from public SVG backing`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 76 74
+	    if (!complete && (!text(declared.gapReason) || cell.reason !== declared.gapReason)) reject(`${cell.family}/${cell.cell}: gap requires its declared reason`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 77 75
+	    if (complete && cell.reason !== undefined) reject(`${cell.family}/${cell.cell}: complete cell cannot retain a gap reason`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 78 76
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 79 77
+	  const summary: VizSummary = {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 80 78
+	    types: taxonomy.identities.filter(identity => identity.kind === 'type').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 81 79
+	    patterns: taxonomy.identities.filter(identity => identity.kind === 'pattern').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 82 80
+	    families: taxonomy.families.length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 83 81
+	    classified: taxonomy.identities.length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 84 82
+	    coreCells: taxonomy.coreCells.length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 85 83
+	    coreSurfaceComplete: taxonomy.coreCells.filter(cell => cell.status === 'surface-complete').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 86 84
+	    typedGaps: taxonomy.coreCells.filter(cell => cell.status === 'typed-gap').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 87 85
+	  };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 88 86
+	  if (!taxonomy.summary || !same(Object.keys(taxonomy.summary), Object.keys(summary)) || (Object.keys(summary) as Array<keyof VizSummary>).some(key => taxonomy.summary[key] !== summary[key])) reject('summary differs from classified identities and core cells');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 89 87
+	  return summary;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 90 88
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 91 89
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 92 90
+	export function readVizSummary(): VizSummary {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 93 91
+	  return projectVizSummary(
+ffcdc29ef225d28e54f094e2b430b707f85d1167 94 92
+	    readRegistry('viz-taxonomy.v1.json', process.env.MCP_VIZ_TAXONOMY_PATH),
+ffcdc29ef225d28e54f094e2b430b707f85d1167 95 93
+	    readRegistry('viz-classification.v1.json', process.env.MCP_VIZ_CLASSIFICATION_PATH),
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 94 94 1
+	    readRegistry('viz-patterns.v1.json', process.env.MCP_VIZ_PATTERN_REGISTRY_PATH),
+ffcdc29ef225d28e54f094e2b430b707f85d1167 96 95 2
+	  );
+ffcdc29ef225d28e54f094e2b430b707f85d1167 97 96
+	}

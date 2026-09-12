@@ -99,7 +99,7 @@ export type CodegenOptions = {
   workflowCollections?: boolean;
   typescript: boolean;
   styling: CodegenStyling;
-  theme?: 'light' | 'dark';
+  theme?: 'light' | 'dark' | 'hc';
   brand?: 'A' | 'B';
 };
 

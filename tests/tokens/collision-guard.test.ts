@@ -14,7 +14,7 @@
  *      duplicate that crosses out of one brand's directory is still reported.
  *
  * (3) matters because a guard that exempted too much would be green for the wrong
- * reason: the prescribed layering produces 44 differing source-leaf duplicates per themed
+ * reason: the prescribed layering produces 45 differing source-leaf duplicates per themed
  * scope by design, so "no collisions reported" is only meaningful if non-chain duplicates
  * fail. This is a source inventory, distinct from the 41-slot semantic bridge.
  */
@@ -121,7 +121,7 @@ describe('s167 m01 — the token collision guard', () => {
     // With the exemption in place: clean.
     expect(findCollisions(files, TOKENS_PKG)).toEqual([]);
 
-    // Without it: the same two files collide on all 44 brand source leaves. Counted directly
+    // Without it: the same two files collide on all 45 brand source leaves (including categorical05 added in s195). Counted directly
     // from source so this cannot drift out of step with the guard's own logic.
     const leaves = (node: unknown, trail: string[] = []): string[] => {
       const out: string[] = [];
@@ -138,7 +138,7 @@ describe('s167 m01 — the token collision guard', () => {
     const baseLeaves = new Set(leaves(read('src/tokens/brands/A/base.json')));
     const darkLeaves = leaves(read('src/tokens/brands/A/dark.json'));
     const overlapping = darkLeaves.filter((p) => baseLeaves.has(p));
-    expect(overlapping).toHaveLength(44);
+    expect(overlapping).toHaveLength(45);
   });
 
   /**

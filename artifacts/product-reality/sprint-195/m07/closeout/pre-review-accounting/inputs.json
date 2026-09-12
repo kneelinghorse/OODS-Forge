@@ -1,0 +1,55 @@
+{
+  "diagnosticOnly": true,
+  "sourceManifest": {
+    "path": "/tmp/oods-s195-m07-manifest-inputs.json",
+    "sha256": "5103e51b4049c0fbd3f91164aedc265e47398080be487a81cae307241b0aa2c1"
+  },
+  "arguments": {
+    "root": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+    "sprintId": "sprint-195",
+    "missionId": "s195-m07",
+    "capturePath": "artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json",
+    "baselinePath": "artifacts/product-reality/sprint-194/m07/five-suite-closeout/four-suite-baseline.json",
+    "attempts": [
+      {
+        "name": "initial-failed-closeout",
+        "path": "artifacts/product-reality/sprint-195/m07/five-suite-closeout-attempt-1/four-suite-baseline.json",
+        "originalReferenceRoot": "five-suite-closeout",
+        "reason": "Full attempt at C retained with 17 assertion failures (11 unique across overlapping suites), including qualified palette expectations and current scope/census contract expectations; all 32 skips retained. No raw receipt or reference was rewritten."
+      }
+    ],
+    "attributions": [
+      {
+        "suite": "root-core",
+        "file": "tests/viz/mark-options-schema-validity-s167.test.ts",
+        "baseline": "sprint194Closeout",
+        "kind": "schema-derived-test-population",
+        "reason": "The unchanged test dynamically creates one assertion per declared mark parameter. s195-m06 added title/description to all five canonical mark schemas and chart to the four non-area schemas:14new assertions, actual observed61→75 tests; no exclusions or test-file edits. Attribute the population increase to the five authoritative parameter schemas at the implementation commit.",
+        "references": [
+          {
+            "commit": "a3158282bba25713171d7216181bde28b69a80a1",
+            "path": "schemas/traits/mark-area.parameters.schema.json"
+          },
+          {
+            "commit": "a3158282bba25713171d7216181bde28b69a80a1",
+            "path": "schemas/traits/mark-bar.parameters.schema.json"
+          },
+          {
+            "commit": "a3158282bba25713171d7216181bde28b69a80a1",
+            "path": "schemas/traits/mark-line.parameters.schema.json"
+          },
+          {
+            "commit": "a3158282bba25713171d7216181bde28b69a80a1",
+            "path": "schemas/traits/mark-point.parameters.schema.json"
+          },
+          {
+            "commit": "a3158282bba25713171d7216181bde28b69a80a1",
+            "path": "schemas/traits/mark-rect.parameters.schema.json"
+          }
+        ]
+      }
+    ],
+    "executionHead": "6e779776a7efa3b6e7b26a12966f0c4186dba1d6",
+    "reviewHead": "6e779776a7efa3b6e7b26a12966f0c4186dba1d6"
+  }
+}

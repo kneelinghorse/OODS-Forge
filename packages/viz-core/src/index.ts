@@ -54,6 +54,7 @@ export * from './adapters/spatial/index.js';
 // Chart recommender + pattern catalogue
 export * from './patterns/suggest-chart.js';
 export * from './patterns/index.js';
+export * from './patterns/translate-pattern.js';
 
 // Rung-1 retirement surface: these implementations have always lived in
 // viz-core, but the legacy src/viz forwarding modules exposed them only by
@@ -113,3 +114,4 @@ export * from './tokens/oods-echarts-chrome.js';
 export { finestGranularity, parseTemporalValue } from './analysis/temporal.js';
 
 export { VIZ_RECIPES, type VizRecipeCapability } from './registry/viz-recipes.js';
+export { validateVizPatternRegistry, canonicalPatternValue, type VizPatternCapability, type VizPatternScope, type VizPatternProvenance } from './registry/viz-patterns.js';

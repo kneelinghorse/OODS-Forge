@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "mission": "s195-m02",
+  "evidenceKind": "execution-summary-from-observed-tool-results",
+  "rawLogsRetained": false,
+  "disclosure": "Commands ran before this receipt was requested. This file records observed exit statuses and reported test counts, not reconstructed raw logs. Unchanged tests were not rerun for retention.",
+  "workingDirectory": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+  "commands": [
+    {
+      "command": "pnpm exec tsx scripts/product-reality/s195-health-viz-schema.ts && pnpm --filter @oods/schemas-tools run generate",
+      "exitCode": 0,
+      "observation": "Recorded additive output migration and existing TypeScript generator completed."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build && pnpm exec vitest run packages/mcp-server/test/product-reality/health-viz.s195.spec.ts packages/mcp-server/src/tools/__tests__/health.test.ts packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "attempt": 1,
+      "exitCode": 2,
+      "observation": "Build rejected Map inference at viz-taxonomy.ts:62 (TS2345). Explicit Map<string, string> fixed the type mismatch; no tests executed after this failed build."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server run build && pnpm exec vitest run packages/mcp-server/test/product-reality/health-viz.s195.spec.ts packages/mcp-server/src/tools/__tests__/health.test.ts packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "attempt": 2,
+      "exitCode": 0,
+      "build": "passed",
+      "testFilesPassed": 1,
+      "testsPassed": 24,
+      "testsReportedSkipped": 0,
+      "observedDurationSeconds": 1.02,
+      "executedFiles": [
+        "packages/mcp-server/test/product-reality/health-viz.s195.spec.ts"
+      ],
+      "selectionDisclosure": "Root workspace selected only the product-reality file. The named server unit and portable contract files were ignored by root selection; they were explicitly executed from the package in the next command."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/health.test.ts test/contracts/portable-boundary.s181.spec.ts && pnpm exec tsx scripts/product-reality/s195-health-viz-schema.ts --check && pnpm --filter @oods/schemas-tools run generate:check",
+      "exitCode": 0,
+      "testFilesPassed": 2,
+      "testsPassed": 14,
+      "testsReportedSkipped": 0,
+      "observedDurationSeconds": 4.23,
+      "executedFiles": [
+        {
+          "path": "packages/mcp-server/src/tools/__tests__/health.test.ts",
+          "testsPassed": 4
+        },
+        {
+          "path": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+          "testsPassed": 10
+        }
+      ],
+      "schemaMigrationCheck": "passed",
+      "generatedTypesCheck": "passed"
+    }
+  ],
+  "portableObservations": {
+    "method": "Observed passing assertions in the executed portable-boundary contract; raw protocol responses were not retained.",
+    "nativeDistOnly": "Staged dist plus package metadata and linked dependencies answered health with the complete viz summary without host planning data.",
+    "adapter": "Staged MCP adapter completed initialize then tools/call health and returned the same complete viz summary.",
+    "artifactIdentity": "Both shipped taxonomy and classification bytes matched canonical viz-core registry files.",
+    "missingTaxonomy": "Staged native server remained alive, returned degraded status, explicit null viz and taxonomy warning.",
+    "missingClassification": "Staged native server remained alive, returned degraded status, explicit null viz and taxonomy warning.",
+    "assertedSummary": {
+      "types": 13,
+      "patterns": 21,
+      "families": 8,
+      "classified": 34,
+      "coreCells": 20,
+      "coreSurfaceComplete": 11,
+      "typedGaps": 9
+    }
+  },
+  "freshObservation": {
+    "path": "dist-health.json",
+    "status": "ok",
+    "warnings": [],
+    "note": "Fresh built-handler response retained after verification; this was an observation capture, not a repeated test run."
+  },
+  "fullSuiteCapturePerformed": false,
+  "fullPortableCampaignPerformed": false,
+  "builderSelfCertified": false
+}

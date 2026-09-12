@@ -1,0 +1,32 @@
+
+ RUN  v3.2.4 /private/tmp/oods-s195-soak/head/packages/mcp-server
+
+
+ECHARTS_SOAK_EVIDENCE resources-observed {"warmupRenders":100,"measuredRenders":2000,"plateauWindowRange":"1300..2000","workerHeapDeltaBytes":-1036800,"heapTrend":{"slope":9416.380952380952,"slopeStandardError":2214.645732807901,"positiveTrendLower99":2455.74941416572},"rssTrend":{"slope":74313.14285714286,"slopeStandardError":31352.956810079697,"positiveTrendLower99":-24229.200396937624},"samples":[{"renderCount":0,"workerHeapUsedBytes":20063520,"processRssBytes":182403072},{"renderCount":100,"workerHeapUsedBytes":20222696,"processRssBytes":230244352},{"renderCount":200,"workerHeapUsedBytes":20289424,"processRssBytes":227622912},{"renderCount":300,"workerHeapUsedBytes":20324952,"processRssBytes":228999168},{"renderCount":400,"workerHeapUsedBytes":20382528,"processRssBytes":228851712},{"renderCount":500,"workerHeapUsedBytes":20451680,"processRssBytes":227950592},{"renderCount":600,"workerHeapUsedBytes":20458016,"processRssBytes":228130816},{"renderCount":700,"workerHeapUsedBytes":20458120,"processRssBytes":228196352},{"renderCount":800,"workerHeapUsedBytes":20451360,"processRssBytes":228687872},{"renderCount":900,"workerHeapUsedBytes":20450944,"processRssBytes":228720640},{"renderCount":1000,"workerHeapUsedBytes":20452600,"processRssBytes":228884480},{"renderCount":1100,"workerHeapUsedBytes":20455800,"processRssBytes":228868096},{"renderCount":1200,"workerHeapUsedBytes":19219192,"processRssBytes":228802560},{"renderCount":1300,"workerHeapUsedBytes":18937072,"processRssBytes":228786176},{"renderCount":1400,"workerHeapUsedBytes":18946912,"processRssBytes":229146624},{"renderCount":1500,"workerHeapUsedBytes":18977744,"processRssBytes":229310464},{"renderCount":1600,"workerHeapUsedBytes":18975296,"processRssBytes":229359616},{"renderCount":1700,"workerHeapUsedBytes":18970832,"processRssBytes":229572608},{"renderCount":1800,"workerHeapUsedBytes":18978912,"processRssBytes":229621760},{"renderCount":1900,"workerHeapUsedBytes":18979792,"processRssBytes":229294080},{"renderCount":2000,"workerHeapUsedBytes":19026720,"processRssBytes":229408768}],"beforeFault":{"loadCount":1,"activeJobs":0,"maxActiveJobs":1,"completedJobs":2100,"chartsCreated":2100,"chartsDisposed":2100,"activeCharts":0,"renderFaults":0,"geoRegistrationCount":2100,"geoRegistrySize":1,"lastGeometryHash":"475286439054167373009117c9c53a0247626837fdb16d2a2fe33fa3dfa032f5","randomRestored":true,"clockGuardRestored":true,"ambientAccesses":0,"workerCreated":true,"echartsLoaded":true,"spawnCount":1,"queuedJobs":0},"afterFault":{"loadCount":1,"activeJobs":0,"maxActiveJobs":1,"completedJobs":2101,"chartsCreated":2101,"chartsDisposed":2101,"activeCharts":0,"renderFaults":1,"geoRegistrationCount":2100,"geoRegistrySize":1,"lastGeometryHash":"475286439054167373009117c9c53a0247626837fdb16d2a2fe33fa3dfa032f5","randomRestored":true,"clockGuardRestored":true,"ambientAccesses":0},"budgets":{"packageImportP95Ms":100,"workerStartupP95Ms":250,"incrementalFirstUseP95Ms":900,"startupPlusFirstUseP95Ms":1000,"warmTreemapP95Ms":15,"force100P95Ms":500,"force250P95Ms":1500,"workerHeapAbsoluteDeltaBytes":12582912,"workerHeapSlopeBytesPerWindow":262144,"processRssSlopeBytesPerWindow":2097152,"repeatedWindowGrowthBytes":4194304}}
+ ❯ test/soak/echarts-render-soak.s179.spec.ts (3 tests | 1 failed | 2 skipped) 7291ms
+   ↓ ECharts artifact.certify concurrency and resource release gate > runs four artifact.certify calls at the server cap with conflicting geo data and mixed families
+   ↓ ECharts artifact.certify concurrency and resource release gate > pins fresh startup/first-use, warm treemap, and force-size p95 budgets
+   × ECharts artifact.certify concurrency and resource release gate > plateaus after 100 warmups plus 2,000 unique-geo renders and disposes faulted charts 7291ms
+     → expected 2455.74941416572 to be less than or equal to 0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/soak/echarts-render-soak.s179.spec.ts > ECharts artifact.certify concurrency and resource release gate > plateaus after 100 warmups plus 2,000 unique-geo renders and disposes faulted charts
+AssertionError: expected 2455.74941416572 to be less than or equal to 0
+ ❯ plateauEvidence test/soak/echarts-render-soak.s179.spec.ts:283:40
+    281|   ) {
+    282|     expect(trend.slope).toBeLessThanOrEqual(slopeBudget);
+    283|     expect(trend.positiveTrendLower99).toBeLessThanOrEqual(0);
+       |                                        ^
+    284|     return {
+    285|       method: "least-squares-slope",
+ ❯ test/soak/echarts-render-soak.s179.spec.ts:649:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 skipped (3)
+   Start at  16:53:31
+   Duration  8.02s (transform 359ms, setup 13ms, collect 560ms, tests 7.29s, environment 0ms, prepare 56ms)
+

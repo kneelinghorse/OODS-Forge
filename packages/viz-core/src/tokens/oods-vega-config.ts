@@ -84,7 +84,8 @@ export interface OodsVegaConfig {
 function resolveChromeColor(token: string, overrides: Map<string, string>, scope: TokenScope): string {
   const override = overrides.get(token);
   const resolved =
-    (override !== undefined ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token, scope) ?? '');
+    (override !== undefined ? toHex(override) : undefined) ??
+    (scope.theme === 'hc' ? resolveTokenToColor(token, scope) : toHex(resolveTokenToColor(token, scope) ?? ''));
   if (resolved === undefined) {
     throw new Error(`OODS chrome color token did not resolve: ${token}`);
   }

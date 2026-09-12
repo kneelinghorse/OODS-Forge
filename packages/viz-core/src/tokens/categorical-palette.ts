@@ -100,7 +100,8 @@ export function resolveCategoricalPalette(spec: NormalizedVizSpec, scope: TokenS
     // default so the palette stays a clean, index-aligned, fixed-length array (a bad
     // override never shifts the next slot's color onto the wrong series). The six OODS
     // tokens always resolve, so the no-override path yields the full 6-slot range.
-    const hex = (override ? toHex(override) : undefined) ?? toHex(resolveTokenToColor(token, scope) ?? '');
+    const hex = (override ? toHex(override) : undefined) ??
+      (scope.theme === 'hc' ? resolveTokenToColor(token, scope) : toHex(resolveTokenToColor(token, scope) ?? ''));
     if (hex) palette.push(hex);
   }
   return palette;

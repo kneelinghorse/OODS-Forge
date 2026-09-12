@@ -1,0 +1,860 @@
+﻿2026-09-12T01:14:30.0180343Z Current runner version: '2.337.0'
+2026-09-12T01:14:30.0217809Z ##[group]Runner Image Provisioner
+2026-09-12T01:14:30.0219251Z Hosted Compute Agent
+2026-09-12T01:14:30.0220280Z Version: 20260828.587
+2026-09-12T01:14:30.0221590Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-12T01:14:30.0222841Z Build Date: 2026-08-28T16:44:25Z
+2026-09-12T01:14:30.0223954Z Worker ID: {8a3c8cc2-5e4b-4a30-a351-54f338613554}
+2026-09-12T01:14:30.0225325Z Azure Region: westus2
+2026-09-12T01:14:30.0226729Z ##[endgroup]
+2026-09-12T01:14:30.0229155Z ##[group]Operating System
+2026-09-12T01:14:30.0230185Z Ubuntu
+2026-09-12T01:14:30.0231002Z 24.04.5
+2026-09-12T01:14:30.0231966Z LTS
+2026-09-12T01:14:30.0232792Z ##[endgroup]
+2026-09-12T01:14:30.0233831Z ##[group]Runner Image
+2026-09-12T01:14:30.0234912Z Image: ubuntu-24.04
+2026-09-12T01:14:30.0235938Z Version: 20260907.300.1
+2026-09-12T01:14:30.0238689Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-12T01:14:30.0241585Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-12T01:14:30.0243351Z ##[endgroup]
+2026-09-12T01:14:30.0245483Z ##[group]GITHUB_TOKEN Permissions
+2026-09-12T01:14:30.0248515Z Contents: read
+2026-09-12T01:14:30.0249521Z Metadata: read
+2026-09-12T01:14:30.0250593Z PullRequests: write
+2026-09-12T01:14:30.0251583Z ##[endgroup]
+2026-09-12T01:14:30.0254846Z Secret source: Actions
+2026-09-12T01:14:30.0256877Z Cache mode: write
+2026-09-12T01:14:30.0258151Z Prepare workflow directory
+2026-09-12T01:14:30.0926110Z Prepare all required actions
+2026-09-12T01:14:30.1000458Z Getting action download info
+2026-09-12T01:14:30.5417981Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-12T01:14:30.6590317Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-12T01:14:30.9552622Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-12T01:14:31.1552476Z Complete job name: tenancy-matrix
+2026-09-12T01:14:31.2327725Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:31.2336993Z ##[group]Run actions/checkout@v4
+2026-09-12T01:14:31.2337818Z with:
+2026-09-12T01:14:31.2338285Z   repository: kneelinghorse/OODS-Forge
+2026-09-12T01:14:31.2342314Z   token: ***
+2026-09-12T01:14:31.2342752Z   ssh-strict: true
+2026-09-12T01:14:31.2343188Z   ssh-user: git
+2026-09-12T01:14:31.2343622Z   persist-credentials: true
+2026-09-12T01:14:31.2344096Z   clean: true
+2026-09-12T01:14:31.2344535Z   sparse-checkout-cone-mode: true
+2026-09-12T01:14:31.2345041Z   fetch-depth: 1
+2026-09-12T01:14:31.2345454Z   fetch-tags: false
+2026-09-12T01:14:31.2345891Z   show-progress: true
+2026-09-12T01:14:31.2346559Z   lfs: false
+2026-09-12T01:14:31.2347000Z   submodules: false
+2026-09-12T01:14:31.2347438Z   set-safe-directory: true
+2026-09-12T01:14:31.2347931Z   allow-unsafe-pr-checkout: false
+2026-09-12T01:14:31.2348680Z env:
+2026-09-12T01:14:31.2349079Z   NODE_VERSION: 24
+2026-09-12T01:14:31.2349507Z ##[endgroup]
+2026-09-12T01:14:31.3675377Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-12T01:14:31.3678558Z ##[group]Getting Git version info
+2026-09-12T01:14:31.3679860Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T01:14:31.3682034Z [command]/usr/bin/git version
+2026-09-12T01:14:31.3683083Z git version 2.55.0
+2026-09-12T01:14:31.3718326Z ##[endgroup]
+2026-09-12T01:14:31.3728013Z Temporarily overriding HOME='/home/runner/work/_temp/d945394f-fc56-4094-a248-9991f634bf09' before making global git config changes
+2026-09-12T01:14:31.3730739Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T01:14:31.3733522Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:14:31.3831617Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-12T01:14:31.3833468Z ##[group]Initializing the repository
+2026-09-12T01:14:31.3834812Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:14:31.3980869Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-12T01:14:31.4003148Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-12T01:14:31.4005529Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-12T01:14:31.4037448Z hint: call:
+2026-09-12T01:14:31.4045540Z hint:
+2026-09-12T01:14:31.4047040Z hint: 	git config --global init.defaultBranch <name>
+2026-09-12T01:14:31.4067027Z hint:
+2026-09-12T01:14:31.4072449Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-12T01:14:31.4078674Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-12T01:14:31.4080352Z hint:
+2026-09-12T01:14:31.4081376Z hint: 	git branch -m <name>
+2026-09-12T01:14:31.4082544Z hint:
+2026-09-12T01:14:31.4083905Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-12T01:14:31.4089637Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-12T01:14:31.4093351Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T01:14:31.4097164Z ##[endgroup]
+2026-09-12T01:14:31.4099029Z ##[group]Disabling automatic garbage collection
+2026-09-12T01:14:31.4100358Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-12T01:14:31.4152340Z ##[endgroup]
+2026-09-12T01:14:31.4154108Z ##[group]Setting up auth
+2026-09-12T01:14:31.4155584Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T01:14:31.4196914Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T01:14:31.4720986Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T01:14:31.4779912Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T01:14:31.5060410Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T01:14:31.5104516Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T01:14:31.5361472Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-12T01:14:31.5404313Z ##[endgroup]
+2026-09-12T01:14:31.5407221Z ##[group]Fetching the repository
+2026-09-12T01:14:31.5416966Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4787733b6bfd48aedde0d5f850a0e9d87643356f:refs/remotes/pull/101/merge
+2026-09-12T01:14:49.3148956Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-12T01:14:49.3158427Z  * [new ref]           4787733b6bfd48aedde0d5f850a0e9d87643356f -> pull/101/merge
+2026-09-12T01:14:49.3171625Z ##[endgroup]
+2026-09-12T01:14:49.3173657Z ##[group]Determining the checkout info
+2026-09-12T01:14:49.3175563Z ##[endgroup]
+2026-09-12T01:14:49.3177435Z [command]/usr/bin/git sparse-checkout disable
+2026-09-12T01:14:49.3270724Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-12T01:14:49.3289513Z ##[group]Checking out the ref
+2026-09-12T01:14:49.3301334Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/101/merge
+2026-09-12T01:14:50.4456966Z Updating files:  16% (10268/63292)
+2026-09-12T01:14:50.5079270Z Updating files:  17% (10760/63292)
+2026-09-12T01:14:50.5709466Z Updating files:  18% (11393/63292)
+2026-09-12T01:14:50.6695665Z Updating files:  19% (12026/63292)
+2026-09-12T01:14:50.7700762Z Updating files:  20% (12659/63292)
+2026-09-12T01:14:50.8593498Z Updating files:  21% (13292/63292)
+2026-09-12T01:14:50.9419814Z Updating files:  22% (13925/63292)
+2026-09-12T01:14:51.0211995Z Updating files:  23% (14558/63292)
+2026-09-12T01:14:51.1229160Z Updating files:  24% (15191/63292)
+2026-09-12T01:14:51.1900872Z Updating files:  25% (15823/63292)
+2026-09-12T01:14:51.2608591Z Updating files:  26% (16456/63292)
+2026-09-12T01:14:51.3313475Z Updating files:  27% (17089/63292)
+2026-09-12T01:14:51.3902684Z Updating files:  28% (17722/63292)
+2026-09-12T01:14:51.4402380Z Updating files:  28% (17846/63292)
+2026-09-12T01:14:51.5558676Z Updating files:  29% (18355/63292)
+2026-09-12T01:14:51.6360168Z Updating files:  30% (18988/63292)
+2026-09-12T01:14:51.7229639Z Updating files:  31% (19621/63292)
+2026-09-12T01:14:51.8216100Z Updating files:  32% (20254/63292)
+2026-09-12T01:14:51.9009813Z Updating files:  33% (20887/63292)
+2026-09-12T01:14:51.9984482Z Updating files:  34% (21520/63292)
+2026-09-12T01:14:52.2641131Z Updating files:  35% (22153/63292)
+2026-09-12T01:14:52.3163938Z Updating files:  36% (22786/63292)
+2026-09-12T01:14:52.3597393Z Updating files:  37% (23419/63292)
+2026-09-12T01:14:52.3888635Z Updating files:  38% (24051/63292)
+2026-09-12T01:14:52.4949894Z Updating files:  38% (24119/63292)
+2026-09-12T01:14:52.6192159Z Updating files:  39% (24684/63292)
+2026-09-12T01:14:52.7331949Z Updating files:  40% (25317/63292)
+2026-09-12T01:14:52.9312781Z Updating files:  41% (25950/63292)
+2026-09-12T01:14:52.9826713Z Updating files:  42% (26583/63292)
+2026-09-12T01:14:53.0419839Z Updating files:  43% (27216/63292)
+2026-09-12T01:14:53.0967555Z Updating files:  44% (27849/63292)
+2026-09-12T01:14:53.1517739Z Updating files:  45% (28482/63292)
+2026-09-12T01:14:53.2182227Z Updating files:  46% (29115/63292)
+2026-09-12T01:14:53.2741201Z Updating files:  47% (29748/63292)
+2026-09-12T01:14:53.3273040Z Updating files:  48% (30381/63292)
+2026-09-12T01:14:53.3878056Z Updating files:  49% (31014/63292)
+2026-09-12T01:14:53.4079161Z Updating files:  49% (31475/63292)
+2026-09-12T01:14:53.4922991Z Updating files:  50% (31646/63292)
+2026-09-12T01:14:53.5660351Z Updating files:  51% (32279/63292)
+2026-09-12T01:14:53.6573844Z Updating files:  52% (32912/63292)
+2026-09-12T01:14:53.7421310Z Updating files:  53% (33545/63292)
+2026-09-12T01:14:53.8963338Z Updating files:  54% (34178/63292)
+2026-09-12T01:14:54.0091434Z Updating files:  55% (34811/63292)
+2026-09-12T01:14:54.0784981Z Updating files:  56% (35444/63292)
+2026-09-12T01:14:54.1577372Z Updating files:  57% (36077/63292)
+2026-09-12T01:14:54.2184174Z Updating files:  58% (36710/63292)
+2026-09-12T01:14:54.3063033Z Updating files:  59% (37343/63292)
+2026-09-12T01:14:54.3917149Z Updating files:  60% (37976/63292)
+2026-09-12T01:14:54.4385342Z Updating files:  60% (38458/63292)
+2026-09-12T01:14:54.4879935Z Updating files:  61% (38609/63292)
+2026-09-12T01:14:54.5442085Z Updating files:  62% (39242/63292)
+2026-09-12T01:14:54.6081818Z Updating files:  63% (39874/63292)
+2026-09-12T01:14:54.7047745Z Updating files:  64% (40507/63292)
+2026-09-12T01:14:54.8417721Z Updating files:  65% (41140/63292)
+2026-09-12T01:14:54.8957498Z Updating files:  66% (41773/63292)
+2026-09-12T01:14:54.9520480Z Updating files:  67% (42406/63292)
+2026-09-12T01:14:55.0416539Z Updating files:  68% (43039/63292)
+2026-09-12T01:14:55.1335246Z Updating files:  69% (43672/63292)
+2026-09-12T01:14:55.2417102Z Updating files:  70% (44305/63292)
+2026-09-12T01:14:55.3022111Z Updating files:  71% (44938/63292)
+2026-09-12T01:14:55.3874064Z Updating files:  72% (45571/63292)
+2026-09-12T01:14:55.3955435Z Updating files:  72% (46186/63292)
+2026-09-12T01:14:55.4914246Z Updating files:  73% (46204/63292)
+2026-09-12T01:14:55.5746505Z Updating files:  74% (46837/63292)
+2026-09-12T01:14:55.6281753Z Updating files:  75% (47469/63292)
+2026-09-12T01:14:55.6824205Z Updating files:  76% (48102/63292)
+2026-09-12T01:14:55.7711221Z Updating files:  77% (48735/63292)
+2026-09-12T01:14:55.8474024Z Updating files:  78% (49368/63292)
+2026-09-12T01:14:55.9313538Z Updating files:  79% (50001/63292)
+2026-09-12T01:14:55.9765733Z Updating files:  80% (50634/63292)
+2026-09-12T01:14:56.0697207Z Updating files:  81% (51267/63292)
+2026-09-12T01:14:56.1497008Z Updating files:  82% (51900/63292)
+2026-09-12T01:14:56.2216983Z Updating files:  83% (52533/63292)
+2026-09-12T01:14:56.3080173Z Updating files:  84% (53166/63292)
+2026-09-12T01:14:56.3879018Z Updating files:  85% (53799/63292)
+2026-09-12T01:14:56.3941273Z Updating files:  85% (54355/63292)
+2026-09-12T01:14:56.4910214Z Updating files:  86% (54432/63292)
+2026-09-12T01:14:56.5654236Z Updating files:  87% (55065/63292)
+2026-09-12T01:14:56.9348515Z Updating files:  88% (55697/63292)
+2026-09-12T01:14:56.9815560Z Updating files:  89% (56330/63292)
+2026-09-12T01:14:57.0302866Z Updating files:  90% (56963/63292)
+2026-09-12T01:14:57.0973084Z Updating files:  91% (57596/63292)
+2026-09-12T01:14:57.1913220Z Updating files:  92% (58229/63292)
+2026-09-12T01:14:57.5010607Z Updating files:  93% (58862/63292)
+2026-09-12T01:14:57.5328232Z Updating files:  93% (59164/63292)
+2026-09-12T01:14:57.5958063Z Updating files:  94% (59495/63292)
+2026-09-12T01:14:57.6393030Z Updating files:  95% (60128/63292)
+2026-09-12T01:14:57.6832933Z Updating files:  96% (60761/63292)
+2026-09-12T01:14:57.7383357Z Updating files:  97% (61394/63292)
+2026-09-12T01:14:57.7973029Z Updating files:  98% (62027/63292)
+2026-09-12T01:14:57.8423122Z Updating files:  99% (62660/63292)
+2026-09-12T01:14:57.8424972Z Updating files: 100% (63292/63292)
+2026-09-12T01:14:57.8425703Z Updating files: 100% (63292/63292), done.
+2026-09-12T01:14:57.9247486Z Note: switching to 'refs/remotes/pull/101/merge'.
+2026-09-12T01:14:57.9249419Z 
+2026-09-12T01:14:57.9250133Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-12T01:14:57.9251197Z changes and commit them, and you can discard any commits you make in this
+2026-09-12T01:14:57.9252389Z state without impacting any branches by switching back to a branch.
+2026-09-12T01:14:57.9253330Z 
+2026-09-12T01:14:57.9253859Z If you want to create a new branch to retain commits you create, you may
+2026-09-12T01:14:57.9254837Z do so (now or later) by using -c with the switch command. Example:
+2026-09-12T01:14:57.9255467Z 
+2026-09-12T01:14:57.9255812Z   git switch -c <new-branch-name>
+2026-09-12T01:14:57.9256501Z 
+2026-09-12T01:14:57.9256887Z Or undo this operation with:
+2026-09-12T01:14:57.9257514Z 
+2026-09-12T01:14:57.9279222Z   git switch -
+2026-09-12T01:14:57.9279960Z 
+2026-09-12T01:14:57.9280541Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-12T01:14:57.9281297Z 
+2026-09-12T01:14:57.9282413Z HEAD is now at 4787733b Merge 39deb793a3161621b5a0893618f9d40201c22256 into 3872feaf4372fe66a10d1746537649df386c37f4
+2026-09-12T01:14:57.9375348Z ##[endgroup]
+2026-09-12T01:14:57.9437584Z [command]/usr/bin/git log -1 --format=%H
+2026-09-12T01:14:57.9462074Z 4787733b6bfd48aedde0d5f850a0e9d87643356f
+2026-09-12T01:14:57.9720330Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:57.9722114Z ##[group]Run pnpm/action-setup@v4
+2026-09-12T01:14:57.9722367Z with:
+2026-09-12T01:14:57.9722560Z   run_install: false
+2026-09-12T01:14:57.9722782Z   dest: ~/setup-pnpm
+2026-09-12T01:14:57.9722990Z   cache: false
+2026-09-12T01:14:57.9723223Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-12T01:14:57.9723527Z   package_json_file: package.json
+2026-09-12T01:14:57.9723784Z   standalone: false
+2026-09-12T01:14:57.9723978Z env:
+2026-09-12T01:14:57.9724158Z   NODE_VERSION: 24
+2026-09-12T01:14:57.9724355Z ##[endgroup]
+2026-09-12T01:14:58.1417596Z ##[group]Running self-installer...
+2026-09-12T01:14:58.7326654Z (node:2041) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T01:14:58.7328843Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:14:58.9800659Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T01:14:59.0010954Z Packages: +1
+2026-09-12T01:14:59.0011414Z +
+2026-09-12T01:14:59.4734820Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-12T01:14:59.5876998Z 
+2026-09-12T01:14:59.5877942Z dependencies:
+2026-09-12T01:14:59.5881802Z + pnpm 9.12.2 (12.4.1 is available)
+2026-09-12T01:14:59.5885871Z 
+2026-09-12T01:14:59.5977712Z Done in 1.1s
+2026-09-12T01:14:59.6087737Z ##[endgroup]
+2026-09-12T01:14:59.6088877Z Installation Completed!
+2026-09-12T01:14:59.6286935Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:14:59.6288344Z ##[group]Run actions/setup-node@v4
+2026-09-12T01:14:59.6288603Z with:
+2026-09-12T01:14:59.6288796Z   node-version: 24
+2026-09-12T01:14:59.6289001Z   cache: pnpm
+2026-09-12T01:14:59.6289196Z   always-auth: false
+2026-09-12T01:14:59.6289413Z   check-latest: false
+2026-09-12T01:14:59.6292281Z   token: ***
+2026-09-12T01:14:59.6292484Z env:
+2026-09-12T01:14:59.6292665Z   NODE_VERSION: 24
+2026-09-12T01:14:59.6292948Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:14:59.6293257Z ##[endgroup]
+2026-09-12T01:14:59.8505215Z (node:2054) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T01:14:59.8508819Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-12T01:14:59.8509673Z ##[group]Environment details
+2026-09-12T01:14:59.8707375Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:15:03.8007945Z node: v24.20.0
+2026-09-12T01:15:03.8017351Z npm: 11.19.0
+2026-09-12T01:15:03.8017948Z yarn: 1.22.22
+2026-09-12T01:15:03.8019353Z ##[endgroup]
+2026-09-12T01:15:03.8039776Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-12T01:15:04.2392391Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-12T01:15:04.5180034Z Cache hit for: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T01:15:04.5300401Z (node:2054) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-12T01:15:05.8163773Z Received 4194304 of 125400025 (3.3%), 4.0 MBs/sec
+2026-09-12T01:15:06.8247256Z Received 121205721 of 125400025 (96.7%), 57.7 MBs/sec
+2026-09-12T01:15:06.9077890Z Received 125400025 of 125400025 (100.0%), 57.2 MBs/sec
+2026-09-12T01:15:06.9078873Z Cache Size: ~120 MB (125400025 B)
+2026-09-12T01:15:06.9119939Z [command]/usr/bin/tar -xf /home/runner/work/_temp/fd3ba91d-f682-4745-a572-79222645029f/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-12T01:15:09.4700296Z Cache restored successfully
+2026-09-12T01:15:09.4767490Z Cache restored from key: node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1
+2026-09-12T01:15:09.4963016Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-12T01:15:09.4963469Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-12T01:15:09.5012383Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:09.5012661Z env:
+2026-09-12T01:15:09.5012859Z   NODE_VERSION: 24
+2026-09-12T01:15:09.5013146Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:09.5013498Z ##[endgroup]
+2026-09-12T01:15:10.0378650Z Scope: all 22 workspace projects
+2026-09-12T01:15:10.1147546Z Lockfile is up to date, resolution step is skipped
+2026-09-12T01:15:10.2068770Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-12T01:15:10.4047847Z Packages: +946
+2026-09-12T01:15:10.4048636Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-12T01:15:11.2083343Z Progress: resolved 946, reused 703, downloaded 0, added 0
+2026-09-12T01:15:12.2069844Z Progress: resolved 946, reused 945, downloaded 0, added 427
+2026-09-12T01:15:13.1142490Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-12T01:15:14.4529080Z 
+2026-09-12T01:15:14.4530009Z dependencies:
+2026-09-12T01:15:14.4531542Z + @radix-ui/react-slot 1.2.3
+2026-09-12T01:15:14.4532416Z + @rjsf/core 5.24.13
+2026-09-12T01:15:14.4533139Z + @rjsf/utils 5.24.13
+2026-09-12T01:15:14.4540947Z + @rjsf/validator-ajv8 5.24.13
+2026-09-12T01:15:14.4543754Z + @types/geojson 7946.0.16
+2026-09-12T01:15:14.4549352Z + @types/topojson-client 3.1.5
+2026-09-12T01:15:14.4550974Z + @types/topojson-specification 1.0.5
+2026-09-12T01:15:14.4551720Z + ajv 8.17.1
+2026-09-12T01:15:14.4554154Z + ajv-formats 3.0.1
+2026-09-12T01:15:14.4556862Z + d3-geo 3.1.1
+2026-09-12T01:15:14.4558691Z + d3-scale 4.0.2
+2026-09-12T01:15:14.4559289Z + echarts 6.0.0
+2026-09-12T01:15:14.4576918Z + js-yaml 4.1.0
+2026-09-12T01:15:14.4578718Z + luxon 3.7.2
+2026-09-12T01:15:14.4579253Z + pg 8.16.3
+2026-09-12T01:15:14.4579793Z + react 19.2.0
+2026-09-12T01:15:14.4582394Z + react-dom 19.2.0
+2026-09-12T01:15:14.4583117Z + react-window 1.8.11
+2026-09-12T01:15:14.4604591Z + topojson-client 3.1.0
+2026-09-12T01:15:14.4607280Z + vega 6.2.0
+2026-09-12T01:15:14.4616956Z + vega-embed 7.1.0
+2026-09-12T01:15:14.4617557Z + zod 4.1.12
+2026-09-12T01:15:14.4617911Z 
+2026-09-12T01:15:14.4618180Z devDependencies:
+2026-09-12T01:15:14.4618964Z + @chromatic-com/storybook 4.1.1
+2026-09-12T01:15:14.4619842Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-12T01:15:14.4662034Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-12T01:15:14.4673194Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-12T01:15:14.4700355Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-12T01:15:14.4703242Z + @playwright/test 1.56.1
+2026-09-12T01:15:14.4706898Z + @storybook/addon-a11y 9.1.10
+2026-09-12T01:15:14.4725371Z + @storybook/addon-docs 9.1.10
+2026-09-12T01:15:14.4742535Z + @storybook/addon-onboarding 9.1.10
+2026-09-12T01:15:14.4745698Z + @storybook/mdx2-csf 1.1.0
+2026-09-12T01:15:14.4747289Z + @storybook/react 9.1.10
+2026-09-12T01:15:14.4751105Z + @storybook/react-vite 9.1.10
+2026-09-12T01:15:14.4751672Z + @testing-library/dom 10.4.1
+2026-09-12T01:15:14.4757125Z + @testing-library/jest-dom 6.9.1
+2026-09-12T01:15:14.4757706Z + @testing-library/react 16.3.0
+2026-09-12T01:15:14.4758277Z + @testing-library/user-event 14.6.1
+2026-09-12T01:15:14.4758852Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-12T01:15:14.4759344Z + @types/d3-geo 3.1.0
+2026-09-12T01:15:14.4759763Z + @types/d3-scale 4.0.9
+2026-09-12T01:15:14.4760177Z + @types/js-yaml 4.0.9
+2026-09-12T01:15:14.4760610Z + @types/luxon 3.7.1
+2026-09-12T01:15:14.4761000Z + @types/node 20.19.21
+2026-09-12T01:15:14.4761260Z + @types/pg 8.15.6
+2026-09-12T01:15:14.4761502Z + @types/react 19.2.2
+2026-09-12T01:15:14.4761767Z + @types/react-dom 19.2.2
+2026-09-12T01:15:14.4762041Z + @types/react-window 1.8.8
+2026-09-12T01:15:14.4762300Z + @types/semver 7.7.1
+2026-09-12T01:15:14.4762550Z + @types/sql.js 1.4.9
+2026-09-12T01:15:14.4762854Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-12T01:15:14.4763469Z + @typescript-eslint/parser 6.21.0
+2026-09-12T01:15:14.4763794Z + @vitejs/plugin-react 5.0.4
+2026-09-12T01:15:14.4764092Z + @vitest/browser 3.2.4
+2026-09-12T01:15:14.4764354Z + @vitest/coverage-v8 3.2.4
+2026-09-12T01:15:14.4764613Z + axe-core 4.11.0
+2026-09-12T01:15:14.4764845Z + colorjs.io 0.5.2
+2026-09-12T01:15:14.4765067Z + dotenv 17.4.2
+2026-09-12T01:15:14.4765271Z + eslint 8.57.1
+2026-09-12T01:15:14.4765552Z + eslint-plugin-storybook 9.1.10
+2026-09-12T01:15:14.4765830Z + globals 17.6.0
+2026-09-12T01:15:14.4768806Z + jsdom 24.1.3
+2026-09-12T01:15:14.4769373Z + json-schema-to-typescript 13.1.2
+2026-09-12T01:15:14.4769958Z + markdown-to-jsx 7.7.15
+2026-09-12T01:15:14.4770387Z + pg-mem 3.0.5
+2026-09-12T01:15:14.4770755Z + playwright 1.56.1
+2026-09-12T01:15:14.4771174Z + postcss 8.5.28
+2026-09-12T01:15:14.4771572Z + prettier 3.6.2
+2026-09-12T01:15:14.4771941Z + rimraf 5.0.10
+2026-09-12T01:15:14.4772310Z + semver 7.7.3
+2026-09-12T01:15:14.4772666Z + sql.js 1.13.0
+2026-09-12T01:15:14.4773067Z + storybook 9.1.10
+2026-09-12T01:15:14.4773510Z + style-dictionary 4.4.0
+2026-09-12T01:15:14.4774281Z + tailwindcss 3.4.18
+2026-09-12T01:15:14.4774681Z + tsup 8.5.0
+2026-09-12T01:15:14.4775025Z + tsx 4.20.6
+2026-09-12T01:15:14.4775396Z + typescript 5.3.3
+2026-09-12T01:15:14.4775796Z + vega-lite 6.4.1
+2026-09-12T01:15:14.4787553Z + vite-tsconfig-paths 5.1.4
+2026-09-12T01:15:14.4788846Z + vitest 3.2.4
+2026-09-12T01:15:14.4790282Z + vitest-axe 0.1.0
+2026-09-12T01:15:14.4791126Z 
+2026-09-12T01:15:14.5778686Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-12T01:15:14.6352920Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-12T01:15:14.6391883Z . prepare: Done
+2026-09-12T01:15:14.6504891Z Done in 5.1s
+2026-09-12T01:15:14.7013231Z ##[group]Run pnpm tenancy:check
+2026-09-12T01:15:14.7013575Z [36;1mpnpm tenancy:check[0m
+2026-09-12T01:15:14.7051934Z shell: /usr/bin/bash -e {0}
+2026-09-12T01:15:14.7052198Z env:
+2026-09-12T01:15:14.7052396Z   NODE_VERSION: 24
+2026-09-12T01:15:14.7052677Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-12T01:15:14.7053025Z ##[endgroup]
+2026-09-12T01:15:15.3743874Z 
+2026-09-12T01:15:15.3767911Z > @oods/foundry-mcp@0.1.0 tenancy:check /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:15.3797315Z > tsx scripts/tenancy/check.ts
+2026-09-12T01:15:15.3826662Z 
+2026-09-12T01:15:15.7167508Z 🔍 OODS Tenancy Matrix Check
+2026-09-12T01:15:15.7186567Z 
+2026-09-12T01:15:15.7187466Z Testing modes: shared-schema, schema-per-tenant, external-adapter
+2026-09-12T01:15:15.7210858Z ────────────────────────────────────────────────────────────
+2026-09-12T01:15:15.7256614Z 
+2026-09-12T01:15:15.7257399Z 🧪 Running tests in shared-schema mode...
+2026-09-12T01:15:15.7284433Z 
+2026-09-12T01:15:17.0321978Z 
+2026-09-12T01:15:17.0324096Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge[39m
+2026-09-12T01:15:17.0325264Z 
+2026-09-12T01:15:17.4872733Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:17.4887468Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.4887987Z 
+2026-09-12T01:15:17.4889576Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:17.4891437Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:17.4892094Z 
+2026-09-12T01:15:17.4893386Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:17.4894360Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:17.4894625Z 
+2026-09-12T01:15:17.4895496Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:17.4896700Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:17.4897049Z 
+2026-09-12T01:15:17.4929875Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:17.4931559Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.4932409Z 
+2026-09-12T01:15:17.4933931Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:17.4935244Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:17.4935597Z 
+2026-09-12T01:15:17.4958520Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:17.4960339Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.4960798Z 
+2026-09-12T01:15:17.4962384Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:17.4963411Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:17.4963674Z 
+2026-09-12T01:15:17.4964889Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:17.4966597Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:17.4967471Z 
+2026-09-12T01:15:17.4969035Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:17.4970581Z [22m[39m[SchemaPerTenant] COMMIT in tenant_tenant_alice
+2026-09-12T01:15:17.4970976Z 
+2026-09-12T01:15:17.4972185Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:17.4973202Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.4973475Z 
+2026-09-12T01:15:17.4974381Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:17.4975305Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:17.4975548Z 
+2026-09-12T01:15:17.4988655Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:17.4992519Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:17.4993649Z 
+2026-09-12T01:15:17.4995604Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:17.4998123Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:17.4998815Z 
+2026-09-12T01:15:17.5000542Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:17.5002423Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5003010Z 
+2026-09-12T01:15:17.5004549Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mConcurrent Access[2m > [22m[2mshould handle multiple tenants querying simultaneously
+2026-09-12T01:15:17.5005544Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.5006010Z [SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:17.5006983Z [SchemaPerTenant] Using schema: tenant_tenant_charlie
+2026-09-12T01:15:17.5008328Z [SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5009499Z [SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5010689Z [SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5011319Z 
+2026-09-12T01:15:17.5032929Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:17.5049810Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:17.5070220Z 
+2026-09-12T01:15:17.5078668Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:17.5081200Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5082285Z 
+2026-09-12T01:15:17.5084678Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:17.5087118Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:17.5087871Z 
+2026-09-12T01:15:17.5089796Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:17.5092204Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:17.5097419Z 
+2026-09-12T01:15:17.5098771Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould route queries to tenant-specific schema[32m 7[2mms[22m[39m
+2026-09-12T01:15:17.5100643Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould prevent cross-schema data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.5102482Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould not append tenant_id filter to queries[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.5104217Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Naming[2m > [22mshould use tenant-specific schema names[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.5106007Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould maintain schema context across transaction[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.5108917Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould not leak data across schema transactions[32m 3[2mms[22m[39m
+2026-09-12T01:15:17.5112567Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mConcurrent Access[2m > [22mshould handle multiple tenants querying simultaneously[32m 3[2mms[22m[39m
+2026-09-12T01:15:17.5116361Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould fail fast when tenant context is missing[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.5119743Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould reject empty schema names[32m 0[2mms[22m[39m
+2026-09-12T01:15:17.5123153Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mPer-Tenant Migrations[2m > [22mshould support independent schema versions[32m 2[2mms[22m[39m
+2026-09-12T01:15:17.7997749Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:17.8003539Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:17.8004856Z 
+2026-09-12T01:15:17.8007047Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:17.8009595Z [22m[39m[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+2026-09-12T01:15:17.8010747Z 
+2026-09-12T01:15:17.8031004Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould prevent cross-tenant data access
+2026-09-12T01:15:17.8035142Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:17.8036647Z 
+2026-09-12T01:15:17.8066122Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:17.8074764Z [22m[39m[SharedSchema] BEGIN for tenant tenant-alice
+2026-09-12T01:15:17.8077010Z 
+2026-09-12T01:15:17.8079057Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:17.8085917Z [22m[39m[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:17.8089296Z 
+2026-09-12T01:15:17.8091272Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:17.8093412Z [22m[39m[SharedSchema] COMMIT for tenant tenant-alice
+2026-09-12T01:15:17.8094193Z 
+2026-09-12T01:15:17.8098376Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:17.8100813Z [22m[39m[SharedSchema] BEGIN for tenant tenant-bob
+2026-09-12T01:15:17.8101457Z 
+2026-09-12T01:15:17.8104162Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:17.8106891Z [22m[39m[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:17.8107976Z 
+2026-09-12T01:15:17.8109751Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:17.8111751Z [22m[39m[SharedSchema] ROLLBACK for tenant tenant-bob
+2026-09-12T01:15:17.8114537Z 
+2026-09-12T01:15:17.8123483Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould isolate queries to current tenant[32m 5[2mms[22m[39m
+2026-09-12T01:15:17.8126912Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould prevent cross-tenant data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8130189Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould enforce tenant context requirement[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8132693Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould restore previous tenant context after withTenant[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8137703Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould append tenant filter to WHERE clause[32m 0[2mms[22m[39m
+2026-09-12T01:15:17.8140522Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould add WHERE clause if missing[32m 0[2mms[22m[39m
+2026-09-12T01:15:17.8143740Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould maintain tenant context across transaction[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8147099Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould restore context after rollback[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8150448Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle concurrent tenant contexts[32m 1[2mms[22m[39m
+2026-09-12T01:15:17.8153569Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle nested tenant contexts[32m 0[2mms[22m[39m
+2026-09-12T01:15:17.8156876Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould reject invalid tenant IDs[32m 1[2mms[22m[39m
+2026-09-12T01:15:18.0927124Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:18.0951425Z [22m[39m[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+2026-09-12T01:15:18.0952704Z 
+2026-09-12T01:15:18.0954318Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:18.0956512Z [22m[39m[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:18.0957273Z 
+2026-09-12T01:15:18.0958821Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:18.0960900Z [22m[39m[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+2026-09-12T01:15:18.0961789Z 
+2026-09-12T01:15:18.0963402Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:18.0965270Z [22m[39m[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:18.0966029Z 
+2026-09-12T01:15:18.1023082Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould route queries to dedicated databases[32m 7[2mms[22m[39m
+2026-09-12T01:15:18.1030459Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould include registry metadata in tenant context[32m 1[2mms[22m[39m
+2026-09-12T01:15:18.1032385Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mError Handling[2m > [22mshould fail fast when tenant configuration is missing[32m 2[2mms[22m[39m
+2026-09-12T01:15:18.1154430Z 
+2026-09-12T01:15:18.1169041Z [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+2026-09-12T01:15:18.1199495Z [2m      Tests [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+2026-09-12T01:15:18.1200901Z [2m   Start at [22m 01:15:17
+2026-09-12T01:15:18.1202557Z [2m   Duration [22m 1.08s[2m (transform 152ms, setup 0ms, collect 327ms, tests 47ms, environment 1ms, prepare 214ms)[22m
+2026-09-12T01:15:18.1203722Z 
+2026-09-12T01:15:18.2637734Z 
+2026-09-12T01:15:18.2641126Z ✅ Tests passed in shared-schema mode (2547ms)
+2026-09-12T01:15:18.2641914Z 
+2026-09-12T01:15:18.2642594Z 🧪 Running tests in schema-per-tenant mode...
+2026-09-12T01:15:18.2643246Z 
+2026-09-12T01:15:19.2656954Z 
+2026-09-12T01:15:19.2662083Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge[39m
+2026-09-12T01:15:19.2662762Z 
+2026-09-12T01:15:19.7069356Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:19.7071431Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7072019Z 
+2026-09-12T01:15:19.7074046Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:19.7087920Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7089218Z 
+2026-09-12T01:15:19.7091471Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:19.7093819Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:19.7095000Z 
+2026-09-12T01:15:19.7097323Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:19.7101418Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7102583Z 
+2026-09-12T01:15:19.7104787Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:19.7107222Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7108398Z 
+2026-09-12T01:15:19.7110518Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:19.7116642Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7121465Z 
+2026-09-12T01:15:19.7123775Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:19.7126540Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7127397Z 
+2026-09-12T01:15:19.7132896Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:19.7135699Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:19.7136865Z 
+2026-09-12T01:15:19.7139087Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:19.7142386Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:19.7143893Z 
+2026-09-12T01:15:19.7146495Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:19.7149311Z [22m[39m[SchemaPerTenant] COMMIT in tenant_tenant_alice
+2026-09-12T01:15:19.7150387Z 
+2026-09-12T01:15:19.7152438Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:19.7154624Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7155392Z 
+2026-09-12T01:15:19.7157599Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:19.7159648Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:19.7160322Z 
+2026-09-12T01:15:19.7162267Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:19.7168573Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:19.7169722Z 
+2026-09-12T01:15:19.7171947Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:19.7174105Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:19.7174870Z 
+2026-09-12T01:15:19.7177106Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:19.7179471Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7180389Z 
+2026-09-12T01:15:19.7182471Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mConcurrent Access[2m > [22m[2mshould handle multiple tenants querying simultaneously
+2026-09-12T01:15:19.7186603Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7187821Z [SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:19.7188975Z [SchemaPerTenant] Using schema: tenant_tenant_charlie
+2026-09-12T01:15:19.7190336Z [SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7191859Z [SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7193310Z [SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7194201Z 
+2026-09-12T01:15:19.7196449Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:19.7198743Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:19.7199566Z 
+2026-09-12T01:15:19.7201524Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:19.7203875Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7204861Z 
+2026-09-12T01:15:19.7207113Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:19.7209251Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:19.7209989Z 
+2026-09-12T01:15:19.7211912Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:19.7214222Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:19.7215134Z 
+2026-09-12T01:15:19.7238021Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould route queries to tenant-specific schema[32m 6[2mms[22m[39m
+2026-09-12T01:15:19.7248273Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould prevent cross-schema data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:19.7265352Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould not append tenant_id filter to queries[32m 1[2mms[22m[39m
+2026-09-12T01:15:19.7268576Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Naming[2m > [22mshould use tenant-specific schema names[32m 1[2mms[22m[39m
+2026-09-12T01:15:19.7271541Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould maintain schema context across transaction[32m 2[2mms[22m[39m
+2026-09-12T01:15:19.7273827Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould not leak data across schema transactions[32m 2[2mms[22m[39m
+2026-09-12T01:15:19.7277294Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mConcurrent Access[2m > [22mshould handle multiple tenants querying simultaneously[32m 2[2mms[22m[39m
+2026-09-12T01:15:19.7280812Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould fail fast when tenant context is missing[32m 1[2mms[22m[39m
+2026-09-12T01:15:19.7283771Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould reject empty schema names[32m 0[2mms[22m[39m
+2026-09-12T01:15:19.7287121Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mPer-Tenant Migrations[2m > [22mshould support independent schema versions[32m 2[2mms[22m[39m
+2026-09-12T01:15:20.0129084Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:20.0132011Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:20.0134401Z 
+2026-09-12T01:15:20.0136595Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:20.0139122Z [22m[39m[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+2026-09-12T01:15:20.0140301Z 
+2026-09-12T01:15:20.0166120Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould prevent cross-tenant data access
+2026-09-12T01:15:20.0170014Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:20.0171346Z 
+2026-09-12T01:15:20.0205823Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:20.0234040Z [22m[39m[SharedSchema] BEGIN for tenant tenant-alice
+2026-09-12T01:15:20.0250414Z 
+2026-09-12T01:15:20.0254524Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:20.0259768Z [22m[39m[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:20.0262462Z 
+2026-09-12T01:15:20.0264446Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:20.0274574Z [22m[39m[SharedSchema] COMMIT for tenant tenant-alice
+2026-09-12T01:15:20.0275222Z 
+2026-09-12T01:15:20.0277189Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:20.0278161Z [22m[39m[SharedSchema] BEGIN for tenant tenant-bob
+2026-09-12T01:15:20.0278407Z 
+2026-09-12T01:15:20.0279194Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:20.0280342Z [22m[39m[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:20.0280768Z 
+2026-09-12T01:15:20.0281831Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:20.0282709Z [22m[39m[SharedSchema] ROLLBACK for tenant tenant-bob
+2026-09-12T01:15:20.0282953Z 
+2026-09-12T01:15:20.0283816Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould isolate queries to current tenant[32m 5[2mms[22m[39m
+2026-09-12T01:15:20.0285310Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould prevent cross-tenant data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0288547Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould enforce tenant context requirement[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0291624Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould restore previous tenant context after withTenant[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0294554Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould append tenant filter to WHERE clause[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0297726Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould add WHERE clause if missing[32m 0[2mms[22m[39m
+2026-09-12T01:15:20.0317182Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould maintain tenant context across transaction[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0318916Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould restore context after rollback[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0320470Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle concurrent tenant contexts[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0321999Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle nested tenant contexts[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.0323525Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould reject invalid tenant IDs[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.3169999Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:20.3188055Z [22m[39m[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+2026-09-12T01:15:20.3189157Z 
+2026-09-12T01:15:20.3191106Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:20.3193444Z [22m[39m[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:20.3194312Z 
+2026-09-12T01:15:20.3196377Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:20.3198875Z [22m[39m[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+2026-09-12T01:15:20.3200818Z 
+2026-09-12T01:15:20.3203187Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:20.3207002Z [22m[39m[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:20.3207963Z 
+2026-09-12T01:15:20.3251013Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould route queries to dedicated databases[32m 7[2mms[22m[39m
+2026-09-12T01:15:20.3253895Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould include registry metadata in tenant context[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.3255985Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mError Handling[2m > [22mshould fail fast when tenant configuration is missing[32m 1[2mms[22m[39m
+2026-09-12T01:15:20.3381777Z 
+2026-09-12T01:15:20.3399593Z [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+2026-09-12T01:15:20.3418716Z [2m      Tests [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+2026-09-12T01:15:20.3439803Z [2m   Start at [22m 01:15:19
+2026-09-12T01:15:20.3449097Z [2m   Duration [22m 1.07s[2m (transform 130ms, setup 0ms, collect 310ms, tests 45ms, environment 1ms, prepare 207ms)[22m
+2026-09-12T01:15:20.3450076Z 
+2026-09-12T01:15:20.4896008Z 
+2026-09-12T01:15:20.4902438Z ✅ Tests passed in schema-per-tenant mode (2226ms)
+2026-09-12T01:15:20.4903228Z 
+2026-09-12T01:15:20.4903950Z 🧪 Running tests in external-adapter mode...
+2026-09-12T01:15:20.4904641Z 
+2026-09-12T01:15:21.5337048Z 
+2026-09-12T01:15:21.5338920Z [1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m/home/runner/work/OODS-Forge/OODS-Forge[39m
+2026-09-12T01:15:21.5339903Z 
+2026-09-12T01:15:21.9942893Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:21.9945381Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:21.9946559Z 
+2026-09-12T01:15:21.9948623Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:21.9951970Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:21.9952916Z 
+2026-09-12T01:15:21.9954842Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:21.9957194Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:21.9957958Z 
+2026-09-12T01:15:21.9960426Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould route queries to tenant-specific schema
+2026-09-12T01:15:21.9962764Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:21.9963646Z 
+2026-09-12T01:15:21.9980640Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:21.9984757Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:21.9985640Z 
+2026-09-12T01:15:21.9987819Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mSchema Isolation[2m > [22m[2mshould prevent cross-schema data access
+2026-09-12T01:15:21.9990128Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:21.9991041Z 
+2026-09-12T01:15:22.0007995Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:22.0013860Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:22.0017353Z 
+2026-09-12T01:15:22.0019474Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:22.0021638Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:22.0022328Z 
+2026-09-12T01:15:22.0024364Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:22.0027376Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:22.0028507Z 
+2026-09-12T01:15:22.0030616Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain schema context across transaction
+2026-09-12T01:15:22.0032833Z [22m[39m[SchemaPerTenant] COMMIT in tenant_tenant_alice
+2026-09-12T01:15:22.0033602Z 
+2026-09-12T01:15:22.0035667Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:22.0038115Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:22.0038882Z 
+2026-09-12T01:15:22.0040924Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:22.0043068Z [22m[39m[SchemaPerTenant] BEGIN in tenant_tenant_alice
+2026-09-12T01:15:22.0043842Z 
+2026-09-12T01:15:22.0045891Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:22.0048887Z [22m[39m[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:22.0050013Z 
+2026-09-12T01:15:22.0052089Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:22.0057976Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:22.0058767Z 
+2026-09-12T01:15:22.0060771Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould not leak data across schema transactions
+2026-09-12T01:15:22.0063454Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0064341Z 
+2026-09-12T01:15:22.0066629Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mConcurrent Access[2m > [22m[2mshould handle multiple tenants querying simultaneously
+2026-09-12T01:15:22.0068858Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:22.0070048Z [SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:22.0071398Z [SchemaPerTenant] Using schema: tenant_tenant_charlie
+2026-09-12T01:15:22.0073310Z [SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0074864Z [SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0078219Z [SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0081815Z 
+2026-09-12T01:15:22.0086951Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:22.0089379Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_alice
+2026-09-12T01:15:22.0092305Z 
+2026-09-12T01:15:22.0094480Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:22.0099407Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0100074Z 
+2026-09-12T01:15:22.0101783Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:22.0103610Z [22m[39m[SchemaPerTenant] Using schema: tenant_tenant_bob
+2026-09-12T01:15:22.0104111Z 
+2026-09-12T01:15:22.0110364Z [90mstdout[2m | tests/tenancy/isolated.spec.ts[2m > [22m[2mSchema-Per-Tenant Isolation[2m > [22m[2mPer-Tenant Migrations[2m > [22m[2mshould support independent schema versions
+2026-09-12T01:15:22.0112927Z [22m[39m[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:22.0114428Z 
+2026-09-12T01:15:22.0143908Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould route queries to tenant-specific schema[32m 6[2mms[22m[39m
+2026-09-12T01:15:22.0149239Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould prevent cross-schema data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.0159791Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Isolation[2m > [22mshould not append tenant_id filter to queries[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.0162034Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mSchema Naming[2m > [22mshould use tenant-specific schema names[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.0164311Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould maintain schema context across transaction[32m 2[2mms[22m[39m
+2026-09-12T01:15:22.0166910Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mTransaction Isolation[2m > [22mshould not leak data across schema transactions[32m 2[2mms[22m[39m
+2026-09-12T01:15:22.0169738Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mConcurrent Access[2m > [22mshould handle multiple tenants querying simultaneously[32m 2[2mms[22m[39m
+2026-09-12T01:15:22.0173929Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould fail fast when tenant context is missing[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.0177220Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mError Handling[2m > [22mshould reject empty schema names[32m 0[2mms[22m[39m
+2026-09-12T01:15:22.0180295Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/isolated.spec.ts[2m > [22mSchema-Per-Tenant Isolation[2m > [22mPer-Tenant Migrations[2m > [22mshould support independent schema versions[32m 2[2mms[22m[39m
+2026-09-12T01:15:22.3027412Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:22.3030452Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:22.3032196Z 
+2026-09-12T01:15:22.3034501Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould isolate queries to current tenant
+2026-09-12T01:15:22.3037790Z [22m[39m[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+2026-09-12T01:15:22.3039126Z 
+2026-09-12T01:15:22.3054553Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTenant Isolation[2m > [22m[2mshould prevent cross-tenant data access
+2026-09-12T01:15:22.3057551Z [22m[39m[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+2026-09-12T01:15:22.3059263Z 
+2026-09-12T01:15:22.3090365Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:22.3092830Z [22m[39m[SharedSchema] BEGIN for tenant tenant-alice
+2026-09-12T01:15:22.3094159Z 
+2026-09-12T01:15:22.3096511Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:22.3106768Z [22m[39m[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:22.3112409Z 
+2026-09-12T01:15:22.3114913Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould maintain tenant context across transaction
+2026-09-12T01:15:22.3121480Z [22m[39m[SharedSchema] COMMIT for tenant tenant-alice
+2026-09-12T01:15:22.3121965Z 
+2026-09-12T01:15:22.3123557Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:22.3127860Z [22m[39m[SharedSchema] BEGIN for tenant tenant-bob
+2026-09-12T01:15:22.3128315Z 
+2026-09-12T01:15:22.3130982Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:22.3133189Z [22m[39m[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+2026-09-12T01:15:22.3133994Z 
+2026-09-12T01:15:22.3135573Z [90mstdout[2m | tests/tenancy/shared.spec.ts[2m > [22m[2mShared-Schema Tenancy[2m > [22m[2mTransaction Isolation[2m > [22m[2mshould restore context after rollback
+2026-09-12T01:15:22.3138440Z [22m[39m[SharedSchema] ROLLBACK for tenant tenant-bob
+2026-09-12T01:15:22.3138909Z 
+2026-09-12T01:15:22.3148956Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould isolate queries to current tenant[32m 6[2mms[22m[39m
+2026-09-12T01:15:22.3154899Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould prevent cross-tenant data access[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3157307Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould enforce tenant context requirement[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3160046Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTenant Isolation[2m > [22mshould restore previous tenant context after withTenant[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3162101Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould append tenant filter to WHERE clause[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3164016Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mQuery Scoping[2m > [22mshould add WHERE clause if missing[32m 0[2mms[22m[39m
+2026-09-12T01:15:22.3167218Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould maintain tenant context across transaction[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3170359Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mTransaction Isolation[2m > [22mshould restore context after rollback[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3172630Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle concurrent tenant contexts[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3175098Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould handle nested tenant contexts[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.3178311Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/shared.spec.ts[2m > [22mShared-Schema Tenancy[2m > [22mMulti-Tenant Edge Cases[2m > [22mshould reject invalid tenant IDs[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.6041228Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:22.6044132Z [22m[39m[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+2026-09-12T01:15:22.6045626Z 
+2026-09-12T01:15:22.6047921Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:22.6050569Z [22m[39m[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+2026-09-12T01:15:22.6051567Z 
+2026-09-12T01:15:22.6053836Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:22.6056666Z [22m[39m[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+2026-09-12T01:15:22.6058193Z 
+2026-09-12T01:15:22.6060023Z [90mstdout[2m | tests/tenancy/external.spec.ts[2m > [22m[2mExternal Adapter Tenancy[2m > [22m[2mIsolation[2m > [22m[2mshould route queries to dedicated databases
+2026-09-12T01:15:22.6062681Z [22m[39m[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+2026-09-12T01:15:22.6064705Z 
+2026-09-12T01:15:22.6107987Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould route queries to dedicated databases[32m 7[2mms[22m[39m
+2026-09-12T01:15:22.6111120Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mIsolation[2m > [22mshould include registry metadata in tenant context[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.6113703Z  [32m✓[39m [30m[45m core [49m[39m tests/tenancy/external.spec.ts[2m > [22mExternal Adapter Tenancy[2m > [22mError Handling[2m > [22mshould fail fast when tenant configuration is missing[32m 1[2mms[22m[39m
+2026-09-12T01:15:22.6264388Z 
+2026-09-12T01:15:22.6265867Z [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+2026-09-12T01:15:22.6269327Z [2m      Tests [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+2026-09-12T01:15:22.6270141Z [2m   Start at [22m 01:15:21
+2026-09-12T01:15:22.6271488Z [2m   Duration [22m 1.09s[2m (transform 137ms, setup 0ms, collect 325ms, tests 45ms, environment 1ms, prepare 212ms)[22m
+2026-09-12T01:15:22.6272280Z 
+2026-09-12T01:15:22.7850978Z 
+2026-09-12T01:15:22.7852400Z ✅ Tests passed in external-adapter mode (2295ms)
+2026-09-12T01:15:22.7862582Z 
+2026-09-12T01:15:22.7863449Z ════════════════════════════════════════════════════════════
+2026-09-12T01:15:22.7864125Z 📊 Summary
+2026-09-12T01:15:22.7864366Z 
+2026-09-12T01:15:22.7864728Z   ✅ PASS | shared-schema        | 2547ms
+2026-09-12T01:15:22.7865935Z   ✅ PASS | schema-per-tenant    | 2226ms
+2026-09-12T01:15:22.7866907Z   ✅ PASS | external-adapter     | 2295ms
+2026-09-12T01:15:22.7867246Z 
+2026-09-12T01:15:22.7867780Z ════════════════════════════════════════════════════════════
+2026-09-12T01:15:22.7868388Z Total time: 7068ms
+2026-09-12T01:15:22.7868643Z 
+2026-09-12T01:15:22.7868943Z ✅ All tenancy modes passed!
+2026-09-12T01:15:22.7869246Z 
+2026-09-12T01:15:22.8210250Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:22.8211538Z Post job cleanup.
+2026-09-12T01:15:22.9565531Z (node:2608) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-12T01:15:22.9577356Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-12T01:15:22.9579047Z Cache hit occurred on the primary key node-cache-Linux-x64-pnpm-575290c1778133c82f44b50f7de059cbeee877a37bdee24ee6acaecd39951ea1, not saving cache.
+2026-09-12T01:15:22.9702709Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:22.9704023Z Post job cleanup.
+2026-09-12T01:15:23.1499142Z Pruning is unnecessary.
+2026-09-12T01:15:23.1900500Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-12T01:15:23.1902851Z Post job cleanup.
+2026-09-12T01:15:23.3776984Z [command]/usr/bin/git version
+2026-09-12T01:15:23.3799417Z git version 2.55.0
+2026-09-12T01:15:23.3818335Z Temporarily overriding HOME='/home/runner/work/_temp/e851dfca-ae1e-42f2-a705-5a036e74d9dc' before making global git config changes
+2026-09-12T01:15:23.3820354Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-12T01:15:23.3823408Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-12T01:15:23.3871007Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-12T01:15:23.3990753Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-12T01:15:23.4367554Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-12T01:15:23.4522213Z http.https://github.com/.extraheader
+2026-09-12T01:15:23.4529642Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-12T01:15:23.4550674Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-12T01:15:23.4935098Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-12T01:15:23.4993850Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-12T01:15:23.5533878Z Cleaning up orphan processes
+2026-09-12T01:15:23.5815298Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

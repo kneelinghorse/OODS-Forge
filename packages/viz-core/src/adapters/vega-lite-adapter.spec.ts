@@ -31,7 +31,8 @@ const ROWS = [
 // The fixed 6-slot OODS categorical viz-scale palette (default, no config.tokens override).
 // The literal pin ALSO catches a token/palette drift; the resolveCategoricalPalette tie
 // proves the baked bytes come from the SAME resolver certify grades.
-const OODS_CATEGORICAL_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00'];
+// Sprint 195 m05's qualified Role-A revision changes light slot05 by one blue unit.
+const OODS_CATEGORICAL_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4949', '#993B00'];
 
 describe('vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03)', () => {
   it('multi-series: a nominal color encoding bakes the fixed-6 OODS palette into encoding.color.scale.range', () => {

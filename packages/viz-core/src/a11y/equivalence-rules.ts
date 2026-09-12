@@ -12,6 +12,8 @@ export interface VizA11yRuleResult {
   readonly severity: 'error' | 'warn';
   readonly passed: boolean;
   readonly message?: string;
+  /** Internal evaluator fault, distinct from an ordinary rule finding. */
+  readonly executionError?: true;
   /**
    * s174 m01 — the TRI-STATE carrier. `passed` deliberately SURVIVES as a boolean (every
    * existing `.passed` pin is a chartered non-mover); a rule whose declared positive
@@ -89,6 +91,7 @@ export function validateVizEquivalenceRulesForContext(context: VizEquivalenceCon
         summary: rule.summary,
         severity: rule.severity,
         passed: false,
+        executionError: true,
         message: `Rule execution failed: ${error instanceof Error ? error.message : String(error)}`,
       } satisfies VizA11yRuleResult;
     }

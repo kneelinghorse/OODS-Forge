@@ -1,0 +1,103 @@
+[
+  {
+    "step": "fetch",
+    "command": [
+      "git",
+      "fetch",
+      "origin"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:22:31.493262+00:00",
+    "finishedAt": "2026-09-11T20:22:32.506646+00:00"
+  },
+  {
+    "step": "checkout",
+    "command": [
+      "git",
+      "switch",
+      "--detach",
+      "5b25c3c9ec795315bf52a698d135c96bffd66393"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:22:32.507167+00:00",
+    "finishedAt": "2026-09-11T20:22:34.325344+00:00"
+  },
+  {
+    "step": "install",
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:22:34.325857+00:00",
+    "finishedAt": "2026-09-11T20:22:36.526554+00:00"
+  },
+  {
+    "step": "build-tokens",
+    "command": [
+      "pnpm",
+      "run",
+      "build:tokens"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:22:36.527097+00:00",
+    "finishedAt": "2026-09-11T20:22:39.551260+00:00"
+  },
+  {
+    "step": "build-packages",
+    "command": [
+      "pnpm",
+      "run",
+      "build:packages"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:22:39.551750+00:00",
+    "finishedAt": "2026-09-11T20:23:06.736131+00:00"
+  },
+  {
+    "step": "build-bridge",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-bridge",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:23:06.736904+00:00",
+    "finishedAt": "2026-09-11T20:23:08.262513+00:00"
+  },
+  {
+    "step": "pkg-build",
+    "command": [
+      "pnpm",
+      "run",
+      "pkg:build"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:23:08.263051+00:00",
+    "finishedAt": "2026-09-11T20:23:17.982806+00:00"
+  },
+  {
+    "step": "pm2-restart",
+    "command": [
+      "pm2",
+      "restart",
+      "oods-forge-bridge"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:23:43.761529+00:00",
+    "finishedAt": "2026-09-11T20:23:44.094000+00:00"
+  },
+  {
+    "step": "pm2-save",
+    "command": [
+      "pm2",
+      "save"
+    ],
+    "exitCode": 0,
+    "startedAt": "2026-09-11T20:23:44.094412+00:00",
+    "finishedAt": "2026-09-11T20:23:44.197230+00:00"
+  }
+]

@@ -25,9 +25,9 @@
 //                                     rendered series-to-paint assignment, duplicates
 //                                     retained. <2 fail (a recycled pair is 0); 2-10 pass
 //                                     with a distinguishability warn; >=10 clean pass.
-//   role-B (WCAG-EXEMPT)           — a color channel that baked NO categorical palette
-//                                     (a sequential/diverging gradient, or a divergence/
-//                                     mistype that renders on a continuous/default scale)
+//   role-B (WCAG-EXEMPT)           — a continuous/default color channel without a
+//                                     categorical palette (a sequential/diverging gradient,
+//                                     or a divergence/mistype compiled quantitative)
 //                                     is the essential-exception gradient -> 'exempt'.
 //                                     Classified from the COMPILED spec, BEFORE any
 //                                     rendered-paint logic runs (s176 D5).
@@ -63,6 +63,8 @@ export type ContrastVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'e
 
 export interface ContrastPillarResult {
   readonly contrast: ContrastVerdict;
+  /** Internal: a structural failure cannot claim a completed contrast measurement. */
+  readonly contrastMeasured?: false;
   /** The rendered-contrast caveat (pass/fail) or the role-specific rationale. */
   readonly contrastNote?: string;
   /**
@@ -121,8 +123,8 @@ const BAKED_CONTRAST_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
   'against the requested CSS scope canvas; no rendered carrier measurement is claimed.';
 
-// A color channel exists but the adapter baked NO OODS categorical palette (no
-// scale.range, no OODS mark.color): the chart renders as a continuous/default color
+// A continuous/default color channel exists but the adapter baked NO categorical
+// palette: the chart renders as a continuous/default color
 // scale — a legit sequential/diverging gradient, OR a divergence/mistype (a color
 // binding the bake gate left quantitative). Either way there is no discrete palette to
 // contrast-check, so WCAG 1.4.11's essential exception applies (memo §3 case 3 / fork A).
@@ -132,6 +134,10 @@ const EXEMPT_NOTE =
   'No OODS categorical palette was baked into the compiled color scale — the chart renders ' +
   'as a continuous/default color scale (WCAG 1.4.11 gradient essential exception); ' +
   "Forge's generated accessible data table is the guarantee. " + NO_RATIO_CAVEAT;
+const MISSING_CATEGORICAL_PALETTE_NOTE =
+  'Categorical color encoding is missing its baked palette; the renderer default cannot ' +
+  'establish categorical contrast conformance. No categorical canvas ratio is graded ' +
+  'for the missing-palette unit.';
 
 function distinctCount(values: Array<Record<string, unknown>> | undefined, field: string): number {
   if (!values || values.length === 0) return 0;
@@ -395,12 +401,14 @@ const SLOT1_TOKEN = categoricalToken(1);
  *   CASE 1 (baked categorical range)          -> 'series' with the range as the match set
  *   CASE 2 (mark.color === the OODS slot-1)   -> 'series' with slot-1 as the match set
  *   CASE 2 (mark.color, NOT the OODS slot-1)  -> 'chrome' (author decoration — neutral)
- *   CASE 3 (color channel, no baked palette)  -> 'exempt' (gradient essential exception)
+ *   CASE 3 (categorical color, no palette)   -> 'missing-palette' (contrast fail)
+ *   CASE 3 (continuous/default color)        -> 'exempt' (gradient essential exception)
  *   CASE 4 (no color in this unit)            -> 'chrome' (neutral)
  */
 type UnitClass =
   | { readonly kind: 'series'; readonly matchSlots: ReadonlyArray<{ token: string; hex: string }>; readonly n: number }
   | { readonly kind: 'exempt' }
+  | { readonly kind: 'missing-palette' }
   | { readonly kind: 'chrome' };
 
 function classifyUnit(
@@ -436,6 +444,14 @@ function classifyUnit(
     };
   }
 
+  // s195-m06: absent bake is not evidence of a gradient. A compiled discrete
+  // color channel must carry its categorical range even if a mark also has a
+  // decorative fallback color. The physical palette-removal bite exposed the
+  // previous false exemption (and conformant:true) here.
+  if (colorEnc?.type === 'nominal' || colorEnc?.type === 'ordinal') {
+    return { kind: 'missing-palette' };
+  }
+
   // CASE 2 — single-series: no color channel, so the adapter baked categorical-01 as
   // mark.color. A series unit ONLY when it IS the OODS series color (it equals the
   // resolved categorical-01 slot, override-aware, so a config.tokens-poisoned
@@ -452,7 +468,7 @@ function classifyUnit(
     return { kind: 'chrome' };
   }
 
-  // CASE 3 — a color channel exists but NO OODS categorical palette was baked (gradient,
+  // CASE 3 — a continuous/default color channel has no categorical palette (gradient,
   // or a divergence/mistype rendering on a continuous/default scale): WCAG-exempt,
   // decided here — before any render — so an interpolated ramp's rgb() fills are never
   // fed to the palette-match fold (which would silently move 'exempt' -> 'unchecked').
@@ -600,8 +616,10 @@ export async function evaluateContrastPillar(
   );
 
   const graded: ContrastPillarResult[] = classified
-    .filter((c) => c.kind === 'exempt')
-    .map(() => ({ contrast: 'exempt', contrastNote: EXEMPT_NOTE }) as ContrastPillarResult);
+    .filter((c) => c.kind === 'exempt' || c.kind === 'missing-palette')
+    .map((c) => c.kind === 'missing-palette'
+      ? { contrast: 'fail', contrastNote: MISSING_CATEGORICAL_PALETTE_NOTE, contrastMeasured: false }
+      : { contrast: 'exempt', contrastNote: EXEMPT_NOTE });
 
   // THE RENDER (s176 D1) — only when a series unit exists: an all-exempt/all-chrome
   // chart never renders (which is what keeps the decorative trio's plain/poisoned

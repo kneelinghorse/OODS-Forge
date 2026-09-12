@@ -279,9 +279,19 @@ Example input (explicit full detail):
 Portable React/Vue generation returns OODS-N015 because readiness source/test/declaration references are not shipped; host generation remains supported.
 
 Subscription detail declares a read-only `VizAreaPreview.chart` over
-`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. This public
+`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. Invoice adds
+`VizMarkPreview` over `line_items` in detail and dashboard layouts, with amounts
+kept in minor currency units and matching descriptions summed. Usage adds
+`VizLinePreview` over timestamp/value `samples` in those layouts. Its seed rows
+are explicitly labelled synthetic API-call examples; the canonical meter unit
+remains `api_calls`.
+
+Bound canonical MarkArea, MarkBar, MarkLine, MarkPoint and MarkRect declarations
+use trait `title` and `description` parameters. Detail is projected; dashboard is
+projected when the trait authors that context. MarkRect maps to the heatmap
+preview. Unknown bound marks and mismatched chart types fail. Each public
 UiSchema declaration is rendered through `viz.render` during generation using
-the compose theme and brand (default light/A). React and Vue receive an optional
+the requested `options.theme` (light/dark/hc) and brand (default light/A). The generated HC Subscription/detail area assets are verified in React and Vue under forced colours. React and Vue receive an optional
 typed `svg` prop with a seed default; workflows include one hashed static SVG
 asset per seed record, selected by record id. These sample charts stay fixed
 when the local record is edited; consumers can supply a replacement SVG.
@@ -289,6 +299,19 @@ Generated applications require no visualization runtime. The component embeds
 the SVG verbatim in a labelled figure and retains the existing placeholder when
 `svg` is omitted. Its passive SVG boundary rejects scripts, style blocks or
 attributes, and external references.
+
+The `record-array` chart source binds a declared object array, public chart
+encodings, and explicit `sampleRows` used to seed generated example records.
+Generation reads the rows from each resulting record. One distinct chart
+declaration is supported per generated object; identical repeated projections
+share its assets. ECharts placement is carried under decision #1944: no matching
+authored preview trait or object operand is present. Relationship's scalar edge
+fields require an explicit directed nodes/links transformation before a graph
+placement can claim the public network contract. The visualization census
+records composed chart declarations; executed application proof is separate.
+React/Vue application generation and isolated HTML chart nodes carry the real
+SVG. Full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs
+normalization limit; chart-node proof does not certify a full HTML application.
 
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`
@@ -585,7 +608,7 @@ Runs compose, validate, render and code generation, optionally saving by name. F
 
 ### `health`
 
-Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
+Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `productReality.viz` reports the generated taxonomy's type, pattern, family, classification and Core Analytics Profile counts; surface-complete cells require public pixels from an identity assigned to that cell, while gaps have explicit reasons. Missing or invalid taxonomy returns null and degrades health. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
 
 [Complete input/output reference](../api/health.md).
 
@@ -665,11 +688,22 @@ Output fields:
 
 ### `viz.render`
 
+- **Pattern mode**: supply an exact source identity such as `pattern:viz:simple-bar`. Bundled rows, bindings and authored presentation drive the same public renderer. The generated [pattern catalog](../viz/pattern-library-v2.md) records each identity's pixel proof or authoring-only reasons. Unsupported interactions and structural layouts return `OODS-V167`; pattern with explicit data, encodings, intent or identity/presentation overrides returns `OODS-V166`. Brand, theme, strict-field checks and output controls remain available.
 - **Input schema**: `packages/mcp-server/src/schemas/viz.render.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
 - **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
 - **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Supports 13 chart types: 5 tabular (`bar`, `line`, `area`, `scatter`, `heatmap`) in both suggest and explicit mode, plus 8 explicit-only (`treemap`, `sunburst`, `sankey`, `force_graph`, `chord`, `choropleth`, `bubble_map`, `flow_map`).
 - **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
+
+Example input (pattern mode):
+```json
+{
+  "pattern": "pattern:viz:simple-bar",
+  "brand": "A",
+  "theme": "dark",
+  "output": { "svg": true, "includeNormalizedSpec": true }
+}
+```
 
 Example input (explicit mode):
 ```json
@@ -756,7 +790,9 @@ Renders shared datasets into KPI/chart panels and deterministic self-contained H
 
 ### `artifact.certify`
 
-Grades the normalized IR returned by `viz.render`, with the same data operand for ECharts-primary families. Returns per-check accessibility, determinism, contrast and accuracy evidence; five Cartesian families can be certified and eight advanced families remain explicitly uncertified. HTML is rejected with OODS-V126. Scope is A/B and light/dark; HC chart pixels are unsupported.
+Grades the normalized IR returned by `viz.render`. The five Cartesian families certify from the IR alone. ECharts-primary families use the declared operand profile: pass the same `data` branch used to render the chart. That path grades accessibility equivalence, determinism, contrast and the offered accuracy rules, then returns a measured conformance boolean. Conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and at least one evaluated accuracy rule with no detected distortion. Warning-severity accessibility findings and named not-applicable rules remain visible. A certified result may be nonconformant; the measured failures are retained.
+
+Without an ECharts data operand, coverage remains `uncertified` and conformance remains `null`; notes name what could not be evaluated. No Vega-Lite compile is added to the ECharts profile. HTML is rejected with OODS-V126. Scope is A/B and light/dark/hc. HC contrast is exempt with `reason: forced-colors` and no numeric grade; accessibility, accuracy and determinism still evaluate normally. HC SVG proof covers bar, line, area and scatter. Heatmap and all eight ECharts types retain OODS-V165 undeclared-paint failures, which fail certification determinism and conformance. The registry pins the measured failures; no server-side system-colour hex palette is invented.
 
 [Complete input/output reference](../api/artifact-certify.md).
 

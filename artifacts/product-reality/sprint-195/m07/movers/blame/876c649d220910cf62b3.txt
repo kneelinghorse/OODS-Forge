@@ -1,0 +1,23 @@
+c6453c97883feb38dda203628684a7bb9643765d 1107 1107 6
+author System Systems
+author-mail <systems@example.com>
+author-time 1789166184
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789166184
+committer-tz -0500
+summary fix(proof): close retained browser connections after verification
+previous a3158282bba25713171d7216181bde28b69a80a1 scripts/product-reality/s184-m06-live-consumers.ts
+filename scripts/product-reality/s184-m06-live-consumers.ts
+	    await new Promise<void>((resolve, reject) => {
+c6453c97883feb38dda203628684a7bb9643765d 1108 1108
+	      server.close((error) => (error ? reject(error) : resolve()));
+c6453c97883feb38dda203628684a7bb9643765d 1109 1109
+	      // Proof work is finished; forwarded browser connections may still hold
+c6453c97883feb38dda203628684a7bb9643765d 1110 1110
+	      // an incomplete request open. Stop accepting first, then release them.
+c6453c97883feb38dda203628684a7bb9643765d 1111 1111
+	      server.closeAllConnections();
+c6453c97883feb38dda203628684a7bb9643765d 1112 1112
+	    });

@@ -99,9 +99,18 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
   BaselineCell
 >;
 
-// s191: reuse the attributed m01 matrix; only force_graph light pixels move for slot 04.
-const m03 = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-191/m01/matrix/matrix.json', import.meta.url), 'utf8'));
-const scopedHash = (chartType: string): string => m03.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
+// s195-m05: exact current hashes come from the real legacy operand matrix; the
+// migration receipt retains every superseded s191 hash and the pristine fixture.
+const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-195/m05/golden-migration/matrix/matrix.json', import.meta.url), 'utf8'));
+const scopedHash = (chartType: string): string => currentMatrix.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
+// s195 m04 declared movers over the immutable historical fixture: coverage/fold,
+// a11y pillar, newly offered rule counts, actual bubble V169, and path-specific prose.
+const M04_RULE_COUNTS: Record<string, number> = { treemap: 2, sunburst: 2, sankey: 3, chord: 1, force_graph: 1, choropleth: 1, bubble_map: 3, flow_map: 2 };
+const M04_OPERAND_NOTE = "The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.";
+const M04_BUBBLE_FINDING = {
+  code: 'OODS-V169', severity: 'error',
+  message: 'artifact.certify: bubble_map encodes varying "pop" values with the public renderer\'s default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override.',
+};
 function expectedCurrentCell(chartType: string, contentHash: string): BaselineCell {
   const cell = baseline[chartType];
   const determinism = cell.certified.determinism as Record<string, unknown>;
@@ -113,13 +122,18 @@ function expectedCurrentCell(chartType: string, contentHash: string): BaselineCe
     renderedContentHash: contentHash,
     certified: {
       ...cell.certified,
+      coverage: 'certified',
+      conformant: chartType !== 'bubble_map',
+      findings: [...(chartType === 'bubble_map' ? [M04_BUBBLE_FINDING] : []), ...cell.certified.findings as unknown[]],
+      pillars: { ...cell.certified.pillars as Record<string, unknown>, a11yEquivalence: 'pass', accuracy: chartType === 'bubble_map' ? 'fail' : 'pass' },
+      accuracySummary: { rulesEvaluated: M04_RULE_COUNTS[chartType], failing: chartType === 'bubble_map' ? 1 : 0 },
       determinism: {
         ...determinism,
         contentHash,
         renderHash: scopedHash(chartType),
       },
       contrastNote: (categorical ? CATEGORICAL_CONTRAST_NOTE : GEO_CONTRAST_NOTE) + ' Scope: light/A.',
-      notes: [notes[0], RENDER_SCOPE_NOTE, ...notes.slice(2)],
+      notes: [notes[0].split('A11y-equivalence runs WARN-FIRST here:')[0] + M04_OPERAND_NOTE, RENDER_SCOPE_NOTE, ...notes.slice(2).filter(note => !note.startsWith('No accuracy rule is offered for'))],
     },
   };
 }
@@ -143,6 +157,16 @@ async function renderThenCertify(
 }
 
 describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT}`, () => {
+  it("the palette epoch carries an explicit before/after attribution for every legacy render identity", () => {
+    const migration = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-195/m05/golden-migration/golden-attribution.json', import.meta.url), 'utf8'));
+    for (const operand of ECHARTS_OPERAND_CASES) {
+      const row = migration.matrixRows.find((entry: any) => entry.source === 'artifacts/product-reality/sprint-191/m01/matrix/matrix.json' && entry.identity === `${operand.chartType}/light/A`);
+      expect(row).toMatchObject({ class: 'public-chart-matrix', afterHash: scopedHash(operand.chartType) });
+      expect(row.beforeHash).toMatch(/^[a-f0-9]{64}$/);
+      expect(row.reason.length).toBeGreaterThan(0);
+    }
+  });
+
   it("the pin enumerates exactly the eight canonical operand cases", () => {
     expect(createHash("sha256").update(baselineBytes).digest("hex")).toBe(
       EXPECTED_BASELINE_SHA256,
@@ -193,10 +217,9 @@ describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT
         (observed.certified.determinism as Record<string, unknown>).renderHash,
       ).toBe(scopedHash(chartType));
 
-      // Byte-level response control: pillars, findings, accuracy summary and the
-      // not-applicable channel stay frozen. The pristine fixture stays immutable; m03
-      // derives its hash-only delta and m05 derives only the renderHash plus the two
-      // path-scoped truth replacements above.
+      // Full response control retains the historical fixture and applies only explicit
+      // m03/m05 hash and scope movers plus the declared s195 operand-profile migration.
+      // N/A, a11y finding bytes, contrast and both hashes remain pinned.
       expect(JSON.stringify(observed)).toBe(
         JSON.stringify(expectedCurrentCell(chartType, expectedHash)),
       );

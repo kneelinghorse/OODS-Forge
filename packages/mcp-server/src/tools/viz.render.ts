@@ -9,12 +9,14 @@
 // is validated against viz.render.output.json after return (so the shape here
 // must stay additionalProperties-clean).
 
+import { assertHcSvgPaints } from './hc-svg-paints.js';
 import {
   adaptChordToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
   adaptSunburstToECharts,
   adaptTreemapToECharts,
+  applyPatternPresentation,
   buildFromIntent,
   buildVizSpecFromRows,
   convertToEChartsTreeData,
@@ -23,6 +25,7 @@ import {
   generateNarrativeSummary,
   toEChartsOption,
   toVegaLiteSpec,
+  translatePattern,
   validateVizEquivalenceRules,
   type AccessibleTableResult,
   type BuildVizSpecInput,
@@ -31,6 +34,7 @@ import {
   type NarrativeResult,
   type NetworkInput,
   type NormalizedVizSpec,
+  type PatternPresentation,
   type SankeyInput,
   type StructuredIntent,
 } from '@oods/viz-core';
@@ -229,7 +233,20 @@ function neverCycleWarnings(
 // ./echarts-link-integrity.ts (sprint-172 m01) so certify replays the SAME V147 check.
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
-  const out = await renderSpec(input);
+  let presentation: PatternPresentation | undefined;
+  if (Object.hasOwn(input, 'pattern')) {
+    const conflicts = ['chartType', 'encodings', 'rows', 'datasetRef', 'intent', 'hierarchy', 'sankey', 'chord', 'network', 'geo', 'id', 'name', 'description', 'opacity']
+      .filter(field => Object.hasOwn(input, field));
+    if (conflicts.length) return errorOut('OODS-V166', `viz.render: pattern cannot be combined with ${conflicts.join(', ')}; the source identity, data and presentation must remain intact.`, input.output?.compact ?? true, input.output?.echarts ?? false);
+    let translated: ReturnType<typeof translatePattern>;
+    try { translated = translatePattern(input.pattern!); }
+    catch (error) { return errorOut('OODS-V123', `viz.render: ${error instanceof Error ? error.message : String(error)}`, input.output?.compact ?? true, input.output?.echarts ?? false); }
+    if (translated.status === 'authoring-only') return errorOut('OODS-V167', `viz.render: pattern "${input.pattern}" is authoring-only: ${translated.reasons.join('; ')}`, input.output?.compact ?? true, input.output?.echarts ?? false);
+    const { pattern: _pattern, ...controls } = input;
+    input = { ...controls, ...translated.explicitInput } as VizRenderInput;
+    presentation = translated.presentation;
+  }
+  const out = await renderSpec(input, presentation);
   if (out.status !== 'ok' || !input.output?.svg) return out;
 
   try {
@@ -244,6 +261,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
           height: height ?? ECHARTS_SSR_DIMENSIONS.height,
         }))
       : await renderVegaLiteToSvg(out.spec as unknown as VegaLiteSpec, { width, height });
+    assertHcSvgPaints(svg, input);
     const root = /^<svg\b[^>]*>/.exec(svg)?.[0];
     const renderedWidth = Number(root?.match(/\bwidth="([\d.]+)"/)?.[1]);
     const renderedHeight = Number(root?.match(/\bheight="([\d.]+)"/)?.[1]);
@@ -262,7 +280,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   }
 }
 
-async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
+async function renderSpec(input: VizRenderInput, presentation?: PatternPresentation): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
@@ -379,7 +397,7 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
     // intent dispatch (sprint-131 m03): a structured intent routes through the
     // deterministic buildFromIntent (recommender pick under the named fields + goal);
     // intent-absent is the byte-identical pre-s131 buildVizSpecFromRows path.
-    const built = input.intent
+    const rawBuilt = input.intent
       ? buildFromIntent({
           intent: input.intent as StructuredIntent,
           rows,
@@ -395,6 +413,10 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
           name: input.name,
           description: input.description,
         });
+
+    // The source presentation is applied to fresh builder IR and validated by
+    // viz-core before adapters, a11y gates, hashes and certification observe it.
+    const built = presentation ? { ...rawBuilt, spec: applyPatternPresentation(rawBuilt.spec, presentation) } : rawBuilt;
 
     if (input.opacity !== undefined) {
       for (const mark of built.spec.marks) {

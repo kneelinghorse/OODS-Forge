@@ -84,36 +84,22 @@ describe('artifact.certify — live cross-tool contentHash parity, same (spec, d
 
 describe('artifact.certify — the ECharts determinism verdict SHAPE (s172 m02)', () => {
   it.each(ECHARTS_OPERAND_CASES.map((c) => [c.chartType, c] as const))(
-    '%s: pillars deep-equal the s141 Design-A shape with determinism now REAL; coverage/conformant unmoved',
+    '%s: the declared operand profile preserves option and render evidence',
     async (_label, operand) => {
       const { certified } = await renderThenCertify(operand);
-      // Coverage + conformant are DELIBERATELY unmoved (s141 Design A): the operand lights
-      // determinism, it does not turn these into certified charts.
-      expect(certified.coverage).toBe('uncertified');
-      expect(certified.conformant).toBeNull();
-      // DECLARED MOVER (s174 m01). This pinned `[]`, which was only ever true because the
-      // a11y-equivalence engine did not run on this path. Warn-first runs it, so the lock is
-      // TIGHTENED to the exact matrix-derived set rather than loosened: findings[] is still
-      // fully pinned, it just now says which rules fire and at what severity.
+      expect(certified.coverage).toBe('certified');
+      expect(certified.conformant).toBe(operand.chartType !== 'bubble_map');
+      const accuracyFindings = operand.chartType === 'bubble_map'
+        ? [{ code: 'OODS-V169', severity: 'error' }] : [];
       expect(certified.findings?.map((f) => ({ code: f.code, severity: f.severity }))).toEqual(
-        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType],
+        [...accuracyFindings, ...RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType]],
       );
       expect(certified.pillars).toEqual({
-        a11yEquivalence: 'unchecked',
-        determinism: 'pass',
+        a11yEquivalence: 'pass', determinism: 'pass',
         contrast: operand.branch === 'geo' ? 'exempt' : 'pass',
-        // m03 lit this pillar on the same operand. Updated DELIBERATELY here rather than
-        // loosened: the lock still pins every one of the four values exactly, and
-        // a11yEquivalence is still asserted 'unchecked' — s174's warn-first rollout puts
-        // a11y findings in findings[] and deliberately does NOT move this pillar, so this
-        // line is a MUST-NOT-MOVE guard for that decision, not a stale leftover. The three
-        // types that offer NO accuracy rule stay 'unchecked': zero resolved rules is never
-        // a pass.
-        accuracy: ['force_graph', 'bubble_map', 'flow_map'].includes(operand.chartType)
-          ? 'unchecked'
-          : 'pass',
+        accuracy: operand.chartType === 'bubble_map' ? 'fail' : 'pass',
       });
-      expect(certified.accuracySummary?.failing).toBe(0);
+      expect(certified.accuracySummary?.failing).toBe(operand.chartType === 'bubble_map' ? 1 : 0);
     },
   );
 

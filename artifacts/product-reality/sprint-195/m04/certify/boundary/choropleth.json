@@ -1,0 +1,236 @@
+{
+  "input": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:choropleth",
+      "name": "State sales",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkChoropleth"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Choropleth map of State sales."
+      }
+    },
+    "data": {
+      "geo": {
+        "geojson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "rows": [
+          {
+            "state": "CA",
+            "sales": 580
+          },
+          {
+            "state": "NV",
+            "sales": 96
+          }
+        ],
+        "join": {
+          "dataKey": "state",
+          "featureProperty": "region"
+        },
+        "valueField": "sales",
+        "colorScale": "linear"
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V159"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "0bc49621bda7b0af5a24dea5703b036aea34aa6a3353646e3fe0d6c4020f1cbb",
+      "renderHash": "f10cbd6bcacaf64d7562b90ad6ad0619edd9a09a7fcf3674401d8b76feebc55f"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkChoropleth is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Geo carrier paints were read from the rendered ECharts SVG, but geo color remains exempt from categorical contrast grading under the standing gradient-essential ruling. certify reads actual carrier paints from the normalized SVG rendered from the retained projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Geo carrier paints were read from the rendered ECharts SVG, but geo color remains exempt from categorical contrast grading under the standing gradient-essential ruling. certify reads actual carrier paints from the normalized SVG rendered from the retained projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded. Scope: light/A."
+      }
+    ]
+  },
+  "specOnly": {
+    "status": "ok",
+    "coverage": "uncertified",
+    "conformant": null,
+    "accuracyRules": [
+      "OODS-V159"
+    ],
+    "findings": [],
+    "pillars": {
+      "a11yEquivalence": "unchecked",
+      "determinism": "unchecked",
+      "contrast": "exempt",
+      "accuracy": "unchecked"
+    },
+    "notes": [
+      "MarkChoropleth is an ECharts-primary mark. Without the `data` operand there is nothing to evaluate: no a11y findings appear, pillars.a11yEquivalence stays 'unchecked', coverage stays 'uncertified', and conformant stays null. Supply the matching operand to grade a11y-equivalence, determinism and accuracy over the chart's actual data.",
+      "Determinism is unchecked for MarkChoropleth: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkChoropleth: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
+    ],
+    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. No categorical canvas ratio is graded for this scope. Scope: light/A.",
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "none",
+        "note": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. No categorical canvas ratio is graded for this scope. Scope: light/A."
+      }
+    ]
+  }
+}

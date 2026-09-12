@@ -280,14 +280,17 @@ function buildExampleBlock(inputSchema: JsonSchema): string {
 
 function visualizationCoverage(toolName: string): string {
   if (!['viz.render', 'dashboard.render', 'artifact.certify'].includes(toolName)) return '';
-  const recipes = readJson<Array<{ chartType: string; specEngine: string; publicSvg: boolean; dashboardDrawn: boolean | string; themes: Record<string, boolean>; brands: string[]; certifyCoverage: string; contrastMeasured: string[]; chartInApp: string; notes: string[] }>>(VIZ_RECIPES_PATH);
+  const recipes = readJson<Array<{ chartType: string; specEngine: string; publicSvg: boolean; dashboardDrawn: boolean | string; themes: Record<string, boolean>; brands: string[]; certifyCoverage: string; certifyScopes: Array<{ conformant: boolean | null }>; accuracyRules: string[]; contrastMeasured: string[]; chartInApp: string; notes: string[] }>>(VIZ_RECIPES_PATH);
   const count = (predicate: (row: typeof recipes[number]) => boolean) => recipes.filter(predicate).length;
+  const scopes = recipes.flatMap(row => row.certifyScopes);
+  const echartsRules = [...new Set(recipes.filter(row => row.specEngine === 'echarts').flatMap(row => row.accuracyRules))].sort();
   return [
     '## Measured visualization coverage', '',
     'Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.', '',
     `Public SVG: ${count(row => row.publicSvg)}/${recipes.length}. Dashboard SVG panels: ${count(row => row.dashboardDrawn === true)}/${recipes.length}. Certification coverage: ${count(row => row.certifyCoverage === 'certified')} certified / ${count(row => row.certifyCoverage === 'uncertified')} uncertified; uncertified results keep conformant:null.`, '',
-    `Theme parameters: light (${count(row => row.themes.light)}/${recipes.length}) and dark (${count(row => row.themes.dark)}/${recipes.length}); HC pixels (${count(row => row.themes.hc)}/${recipes.length}) are deferred. Brand parameters: ${[...new Set(recipes.flatMap(row => row.brands))].join(', ')}. Default scope is light/A.`, '',
-    'Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.', '',
+    `Measured scope verdicts: ${scopes.filter(scope => scope.conformant === true).length} conformant / ${scopes.filter(scope => scope.conformant === false).length} nonconformant / ${scopes.filter(scope => scope.conformant === null).length} uncertified. Types with a nonconformant scope: ${recipes.filter(row => row.certifyScopes.some(scope => scope.conformant === false)).map(row => row.chartType).join(', ') || 'none'}.`, '',
+    `Theme parameters: light (${count(row => row.themes.light)}/${recipes.length}), dark (${count(row => row.themes.dark)}/${recipes.length}) and hc (${count(row => row.themes.hc)}/${recipes.length} with measured SVGs; ${count(row => !row.themes.hc)}/${recipes.length} typed-deferred). HC emits declared scope paints verbatim and contrast is forced-colors exempt; actual render failures still fail determinism. Brand parameters: ${[...new Set(recipes.flatMap(row => row.brands))].join(', ')}. Default scope is light/A.`, '',
+    `Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: ${echartsRules.join(', ')}; applicability and evaluated counts depend on the data operand.`, '',
     '| Type | Engine | Dashboard | Certification | Contrast measured | Application |',
     '| --- | --- | --- | --- | --- | --- |',
     ...recipes.map(row => `| ${row.chartType} | ${row.specEngine} | ${row.dashboardDrawn} | ${row.certifyCoverage} | ${row.contrastMeasured.join(', ') || 'none (exempt)'} | ${row.chartInApp} |`), '',

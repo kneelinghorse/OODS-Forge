@@ -1,0 +1,46 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/viz-render
+      Coverage enabled with v8
+
+ ✓ test/emitter.spec.ts (12 tests) 641ms
+ ❯ test/echarts-normalized-hash-matrix.s179.spec.ts (11 tests | 1 failed) 355ms
+   ✓ s179 ECharts normalized-SVG hash matrix > covers exactly the shared eight canonical operand families 1ms
+   ✓ s179 ECharts normalized-SVG hash matrix > treemap pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > sunburst pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > sankey pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > chord pins a byte-stable normalized SVG hash 0ms
+   × s179 ECharts normalized-SVG hash matrix > force_graph pins a byte-stable normalized SVG hash 5ms
+     → expected 'a56f8eedbfbfb8cc0d5af9753ac70d23a4681…' to be 'eaffab2cc459fd942547e607160d65fa21c0f…' // Object.is equality
+   ✓ s179 ECharts normalized-SVG hash matrix > choropleth pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > bubble_map pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > flow_map pins a byte-stable normalized SVG hash 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > preserves the ASCII, CJK, combining-mark, emoji, and truncation carriers 0ms
+   ✓ s179 ECharts normalized-SVG hash matrix > normalizes actual shadow, gradient, pattern, and clip structural carriers 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/echarts-normalized-hash-matrix.s179.spec.ts > s179 ECharts normalized-SVG hash matrix > force_graph pins a byte-stable normalized SVG hash
+AssertionError: expected 'a56f8eedbfbfb8cc0d5af9753ac70d23a4681…' to be 'eaffab2cc459fd942547e607160d65fa21c0f…' // Object.is equality
+
+Expected: "eaffab2cc459fd942547e607160d65fa21c0f52029c4e1ead2137d9f3e5f1923"
+Received: "a56f8eedbfbfb8cc0d5af9753ac70d23a468109c438e49e429c191df0361a43b"
+
+ ❯ test/echarts-normalized-hash-matrix.s179.spec.ts:133:44
+    131|       expect(capture).toBeDefined();
+    132|       expect(capture?.second).toBe(capture?.first);
+    133|       expect(sha256(capture?.first ?? "")).toBe(
+       |                                            ^
+    134|         EXPECTED_NORMALIZED_HASHES[family],
+    135|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 22 passed (23)
+   Start at  16:35:27
+   Duration  1.52s (transform 324ms, setup 0ms, collect 906ms, tests 997ms, environment 0ms, prepare 115ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/viz-render:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/emitter.spec.ts test/echarts-normalized-hash-matrix.s179.spec.ts

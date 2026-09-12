@@ -1,0 +1,28 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts [ packages/mcp-server/test/product-reality/high-contrast.s195.spec.ts ]
+Error: no schema with key or ref "https://json-schema.org/draft/2020-12/schema"
+ ❯ Ajv.validate node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:362:21
+ ❯ Ajv.validateSchema node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:519:24
+ ❯ Ajv._addSchema node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:725:30
+ ❯ Ajv.compile node_modules/.pnpm/ajv@8.17.1/node_modules/ajv/lib/core.ts:388:22
+ ❯ packages/viz-core/src/spec/dashboard-spec.ts:57:56
+     55| 
+     56| const typedSchema = schema as unknown as JSONSchemaType<DashboardSpec>;
+     57| const validator: ValidateFunction<DashboardSpec> = ajv.compile(typedSc…
+       |                                                        ^
+     58| 
+     59| export function validateDashboardSpec(input: unknown): DashboardSpecVa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  16:26:48
+   Duration  466ms (transform 72ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 75ms)
+

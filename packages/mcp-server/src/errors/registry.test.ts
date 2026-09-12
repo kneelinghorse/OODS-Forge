@@ -10,6 +10,20 @@ import {
 } from './registry.js';
 
 describe('Error Registry', () => {
+  it.each([
+    ['OODS-V168', 'size is negative or non-finite'],
+    ['OODS-V169', 'radius rather than area'],
+    ['OODS-V170', 'conflicting encoded values'],
+    ['OODS-V171', 'strength is negative or non-finite'],
+    ['OODS-V172', 'directed geographic flow'],
+    ['OODS-V173', 'force-graph directed edge'],
+  ])('%s keeps its distinct operand-profile accuracy meaning and names the tool', (code, meaning) => {
+    expect(getDefinition(code)).toMatchObject({ code, category: 'validation', retryable: true });
+    expect(getDefinition(code)?.message).toContain('artifact.certify:');
+    expect(getDefinition(code)?.message).toContain(meaning);
+  });
+
+
   // ── Registry integrity ─────────────────────────────────────────────────
   it('contains at least 40 registered error codes', () => {
     expect(allCodes().length).toBeGreaterThanOrEqual(40);
@@ -81,6 +95,19 @@ describe('Error Registry', () => {
       category: 'validation',
       message: 'Unknown UI workflow state',
       retryable: true,
+    });
+  });
+
+  it('distinguishes fixable viz.render pattern conflicts from authoring-only structural limits', () => {
+    expect(getDefinition('OODS-V166')).toEqual({
+      code: 'OODS-V166', category: 'validation',
+      message: 'viz.render pattern conflicts with explicit data or source identity/presentation overrides',
+      retryable: true,
+    });
+    expect(getDefinition('OODS-V167')).toEqual({
+      code: 'OODS-V167', category: 'validation',
+      message: 'viz.render pattern is authoring-only because its source structure is not supported by the public renderer',
+      retryable: false,
     });
   });
 

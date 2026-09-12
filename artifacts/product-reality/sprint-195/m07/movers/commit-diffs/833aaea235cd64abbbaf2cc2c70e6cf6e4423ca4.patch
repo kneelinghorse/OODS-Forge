@@ -1,0 +1,1566 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 88c568f5..0ab3b7de 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -484,2 +484,2 @@ jobs:
+-      - name: Measure all single-screen and workflow cells from one tarball sweep
+-        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-193/m03-ci --workflows
++      - name: Measure canonical and chart dashboard cells from one tarball sweep
++        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-195/m07-ci --workflows --dashboard-objects=Invoice,Usage
+@@ -488,2 +488,4 @@ jobs:
+-          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-193/m03-ci/runtime-cells.v1.json
+-        run: pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts
++          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-195/m07-ci/runtime-cells.v1.json
++        run: |
++          pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts
++          pnpm exec tsx artifacts/product-reality/sprint-195/m06/verify-runtime.ts artifacts/product-reality/sprint-195/m07-ci > artifacts/product-reality/sprint-195/m07-ci/placement-verification.json
+@@ -494 +496 @@ jobs:
+-          path: artifacts/product-reality/sprint-193/m03-ci
++          path: artifacts/product-reality/sprint-195/m07-ci
+diff --git a/cmos/foundational-docs/roadmap/near.md b/cmos/foundational-docs/roadmap/near.md
+index 3c3941a0..d3deb0a5 100644
+--- a/cmos/foundational-docs/roadmap/near.md
++++ b/cmos/foundational-docs/roadmap/near.md
+@@ -5 +5 @@
+-**Updated:** 2026-09-11 — Sprint 194 review `PS-2026-09-11-006`; Increment 13 CERTIFIED AND CLOSED (`#1934`); residual carries preserved by `#1935`. Classification approval remains Derek's (`#1438`); `approvedRuntimeCensus:null`.
++**Updated:** 2026-09-11 — Sprint 195 build `PS-2026-09-11-008`; Increment 14 BUILT, REVIEW PENDING. Increment 13 remains CERTIFIED AND CLOSED (`#1934`), with its residual carries preserved by `#1935`. Classification approval remains Derek's (`#1438`); `approvedRuntimeCensus:null`.
+@@ -23 +23 @@
+-**Scope:** The next increments — Increment 12 (Sprint 193, certified and closed), Increment 13 (Sprint 194, certified and closed), Increment 14 (Sprint 195, visualization breadth and certification, locked 2026-09-11) and Increment 15 (Sprint 196, release proof); the whole remaining map is [the phase map](../../planning/forge-remaining-work-phase-map-2026-09.md) (`#1893`); see [Program position](#program-position-and-the-next-three-increments)
++**Scope:** The next increments — Increment 12 (Sprint 193, certified and closed), Increment 13 (Sprint 194, certified and closed), Increment 14 (Sprint 195, visualization breadth and certification, built/review pending) and Increment 15 (Sprint 196, release proof); the whole remaining map is [the phase map](../../planning/forge-remaining-work-phase-map-2026-09.md) (`#1893`); see [Program position](#program-position-and-the-next-three-increments)
+@@ -45 +45 @@ follows runnable product foundations.
+-## Current measured state — Sprint 194, 2026-09-11; CERTIFIED AND CLOSED
++## Current measured state — Sprint 195, 2026-09-11; BUILT, REVIEW PENDING
+@@ -51,2 +51,2 @@ follows runnable product foundations.
+-| Runtime coverage | **154/154 pass**, zero typed gaps/failures:11 objects ×7 contexts ×2 frameworks, one pack/run at the recorded final head. Invoice and Plan are included. The current public population places **66/109** component identities;43 are explicitly not reached by those schemas | Separate bounded real-trait fixtures prove the nine new non-viz and25Viz recipes; no union with public runtime receipts and no claim that every component is placed by a public object |
+-| Fresh composition | **77/77 schemas and154/154 generation cells**;30 changed schemas/47 unchanged versus c098237f, with component classes and reasons enumerated | Generation and runtime counts remain distinct; no composed schema is hand-edited |
++| Runtime coverage | **154/154 pass**, zero typed gaps/failures: 11 objects ×7 contexts ×2 frameworks, one pack/run at the recorded head. Invoice/Usage dashboard layouts add **4/4** separately scoped cells; their detail/dashboard charts add **48/48** brand/theme checks. The canonical population places **68/109** component identities | The remaining 41 identities are not placed by those public schemas. Separate real-trait fixtures and component proofs remain separate; runtime does not imply application craft approval |
++| Fresh composition | **77/77 schemas and 154/154 generation cells**; four chart additions (Invoice/Usage detail and workflow), 73 unchanged versus the pre-placement census. Record headers and all other schema content are retained | Eight chart declarations across 88 context/layout requests cover area, bar and line. Declaration coverage and runtime proof remain distinct |
+@@ -55,3 +55,3 @@ follows runnable product foundations.
+-| Delivery and discovery | Primary PM2 serves reviewed 1f69c957; Sprint 194 m01 delivered it and sent the three prepared Sprint 194 notices. Built catalog and health expose the current component/runtime/tool ledgers; portable health loads the packaged ledger | The certified Sprint 194 head is the next candidate delivery; the Sprint 195 reconnect for cmos-dashboard, forge-demos and aquex-mcp is prepared unsent and is sent by Sprint 195 m01 |
+-| Visualization |13/13 public SVG in light/dark ×A/B;11/11 admitted dashboard types;contrastPassed light/dark for 9 categorical types, [] for 4 exempt;5 certified /8 uncertified. Five new component previews preserve actual renderer SVG; optional Cartesian opacity reaches output | Eight ECharts certifications, HC chart pixels and broader taxonomy remain Increment 14/Sprint 195. New authoring controls are measured on declared real-trait fixtures |
+-| Release proof | Five-suite campaign and all skips/deltas are retained in the m07 closeout packet. Portable boundary includes the new traits/exports and health proof assets | Independent review remains required. The bridge and additional bundle reference apps belong to Increment 15/Sprint 196 |
++| Delivery and discovery | Sprint 195 m01 delivered certified **5b25c3c9** to primary PM2 and sent exactly three prepared notices. Built catalog and health expose component/runtime/tool ledgers plus `productReality.viz`; portable health includes the same registry inputs | Sprint 195 candidate delivery belongs to Sprint 196. Its notices for cmos-dashboard, forge-demos and aquex-mcp are prepared unsent |
++| Visualization | **34/34 identities** classified into eight families; 20 core cells: **13 surface-complete /7 typed gaps**. The 21 patterns have **8 public /13 authoring-only** identities. Thirteen chart types yield **60 rendered /18 typed HC-deferred** scopes out of 78. All 13 types have a declared certification path; 56 rendered scopes conform and four bubble-map scopes remain nonconformant. Palette Role-A minima exceed 10 with all 24 Role-C checks passing | HC contrast is typed forced-colors exemption, not a numerical contrast measurement. Spec-only ECharts stays uncertified/null. ECharts object placement carries under #1944; bar/line are placed. Full Invoice/Usage detail HTML retains Tabs OODS-V007; chart-node HTML carries real SVG |
++| Release proof | The m07 packet binds the five-suite campaign, all skips/deltas, frozen censuses, mutation checks and actual CI source heads. Strict soak retains its statistical failure as `OODS-SOAK-1442` observation under #1946; thresholds are unchanged | `builderSelfCertified:false`; independent review remains required. Bridge packaging and bundle reference apps remain Increment 15/Sprint 196 |
+@@ -87 +87 @@ Sprint 193 closes the implementation gap left after Increment 11: every one of10
+-| 14 — Visualization breadth and certification | 195, LOCKED 2026-09-11 (memo `forge-s195-visualization-breadth-decision-memo.md`) | A versioned taxonomy and Core Analytics Profile across the eight families; the 21 patterns promoted to recipe identities in the registry; extension gaps typed (financial, scientific); the ECharts certification architecture decision (a compile leg or a declared uncertified profile); the HC palette decision (`#1851`); the Role-A hue revision; viz mutation bites | 100% of the census classified; the core profile surface-complete; no untyped gap |
++| 14 — Visualization breadth and certification | 195, BUILT, REVIEW PENDING | Versioned taxonomy/Core Analytics Profile; 21 pattern identities; measured operand certification, canonical palette revision, forced-colors proof, bar/line placements and real mutation checks | 34/34 classified; 13/20 core cells surface-complete and seven typed gaps with reasons. ECharts placement and measured HC failures remain explicit; independent review pending |
+@@ -516 +516,13 @@ The final packet is `artifacts/product-reality/sprint-194/m07/closeout/review-ha
+-Sprint194 stays **Active** and `builderSelfCertified:false`. The primary bridge serves reviewed `1f69c957`; Sprint195 reconnect notices are prepared unsent for cmos-dashboard, forge-demos and aquex-mcp. The phase-map order remains visualization breadth in195, then release proof in196.
++At the Sprint 194 build handoff, the sprint remained **Active** and `builderSelfCertified:false`, the bridge served `1f69c957`, and the three Sprint 195 notices were prepared unsent. Review subsequently certified and closed Sprint 194; Sprint 195 m01 delivered `5b25c3c9` and sent those notices. These historical builder receipts are not relabeled.
++
++## Increment 14 — Sprint 195: Visualization breadth and certification — BUILT, REVIEW PENDING
++
++Built under the [locked decision memo](../../planning/forge-s195-visualization-breadth-decision-memo.md) in session `PS-2026-09-11-008`. The [m07 handoff](../../../artifacts/product-reality/sprint-195/m07/closeout/handoff.md) binds the actual implementation, execution and evidence heads, the five-suite accounting, all 28 literal mission criteria and observed CI. Sprint 195 remains **Active** with `builderSelfCertified:false`; independent review is a separate step.
++
++The taxonomy classifies 34 identities across eight families. Its 20 core cells contain 13 surface-complete cells and seven typed gaps, including financial and scientific cells. Eight of 21 patterns have public pixels in all four light/dark brand scopes; thirteen preserve explicit authoring-only reasons. Operand certification grades the ECharts a11y, contrast, determinism and accuracy pillars; spec-only calls remain uncertified with `conformant:null`. Measured bubble-map failures remain failures.
++
++The canonical categorical hue revision reaches Role-A minima 10.0176 light and 10.2364 dark with all 24 Role-C checks passing. HC preserves declared scope paints and CSS system colors: bar, line, area and scatter render; the other nine types retain measured typed failures. Forced-colors browser evidence is separate from numerical contrast, which is explicitly exempt on HC. The [m05 golden receipt](../../../artifacts/product-reality/sprint-195/m05/integration-results.json) retains the original migration qualification head and before/after evidence.
++
++Invoice now places a bar chart from line-item amounts in minor units, and Usage places a line chart from explicitly labeled synthetic API-call samples. The 77-schema comparison records four additions and 73 unchanged schemas, preserving record headers. The same runtime sweep proves 154 standard cells, four dashboard cells and 48 placement theme checks. ECharts object placement carries under #1944 pending an authored mark/preview and a domain-data contract; full detail HTML still reports the existing Tabs normalization limit. The three visualization mutations fail then pass after exact restoration. The soak investigation retains its strict statistical failure as a bounded observation under #1946; it does not certify retention.
++
++Sprint 196 notices are prepared and unsent for cmos-dashboard, forge-demos and aquex-mcp. They name `pattern`, `hc`, the certification operand contract and `health.productReality.viz`. Classification approval, application craft, the five historical portable limits and the phase-map M5 release proof remain open. Increment 15 stays assigned to Sprint 196.
+diff --git a/configs/agent/policy.json b/configs/agent/policy.json
+index b7928aa5..dd61a391 100644
+--- a/configs/agent/policy.json
++++ b/configs/agent/policy.json
+@@ -216 +216 @@
+-      "description": "Certifies a Forge NormalizedVizSpec IR, optionally with the chart's DATA. Returns a per-pillar verdict summary (a11yEquivalence, determinism, contrast, accuracy \u2014 five-valued on contrast, four-valued on accuracy) that disaggregates what was actually checked, plus \u2014 on the cartesian path only \u2014 a folded conformance verdict at the requested theme/brand (light|dark, A|B; default light/A). contrastResults names the scope and actual measurement evidence; accuracyRules lists offered codes. HC pixels are deferred. Cartesian CONTRAST is render-measured (s176): certify renders the compiled spec through @oods/viz-render and grades the series-to-paint assignment the data marks actually carry, duplicates retained, so a recycled palette (more consumed series than baked hexes) truthfully fails as a \u0394E00=0 pair; ECharts contrast is render-measured when `data` is supplied: actual chart carriers feed Role C and the semantic N-long assignment feeds Role A; geo families remain exempt while retaining render evidence. spec-only calls retain the reconstructed baked-palette verdict. Data-backed ECharts determinism retains contentHash as projected-option identity and adds renderHash for the first normalized SVG when rendering succeeds; a second independent option emission and render prove `stable`. A typed first-render fault omits renderHash and makes stable false, while bubble_map without inline geometry keeps the option proof and names the limitation. The runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json. The folded verdict folds the graded pillars: 'fail' OR 'ungradeable' on contrast or accuracy pulls conformant false \u2014 ungradeable (s175) means grading was ATTEMPTED and failed for a reason outside the spec (an unresolvable canvas token, an evaluator fault); 'unchecked' (nothing to grade) and 'exempt' leave it a11y-driven. contrast and accuracy enums now carry 'ungradeable'; an exhaustive switch must handle it. Read-only: reads the IR and the operand, never rebuilds or re-recommends. The 8 ECharts-primary types return coverage:'uncertified'/conformant:null \u2014 a distinct verdict, not a failure, and NOT a statement that nothing was checked: contrast has carried a real verdict for them since s141, and as of s172 DETERMINISM and ACCURACY do too whenever the caller supplies the optional `data` operand (the same data branch viz.render takes; exactly one branch, matching the mark trait). With it, certify re-emits the ECharts option twice and its contentHash equals viz.render's for the SAME (spec, data) pair, and it evaluates a per-type accuracy set (OODS-V154..V159); without it those two pillars stay 'unchecked' and notes[] names the missing operand. `data` on a cartesian spec is a structured error \u2014 dead input, not a silent no-op. Read accuracy:'pass' precisely: none of the rules OFFERED for that chart type positively detected its distortion, with accuracySummary.rulesEvaluated reporting how many actually ran; it is not a claim that the chart is accurate. a11y-equivalence runs WARN-FIRST for these 8 whenever the operand is supplied: the 16 rules evaluate over the operand-built table and narrative, each reporting pass, fail, or not-applicable with its absent precondition named; failures surface in findings[] as OODS-A11Y-<rule.id> at their native severity, and not-applicable rules surface in the top-level a11yNotApplicable[] channel as {rule, preconditionAbsent} \u2014 present exactly when the engine ran on the data-backed path, absent on a {spec}-only call. pillars.a11yEquivalence deliberately stays 'unchecked' \u2014 warn-first moves no verdict; the flip to pass/fail is a future enforce step. Without the operand no a11y rule runs. IF YOUR CLIENT CACHES THIS TEXT (s173 m01): tool EXECUTION is read fresh from the built server on every call, so a Forge update reaches your results immediately \u2014 but this description and the input schema are what your connector advertised AT CONNECT TIME, so after a Forge release you are reading the old contract until you RECONNECT.",
++      "description": "Certify the Forge NormalizedVizSpec returned by viz.render. Returns coverage, a measured conformant result, findings, and four pillars: a11yEquivalence, determinism, contrast and accuracy. Read-only: it reads the IR and the matching data operand without rebuilding or recommending a chart.\n\nDECLARED COVERAGE. The five Cartesian types certify from the IR alone. The eight ECharts-primary types certify under the declared operand profile when the same data branch used by viz.render is supplied. ECharts conformance requires a11yEquivalence:'pass', contrast neither 'fail' nor 'ungradeable', stable determinism, and accuracy:'pass' with rulesEvaluated > 0 and no detected distortion. A certified chart can be conformant:false; inspect the pillars and findings. No Vega-Lite compile is added to the ECharts profile. Spec-only ECharts calls remain coverage:'uncertified' with conformant:null and notes naming the missing operand. Unmodeled marks remain explicitly uncertified.\n\nDATA. An ECharts-primary IR carries metadata; nodes, links, rows and geometry live in its original branch. Supply exactly the matching hierarchy, sankey, chord, network or geo branch as data. The tool validates it against the mark trait. Data on a Cartesian IR is OODS-V123 because those charts certify from their IR. HTML or invalid IR is OODS-V126.\n\nACCESSIBILITY. The 16 equivalence rules evaluate the operand-built table and narrative. Error-severity failures fail the ECharts pillar and conformance. Warnings stay visible without failing the pillar. Findings keep their native severity. a11yNotApplicable lists rules whose declared preconditions were absent; absence is not a meaningful pass. This channel is present when the ECharts engine completed, including [] if no rule was inapplicable, and absent for spec-only, Cartesian or incomplete engine evaluations. A completed engine with an individual rule fault retains its findings and not-applicable results while failing the pillar. An evaluator fault cannot produce a passing accessibility pillar.\n\nACCURACY. Cartesian rules read the IR and compiled spec: non-zero bar baseline (V150), dual axis (V151), area scaling (V152), undisclosed aggregation (V153). ECharts rules read data: invalid hierarchy values/non-additive parents (V154/V155); invalid sankey/chord link values (V156); inconsistent sankey node throughput/duplicate links (V157/V158); conflicting choropleth join values (V159); negative or non-finite bubble size (OODS-V168), radius-based bubble scaling (OODS-V169), conflicting rows at the same bubble coordinates (OODS-V170), negative or non-finite flow strength (OODS-V171), duplicate directed geographic flows (OODS-V172), and duplicate directed force-graph links (OODS-V173). Reciprocal graph links and reciprocal geographic flows are distinct. Bubble scaling reads the public renderer's default linear size behavior; certification does not repair its pixels. accuracyRules lists offered codes, while accuracySummary counts only rules whose preconditions resolved. Pass means no offered rule detected its distortion, not a general promise of accuracy; zero evaluated ECharts rules is unchecked and cannot yield conformant:true.\n\nDETERMINISM. Two independent compiler/adapter emissions are compared and rendered independently. contentHash identifies the first canonical compiled spec or projected ECharts option; renderHash identifies its normalized SVG and matches viz.render for the same operand/scope. Stable requires both identities to repeat. A first-render fault keeps contentHash, omits renderHash and fails stability. A bubble_map without inline geometry keeps the option proof, omits renderHash and names the no-server-map limitation. Proof is bounded by packages/viz-render/certified-matrix.json and covers certify's own rendering, not a caller's rendering.\n\nCONTRAST. Cartesian charts and ECharts calls with data grade actual rendered paints. Role C checks mark-to-canvas WCAG 3:1; Role A checks categorical CIEDE2000 distinguishability across normal vision and three CVD simulations, retaining recycled-palette duplicates. Missing baked OODS palette bytes cannot produce contrast:'pass'. The three geo families retain the standing contrast exemption with their render evidence; this includes ordinal bubble maps. Spec-only ECharts calls retain the reconstructed palette grade and caveat. Cartesian conformance still fails for fail or ungradeable contrast/accuracy; unchecked and exempt retain their existing semantics. Read every pillar's enum, including ungradeable. contrastResults reports the requested theme/brand and measurement evidence; exemptions do not claim a canvas ratio.\n\nSCOPE. Theme light|dark|hc and brand A|B select the same CSS scope as rendering, default light/A. HC contrast returns exempt, measured:false and reason:forced-colors, with no numeric grade. Accessibility, accuracy and determinism retain their normal evaluation; an actual HC render failure fails determinism and conformance. Four Cartesian types have HC SVG proof; heatmap and the eight ECharts-primary types retain measured undeclared-paint failures. After a release that changes a schema or verdict, reconnect clients that cache tool descriptions and schemas.",
+diff --git a/generated/types/traits/mark-area.parameters.ts b/generated/types/traits/mark-area.parameters.ts
+index 30ed5cec..c573a0a5 100644
+--- a/generated/types/traits/mark-area.parameters.ts
++++ b/generated/types/traits/mark-area.parameters.ts
+@@ -2,0 +3,100 @@
++/**
++ * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
++ */
++export type MarkAreaChartDeclaration =
++  | {
++      chartType: 'area';
++      source: 'payment-events';
++      /**
++       * @minItems 2
++       */
++      dateFields: [string, string, ...string[]];
++      amountField: string;
++      minorUnits: number;
++      currencyField: string;
++      brand?: 'A' | 'B';
++    }
++  | {
++      chartType: 'area';
++      source: 'record-array';
++      /**
++       * Declared objectSchema array field containing the chart rows.
++       */
++      dataField: string;
++      /**
++       * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
++       */
++      encodings: {
++        x: MarkAreaChartEncodingBinding;
++        y: MarkAreaChartEncodingBinding;
++        color?: MarkAreaChartColorEncodingBinding;
++        size?: MarkAreaChartEncodingBinding;
++        shape?: MarkAreaChartEncodingBinding;
++        detail?: MarkAreaChartEncodingBinding;
++      };
++      /**
++       * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
++       *
++       * @minItems 1
++       */
++      sampleRows: [
++        {
++          [k: string]: unknown;
++        },
++        ...{
++          [k: string]: unknown;
++        }[]
++      ];
++      brand?: 'A' | 'B';
++    };
++/**
++ * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
++ */
++export type MarkAreaChartEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++    };
++/**
++ * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
++ */
++export type MarkAreaChartColorEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++      /**
++       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
++       *
++       * @minItems 2
++       */
++      range?: [string, string, ...string[]];
++    };
++
+@@ -20,15 +120 @@ export interface MarkAreaTraitParameters {
+-  /**
+-   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+-   */
+-  chart?: {
+-    chartType: 'area';
+-    source: 'payment-events';
+-    /**
+-     * @minItems 2
+-     */
+-    dateFields: [string, string, ...string[]];
+-    amountField: string;
+-    minorUnits: number;
+-    currencyField: string;
+-    brand?: 'A' | 'B';
+-  };
++  chart?: MarkAreaChartDeclaration;
+@@ -42,0 +129,8 @@ export interface MarkAreaTraitParameters {
++  /**
++   * Title of the read-only chart projection.
++   */
++  title?: string;
++  /**
++   * Accessible description of the read-only chart projection.
++   */
++  description?: string;
+diff --git a/generated/types/traits/mark-bar.parameters.ts b/generated/types/traits/mark-bar.parameters.ts
+index 99da7014..699f539c 100644
+--- a/generated/types/traits/mark-bar.parameters.ts
++++ b/generated/types/traits/mark-bar.parameters.ts
+@@ -2,0 +3,87 @@
++/**
++ * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
++ */
++export type MarkBarChartDeclaration = {
++  chartType: 'bar';
++  source: 'record-array';
++  /**
++   * Declared objectSchema array field containing the chart rows.
++   */
++  dataField: string;
++  /**
++   * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
++   */
++  encodings: {
++    x: MarkBarChartEncodingBinding;
++    y: MarkBarChartEncodingBinding;
++    color?: MarkBarChartColorEncodingBinding;
++    size?: MarkBarChartEncodingBinding;
++    shape?: MarkBarChartEncodingBinding;
++    detail?: MarkBarChartEncodingBinding;
++  };
++  /**
++   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
++   *
++   * @minItems 1
++   */
++  sampleRows: [
++    {
++      [k: string]: unknown;
++    },
++    ...{
++      [k: string]: unknown;
++    }[]
++  ];
++  brand?: 'A' | 'B';
++};
++/**
++ * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
++ */
++export type MarkBarChartEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++    };
++/**
++ * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
++ */
++export type MarkBarChartColorEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++      /**
++       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
++       *
++       * @minItems 2
++       */
++      range?: [string, string, ...string[]];
++    };
++
+@@ -27,0 +115,9 @@ export interface MarkBarTraitParameters {
++  chart?: MarkBarChartDeclaration;
++  /**
++   * Title of the read-only chart projection.
++   */
++  title?: string;
++  /**
++   * Accessible description of the read-only chart projection.
++   */
++  description?: string;
+diff --git a/generated/types/traits/mark-line.parameters.ts b/generated/types/traits/mark-line.parameters.ts
+index fe54f918..bfa582d9 100644
+--- a/generated/types/traits/mark-line.parameters.ts
++++ b/generated/types/traits/mark-line.parameters.ts
+@@ -2,0 +3,87 @@
++/**
++ * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
++ */
++export type MarkLineChartDeclaration = {
++  chartType: 'line';
++  source: 'record-array';
++  /**
++   * Declared objectSchema array field containing the chart rows.
++   */
++  dataField: string;
++  /**
++   * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
++   */
++  encodings: {
++    x: MarkLineChartEncodingBinding;
++    y: MarkLineChartEncodingBinding;
++    color?: MarkLineChartColorEncodingBinding;
++    size?: MarkLineChartEncodingBinding;
++    shape?: MarkLineChartEncodingBinding;
++    detail?: MarkLineChartEncodingBinding;
++  };
++  /**
++   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
++   *
++   * @minItems 1
++   */
++  sampleRows: [
++    {
++      [k: string]: unknown;
++    },
++    ...{
++      [k: string]: unknown;
++    }[]
++  ];
++  brand?: 'A' | 'B';
++};
++/**
++ * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
++ */
++export type MarkLineChartEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++    };
++/**
++ * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
++ */
++export type MarkLineChartColorEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++      /**
++       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
++       *
++       * @minItems 2
++       */
++      range?: [string, string, ...string[]];
++    };
++
+@@ -27,0 +115,9 @@ export interface MarkLineTraitParameters {
++  chart?: MarkLineChartDeclaration;
++  /**
++   * Title of the read-only chart projection.
++   */
++  title?: string;
++  /**
++   * Accessible description of the read-only chart projection.
++   */
++  description?: string;
+diff --git a/generated/types/traits/mark-point.parameters.ts b/generated/types/traits/mark-point.parameters.ts
+index c0f54014..fc3de77b 100644
+--- a/generated/types/traits/mark-point.parameters.ts
++++ b/generated/types/traits/mark-point.parameters.ts
+@@ -2,0 +3,87 @@
++/**
++ * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
++ */
++export type MarkPointChartDeclaration = {
++  chartType: 'scatter';
++  source: 'record-array';
++  /**
++   * Declared objectSchema array field containing the chart rows.
++   */
++  dataField: string;
++  /**
++   * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
++   */
++  encodings: {
++    x: MarkPointChartEncodingBinding;
++    y: MarkPointChartEncodingBinding;
++    color?: MarkPointChartColorEncodingBinding;
++    size?: MarkPointChartEncodingBinding;
++    shape?: MarkPointChartEncodingBinding;
++    detail?: MarkPointChartEncodingBinding;
++  };
++  /**
++   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
++   *
++   * @minItems 1
++   */
++  sampleRows: [
++    {
++      [k: string]: unknown;
++    },
++    ...{
++      [k: string]: unknown;
++    }[]
++  ];
++  brand?: 'A' | 'B';
++};
++/**
++ * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
++ */
++export type MarkPointChartEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++    };
++/**
++ * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
++ */
++export type MarkPointChartColorEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++      /**
++       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
++       *
++       * @minItems 2
++       */
++      range?: [string, string, ...string[]];
++    };
++
+@@ -31,0 +119,9 @@ export interface MarkPointTraitParameters {
++  chart?: MarkPointChartDeclaration;
++  /**
++   * Title of the read-only chart projection.
++   */
++  title?: string;
++  /**
++   * Accessible description of the read-only chart projection.
++   */
++  description?: string;
+diff --git a/generated/types/traits/mark-rect.parameters.ts b/generated/types/traits/mark-rect.parameters.ts
+index 284e2c77..96b9f398 100644
+--- a/generated/types/traits/mark-rect.parameters.ts
++++ b/generated/types/traits/mark-rect.parameters.ts
+@@ -2,0 +3,87 @@
++/**
++ * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
++ */
++export type MarkRectChartDeclaration = {
++  chartType: 'heatmap';
++  source: 'record-array';
++  /**
++   * Declared objectSchema array field containing the chart rows.
++   */
++  dataField: string;
++  /**
++   * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
++   */
++  encodings: {
++    x: MarkRectChartEncodingBinding;
++    y: MarkRectChartEncodingBinding;
++    color?: MarkRectChartColorEncodingBinding;
++    size?: MarkRectChartEncodingBinding;
++    shape?: MarkRectChartEncodingBinding;
++    detail?: MarkRectChartEncodingBinding;
++  };
++  /**
++   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
++   *
++   * @minItems 1
++   */
++  sampleRows: [
++    {
++      [k: string]: unknown;
++    },
++    ...{
++      [k: string]: unknown;
++    }[]
++  ];
++  brand?: 'A' | 'B';
++};
++/**
++ * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
++ */
++export type MarkRectChartEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++    };
++/**
++ * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
++ */
++export type MarkRectChartColorEncodingBinding =
++  | string
++  | {
++      field: string;
++      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
++      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
++      /**
++       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
++       */
++      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
++      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
++      sort?:
++        | ('none' | 'ascending' | 'descending')
++        | {
++            field: string;
++            order: 'ascending' | 'descending';
++          };
++      title?: string;
++      /**
++       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
++       *
++       * @minItems 2
++       */
++      range?: [string, string, ...string[]];
++    };
++
+@@ -11,0 +99,9 @@ export interface MarkRectTraitParameters {
++  chart?: MarkRectChartDeclaration;
++  /**
++   * Title of the read-only chart projection.
++   */
++  title?: string;
++  /**
++   * Accessible description of the read-only chart projection.
++   */
++  description?: string;
+diff --git a/packages/mcp-server/package.json b/packages/mcp-server/package.json
+index 89ed15d4..faefb841 100644
+--- a/packages/mcp-server/package.json
++++ b/packages/mcp-server/package.json
+@@ -23 +23 @@
+-    "build": "rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../../artifacts/product-reality/sprint-194/m07/runtime/runtime-cells.v1.json dist/registry/runtime-cells.v1.json && cp ../viz-core/src/registry/viz-taxonomy.v1.json ../viz-core/src/registry/viz-classification.v1.json ../viz-core/src/registry/viz-patterns.v1.json dist/registry/ && node ../../scripts/build-revision.mjs dist/build-revision.json",
++    "build": "rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../../artifacts/product-reality/sprint-195/m07/runtime/runtime-cells.v1.json dist/registry/runtime-cells.v1.json && cp ../viz-core/src/registry/viz-taxonomy.v1.json ../viz-core/src/registry/viz-classification.v1.json ../viz-core/src/registry/viz-patterns.v1.json dist/registry/ && node ../../scripts/build-revision.mjs dist/build-revision.json",
+diff --git a/packages/mcp-server/src/lib/runtime-ledger.ts b/packages/mcp-server/src/lib/runtime-ledger.ts
+index 009643bd..13ed40c4 100644
+--- a/packages/mcp-server/src/lib/runtime-ledger.ts
++++ b/packages/mcp-server/src/lib/runtime-ledger.ts
+@@ -64 +64 @@ export function readRuntimeSummary(): RuntimeSummary {
+-  const source = path.join(root, 'artifacts/product-reality/sprint-194/m07/runtime/runtime-cells.v1.json');
++  const source = path.join(root, 'artifacts/product-reality/sprint-195/m07/runtime/runtime-cells.v1.json');
+diff --git a/schemas/traits/mark-area.parameters.schema.json b/schemas/traits/mark-area.parameters.schema.json
+index d52a427f..86544433 100644
+--- a/schemas/traits/mark-area.parameters.schema.json
++++ b/schemas/traits/mark-area.parameters.schema.json
+@@ -41 +41 @@
+-      "title": "ChartDeclaration",
++      "title": "MarkAreaChartDeclaration",
+@@ -193 +193 @@
+-      "title": "ChartEncodingBinding",
++      "title": "MarkAreaChartEncodingBinding",
+@@ -298 +298 @@
+-      "title": "ChartColorEncodingBinding",
++      "title": "MarkAreaChartColorEncodingBinding",
+diff --git a/schemas/traits/mark-bar.parameters.schema.json b/schemas/traits/mark-bar.parameters.schema.json
+index 052cda82..9ef3bbc6 100644
+--- a/schemas/traits/mark-bar.parameters.schema.json
++++ b/schemas/traits/mark-bar.parameters.schema.json
+@@ -50 +50 @@
+-      "title": "ChartDeclaration",
++      "title": "MarkBarChartDeclaration",
+@@ -147 +147 @@
+-      "title": "ChartEncodingBinding",
++      "title": "MarkBarChartEncodingBinding",
+@@ -252 +252 @@
+-      "title": "ChartColorEncodingBinding",
++      "title": "MarkBarChartColorEncodingBinding",
+diff --git a/schemas/traits/mark-line.parameters.schema.json b/schemas/traits/mark-line.parameters.schema.json
+index c5a6d86a..bd411589 100644
+--- a/schemas/traits/mark-line.parameters.schema.json
++++ b/schemas/traits/mark-line.parameters.schema.json
+@@ -49 +49 @@
+-      "title": "ChartDeclaration",
++      "title": "MarkLineChartDeclaration",
+@@ -144 +144 @@
+-      "title": "ChartEncodingBinding",
++      "title": "MarkLineChartEncodingBinding",
+@@ -249 +249 @@
+-      "title": "ChartColorEncodingBinding",
++      "title": "MarkLineChartColorEncodingBinding",
+diff --git a/schemas/traits/mark-point.parameters.schema.json b/schemas/traits/mark-point.parameters.schema.json
+index 1d78b11d..c9b09bee 100644
+--- a/schemas/traits/mark-point.parameters.schema.json
++++ b/schemas/traits/mark-point.parameters.schema.json
+@@ -58 +58 @@
+-      "title": "ChartDeclaration",
++      "title": "MarkPointChartDeclaration",
+@@ -154 +154 @@
+-      "title": "ChartEncodingBinding",
++      "title": "MarkPointChartEncodingBinding",
+@@ -259 +259 @@
+-      "title": "ChartColorEncodingBinding",
++      "title": "MarkPointChartColorEncodingBinding",
+diff --git a/schemas/traits/mark-rect.parameters.schema.json b/schemas/traits/mark-rect.parameters.schema.json
+index 80932c5b..5cafa5f8 100644
+--- a/schemas/traits/mark-rect.parameters.schema.json
++++ b/schemas/traits/mark-rect.parameters.schema.json
+@@ -17 +17 @@
+-      "title": "ChartDeclaration",
++      "title": "MarkRectChartDeclaration",
+@@ -104 +104 @@
+-      "title": "ChartEncodingBinding",
++      "title": "MarkRectChartEncodingBinding",
+@@ -209 +209 @@
+-      "title": "ChartColorEncodingBinding",
++      "title": "MarkRectChartColorEncodingBinding",
+diff --git a/scripts/product-reality/s185-audit-closeout.mjs b/scripts/product-reality/s185-audit-closeout.mjs
+index be7b3c27..eadde724 100644
+--- a/scripts/product-reality/s185-audit-closeout.mjs
++++ b/scripts/product-reality/s185-audit-closeout.mjs
+@@ -47,0 +48,16 @@ const publicScope194 = [...publicScope193, 'packages/mcp-server/src', 'packages/
++// Sprint 195's independently enumerated public additions; never import producer scope.
++const publicScope195 = [...publicScope194,
++  'domains/saas-billing', 'src/core/trait-definition.ts', 'docs/viz', 'docs/authoring-traits-viz.md',
++  'examples/viz/patterns-v2', 'scripts/product-reality/s190-viz-census.ts',
++  'scripts/product-reality/s195-attribute-viz-goldens.py', 'scripts/product-reality/s195-certify-profile-migration.mjs',
++  'scripts/product-reality/s195-certify-profile-receipt.ts', 'scripts/product-reality/s195-certify-profile-schema.ts',
++  'scripts/product-reality/s195-chart-declaration-schema.ts', 'scripts/product-reality/s195-hc-browser.ts',
++  'scripts/product-reality/s195-hc-built-receipt.ts', 'scripts/product-reality/s195-hc-schema.ts',
++  'scripts/product-reality/s195-health-viz-schema.ts', 'scripts/product-reality/s195-palette.ts',
++  'scripts/product-reality/s195-pattern-census.ts', 'scripts/product-reality/s195-pattern-input-schema.ts',
++  'scripts/product-reality/s195-pattern-sources.ts', 'scripts/product-reality/s195-qualify-viz-matrix.ts',
++  'scripts/product-reality/s195-soak-observation.mjs', 'scripts/product-reality/s195-viz-accuracy-bite.mjs',
++  'scripts/product-reality/s195-viz-bite-probe.ts', 'scripts/product-reality/s195-viz-certification-migration.mjs',
++  'scripts/product-reality/s195-viz-matrix.ts', 'scripts/product-reality/s195-viz-mutation-bites.mjs',
++  'scripts/product-reality/s195-viz-taxonomy.ts'];
++
+@@ -50 +66 @@ export function auditPublicRuntimeBytes({ root, implementationHead, executionHea
+-  const scope = sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
++  const scope = sprintId === 'sprint-195' ? publicScope195 : sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
+@@ -65 +81,6 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' })
+-  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
++  const result = { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-195' ? publicScope195 : sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
++  if (sprintId === 'sprint-195') {
++    result.patch = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
++    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(Boolean).sort();
++  }
++  return result;
+@@ -169 +190,2 @@ export function auditBrowserReceipt(ref, readFrozen, head) {
+-export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
++export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest, ciChangedPaths }) {
++  if (manifestPath.startsWith('artifacts/product-reality/sprint-195/m07/')) return auditSprint195Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath, ciChangedPaths });
+@@ -1245,0 +1268,290 @@ export function auditSprint193Closeout({ executionHead, reviewHead, readOutput,
++const S195_BUILD_BASE = '5b25c3c9ec795315bf52a698d135c96bffd66393';
++const S195_PALETTE_HEAD = '52b0da991705c4c565987bc9faf7738ba00d885e';
++const s195Scopes = ['A/light', 'A/dark', 'A/hc', 'B/light', 'B/dark', 'B/hc'].sort();
++const sorted195 = values => [...values].sort();
++const canonical195 = value => JSON.stringify(value, (_key, child) => child && typeof child === 'object' && !Array.isArray(child) ? Object.fromEntries(Object.keys(child).sort().map(key => [key, child[key]])) : child);
++const safe195 = file => { assert(typeof file === 'string' && !path.posix.isAbsolute(file) && !file.split('/').includes('..'), `Unsafe proof path ${file}`); return file; };
++const read195 = (read, file) => JSON.parse(read(safe195(file)));
++const hash195 = (read, file, expected) => assert.equal(digest(read(safe195(file))), bare(expected), `Proof bytes differ: ${file}`);
++
++export function auditSprint195Runtime({ runtime, dashboard, placement, runtimePath, dashboardPath, readFrozen, head }) {
++  const root = path.posix.dirname(runtimePath), dashboardRoot = path.posix.dirname(dashboardPath);
++  const objects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
++  const identity = row => `${row.object}/${row.context}/${row.framework}`;
++  const expected = objects.flatMap(object => ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow'].flatMap(context => ['react', 'vue'].map(framework => `${object}/${context}/${framework}`)));
++  assert.deepEqual(sorted195(runtime.rows.map(identity)), sorted195(expected));
++  assert.deepEqual(sorted195(dashboard.rows.map(identity)), ['Invoice/detail/react', 'Invoice/detail/vue', 'Usage/detail/react', 'Usage/detail/vue']);
++  assert.equal(runtime.head, head); assert(fullHead(head)); assert.equal(runtime.packCount, 1); assert.equal(runtime.historicalReceiptsUnioned, false);
++  assert.equal(runtime.browserImage, 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a');
++  for (const key of ['head', 'runId', 'packCount', 'browserImage']) { assert.equal(dashboard[key], runtime[key]); assert.equal(placement[key], runtime[key]); }
++  assert.equal(dashboard.scope.layout, 'dashboard'); assert.deepEqual(sorted195(dashboard.scope.objects), ['Invoice', 'Usage']);
++  assert.equal(dashboard.historicalReceiptsUnioned, false);
++  assert.deepEqual(runtime.summary, { cells: 154, pass: 154, typedGap: 0, fail: 0 });
++  assert.deepEqual(dashboard.summary, { cells: 4, pass: 4, typedGap: 0, fail: 0 });
++  assert.deepEqual(placement.canonical, runtime.summary); assert.deepEqual(placement.dashboard, dashboard.summary);
++  assert.equal(placement.chartThemeScopes, 48); assert.equal(placement.chartThemeScopesPassed, 48); assert.equal(placement.proof.length, 48);
++  const browser = read195(readFrozen, `${root}/browser.json`); assert.equal(browser.image, runtime.browserImage); assert.equal(browser.version, '141.0.7390.37'); assert.match(browser.userAgent, /Linux/);
++  const packages = read195(readFrozen, `${root}/submitted-packages/inventory.json`); assert(packages.length); assert.equal(new Set(packages.map(row => row.name)).size, packages.length);
++  for (const pkg of packages) hash195(readFrozen, `${root}/${pkg.artifactPath}`, pkg.sha256);
++  const packageHashes = Object.fromEntries(packages.map(pkg => [pkg.name, bare(pkg.sha256)]));
++  const themed = [];
++  for (const [population, directory, ledger] of [['canonical', root, runtime], ['dashboard', dashboardRoot, dashboard]]) for (const row of ledger.rows) {
++    assert.equal(row.head, head); assert.equal(row.runId, runtime.runId); assert.equal(row.status, 'pass');
++    assert.deepEqual(read195(readFrozen, `${directory}/${row.report}`), row);
++    const required = ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states'];
++    if (row.context === 'workflow') required.push('server-render', 'hydration', 'shared-css-resolution', 'interaction-evidence');
++    assert.equal(new Set(row.gates.map(gate => gate.name)).size, row.gates.length);
++    for (const name of required) assert(row.gates.some(gate => gate.name === name && gate.status === 'pass'), `${identity(row)} missing ${name}`);
++    assert(row.gates.every(gate => gate.status === 'pass'));
++    if (row.context === 'workflow') assert.equal(row.gates.find(gate => gate.name === 'context-states').detail.observations.length, 16);
++    const install = row.gates.find(gate => gate.name === 'fresh-exact-tarball-install').detail;
++    if (row.context === 'workflow') {
++      const raw = read195(readFrozen, `${directory}/${install.report}`);
++      assert.deepEqual(raw.gates.find(gate => gate.name === 'fresh-exact-tarball-install').detail, install.observation);
++      const manifest = read195(readFrozen, `${directory}/workflows/${row.object}/${row.framework}/installed-manifest.json`);
++      for (const pkg of install.observation.isolation.installed) { const packed = packages.find(item => item.name === pkg.name); assert(packed); assert.equal(manifest.dependencies[pkg.name], `file:./tarballs/${path.posix.basename(packed.artifactPath)}`); }
++    } else { assert(install.tarballs.length); for (const pkg of install.tarballs) assert.equal(bare(pkg.sha256), packageHashes[pkg.name], `Different sweep tarball ${pkg.name}`); }
++    if (!['Invoice', 'Usage'].includes(row.object) || row.context !== 'detail') continue;
++    const cellRoot = `${directory}/${path.posix.dirname(row.report)}`;
++    assert.deepEqual(read195(readFrozen, `${cellRoot}/composition-request.json`), population === 'dashboard' ? { object: row.object, layout: 'dashboard' } : { object: row.object, context: 'detail' });
++    const scopeGate = row.gates.find(gate => gate.name === 'chart-theme-scopes'); assert(scopeGate); assert.equal(scopeGate.status, 'pass');
++    assert.equal(scopeGate.detail.cells, 6); assert.equal(scopeGate.detail.failed, 0); assert.equal(scopeGate.detail.skipped, 0); assert.equal(scopeGate.detail.reusedSweepTarballs, true);
++    assert.equal(`${directory}/${scopeGate.detail.report}`, `${cellRoot}/chart-themes/report.json`);
++    const report = read195(readFrozen, `${directory}/${scopeGate.detail.report}`);
++    assert.equal(report.status, 'passed'); assert.equal(report.selected, 6); assert.equal(report.failed, 0); assert.equal(report.skipped, 0); assert.deepEqual(report.failures, []);
++    assert.deepEqual(sorted195(report.cells.map(cell => `${cell.brand}/${cell.theme}`)), s195Scopes);
++    for (const cell of report.cells) {
++      assert.equal(cell.id, `${cell.brand}-${cell.theme}`); assert.equal(cell.status, 'passed'); assert.deepEqual(cell.errors, []); assert.deepEqual(cell.failures, []);
++      assert.equal(cell.placeholders, 0); assert.equal(cell.charts.length, 1); assert.equal(cell.charts[0].matchesPublicSvg, true); assert(cell.charts[0].width > 0 && cell.charts[0].height > 0); assert.equal(cell.forcedColours, cell.theme === 'hc');
++      const title = row.object === 'Invoice' ? 'Invoice line item amounts' : 'Example API-call usage';
++      assert(readFrozen(`${cellRoot}/chart-themes/${cell.id}-accessibility-tree.txt`).toString().includes(`img "${title}"`));
++      hash195(readFrozen, `${cellRoot}/chart-themes/${cell.screenshot}`, cell.screenshotSha256);
++      const proof = read195(readFrozen, `${cellRoot}/chart-themes/${cell.id}-certification.json`), generated = read195(readFrozen, `${cellRoot}/chart-themes/${cell.id}-generation.json`);
++      assert.equal(proof.renderRequest.theme, cell.theme); assert.equal(proof.renderRequest.brand, cell.brand); assert.equal(proof.renderRequest.name, title);
++      assert.equal(proof.renderRequest.chartType, row.object === 'Invoice' ? 'bar' : 'line'); assert.equal(proof.rendered.status, 'ok'); assert.equal(digest(proof.rendered.svg), bare(proof.rendered.svgHash));
++      assert.equal(proof.certification.status, 'ok'); assert.equal(proof.certification.coverage, 'certified'); assert.equal(proof.certification.conformant, true); assert.equal(proof.certification.determinism.stable, true); assert(/^(?:sha256:)?[a-f0-9]{64}$/.test(proof.certification.determinism.renderHash)); // Certification grades the IR's default dimensions; generation below binds the displayed360×200 pixels.
++      assert.equal(generated.request.options.theme, cell.theme); assert.equal(generated.request.options.brand, cell.brand); assert.equal(generated.response.status, 'ok');
++      assert.equal(generated.response.artifact.files.find(file => file.path.endsWith('.svg'))?.contents, proof.rendered.svg);
++      const summary = placement.proof.filter(item => item.population === population && item.object === row.object && item.framework === row.framework && item.brand === cell.brand && item.theme === cell.theme);
++      assert.equal(summary.length, 1); assert.equal(summary[0].svgHash, proof.rendered.svgHash); assert.equal(summary[0].conformant, true); assert.equal(summary[0].screenshotSha256, cell.screenshotSha256);
++      themed.push(`${population}/${identity(row)}/${cell.id}`);
++    }
++  }
++  assert.equal(new Set(themed).size, 48);
++  assert.equal(read195(readFrozen, `${dashboardRoot}/validation.json`).reusedSweepTarballs, true);
++  return { canonical: 154, dashboard: 4, chartThemes: 48, packCount: 1 };
++}
++
++export function auditSprint195Viz({ registry, observations, patterns, patternCensus, taxonomy, classification, patternSources, readFrozen }) {
++  const types = ['bar', 'line', 'area', 'scatter', 'heatmap', 'treemap', 'sunburst', 'sankey', 'chord', 'force_graph', 'choropleth', 'bubble_map', 'flow_map'];
++  assert.deepEqual(sorted195(registry.map(row => row.chartType)), sorted195(types)); assert.deepEqual(observations.registry, registry);
++  assert.deepEqual(sorted195(observations.observations.map(row => row.chartType)), sorted195(types));
++  let rendered = 0, deferred = 0, nonconformant = 0;
++  for (const row of registry) {
++    assert.equal(row.publicSvg, true); assert.equal(row.certifyCoverage, 'certified'); assert.equal(row.renderScopes.length, 6);
++    const raw = observations.observations.find(item => item.chartType === row.chartType); assert.equal(raw.defaultEqualsLightA, true);
++    assert.deepEqual(sorted195(raw.scopes.map(scope => `${scope.brand}/${scope.theme}`)), s195Scopes);
++    assert.deepEqual(row.certifyScopes, raw.scopes.filter(scope => scope.status === 'rendered').map(({ theme, brand, coverage, conformant, pillars, accuracySummary }) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })));
++    for (const scope of raw.scopes) {
++      const projected = row.renderScopes.find(item => item.brand === scope.brand && item.theme === scope.theme); assert(projected); assert.equal(projected.status, scope.status);
++      if (scope.status === 'typed-deferred') { deferred++; assert.equal(scope.theme, 'hc'); assert(scope.errors.length && scope.errors.every(error => error.code === 'OODS-V165' && error.message.trim())); assert.deepEqual(projected.errors, scope.errors); continue; }
++      rendered++; assert.equal(scope.status, 'rendered'); assert.equal(digest(scope.svg), bare(scope.svgHash)); assert.equal(scope.svgHash, scope.renderHash); assert.equal(scope.repeated, true); assert.equal(projected.svgHash, scope.svgHash);
++      assert.equal(scope.coverage, 'certified'); assert(scope.accuracySummary.rulesEvaluated > 0); assert.equal(scope.render.theme, scope.theme); assert.equal(scope.render.brand, scope.brand);
++      assert.equal(scope.conformant, scope.pillars.a11yEquivalence === 'pass' && scope.pillars.determinism === 'pass' && !['fail', 'ungradeable'].includes(scope.pillars.contrast) && scope.pillars.accuracy === 'pass');
++      if (!scope.conformant) { nonconformant++; assert.equal(row.chartType, 'bubble_map'); assert(scope.findings.some(item => item.code === 'OODS-V169')); }
++      if (scope.theme === 'hc') { assert.equal(scope.pillars.contrast, 'exempt'); assert.equal(scope.contrast.reason, 'forced-colors'); }
++    }
++    assert.equal(row.themes.hc, raw.scopes.filter(scope => scope.theme === 'hc').every(scope => scope.status === 'rendered'));
++    if (row.specEngine === 'echarts') { assert.equal(row.chartInApp, 'not-placed'); assert.match(row.notes.join(' '), /1944/); }
++  }
++  assert.deepEqual({ rendered, deferred, nonconformant }, { rendered: 60, deferred: 18, nonconformant: 4 });
++  assert.equal(registry.filter(row => row.dashboardDrawn === true).length, 11); assert.equal(observations.placementCompositions, 88); assert.equal(observations.placements.length, 8);
++  assert.deepEqual(sorted195([...new Set(observations.placements.map(row => row.chartType))]), ['area', 'bar', 'line']);
++  assert.deepEqual(observations.accuracyControls.map(row => row.expectedCode), ['OODS-V168', 'OODS-V171']);
++  for (const row of observations.accuracyControls) { assert.equal(row.grade.conformant, false); assert.equal(row.grade.pillars.accuracy, 'fail'); assert(row.grade.findings.some(item => item.code === row.expectedCode)); }
++  assert.equal(patterns.length, 21); assert.equal(patternSources.length, 21); assert.equal(patternCensus.cells.length, 84);
++  assert.deepEqual(sorted195(patterns.map(row => row.id)), sorted195(patternSources.map(row => row.id))); assert.equal(new Set(patterns.map(row => row.id)).size, 21);
++  assert.equal(patterns.filter(row => row.publicSvg).length, 8);
++  assert.equal(patternCensus.inputSchemaSha256, digest(readFrozen('packages/mcp-server/src/schemas/viz.render.input.json')));
++  const four = ['A/light', 'A/dark', 'B/light', 'B/dark'].sort();
++  for (const row of patterns) {
++    const source = patternSources.find(item => item.id === row.id); const authored = readFrozen(row.specPath);
++    assert.equal(row.specSha256, digest(authored)); assert.equal(source.specSha256, row.specSha256); assert.equal(source.specPath, row.specPath); assert.equal(row.baseChartType, source.baseChartType); assert.deepEqual(JSON.parse(authored), source.spec); assert.deepEqual(row.portability, source.portability);
++    assert.deepEqual(sorted195(row.scopes.map(scope => `${scope.brand}/${scope.theme}`)), four);
++    const cells = patternCensus.cells.filter(cell => cell.id === row.id); assert.deepEqual(sorted195(cells.map(cell => `${cell.request.brand}/${cell.request.theme}`)), four);
++    for (const scope of row.scopes) {
++      const cell = cells.find(item => item.request.brand === scope.brand && item.request.theme === scope.theme); assert.equal(cell.request.pattern, row.id);
++      if (!row.publicSvg) { assert.equal(row.status, 'authoring-only'); assert.equal(scope.status, 'authoring-only'); assert.equal(cell.rendered.status, 'error'); assert(cell.rendered.errors.length && cell.rendered.errors.every(error => error.code === 'OODS-V167')); assert.deepEqual(scope.errors, cell.rendered.errors.map(({ code, message }) => ({ code, message }))); assert(row.reasons.includes(cell.rendered.errors[0].message)); continue; }
++      assert.equal(row.status, 'public'); assert.equal(scope.status, 'public'); assert.equal(cell.rendered.status, 'ok'); assert.equal(digest(cell.rendered.svg), bare(scope.svgHash)); assert.equal(cell.rendered.svgHash, scope.svgHash);
++      assert.equal(digest(canonical195(cell.rendered.normalizedSpec)), scope.normalizedSpecSha256); assert.equal(scope.a11yDescription, cell.rendered.normalizedSpec.a11y.description);
++      assert.deepEqual(scope.certify, { coverage: cell.certified.coverage, conformant: cell.certified.conformant, pillars: cell.certified.pillars, stable: cell.certified.determinism.stable, renderHash: cell.certified.determinism.renderHash });
++      assert.equal(scope.certify.renderHash, scope.svgHash);
++    }
++  }
++  assert.equal(taxonomy.schemaVersion, 1); assert.equal(taxonomy.identities.length, 34); assert.equal(classification.assignments.length, 34);
++  const identities = [...types, ...patterns.map(row => row.id)]; assert.deepEqual(sorted195(taxonomy.identities.map(row => row.id)), sorted195(identities)); assert.equal(new Set(identities).size, 34);
++  assert.deepEqual(taxonomy.families, classification.families.map(({ id, definition }) => ({ id, definition }))); assert.equal(taxonomy.families.length, 8);
++  for (const row of taxonomy.identities) {
++    const assignment = classification.assignments.find(item => item.id === row.id); assert(assignment); for (const key of ['family', 'role', 'coreCell']) assert.equal(row[key], assignment[key]);
++    assert(taxonomy.families.some(family => family.id === row.family)); assert(['core', 'extension'].includes(row.role));
++    const pattern = patterns.find(item => item.id === row.id); assert.equal(row.kind, pattern ? 'pattern' : 'type'); assert.equal(row.publicSvg, pattern ? pattern.publicSvg : true);
++    if (pattern) assert.equal(row.specSha256, pattern.specSha256);
++  }
++  const core = classification.families.flatMap(family => family.coreCells.map(cell => ({ ...cell, family: family.id })));
++  assert.deepEqual(sorted195(taxonomy.coreCells.map(row => `${row.family}/${row.cell}`)), sorted195(core.map(row => `${row.family}/${row.cell}`)));
++  for (const cell of taxonomy.coreCells) {
++    const input = core.find(row => row.cell === cell.cell && row.family === cell.family); const assigned = taxonomy.identities.filter(row => row.family === cell.family && row.coreCell === cell.cell);
++    assert.equal(cell.definition, input.definition); assert.deepEqual(sorted195(cell.identities), sorted195(assigned.map(row => row.id)));
++    assert.equal(cell.status, assigned.some(row => row.publicSvg) ? 'surface-complete' : 'typed-gap'); if (cell.status === 'typed-gap') assert.equal(cell.reason, input.gapReason);
++  }
++  const summary = { types: 13, patterns: 21, families: 8, classified: 34, coreCells: core.length, coreSurfaceComplete: taxonomy.coreCells.filter(row => row.status === 'surface-complete').length, typedGaps: taxonomy.coreCells.filter(row => row.status === 'typed-gap').length };
++  assert.deepEqual(summary, { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 }); assert.deepEqual(taxonomy.summary, summary);
++  return summary;
++}
++
++export function auditSprint195Bites(index, indexPath, readFrozen) {
++  assert.equal(index.status, 'passed'); assert.equal(index.builderSelfCertified, false); assert.deepEqual(sorted195(index.bites.map(row => row.id)), ['palette', 'pattern-sha', 'registry']);
++  assert.equal(index.finalPaletteAttempt, 'attempt-3/bites.json');
++  const root = path.posix.dirname(indexPath);
++  for (const row of index.bites) {
++    assert.equal(row.status, 'passed'); assert.equal(row.restoredByteIdentically, true); assert.equal(row.beforeSha256, row.restoredSha256); assert.notEqual(row.beforeSha256, row.disabledSha256);
++    hash195(readFrozen, row.path, row.restoredSha256);
++    assert.equal(row.receipt, row.id === 'palette' ? 'attempt-3/bites.json' : 'attempt-2/bites.json');
++    const file = `${root}/${row.receipt}`, receipt = read195(readFrozen, file), actual = receipt.records.find(item => item.id === row.id);
++    assert(actual); assert.equal(actual.status, 'passed'); assert.equal(actual.restoredByteIdentically, true); assert.equal(actual.path, row.path); assert.equal(actual.beforeSha256, row.beforeSha256); assert.equal(actual.disabledSha256, row.disabledSha256);
++    const red = actual.commands.find(command => command.log.endsWith(row.id === 'palette' ? 'disabled-census.log' : 'disabled-contract.log'));
++    const green = actual.commands.find(command => command.log.endsWith(row.id === 'palette' ? 'restored-census.log' : 'restored-contract.log'));
++    assert.equal(red?.exitCode, 1); assert.equal(green?.exitCode, 0);
++    const directory = path.posix.dirname(file), log = readFrozen(`${directory}/${red.log}`).toString();
++    assert.match(log, row.id === 'palette' ? /Measured viz registry differs from canonical source/ : row.id === 'registry' ? /the exported registry equals every live census cell/ : /bundled source SHA is stale|specSha256|source hashes/);
++    assert(readFrozen(`${directory}/${green.log}`).length > 0);
++    if (row.id === 'palette') {
++      for (const [phase, contrast, conformant, measured, evidence] of [['disabled', 'fail', false, false, 'none'], ['restored', 'pass', true, true, 'render']]) {
++        const proof = read195(readFrozen, `${directory}/palette/${phase}-proof.json`);
++        assert.equal(proof.rendered.status, 'ok'); assert.equal(digest(proof.rendered.svg), bare(proof.rendered.svgHash)); assert.equal(proof.grade.determinism.renderHash, proof.rendered.svgHash);
++        assert.equal(proof.grade.pillars.contrast, contrast); assert.equal(proof.grade.conformant, conformant); assert.equal(proof.grade.contrastResults[0].measured, measured); assert.equal(proof.grade.contrastResults[0].evidence, evidence); assert.equal('contrastMeasured' in proof.grade, false);
++      }
++    }
++  }
++  return { bites: 3, restored: true };
++}
++
++export function auditSprint195Soak(soak, soakPath, readFrozen) {
++  assert.equal(soak.issue, '#1442'); assert.equal(soak.provenRetentionCause, null); assert.equal(soak.rendererSourceChanges, false); assert.equal(soak.disposition.code, 'OODS-SOAK-1442'); assert.equal(soak.disposition.retentionCertification, 'not-established'); assert.equal(soak.disposition.thresholdChanges, false);
++  for (const proof of Object.values(soak.thresholdAndStatisticsProof)) { assert.equal(proof.unchanged, true); assert.equal(proof.beforeSha256, proof.afterSha256); }
++  const root = path.posix.dirname(soakPath);
++  const strict = read195(readFrozen, `${root}/full-suite-observation/vitest.json`), observation = read195(readFrozen, `${root}/full-suite-observation/observation.json`);
++  assert.equal(strict.numPassedTests, 2); assert.equal(strict.numFailedTests, 1); assert.equal(strict.numPendingTests, 0); assert.equal(strict.success, false);
++  const failed = strict.testResults.flatMap(row => row.assertionResults).filter(row => row.status === 'failed'); assert.equal(failed.length, 1); assert.match(failed[0].failureMessages.join('\n'), /OODS-SOAK-1442: statistically positive retained resource trend/);
++  assert.equal(observation.originalExitCode, 1); assert.equal(observation.status, 'observation'); assert.equal(observation.retentionCertification, 'not-established');
++  const log = readFrozen(`${root}/full-suite-observation/strict-soak.log`).toString(); const raw = JSON.parse(/ECHARTS_SOAK_EVIDENCE resources-observed (\{[^\n]+\})/.exec(log)?.[1] ?? 'null'); assert.deepEqual(raw, observation.evidence);
++  assert.equal(raw.samples.length, 21); assert.equal(raw.warmupRenders, 100); assert.equal(raw.measuredRenders, 2000);
++  assert.equal(raw.budgets.workerHeapAbsoluteDeltaBytes, 12 * 1024 * 1024); assert.equal(raw.budgets.workerHeapSlopeBytesPerWindow, 256 * 1024); assert.equal(raw.budgets.processRssSlopeBytesPerWindow, 2 * 1024 * 1024);
++  const trend = values => { const mean = values.reduce((a, b) => a + b, 0) / 8; const denominator = 42; const slope = values.reduce((sum, value, i) => sum + (i - 3.5) * (value - mean), 0) / denominator; const se = Math.sqrt(values.reduce((sum, value, i) => sum + (value - (mean - slope * 3.5 + slope * i)) ** 2, 0) / 6 / denominator); return { slope, slopeStandardError: se, positiveTrendLower99: slope - 3.143 * se }; };
++  for (const [field, name, budget] of [['workerHeapUsedBytes', 'heapTrend', 'workerHeapSlopeBytesPerWindow'], ['processRssBytes', 'rssTrend', 'processRssSlopeBytesPerWindow']]) { assert.deepEqual(trend(raw.samples.slice(13).map(row => row[field])), raw[name]); assert(raw[name].slope <= raw.budgets[budget]); }
++  assert(raw.heapTrend.positiveTrendLower99 > 0 || raw.rssTrend.positiveTrendLower99 > 0); assert(raw.workerHeapDeltaBytes <= raw.budgets.workerHeapAbsoluteDeltaBytes);
++  assert.equal(raw.beforeFault.chartsCreated, 2100); assert.equal(raw.beforeFault.chartsDisposed, 2100); assert.equal(raw.afterFault.chartsCreated, 2101); assert.equal(raw.afterFault.chartsDisposed, 2101); assert.equal(raw.afterFault.activeCharts, 0); assert.equal(raw.afterFault.geoRegistrySize, 1); assert.equal(raw.afterFault.renderFaults, raw.beforeFault.renderFaults + 1); assert.equal(raw.afterFault.randomRestored, true); assert.equal(raw.afterFault.clockGuardRestored, true); assert.equal(raw.afterFault.ambientAccesses, 0);
++  for (const name of ['head', 'unchanged-control']) assert.match(readFrozen(`${root}/${name}.log`).toString(), /FAIL.*plateaus after/s);
++  return { strictPassed: 2, strictFailed: 1, strictSkipped: 0, retentionCertified: false };
++}
++
++export function auditSprint195Attribution({ attribution, movers, migration, readFrozen, readHistorical, rangeGitEvidence }) {
++  assert.equal(attribution.base, S195_BUILD_BASE); assert.equal(attribution.head, movers.s195.head); assert.deepEqual(attribution.unattributedPaths, []);
++  assert.equal(rangeGitEvidence.base, S195_BUILD_BASE); assert.equal(rangeGitEvidence.head, attribution.head);
++  assert.deepEqual(sorted195(attribution.rows.map(row => row.path)), sorted195(movers.s195.publicPaths)); assert.equal(new Set(attribution.rows.map(row => row.path)).size, attribution.rows.length);
++  hash195(readFrozen, attribution.patch.path, attribution.patch.sha256);
++  assert.equal(readFrozen(attribution.patch.path).toString(), rangeGitEvidence.patch, 'The retained advertised patch omits or alters a Git hunk');
++  for (const row of attribution.rows) {
++    assert(row.missions.length && row.commits.length && row.reason?.trim()); assert(row.missions.every(mission => /^s195-m0[1-7]$/.test(mission))); assert(row.commits.every(fullHead));
++    assert(row.evidence.length); for (const ref of row.evidence) hash195(readFrozen, ref.path, ref.sha256);
++    const filePatch = rangeGitEvidence.patch.split(/(?=^diff --git )/m).filter(chunk => chunk.startsWith(`diff --git a/${row.path} b/${row.path}\n`));
++    assert.equal(filePatch.length, 1, `Missing advertised file patch: ${row.path}`);
++    const headers = filePatch[0].split('\n').filter(line => line.startsWith('@@ '));
++    assert.deepEqual(row.hunks.map(hunk => hunk.header), headers.length ? headers : ['file-metadata'], `Missing or invented attributed hunk in ${row.path}`);
++    assert(row.hunks.length); for (const hunk of row.hunks) { assert(hunk.reason.trim() && hunk.missions.length && hunk.commits.length); assert(hunk.missions.every(id => row.missions.includes(id))); assert(hunk.commits.every(id => row.commits.includes(id))); }
++    for (const [head, expected] of [[S195_BUILD_BASE, row.beforeSha256], [attribution.head, row.afterSha256]]) {
++      assert(expected === null || /^[a-f0-9]{64}$/.test(expected));
++      let observed = null; try { observed = digest(readHistorical(head, row.path)); } catch (error) { if (expected !== null) throw error; } assert.equal(observed, expected, `Attribution bytes differ at ${head}:${row.path}`);
++    }
++  }
++  assert.equal(migration.qualificationHead, S195_PALETTE_HEAD); assert.equal(migration.builderSelfCertified, false); hash195(readFrozen, migration.receipt.path, migration.receipt.sha256);
++  const palette = read195(readFrozen, migration.receipt.path); assert.equal(palette.qualificationHead, S195_PALETTE_HEAD); assert.equal(palette.historicalRawFilesUnchanged, true); assert.equal(palette.builderSelfCertified, false);
++  assert.equal(palette.files.length, 29); assert.equal(palette.snapshotEntries.length, 14); assert.equal(palette.matrixRows.length, 910); assert.equal(palette.matrixRows.filter(row => row.status === 'superseded').length, 231);
++  for (const row of palette.files) { assert.equal(digest(readHistorical(palette.beforeHead, row.file)), row.beforeSha256); assert.equal(digest(readHistorical(palette.qualificationHead, row.file)), row.afterSha256); assert(row.reason.trim()); }
++  for (const row of [...palette.sourceHashes, ...palette.newSvgEvidence]) hash195(readFrozen, row.path, row.sha256);
++  for (const row of palette.matrixRows) assert(row.reason.trim());
++  return { paths: attribution.rows.length, historicalMatrixRows: 910, superseded: 231 };
++}
++
++export function auditSprint195Ci({ ci, implementationHead, readFrozen, changedPaths }) {
++  assert.equal(ci.baseRefName, 'OODS-pro'); assert.equal(ci.headRefName, 'codex/sprint-195-visualization-breadth');
++  const required = ['coverage', 'product-reality-consumers', 'component-packages', 'a11y-contract', 'portable-runtime', 'runtime-cells', 'viz-determinism'];
++  assert.deepEqual(sorted195(ci.jobs.map(row => row.name)), sorted195(required));
++  const heads = sorted195([...new Set(ci.jobs.map(row => row.headSha))]);
++  assert.deepEqual(sorted195(ci.sourceEquivalence.map(row => row.headSha)), heads);
++  for (const row of ci.jobs) {
++    assert(fullHead(row.headSha)); assert.equal(row.status, 'completed'); assert.equal(row.conclusion, 'success');
++    hash195(readFrozen, row.run.path, row.run.sha256); hash195(readFrozen, row.jobInventory.path, row.jobInventory.sha256);
++    const run = read195(readFrozen, row.run.path), jobs = read195(readFrozen, row.jobInventory.path).jobs;
++    assert.equal(run.id, row.runId); assert.equal(run.head_sha, row.headSha); assert.equal(run.status, 'completed');
++    const matching = jobs.filter(job => job.id === row.jobId); assert.equal(matching.length, 1);
++    const actual = matching[0]; assert.equal(actual.run_id, row.runId); assert.equal(actual.name, row.name); assert.equal(actual.status, row.status); assert.equal(actual.conclusion, row.conclusion);
++  }
++  for (const row of ci.sourceEquivalence) {
++    assert.equal(row.implementationHead, implementationHead); assert.deepEqual(row.scope, publicScope195); assert.deepEqual(row.changedPaths, []);
++    assert.deepEqual(changedPaths(row.headSha, implementationHead, publicScope195), [], 'CI executed different public source bytes');
++  }
++  return { jobs: 7, actualHeads: heads.length };
++}
++
++export function auditSprint195ToolProof({ tools, proof, implementationHead, ledgerPath, readFrozen }) {
++  assert(fullHead(tools.head) && fullHead(implementationHead));
++  assert.equal(proof.censusHead, tools.head); assert.equal(proof.implementationHead, implementationHead);
++  assert.equal(proof.byteIdentical, true); hash195(readFrozen, ledgerPath, proof.sha256); assert.deepEqual(proof.summary, tools.summary);
++  const registry = read195(readFrozen, 'packages/mcp-server/src/tools/registry.json');
++  assert.deepEqual(tools.rows.map(row => row.name), [...registry.auto, ...registry.onDemand]);
++  const descriptions = read195(readFrozen, 'packages/mcp-adapter/tool-descriptions.json');
++  for (const row of tools.rows) {
++    assert.equal(row.registration, registry.auto.includes(row.name) ? 'auto' : 'on-demand');
++    hash195(readFrozen, row.inputSchemaPath, row.inputSchemaHash);
++    const schema = read195(readFrozen, row.inputSchemaPath);
++    assert.deepEqual(row.advertisedClaim, { description: descriptions[row.name], inputSchemaDescription: schema.description ?? '' });
++    assert.equal(bare(row.claimHash), digest(JSON.stringify(row.advertisedClaim, null, 2) + '\n'));
++  }
++  return { censusHead: tools.head, implementationHead, entries: tools.rows.length };
++}
++
++export function auditSprint195CertificationProfiles(receipt) {
++  assert.deepEqual(sorted195(receipt.rows.map(row => row.chartType)), ['bubble_map', 'chord', 'choropleth', 'flow_map', 'force_graph', 'sankey', 'sunburst', 'treemap']);
++  for (const row of receipt.rows) {
++    assert(row.input.data); assert.equal(row.operand.coverage, 'certified'); assert.equal(row.operand.conformant, row.chartType !== 'bubble_map'); assert.equal(row.operand.determinism.stable, true);
++    assert.equal(row.specOnly.status, 'ok'); assert.equal(row.specOnly.coverage, 'uncertified'); assert.equal(row.specOnly.conformant, null);
++    for (const key of ['accuracy', 'determinism', 'a11yEquivalence']) assert.equal(row.specOnly.pillars[key], 'unchecked');
++    assert.equal(row.specOnly.findings.length, 0); assert.equal(row.specOnly.determinism, undefined); assert.equal(row.specOnly.accuracySummary, undefined);
++  }
++  return { operands: 8, specOnlyUncertified: 8, operandConformant: 7 };
++}
++
++export function auditSprint195Claims({ missions, claims, executions, verify, readHistorical }) {
++  assert.deepEqual(missions.map(row => row.id), Array.from({ length: 7 }, (_, index) => `s195-m0${index + 1}`));
++  const expected = missions.flatMap(mission => mission.successCriteria.map((criterion, index) => ({ missionId: mission.id, criterionIndex: index + 1, criterion })));
++  assert.equal(expected.length, 28); assert.equal(claims.length, expected.length);
++  const byId = new Map(executions.map(row => [row.id, row])); assert.equal(byId.size, executions.length);
++  for (let i = 0; i < expected.length; i++) {
++    const claim = claims[i]; for (const key of ['missionId', 'criterionIndex', 'criterion']) assert.equal(claim[key], expected[i][key]);
++    assert(['proven', 'proven-with-documented-limit'].includes(claim.status)); if (claim.status === 'proven-with-documented-limit') { assert(claim.decisionIds?.length); assert(claim.qualification?.trim()); }
++    assert(claim.executionIds.length && claim.evidence.length); assert(claim.executionIds.every(id => byId.has(id)));
++    for (const ref of claim.evidence) { verify(ref); assert(claim.executionIds.some(id => byId.get(id).evidence.some(row => row.path === ref.path && row.sha256 === ref.sha256))); }
++  }
++  for (const execution of executions) { assert(fullHead(execution.head)); for (const ref of execution.evidence) { const bytes = verify(ref); if (execution.historical) assert(bytes.equals(readHistorical(execution.head, ref.path))); } }
++  return { criteria: expected.length, executions: byId.size };
++}
++
++export function auditSprint195Theme({ report, reportPath, target, ids, readFrozen }) {
++  assert.equal(report.target, target); assert.equal(report.status, 'passed'); assert.equal(report.failed, 0); assert.equal(report.skipped, 0); assert.deepEqual(report.failures, []);
++  assert.equal(report.cells.length, 6); assert.deepEqual(sorted195(report.cells.map(cell => `${cell.brand}/${cell.theme}`)), s195Scopes);
++  assert.deepEqual(sorted195(report.canonicalIds), sorted195(ids)); assert.equal(ids.length, 109);
++  for (const cell of report.cells) { assert.equal(cell.status, 'passed'); assert.deepEqual(sorted195(cell.rows.map(row => row.componentId)), sorted195(ids)); assert.equal(cell.overflow, false); assert.equal(cell.bodyBackground, cell.tokenBackground); assert.equal(cell.bodyForeground, cell.tokenForeground); assert.deepEqual(cell.errors, []); assert.deepEqual(cell.failures, []); assert.equal(cell.forcedColours, cell.theme === 'hc'); for (const row of cell.rows) { assert(!row.missing && row.width > 0 && row.height > 0 && row.pairs.length); for (const pair of row.pairs) assert(cell.theme === 'hc' ? pair.visible : pair.ratio >= 4.5); for (const control of row.controls) assert(control.focused && control.visible && (cell.theme === 'hc' ? control.ratio > 1 : control.ratio >= 3)); if (cell.theme !== 'hc') assert.deepEqual(row.systemColours, []); } hash195(readFrozen, `${path.posix.dirname(reportPath)}/${cell.screenshot}`, cell.screenshotSha256); }
++  return { cells: 6, components: 109 };
++}
++
+@@ -1372,0 +1685,123 @@ export function auditSprint194Closeout({ executionHead, reviewHead, readOutput,
++export function auditSprint195BiteIndex(index, readFrozen, runtime) {
++  assert.equal(index.head, runtime.head); assert.equal(index.builderSelfCertified, false);
++  assert.deepEqual(sorted195(index.rows.map(row => row.id)), ['accuracy-rule', 'retirement-gate', 'runtime-emitter', 'viz-mutations']);
++  for (const row of index.rows) {
++    assert.equal(row.status, 'passed'); hash195(readFrozen, row.receipt.path, row.receipt.sha256);
++    assert.equal(row.missionId, { 'retirement-gate': 's195-m01', 'accuracy-rule': 's195-m04', 'viz-mutations': 's195-m06', 'runtime-emitter': 's195-m07' }[row.id]);
++    const raw = read195(readFrozen, row.receipt.path), root = path.posix.dirname(row.receipt.path);
++    if (row.id === 'viz-mutations') { auditSprint195Bites(raw, row.receipt.path, readFrozen); continue; }
++    if (row.id === 'retirement-gate') {
++      assert.equal(raw.bite.redExitCode, 1); assert.equal(raw.bite.greenExitCode, 0); assert.deepEqual(raw.bite.redTests, { passed: 9, failed: 1, skipped: 0 }); assert.deepEqual(raw.bite.greenTests, { passed: 10, failed: 0, skipped: 0 }); assert.equal(raw.bite.scratchRemoved, true);
++      assert.match(readFrozen(`${root}/${raw.bite.redLog}`).toString(), /release\.verify/); assert.match(readFrozen(`${root}/${raw.bite.greenLog}`).toString(), /10 passed/);
++      let scratch; try { scratch = readFrozen(raw.bite.scratchPath); } catch { /* Expected: the mutation was never committed. */ } assert.equal(scratch, undefined);
++    } else if (row.id === 'accuracy-rule') {
++      assert.equal(raw.status, 'passed'); assert.equal(raw.restoredByteIdentically, true); assert.equal(raw.mutation.code, 'OODS-V171'); assert.notEqual(raw.mutation.sourceSha256Before, raw.mutation.sourceSha256Disabled); hash195(readFrozen, raw.mutation.path, raw.mutation.sourceSha256Before);
++      for (const [name, code] of [['disabled-census', 1], ['restored-census', 0]]) { const command = raw.commands.find(item => item.name === name); assert.equal(command?.exitCode, code); assert(readFrozen(`${root}/${command.log}`).length); }
++    } else {
++      assert.equal(raw.beforeHash, raw.restoredHash); assert.notEqual(raw.beforeHash, raw.mutatedHash); hash195(readFrozen, raw.source, raw.restoredHash);
++      assert.equal(raw.red.status, 'fail'); assert.equal(raw.redSpecExitCode, 1); assert(raw.red.gates.some(gate => gate.name === 'mount' && gate.status === 'fail')); assert.equal(raw.restored.status, 'pass'); assert(raw.restored.gates.every(gate => gate.status === 'pass'));
++      for (const value of [raw.red, raw.restored]) { assert.equal(value.head, runtime.head); assert.equal(value.runId, runtime.runId); }
++    }
++  }
++  return { mutationFamilies: 4, visualizationBites: 3 };
++}
++
++export function auditSprint195Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath, ciChangedPaths }) {
++  const base = 'artifacts/product-reality/sprint-195/m07';
++  const manifest = JSON.parse(readFrozen(manifestPath));
++  const ledger = JSON.parse(readOutput(`${base}/closeout/claim-ledger.json`));
++  const handoff = JSON.parse(readOutput(`${base}/closeout/review-handoff.json`));
++  const accounting = JSON.parse(readOutput(`${base}/closeout/suite-accounting.json`));
++  const checked = new Set();
++  const verify = ref => { assert(ref.path && !path.isAbsolute(ref.path) && !ref.path.split('/').includes('..')); const bytes = readFrozen(ref.path); assert.equal(digest(bytes), bare(ref.sha256), ref.path); checked.add(ref.path); return bytes; };
++  const source = key => JSON.parse(readFrozen(manifest.sources[key]));
++  for (const result of [ledger, handoff]) {
++    assert.equal(result.builderSelfCertified, false); assert.equal(result.separateReviewRequired, true); assert.equal(result.sprintStatus, 'Active');
++    assert.equal(result.executionHead, executionHead); assert.equal(result.reviewHead, reviewHead); assert.equal(result.implementationHead, manifest.implementationHead);
++  }
++  assert.equal(handoff.evidenceCommit, reviewHead); assert.equal(handoff.exportVersion, '2026-09-11-s195-m07');
++  assert.equal(gitEvidence.ancestor, true);
++  assert.equal(accounting.executionHead, executionHead); assert.equal(accounting.reviewHead, reviewHead);
++  assert.equal(accounting.headRelation.ancestor, true);
++  assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
++  assert.equal(accounting.headRelation.executableInputsUnchanged, true);
++  for (const change of gitEvidence.changes) {
++    assert.equal(change.status, 'A');
++    assert(/^artifacts\/product-reality\/sprint-195\/m07\/(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)$/.test(change.path), change.path);
++  }
++
++  for (const ref of [...ledger.references, ...accounting.references]) verify(ref);
++  assert.equal(source('missions').sprint.id, 'sprint-195'); assert.equal(source('missions').sprint.status, 'Active');
++  const claimCounts = auditSprint195Claims({ missions: source('missions').missions, claims: ledger.claims, executions: ledger.executions, verify, readHistorical });
++  assert(publicGitEvidence.ancestor); assert.deepEqual(publicGitEvidence.changedPaths, []); assert.deepEqual(publicGitEvidence.scope, publicScope195);
++  const movers = source('movers'); assert.equal(rangeGitEvidence.base, S195_BUILD_BASE); assert.equal(rangeGitEvidence.head, manifest.implementationHead);
++  const declared = read195(readFrozen, `${base}/movers/declared-movers.json`); for (const key of ['canonicalPaths', 'publicPaths']) assert.deepEqual(declared.s195[key], rangeGitEvidence[key]);
++  for (const key of ['canonicalPaths', 'publicPaths']) assert.deepEqual(movers.s195[key], rangeGitEvidence[key]);
++  const capability = source('componentLedger'), exported = source('componentExport'); assert.equal(capability.rows.length, 109); assert.equal(capability.approvedRuntimeCensus, null);
++  const count = (surface, state) => capability.rows.filter(row => row.surfaces[surface].state === state).length;
++  assert.equal(count('react', 'implemented-evidence-complete'), 109); assert.equal(count('vue', 'implemented-evidence-complete'), 109); assert.equal(count('html', 'mapped'), 109);
++  assert.equal(count('accessibility', 'verified'), 109); assert.equal(count('theme', 'verified'), 109); assert.equal(count('interaction', 'verified'), 40); assert.equal(count('interaction', 'not-applicable'), 69);
++  for (const row of capability.rows) {
++    assert.deepEqual(row.surfaces, exported.components.find(entry => entry.id === row.id).productReality.surfaces);
++    for (const surface of ['accessibility', 'theme', 'interaction']) { assert.notEqual(row.surfaces[surface].state, 'unverified'); if (['not-applicable', 'unavailable'].includes(row.surfaces[surface].state)) assert(row.surfaces[surface].reason); }
++  }
++  const proof = source('componentProof'); assert.match(proof.head, /^[a-f0-9]{40}$/); proof.references.forEach(verify);
++  assert.equal(proof.head, manifest.implementationHead); assert.equal(proof.status, 'passed'); assert(proof.sourceInputs.length > 0);
++  assert.deepEqual(sorted195(proof.sourceInputs.map(row => row.path)), rangeGitEvidence.componentInputs); for (const input of proof.sourceInputs) { verify(input); assert.equal(digest(readHistorical(manifest.implementationHead, input.path)), bare(input.sha256)); }
++  assert.deepEqual(sorted195(proof.executions.map(row => row.reportPath)), sorted195(['reactTheme', 'vueTheme', 'reactMeasured', 'vueMeasured'].map(key => manifest.sources[key])));
++  for (const row of proof.executions) { assert.equal(row.headBefore, manifest.implementationHead); assert.equal(row.headAfter, manifest.implementationHead); assert.equal(row.exitCode, 0); assert(row.command.trim() && readFrozen(safe195(row.log)).length); }
++  for (const key of ['reactTheme', 'vueTheme', 'reactMeasured', 'vueMeasured']) { assert(manifest.sources[key].startsWith(base + '/')); assert(proof.references.some(ref => ref.path === manifest.sources[key])); }
++  for (const target of ['react', 'vue']) {
++    const report = source(`${target}Measured`); assert.equal(report.success, true); assert.equal(report.numPendingTests, 0); assert.equal(report.numFailedTests, 0);
++    const axe = report.testResults.filter(row => /accessibility\.spec\./.test(row.name)).flatMap(row => row.assertionResults).filter(row => /shared scenario/.test(row.fullName)); assert.equal(axe.length, 109); assert(axe.every(row => row.status === 'passed'));
++    auditSprint195Theme({ report: source(`${target}Theme`), reportPath: manifest.sources[`${target}Theme`], target, ids: capability.rows.map(row => row.id), readFrozen });
++  }
++  const composition = source('componentCensus'); assert.equal(composition.head, manifest.implementationHead); assert.equal(composition.allRows.length, 77); assert.equal(composition.greenTotalCells, 154); assert(composition.allRows.every(row => row.green && row.cells.every(cell => cell.errors.length === 0)));
++  const movement = source('schemaMovement'); assert.equal(movement.changedSchemas + movement.unchangedSchemas, 77); assert.deepEqual(movement.unattributedChanges, []); assert.equal(movement.rows.length, movement.changedSchemas); assert.equal(Object.values(movement.classes).reduce((a, b) => a + b, 0), movement.changedSchemas);
++  assert.equal(source('originalStore').reachable, 15); assert.equal(source('successorStore').reachable, 16); assert.equal(source('compatibility').changedLiveFiles, 0); assert.equal(source('compatibility').liveStoreFiles, 17);
++  const taxonomy = source('taxonomy');
++  auditSprint195Viz({ registry: source('registry'), observations: source('vizObservations'), patterns: source('patternRegistry'), patternCensus: source('patternCensus'), taxonomy,
++    classification: read195(readFrozen, 'packages/viz-core/src/registry/viz-classification.v1.json'), patternSources: read195(readFrozen, 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json'), readFrozen });
++  assert.deepEqual(source('vizCensus'), source('registry'));
++  const taxonomyCensus = source('taxonomyCensus'); assert.equal(taxonomyCensus.status, 'passed'); assert.equal(taxonomyCensus.head, manifest.implementationHead); assert.deepEqual(taxonomyCensus.summary, taxonomy.summary); assert.equal(taxonomyCensus.sha256, digest(readFrozen(manifest.sources.taxonomy)));
++  for (const key of ['runtime', 'dashboardRuntime', 'runtimePlacement', 'vizObservations', 'patternCensus']) assert(manifest.sources[key].startsWith(base + '/'), `Fresh195 proof expected: ${key}`);
++  auditSprint195CertificationProfiles(read195(readFrozen, 'artifacts/product-reality/sprint-195/m04/certify/after.json'));
++  const runtime = source('runtime');
++  auditSprint195Runtime({ runtime, dashboard: source('dashboardRuntime'), placement: source('runtimePlacement'), runtimePath: manifest.sources.runtime, dashboardPath: manifest.sources.dashboardRuntime, head: manifest.implementationHead, readFrozen });
++  assert.deepEqual(source('runtimeValidation').issues, []);
++  auditSprint195BiteIndex(source('bitesIndex'), readFrozen, runtime);
++  auditSprint195Soak(source('soak'), manifest.sources.soak, readFrozen);
++  const decisions = source('missions').decisions;
++  for (const id of [1944, 1946]) { assert(decisions.some(row => row.id === id)); assert(ledger.claims.some(row => row.missionId === 's195-m06' && row.decisionIds?.includes(id) && row.status === 'proven-with-documented-limit')); }
++  auditSprint195Attribution({ attribution: source('moverAttribution'), movers, migration: source('paletteMigration'), readFrozen, readHistorical, rangeGitEvidence });
++  const tools = source('toolLedger'); assert.equal(tools.rows.length, 24); assert.equal(tools.rows.filter(row => row.registration === 'auto').length, 19);
++  const counts = Object.fromEntries(['product-reality', 'contract', 'unit', 'none'].map(tier => [tier, tools.rows.filter(row => row.proofTier === tier).length]));
++  assert.deepEqual(counts, { 'product-reality': 19, contract: 5, unit: 0, none: 0 }); assert.deepEqual(counts, tools.summary.byTier);
++  auditSprint195ToolProof({ tools, proof: source('toolProof'), implementationHead: manifest.implementationHead, ledgerPath: manifest.sources.toolLedger, readFrozen });
++  auditSprint194ToolOutcomes({ tools, portable: source('portable') });
++  const retention = source('componentRetention'); assert.equal(retention.base, S195_BUILD_BASE); assert.deepEqual(retention.changedPaths, []);
++  assert(!source('movers').s195.publicPaths.some(file => /^packages\/(?:component-contracts|component-styles|components-react|components-vue)\//.test(file)), 'Retained component proof requires unchanged component implementation bytes');
++  const preFreeze = source('preFreeze'); assert.equal(preFreeze.status, 'passed'); assert.equal(preFreeze.skipped, 0);
++  const health = source('health'); assert.equal(health.status, 'ok'); assert.deepEqual(health.productReality.runtime, { ...runtime.summary, head: runtime.head }); assert.deepEqual(health.productReality.tools, { entries: 24, byTier: counts, head: tools.head });
++  assert.equal(accounting.status, 'passed'); assert.deepEqual(accounting.validationIssues, []); assert.deepEqual(accounting.unattributedDeltas, []);
++  assert.equal(accounting.closeout.runs.length, 1); assert(accounting.closeoutAttempts.length <= 1); assert.equal(accounting.captureExtensionAcceptance, undefined);
++  const runs = accounting.executions.filter(row => row.cohort === 'closeout'); assert.equal(runs.length, 5); assert.deepEqual(runs.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
++  for (const run of runs) {
++    const raw = JSON.parse(verify(run.rawReport)); assert.equal(run.measuredHead, executionHead); const failed = 0;
++    assert.equal(raw.numFailedTests, failed); assert.equal(raw.success, !failed); assert.equal(run.exitCode, failed); assert.equal(raw.numPassedTests, run.counts.passed); assert.equal(raw.numPendingTests, run.counts.skipped);
++  }
++  assert.equal(accounting.timeoutAcceptance, undefined); assert.deepEqual(accounting.closeoutFailures, []);
++  assert.equal(accounting.comparisons.length, 5); assert.deepEqual(accounting.comparisons.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
++  assert.deepEqual(health.productReality.viz, taxonomy.summary);
++  const inputs = (cohort, capture) => { const aggregate = JSON.parse(verify(capture.aggregate)); return accounting.executions.filter(row => row.cohort === cohort && row.suite !== 'component-packages').map(row => ({ suite: row.suite, workspace: aggregate.workspace, platform: aggregate.host.platform, report: JSON.parse(verify(row.rawReport)) })); };
++  const skipped = auditSprint190SkippedIdentities(inputs('closeout', accounting.closeout), inputs('sprint194Closeout', accounting.baselines.sprint194Closeout));
++  assert.equal(runs.find(row => row.suite === 'component-packages').counts.skipped, 0);
++  for (const row of accounting.goldenAttribution.files) { verify({ path: row.file, sha256: row.afterSha256 }); assert.equal(digest(readHistorical(accounting.goldenAttribution.beforeHead, row.file)), row.beforeSha256); assert(row.reason.trim()); }
++  const notice = source('noticePlan'); assert.equal(notice.sent, false); assert.equal(notice.sendsExecuted, 0); assert.deepEqual(notice.targets, ['cmos-dashboard', 'forge-demos', 'aquex-mcp']); assert(notice.notices.every(row => row.request.body.includes('Sprint 195 candidate') && row.request.body.includes('19 advertised')));
++  auditSprint195Ci({ ci: source('ci'), implementationHead: manifest.implementationHead, readFrozen, changedPaths: ciChangedPaths });
++  assert.equal(notice.deliverySprint, 'sprint-196'); assert.equal(notice.implementationHead, manifest.implementationHead);
++  for (const item of notice.notices) { assert.equal(digest(JSON.stringify(item.request)), item.requestSha256); for (const term of ['pattern', 'hc', 'spec-only', 'productReality.viz', 'builderSelfCertified:false']) assert(item.request.body.includes(term)); }
++  assert.equal(source('prose').exitCode, 0); assert(readFrozen(manifest.sources.near).toString().includes('Increment 14 — Sprint 195: Visualization breadth and certification — BUILT, REVIEW PENDING'));
++  return { status: 'passed', skipped, gitEvidence, checkedCriteria: claimCounts.criteria, checkedExecutions: claimCounts.executions, checkedFrozenPaths: checked.size, executionHead, reviewHead, builderSelfCertified: false, separateReviewRequired: true };
++}
++
+@@ -1392,2 +1827,2 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-      sprintId: manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+-    const rangeGitEvidence = manifest.missionId === 's194-m07' ? auditSprintRange({ root, base: '1f69c957f4435a0a2f18b168b684de050f7a5f22', head: implementationHead, sprintId: 'sprint-194' }) : manifest.missionId === 's193-m07' ? auditSprintRange({ root, base: 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d', head: implementationHead, sprintId: 'sprint-193' }) : manifest.missionId === 's192-m07' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','5fdf8a18'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-192' }) : manifest.missionId === 's191-m05' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','d3a99d39'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-191' }) : manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
++      sprintId: manifest.missionId === 's195-m07' ? 'sprint-195' : manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
++    const rangeGitEvidence = manifest.missionId === 's195-m07' ? auditSprintRange({ root, base: '5b25c3c9ec795315bf52a698d135c96bffd66393', head: implementationHead, sprintId: 'sprint-195' }) : manifest.missionId === 's194-m07' ? auditSprintRange({ root, base: '1f69c957f4435a0a2f18b168b684de050f7a5f22', head: implementationHead, sprintId: 'sprint-194' }) : manifest.missionId === 's193-m07' ? auditSprintRange({ root, base: 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d', head: implementationHead, sprintId: 'sprint-193' }) : manifest.missionId === 's192-m07' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','5fdf8a18'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-192' }) : manifest.missionId === 's191-m05' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','d3a99d39'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-191' }) : manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
+@@ -1400,0 +1836 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
++      ciChangedPaths: (head, implementation, scope) => execFileSync('git', ['diff', '--name-only', '--no-renames', head, implementation, '--', ...scope], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(file => file && !testPath(file)).sort(),
+diff --git a/scripts/product-reality/s185-closeout.mjs b/scripts/product-reality/s185-closeout.mjs
+index bf48056e..14ab3364 100644
+--- a/scripts/product-reality/s185-closeout.mjs
++++ b/scripts/product-reality/s185-closeout.mjs
+@@ -9 +9 @@ import { deriveSuiteAccounting, S188_DERIVATION_FILES } from './s185-suite-accou
+-import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S188_PUBLIC_RUNTIME_SCOPE, S189_PUBLIC_RUNTIME_SCOPE, S190_PUBLIC_RUNTIME_SCOPE, S191_PUBLIC_RUNTIME_SCOPE, S192_PUBLIC_RUNTIME_SCOPE, S193_PUBLIC_RUNTIME_SCOPE, S194_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
++import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S188_PUBLIC_RUNTIME_SCOPE, S189_PUBLIC_RUNTIME_SCOPE, S190_PUBLIC_RUNTIME_SCOPE, S191_PUBLIC_RUNTIME_SCOPE, S192_PUBLIC_RUNTIME_SCOPE, S193_PUBLIC_RUNTIME_SCOPE, S194_PUBLIC_RUNTIME_SCOPE, S195_PUBLIC_RUNTIME_SCOPE, S195_BASE } from './s185-sprint-wide-movers.mjs';
+@@ -43 +43 @@ export function derivePublicHeadEquivalence({ root, implementationHead, executio
+-  const scope = sprintId === 'sprint-194' ? S194_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-193' ? S193_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-192' ? S192_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-191' ? S191_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-190' ? S190_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-189' ? S189_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-188' ? S188_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-187' ? S187_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
++  const scope = sprintId === 'sprint-195' ? S195_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-194' ? S194_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-193' ? S193_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-192' ? S192_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-191' ? S191_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-190' ? S190_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-189' ? S189_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-188' ? S188_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-187' ? S187_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
+@@ -56,0 +57 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
++  if (manifest.missionId === 's195-m07') return deriveSprint195Closeout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence });
+@@ -1087,0 +1089,267 @@ export function deriveSprint194Closeout({ executionHead, reviewHead, manifest, r
++/** Sprint195 uses the actual retained rows; verifier summaries cannot replace raw proof. */
++export function verifySprint195Runtime({ runtime, dashboard, placement, implementationHead, runtimePath, read }) {
++  const root = path.posix.dirname(runtimePath), json = file => JSON.parse(read(file));
++  const objects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
++  const frameworks = ['react', 'vue'], contexts = ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow'];
++  const identity = row => `${row.object}/${row.context}/${row.framework}`;
++  const exact = (actual, expected) => assert.deepEqual([...actual].sort(), [...expected].sort());
++  assert.equal(runtime.head, implementationHead); assert(fullHead(implementationHead));
++  assert.equal(runtime.packCount, 1); assert.equal(runtime.historicalReceiptsUnioned, false);
++  assert.deepEqual(runtime.summary, { cells: 154, pass: 154, typedGap: 0, fail: 0 });
++  exact(runtime.rows.map(identity), objects.flatMap(object => contexts.flatMap(context => frameworks.map(framework => `${object}/${context}/${framework}`))));
++  assert.deepEqual(dashboard.summary, { cells: 4, pass: 4, typedGap: 0, fail: 0 });
++  assert.equal(dashboard.scope.layout, 'dashboard'); exact(dashboard.scope.objects, ['Invoice', 'Usage']);
++  exact(dashboard.rows.map(identity), ['Invoice', 'Usage'].flatMap(object => frameworks.map(framework => `${object}/detail/${framework}`)));
++  for (const key of ['head', 'runId', 'browserImage', 'packCount']) assert.equal(dashboard[key], runtime[key]);
++  const browser = json(`${root}/browser.json`);
++  assert.equal(browser.image, runtime.browserImage); assert.equal(browser.version, '141.0.7390.37'); assert.match(browser.userAgent, /Linux/);
++  assert.equal(runtime.browserImage, 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a');
++  const packages = json(`${root}/submitted-packages/inventory.json`);
++  assert(packages.length > 0); assert.equal(new Set(packages.map(row => row.name)).size, packages.length);
++  for (const item of packages) assert.equal(sha256(read(`${root}/${item.artifactPath}`)), digest(item.sha256));
++  const recursiveHashes = (value, folder) => { if (!value || typeof value !== 'object') return; if (value.path && value.hash) assert.equal(sha256(read(`${folder}/${value.path}`)), digest(value.hash)); for (const child of Object.values(value)) if (typeof child === 'object') recursiveHashes(child, folder); };
++  const scopeIds = ['A-light', 'A-dark', 'A-hc', 'B-light', 'B-dark', 'B-hc'];
++  const measured = [];
++  for (const [population, folder, ledger] of [['canonical', root, runtime], ['dashboard', `${root}/layouts/dashboard`, dashboard]]) {
++    for (const row of ledger.rows) {
++      assert.equal(row.head, runtime.head); assert.equal(row.runId, runtime.runId); assert.equal(row.status, 'pass');
++      assert.deepEqual(json(`${folder}/${row.report}`), row);
++      const required = ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states'];
++      if (row.context === 'workflow') required.push('server-render', 'hydration', 'shared-css-resolution', 'interaction-evidence');
++      for (const name of required) assert.equal(row.gates.filter(gate => gate.name === name && gate.status === 'pass').length, 1);
++      assert(row.gates.every(gate => gate.status === 'pass')); row.gates.forEach(gate => recursiveHashes(gate.detail, folder));
++      if (row.context === 'workflow') assert.equal(row.gates.find(gate => gate.name === 'context-states').detail.observations.length, 16);
++      if (!['Invoice', 'Usage'].includes(row.object) || row.context !== 'detail') continue;
++      const cellRoot = `${folder}/${path.posix.dirname(row.report)}`;
++      assert.deepEqual(json(`${cellRoot}/composition-request.json`), population === 'dashboard' ? { object: row.object, layout: 'dashboard' } : { object: row.object, context: 'detail' });
++      const installed = row.gates.find(gate => gate.name === 'fresh-exact-tarball-install').detail.tarballs;
++      assert(installed.length > 0); for (const item of installed) assert.equal(digest(item.sha256), packages.find(pkg => pkg.name === item.name)?.sha256);
++      const gates = row.gates.filter(gate => gate.name === 'chart-theme-scopes'); assert.equal(gates.length, 1);
++      const detail = gates[0].detail; assert.equal(detail.cells, 6); assert.equal(detail.failed, 0); assert.equal(detail.skipped, 0); assert.equal(detail.reusedSweepTarballs, true);
++      assert.equal(`${folder}/${detail.report}`, `${cellRoot}/chart-themes/report.json`);
++      const themeRoot = `${cellRoot}/chart-themes`, report = json(`${themeRoot}/report.json`);
++      assert.equal(report.status, 'passed'); assert.equal(report.failed, 0); assert.equal(report.skipped, 0); assert.deepEqual(report.failures, []);
++      assert.equal(report.browser.version, browser.version); exact(report.cells.map(cell => cell.id), scopeIds);
++      const name = row.object === 'Invoice' ? 'Invoice line item amounts' : 'Example API-call usage';
++      for (const cell of report.cells) {
++        assert.equal(cell.status, 'passed'); assert.deepEqual(cell.failures, []); assert.deepEqual(cell.errors, []);
++        assert.equal(cell.placeholders, 0); assert.equal(cell.charts.length, 1); assert.equal(cell.forcedColours, cell.theme === 'hc');
++        assert.equal(cell.charts[0].matchesPublicSvg, true); assert(cell.charts[0].width > 0 && cell.charts[0].height > 0);
++        assert(read(`${themeRoot}/${cell.id}-accessibility-tree.txt`).toString().includes(`img "${name}"`));
++        assert.equal(sha256(read(`${themeRoot}/${cell.screenshot}`)), cell.screenshotSha256);
++        const { renderRequest, rendered, certification } = json(`${themeRoot}/${cell.id}-certification.json`);
++        const generated = json(`${themeRoot}/${cell.id}-generation.json`);
++        assert.equal(renderRequest.name, name); assert.equal(renderRequest.chartType, row.object === 'Invoice' ? 'bar' : 'line');
++        assert.equal(`${renderRequest.brand}-${renderRequest.theme}`, cell.id); assert.equal(rendered.status, 'ok');
++        assert.equal(sha256(rendered.svg), digest(rendered.svgHash));
++        assert.equal(certification.status, 'ok'); assert.equal(certification.coverage, 'certified'); assert.equal(certification.conformant, true);
++        assert.equal(certification.determinism.stable, true); assert.match(digest(certification.determinism.renderHash), /^[a-f0-9]{64}$/);
++        assert.equal(generated.response.status, 'ok'); assert.equal(`${generated.request.options.brand}-${generated.request.options.theme}`, cell.id);
++        assert.equal(generated.response.artifact.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg);
++        measured.push(`${population}/${identity(row)}/${cell.id}`);
++      }
++    }
++  }
++  assert.equal(measured.length, 48);
++  for (const key of ['head', 'runId', 'browserImage', 'packCount']) assert.equal(placement[key], runtime[key]);
++  assert.deepEqual(placement.canonical, runtime.summary); assert.deepEqual(placement.dashboard, dashboard.summary);
++  assert.equal(placement.chartThemeScopes, 48); assert.equal(placement.chartThemeScopesPassed, 48);
++  exact(placement.proof.map(row => `${row.population}/${identity(row)}/${row.brand}-${row.theme}`), measured);
++  for (const framework of frameworks) {
++    const row = runtime.rows.find(item => item.object === 'Subscription' && item.context === 'detail' && item.framework === framework);
++    const generation = json(`${root}/${path.posix.dirname(row.report)}/generation.json`);
++    assert.equal(generation.status, 'ok'); assert.equal(generation.artifact.contentHash, row.artifactHash);
++    assert(generation.artifact.files.some(file => file.path.endsWith('.svg') && file.contents.includes('<svg')));
++    assert(placement.legacyAreaGeneration.some(item => item.framework === framework && item.chartType === 'area' && item.chartSource === 'payment-events' && item.artifactHash === row.artifactHash));
++  }
++  assert.equal(placement.htmlFullApplicationProof, 'not-claimed; this runtime population contains React and Vue only');
++  return { canonical: 154, dashboard: 4, chartThemeScopes: 48 };
++}
++
++export function verifySprint195Viz({ registry, census, observations, patterns, patternCensus, taxonomy, read }) {
++  assert.deepEqual(registry, census); assert.deepEqual(registry, observations.registry); assert.equal(registry.length, 13);
++  assert.equal(new Set(registry.map(row => row.chartType)).size, 13); assert(registry.every(row => row.certifyCoverage === 'certified'));
++  assert.equal(registry.filter(row => row.dashboardDrawn === true).length, 11);
++  assert.deepEqual(registry.filter(row => row.themes.hc).map(row => row.chartType), ['bar', 'line', 'area', 'scatter']);
++  const scopes = observations.observations.flatMap(row => row.scopes.map(scope => ({ ...scope, chartType: row.chartType })));
++  assert.equal(scopes.length, 78); assert.equal(new Set(scopes.map(row => `${row.chartType}/${row.brand}/${row.theme}`)).size, 78);
++  assert.equal(scopes.filter(row => row.status === 'rendered').length, 60); assert.equal(scopes.filter(row => row.status === 'typed-deferred').length, 18);
++  assert.equal(scopes.filter(row => row.conformant === false).length, 4);
++  for (const scope of scopes) {
++    const row = registry.find(row => row.chartType === scope.chartType); assert(row && ['A', 'B'].includes(scope.brand) && ['light', 'dark', 'hc'].includes(scope.theme));
++    const registered = row.renderScopes.find(item => item.brand === scope.brand && item.theme === scope.theme); assert.equal(registered?.status, scope.status);
++    if (scope.status === 'rendered') {
++      assert.equal(sha256(scope.svg), digest(scope.svgHash)); assert.equal(registered.svgHash, scope.svgHash); assert.equal(scope.conformant, scope.chartType !== 'bubble_map');
++      assert.equal(row.certifyScopes.find(item => item.brand === scope.brand && item.theme === scope.theme)?.conformant, scope.conformant);
++      if (scope.theme === 'hc') { assert.equal(scope.pillars.contrast, 'exempt'); assert(JSON.stringify(scope.contrast).includes('forced-colors')); }
++    } else { assert.equal(scope.theme, 'hc'); assert.equal(scope.svgHash, undefined); assert(scope.errors.some(error => error.code === 'OODS-V165')); }
++  }
++  assert.deepEqual(observations.accuracyControls.map(row => row.expectedCode), ['OODS-V168', 'OODS-V171']);
++  for (const row of observations.accuracyControls) { assert.equal(row.grade.conformant, false); assert(row.grade.findings.some(finding => finding.code === row.expectedCode)); }
++  assert.equal(observations.placementCompositions, 88); assert.equal(observations.placements.length, 8);
++  assert.deepEqual([...new Set(observations.placements.map(row => row.chartType))].sort(), ['area', 'bar', 'line']);
++  assert.equal(patterns.length, 21); assert.equal(patternCensus.cells.length, 84); assert.equal(patterns.filter(row => row.publicSvg).length, 8);
++  assert.equal(new Set(patterns.map(row => row.id)).size, 21);
++  const authored = JSON.parse(read('packages/viz-core/src/patterns/viz-pattern-sources.v1.json'));
++  assert.deepEqual(authored.map(row => row.id).sort(), patterns.map(row => row.id).sort());
++  const identities = new Set();
++  for (const row of patterns) {
++    assert.equal(sha256(read(row.specPath)), row.specSha256); assert.equal(JSON.parse(read(row.specPath)).id, row.id);
++    const source = authored.find(source => source.id === row.id);
++    for (const key of ['baseChartType', 'specPath', 'specSha256', 'portability']) assert.deepEqual(source[key], row[key]);
++    assert.deepEqual(source.spec, JSON.parse(read(row.specPath)));
++    const cells = patternCensus.cells.filter(cell => cell.id === row.id); assert.equal(cells.length, 4);
++    for (const cell of cells) {
++      const key = `${cell.id}/${cell.request.brand}/${cell.request.theme}`; assert(!identities.has(key)); identities.add(key);
++      assert.equal(cell.request.pattern, row.id); assert(['A', 'B'].includes(cell.request.brand) && ['light', 'dark'].includes(cell.request.theme));
++      const scope = row.scopes.find(scope => scope.brand === cell.request.brand && scope.theme === cell.request.theme); assert(scope);
++      if (row.publicSvg) { assert.equal(row.status, 'public'); assert.equal(scope.status, 'public'); assert.equal(cell.rendered.status, 'ok'); assert.equal(sha256(cell.rendered.svg), digest(cell.rendered.svgHash)); assert.equal(scope.svgHash, cell.rendered.svgHash); }
++      else { assert.equal(row.status, 'authoring-only'); assert(row.reasons.length && row.reasons.every(nonempty)); assert.equal(cell.rendered.status, 'error'); assert(cell.rendered.errors.some(error => error.code === 'OODS-V167')); }
++    }
++  }
++  assert.deepEqual(taxonomy.summary, { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 });
++  assert.equal(taxonomy.families.length, 8); assert.equal(taxonomy.identities.length, 34); assert.equal(taxonomy.coreCells.length, 20);
++  assert.deepEqual(taxonomy.identities.map(row => row.id).sort(), [...registry.map(row => row.chartType), ...patterns.map(row => row.id)].sort());
++  const classification = JSON.parse(read('packages/viz-core/src/registry/viz-classification.v1.json'));
++  assert.deepEqual(classification.assignments.map(row => row.id).sort(), taxonomy.identities.map(row => row.id).sort());
++  for (const row of taxonomy.identities) assert(taxonomy.families.some(family => family.id === row.family) && ['core', 'extension'].includes(row.role));
++  for (const row of taxonomy.identities) { const assigned = classification.assignments.find(item => item.id === row.id); for (const key of ['family', 'role', 'coreCell']) assert.equal(row[key], assigned[key]); }
++  assert.equal(taxonomy.coreCells.filter(row => row.status === 'surface-complete').length, 13);
++  for (const row of taxonomy.coreCells) {
++    if (row.status === 'surface-complete') assert(row.identities.some(id => taxonomy.identities.some(identity => identity.id === id && identity.publicSvg)));
++    else { assert.equal(row.status, 'typed-gap'); assert(nonempty(row.reason)); }
++  }
++  return taxonomy.summary;
++}
++
++export function verifySprint195Attribution({ movers, attribution, implementationHead, readHistorical = undefined }) {
++  assert.equal(movers.status, 'passed'); assert.equal(movers.s195.base, S195_BASE); assert.equal(movers.s195.head, implementationHead);
++  assert.equal(attribution.base, S195_BASE); assert.equal(attribution.head, implementationHead); assert.deepEqual(attribution.unattributedPaths, []);
++  assert(nonempty(attribution.patch?.path) && /^[a-f0-9]{64}$/.test(digest(attribution.patch?.sha256)), 'Missing complete advertised Git patch.');
++  assert.deepEqual(attribution.rows.map(row => row.path).sort(), [...movers.s195.publicPaths].sort());
++  for (const row of attribution.rows) {
++    assert(nonempty(row.reason) && row.missions?.length && row.commits?.length, `${row.path}: missing mission attribution`);
++    assert(row.missions.every(id => /^s195-m0[1-7]$/.test(id))); assert(row.commits.every(fullHead));
++    assert(row.evidence?.length && row.evidence.every(ref => nonempty(ref.path) && /^[a-f0-9]{64}$/.test(digest(ref.sha256))), `${row.path}: missing hash-bound mission evidence`);
++    assert(row.hunks?.length && row.hunks.every(hunk => nonempty(hunk.reason) && hunk.missions?.length && hunk.commits?.length && hunk.missions.every(id => row.missions.includes(id)) && hunk.commits.every(commit => row.commits.includes(commit))), `${row.path}: missing hunk attribution`);
++    if (readHistorical) for (const [head, expected] of [[S195_BASE, row.beforeSha256], [implementationHead, row.afterSha256]]) {
++      let observed = null; try { observed = sha256(readHistorical(head, row.path)); } catch (error) { if (expected !== null) throw error; }
++      assert.equal(observed, expected, `${row.path}: attributed source bytes differ`);
++    }
++  }
++}
++
++export function verifySprint195Bites({ index, implementationHead, read }) {
++  assert.equal(index.head, implementationHead); assert.equal(index.builderSelfCertified, false);
++  assert.deepEqual(index.rows.map(row => row.id).sort(), ['accuracy-rule', 'retirement-gate', 'runtime-emitter', 'viz-mutations']);
++  for (const item of index.rows) {
++    assert.equal(item.status, 'passed'); assert.equal(sha256(read(item.receipt.path)), digest(item.receipt.sha256));
++    const receipt = JSON.parse(read(item.receipt.path)), folder = path.posix.dirname(item.receipt.path);
++    if (item.id === 'retirement-gate') {
++      assert.equal(item.missionId, 's195-m01'); assert.equal(receipt.bite.redExitCode, 1); assert.equal(receipt.bite.greenExitCode, 0); assert.equal(receipt.bite.scratchRemoved, true);
++      assert.equal(receipt.bite.redTests.failed, 1); assert.equal(receipt.bite.greenTests.failed, 0);
++      const retiredName = receipt.bite.scratchContent.match(/`([^`]+)`/)?.[1]; assert(retiredName);
++      const redLog = read(`${folder}/${receipt.bite.redLog}`).toString(); assert(redLog.includes(retiredName)); assert(redLog.includes(receipt.bite.scratchPath)); read(`${folder}/${receipt.bite.greenLog}`);
++    } else if (item.id === 'accuracy-rule') {
++      assert.equal(item.missionId, 's195-m04'); assert.equal(receipt.status, 'passed'); assert.equal(receipt.restoredByteIdentically, true);
++      assert.equal(receipt.mutation.code, 'OODS-V171'); assert.notEqual(receipt.mutation.sourceSha256Before, receipt.mutation.sourceSha256Disabled);
++      assert.equal(receipt.commands.find(row => row.name === 'disabled-census')?.exitCode, 1); assert.equal(receipt.commands.find(row => row.name === 'restored-census')?.exitCode, 0);
++      receipt.commands.forEach(row => read(`${folder}/${row.log}`));
++    } else if (item.id === 'viz-mutations') {
++      assert.equal(item.missionId, 's195-m06'); assert.equal(receipt.status, 'passed'); assert.equal(receipt.finalPaletteAttempt, 'attempt-3/bites.json');
++      assert.deepEqual(receipt.bites.map(row => row.id).sort(), ['palette', 'pattern-sha', 'registry']);
++      for (const bite of receipt.bites) {
++        assert.equal(bite.beforeSha256, bite.restoredSha256); assert.notEqual(bite.beforeSha256, bite.disabledSha256); assert.equal(bite.restoredByteIdentically, true);
++        assert.equal(bite.receipt, bite.id === 'palette' ? 'attempt-3/bites.json' : 'attempt-2/bites.json');
++        const records = JSON.parse(read(`${folder}/${bite.receipt}`)).records, actual = records.find(row => row.id === bite.id);
++        assert.equal(actual.status, 'passed'); assert.equal(actual.restoredByteIdentically, true); assert.equal(actual.beforeSha256, bite.beforeSha256); assert.equal(actual.disabledSha256, bite.disabledSha256);
++        assert(actual.commands.some(row => row.exitCode === 1 && /disabled-(?:census|contract)/.test(row.log))); assert(actual.commands.some(row => row.exitCode === 0 && /restored-(?:census|contract)/.test(row.log)));
++        actual.commands.forEach(row => read(`${folder}/${path.posix.dirname(bite.receipt)}/${row.log}`));
++      }
++    } else {
++      assert.equal(item.missionId, 's195-m07'); assert.equal(receipt.beforeHash, receipt.restoredHash); assert.notEqual(receipt.beforeHash, receipt.mutatedHash);
++      assert.equal(receipt.red.status, 'fail'); assert.equal(receipt.restored.status, 'pass'); assert.equal(receipt.red.head, implementationHead); assert.equal(receipt.restored.head, implementationHead);
++      assert.equal(receipt.sourceRestoredByteIdentical, true); assert.equal(receipt.redSpecExitCode, 1);
++    }
++  }
++}
++
++export function verifySprint195CI({ ci, implementationHead, read }) {
++  assert.equal(ci.baseRefName, 'OODS-pro'); assert.equal(ci.headRefName, 'codex/sprint-195-visualization-breadth'); assert(ci.url.startsWith('https://github.com/'));
++  assert(ci.jobs.length > 0 && ci.jobs.every(row => row.runId && fullHead(row.headSha)), 'Every observed CI job needs its actual run source head.');
++  for (const row of ci.jobs) {
++    for (const ref of [row.run, row.jobInventory]) assert.equal(sha256(read(ref.path)), digest(ref.sha256));
++    const run = JSON.parse(read(row.run.path)), inventory = JSON.parse(read(row.jobInventory.path));
++    assert.equal(run.id, row.runId); assert.equal(run.head_sha, row.headSha);
++    const jobs = inventory.jobs.filter(job => job.id === row.jobId); assert.equal(jobs.length, 1); assert.equal(jobs[0].name, row.name); assert.equal(jobs[0].conclusion, row.conclusion); assert.equal(jobs[0].status, 'completed');
++  }
++  for (const name of ['coverage', 'product-reality-consumers', 'component-packages', 'a11y-contract', 'portable-runtime', 'runtime-cells', 'viz-determinism']) assert(ci.jobs.some(row => row.name === name && row.conclusion === 'success'), `Missing successful CI: ${name}`);
++  assert.deepEqual(ci.sourceEquivalence.map(row => row.headSha).sort(), [...new Set(ci.jobs.map(row => row.headSha))].sort());
++  for (const row of ci.sourceEquivalence) { assert.equal(row.implementationHead, implementationHead); assert.deepEqual(row.scope, S195_PUBLIC_RUNTIME_SCOPE); assert.deepEqual(row.changedPaths, []); }
++}
++
++export function deriveSprint195Closeout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence }) {
++  const base = 'artifacts/product-reality/sprint-195/m07', implementationHead = manifest.implementationHead;
++  assert(fullHead(executionHead) && fullHead(reviewHead) && fullHead(implementationHead)); assert.equal(manifest.missionId, 's195-m07');
++  assert(!Object.hasOwn(manifest, 'criteria') && !Object.hasOwn(manifest, 'claims'));
++  const references = new Map();
++  const bytes = file => { safePath(file); assert(!file.startsWith(`${base}/closeout/claim-ledger`) && !file.startsWith(`${base}/closeout/review-handoff`), 'Generated claims cannot justify themselves.'); const value = Buffer.from(readFrozen(file)); references.set(file, { path: file, bytes: value.length, sha256: sha256(value) }); return value; };
++  const json = key => { assert(nonempty(manifest.sources[key]), `Missing source: ${key}`); return JSON.parse(bytes(manifest.sources[key])); };
++  const verify = ref => assert.equal(sha256(bytes(ref.path)), digest(ref.sha256), ref.path);
++  const missions = json('missions'); assert.equal(missions.sprint.id, 'sprint-195'); assert.equal(missions.sprint.status, 'Active');
++  assert.deepEqual(missions.missions.map(row => row.id), Array.from({ length: 7 }, (_, index) => `s195-m0${index + 1}`));
++  const expected = missions.missions.flatMap(mission => mission.successCriteria.map((criterion, index) => ({ missionId: mission.id, criterionIndex: index + 1, criterion })));
++  assert.equal(expected.length, 28); assert(expected.every(row => nonempty(row.criterion)));
++  const runtime = json('runtime'), dashboard = json('dashboardRuntime');
++  verifySprint195Runtime({ runtime, dashboard, placement: json('runtimePlacement'), implementationHead, runtimePath: manifest.sources.runtime, read: bytes });
++  assert(manifest.sources.runtime.startsWith(`${base}/runtime/`)); assert.deepEqual(json('runtimeValidation').issues, []);
++  const ledger = json('componentLedger'), exported = json('componentExport'), proof = json('componentProof');
++  assert.equal(ledger.rows.length, 109); assert.equal(ledger.approvedRuntimeCensus, null);
++  for (const row of ledger.rows) assert.deepEqual(row.surfaces, exported.components.find(item => item.id === row.id)?.productReality.surfaces);
++  for (const target of ['react', 'vue']) assert.equal(ledger.rows.filter(row => row.surfaces[target].state === 'implemented-evidence-complete').length, 109);
++  assert.equal(proof.head, implementationHead); assert.equal(proof.status, 'passed'); assert(proof.references.length > 0); proof.references.forEach(verify);
++  assert(proof.sourceInputs?.length > 0, 'Fresh component evidence must bind its implementation and token inputs.'); proof.sourceInputs.forEach(verify);
++  for (const prefix of ['packages/component-contracts/', 'packages/component-styles/', 'packages/components-react/', 'packages/components-vue/', 'packages/tokens/src/']) assert(proof.sourceInputs.some(ref => ref.path.startsWith(prefix)), `Fresh component source inventory omits ${prefix}`);
++  for (const file of ['scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs']) assert(proof.sourceInputs.some(ref => ref.path === file));
++  const retention = json('componentRetention'); assert.equal(retention.base, S195_BASE); assert.equal(retention.head, implementationHead); assert.deepEqual(retention.changedPaths, []);
++  assert(retention.scope.length > 0 && !retention.scope.some(file => file.startsWith('packages/tokens')), 'Token theme proof must be refreshed, not retained as unchanged.');
++  for (const target of ['react', 'vue']) {
++    for (const key of [`${target}Theme`, `${target}Measured`]) { assert(manifest.sources[key].startsWith(`${base}/`)); assert(proof.references.some(ref => ref.path === manifest.sources[key])); }
++    const theme = json(`${target}Theme`); assert.equal(theme.status, 'passed'); assert.equal(theme.failed, 0); assert.equal(theme.skipped, 0); assert.equal(theme.cells.length, 6);
++    assert.equal(new Set(theme.cells.map(cell => `${cell.brand}-${cell.theme}`)).size, 6);
++    for (const cell of theme.cells) { assert.equal(cell.status, 'passed'); assert.equal(new Set(cell.rows.map(row => row.componentId)).size, 109); verify({ path: `${path.posix.dirname(manifest.sources[`${target}Theme`])}/${cell.screenshot}`, sha256: cell.screenshotSha256 }); }
++    const measured = json(`${target}Measured`); assert.equal(measured.success, true); assert.equal(measured.numFailedTests, 0); assert.equal(measured.numPendingTests, 0);
++    const axe = measured.testResults.filter(row => /accessibility\.spec\./.test(row.name)).flatMap(row => row.assertionResults).filter(row => /shared scenario/.test(row.fullName)); assert.equal(axe.length, 109); assert(axe.every(row => row.status === 'passed'));
++  }
++  const summary = verifySprint195Viz({ registry: json('registry'), census: json('vizCensus'), observations: json('vizObservations'), patterns: json('patternRegistry'), patternCensus: json('patternCensus'), taxonomy: json('taxonomy'), read: bytes });
++  const taxonomyCensus = json('taxonomyCensus'); assert.equal(taxonomyCensus.status, 'passed'); assert.equal(taxonomyCensus.head, implementationHead); assert.deepEqual(taxonomyCensus.summary, summary); assert.equal(taxonomyCensus.sha256, sha256(bytes(manifest.sources.taxonomy)));
++  const tools = json('toolLedger'); assert.equal(tools.rows.length, 24); assert.deepEqual(tools.summary.byTier, { 'product-reality': 19, contract: 5, unit: 0, none: 0 }); assert.equal(tools.rows.filter(row => row.registration === 'auto' && row.proofTier === 'product-reality').length, 19);
++  const toolProof = json('toolProof'); assert.equal(toolProof.byteIdentical, true); assert.equal(toolProof.censusHead, tools.head); assert.equal(toolProof.implementationHead, implementationHead); assert.equal(digest(toolProof.sha256), sha256(bytes(manifest.sources.toolLedger)));
++  const health = json('health'); assert.equal(health.status, 'ok'); assert.deepEqual(health.productReality.runtime, { ...runtime.summary, head: implementationHead }); assert.deepEqual(health.productReality.viz, summary); assert.deepEqual(health.productReality.tools, { entries: 24, byTier: tools.summary.byTier, head: tools.head });
++  const census = json('componentCensus'); assert.equal(census.head, implementationHead); assert.equal(census.greenTotalSchemas, 77); assert.equal(census.greenTotalCells, 154); assert.equal(census.allRows.length, 77); assert(census.allRows.every(row => row.green && row.cells.every(cell => !cell.errors.length)));
++  const movement = json('schemaMovement'); assert.equal(movement.changedSchemas + movement.unchangedSchemas, 77); assert.equal(movement.rows.length, movement.changedSchemas); assert.deepEqual(movement.unattributedChanges, []); assert.deepEqual([...movement.objectsGainingCharts].sort(), ['Invoice', 'Usage']); assert(movement.rows.every(row => row.class && row.missionId === 's195-m06' && row.reason && row.allOtherSchemaContentPreserved === true));
++  assert.equal(json('originalStore').reachable, 15); assert.equal(json('successorStore').reachable, 16); assert.equal(json('compatibility').liveStoreFiles, 17); assert.equal(json('compatibility').changedLiveFiles, 0);
++  const migration = json('paletteMigration'); assert.equal(migration.builderSelfCertified, false); assert.equal(migration.qualificationHead, '52b0da991705c4c565987bc9faf7738ba00d885e'); verify(migration.receipt);
++  const originalMigration = JSON.parse(bytes(migration.receipt.path)); assert.equal(originalMigration.qualificationHead, migration.qualificationHead); assert.equal(originalMigration.historicalRawFilesUnchanged, true);
++  for (const row of originalMigration.files) { assert.equal(sha256(readHistorical(migration.qualificationHead, row.file)), row.afterSha256); assert.equal(sha256(readHistorical(originalMigration.beforeHead, row.file)), row.beforeSha256); assert(nonempty(row.reason)); }
++  verifySprint195Bites({ index: json('bitesIndex'), implementationHead, read: bytes });
++  const soak = json('soak'); assert.equal(soak.disposition.code, 'OODS-SOAK-1442'); assert.equal(soak.disposition.status, 'typed-observation'); assert.equal(soak.disposition.retentionCertification, 'not-established'); assert.equal(soak.disposition.thresholdChanges, false); assert.equal(soak.provenRetentionCause, null);
++  const preFreeze = json('preFreeze'); assert.equal(preFreeze.status, 'passed'); assert.equal(preFreeze.skipped, 0); assert(preFreeze.reports.length > 0); for (const report of preFreeze.reports) { assert.equal(report.failed, 0); assert.equal(report.skipped, 0); verify(report); }
++  assert.equal(suiteAccounting.status, 'passed'); assert.equal(suiteAccounting.executionHead, executionHead); assert.equal(suiteAccounting.reviewHead, reviewHead); assert.deepEqual(suiteAccounting.validationIssues, []); assert.deepEqual(suiteAccounting.unattributedDeltas, []); assert.equal(suiteAccounting.closeout.runs.length, 1); assert.equal(suiteAccounting.closeout.runs[0].suiteExecutionIds.length, 5); assert.equal(suiteAccounting.comparisons.length, 5); suiteAccounting.references.forEach(verify);
++  assert.equal(publicHeadEquivalence.ancestor, true); assert.deepEqual(publicHeadEquivalence.scope, S195_PUBLIC_RUNTIME_SCOPE); assert.deepEqual(publicHeadEquivalence.changedPaths, []);
++  const movers = json('movers'), attribution = json('moverAttribution'); verifySprint195Attribution({ movers, attribution, implementationHead, readHistorical }); verify(attribution.patch); attribution.rows.forEach(row => row.evidence.forEach(verify));
++  const notice = json('noticePlan'); assert.equal(notice.implementationHead, implementationHead); assert.equal(notice.status, 'prepared-unsent'); assert.equal(notice.sent, false); assert.equal(notice.sendsExecuted, 0); assert.equal(notice.deliverySprint, 'sprint-196'); assert.deepEqual(notice.targets, ['cmos-dashboard', 'forge-demos', 'aquex-mcp']); assert.equal(notice.notices.length, 3);
++  for (const row of notice.notices) { assert.equal(sha256(JSON.stringify(row.request)), row.requestSha256); for (const text of ["theme:'hc'", 'pattern', 'artifact.certify', 'health.productReality.viz', 'builderSelfCertified:false']) assert(row.request.body.includes(text)); }
++  const ci = json('ci'); verifySprint195CI({ ci, implementationHead, read: bytes });
++  assert.equal(json('prose').exitCode, 0); assert(bytes(manifest.sources.near).toString().includes('Increment 14')); assert(bytes(manifest.sources.near).toString().includes('BUILT, REVIEW PENDING'));
++  const executions = manifest.executions.map(row => { assert(nonempty(row.id) && fullHead(row.head) && row.evidencePaths.length); const evidence = row.evidencePaths.map(file => { const value = bytes(file); if (row.historical) assert(value.equals(readHistorical(row.head, file)), `Historical receipt changed: ${file}`); return references.get(file); }); return { ...row, evidence }; });
++  assert.equal(new Set(executions.map(row => row.id)).size, executions.length); assert.equal(manifest.bindings.length, expected.length);
++  const claims = expected.map(criterion => { const rows = manifest.bindings.filter(row => row.missionId === criterion.missionId && row.criterionIndex === criterion.criterionIndex); assert.equal(rows.length, 1); const binding = rows[0]; assert(binding.executionIds.length && binding.evidencePaths.length); assert(binding.executionIds.every(id => executions.some(row => row.id === id))); const limited = binding.disposition === 'documented-limit'; if (limited) { assert(binding.decisionIds?.length && nonempty(binding.qualification)); assert(binding.decisionIds.every(id => missions.decisions.some(row => row.id === id))); } for (const file of binding.evidencePaths) { bytes(file); assert(binding.executionIds.some(id => executions.find(row => row.id === id).evidencePaths.includes(file)), `Claim lacks its executing receipt: ${file}`); } return { ...criterion, status: limited ? 'proven-with-documented-limit' : 'proven', ...(limited ? { decisionIds: binding.decisionIds, qualification: binding.qualification } : {}), executionIds: binding.executionIds, evidence: binding.evidencePaths.map(file => references.get(file)) }; });
++  const shared = { missionId: 's195-m07', sprintStatus: 'Active', builderSelfCertified: false, separateReviewRequired: true, implementationHead, executionHead, reviewHead };
++  return {
++    [`${base}/closeout/claim-ledger.json`]: { ...shared, claims, executions, headline: { total: expected.length, proven: expected.length, unproven: 0 }, references: [...references.values()] },
++    [`${base}/closeout/review-handoff.json`]: { ...shared, evidenceCommit: reviewHead, state: 'BUILT, REVIEW PENDING', exportVersion: '2026-09-11-s195-m07', sources: manifest.sources, claims: `${base}/closeout/claim-ledger.json`, suiteAccounting: `${base}/closeout/suite-accounting.json`, reconnect: notice, pullRequest: ci, limitations: ['Classification approval remains pending; approvedRuntimeCensus:null. No application craft approval.', 'Runtime154 canonical cells, four dashboard layout cells and48 placement theme checks are distinct populations from one pack.', 'Patterns:8 renderable and13 authoring-only. Core profile:13 surface-complete cells and7 typed gaps.', 'Four chart types have HC pixels; nine remain typed-deferred. ECharts certification requires its matching operand; spec-only remains uncertified/null, and bubble accuracy remains a measured failure.', 'ECharts object placement carries under decision1944. Full Invoice/Usage detail HTML is limited by Tabs normalization; chart-node HTML carries real SVG.', 'The strict soak remains OODS-SOAK-1442 observation; retention certification is not established.', 'Five Sprint194 portable limits remain historical carries. Current tool tiers are source boundary evidence, not new portable execution.', 'Sprint196 candidate delivery and three reconnect notices are prepared unsent.'] },
++    [`${base}/closeout/suite-accounting.json`]: suiteAccounting,
++  };
++}
++
+@@ -1109 +1377 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-    ...(manifest.missionId === 's194-m07' ? { sprintId: 'sprint-194', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's193-m07' ? { sprintId: 'sprint-193', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's192-m07' ? { sprintId: 'sprint-192', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's191-m05' ? { sprintId: 'sprint-191', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's190-m06' ? { sprintId: 'sprint-190', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's189-m06' ? { sprintId: 'sprint-189', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's188-m06' ? { sprintId: 'sprint-188', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's187-m06' ? { sprintId: 'sprint-187', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
++    ...(manifest.missionId === 's195-m07' ? { sprintId: 'sprint-195', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's194-m07' ? { sprintId: 'sprint-194', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's193-m07' ? { sprintId: 'sprint-193', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's192-m07' ? { sprintId: 'sprint-192', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's191-m05' ? { sprintId: 'sprint-191', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's190-m06' ? { sprintId: 'sprint-190', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's189-m06' ? { sprintId: 'sprint-189', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's188-m06' ? { sprintId: 'sprint-188', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's187-m06' ? { sprintId: 'sprint-187', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
+@@ -1114 +1382 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-    sprintId: manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
++    sprintId: manifest.missionId === 's195-m07' ? 'sprint-195' : manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+diff --git a/scripts/product-reality/s185-reconnect.mjs b/scripts/product-reality/s185-reconnect.mjs
+index 93d3c4c6..38e82fd1 100644
+--- a/scripts/product-reality/s185-reconnect.mjs
++++ b/scripts/product-reality/s185-reconnect.mjs
+@@ -22,0 +23,24 @@ export function buildNotices(movers, root = ROOT, options = {}) {
++  if (movers.missionId === 's195-m07') {
++    const head = movers.s195.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
++    const read = file => JSON.parse(source(head, file, root));
++    const tools = read('packages/mcp-server/registry/tool-capability-ledger.v1.json');
++    const registry = read('packages/viz-core/src/registry/viz-recipes.v1.json');
++    const patterns = read('packages/viz-core/src/registry/viz-patterns.v1.json');
++    const taxonomy = read('packages/viz-core/src/registry/viz-taxonomy.v1.json');
++    assert(tools.summary.auto === 19 && tools.summary.onDemand === 5 && tools.summary.autoByTier['product-reality'] === 19, 'Sprint195 reconnect requires the current 19 advertised tool proofs.');
++    const hc = registry.filter(row => row.themes.hc).map(row => row.chartType);
++    const body = [
++      `Sprint 195 candidate ${head}; prepared for Sprint 196 after independent review and delivery. Refresh discovery after delivery: 19 advertised tools and five on-demand tools remain.`,
++      `viz.render accepts pattern using the full pattern:viz:* identity. ${patterns.filter(row => row.publicSvg).length} of ${patterns.length} patterns have public SVG; the remainder are authoring-only with typed reasons. Conflicting pattern operands fail with OODS-V166; structural authoring-only patterns return OODS-V167.`,
++      `theme:'hc' is admitted on viz.render, dashboard.render and artifact.certify. HC chart pixels are measured for ${hc.join(', ')}; ${registry.length - hc.length} types retain typed renderer deferrals. HC uses declared system colours; contrast is exempt with a forced-colors note, not a numeric contrast pass.`,
++      'artifact.certify now certifies the eight ECharts types when supplied the matching data operand. A11y, accuracy and determinism remain graded; a real failing verdict stays conformant:false. Spec-only ECharts remain coverage:uncertified/conformant:null. Bubble radius scaling currently yields a measured accuracy failure; certification coverage is not a promise of conformance.',
++      `health.productReality.viz reports ${taxonomy.summary.types} types, ${taxonomy.summary.patterns} patterns, ${taxonomy.summary.families} families and ${taxonomy.summary.classified} classified identities; ${taxonomy.summary.coreSurfaceComplete} core cells have public surfaces and ${taxonomy.summary.typedGaps} remain typed gaps. Financial and scientific gaps remain explicit.`,
++      'Invoice line_items now supplies bar SVG and Usage samples supplies line SVG in generated React/Vue detail and dashboard views, with authored titles. Usage example rows are explicitly synthetic API-call counts. Existing Subscription area stays. ECharts object placement carries under decision1944; full Invoice/Usage detail HTML remains limited by Tabs normalization, while chart-node HTML contains real SVG.',
++      'The categorical palette meets the measured Role-A target with Role-C retained. Historical SVG and matrix evidence remains immutable with the m05 migration receipt. The strict soak result remains OODS-SOAK-1442 observation, not retention certification.',
++      'The five Sprint194 portable limits remain carried to Sprint196; current source boundary tiers do not promote those historical outcomes to passing portable execution. Classification and application craft approval remain pending.',
++      'Primary delivery remains the certified Sprint194 delivery recorded by s195-m01. This candidate is BUILT, REVIEW PENDING; builderSelfCertified:false. These notices are prepared only; candidate delivery and sends have not occurred.',
++      `Advertised/public movers from ${movers.s195.base}..${head}:\n${movers.s195.publicPaths.join('\n')}`,
++    ].join('\n\n');
++    return { missionId: 's195-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-196', targets,
++      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint195 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
++  }
+@@ -247 +271,2 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-  const rederived = sprintId === 'sprint-187'
++  const rederived = sprintId === 'sprint-195'
++    ? deriveMovers(movers.s195.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's195-m07', base: movers.s195.base }) : sprintId === 'sprint-187'
+diff --git a/scripts/product-reality/s185-sprint-wide-movers.mjs b/scripts/product-reality/s185-sprint-wide-movers.mjs
+index c3b40fe2..4ecb719d 100644
+--- a/scripts/product-reality/s185-sprint-wide-movers.mjs
++++ b/scripts/product-reality/s185-sprint-wide-movers.mjs
+@@ -54,0 +55,15 @@ export const S194_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S193_PUBLIC_RUNTIME_S
++export const S195_BASE = '5b25c3c9ec795315bf52a698d135c96bffd66393';
++export const S195_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S194_PUBLIC_RUNTIME_SCOPE,
++  'domains/saas-billing', 'src/core/trait-definition.ts', 'docs/viz', 'docs/authoring-traits-viz.md',
++  'examples/viz/patterns-v2', 'scripts/product-reality/s190-viz-census.ts',
++  'scripts/product-reality/s195-attribute-viz-goldens.py', 'scripts/product-reality/s195-certify-profile-migration.mjs',
++  'scripts/product-reality/s195-certify-profile-receipt.ts', 'scripts/product-reality/s195-certify-profile-schema.ts',
++  'scripts/product-reality/s195-chart-declaration-schema.ts', 'scripts/product-reality/s195-hc-browser.ts',
++  'scripts/product-reality/s195-hc-built-receipt.ts', 'scripts/product-reality/s195-hc-schema.ts',
++  'scripts/product-reality/s195-health-viz-schema.ts', 'scripts/product-reality/s195-palette.ts',
++  'scripts/product-reality/s195-pattern-census.ts', 'scripts/product-reality/s195-pattern-input-schema.ts',
++  'scripts/product-reality/s195-pattern-sources.ts', 'scripts/product-reality/s195-qualify-viz-matrix.ts',
++  'scripts/product-reality/s195-soak-observation.mjs', 'scripts/product-reality/s195-viz-accuracy-bite.mjs',
++  'scripts/product-reality/s195-viz-bite-probe.ts', 'scripts/product-reality/s195-viz-certification-migration.mjs',
++  'scripts/product-reality/s195-viz-matrix.ts', 'scripts/product-reality/s195-viz-mutation-bites.mjs',
++  'scripts/product-reality/s195-viz-taxonomy.ts']);
+@@ -103,0 +119,12 @@ export function deriveMovers(head, declaration, root = ROOT, options = {}) {
++  if (options.sprintId === 'sprint-195') {
++    assert(options.missionId === 's195-m07' && resolveCommit(options.base, root) === S195_BASE, 'Sprint195 requires its mission and locked build base.');
++    const range = deriveRange(S195_BASE, head, root, S195_PUBLIC_RUNTIME_SCOPE), comparison = { s195: {} };
++    for (const surface of ['canonicalPaths', 'publicPaths']) {
++      assert(Array.isArray(declaration?.s195?.[surface]), `Missing s195/${surface} declaration.`);
++      const result = compareDeclaredPaths(range[surface], declaration.s195[surface]);
++      assert(result.missingFromDeclaration.length === 0 && result.extraInDeclaration.length === 0, `s195/${surface}: declared mover union differs: ${canonical(result)}`);
++      comparison.s195[surface] = result;
++    }
++    return { missionId: 's195-m07', sprintId: 'sprint-195', status: 'passed', canonicalScope: CANONICAL_ADVERTISED_SCOPE,
++      publicScope: S195_PUBLIC_RUNTIME_SCOPE, s195: range, comparison };
++  }
+@@ -150 +177 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194'].includes(options.sprintId), 'Unsupported sprint.');
++  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(options.sprintId), 'Unsupported sprint.');
+@@ -159 +186 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-      ...(options.sprintId === 'sprint-194' ? { s194: deriveRange(options.base, head, ROOT, S194_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-193' ? { s193: deriveRange(options.base, head, ROOT, S193_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-192' ? { s192: deriveRange(options.base, head, ROOT, S192_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-191' ? { s191: deriveRange(options.base, head, ROOT, S191_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-190' ? { s190: deriveRange(options.base, head, ROOT, S190_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-189' ? { s189: deriveRange(options.base, head, ROOT, S189_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-188' ? { s188: deriveRange(options.base, head, ROOT, S188_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
++      ...(options.sprintId === 'sprint-195' ? { s195: deriveRange(options.base, head, ROOT, S195_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-194' ? { s194: deriveRange(options.base, head, ROOT, S194_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-193' ? { s193: deriveRange(options.base, head, ROOT, S193_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-192' ? { s192: deriveRange(options.base, head, ROOT, S192_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-191' ? { s191: deriveRange(options.base, head, ROOT, S191_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-190' ? { s190: deriveRange(options.base, head, ROOT, S190_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-189' ? { s189: deriveRange(options.base, head, ROOT, S189_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-188' ? { s188: deriveRange(options.base, head, ROOT, S188_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
+@@ -167 +194 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-  process.stdout.write(canonical(options.sprintId === 'sprint-194' ? { head, s194: { canonical: report.s194.canonicalPaths.length, public: report.s194.publicPaths.length } } : options.sprintId === 'sprint-193' ? { head, s193: { canonical: report.s193.canonicalPaths.length, public: report.s193.publicPaths.length } } : options.sprintId === 'sprint-192' ? { head, s192: { canonical: report.s192.canonicalPaths.length, public: report.s192.publicPaths.length } } : options.sprintId === 'sprint-191' ? { head, s191: { canonical: report.s191.canonicalPaths.length, public: report.s191.publicPaths.length } } : options.sprintId === 'sprint-190' ? { head, s190: { canonical: report.s190.canonicalPaths.length, public: report.s190.publicPaths.length } } : options.sprintId === 'sprint-189' ? { head, s189: { canonical: report.s189.canonicalPaths.length, public: report.s189.publicPaths.length } } : options.sprintId === 'sprint-188' ? { head, s188: { canonical: report.s188.canonicalPaths.length, public: report.s188.publicPaths.length } } : options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,
++  process.stdout.write(canonical(options.sprintId === 'sprint-195' ? { head, s195: { canonical: report.s195.canonicalPaths.length, public: report.s195.publicPaths.length } } : options.sprintId === 'sprint-194' ? { head, s194: { canonical: report.s194.canonicalPaths.length, public: report.s194.publicPaths.length } } : options.sprintId === 'sprint-193' ? { head, s193: { canonical: report.s193.canonicalPaths.length, public: report.s193.publicPaths.length } } : options.sprintId === 'sprint-192' ? { head, s192: { canonical: report.s192.canonicalPaths.length, public: report.s192.publicPaths.length } } : options.sprintId === 'sprint-191' ? { head, s191: { canonical: report.s191.canonicalPaths.length, public: report.s191.publicPaths.length } } : options.sprintId === 'sprint-190' ? { head, s190: { canonical: report.s190.canonicalPaths.length, public: report.s190.publicPaths.length } } : options.sprintId === 'sprint-189' ? { head, s189: { canonical: report.s189.canonicalPaths.length, public: report.s189.publicPaths.length } } : options.sprintId === 'sprint-188' ? { head, s188: { canonical: report.s188.canonicalPaths.length, public: report.s188.publicPaths.length } } : options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,
+diff --git a/scripts/product-reality/s185-suite-accounting.mjs b/scripts/product-reality/s185-suite-accounting.mjs
+index f0fd77e6..539dea21 100644
+--- a/scripts/product-reality/s185-suite-accounting.mjs
++++ b/scripts/product-reality/s185-suite-accounting.mjs
+@@ -213,0 +214 @@ export function allowedReviewEvidence(file, sprintId = 'sprint-185') {
++  if (sprintId === 'sprint-195') return /^artifacts\/product-reality\/sprint-195\/m07\/(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)$/.test(file);
+@@ -360 +361 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-  capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
++  capturePath = sprintId === 'sprint-195' ? 'artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json' : sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
+@@ -362,3 +363,3 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194'].includes(sprintId), 'Unsupported sprint.');
+-  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
+-  const baselinePaths = sprintId === 'sprint-194' ? { sprint193Closeout: baselinePath ?? 'artifacts/product-reality/sprint-193/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-193'
++  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(sprintId), 'Unsupported sprint.');
++  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-195' ? 's195-m07' : sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
++  const baselinePaths = sprintId === 'sprint-195' ? { sprint194Closeout: baselinePath ?? 'artifacts/product-reality/sprint-194/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-194' ? { sprint193Closeout: baselinePath ?? 'artifacts/product-reality/sprint-193/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-193'
+@@ -411 +412 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-      const selected = capture.suiteSelection === 'all' ? (['sprint-192', 'sprint-193', 'sprint-194'].includes(aggregate.sprintId) ? S192_SUITES : SUITES) : capture.suiteSelection;
++      const selected = capture.suiteSelection === 'all' ? (['sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(aggregate.sprintId) ? S192_SUITES : SUITES) : capture.suiteSelection;
+@@ -492 +493 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194'].includes(sprintId)) {
++  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(sprintId)) {
+@@ -555 +556 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-    for (const currentRun of closeout.runs) for (const baselineRun of baseline.runs) for (const suite of (['sprint-193', 'sprint-194'].includes(sprintId) ? S192_SUITES : SUITES)) {
++    for (const currentRun of closeout.runs) for (const baselineRun of baseline.runs) for (const suite of (['sprint-193', 'sprint-194', 'sprint-195'].includes(sprintId) ? S192_SUITES : SUITES)) {
+@@ -611 +612,3 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-  const goldenAttribution = sprintId === 'sprint-194' ? json('artifacts/product-reality/sprint-194/m07/golden-attribution.json') : sprintId === 'sprint-193' ? json('artifacts/product-reality/sprint-193/m07/golden-attribution.json') : sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
++  // Sprint 195's final attribution is distinct from the historically qualified
++  // m05 migration, whose non-golden docs and registry inputs may move in m06.
++  const goldenAttribution = sprintId === 'sprint-195' ? json('artifacts/product-reality/sprint-195/m07/golden-attribution.json') : sprintId === 'sprint-194' ? json('artifacts/product-reality/sprint-194/m07/golden-attribution.json') : sprintId === 'sprint-193' ? json('artifacts/product-reality/sprint-193/m07/golden-attribution.json') : sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
+@@ -627 +630 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead,
+-  return { schemaVersion: '1.0.0', mission: missionId, kind: ['sprint-192', 'sprint-193', 'sprint-194'].includes(sprintId) ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
++  return { schemaVersion: '1.0.0', mission: missionId, kind: ['sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(sprintId) ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
+@@ -652 +655 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
++    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-195' ? 's195-m07' : sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
+@@ -659 +662 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-  const output = path.resolve(ROOT, argument('--output') ?? (sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/accounting.json` : `${EVIDENCE_ROOT}/accounting.json`));
++  const output = path.resolve(ROOT, argument('--output') ?? (sprintId === 'sprint-195' ? 'artifacts/product-reality/sprint-195/m07/closeout/suite-accounting.json' : sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/accounting.json` : `${EVIDENCE_ROOT}/accounting.json`));
+diff --git a/scripts/product-reality/s193-tool-truth.mjs b/scripts/product-reality/s193-tool-truth.mjs
+index bb268bbc..9dc76d84 100644
+--- a/scripts/product-reality/s193-tool-truth.mjs
++++ b/scripts/product-reality/s193-tool-truth.mjs
+@@ -68 +68 @@ export function deriveToolTruth({ root = ROOT, head, mode = 's194' } = {}) {
+-  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-194\/m07\//.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
++  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-19[45]\/m07\//.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
+diff --git a/scripts/product-reality/s195-chart-declaration-schema.ts b/scripts/product-reality/s195-chart-declaration-schema.ts
+index 25d15bdd..344dd905 100644
+--- a/scripts/product-reality/s195-chart-declaration-schema.ts
++++ b/scripts/product-reality/s195-chart-declaration-schema.ts
+@@ -40,0 +41,2 @@ for (const [mark, chartType] of Object.entries({ area: 'area', bar: 'bar', line:
++  const traitName = `Mark${mark[0].toUpperCase()}${mark.slice(1)}`;
++  declaration.title = `${traitName}ChartDeclaration`;
+@@ -46 +48,5 @@ for (const [mark, chartType] of Object.entries({ area: 'area', bar: 'bar', line:
+-  parameters.$defs = { ...parameters.$defs, chartEncodingBinding: schema.$defs.chartEncodingBinding, chartColorEncodingBinding: schema.$defs.chartColorEncodingBinding };
++  parameters.$defs = {
++    ...parameters.$defs,
++    chartEncodingBinding: { ...schema.$defs.chartEncodingBinding, title: `${traitName}ChartEncodingBinding` },
++    chartColorEncodingBinding: { ...schema.$defs.chartColorEncodingBinding, title: `${traitName}ChartColorEncodingBinding` },
++  };

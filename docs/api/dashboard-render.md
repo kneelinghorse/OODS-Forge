@@ -4,11 +4,11 @@
 
 PANEL IDENTITY. Every successful chart panel returns the contentHash produced by its in-process viz.render call; it therefore matches a standalone viz.render call with the identical spec and data. Set the call-level output.includeNormalizedSpec flag to also return each successful chart panel's NormalizedVizSpec. That IR can be passed to artifact.certify as {spec} alone for a cartesian chart, or as {spec,data} with exactly the matching hierarchy, sankey, chord, network, or geo branch for an ECharts-primary chart. These per-panel identity fields are attached after the dashboard's canonical {panels,layout} projection is cached and hashed, so they do not feed the dashboard contentHash.
 
-HTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG; placeholders are reserved for error panels. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.
+HTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. All 11 admitted chart panel types draw server-rendered SVG in light and dark; HC draws the four supported Cartesian types and records unsupported paints as error panels with placeholders. Chord and flow_map stay excluded from dashboards (#881). output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification. HC scans return zero numerically graded pairs with a forced-colors explanation.
 
 BRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.
 
-SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document. Governed measureRef resolution defaults to true: KPI refs bind field/aggregate, chart refs decorate narrative only. Unknown refs produce OODS-V130; missing resolved fields produce OODS-V137 through the panel error policy. Explicit resolveMeasures:false opts out of ref resolution; inputs without refs retain their rendered bytes.
+SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document. Governed measureRef resolution defaults to true: KPI refs bind field/aggregate, chart refs decorate narrative only. Unknown refs produce OODS-V130; missing resolved fields produce OODS-V137 through the panel error policy. Explicit resolveMeasures:false opts out of ref resolution; inputs without refs retain their rendered bytes.
 
 **Registration:** auto
 
@@ -16,39 +16,54 @@ SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the 
 
 Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.
 
-Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 5 certified / 8 uncertified; uncertified results keep conformant:null.
+Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 13 certified / 0 uncertified; uncertified results keep conformant:null.
 
-Theme parameters: light (13/13) and dark (13/13); HC pixels (0/13) are deferred. Brand parameters: A, B. Default scope is light/A.
+Measured scope verdicts: 56 conformant / 4 nonconformant / 0 uncertified. Types with a nonconformant scope: bubble_map.
 
-Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.
+Theme parameters: light (13/13), dark (13/13) and hc (4/13 with measured SVGs; 9/13 typed-deferred). HC emits declared scope paints verbatim and contrast is forced-colors exempt; actual render failures still fail determinism. Brand parameters: A, B. Default scope is light/A.
+
+Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: OODS-V154, OODS-V155, OODS-V156, OODS-V157, OODS-V158, OODS-V159, OODS-V168, OODS-V169, OODS-V170, OODS-V171, OODS-V172, OODS-V173; applicability and evaluated counts depend on the data operand.
 
 | Type | Engine | Dashboard | Certification | Contrast measured | Application |
 | --- | --- | --- | --- | --- | --- |
-| bar | vega-lite | true | certified | light, dark | not-placed |
-| line | vega-lite | true | certified | light, dark | not-placed |
+| bar | vega-lite | true | certified | light, dark | placed |
+| line | vega-lite | true | certified | light, dark | placed |
 | area | vega-lite | true | certified | light, dark | placed |
 | scatter | vega-lite | true | certified | light, dark | not-placed |
 | heatmap | vega-lite | true | certified | none (exempt) | not-placed |
-| treemap | echarts | true | uncertified | light, dark | not-placed |
-| sunburst | echarts | true | uncertified | light, dark | not-placed |
-| sankey | echarts | true | uncertified | light, dark | not-placed |
-| chord | echarts | excluded (#881) | uncertified | light, dark | not-placed |
-| force_graph | echarts | true | uncertified | light, dark | not-placed |
-| choropleth | echarts | true | uncertified | none (exempt) | not-placed |
-| bubble_map | echarts | true | uncertified | none (exempt) | not-placed |
-| flow_map | echarts | excluded (#881) | uncertified | none (exempt) | not-placed |
+| treemap | echarts | true | certified | light, dark | not-placed |
+| sunburst | echarts | true | certified | light, dark | not-placed |
+| sankey | echarts | true | certified | light, dark | not-placed |
+| chord | echarts | excluded (#881) | certified | light, dark | not-placed |
+| force_graph | echarts | true | certified | light, dark | not-placed |
+| choropleth | echarts | true | certified | none (exempt) | not-placed |
+| bubble_map | echarts | true | certified | none (exempt) | not-placed |
+| flow_map | echarts | excluded (#881) | certified | none (exempt) | not-placed |
 
-- HC pixels deferred (#1851); HC token scopes retained.
+- HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.
 - Categorical contrast passes both brands in: light, dark.
-- Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
+- Composed chart declarations: Invoice/detail, Invoice/workflow, Invoice/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Composed chart declarations: Usage/detail, Usage/workflow, Usage/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Composed chart declarations: Subscription/detail, Subscription/workflow. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+- Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.
 - Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.
+- Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
 - Dashboard exclusion (#881): the public panel schema does not admit this type.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.
 
 ## Input Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `theme` | `light` \| `dark` | No | `"light"` | CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported. |
+| `theme` | `light` \| `dark` \| `hc` | No | `"light"` | CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented. |
 | `schemaVersion` | any | Yes |  | IR version discriminant (V01 convention). A future template/shape change bumps to v0.2. |
 | `id` | string | No |  | Stable identifier for the dashboard instance. |
 | `title` | string | No |  | Human-friendly dashboard title surfaced in UI + narration. |
@@ -87,12 +102,12 @@ Contrast measurement records actual categorical canvas grades, including failure
 | `links` | object[] | No | The declared cross-filter links (echoed). The cross-filter resolver applies any active 'selection' to each panel before render. |
 | `a11y` | _ref_ | No |  |
 | `tokenCssRef` | string | No | Deferred token CSS reference when compact mode is on (use tokens.build). |
-| `html` | string | No | Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical. |
+| `html` | string | No | Opt-in self-contained dashboard HTML with scoped chart SVG, KPI tiles and error placeholders. Light/dark renders all admitted chart types. HC chart rendering preserves declared token colors; unsupported renderer paints become typed error panels under the existing placeholder/omit policy. |
 | `specRef` | string | No | One dashboard-level reference to the composed payload for pipeline reuse. |
 | `specRefCreatedAt` | string | No |  |
 | `specRefExpiresAt` | string | No |  |
 | `contentHash` | string | No | Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs (sprint-134 m02). |
-| `outputHtmlHash` | string | No | Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim. |
+| `outputHtmlHash` | string | No | SHA-256 over the exact returned HTML bytes. Successful panels contain scoped SVG; failed panels follow the declared placeholder/omit policy, including measured HC render deferrals. This per-call identity is distinct from a certified runtime-matrix renderHashEpoch claim. |
 | `output` | object | No | Echoes the normalized output controls. |
 | `meta` | object | No |  |
 | `errors` | _ref_[] | No |  |

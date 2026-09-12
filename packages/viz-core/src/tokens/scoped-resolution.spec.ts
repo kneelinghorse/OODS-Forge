@@ -40,8 +40,9 @@ describe('scoped chrome follows CSS, with light/A as the default', () => {
       expect(resolveOodsVegaConfig(override, { theme })).not.toHaveProperty('range');
     }
   });
-  it('exports HC system values without claiming concrete server colors', () => {
+  it('emits HC system values verbatim through both chrome resolvers', () => {
     expect(resolveTokenValue('--sys-surface-canvas', { theme: 'hc' })).toBe('Canvas');
-    expect(() => resolveOodsVegaConfig(spec, { theme: 'hc' })).toThrow('color token did not resolve');
+    expect(resolveOodsVegaConfig(spec, { theme: 'hc' })).toMatchObject({ background: 'Canvas', title: { color: 'CanvasText' } });
+    expect(resolveOodsEchartsChrome(spec, { theme: 'hc' })).toMatchObject({ background: 'Canvas', title: 'CanvasText' });
   });
 });

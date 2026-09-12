@@ -1,0 +1,42 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 16
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+filename packages/mcp-server/src/tools/hc-svg-paints.ts
+	import tokens from '@oods/tokens';
+52b0da991705c4c565987bc9faf7738ba00d885e 2 2
+	import type { TokenScope } from '@oods/viz-core';
+52b0da991705c4c565987bc9faf7738ba00d885e 3 3
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4
+	/** A successful HC render must retain declared paints, not a renderer fallback palette. */
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5
+	export function assertHcSvgPaints(svg: string, scope: TokenScope): string {
+52b0da991705c4c565987bc9faf7738ba00d885e 6 6
+	  if (scope.theme !== 'hc') return svg;
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+	  const declared = new Set(Object.values(tokens.cssVariablesByScope[scope.brand ?? 'A'].hc).map(value => value.trim()));
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	  const paints = [...svg.matchAll(/\b(?:fill|stroke|stop-color)="([^"]+)"/g)].map(match => match[1]!);
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	  const styles = [...svg.matchAll(/\bstyle="([^"]*)"/g), ...svg.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)];
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	  for (const style of styles) {
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	    paints.push(...[...style[1]!.matchAll(/(?:^|[;{\s])(?:fill|stroke|stop-color)\s*:\s*([^;}]+)/g)].map(match => match[1]!.trim()));
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	  const rejected = [...new Set(paints.filter(paint => !declared.has(paint) && !/^(?:none|transparent|url\(#[^)]+\))$/.test(paint)))];
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	  if (rejected.length) throw new Error(`HC renderer emitted paints outside the declared ${scope.brand ?? 'A'}/hc token scope: ${rejected.join(', ')}. Forced-colors rendering is deferred; no replacement palette was invented.`);
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	  return svg;
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	}

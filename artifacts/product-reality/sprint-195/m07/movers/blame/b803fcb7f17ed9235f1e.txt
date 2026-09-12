@@ -1,0 +1,54 @@
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 484 484 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	      - name: Measure canonical and chart dashboard cells from one tarball sweep
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 485 485
+	        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-195/m07-ci --workflows --dashboard-objects=Invoice,Usage
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 488 488 4
+	          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-195/m07-ci/runtime-cells.v1.json
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 489 489
+	        run: |
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 490 490
+	          pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 491 491
+	          pnpm exec tsx artifacts/product-reality/sprint-195/m06/verify-runtime.ts artifacts/product-reality/sprint-195/m07-ci > artifacts/product-reality/sprint-195/m07-ci/placement-verification.json
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 496 496 1
+	          path: artifacts/product-reality/sprint-195/m07-ci
+a3158282bba25713171d7216181bde28b69a80a1 958 960 9
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	      - name: Run strict ECharts soak and retain the typed resource observation
+a3158282bba25713171d7216181bde28b69a80a1 959 961
+	        run: node scripts/product-reality/s195-soak-observation.mjs
+a3158282bba25713171d7216181bde28b69a80a1 960 962
+	
+a3158282bba25713171d7216181bde28b69a80a1 961 963
+	      - name: Retain strict soak result and resource samples
+a3158282bba25713171d7216181bde28b69a80a1 962 964
+	        if: always()
+a3158282bba25713171d7216181bde28b69a80a1 963 965
+	        uses: actions/upload-artifact@v4
+a3158282bba25713171d7216181bde28b69a80a1 964 966
+	        with:
+a3158282bba25713171d7216181bde28b69a80a1 965 967
+	          name: echarts-soak-observation
+a3158282bba25713171d7216181bde28b69a80a1 966 968
+	          path: artifacts/echarts-soak/

@@ -1,0 +1,2398 @@
+{
+  "producer": "compiled mcp-server dist handlers and registered AJV schemas",
+  "cells": [
+    {
+      "object": "Invoice",
+      "framework": "html",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "ve-header-24",
+              "component": "VizMarkPreview",
+              "props": {
+                "title": "Invoice line item amounts",
+                "description": "Line-item amounts in minor currency units; matching descriptions are summed."
+              },
+              "chart": {
+                "chartType": "bar",
+                "source": "record-array",
+                "dataField": "line_items",
+                "encodings": {
+                  "x": {
+                    "field": "description",
+                    "title": "Line item"
+                  },
+                  "y": {
+                    "field": "amount_minor",
+                    "aggregate": "sum",
+                    "title": "Amount (minor units)"
+                  }
+                },
+                "sampleRows": [
+                  {
+                    "description": "Scale plan",
+                    "quantity": 1,
+                    "amount_minor": 284000,
+                    "unit_amount_minor": 284000
+                  }
+                ]
+              }
+            }
+          ],
+          "objectSchema": {
+            "invoice_number": {
+              "type": "string",
+              "required": true,
+              "description": "Human readable invoice identifier presented to customers.",
+              "semanticType": "billing.invoice.number"
+            },
+            "status": {
+              "type": "string",
+              "required": true,
+              "description": "Canonical invoice status after provider mapping.",
+              "semanticType": "billing.invoice.status"
+            },
+            "provider_status": {
+              "type": "string",
+              "required": false,
+              "description": "Original provider reported status or badge.",
+              "semanticType": "billing.invoice.provider_status"
+            },
+            "issued_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp when the invoice was finalized or posted.",
+              "semanticType": "billing.invoice.issued_at"
+            },
+            "due_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Payment due timestamp derived from payment terms.",
+              "semanticType": "billing.invoice.due_at"
+            },
+            "paid_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when full payment cleared.",
+              "semanticType": "billing.invoice.paid_at"
+            },
+            "total_minor": {
+              "type": "integer",
+              "required": true,
+              "description": "Total amount due expressed in minor currency units.",
+              "semanticType": "billing.invoice.total_minor"
+            },
+            "balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining amount outstanding in minor units.",
+              "semanticType": "billing.invoice.balance_minor"
+            },
+            "currency": {
+              "type": "string",
+              "required": true,
+              "description": "ISO 4217 currency for the invoice.",
+              "semanticType": "billing.invoice.currency"
+            },
+            "payment_terms": {
+              "type": "string",
+              "required": false,
+              "description": "Payment term label describing when payment is expected.",
+              "semanticType": "billing.invoice.payment_terms"
+            },
+            "collection_state": {
+              "type": "string",
+              "required": false,
+              "description": "Dunning phase or retry program detail presented to success teams.",
+              "semanticType": "billing.invoice.collection_state"
+            },
+            "last_reminder_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp of most recent payment reminder issued to customer.",
+              "semanticType": "billing.invoice.last_reminder_at"
+            },
+            "aging_bucket_days": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of days outstanding grouped for aging reports.",
+              "semanticType": "billing.invoice.aging_bucket_days"
+            },
+            "attempt_count": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.attempt_count"
+            },
+            "next_payment_attempt": {
+              "type": "datetime",
+              "required": false,
+              "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.next_payment_attempt"
+            },
+            "memo": {
+              "type": "string",
+              "required": false,
+              "description": "Internal finance note or customer visible memo.",
+              "semanticType": "billing.invoice.memo"
+            },
+            "refundable_until": {
+              "type": "datetime",
+              "required": false,
+              "description": "Date when refund eligibility window ends for this record.",
+              "semanticType": "billing.refund.window_end"
+            },
+            "refund_policy_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to customer facing refund or cancellation policy.",
+              "semanticType": "billing.refund.policy_link"
+            },
+            "total_refunded_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cumulative amount refunded in minor currency units.",
+              "semanticType": "billing.refund.total_minor"
+            },
+            "credit_memo_balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining credit memo balance that can be applied to invoices.",
+              "semanticType": "billing.refund.credit_memo_balance_minor"
+            },
+            "credit_memo_type": {
+              "type": "string",
+              "required": false,
+              "description": "Category of credit memo tied to business justification.",
+              "semanticType": "billing.refund.credit_memo_type"
+            },
+            "last_refund_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when the most recent refund was issued.",
+              "semanticType": "billing.refund.last_refund_at"
+            },
+            "requires_manager_approval": {
+              "type": "boolean",
+              "required": false,
+              "description": "Indicates if finance manager approval is required before issuing refund.",
+              "semanticType": "billing.refund.requires_manager_approval"
+            },
+            "notes": {
+              "type": "string",
+              "required": false,
+              "description": "Internal commentary about refund actions or policy exceptions.",
+              "semanticType": "billing.refund.notes"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "invoice_id": {
+              "type": "string",
+              "required": true,
+              "description": "Primary identifier for the invoice inside the billing domain.",
+              "semanticType": "billing.invoice.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription identifier this invoice is associated with.",
+              "semanticType": "billing.invoice.subscription_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source system providing invoice data.",
+              "semanticType": "billing.invoice.provider"
+            },
+            "provider_invoice_id": {
+              "type": "string",
+              "required": false,
+              "description": "Native provider identifier retained for audit trails.",
+              "semanticType": "billing.invoice.provider_id"
+            },
+            "billing_contact_name": {
+              "type": "string",
+              "required": false,
+              "description": "Customer billing contact receiving the invoice.",
+              "semanticType": "billing.invoice.billing_contact_name"
+            },
+            "billing_contact_email": {
+              "type": "email",
+              "required": false,
+              "description": "Email address for the billing contact.",
+              "semanticType": "billing.invoice.billing_contact_email"
+            },
+            "tax_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Tax amount collected on the invoice in minor currency units.",
+              "semanticType": "billing.invoice.tax_minor"
+            },
+            "discount_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Total discounts applied to the invoice in minor units.",
+              "semanticType": "billing.invoice.discount_minor"
+            },
+            "subtotal_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Subtotal before discounts and tax in minor units.",
+              "semanticType": "billing.invoice.subtotal_minor"
+            },
+            "line_items": {
+              "type": "InvoiceLineItem[]",
+              "required": false,
+              "description": "Normalized line items with quantity, amount_minor, and description fields.",
+              "semanticType": "billing.invoice.line_items"
+            },
+            "attachments": {
+              "type": "AssetReference[]",
+              "required": false,
+              "description": "Supporting documents or credit memos associated with the invoice.",
+              "semanticType": "billing.invoice.attachments"
+            },
+            "portal_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to the hosted invoice or customer billing portal.",
+              "semanticType": "billing.invoice.portal_url"
+            },
+            "dunning_step": {
+              "type": "string",
+              "required": false,
+              "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+              "semanticType": "billing.invoice.dunning_step"
+            },
+            "payment_source": {
+              "type": "string",
+              "required": false,
+              "description": "Payment method used or expected (card, ach, wire).",
+              "semanticType": "billing.invoice.payment_source"
+            }
+          }
+        },
+        "framework": "html",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "bar",
+        "source": "record-array",
+        "dataField": "line_items",
+        "encodings": {
+          "x": {
+            "field": "description",
+            "title": "Line item"
+          },
+          "y": {
+            "field": "amount_minor",
+            "aggregate": "sum",
+            "title": "Amount (minor units)"
+          }
+        },
+        "sampleRows": [
+          {
+            "description": "Scale plan",
+            "quantity": 1,
+            "amount_minor": 284000,
+            "unit_amount_minor": 284000
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/bar-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h240v65h-240Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\"><g transform=\"translate(0.5,65.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(119.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Scale plan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"240\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(120,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Line item</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,68)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,24.666666666666668)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">200,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"0\" y2=\"-65\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,32.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Amount (minor units)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Line item: Scale plan; Amount (minor units): 284000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M12,3.4666666666666672h216v61.53333333333333h-216Z\" fill=\"#517FED\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78.00000000000001,-83.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Invoice line item amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Invoice line item amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:94868eddbc79f6c3b7cb90d0f40ef0debc522f3cc9b674833ae948cc78b0b8b3"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:dbb93b7b3fa5abd3d0e1eb896add9787f9d0c7308896b437574ea722fc9ea46d"
+    },
+    {
+      "object": "Invoice",
+      "framework": "react",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "screen-detail-13",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-header-1",
+                  "component": "Stack",
+                  "layout": {
+                    "type": "inline",
+                    "align": "space-between"
+                  },
+                  "style": {
+                    "spacingToken": "inset-default"
+                  },
+                  "children": [
+                    {
+                      "id": "slot-header-2",
+                      "component": "Stack",
+                      "meta": {
+                        "intent": "slot:header",
+                        "label": "header"
+                      },
+                      "children": [
+                        {
+                          "id": "primary-header-25",
+                          "component": "DetailHeader",
+                          "props": {
+                            "field": "billing_contact_name",
+                            "label": "Billing contact name"
+                          }
+                        },
+                        {
+                          "id": "ve-header-24",
+                          "component": "VizMarkPreview",
+                          "props": {
+                            "title": "Invoice line item amounts",
+                            "description": "Line-item amounts in minor currency units; matching descriptions are summed."
+                          },
+                          "chart": {
+                            "chartType": "bar",
+                            "source": "record-array",
+                            "dataField": "line_items",
+                            "encodings": {
+                              "x": {
+                                "field": "description",
+                                "title": "Line item"
+                              },
+                              "y": {
+                                "field": "amount_minor",
+                                "aggregate": "sum",
+                                "title": "Amount (minor units)"
+                              }
+                            },
+                            "sampleRows": [
+                              {
+                                "description": "Scale plan",
+                                "quantity": 1,
+                                "amount_minor": 284000,
+                                "unit_amount_minor": 284000
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "detail-body-10",
+                  "component": "Card",
+                  "layout": {
+                    "type": "sidebar",
+                    "gapToken": "cluster-default"
+                  },
+                  "children": [
+                    {
+                      "id": "detail-tabs-9",
+                      "component": "Tabs",
+                      "children": [
+                        {
+                          "id": "detail-tab-panel-3",
+                          "component": "Stack",
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-default"
+                          },
+                          "props": {
+                            "label": "Details"
+                          },
+                          "children": [
+                            {
+                              "id": "slot-tab-0-4",
+                              "component": "Stack",
+                              "meta": {
+                                "intent": "slot:tab-0",
+                                "label": "tab-0",
+                                "notes": "pattern-group:status-timeline"
+                              },
+                              "props": {
+                                "patternComponent": "StatusTimeline",
+                                "fields": [
+                                  "status",
+                                  "updated_at"
+                                ]
+                              },
+                              "layout": {
+                                "type": "stack",
+                                "gapToken": "cluster-tight"
+                              },
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-27",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status",
+                                    "label": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-28",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at",
+                                    "label": "Updated at"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "slot-tab-2-8",
+                              "component": "Text",
+                              "meta": {
+                                "intent": "slot:tab-2",
+                                "label": "tab-2",
+                                "confidence": 0.76,
+                                "confidenceLevel": "low"
+                              },
+                              "props": {
+                                "field": "created_at",
+                                "label": "Created at"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "props": {
+                        "ariaLabel": "Record details"
+                      }
+                    },
+                    {
+                      "id": "detail-meta-11",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-tight"
+                      },
+                      "style": {
+                        "spacingToken": "inset-default"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ],
+              "bindings": {
+                "onEdit": "handleEdit",
+                "onDelete": "handleDelete",
+                "onViewTimeline": "handleViewTimeline"
+              }
+            }
+          ],
+          "objectSchema": {
+            "invoice_number": {
+              "type": "string",
+              "required": true,
+              "description": "Human readable invoice identifier presented to customers.",
+              "semanticType": "billing.invoice.number"
+            },
+            "status": {
+              "type": "string",
+              "required": true,
+              "description": "Canonical invoice status after provider mapping.",
+              "semanticType": "billing.invoice.status"
+            },
+            "provider_status": {
+              "type": "string",
+              "required": false,
+              "description": "Original provider reported status or badge.",
+              "semanticType": "billing.invoice.provider_status"
+            },
+            "issued_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp when the invoice was finalized or posted.",
+              "semanticType": "billing.invoice.issued_at"
+            },
+            "due_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Payment due timestamp derived from payment terms.",
+              "semanticType": "billing.invoice.due_at"
+            },
+            "paid_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when full payment cleared.",
+              "semanticType": "billing.invoice.paid_at"
+            },
+            "total_minor": {
+              "type": "integer",
+              "required": true,
+              "description": "Total amount due expressed in minor currency units.",
+              "semanticType": "billing.invoice.total_minor"
+            },
+            "balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining amount outstanding in minor units.",
+              "semanticType": "billing.invoice.balance_minor"
+            },
+            "currency": {
+              "type": "string",
+              "required": true,
+              "description": "ISO 4217 currency for the invoice.",
+              "semanticType": "billing.invoice.currency"
+            },
+            "payment_terms": {
+              "type": "string",
+              "required": false,
+              "description": "Payment term label describing when payment is expected.",
+              "semanticType": "billing.invoice.payment_terms"
+            },
+            "collection_state": {
+              "type": "string",
+              "required": false,
+              "description": "Dunning phase or retry program detail presented to success teams.",
+              "semanticType": "billing.invoice.collection_state"
+            },
+            "last_reminder_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp of most recent payment reminder issued to customer.",
+              "semanticType": "billing.invoice.last_reminder_at"
+            },
+            "aging_bucket_days": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of days outstanding grouped for aging reports.",
+              "semanticType": "billing.invoice.aging_bucket_days"
+            },
+            "attempt_count": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.attempt_count"
+            },
+            "next_payment_attempt": {
+              "type": "datetime",
+              "required": false,
+              "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.next_payment_attempt"
+            },
+            "memo": {
+              "type": "string",
+              "required": false,
+              "description": "Internal finance note or customer visible memo.",
+              "semanticType": "billing.invoice.memo"
+            },
+            "refundable_until": {
+              "type": "datetime",
+              "required": false,
+              "description": "Date when refund eligibility window ends for this record.",
+              "semanticType": "billing.refund.window_end"
+            },
+            "refund_policy_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to customer facing refund or cancellation policy.",
+              "semanticType": "billing.refund.policy_link"
+            },
+            "total_refunded_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cumulative amount refunded in minor currency units.",
+              "semanticType": "billing.refund.total_minor"
+            },
+            "credit_memo_balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining credit memo balance that can be applied to invoices.",
+              "semanticType": "billing.refund.credit_memo_balance_minor"
+            },
+            "credit_memo_type": {
+              "type": "string",
+              "required": false,
+              "description": "Category of credit memo tied to business justification.",
+              "semanticType": "billing.refund.credit_memo_type"
+            },
+            "last_refund_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when the most recent refund was issued.",
+              "semanticType": "billing.refund.last_refund_at"
+            },
+            "requires_manager_approval": {
+              "type": "boolean",
+              "required": false,
+              "description": "Indicates if finance manager approval is required before issuing refund.",
+              "semanticType": "billing.refund.requires_manager_approval"
+            },
+            "notes": {
+              "type": "string",
+              "required": false,
+              "description": "Internal commentary about refund actions or policy exceptions.",
+              "semanticType": "billing.refund.notes"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "invoice_id": {
+              "type": "string",
+              "required": true,
+              "description": "Primary identifier for the invoice inside the billing domain.",
+              "semanticType": "billing.invoice.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription identifier this invoice is associated with.",
+              "semanticType": "billing.invoice.subscription_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source system providing invoice data.",
+              "semanticType": "billing.invoice.provider"
+            },
+            "provider_invoice_id": {
+              "type": "string",
+              "required": false,
+              "description": "Native provider identifier retained for audit trails.",
+              "semanticType": "billing.invoice.provider_id"
+            },
+            "billing_contact_name": {
+              "type": "string",
+              "required": false,
+              "description": "Customer billing contact receiving the invoice.",
+              "semanticType": "billing.invoice.billing_contact_name"
+            },
+            "billing_contact_email": {
+              "type": "email",
+              "required": false,
+              "description": "Email address for the billing contact.",
+              "semanticType": "billing.invoice.billing_contact_email"
+            },
+            "tax_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Tax amount collected on the invoice in minor currency units.",
+              "semanticType": "billing.invoice.tax_minor"
+            },
+            "discount_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Total discounts applied to the invoice in minor units.",
+              "semanticType": "billing.invoice.discount_minor"
+            },
+            "subtotal_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Subtotal before discounts and tax in minor units.",
+              "semanticType": "billing.invoice.subtotal_minor"
+            },
+            "line_items": {
+              "type": "InvoiceLineItem[]",
+              "required": false,
+              "description": "Normalized line items with quantity, amount_minor, and description fields.",
+              "semanticType": "billing.invoice.line_items"
+            },
+            "attachments": {
+              "type": "AssetReference[]",
+              "required": false,
+              "description": "Supporting documents or credit memos associated with the invoice.",
+              "semanticType": "billing.invoice.attachments"
+            },
+            "portal_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to the hosted invoice or customer billing portal.",
+              "semanticType": "billing.invoice.portal_url"
+            },
+            "dunning_step": {
+              "type": "string",
+              "required": false,
+              "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+              "semanticType": "billing.invoice.dunning_step"
+            },
+            "payment_source": {
+              "type": "string",
+              "required": false,
+              "description": "Payment method used or expected (card, ach, wire).",
+              "semanticType": "billing.invoice.payment_source"
+            }
+          }
+        },
+        "framework": "react",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "bar",
+        "source": "record-array",
+        "dataField": "line_items",
+        "encodings": {
+          "x": {
+            "field": "description",
+            "title": "Line item"
+          },
+          "y": {
+            "field": "amount_minor",
+            "aggregate": "sum",
+            "title": "Amount (minor units)"
+          }
+        },
+        "sampleRows": [
+          {
+            "description": "Scale plan",
+            "quantity": 1,
+            "amount_minor": 284000,
+            "unit_amount_minor": 284000
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/bar-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h240v65h-240Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\"><g transform=\"translate(0.5,65.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(119.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Scale plan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"240\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(120,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Line item</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,68)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,24.666666666666668)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">200,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"0\" y2=\"-65\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,32.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Amount (minor units)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Line item: Scale plan; Amount (minor units): 284000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M12,3.4666666666666672h216v61.53333333333333h-216Z\" fill=\"#517FED\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78.00000000000001,-83.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Invoice line item amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Invoice line item amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:94868eddbc79f6c3b7cb90d0f40ef0debc522f3cc9b674833ae948cc78b0b8b3"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:406859e608102ef1b78d43bc7a2a34fc97c74364cbc806d3a7e2d756e43ec1a3"
+    },
+    {
+      "object": "Invoice",
+      "framework": "vue",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "screen-detail-13",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-header-1",
+                  "component": "Stack",
+                  "layout": {
+                    "type": "inline",
+                    "align": "space-between"
+                  },
+                  "style": {
+                    "spacingToken": "inset-default"
+                  },
+                  "children": [
+                    {
+                      "id": "slot-header-2",
+                      "component": "Stack",
+                      "meta": {
+                        "intent": "slot:header",
+                        "label": "header"
+                      },
+                      "children": [
+                        {
+                          "id": "primary-header-25",
+                          "component": "DetailHeader",
+                          "props": {
+                            "field": "billing_contact_name",
+                            "label": "Billing contact name"
+                          }
+                        },
+                        {
+                          "id": "ve-header-24",
+                          "component": "VizMarkPreview",
+                          "props": {
+                            "title": "Invoice line item amounts",
+                            "description": "Line-item amounts in minor currency units; matching descriptions are summed."
+                          },
+                          "chart": {
+                            "chartType": "bar",
+                            "source": "record-array",
+                            "dataField": "line_items",
+                            "encodings": {
+                              "x": {
+                                "field": "description",
+                                "title": "Line item"
+                              },
+                              "y": {
+                                "field": "amount_minor",
+                                "aggregate": "sum",
+                                "title": "Amount (minor units)"
+                              }
+                            },
+                            "sampleRows": [
+                              {
+                                "description": "Scale plan",
+                                "quantity": 1,
+                                "amount_minor": 284000,
+                                "unit_amount_minor": 284000
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "detail-body-10",
+                  "component": "Card",
+                  "layout": {
+                    "type": "sidebar",
+                    "gapToken": "cluster-default"
+                  },
+                  "children": [
+                    {
+                      "id": "detail-tabs-9",
+                      "component": "Tabs",
+                      "children": [
+                        {
+                          "id": "detail-tab-panel-3",
+                          "component": "Stack",
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-default"
+                          },
+                          "props": {
+                            "label": "Details"
+                          },
+                          "children": [
+                            {
+                              "id": "slot-tab-0-4",
+                              "component": "Stack",
+                              "meta": {
+                                "intent": "slot:tab-0",
+                                "label": "tab-0",
+                                "notes": "pattern-group:status-timeline"
+                              },
+                              "props": {
+                                "patternComponent": "StatusTimeline",
+                                "fields": [
+                                  "status",
+                                  "updated_at"
+                                ]
+                              },
+                              "layout": {
+                                "type": "stack",
+                                "gapToken": "cluster-tight"
+                              },
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-27",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status",
+                                    "label": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-28",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at",
+                                    "label": "Updated at"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "slot-tab-2-8",
+                              "component": "Text",
+                              "meta": {
+                                "intent": "slot:tab-2",
+                                "label": "tab-2",
+                                "confidence": 0.76,
+                                "confidenceLevel": "low"
+                              },
+                              "props": {
+                                "field": "created_at",
+                                "label": "Created at"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "props": {
+                        "ariaLabel": "Record details"
+                      }
+                    },
+                    {
+                      "id": "detail-meta-11",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-tight"
+                      },
+                      "style": {
+                        "spacingToken": "inset-default"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ],
+              "bindings": {
+                "onEdit": "handleEdit",
+                "onDelete": "handleDelete",
+                "onViewTimeline": "handleViewTimeline"
+              }
+            }
+          ],
+          "objectSchema": {
+            "invoice_number": {
+              "type": "string",
+              "required": true,
+              "description": "Human readable invoice identifier presented to customers.",
+              "semanticType": "billing.invoice.number"
+            },
+            "status": {
+              "type": "string",
+              "required": true,
+              "description": "Canonical invoice status after provider mapping.",
+              "semanticType": "billing.invoice.status"
+            },
+            "provider_status": {
+              "type": "string",
+              "required": false,
+              "description": "Original provider reported status or badge.",
+              "semanticType": "billing.invoice.provider_status"
+            },
+            "issued_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp when the invoice was finalized or posted.",
+              "semanticType": "billing.invoice.issued_at"
+            },
+            "due_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Payment due timestamp derived from payment terms.",
+              "semanticType": "billing.invoice.due_at"
+            },
+            "paid_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when full payment cleared.",
+              "semanticType": "billing.invoice.paid_at"
+            },
+            "total_minor": {
+              "type": "integer",
+              "required": true,
+              "description": "Total amount due expressed in minor currency units.",
+              "semanticType": "billing.invoice.total_minor"
+            },
+            "balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining amount outstanding in minor units.",
+              "semanticType": "billing.invoice.balance_minor"
+            },
+            "currency": {
+              "type": "string",
+              "required": true,
+              "description": "ISO 4217 currency for the invoice.",
+              "semanticType": "billing.invoice.currency"
+            },
+            "payment_terms": {
+              "type": "string",
+              "required": false,
+              "description": "Payment term label describing when payment is expected.",
+              "semanticType": "billing.invoice.payment_terms"
+            },
+            "collection_state": {
+              "type": "string",
+              "required": false,
+              "description": "Dunning phase or retry program detail presented to success teams.",
+              "semanticType": "billing.invoice.collection_state"
+            },
+            "last_reminder_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp of most recent payment reminder issued to customer.",
+              "semanticType": "billing.invoice.last_reminder_at"
+            },
+            "aging_bucket_days": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of days outstanding grouped for aging reports.",
+              "semanticType": "billing.invoice.aging_bucket_days"
+            },
+            "attempt_count": {
+              "type": "integer",
+              "required": false,
+              "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.attempt_count"
+            },
+            "next_payment_attempt": {
+              "type": "datetime",
+              "required": false,
+              "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+              "semanticType": "billing.invoice.next_payment_attempt"
+            },
+            "memo": {
+              "type": "string",
+              "required": false,
+              "description": "Internal finance note or customer visible memo.",
+              "semanticType": "billing.invoice.memo"
+            },
+            "refundable_until": {
+              "type": "datetime",
+              "required": false,
+              "description": "Date when refund eligibility window ends for this record.",
+              "semanticType": "billing.refund.window_end"
+            },
+            "refund_policy_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to customer facing refund or cancellation policy.",
+              "semanticType": "billing.refund.policy_link"
+            },
+            "total_refunded_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cumulative amount refunded in minor currency units.",
+              "semanticType": "billing.refund.total_minor"
+            },
+            "credit_memo_balance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Remaining credit memo balance that can be applied to invoices.",
+              "semanticType": "billing.refund.credit_memo_balance_minor"
+            },
+            "credit_memo_type": {
+              "type": "string",
+              "required": false,
+              "description": "Category of credit memo tied to business justification.",
+              "semanticType": "billing.refund.credit_memo_type"
+            },
+            "last_refund_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp when the most recent refund was issued.",
+              "semanticType": "billing.refund.last_refund_at"
+            },
+            "requires_manager_approval": {
+              "type": "boolean",
+              "required": false,
+              "description": "Indicates if finance manager approval is required before issuing refund.",
+              "semanticType": "billing.refund.requires_manager_approval"
+            },
+            "notes": {
+              "type": "string",
+              "required": false,
+              "description": "Internal commentary about refund actions or policy exceptions.",
+              "semanticType": "billing.refund.notes"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "invoice_id": {
+              "type": "string",
+              "required": true,
+              "description": "Primary identifier for the invoice inside the billing domain.",
+              "semanticType": "billing.invoice.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription identifier this invoice is associated with.",
+              "semanticType": "billing.invoice.subscription_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source system providing invoice data.",
+              "semanticType": "billing.invoice.provider"
+            },
+            "provider_invoice_id": {
+              "type": "string",
+              "required": false,
+              "description": "Native provider identifier retained for audit trails.",
+              "semanticType": "billing.invoice.provider_id"
+            },
+            "billing_contact_name": {
+              "type": "string",
+              "required": false,
+              "description": "Customer billing contact receiving the invoice.",
+              "semanticType": "billing.invoice.billing_contact_name"
+            },
+            "billing_contact_email": {
+              "type": "email",
+              "required": false,
+              "description": "Email address for the billing contact.",
+              "semanticType": "billing.invoice.billing_contact_email"
+            },
+            "tax_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Tax amount collected on the invoice in minor currency units.",
+              "semanticType": "billing.invoice.tax_minor"
+            },
+            "discount_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Total discounts applied to the invoice in minor units.",
+              "semanticType": "billing.invoice.discount_minor"
+            },
+            "subtotal_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Subtotal before discounts and tax in minor units.",
+              "semanticType": "billing.invoice.subtotal_minor"
+            },
+            "line_items": {
+              "type": "InvoiceLineItem[]",
+              "required": false,
+              "description": "Normalized line items with quantity, amount_minor, and description fields.",
+              "semanticType": "billing.invoice.line_items"
+            },
+            "attachments": {
+              "type": "AssetReference[]",
+              "required": false,
+              "description": "Supporting documents or credit memos associated with the invoice.",
+              "semanticType": "billing.invoice.attachments"
+            },
+            "portal_url": {
+              "type": "string",
+              "required": false,
+              "description": "Link to the hosted invoice or customer billing portal.",
+              "semanticType": "billing.invoice.portal_url"
+            },
+            "dunning_step": {
+              "type": "string",
+              "required": false,
+              "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+              "semanticType": "billing.invoice.dunning_step"
+            },
+            "payment_source": {
+              "type": "string",
+              "required": false,
+              "description": "Payment method used or expected (card, ach, wire).",
+              "semanticType": "billing.invoice.payment_source"
+            }
+          }
+        },
+        "framework": "vue",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "bar",
+        "source": "record-array",
+        "dataField": "line_items",
+        "encodings": {
+          "x": {
+            "field": "description",
+            "title": "Line item"
+          },
+          "y": {
+            "field": "amount_minor",
+            "aggregate": "sum",
+            "title": "Amount (minor units)"
+          }
+        },
+        "sampleRows": [
+          {
+            "description": "Scale plan",
+            "quantity": 1,
+            "amount_minor": 284000,
+            "unit_amount_minor": 284000
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/bar-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h240v65h-240Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"240\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\"><g transform=\"translate(0.5,65.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(119.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Scale plan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"240\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(120,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Line item</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,22)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,68)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,24.666666666666668)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">200,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,65)\" x2=\"0\" y2=\"-65\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,32.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Amount (minor units)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Line item: Scale plan; Amount (minor units): 284000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M12,3.4666666666666672h216v61.53333333333333h-216Z\" fill=\"#517FED\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78.00000000000001,-83.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Invoice line item amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Invoice line item amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:94868eddbc79f6c3b7cb90d0f40ef0debc522f3cc9b674833ae948cc78b0b8b3"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:34d13929ef37514ec42d18ae896a7266eaf5eb78bbfc58b7ea826a57cda98f02"
+    },
+    {
+      "object": "Usage",
+      "framework": "html",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "ve-header-20",
+              "component": "VizLinePreview",
+              "props": {
+                "title": "Example API-call usage",
+                "description": "Synthetic API-call counts for generated example records."
+              },
+              "chart": {
+                "chartType": "line",
+                "source": "record-array",
+                "dataField": "samples",
+                "encodings": {
+                  "x": {
+                    "field": "timestamp",
+                    "scale": "temporal",
+                    "title": "Recorded at"
+                  },
+                  "y": {
+                    "field": "value",
+                    "title": "API calls"
+                  }
+                },
+                "sampleRows": [
+                  {
+                    "timestamp": "2025-06-15T00:00:00Z",
+                    "value": 1200
+                  },
+                  {
+                    "timestamp": "2025-06-20T00:00:00Z",
+                    "value": 1800
+                  },
+                  {
+                    "timestamp": "2025-06-25T00:00:00Z",
+                    "value": 1500
+                  }
+                ]
+              }
+            }
+          ],
+          "objectSchema": {
+            "meter_name": {
+              "type": "string",
+              "required": true,
+              "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+              "semanticType": "billing.usage.meter_name"
+            },
+            "included_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Quantity included in base plan before overages.",
+              "semanticType": "billing.usage.included_quantity"
+            },
+            "consumed_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Actual quantity consumed in the active period.",
+              "semanticType": "billing.usage.consumed_quantity"
+            },
+            "unit_label": {
+              "type": "string",
+              "required": true,
+              "description": "Label for display, defaults to the unit parameter.",
+              "semanticType": "billing.usage.unit_label"
+            },
+            "period_start": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window began.",
+              "semanticType": "billing.usage.period_start"
+            },
+            "period_end": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window ends.",
+              "semanticType": "billing.usage.period_end"
+            },
+            "rollover_strategy": {
+              "type": "string",
+              "required": false,
+              "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+              "semanticType": "billing.usage.rollover_strategy"
+            },
+            "overage_rate_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cost per additional unit expressed in minor currency units.",
+              "semanticType": "billing.usage.overage_rate_minor"
+            },
+            "projected_overage_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Forecasted overage spend derived from consumption trends.",
+              "semanticType": "billing.usage.projected_overage_minor"
+            },
+            "samples": {
+              "type": "UsageSample[]",
+              "required": false,
+              "description": "Rolling usage measurements for charts or anomaly detection.",
+              "semanticType": "billing.usage.samples"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "usage_id": {
+              "type": "string",
+              "required": true,
+              "description": "Identifier for this usage record.",
+              "semanticType": "billing.usage.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription the usage belongs to.",
+              "semanticType": "billing.usage.subscription_id"
+            },
+            "meter_id": {
+              "type": "string",
+              "required": true,
+              "description": "Provider specific meter identifier.",
+              "semanticType": "billing.usage.meter_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source provider for usage data.",
+              "semanticType": "billing.usage.provider"
+            },
+            "status": {
+              "type": "string",
+              "required": false,
+              "description": "Health of the usage feed (ok, delayed, investigating).",
+              "enum": [
+                "ok",
+                "delayed",
+                "investigating"
+              ],
+              "semanticType": "billing.usage.status"
+            },
+            "trend_percent": {
+              "type": "number",
+              "required": false,
+              "description": "Percent delta compared to previous window.",
+              "semanticType": "billing.usage.trend_percent"
+            },
+            "variance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Currency impact of usage variance calculated with overage rate.",
+              "semanticType": "billing.usage.variance_minor"
+            },
+            "last_reported_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp of the most recent provider usage payload.",
+              "semanticType": "billing.usage.last_reported_at"
+            },
+            "anomalies": {
+              "type": "UsageAnomaly[]",
+              "required": false,
+              "description": "Detected anomalies with context for investigation.",
+              "semanticType": "billing.usage.anomalies"
+            }
+          }
+        },
+        "framework": "html",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "line",
+        "source": "record-array",
+        "dataField": "samples",
+        "encodings": {
+          "x": {
+            "field": "timestamp",
+            "scale": "temporal",
+            "title": "Recorded at"
+          },
+          "y": {
+            "field": "value",
+            "title": "API calls"
+          }
+        },
+        "sampleRows": [
+          {
+            "timestamp": "2025-06-15T00:00:00Z",
+            "value": 1200
+          },
+          {
+            "timestamp": "2025-06-20T00:00:00Z",
+            "value": 1800
+          },
+          {
+            "timestamp": "2025-06-25T00:00:00Z",
+            "value": 1500
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/line-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,35)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h296v138h-296Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a time scale with values from Saturday, 14 June 2025, 7:00:00 PM to Tuesday, 24 June 2025, 7:00:00 PM\"><g transform=\"translate(0.5,138.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(6,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(36,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(65,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(95,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(125,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(154,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(184,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(213,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(243,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(273,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(6.166666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(35.766666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(65.36666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(94.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(124.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(154.16666666666669,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(183.76666666666668,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(213.36666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(242.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(272.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Tue 24</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"296\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(148,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,141)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,102.66666666666667)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">500</text><text text-anchor=\"end\" transform=\"translate(-7,64.33333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,25.999999999999996)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"0\" y2=\"-138\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,69) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 14, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,46L148,0L296,23\" stroke=\"#517FED\" stroke-width=\"2\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-62.00000000000001,-30)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Example API-call usage'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Example API-call usage</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:dc05841ce9bc5133cab0aa3dfb6497c6c22ef306f191e2ebbd162b6222cd5eb5"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:24d09161c82fa2821009ca289974be9c76a6ca4fdb6c559a62f1b86a6543d1a1"
+    },
+    {
+      "object": "Usage",
+      "framework": "react",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "screen-detail-13",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-header-1",
+                  "component": "Stack",
+                  "layout": {
+                    "type": "inline",
+                    "align": "space-between"
+                  },
+                  "style": {
+                    "spacingToken": "inset-default"
+                  },
+                  "children": [
+                    {
+                      "id": "slot-header-2",
+                      "component": "Stack",
+                      "meta": {
+                        "intent": "slot:header",
+                        "label": "header"
+                      },
+                      "children": [
+                        {
+                          "id": "primary-header-21",
+                          "component": "DetailHeader",
+                          "props": {
+                            "field": "meter_name",
+                            "label": "Meter name"
+                          }
+                        },
+                        {
+                          "id": "ve-header-20",
+                          "component": "VizLinePreview",
+                          "props": {
+                            "title": "Example API-call usage",
+                            "description": "Synthetic API-call counts for generated example records."
+                          },
+                          "chart": {
+                            "chartType": "line",
+                            "source": "record-array",
+                            "dataField": "samples",
+                            "encodings": {
+                              "x": {
+                                "field": "timestamp",
+                                "scale": "temporal",
+                                "title": "Recorded at"
+                              },
+                              "y": {
+                                "field": "value",
+                                "title": "API calls"
+                              }
+                            },
+                            "sampleRows": [
+                              {
+                                "timestamp": "2025-06-15T00:00:00Z",
+                                "value": 1200
+                              },
+                              {
+                                "timestamp": "2025-06-20T00:00:00Z",
+                                "value": 1800
+                              },
+                              {
+                                "timestamp": "2025-06-25T00:00:00Z",
+                                "value": 1500
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "detail-body-10",
+                  "component": "Card",
+                  "layout": {
+                    "type": "sidebar",
+                    "gapToken": "cluster-default"
+                  },
+                  "children": [
+                    {
+                      "id": "detail-tabs-9",
+                      "component": "Tabs",
+                      "children": [
+                        {
+                          "id": "detail-tab-panel-3",
+                          "component": "Stack",
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-default"
+                          },
+                          "props": {
+                            "label": "Details"
+                          },
+                          "children": [
+                            {
+                              "id": "slot-tab-0-4",
+                              "component": "Stack",
+                              "meta": {
+                                "intent": "slot:tab-0",
+                                "label": "tab-0",
+                                "notes": "pattern-group:status-timeline"
+                              },
+                              "props": {
+                                "patternComponent": "StatusTimeline",
+                                "fields": [
+                                  "status",
+                                  "updated_at"
+                                ]
+                              },
+                              "layout": {
+                                "type": "stack",
+                                "gapToken": "cluster-tight"
+                              },
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-23",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status",
+                                    "label": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-24",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at",
+                                    "label": "Updated at"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "slot-tab-1-6",
+                              "component": "Text",
+                              "meta": {
+                                "intent": "slot:tab-1",
+                                "label": "tab-1",
+                                "confidence": 0.76,
+                                "confidenceLevel": "low"
+                              },
+                              "props": {
+                                "field": "consumed_quantity",
+                                "label": "Consumed quantity"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "props": {
+                        "ariaLabel": "Record details"
+                      }
+                    },
+                    {
+                      "id": "detail-meta-11",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-tight"
+                      },
+                      "style": {
+                        "spacingToken": "inset-default"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ],
+              "bindings": {
+                "onEdit": "handleEdit",
+                "onDelete": "handleDelete",
+                "onViewTimeline": "handleViewTimeline"
+              }
+            }
+          ],
+          "objectSchema": {
+            "meter_name": {
+              "type": "string",
+              "required": true,
+              "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+              "semanticType": "billing.usage.meter_name"
+            },
+            "included_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Quantity included in base plan before overages.",
+              "semanticType": "billing.usage.included_quantity"
+            },
+            "consumed_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Actual quantity consumed in the active period.",
+              "semanticType": "billing.usage.consumed_quantity"
+            },
+            "unit_label": {
+              "type": "string",
+              "required": true,
+              "description": "Label for display, defaults to the unit parameter.",
+              "semanticType": "billing.usage.unit_label"
+            },
+            "period_start": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window began.",
+              "semanticType": "billing.usage.period_start"
+            },
+            "period_end": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window ends.",
+              "semanticType": "billing.usage.period_end"
+            },
+            "rollover_strategy": {
+              "type": "string",
+              "required": false,
+              "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+              "semanticType": "billing.usage.rollover_strategy"
+            },
+            "overage_rate_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cost per additional unit expressed in minor currency units.",
+              "semanticType": "billing.usage.overage_rate_minor"
+            },
+            "projected_overage_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Forecasted overage spend derived from consumption trends.",
+              "semanticType": "billing.usage.projected_overage_minor"
+            },
+            "samples": {
+              "type": "UsageSample[]",
+              "required": false,
+              "description": "Rolling usage measurements for charts or anomaly detection.",
+              "semanticType": "billing.usage.samples"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "usage_id": {
+              "type": "string",
+              "required": true,
+              "description": "Identifier for this usage record.",
+              "semanticType": "billing.usage.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription the usage belongs to.",
+              "semanticType": "billing.usage.subscription_id"
+            },
+            "meter_id": {
+              "type": "string",
+              "required": true,
+              "description": "Provider specific meter identifier.",
+              "semanticType": "billing.usage.meter_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source provider for usage data.",
+              "semanticType": "billing.usage.provider"
+            },
+            "status": {
+              "type": "string",
+              "required": false,
+              "description": "Health of the usage feed (ok, delayed, investigating).",
+              "enum": [
+                "ok",
+                "delayed",
+                "investigating"
+              ],
+              "semanticType": "billing.usage.status"
+            },
+            "trend_percent": {
+              "type": "number",
+              "required": false,
+              "description": "Percent delta compared to previous window.",
+              "semanticType": "billing.usage.trend_percent"
+            },
+            "variance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Currency impact of usage variance calculated with overage rate.",
+              "semanticType": "billing.usage.variance_minor"
+            },
+            "last_reported_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp of the most recent provider usage payload.",
+              "semanticType": "billing.usage.last_reported_at"
+            },
+            "anomalies": {
+              "type": "UsageAnomaly[]",
+              "required": false,
+              "description": "Detected anomalies with context for investigation.",
+              "semanticType": "billing.usage.anomalies"
+            }
+          }
+        },
+        "framework": "react",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "line",
+        "source": "record-array",
+        "dataField": "samples",
+        "encodings": {
+          "x": {
+            "field": "timestamp",
+            "scale": "temporal",
+            "title": "Recorded at"
+          },
+          "y": {
+            "field": "value",
+            "title": "API calls"
+          }
+        },
+        "sampleRows": [
+          {
+            "timestamp": "2025-06-15T00:00:00Z",
+            "value": 1200
+          },
+          {
+            "timestamp": "2025-06-20T00:00:00Z",
+            "value": 1800
+          },
+          {
+            "timestamp": "2025-06-25T00:00:00Z",
+            "value": 1500
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/line-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,35)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h296v138h-296Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a time scale with values from Saturday, 14 June 2025, 7:00:00 PM to Tuesday, 24 June 2025, 7:00:00 PM\"><g transform=\"translate(0.5,138.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(6,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(36,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(65,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(95,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(125,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(154,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(184,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(213,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(243,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(273,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(6.166666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(35.766666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(65.36666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(94.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(124.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(154.16666666666669,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(183.76666666666668,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(213.36666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(242.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(272.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Tue 24</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"296\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(148,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,141)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,102.66666666666667)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">500</text><text text-anchor=\"end\" transform=\"translate(-7,64.33333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,25.999999999999996)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"0\" y2=\"-138\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,69) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 14, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,46L148,0L296,23\" stroke=\"#517FED\" stroke-width=\"2\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-62.00000000000001,-30)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Example API-call usage'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Example API-call usage</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:dc05841ce9bc5133cab0aa3dfb6497c6c22ef306f191e2ebbd162b6222cd5eb5"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:cc0ba15b1217736fd009b1a0a7310edae4e2fe98afb88738dc07e5c9d3983beb"
+    },
+    {
+      "object": "Usage",
+      "framework": "vue",
+      "request": {
+        "schema": {
+          "version": "2026.02",
+          "screens": [
+            {
+              "id": "screen-detail-13",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-header-1",
+                  "component": "Stack",
+                  "layout": {
+                    "type": "inline",
+                    "align": "space-between"
+                  },
+                  "style": {
+                    "spacingToken": "inset-default"
+                  },
+                  "children": [
+                    {
+                      "id": "slot-header-2",
+                      "component": "Stack",
+                      "meta": {
+                        "intent": "slot:header",
+                        "label": "header"
+                      },
+                      "children": [
+                        {
+                          "id": "primary-header-21",
+                          "component": "DetailHeader",
+                          "props": {
+                            "field": "meter_name",
+                            "label": "Meter name"
+                          }
+                        },
+                        {
+                          "id": "ve-header-20",
+                          "component": "VizLinePreview",
+                          "props": {
+                            "title": "Example API-call usage",
+                            "description": "Synthetic API-call counts for generated example records."
+                          },
+                          "chart": {
+                            "chartType": "line",
+                            "source": "record-array",
+                            "dataField": "samples",
+                            "encodings": {
+                              "x": {
+                                "field": "timestamp",
+                                "scale": "temporal",
+                                "title": "Recorded at"
+                              },
+                              "y": {
+                                "field": "value",
+                                "title": "API calls"
+                              }
+                            },
+                            "sampleRows": [
+                              {
+                                "timestamp": "2025-06-15T00:00:00Z",
+                                "value": 1200
+                              },
+                              {
+                                "timestamp": "2025-06-20T00:00:00Z",
+                                "value": 1800
+                              },
+                              {
+                                "timestamp": "2025-06-25T00:00:00Z",
+                                "value": 1500
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "detail-body-10",
+                  "component": "Card",
+                  "layout": {
+                    "type": "sidebar",
+                    "gapToken": "cluster-default"
+                  },
+                  "children": [
+                    {
+                      "id": "detail-tabs-9",
+                      "component": "Tabs",
+                      "children": [
+                        {
+                          "id": "detail-tab-panel-3",
+                          "component": "Stack",
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-default"
+                          },
+                          "props": {
+                            "label": "Details"
+                          },
+                          "children": [
+                            {
+                              "id": "slot-tab-0-4",
+                              "component": "Stack",
+                              "meta": {
+                                "intent": "slot:tab-0",
+                                "label": "tab-0",
+                                "notes": "pattern-group:status-timeline"
+                              },
+                              "props": {
+                                "patternComponent": "StatusTimeline",
+                                "fields": [
+                                  "status",
+                                  "updated_at"
+                                ]
+                              },
+                              "layout": {
+                                "type": "stack",
+                                "gapToken": "cluster-tight"
+                              },
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-23",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status",
+                                    "label": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-24",
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at",
+                                    "label": "Updated at"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "slot-tab-1-6",
+                              "component": "Text",
+                              "meta": {
+                                "intent": "slot:tab-1",
+                                "label": "tab-1",
+                                "confidence": 0.76,
+                                "confidenceLevel": "low"
+                              },
+                              "props": {
+                                "field": "consumed_quantity",
+                                "label": "Consumed quantity"
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "props": {
+                        "ariaLabel": "Record details"
+                      }
+                    },
+                    {
+                      "id": "detail-meta-11",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-tight"
+                      },
+                      "style": {
+                        "spacingToken": "inset-default"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ],
+              "bindings": {
+                "onEdit": "handleEdit",
+                "onDelete": "handleDelete",
+                "onViewTimeline": "handleViewTimeline"
+              }
+            }
+          ],
+          "objectSchema": {
+            "meter_name": {
+              "type": "string",
+              "required": true,
+              "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+              "semanticType": "billing.usage.meter_name"
+            },
+            "included_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Quantity included in base plan before overages.",
+              "semanticType": "billing.usage.included_quantity"
+            },
+            "consumed_quantity": {
+              "type": "integer",
+              "required": true,
+              "description": "Actual quantity consumed in the active period.",
+              "semanticType": "billing.usage.consumed_quantity"
+            },
+            "unit_label": {
+              "type": "string",
+              "required": true,
+              "description": "Label for display, defaults to the unit parameter.",
+              "semanticType": "billing.usage.unit_label"
+            },
+            "period_start": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window began.",
+              "semanticType": "billing.usage.period_start"
+            },
+            "period_end": {
+              "type": "date",
+              "required": true,
+              "description": "Date the usage accumulation window ends.",
+              "semanticType": "billing.usage.period_end"
+            },
+            "rollover_strategy": {
+              "type": "string",
+              "required": false,
+              "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+              "semanticType": "billing.usage.rollover_strategy"
+            },
+            "overage_rate_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Cost per additional unit expressed in minor currency units.",
+              "semanticType": "billing.usage.overage_rate_minor"
+            },
+            "projected_overage_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Forecasted overage spend derived from consumption trends.",
+              "semanticType": "billing.usage.projected_overage_minor"
+            },
+            "samples": {
+              "type": "UsageSample[]",
+              "required": false,
+              "description": "Rolling usage measurements for charts or anomaly detection.",
+              "semanticType": "billing.usage.samples"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp recording when the entity was first created.",
+              "semanticType": "audit.created_at"
+            },
+            "updated_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the most recent modification, when available.",
+              "semanticType": "audit.updated_at"
+            },
+            "last_event": {
+              "type": "string",
+              "required": true,
+              "description": "Lifecycle event associated with the most recent timestamp mutation.",
+              "semanticType": "audit.event.type"
+            },
+            "last_event_at": {
+              "type": "datetime",
+              "required": false,
+              "description": "Timestamp for the lifecycle event captured in last_event.",
+              "semanticType": "audit.event.timestamp"
+            },
+            "usage_id": {
+              "type": "string",
+              "required": true,
+              "description": "Identifier for this usage record.",
+              "semanticType": "billing.usage.id"
+            },
+            "subscription_id": {
+              "type": "string",
+              "required": true,
+              "description": "Subscription the usage belongs to.",
+              "semanticType": "billing.usage.subscription_id"
+            },
+            "meter_id": {
+              "type": "string",
+              "required": true,
+              "description": "Provider specific meter identifier.",
+              "semanticType": "billing.usage.meter_id"
+            },
+            "provider": {
+              "type": "string",
+              "required": true,
+              "description": "Source provider for usage data.",
+              "semanticType": "billing.usage.provider"
+            },
+            "status": {
+              "type": "string",
+              "required": false,
+              "description": "Health of the usage feed (ok, delayed, investigating).",
+              "enum": [
+                "ok",
+                "delayed",
+                "investigating"
+              ],
+              "semanticType": "billing.usage.status"
+            },
+            "trend_percent": {
+              "type": "number",
+              "required": false,
+              "description": "Percent delta compared to previous window.",
+              "semanticType": "billing.usage.trend_percent"
+            },
+            "variance_minor": {
+              "type": "integer",
+              "required": false,
+              "description": "Currency impact of usage variance calculated with overage rate.",
+              "semanticType": "billing.usage.variance_minor"
+            },
+            "last_reported_at": {
+              "type": "datetime",
+              "required": true,
+              "description": "Timestamp of the most recent provider usage payload.",
+              "semanticType": "billing.usage.last_reported_at"
+            },
+            "anomalies": {
+              "type": "UsageAnomaly[]",
+              "required": false,
+              "description": "Detected anomalies with context for investigation.",
+              "semanticType": "billing.usage.anomalies"
+            }
+          }
+        },
+        "framework": "vue",
+        "profile": "build",
+        "options": {
+          "theme": "dark",
+          "brand": "B",
+          "typescript": true,
+          "styling": "tokens"
+        }
+      },
+      "chart": {
+        "chartType": "line",
+        "source": "record-array",
+        "dataField": "samples",
+        "encodings": {
+          "x": {
+            "field": "timestamp",
+            "scale": "temporal",
+            "title": "Recorded at"
+          },
+          "y": {
+            "field": "value",
+            "title": "API calls"
+          }
+        },
+        "sampleRows": [
+          {
+            "timestamp": "2025-06-15T00:00:00Z",
+            "value": 1200
+          },
+          {
+            "timestamp": "2025-06-20T00:00:00Z",
+            "value": 1800
+          },
+          {
+            "timestamp": "2025-06-25T00:00:00Z",
+            "value": 1500
+          }
+        ]
+      },
+      "assets": [
+        {
+          "path": "src/charts/line-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,35)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h296v138h-296Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a time scale with values from Saturday, 14 June 2025, 7:00:00 PM to Tuesday, 24 June 2025, 7:00:00 PM\"><g transform=\"translate(0.5,138.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(6,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(36,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(65,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(95,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(125,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(154,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(184,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(213,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(243,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(273,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(6.166666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(35.766666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(65.36666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(94.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(124.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(154.16666666666669,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(183.76666666666668,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(213.36666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(242.96666666666667,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(272.56666666666666,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Tue 24</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"296\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(148,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,141)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,102.66666666666667)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">500</text><text text-anchor=\"end\" transform=\"translate(-7,64.33333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,25.999999999999996)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"0\" y2=\"-138\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,69) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 14, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,46L148,0L296,23\" stroke=\"#517FED\" stroke-width=\"2\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-62.00000000000001,-30)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Example API-call usage'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Example API-call usage</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:dc05841ce9bc5133cab0aa3dfb6497c6c22ef306f191e2ebbd162b6222cd5eb5"
+        }
+      ],
+      "sourceParity": true,
+      "repeatParity": true,
+      "artifactHash": "sha256:052f6ad690ed03740f603df9133c3a2d12fba9293d51f3b8843d35314373261b"
+    }
+  ],
+  "fullHtml": [
+    {
+      "object": "Invoice",
+      "status": "error",
+      "errors": [
+        {
+          "code": "OODS-V007",
+          "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record.",
+          "nodeId": "detail-tab-panel-3",
+          "component": "Stack"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Tabs child \"detail-tab-panel-3\" uses layout, which cannot be preserved in the normalized item record.",
+          "nodeId": "detail-tab-panel-3",
+          "component": "Stack"
+        }
+      ],
+      "hasSvg": false
+    },
+    {
+      "object": "Usage",
+      "status": "error",
+      "errors": [
+        {
+          "code": "OODS-V007",
+          "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record.",
+          "nodeId": "detail-tab-panel-3",
+          "component": "Stack"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Tabs child \"detail-tab-panel-3\" uses layout, which cannot be preserved in the normalized item record.",
+          "nodeId": "detail-tab-panel-3",
+          "component": "Stack"
+        }
+      ],
+      "hasSvg": false
+    }
+  ],
+  "legacy": [
+    {
+      "object": "Subscription",
+      "framework": "react",
+      "assets": [
+        {
+          "path": "src/charts/payment-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,33)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h306v140h-306Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,76)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,13)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Date' for a time scale with values from Monday, 01 June 2026, 7:00:00 AM to Tuesday, 01 September 2026, 7:00:00 AM\"><g transform=\"translate(0.5,140.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(19,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(42,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(66,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(89,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(112,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(135,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(159,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(182,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(205,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(229,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(252,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(275,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(298,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(18.98641304347826,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jun 07</text><text text-anchor=\"middle\" transform=\"translate(42.26902173913044,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 14</text><text text-anchor=\"middle\" transform=\"translate(65.55163043478261,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 21</text><text text-anchor=\"middle\" transform=\"translate(88.83423913043478,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 28</text><text text-anchor=\"middle\" transform=\"translate(112.11684782608695,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jul 05</text><text text-anchor=\"middle\" transform=\"translate(135.39945652173913,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 12</text><text text-anchor=\"middle\" transform=\"translate(158.6820652173913,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 19</text><text text-anchor=\"middle\" transform=\"translate(181.96467391304347,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 26</text><text text-anchor=\"middle\" transform=\"translate(205.24728260869563,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Aug 02</text><text text-anchor=\"middle\" transform=\"translate(228.5298913043478,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 09</text><text text-anchor=\"middle\" transform=\"translate(251.8125,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 16</text><text text-anchor=\"middle\" transform=\"translate(275.0951086956522,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 23</text><text text-anchor=\"middle\" transform=\"translate(298.3777173913043,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Aug 30</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(153,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Date</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,76)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,13)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,143)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,111.18181818181817)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,79.36363636363636)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,47.545454545454554)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,15.727272727272732)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"0\" y2=\"-140\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,70) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Amount</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Date: Jun 01, 2026; Amount: 15.2\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M0,43.273L99.783,7L202.891,31.182L306,19.091L306,140L202.891,140L99.783,140L0,140Z\" fill=\"oklch(0.56 0.1737 264.97)\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Payment amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Payment amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7"
+        }
+      ],
+      "m05AssetBytesUnchanged": true
+    },
+    {
+      "object": "Subscription",
+      "framework": "vue",
+      "assets": [
+        {
+          "path": "src/charts/payment-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,33)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h306v140h-306Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,76)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,13)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Date' for a time scale with values from Monday, 01 June 2026, 7:00:00 AM to Tuesday, 01 September 2026, 7:00:00 AM\"><g transform=\"translate(0.5,140.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(19,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(42,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(66,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(89,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(112,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(135,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(159,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(182,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(205,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(229,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(252,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(275,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(298,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(18.98641304347826,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jun 07</text><text text-anchor=\"middle\" transform=\"translate(42.26902173913044,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 14</text><text text-anchor=\"middle\" transform=\"translate(65.55163043478261,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 21</text><text text-anchor=\"middle\" transform=\"translate(88.83423913043478,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jun 28</text><text text-anchor=\"middle\" transform=\"translate(112.11684782608695,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Jul 05</text><text text-anchor=\"middle\" transform=\"translate(135.39945652173913,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 12</text><text text-anchor=\"middle\" transform=\"translate(158.6820652173913,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 19</text><text text-anchor=\"middle\" transform=\"translate(181.96467391304347,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Jul 26</text><text text-anchor=\"middle\" transform=\"translate(205.24728260869563,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Aug 02</text><text text-anchor=\"middle\" transform=\"translate(228.5298913043478,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 09</text><text text-anchor=\"middle\" transform=\"translate(251.8125,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 16</text><text text-anchor=\"middle\" transform=\"translate(275.0951086956522,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"0\">Aug 23</text><text text-anchor=\"middle\" transform=\"translate(298.3777173913043,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Aug 30</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"306\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(153,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Date</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,76)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,13)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,143)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,111.18181818181817)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,79.36363636363636)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,47.545454545454554)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,15.727272727272732)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,140)\" x2=\"0\" y2=\"-140\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,70) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Amount</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Date: Jun 01, 2026; Amount: 15.2\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M0,43.273L99.783,7L202.891,31.182L306,19.091L306,140L202.891,140L99.783,140L0,140Z\" fill=\"oklch(0.56 0.1737 264.97)\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Payment amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Payment amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7"
+        }
+      ],
+      "m05AssetBytesUnchanged": true
+    }
+  ]
+}

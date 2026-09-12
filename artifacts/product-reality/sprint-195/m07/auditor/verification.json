@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "scope": "independent-auditor-source-and-focused-tests",
+  "builderSelfCertified": false,
+  "currentCloseoutCertified": false,
+  "sourceFrozen": true,
+  "sourceInputs": [
+    {
+      "path": "scripts/product-reality/s185-audit-closeout.mjs",
+      "sha256": "1d789171cec9c9bac33238fd887c7b1a43713cb9c1887001caddbe5e5f3502ed"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout-audit.s195.spec.ts",
+      "sha256": "82f6c32d59acdbf4832d617f28e6351cc168ff5dc228cca4d47a248c652729ce"
+    }
+  ],
+  "checks": [
+    {
+      "log": "focused.log",
+      "exitCode": 0,
+      "passed": 92,
+      "failed": 0,
+      "skipped": 0,
+      "includes": {
+        "newAuditor": 26,
+        "historical": 66
+      }
+    },
+    {
+      "log": "bite-wrapper.log",
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "deselected": 26,
+      "selection": "traverses all four bite families"
+    },
+    {
+      "log": "census-head-correction.log",
+      "exitCode": 0,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "log": "census-head-fixture.log",
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "deselected": 27,
+      "selection": "keeps the recorded tool census head distinct"
+    }
+  ],
+  "finalAuditorTestCases": 28,
+  "combinedPreFreezeOwner": "m02_health",
+  "fixtureQualification": "Retained m04/m05/m06 operands exercise predicates. They do not represent new m07 runtime or component executions.",
+  "toolHeadBinding": "Ledger censusHead remains the actual generation head; the later runtime implementationHead is recorded separately. Schema, registration, and advertised-claim bytes are independently bound."
+}

@@ -1,0 +1,123 @@
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 3 3 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 docs/api/viz-render.md
+filename docs/api/viz-render.md
+	> Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. ["#1F6FEB","#D1242F"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e docs/api/viz-render.md
+filename docs/api/viz-render.md
+	SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.
+86b44639489552329a627219fe527918a6c08420 13 13 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+previous a10afdffe708055fa241e110eb1881bbd16c2968 docs/api/viz-render.md
+filename docs/api/viz-render.md
+	Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 13 certified / 0 uncertified; uncertified results keep conformant:null.
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15 1
+	Measured scope verdicts: 56 conformant / 4 nonconformant / 0 uncertified. Types with a nonconformant scope: bubble_map.
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17 1
+	Theme parameters: light (13/13), dark (13/13) and hc (4/13 with measured SVGs; 9/13 typed-deferred). HC emits declared scope paints verbatim and contrast is forced-colors exempt; actual render failures still fail determinism. Brand parameters: A, B. Default scope is light/A.
+cd2a75a1a1e93e961baf350c6ea5bdb5b497d553 16 18 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1788995081
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1788995081
+committer-tz -0500
+summary feat(viz): certify scoped pixels and publish measured recipe registry
+previous a2c5122694283afc5cf29883bca39bca16549b17 docs/api/viz-render.md
+filename docs/api/viz-render.md
+	
+86b44639489552329a627219fe527918a6c08420 19 19 1
+	Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: OODS-V154, OODS-V155, OODS-V156, OODS-V157, OODS-V158, OODS-V159, OODS-V168, OODS-V169, OODS-V170, OODS-V171, OODS-V172, OODS-V173; applicability and evaluated counts depend on the data operand.
+a3158282bba25713171d7216181bde28b69a80a1 23 23 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c docs/api/viz-render.md
+filename docs/api/viz-render.md
+	| bar | vega-lite | true | certified | light, dark | placed |
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	| line | vega-lite | true | certified | light, dark | placed |
+86b44639489552329a627219fe527918a6c08420 28 28 8
+	| treemap | echarts | true | certified | light, dark | not-placed |
+86b44639489552329a627219fe527918a6c08420 29 29
+	| sunburst | echarts | true | certified | light, dark | not-placed |
+86b44639489552329a627219fe527918a6c08420 30 30
+	| sankey | echarts | true | certified | light, dark | not-placed |
+86b44639489552329a627219fe527918a6c08420 31 31
+	| chord | echarts | excluded (#881) | certified | light, dark | not-placed |
+86b44639489552329a627219fe527918a6c08420 32 32
+	| force_graph | echarts | true | certified | light, dark | not-placed |
+86b44639489552329a627219fe527918a6c08420 33 33
+	| choropleth | echarts | true | certified | none (exempt) | not-placed |
+86b44639489552329a627219fe527918a6c08420 34 34
+	| bubble_map | echarts | true | certified | none (exempt) | not-placed |
+86b44639489552329a627219fe527918a6c08420 35 35
+	| flow_map | echarts | excluded (#881) | certified | none (exempt) | not-placed |
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37 1
+	- HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.
+a3158282bba25713171d7216181bde28b69a80a1 39 39 4
+	- Composed chart declarations: Invoice/detail, Invoice/workflow, Invoice/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+a3158282bba25713171d7216181bde28b69a80a1 40 40
+	- Composed chart declarations: Usage/detail, Usage/workflow, Usage/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+a3158282bba25713171d7216181bde28b69a80a1 41 41
+	- Composed chart declarations: Subscription/detail, Subscription/workflow. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.
+a3158282bba25713171d7216181bde28b69a80a1 42 42
+	- Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.
+52b0da991705c4c565987bc9faf7738ba00d885e 40 43 1
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(239, 249, 189), rgb(69, 180, 194), rgb(162, 218, 184), rgb(33, 120, 179), rgb(119, 202, 188), rgb(28, 49, 133), #ddd, rgb(226, 244, 183), rgb(209, 237, 180), rgb(189, 229, 181), rgb(134, 208, 187), rgb(105, 197, 190), rgb(81, 186, 193), rgb(61, 173, 193), rgb(44, 158, 192), rgb(37, 139, 187), rgb(33, 99, 170), rgb(34, 80, 161), rgb(33, 64, 148). Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 42 45 1
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #54555a, rgb(0,0,0), #3c3c41, #f4f7fd. Forced-colors rendering is deferred; no replacement palette was invented.
+a3158282bba25713171d7216181bde28b69a80a1 46 46 1
+	- Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.
+52b0da991705c4c565987bc9faf7738ba00d885e 43 47 3
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 44 48
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #3c3c41, [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 45 49
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: source, rgb(0,0,0), #3c3c41. Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 47 51 4
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #b7b9be, #3c3c41, rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 48 52
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 49 53
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #cfd2d7, #fff, #3c3c41, #000, rgb(207,210,215), rgba(255,231,130,0.8), rgba(0,0,0,1), [object Object]. Forced-colors rendering is deferred; no replacement palette was invented.
+52b0da991705c4c565987bc9faf7738ba00d885e 50 54
+	- HC pixels typed-deferred: OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.; OODS-V165: SVG rendering failed: HC renderer emitted paints outside the declared B/hc token scope: #f2f2f2, rgb(0,0,0), #3c3c41, rgba(255,231,130,0.8). Forced-colors rendering is deferred; no replacement palette was invented.
+a3158282bba25713171d7216181bde28b69a80a1 60 60 1
+	| `theme` | `light` \| `dark` \| `hc` | No | `"light"` | CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented. |
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 105 120 1
+	| `pattern` | `pattern:viz:bubble-distribution` \| `pattern:viz:correlation-matrix` \| `pattern:viz:correlation-scatter` \| `pattern:viz:detail-overview-bar` \| `pattern:viz:diverging-bar` \| `pattern:viz:drilldown-stacked-bar` \| `pattern:viz:facet-small-multiples-line` \| `pattern:viz:facet-target-band` \| `pattern:viz:focus-context-line` \| `pattern:viz:grouped-bar` \| `pattern:viz:layered-line-area` \| `pattern:viz:linked-brush-scatter` \| `pattern:viz:multi-series-line` \| `pattern:viz:running-total-area` \| `pattern:viz:simple-bar` \| `pattern:viz:sparkline-grid` \| `pattern:viz:stacked-100-bar` \| `pattern:viz:stacked-area-projection` \| `pattern:viz:stacked-bar` \| `pattern:viz:target-band-line` \| `pattern:viz:time-grid-heatmap` | No |  | Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Authoring-only identities return OODS-V167 with reasons. Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166). |

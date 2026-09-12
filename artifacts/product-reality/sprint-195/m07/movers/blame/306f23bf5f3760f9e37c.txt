@@ -1,0 +1,114 @@
+86b44639489552329a627219fe527918a6c08420 1 1 52
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+filename scripts/product-reality/s195-viz-certification-migration.mjs
+	#!/usr/bin/env node
+86b44639489552329a627219fe527918a6c08420 2 2
+	import assert from 'node:assert/strict';
+86b44639489552329a627219fe527918a6c08420 3 3
+	import { createHash } from 'node:crypto';
+86b44639489552329a627219fe527918a6c08420 4 4
+	import { readFileSync, writeFileSync } from 'node:fs';
+86b44639489552329a627219fe527918a6c08420 5 5
+	import { dirname, resolve } from 'node:path';
+86b44639489552329a627219fe527918a6c08420 6 6
+	import { fileURLToPath } from 'node:url';
+86b44639489552329a627219fe527918a6c08420 7 7
+	
+86b44639489552329a627219fe527918a6c08420 8 8
+	const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
+86b44639489552329a627219fe527918a6c08420 9 9
+	const directory = 'artifacts/product-reality/sprint-195/m04/viz';
+86b44639489552329a627219fe527918a6c08420 10 10
+	const beforePath = `${directory}/before/viz-observations.json`;
+86b44639489552329a627219fe527918a6c08420 11 11
+	const afterPath = `${directory}/viz-observations.json`;
+86b44639489552329a627219fe527918a6c08420 12 12
+	const read = file => readFileSync(resolve(root, file), 'utf8');
+86b44639489552329a627219fe527918a6c08420 13 13
+	const before = JSON.parse(read(beforePath));
+86b44639489552329a627219fe527918a6c08420 14 14
+	const after = JSON.parse(read(afterPath));
+86b44639489552329a627219fe527918a6c08420 15 15
+	const key = (type, scope) => `${type}/${scope.theme}/${scope.brand}`;
+86b44639489552329a627219fe527918a6c08420 16 16
+	const oldScopes = new Map(before.observations.flatMap(row => row.scopes.map(scope => [key(row.chartType, scope), scope])));
+86b44639489552329a627219fe527918a6c08420 17 17
+	const allowedRegistryChanges = ['certifyCoverage', 'accuracyRules', 'certifyProfile', 'certifyScopes'];
+86b44639489552329a627219fe527918a6c08420 18 18
+	const retained = row => Object.fromEntries(Object.entries(row).filter(([field]) => !allowedRegistryChanges.includes(field)));
+86b44639489552329a627219fe527918a6c08420 19 19
+	assert.equal(after.registry.length, 13);
+86b44639489552329a627219fe527918a6c08420 20 20
+	for (const row of after.registry) {
+86b44639489552329a627219fe527918a6c08420 21 21
+	  const prior = before.registry.find(item => item.chartType === row.chartType);
+86b44639489552329a627219fe527918a6c08420 22 22
+	  assert(prior, `Missing before registry identity: ${row.chartType}`);
+86b44639489552329a627219fe527918a6c08420 23 23
+	  assert.deepEqual(retained(row), retained(prior), `${row.chartType}: an undeclared registry field moved`);
+86b44639489552329a627219fe527918a6c08420 24 24
+	}
+86b44639489552329a627219fe527918a6c08420 25 25
+	const rows = after.observations.flatMap(row => row.scopes.map(scope => {
+86b44639489552329a627219fe527918a6c08420 26 26
+	  const identity = key(row.chartType, scope);
+86b44639489552329a627219fe527918a6c08420 27 27
+	  const prior = oldScopes.get(identity);
+86b44639489552329a627219fe527918a6c08420 28 28
+	  assert(prior, `Missing before scope: ${identity}`);
+86b44639489552329a627219fe527918a6c08420 29 29
+	  assert.equal(scope.svgHash, prior.svgHash, `${identity}: certification-only work changed public SVG bytes`);
+86b44639489552329a627219fe527918a6c08420 30 30
+	  assert.deepEqual(scope.contrast, prior.contrast, `${identity}: certification-only work changed measured contrast`);
+86b44639489552329a627219fe527918a6c08420 31 31
+	  return { identity, svgHashBefore: prior.svgHash, svgHashAfter: scope.svgHash,
+86b44639489552329a627219fe527918a6c08420 32 32
+	    before: { coverage: prior.coverage, conformant: prior.conformant, accuracyRules: prior.accuracyRules, accuracySummary: prior.accuracySummary },
+86b44639489552329a627219fe527918a6c08420 33 33
+	    after: { coverage: scope.coverage, conformant: scope.conformant, accuracyRules: scope.accuracyRules, accuracySummary: scope.accuracySummary, pillars: scope.pillars, findings: scope.findings } };
+86b44639489552329a627219fe527918a6c08420 34 34
+	}));
+86b44639489552329a627219fe527918a6c08420 35 35
+	assert.equal(rows.length, 52);
+86b44639489552329a627219fe527918a6c08420 36 36
+	assert.equal(new Set(rows.map(row => row.identity)).size, oldScopes.size);
+86b44639489552329a627219fe527918a6c08420 37 37
+	const record = {
+86b44639489552329a627219fe527918a6c08420 38 38
+	  schemaVersion: 1, missionId: 's195-m04', builderSelfCertified: false,
+86b44639489552329a627219fe527918a6c08420 39 39
+	  inputs: [beforePath, afterPath].map(path => ({ path, sha256: createHash('sha256').update(read(path)).digest('hex') })),
+86b44639489552329a627219fe527918a6c08420 40 40
+	  reason: 'The declared ECharts data operand profile now grades accessibility, contrast, determinism, and evaluated accuracy; measured conformance booleans replace null on that path. Public pixels and unrelated registry fields are unchanged.',
+86b44639489552329a627219fe527918a6c08420 41 41
+	  registryMovement: { allowedFields: allowedRegistryChanges, unchangedOtherFields: true,
+86b44639489552329a627219fe527918a6c08420 42 42
+	    attribution: 'The m04 requirement to add real accuracy predicates supersedes the generic memo nonmover list for accuracyRules only; new per-scope metadata records the actual certification operand and booleans.' },
+86b44639489552329a627219fe527918a6c08420 43 43
+	  summary: { types: after.registry.length, scopes: rows.length, unchangedSvgScopes: rows.length,
+86b44639489552329a627219fe527918a6c08420 44 44
+	    beforeCertifiedTypes: before.registry.filter(row => row.certifyCoverage === 'certified').length,
+86b44639489552329a627219fe527918a6c08420 45 45
+	    afterCertifiedTypes: after.registry.filter(row => row.certifyCoverage === 'certified').length,
+86b44639489552329a627219fe527918a6c08420 46 46
+	    conformantScopes: rows.filter(row => row.after.conformant === true).length,
+86b44639489552329a627219fe527918a6c08420 47 47
+	    nonconformantScopes: rows.filter(row => row.after.conformant === false).length,
+86b44639489552329a627219fe527918a6c08420 48 48
+	    uncertifiedScopes: rows.filter(row => row.after.conformant === null).length },
+86b44639489552329a627219fe527918a6c08420 49 49
+	  rows,
+86b44639489552329a627219fe527918a6c08420 50 50
+	};
+86b44639489552329a627219fe527918a6c08420 51 51
+	writeFileSync(resolve(root, `${directory}/verdict-migration.json`), JSON.stringify(record, null, 2) + '\n');
+86b44639489552329a627219fe527918a6c08420 52 52
+	console.log(JSON.stringify(record.summary));

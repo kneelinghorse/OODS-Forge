@@ -11,7 +11,7 @@ const ts = require('typescript');
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const LEDGER_PATH = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
 export const TIERS = ['product-reality', 'contract', 'unit', 'none'];
-const families = new Set(['map', 'schema', 'object', 'repl', 'review']);
+const families = new Set(['map', 'schema', 'object', 'repl']);
 const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
 const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]).sort();
 const quote = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -65,7 +65,7 @@ export function deriveToolTruth({ root = ROOT, head, mode = 's194' } = {}) {
       allImports.push(...handlerImports(file, read(file), root, names));
     }
   }
-  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-194\/m07\//.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
+  const readmes = walk(path.join(root, 'artifacts/product-reality')).filter(file => path.basename(file) === 'README.md' && !(/\/sprint-193\/m0[67]\/|\/sprint-19[45]\/m07\//.test(file))).map(full => ({ path: path.relative(root, full).replaceAll(path.sep, '/'), text: fs.readFileSync(full, 'utf8') })).filter(file => /\b(browser|packed|runtime|SVG|screenshot)\b/i.test(file.text));
   const e2ePath = 'scripts/runtime/e2e.mjs';
   const e2eSource = read(e2ePath);
   const e2eCalls = [...e2eSource.matchAll(/\.callTool\(\s*["']([^"']+)["']/g)].map(match => ({ name: match[1], path: e2ePath, line: e2eSource.slice(0, match.index).split('\n').length }));

@@ -1,0 +1,213 @@
+86b44639489552329a627219fe527918a6c08420 14 14 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+previous a10afdffe708055fa241e110eb1881bbd16c2968 packages/mcp-server/src/tools/artifact.certify.ts
+filename packages/mcp-server/src/tools/artifact.certify.ts
+	// ECharts-primary certification uses the declared data operand profile. With data,
+86b44639489552329a627219fe527918a6c08420 15 15
+	// a11y-equivalence is graded over the same table/narrative as viz.render, and the
+86b44639489552329a627219fe527918a6c08420 16 16
+	// folded verdict requires passing a11y, stable determinism, non-failing contrast,
+86b44639489552329a627219fe527918a6c08420 17 17
+	// and at least one evaluated clean accuracy rule. Without data, coverage remains
+86b44639489552329a627219fe527918a6c08420 18 18
+	// uncertified and conformant remains null; metadata cannot prove missing operands.
+86b44639489552329a627219fe527918a6c08420 30 30 1
+	// 13 types in s172. On the Cartesian path certify evaluates FOUR declared structural rules
+86b44639489552329a627219fe527918a6c08420 33 33 1
+	// (OODS-V154..V159 and OODS-V168..V173) over the `data` operand — the only place those charts' data exists. No
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/tools/artifact.certify.ts
+filename packages/mcp-server/src/tools/artifact.certify.ts
+	import { assertHcSvgPaints } from './hc-svg-paints.js';
+a3158282bba25713171d7216181bde28b69a80a1 65 65 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c packages/mcp-server/src/tools/artifact.certify.ts
+filename packages/mcp-server/src/tools/artifact.certify.ts
+	  type ContrastPillarResult,
+52b0da991705c4c565987bc9faf7738ba00d885e 80 81 1
+	  readonly theme?: 'light' | 'dark' | 'hc';
+52b0da991705c4c565987bc9faf7738ba00d885e 177 178 1
+	  readonly contrastResults?: ReadonlyArray<{ reason?: 'forced-colors'; theme: 'light' | 'dark' | 'hc'; brand: 'A' | 'B'; verdict: ContrastVerdict; measured: boolean; evidence: 'render' | 'baked-palette' | 'none'; note: string }>;
+86b44639489552329a627219fe527918a6c08420 179 181 4
+	   * The folded conformance gate. ECharts data-backed calls require passing a11y,
+86b44639489552329a627219fe527918a6c08420 180 182
+	   * stable determinism, contrast neither fail nor ungradeable, and accuracy pass
+86b44639489552329a627219fe527918a6c08420 181 183
+	   * with at least one evaluated clean rule. Spec-only ECharts calls retain null.
+86b44639489552329a627219fe527918a6c08420 182 184
+	   * Cartesian grading is unchanged. Absent on error.
+86b44639489552329a627219fe527918a6c08420 188 190 2
+	   * ECharts-primary accuracy (OODS-V154..V159 and OODS-V168..V173). Findings retain
+86b44639489552329a627219fe527918a6c08420 189 191
+	   * native severity; evaluator faults are also exposed in pillars and notes.
+86b44639489552329a627219fe527918a6c08420 194 196 1
+	   * absent precondition. Present (as [] if none) EXACTLY when the a11y-equivalence engine ran to
+86b44639489552329a627219fe527918a6c08420 197 199 2
+	   * error, and when the engine throws or returns an incomplete rule population. A fault in
+86b44639489552329a627219fe527918a6c08420 198 200
+	   * one rule retains the completed population and findings while failing the a11y pillar.
+86b44639489552329a627219fe527918a6c08420 202 204 2
+	   * The re-emit proof: the Vega-Lite compile for Cartesian charts, or the ECharts
+86b44639489552329a627219fe527918a6c08420 203 205
+	   * option and available normalized SVG whenever the `data` operand was supplied.
+86b44639489552329a627219fe527918a6c08420 274 276 4
+	// Separate notes keep the missing-operand explanation accurate after enforcement.
+86b44639489552329a627219fe527918a6c08420 275 277
+	const echartsA11yNote = (trait: string, hasOperand = false): string => hasOperand
+86b44639489552329a627219fe527918a6c08420 276 278
+	  ? `${trait} is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.`
+86b44639489552329a627219fe527918a6c08420 277 279
+	  : `${trait} is an ECharts-primary mark. Without the \`data\` operand there is nothing to evaluate: no a11y findings appear, pillars.a11yEquivalence stays 'unchecked', coverage stays 'uncertified', and conformant stays null. Supply the matching operand to grade a11y-equivalence, determinism and accuracy over the chart's actual data.`;
+86b44639489552329a627219fe527918a6c08420 286 288 1
+	  readonly a11yPillar: 'pass' | 'fail' | 'unchecked';
+86b44639489552329a627219fe527918a6c08420 297 299 1
+	  /** Accuracy findings followed by a11y-equivalence findings at native severity. */
+86b44639489552329a627219fe527918a6c08420 301 303 1
+	   * not-applicable) EXACTLY when the a11y-equivalence engine ran to completion; undefined when it
+86b44639489552329a627219fe527918a6c08420 309 311 1
+	/** The declared operand profile folds measured pillars; spec-only calls make no folded claim. */
+86b44639489552329a627219fe527918a6c08420 318 320 5
+	    coverage: operand.determinism ? 'certified' : 'uncertified',
+86b44639489552329a627219fe527918a6c08420 319 321
+	    conformant: operand.determinism
+86b44639489552329a627219fe527918a6c08420 320 322
+	      ? operand.a11yPillar === 'pass' && operand.determinismPillar === 'pass'
+86b44639489552329a627219fe527918a6c08420 321 323
+	        && contrast !== 'fail' && contrast !== 'ungradeable' && operand.accuracyPillar === 'pass'
+86b44639489552329a627219fe527918a6c08420 322 324
+	      : null,
+86b44639489552329a627219fe527918a6c08420 326 328 1
+	    // a11y-equivalence engine ran (data-backed path), absent on the {spec}-only path.
+86b44639489552329a627219fe527918a6c08420 329 331 1
+	      a11yEquivalence: operand.a11yPillar,
+86b44639489552329a627219fe527918a6c08420 336 338 1
+	    notes: [echartsA11yNote(trait, operand.determinism !== undefined), ...operand.notes],
+52b0da991705c4c565987bc9faf7738ba00d885e 459 460 1
+	    firstSvg = assertHcSvgPaints(await renderEChartsToSvg(outcome.firstProjected), scope);
+52b0da991705c4c565987bc9faf7738ba00d885e 464 465 3
+	      (scope.theme === 'hc'
+52b0da991705c4c565987bc9faf7738ba00d885e 465 466
+	        ? 'HC contrast remains forced-colors exempt, and stable is false.'
+52b0da991705c4c565987bc9faf7738ba00d885e 466 467
+	        : 'render-backed contrast is ungradeable, and stable is false.');
+52b0da991705c4c565987bc9faf7738ba00d885e 469 470 1
+	      contrast: scope.theme === 'hc' ? 'exempt' : 'ungradeable',
+52b0da991705c4c565987bc9faf7738ba00d885e 479 480 3
+	    const grade = scope.theme === 'hc'
+52b0da991705c4c565987bc9faf7738ba00d885e 480 481
+	      ? { contrast: 'exempt' as const, contrastNote: FORCED_COLORS_CONTRAST_NOTE }
+52b0da991705c4c565987bc9faf7738ba00d885e 481 482
+	      : evaluateEChartsRenderContrast({
+52b0da991705c4c565987bc9faf7738ba00d885e 507 508 1
+	    const secondSvg = assertHcSvgPaints(await renderEChartsToSvg(outcome.secondProjected), scope);
+86b44639489552329a627219fe527918a6c08420 576 582 1
+	      a11yPillar: 'unchecked',
+86b44639489552329a627219fe527918a6c08420 628 634 3
+	  // Grade the same operand-built context viz.render uses. A fault must not turn
+86b44639489552329a627219fe527918a6c08420 629 635
+	  // a missing evaluation into a pass; commit findings/NA only after completion.
+86b44639489552329a627219fe527918a6c08420 630 636
+	  let a11yPillar: EChartsOperandVerdict['a11yPillar'] = 'fail';
+86b44639489552329a627219fe527918a6c08420 643 649 7
+	    const a11yFindings: CertifyFinding[] = [];
+86b44639489552329a627219fe527918a6c08420 644 650
+	    const results = validateVizEquivalenceRulesForContext(context);
+86b44639489552329a627219fe527918a6c08420 645 651
+	    const expectedIds = Array.from({ length: 16 }, (_, index) => `A11Y-R-${String(index + 1).padStart(2, '0')}`);
+86b44639489552329a627219fe527918a6c08420 646 652
+	    if (JSON.stringify(results.map(rule => rule.id).sort()) !== JSON.stringify(expectedIds)) throw new Error('Incomplete a11y-equivalence rule population');
+86b44639489552329a627219fe527918a6c08420 647 653
+	    let failed = false;
+86b44639489552329a627219fe527918a6c08420 648 654
+	    for (const rule of results) {
+86b44639489552329a627219fe527918a6c08420 649 655
+	      if (rule.executionError) failed = true;
+86b44639489552329a627219fe527918a6c08420 660 666 2
+	      if (rule.severity === 'error') failed = true;
+86b44639489552329a627219fe527918a6c08420 661 667
+	      a11yFindings.push({
+86b44639489552329a627219fe527918a6c08420 668 674 3
+	    findings.push(...a11yFindings);
+86b44639489552329a627219fe527918a6c08420 669 675
+	    a11yPillar = failed ? 'fail' : 'pass';
+86b44639489552329a627219fe527918a6c08420 670 676
+	    if (results.some(rule => rule.executionError)) a11yNotes.push('An a11y-equivalence rule faulted; the a11y pillar fails while findings retain native severity.');
+86b44639489552329a627219fe527918a6c08420 673 679 1
+	      `The a11y-equivalence rules could not be evaluated for this ${operand.chartType}; no a11y findings or partial not-applicable results are reported for it. pillars.a11yEquivalence is 'fail', so the operand profile cannot pass.`,
+86b44639489552329a627219fe527918a6c08420 678 684 1
+	    a11yPillar,
+52b0da991705c4c565987bc9faf7738ba00d885e 731 732 2
+	const FORCED_COLORS_CONTRAST_NOTE = 'Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed.';
+52b0da991705c4c565987bc9faf7738ba00d885e 732 733
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 735 736 2
+	  if (!['light', 'dark', 'hc'].includes(theme) || !['A', 'B'].includes(brand)) {
+52b0da991705c4c565987bc9faf7738ba00d885e 736 737
+	    return { status: 'error', errors: [{ code: 'OODS-V126', message: 'Certification supports themes light/dark/hc and brands A/B.' }] };
+a3158282bba25713171d7216181bde28b69a80a1 739 739 1
+	  const { contrastMeasured, ...result } = await certifyAtScope(input, { theme, brand });
+52b0da991705c4c565987bc9faf7738ba00d885e 740 741 1
+	  const verdict = theme === 'hc' ? 'exempt' : result.pillars?.contrast ?? 'unchecked';
+52b0da991705c4c565987bc9faf7738ba00d885e 743 744 1
+	  const note = `${theme === 'hc' ? FORCED_COLORS_CONTRAST_NOTE : result.contrastNote ?? 'No contrast grade was available.'} Scope: ${theme}/${brand}.`;
+a3158282bba25713171d7216181bde28b69a80a1 745 745 1
+	  return { ...result, ...(theme === 'hc' && result.pillars ? { pillars: { ...result.pillars, contrast: 'exempt' as const } } : {}), contrastNote: note, contrastResults: [{ theme, brand, verdict, measured: contrastMeasured !== false && rendered && graded, evidence: contrastMeasured === false ? 'none' : rendered ? 'render' : graded ? 'baked-palette' : 'none', note, ...(theme === 'hc' ? { reason: 'forced-colors' as const } : {}) }] };
+a3158282bba25713171d7216181bde28b69a80a1 748 748 2
+	// Internal measurement disposition is removed by handle before public serialization.
+a3158282bba25713171d7216181bde28b69a80a1 749 749
+	async function certifyAtScope(input: ArtifactCertifyInput, scope: TokenScope): Promise<ArtifactCertifyOutput & { contrastMeasured?: false }> {
+86b44639489552329a627219fe527918a6c08420 773 782 2
+	  // ECharts-primary uses the declared operand profile without a Vega compile leg.
+86b44639489552329a627219fe527918a6c08420 774 783
+	  // Missing data retains the spec-only, explicitly uncertified response.
+52b0da991705c4c565987bc9faf7738ba00d885e 787 789 1
+	    if (scope.theme === 'hc') return echartsContrastVerdict(trait, 'exempt', FORCED_COLORS_CONTRAST_NOTE, operandVerdict);
+a3158282bba25713171d7216181bde28b69a80a1 877 877 1
+	    let contrastMeasured: false | undefined;
+a3158282bba25713171d7216181bde28b69a80a1 879 879 1
+	      const pillar: ContrastPillarResult = scope.theme === 'hc'
+52b0da991705c4c565987bc9faf7738ba00d885e 877 880 2
+	        ? { contrast: 'exempt' as const, contrastNote: FORCED_COLORS_CONTRAST_NOTE, renderedSvg: undefined }
+52b0da991705c4c565987bc9faf7738ba00d885e 878 881
+	        : await evaluateContrastPillar(certifySpec, compiled, scope);
+a3158282bba25713171d7216181bde28b69a80a1 885 885 1
+	      contrastMeasured = pillar.contrastMeasured;
+52b0da991705c4c565987bc9faf7738ba00d885e 897 901 1
+	    const hcRenderNotes: string[] = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 899 903 1
+	      const firstSvg = assertHcSvgPaints(gradedSvg ?? await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec), scope);
+52b0da991705c4c565987bc9faf7738ba00d885e 902 906 2
+	        renderHash === sha256(assertHcSvgPaints(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec), scope));
+52b0da991705c4c565987bc9faf7738ba00d885e 903 907
+	    } catch (error) {
+52b0da991705c4c565987bc9faf7738ba00d885e 905 909 1
+	      if (scope.theme === 'hc') hcRenderNotes.push(`HC render proof failed: ${error instanceof Error ? error.message : String(error)}`);
+a3158282bba25713171d7216181bde28b69a80a1 981 981 1
+	      ...(contrastMeasured === false ? { contrastMeasured } : {}),
+52b0da991705c4c565987bc9faf7738ba00d885e 977 982 1
+	      ...((accuracyNotes.length + hcRenderNotes.length) > 0 ? { notes: [...accuracyNotes, ...hcRenderNotes] } : {}),

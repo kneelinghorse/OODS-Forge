@@ -11,6 +11,25 @@ export interface VizRecipeCapability {
   /** Offered codes; a resolved-operand count is a separate certification field. */
   accuracyRules: string[];
   certifyCoverage: 'certified' | 'uncertified';
+  /** Which data-bearing certification path the census actually exercised. */
+  certifyProfile: 'cartesian' | 'echarts-data';
+  /** Actual pixels or a typed renderer failure for every admitted theme/brand cell. */
+  renderScopes: Array<{
+    theme: 'light' | 'dark' | 'hc';
+    brand: 'A' | 'B';
+    status: 'rendered' | 'typed-deferred';
+    svgHash?: string;
+    errors?: Array<{ code: string; message: string; severity?: string }>;
+  }>;
+  /** Preserve measured booleans per scope; certified coverage never implies conformance. */
+  certifyScopes: Array<{
+    theme: 'light' | 'dark' | 'hc';
+    brand: 'A' | 'B';
+    coverage: 'certified' | 'uncertified';
+    conformant: boolean | null;
+    pillars: { a11yEquivalence: string; determinism: string; contrast: string; accuracy: string };
+    accuracySummary: { rulesEvaluated: number; failing: number };
+  }>;
   /** Actual categorical canvas grades, including failures; never exempt/unchecked. */
   contrastMeasured: Array<'light' | 'dark'>;
   /** Every brand has a measured pass in this theme; exemptions are not passes. */

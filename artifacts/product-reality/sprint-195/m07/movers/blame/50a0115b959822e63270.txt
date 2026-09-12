@@ -1,0 +1,64 @@
+a3158282bba25713171d7216181bde28b69a80a1 1 1 27
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+filename scripts/product-reality/s195-viz-bite-probe.ts
+	/** Real public contrast proof used by the physical palette-bake bite. */
+a3158282bba25713171d7216181bde28b69a80a1 2 2
+	import assert from 'node:assert/strict';
+a3158282bba25713171d7216181bde28b69a80a1 3 3
+	import { mkdirSync, writeFileSync } from 'node:fs';
+a3158282bba25713171d7216181bde28b69a80a1 4 4
+	import { dirname, resolve } from 'node:path';
+a3158282bba25713171d7216181bde28b69a80a1 5 5
+	import { handle as render } from '../../packages/mcp-server/src/tools/viz.render.js';
+a3158282bba25713171d7216181bde28b69a80a1 6 6
+	import { handle as certify } from '../../packages/mcp-server/src/tools/artifact.certify.js';
+a3158282bba25713171d7216181bde28b69a80a1 7 7
+	import type { VizRenderInput } from '../../packages/mcp-server/src/schemas/generated.js';
+a3158282bba25713171d7216181bde28b69a80a1 8 8
+	
+a3158282bba25713171d7216181bde28b69a80a1 9 9
+	const failing = process.argv.includes('--expect-fail');
+a3158282bba25713171d7216181bde28b69a80a1 10 10
+	assert(failing || process.argv.includes('--expect-pass'), 'Select the expected physical palette state');
+a3158282bba25713171d7216181bde28b69a80a1 11 11
+	const input: VizRenderInput = { chartType: 'bar', name: 'Six-category palette bite', rows: [{ category: 'a', value: 10 }, ...['b', 'c', 'd', 'e', 'f'].map(category => ({ category, value: 10 }))],
+a3158282bba25713171d7216181bde28b69a80a1 12 12
+	  encodings: { x: { field: 'category', scale: 'band' as const }, y: { field: 'value', aggregate: 'sum' as const }, color: { field: 'category' } },
+a3158282bba25713171d7216181bde28b69a80a1 13 13
+	  theme: 'light' as const, brand: 'A' as const, output: { svg: true, includeNormalizedSpec: true } };
+a3158282bba25713171d7216181bde28b69a80a1 14 14
+	const rendered = await render(input);
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
+a3158282bba25713171d7216181bde28b69a80a1 16 16
+	assert(rendered.svg && rendered.normalizedSpec, 'The contrast proof must render real pixels');
+a3158282bba25713171d7216181bde28b69a80a1 17 17
+	const grade = await certify({ spec: rendered.normalizedSpec, theme: input.theme, brand: input.brand });
+a3158282bba25713171d7216181bde28b69a80a1 18 18
+	const output = process.env.OODS_VIZ_BITE_PROBE_OUTPUT;
+a3158282bba25713171d7216181bde28b69a80a1 19 19
+	if (output) { mkdirSync(dirname(resolve(output)), { recursive: true }); writeFileSync(resolve(output), JSON.stringify({ input, rendered, grade }, null, 2) + '\n'); }
+a3158282bba25713171d7216181bde28b69a80a1 20 20
+	assert.equal(grade.status, 'ok', JSON.stringify(grade.errors));
+a3158282bba25713171d7216181bde28b69a80a1 21 21
+	assert.equal(grade.determinism?.renderHash, rendered.svgHash, 'Certify must grade the same rendered operand');
+a3158282bba25713171d7216181bde28b69a80a1 22 22
+	assert.equal(grade.pillars?.contrast, failing ? 'fail' : 'pass');
+a3158282bba25713171d7216181bde28b69a80a1 23 23
+	if (failing) assert.equal(grade.conformant, false, 'A missing bake must not remain conformant');
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	assert.equal(grade.contrastResults?.[0]?.measured, !failing, 'Determinism renders cannot turn a missing palette into a contrast measurement');
+a3158282bba25713171d7216181bde28b69a80a1 25 25
+	assert.equal(grade.contrastResults?.[0]?.evidence, failing ? 'none' : 'render');
+a3158282bba25713171d7216181bde28b69a80a1 26 26
+	assert.equal('contrastMeasured' in grade, false, 'Internal measurement disposition must not leak to the public result');
+a3158282bba25713171d7216181bde28b69a80a1 27 27
+	console.log(JSON.stringify({ contrast: grade.pillars?.contrast, conformant: grade.conformant, svgHash: rendered.svgHash, findings: grade.findings, contrastResults: grade.contrastResults }));

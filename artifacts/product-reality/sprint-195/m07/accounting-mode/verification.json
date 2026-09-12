@@ -1,0 +1,74 @@
+{
+  "missionId": "s195-m07",
+  "capturedAt": "2026-09-11T23:15:30.351Z",
+  "commands": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/suite-accounting.s195.spec.ts test/product-reality/suite-accounting.s185.spec.ts > artifacts/product-reality/sprint-195/m07/accounting-mode/tests-initial.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "log": "tests-initial.log",
+      "exitCode": 0,
+      "sha256": "05ab7fa3f56216f455ce24a015ef7a2d9100b96c9640e162aebef5c624f3f83f",
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/suite-accounting.s195.spec.ts > artifacts/product-reality/sprint-195/m07/accounting-mode/tests-final.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "log": "tests-final.log",
+      "exitCode": 1,
+      "sha256": "b6278c1f04a3af9dafbc79fba34356bc6f0b8386bff26623d76fba7c5f4407a5",
+      "passed": 8,
+      "failed": 1,
+      "skipped": 0,
+      "disposition": "CLI test fixture root had a macOS physical-path alias; fixed by realpathSync without production logic changes."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit -p ../../artifacts/product-reality/sprint-195/m07/accounting-mode/tsconfig.json > artifacts/product-reality/sprint-195/m07/accounting-mode/typecheck.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "log": "typecheck.log",
+      "exitCode": 1,
+      "sha256": "edfcdce4c763cfc86ada8211e699da616e48bc8fee9e657e564f88f322c899c2",
+      "compilerDiagnosticExitCode": 2,
+      "disposition": "New test annotations and explicit undefined optional JS API arguments added."
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/suite-accounting.s195.spec.ts > artifacts/product-reality/sprint-195/m07/accounting-mode/tests-verified.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "log": "tests-verified.log",
+      "exitCode": 0,
+      "sha256": "778ec8e4eeddddcf0094b6f43d41c51e049d79a89d0d325216850c88a9294466",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit -p ../../artifacts/product-reality/sprint-195/m07/accounting-mode/tsconfig.json > artifacts/product-reality/sprint-195/m07/accounting-mode/typecheck-verified.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "log": "typecheck-verified.log",
+      "exitCode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "finalDistinctPassingTests": 29,
+  "skipped": 0,
+  "fullCampaignsRun": 0,
+  "buildsRun": 0,
+  "sources": [
+    {
+      "path": "scripts/product-reality/s185-suite-accounting.mjs",
+      "sha256": "782ee06634f583a58c741dc63e2cfe98452199a9340d00a09cf5849b91f1e6a7"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/suite-accounting.s195.spec.ts",
+      "sha256": "18004f3a8ca96621656efc03db18728602ed36e87033329ad4a58158d41fa3dc"
+    }
+  ],
+  "baseline": "artifacts/product-reality/sprint-194/m07/five-suite-closeout/four-suite-baseline.json",
+  "capture": "artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json",
+  "finalGolden": "artifacts/product-reality/sprint-195/m07/golden-attribution.json",
+  "limitations": [
+    "These tests exercise accounting against declared synthetic fixtures; no Sprint 195 full-suite results are asserted.",
+    "The actual final golden wrapper and full capture are created by later m07 steps."
+  ]
+}

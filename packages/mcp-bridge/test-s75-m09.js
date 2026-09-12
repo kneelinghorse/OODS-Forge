@@ -34,7 +34,7 @@ test('default toolset exposes only auto tools', () => {
 
   assert.equal(surface.toolsetMode, 'default');
   assert.ok(surface.enabled.includes('design.compose'), 'expected auto tool to be enabled');
-  assert.ok(!surface.enabled.includes('reviewKit.create'), 'on-demand tool should not be enabled by default');
+  assert.ok(!surface.enabled.includes('billing.reviewKit'), 'on-demand tool should not be enabled by default');
 });
 
 test('MCP_TOOLSET=all exposes on-demand tools too', () => {
@@ -44,17 +44,17 @@ test('MCP_TOOLSET=all exposes on-demand tools too', () => {
   });
 
   assert.equal(surface.toolsetMode, 'all');
-  assert.ok(surface.enabled.includes('reviewKit.create'), 'reviewKit.create should be enabled when toolset=all');
+  assert.ok(surface.enabled.includes('billing.reviewKit'), 'billing.reviewKit should be enabled when toolset=all');
   assert.ok(surface.enabled.includes('a11y.scan'), 'a11y.scan should be enabled when toolset=all');
 });
 
 test('MCP_EXTRA_TOOLS surfaces explicit extras and unknown extras', () => {
   const surface = resolveBridgeToolSurface(SERVER_CWD, bridgeConfig.tools.allowed, {
     MCP_TOOLSET: 'default',
-    MCP_EXTRA_TOOLS: 'reviewKit.create,unknown.tool',
+    MCP_EXTRA_TOOLS: 'billing.reviewKit,unknown.tool',
   });
 
-  assert.ok(surface.enabled.includes('reviewKit.create'), 'explicit on-demand extra should be enabled');
+  assert.ok(surface.enabled.includes('billing.reviewKit'), 'explicit on-demand extra should be enabled');
   assert.deepEqual(surface.unknownExtras, ['unknown.tool']);
   assert.match(surface.registrySource, /tools[\\/]+registry\.json$/);
 });

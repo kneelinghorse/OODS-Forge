@@ -1,0 +1,126 @@
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 1 1 58
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+filename scripts/product-reality/s195-pattern-sources.ts
+	#!/usr/bin/env tsx
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 2 2
+	/** Bundle exact authored pattern data inside viz-core; runtime never reads examples/. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 3 3
+	import assert from 'node:assert/strict';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 4 4
+	import { createHash } from 'node:crypto';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 5 5
+	import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 6 6
+	import { dirname, resolve } from 'node:path';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 7 7
+	import { fileURLToPath } from 'node:url';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 8 8
+	import { chartPatterns } from '../../packages/viz-core/src/patterns/index.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 9 9
+	import { assertNormalizedVizSpec } from '../../packages/viz-core/src/spec/normalized-viz-spec.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 10 10
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 11 11
+	export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 12 12
+	export const PATTERN_DIRECTORY = 'examples/viz/patterns-v2';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 13 13
+	export const PATTERN_SOURCES_PATH = 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 14 14
+	export const serializePatternSources = (value: unknown): string => JSON.stringify(value, null, 2) + '\n';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 15 15
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 16 16
+	export function derivePatternSources(sources: ReadonlyArray<{ specPath: string; bytes: string }>) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 17 17
+	  const ids = new Set<string>();
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 18 18
+	  const paths = new Set<string>();
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 19 19
+	  return [...sources].sort((left, right) => left.specPath.localeCompare(right.specPath)).map(source => {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 20 20
+	    const spec = assertNormalizedVizSpec(JSON.parse(source.bytes));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 21 21
+	    assert(spec.id && /^pattern:viz:[a-z0-9-]+$/.test(spec.id), `Invalid pattern identity: ${source.specPath}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 22 22
+	    assert.equal(source.specPath, `${PATTERN_DIRECTORY}/${spec.id.slice('pattern:viz:'.length)}.spec.json`, `Pattern path differs from identity: ${spec.id}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 23 23
+	    assert(!ids.has(spec.id), `Duplicate pattern identity: ${spec.id}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 24 24
+	    assert(!paths.has(source.specPath), `Duplicate pattern source: ${source.specPath}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 25 25
+	    ids.add(spec.id);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 26 26
+	    paths.add(source.specPath);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 27
+	    // Join by source path: the recommender's cohort-scatter id intentionally
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 28 28
+	    // differs from its authored linked-brush identity. Do not create an alias.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 29 29
+	    const catalog = chartPatterns.filter(pattern => pattern.specPath === source.specPath);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 30 30
+	    assert.equal(catalog.length, 1, `Pattern needs one catalog base type: ${source.specPath}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 31 31
+	    return { id: spec.id, specPath: source.specPath,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 32 32
+	      specSha256: createHash('sha256').update(source.bytes).digest('hex'),
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 33 33
+	      baseChartType: catalog[0]!.chartType, portability: spec.portability, spec };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 34 34
+	  });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 35 35
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 36 36
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 37 37
+	export function generatePatternSources({ root = ROOT, check = false }: { root?: string; check?: boolean } = {}) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 38 38
+	  const sources = readdirSync(resolve(root, PATTERN_DIRECTORY)).filter(name => name.endsWith('.spec.json')).sort()
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 39 39
+	    .map(name => ({ specPath: `${PATTERN_DIRECTORY}/${name}`, bytes: readFileSync(resolve(root, PATTERN_DIRECTORY, name), 'utf8') }));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 40 40
+	  const rows = derivePatternSources(sources);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 41 41
+	  const expected = serializePatternSources(rows);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 42 42
+	  const output = resolve(root, PATTERN_SOURCES_PATH);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 43 43
+	  if (check) assert.equal(readFileSync(output, 'utf8'), expected, `Generated pattern sources are stale: ${PATTERN_SOURCES_PATH}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 44 44
+	  else { mkdirSync(dirname(output), { recursive: true }); writeFileSync(output, expected); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 45 45
+	  return rows;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 46 46
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 47 47
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 48 48
+	if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 49 49
+	  const args = process.argv.slice(2);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 50 50
+	  let root = process.env.OODS_VIZ_PATTERN_SOURCE_ROOT ?? ROOT;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 51 51
+	  let check = false;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 52 52
+	  for (let index = 0; index < args.length; index += 1) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 53 53
+	    if (args[index] === '--check') check = true;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 54 54
+	    else if (args[index] === '--root') { assert(args[index + 1], '--root requires a path'); root = resolve(args[++index]!); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 55 55
+	    else throw new Error(`Unknown argument: ${args[index]}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 56 56
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 57 57
+	  console.log(JSON.stringify({ patterns: generatePatternSources({ root, check }).length, check }));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 58 58
+	}

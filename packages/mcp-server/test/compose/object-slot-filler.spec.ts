@@ -58,6 +58,18 @@ function findAllElements(result: FillResult, predicate: (el: UiElement) => boole
 /* ------------------------------------------------------------------ */
 
 describe('fillSlotsWithObject — core placement', () => {
+  it.each(['Invoice', 'Usage'])('%s keeps its record header when a bound domain chart is added', object => {
+    const composed = composeObject(loadObject(object));
+    const before = { ...composed, traits: composed.traits.filter(trait => !trait.ref.parameters?.chart) };
+    const baseline = fillSlotsWithObject(getDetailTemplate(), collectViewExtensions(before, 'detail').plan, catalog);
+    const result = fillSlotsWithObject(getDetailTemplate(), collectViewExtensions(composed, 'detail').plan, catalog);
+    const header = findAllElements(baseline, node => node.component === 'DetailHeader');
+    expect(header).toHaveLength(1);
+    expect(findAllElements(result, node => node.component === 'DetailHeader')).toHaveLength(1);
+    expect(findAllElements(result, node => node.chart?.source === 'record-array')).toHaveLength(1);
+    expect(result.placements.find(placement => placement.slotName === 'header')?.components[0]).toBe('DetailHeader');
+  });
+
   it('returns schema, placements, and warnings', () => {
     const template = getDetailTemplate();
     const { plan } = collectViewExtensions(subscription, 'detail');
@@ -175,6 +187,28 @@ describe('fillSlotsWithObject — position heuristics', () => {
 /* ------------------------------------------------------------------ */
 /*  Stacking behavior                                                  */
 /* ------------------------------------------------------------------ */
+
+describe('bound chart placement preserves the declaration for generation', () => {
+  it.each([
+    ['VizAreaPreview', 'area'], ['VizMarkPreview', 'bar'], ['VizLinePreview', 'line'],
+    ['VizPointPreview', 'scatter'], ['VizScatterPreview', 'scatter'], ['VizHeatmapPreview', 'heatmap'],
+  ])('%s carries a cloned chart operand outside ordinary DOM props', (component, chartType) => {
+    const chart = { chartType, source: 'record-array', dataField: 'samples',
+      encodings: { x: { field: 'label' }, y: { field: 'value' } },
+      sampleRows: [{ label: 'First', value: 3 }, { label: 'Second', value: 5 }] };
+    const original = structuredClone(chart);
+    const plan: SlotPlan[] = [{ component, sourceTrait: 'viz/BoundMark', position: 'top', priority: 55,
+      props: { chart, title: 'Declared chart', description: 'Declared sample units' } }];
+    const result = fillSlotsWithObject(getDetailTemplate(), plan, catalog);
+    const placed = findAllElements(result, node => node.component === component);
+    expect(placed).toHaveLength(1);
+    expect(placed[0]!.chart).toEqual(original);
+    expect(placed[0]!.props).toMatchObject({ title: 'Declared chart', description: 'Declared sample units' });
+    expect(placed[0]!.props).not.toHaveProperty('chart');
+    expect(placed[0]!.chart).not.toBe(chart);
+    expect(chart).toEqual(original);
+  });
+});
 
 describe('fillSlotsWithObject — stacking', () => {
   it('multiple entries targeting same slot are stacked', () => {

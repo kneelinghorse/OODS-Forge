@@ -1,0 +1,327 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e scripts/product-reality/s190-viz-census.ts
+filename scripts/product-reality/s190-viz-census.ts
+	 * Every theme and dashboard request is tested at its public JSON-schema boundary first.
+86b44639489552329a627219fe527918a6c08420 16 16 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+previous a10afdffe708055fa241e110eb1881bbd16c2968 scripts/product-reality/s190-viz-census.ts
+filename scripts/product-reality/s190-viz-census.ts
+	const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
+a3158282bba25713171d7216181bde28b69a80a1 23 23 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c scripts/product-reality/s190-viz-census.ts
+filename scripts/product-reality/s190-viz-census.ts
+	const composeSchema = readJson('packages/mcp-server/src/schemas/design.compose.input.json');
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	const validCompose = ajv.compile(composeSchema);
+a3158282bba25713171d7216181bde28b69a80a1 31 31 17
+	type PlacementRequest = Pick<Parameters<typeof compose>[0], 'object' | 'context' | 'layout'>;
+a3158282bba25713171d7216181bde28b69a80a1 32 32
+	export interface ChartPlacement {
+a3158282bba25713171d7216181bde28b69a80a1 33 33
+	  object: string;
+a3158282bba25713171d7216181bde28b69a80a1 34 34
+	  context: string | null;
+a3158282bba25713171d7216181bde28b69a80a1 35 35
+	  layout: string | null;
+a3158282bba25713171d7216181bde28b69a80a1 36 36
+	  nodeId: string;
+a3158282bba25713171d7216181bde28b69a80a1 37 37
+	  component: string;
+a3158282bba25713171d7216181bde28b69a80a1 38 38
+	  chartType: string;
+a3158282bba25713171d7216181bde28b69a80a1 39 39
+	  chartSource: string;
+a3158282bba25713171d7216181bde28b69a80a1 40 40
+	  dataField?: string;
+a3158282bba25713171d7216181bde28b69a80a1 41 41
+	  evidence: 'composed-declaration';
+a3158282bba25713171d7216181bde28b69a80a1 42 42
+	}
+a3158282bba25713171d7216181bde28b69a80a1 43 43
+	
+a3158282bba25713171d7216181bde28b69a80a1 44 44
+	/** Inventory the actual UiSchema nodes. This observes placement, not executed consumer pixels. */
+a3158282bba25713171d7216181bde28b69a80a1 45 45
+	export function collectChartPlacements(schema: unknown, request: PlacementRequest): ChartPlacement[] {
+a3158282bba25713171d7216181bde28b69a80a1 46 46
+	  const placements: ChartPlacement[] = [];
+a3158282bba25713171d7216181bde28b69a80a1 47 47
+	  const walk = (node: any) => {
+a3158282bba25713171d7216181bde28b69a80a1 49 49 8
+	    const chart = node.chart;
+a3158282bba25713171d7216181bde28b69a80a1 50 50
+	    if (typeof node.component === 'string' && chart?.chartType) {
+a3158282bba25713171d7216181bde28b69a80a1 51 51
+	      assert(typeof node.id === 'string', 'Placed chart requires a UiSchema node identity');
+a3158282bba25713171d7216181bde28b69a80a1 52 52
+	      placements.push({ object: request.object!, context: request.context ?? null, layout: request.layout ?? null,
+a3158282bba25713171d7216181bde28b69a80a1 53 53
+	        nodeId: node.id, component: node.component, chartType: chart.chartType, chartSource: chart.source,
+a3158282bba25713171d7216181bde28b69a80a1 54 54
+	        ...(chart.dataField ? { dataField: chart.dataField } : {}), evidence: 'composed-declaration' });
+a3158282bba25713171d7216181bde28b69a80a1 55 55
+	    }
+a3158282bba25713171d7216181bde28b69a80a1 56 56
+	    for (const value of Object.values(node)) if (typeof value === 'object') walk(value);
+a3158282bba25713171d7216181bde28b69a80a1 58 58 7
+	  walk(schema);
+a3158282bba25713171d7216181bde28b69a80a1 59 59
+	  return placements;
+a3158282bba25713171d7216181bde28b69a80a1 60 60
+	}
+a3158282bba25713171d7216181bde28b69a80a1 61 61
+	
+a3158282bba25713171d7216181bde28b69a80a1 62 62
+	export async function measureVizPlacements() {
+a3158282bba25713171d7216181bde28b69a80a1 63 63
+	  const placements: ChartPlacement[] = [];
+a3158282bba25713171d7216181bde28b69a80a1 64 64
+	  const requests: PlacementRequest[] = [];
+a3158282bba25713171d7216181bde28b69a80a1 66 66 2
+	    for (const context of composeSchema.properties.context.enum) requests.push({ object, context });
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	    requests.push({ object, layout: 'dashboard' });
+a3158282bba25713171d7216181bde28b69a80a1 69 69 5
+	  for (const request of requests) {
+a3158282bba25713171d7216181bde28b69a80a1 70 70
+	    assert(validCompose(request), JSON.stringify(validCompose.errors));
+a3158282bba25713171d7216181bde28b69a80a1 71 71
+	    const out = await compose(request);
+a3158282bba25713171d7216181bde28b69a80a1 72 72
+	    assert.equal(out.status, 'ok', `${JSON.stringify(request)}: ${JSON.stringify(out.errors)}`);
+a3158282bba25713171d7216181bde28b69a80a1 73 73
+	    placements.push(...collectChartPlacements(out.schema, request));
+cd2a75a1a1e93e961baf350c6ea5bdb5b497d553 43 74 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1788995081
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1788995081
+committer-tz -0500
+summary feat(viz): certify scoped pixels and publish measured recipe registry
+filename scripts/product-reality/s190-viz-census.ts
+	  }
+a3158282bba25713171d7216181bde28b69a80a1 75 75 7
+	  return { placements, placementCompositions: requests.length, placementRequests: requests };
+a3158282bba25713171d7216181bde28b69a80a1 76 76
+	}
+a3158282bba25713171d7216181bde28b69a80a1 77 77
+	
+a3158282bba25713171d7216181bde28b69a80a1 78 78
+	export async function measureVizCensus() {
+a3158282bba25713171d7216181bde28b69a80a1 79 79
+	  assert.deepEqual(censusInputs.map(input => input.chartType).sort(), [...renderSchema.properties.chartType.enum].sort());
+a3158282bba25713171d7216181bde28b69a80a1 80 80
+	  const placementResult = await measureVizPlacements();
+a3158282bba25713171d7216181bde28b69a80a1 81 81
+	  const { placements } = placementResult;
+52b0da991705c4c565987bc9faf7738ba00d885e 50 88 1
+	    for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark', 'hc'] as const) {
+52b0da991705c4c565987bc9faf7738ba00d885e 54 92 10
+	      if (rendered.status !== 'ok') {
+52b0da991705c4c565987bc9faf7738ba00d885e 55 93
+	        assert.equal(theme, 'hc', `${input.chartType}/${theme}/${brand}: existing public scope failed`);
+52b0da991705c4c565987bc9faf7738ba00d885e 56 94
+	        assert(rendered.errors?.length && rendered.errors.every(error => error.code && error.message), 'HC deferral requires a measured typed renderer failure');
+52b0da991705c4c565987bc9faf7738ba00d885e 57 95
+	        assert.equal(repeated.status, 'error');
+52b0da991705c4c565987bc9faf7738ba00d885e 58 96
+	        assert.deepEqual(repeated.errors, rendered.errors, 'HC failure must repeat deterministically');
+52b0da991705c4c565987bc9faf7738ba00d885e 59 97
+	        scopes.push({ theme, brand, status: 'typed-deferred', errors: rendered.errors });
+52b0da991705c4c565987bc9faf7738ba00d885e 60 98
+	        continue;
+52b0da991705c4c565987bc9faf7738ba00d885e 61 99
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 62 100
+	      assert.equal(repeated.status, 'ok', JSON.stringify(repeated.errors));
+52b0da991705c4c565987bc9faf7738ba00d885e 63 101
+	      assert(rendered.svg && rendered.svgHash, 'Successful scope requires actual public SVG bytes');
+52b0da991705c4c565987bc9faf7738ba00d885e 70 108 6
+	      if (theme === 'hc') {
+52b0da991705c4c565987bc9faf7738ba00d885e 71 109
+	        assert.equal(grade.pillars?.contrast, 'exempt', 'HC system-color contrast belongs to the forced-colors browser proof');
+52b0da991705c4c565987bc9faf7738ba00d885e 72 110
+	        assert.equal(grade.contrastResults?.[0]?.verdict, 'exempt');
+52b0da991705c4c565987bc9faf7738ba00d885e 73 111
+	        assert.match(JSON.stringify(grade.contrastResults), /forced-colors/);
+52b0da991705c4c565987bc9faf7738ba00d885e 74 112
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 75 113
+	      scopes.push({ theme, brand, status: 'rendered', svg: rendered.svg, svgBytes: rendered.svgBytes, svgHash: rendered.svgHash, renderHash: grade.determinism?.renderHash, repeated: true,
+86b44639489552329a627219fe527918a6c08420 64 116 2
+	        accuracySummary: grade.accuracySummary, pillars: grade.pillars, findings: grade.findings,
+86b44639489552329a627219fe527918a6c08420 65 117
+	        notes: grade.notes, contrast: grade.contrastResults![0] });
+52b0da991705c4c565987bc9faf7738ba00d885e 92 130 5
+	    assert.equal(hcAdmitted, true, 'HC is part of the public scope boundary');
+52b0da991705c4c565987bc9faf7738ba00d885e 93 131
+	    const successfulScopes = scopes.filter(scope => scope.status === 'rendered');
+52b0da991705c4c565987bc9faf7738ba00d885e 94 132
+	    const establishedScopes = scopes.filter(scope => scope.theme !== 'hc');
+52b0da991705c4c565987bc9faf7738ba00d885e 95 133
+	    const hcScopes = scopes.filter(scope => scope.theme === 'hc');
+52b0da991705c4c565987bc9faf7738ba00d885e 96 134
+	    const hcDrawn = hcScopes.length === 2 && hcScopes.every(scope => scope.status === 'rendered');
+52b0da991705c4c565987bc9faf7738ba00d885e 100 138 1
+	    const notes = [hcDrawn ? 'HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.' : `HC pixels typed-deferred: ${hcScopes.filter(scope => scope.status === 'typed-deferred').flatMap(scope => scope.errors.map((error: any) => `${error.code}: ${error.message}`)).join('; ')}`];
+a3158282bba25713171d7216181bde28b69a80a1 142 142 8
+	    if (places.length) {
+a3158282bba25713171d7216181bde28b69a80a1 143 143
+	      const scopes = [...new Set(places.map(place => `${place.object}/${place.context ?? `layout:${place.layout}`}`))];
+a3158282bba25713171d7216181bde28b69a80a1 144 144
+	      notes.push(`Composed chart declarations: ${scopes.join(', ')}. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.`);
+a3158282bba25713171d7216181bde28b69a80a1 145 145
+	    } else if (defaultRender.render?.engine === 'echarts') {
+a3158282bba25713171d7216181bde28b69a80a1 146 146
+	      notes.push('Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.');
+a3158282bba25713171d7216181bde28b69a80a1 147 147
+	    } else {
+a3158282bba25713171d7216181bde28b69a80a1 148 148
+	      notes.push('Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.');
+a3158282bba25713171d7216181bde28b69a80a1 149 149
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 106 151 1
+	    assert(successfulScopes.every(scope => scope.coverage === first.coverage), `${input.chartType}: scope-dependent certification coverage`);
+86b44639489552329a627219fe527918a6c08420 89 152 4
+	    if (first.coverage === 'uncertified' && first.render.engine === 'echarts') {
+86b44639489552329a627219fe527918a6c08420 90 153
+	      assert(first.notes?.length, `${input.chartType}: uncertified operand profile needs a measured reason`);
+86b44639489552329a627219fe527918a6c08420 91 154
+	      notes.push(`Uncertified operand profile: ${first.notes.join(' ')}`);
+86b44639489552329a627219fe527918a6c08420 92 155
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 111 156 4
+	    registry.push({ chartType: input.chartType, specEngine: first.render.engine, publicSvg: establishedScopes.every(scope => !!scope.svgHash),
+52b0da991705c4c565987bc9faf7738ba00d885e 112 157
+	      dashboardDrawn: drawn ? true : 'excluded (#881)', themes: { light: scopes.filter(scope => scope.theme === 'light').every(scope => !!scope.svgHash), dark: scopes.filter(scope => scope.theme === 'dark').every(scope => !!scope.svgHash), hc: hcDrawn },
+52b0da991705c4c565987bc9faf7738ba00d885e 113 158
+	      brands: ['A', 'B'].filter(brand => establishedScopes.filter(scope => scope.brand === brand).every(scope => !!scope.svgHash)),
+52b0da991705c4c565987bc9faf7738ba00d885e 114 159
+	      a11yDescription: successfulScopes.every(scope => scope.a11yDescription), accuracyRules: first.accuracyRules,
+86b44639489552329a627219fe527918a6c08420 97 160 1
+	      certifyCoverage: first.coverage, certifyProfile: first.render.engine === 'echarts' ? 'echarts-data' : 'cartesian',
+52b0da991705c4c565987bc9faf7738ba00d885e 116 161 2
+	      renderScopes: scopes.map(({ theme, brand, status, svgHash, errors }) => ({ theme, brand, status, ...(svgHash ? { svgHash } : {}), ...(errors ? { errors } : {}) })),
+52b0da991705c4c565987bc9faf7738ba00d885e 117 162
+	      certifyScopes: successfulScopes.map(({ theme, brand, coverage, conformant, pillars, accuracySummary }) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })),
+86b44639489552329a627219fe527918a6c08420 99 163 1
+	      contrastMeasured: measured, contrastPassed: passed, chartInApp: places.length ? 'placed' : 'not-placed', notes });
+52b0da991705c4c565987bc9faf7738ba00d885e 119 164 1
+	    observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted, hcDrawn });
+86b44639489552329a627219fe527918a6c08420 102 166 1
+	  const accuracyControls = await measureVizAccuracyControls();
+a3158282bba25713171d7216181bde28b69a80a1 167 167 1
+	  return { registry, observations, ...placementResult, accuracyControls };
+86b44639489552329a627219fe527918a6c08420 104 168 22
+	}
+86b44639489552329a627219fe527918a6c08420 105 169
+	
+86b44639489552329a627219fe527918a6c08420 106 170
+	/** Missing real predicates must make the census red even when the rule roster is intact. */
+86b44639489552329a627219fe527918a6c08420 107 171
+	export async function measureVizAccuracyControls() {
+86b44639489552329a627219fe527918a6c08420 108 172
+	  const results = [];
+86b44639489552329a627219fe527918a6c08420 109 173
+	  for (const [chartType, code, fieldKey] of [['bubble_map', 'OODS-V168', 'sizeField'], ['flow_map', 'OODS-V171', 'strengthField']] as const) {
+86b44639489552329a627219fe527918a6c08420 110 174
+	    const input = structuredClone(censusInputs.find(row => row.chartType === chartType)!);
+86b44639489552329a627219fe527918a6c08420 111 175
+	    assert(input, `${chartType}: missing accuracy control operand`);
+86b44639489552329a627219fe527918a6c08420 112 176
+	    const rendered = await render({ ...input, brand: 'A', theme: 'light', output: { svg: true, includeNormalizedSpec: true } });
+86b44639489552329a627219fe527918a6c08420 113 177
+	    assert.equal(rendered.status, 'ok', `${chartType}: accuracy control must start with public pixels`);
+86b44639489552329a627219fe527918a6c08420 114 178
+	    const geo = structuredClone((input as any).geo);
+86b44639489552329a627219fe527918a6c08420 115 179
+	    const field = geo[fieldKey];
+86b44639489552329a627219fe527918a6c08420 116 180
+	    assert(typeof field === 'string' && geo.rows?.length, `${chartType}: accuracy control requires its declared measure`);
+86b44639489552329a627219fe527918a6c08420 117 181
+	    geo.rows[0][field] = -1;
+86b44639489552329a627219fe527918a6c08420 118 182
+	    const grade = await certify({ spec: rendered.normalizedSpec!, data: { geo }, brand: 'A', theme: 'light' });
+86b44639489552329a627219fe527918a6c08420 119 183
+	    assert.equal(grade.status, 'ok', `${chartType}: accuracy control must be evaluated`);
+86b44639489552329a627219fe527918a6c08420 120 184
+	    assert(grade.findings?.some(finding => finding.code === code), `${chartType}: census missed required ${code} accuracy finding for a negative ${fieldKey}`);
+86b44639489552329a627219fe527918a6c08420 121 185
+	    assert.equal(grade.pillars?.accuracy, 'fail', `${chartType}: detected distortion must fail accuracy`);
+86b44639489552329a627219fe527918a6c08420 122 186
+	    assert.equal(grade.conformant, false, `${chartType}: detected distortion must fail the operand conformance gate`);
+86b44639489552329a627219fe527918a6c08420 123 187
+	    results.push({ chartType, expectedCode: code, field, suppliedValue: -1, grade });
+86b44639489552329a627219fe527918a6c08420 124 188
+	  }
+86b44639489552329a627219fe527918a6c08420 125 189
+	  return results;
+86b44639489552329a627219fe527918a6c08420 129 193 7
+	  const args = process.argv.slice(2);
+86b44639489552329a627219fe527918a6c08420 130 194
+	  const check = args.includes('--check');
+86b44639489552329a627219fe527918a6c08420 131 195
+	  const writeRegistry = args.includes('--write-registry');
+86b44639489552329a627219fe527918a6c08420 132 196
+	  assert(!(check && writeRegistry), '--check and --write-registry are separate operations');
+86b44639489552329a627219fe527918a6c08420 133 197
+	  assert(args.every(arg => !arg.startsWith('--') || ['--check', '--write-registry'].includes(arg)), 'Unknown census option');
+86b44639489552329a627219fe527918a6c08420 134 198
+	  const output = args.find(arg => !arg.startsWith('--')) ?? process.env.OODS_VIZ_CENSUS_OUTPUT;
+86b44639489552329a627219fe527918a6c08420 135 199
+	  assert(check || output, 'Provide an explicit census output directory; historical receipts are never a default destination.');
+86b44639489552329a627219fe527918a6c08420 137 201 8
+	  if (check) assert.equal(canonical(result.registry), canonical(readJson('packages/viz-core/src/registry/viz-recipes.v1.json')), 'Measured viz registry differs from canonical source');
+86b44639489552329a627219fe527918a6c08420 138 202
+	  else {
+86b44639489552329a627219fe527918a6c08420 139 203
+	    mkdirSync(resolve(output!), { recursive: true });
+86b44639489552329a627219fe527918a6c08420 140 204
+	    writeFileSync(resolve(output!, 'viz-census.json'), JSON.stringify(result.registry, null, 2) + '\n');
+86b44639489552329a627219fe527918a6c08420 141 205
+	    writeFileSync(resolve(output!, 'viz-observations.json'), JSON.stringify(result, null, 2) + '\n');
+86b44639489552329a627219fe527918a6c08420 142 206
+	    if (writeRegistry) writeFileSync(resolve(root, 'packages/viz-core/src/registry/viz-recipes.v1.json'), JSON.stringify(result.registry, null, 2) + '\n');
+86b44639489552329a627219fe527918a6c08420 143 207
+	  }
+86b44639489552329a627219fe527918a6c08420 144 208
+	  console.log(JSON.stringify({ rows: result.registry.length, scopeIdentities: result.observations.reduce((n, row) => n + row.scopes.length, 0),
+52b0da991705c4c565987bc9faf7738ba00d885e 164 209 2
+	    renderedScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.status === 'rendered').length,
+52b0da991705c4c565987bc9faf7738ba00d885e 165 210
+	    typedDeferredScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.status === 'typed-deferred').length,
+86b44639489552329a627219fe527918a6c08420 145 211 3
+	    certified: result.registry.filter(row => row.certifyCoverage === 'certified').length,
+86b44639489552329a627219fe527918a6c08420 146 212
+	    nonconformantScopes: result.observations.flatMap(row => row.scopes).filter(scope => scope.conformant === false).length,
+86b44639489552329a627219fe527918a6c08420 147 213
+	    accuracyControls: result.accuracyControls.length, placements: result.placements }));

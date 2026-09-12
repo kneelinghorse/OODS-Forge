@@ -20,6 +20,30 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's195-m07') {
+    const head = movers.s195.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const read = file => JSON.parse(source(head, file, root));
+    const tools = read('packages/mcp-server/registry/tool-capability-ledger.v1.json');
+    const registry = read('packages/viz-core/src/registry/viz-recipes.v1.json');
+    const patterns = read('packages/viz-core/src/registry/viz-patterns.v1.json');
+    const taxonomy = read('packages/viz-core/src/registry/viz-taxonomy.v1.json');
+    assert(tools.summary.auto === 19 && tools.summary.onDemand === 5 && tools.summary.autoByTier['product-reality'] === 19, 'Sprint195 reconnect requires the current 19 advertised tool proofs.');
+    const hc = registry.filter(row => row.themes.hc).map(row => row.chartType);
+    const body = [
+      `Sprint 195 candidate ${head}; prepared for Sprint 196 after independent review and delivery. Refresh discovery after delivery: 19 advertised tools and five on-demand tools remain.`,
+      `viz.render accepts pattern using the full pattern:viz:* identity. ${patterns.filter(row => row.publicSvg).length} of ${patterns.length} patterns have public SVG; the remainder are authoring-only with typed reasons. Conflicting pattern operands fail with OODS-V166; structural authoring-only patterns return OODS-V167.`,
+      `theme:'hc' is admitted on viz.render, dashboard.render and artifact.certify. HC chart pixels are measured for ${hc.join(', ')}; ${registry.length - hc.length} types retain typed renderer deferrals. HC uses declared system colours; contrast is exempt with a forced-colors note, not a numeric contrast pass.`,
+      'artifact.certify now certifies the eight ECharts types when supplied the matching data operand. A11y, accuracy and determinism remain graded; a real failing verdict stays conformant:false. Spec-only ECharts remain coverage:uncertified/conformant:null. Bubble radius scaling currently yields a measured accuracy failure; certification coverage is not a promise of conformance.',
+      `health.productReality.viz reports ${taxonomy.summary.types} types, ${taxonomy.summary.patterns} patterns, ${taxonomy.summary.families} families and ${taxonomy.summary.classified} classified identities; ${taxonomy.summary.coreSurfaceComplete} core cells have public surfaces and ${taxonomy.summary.typedGaps} remain typed gaps. Financial and scientific gaps remain explicit.`,
+      'Invoice line_items now supplies bar SVG and Usage samples supplies line SVG in generated React/Vue detail and dashboard views, with authored titles. Usage example rows are explicitly synthetic API-call counts. Existing Subscription area stays. ECharts object placement carries under decision1944; full Invoice/Usage detail HTML remains limited by Tabs normalization, while chart-node HTML contains real SVG.',
+      'The categorical palette meets the measured Role-A target with Role-C retained. Historical SVG and matrix evidence remains immutable with the m05 migration receipt. The strict soak result remains OODS-SOAK-1442 observation, not retention certification.',
+      'The five Sprint194 portable limits remain carried to Sprint196; current source boundary tiers do not promote those historical outcomes to passing portable execution. Classification and application craft approval remain pending.',
+      'Primary delivery remains the certified Sprint194 delivery recorded by s195-m01. This candidate is BUILT, REVIEW PENDING; builderSelfCertified:false. These notices are prepared only; candidate delivery and sends have not occurred.',
+      `Advertised/public movers from ${movers.s195.base}..${head}:\n${movers.s195.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's195-m07', implementationHead: head, status: 'prepared-unsent', sent: false, sendsExecuted: 0, deliverySprint: 'sprint-196', targets,
+      notices: targets.map(target => { const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint195 ${head}; reconnect after reviewed delivery`, body }; return { request, requestSha256: requestHash(request) }; }) };
+  }
   if (movers.missionId === 's194-m07') {
     const head = movers.s194.head;
     const tools = JSON.parse(source(head, 'packages/mcp-server/registry/tool-capability-ledger.v1.json', root));
@@ -244,7 +268,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const moversPath = path.resolve(ROOT, argument('--movers') ?? `${sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/movers` : MOVERS_OUTPUT}/sprint-wide-movers.json`);
   const movers = JSON.parse(fs.readFileSync(moversPath, 'utf8'));
   const declaration = JSON.parse(fs.readFileSync(path.resolve(ROOT, argument('--declaration') ?? path.join(path.dirname(moversPath), 'declared-movers.json')), 'utf8'));
-  const rederived = sprintId === 'sprint-187'
+  const rederived = sprintId === 'sprint-195'
+    ? deriveMovers(movers.s195.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's195-m07', base: movers.s195.base }) : sprintId === 'sprint-187'
     ? deriveMovers(movers.s187.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's187-m06', base: movers.s187.base }) : sprintId === 'sprint-186'
     ? deriveMovers(movers.s186.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's186-m06', base: movers.s186.base })
     : deriveMovers(movers.s185.head, declaration);

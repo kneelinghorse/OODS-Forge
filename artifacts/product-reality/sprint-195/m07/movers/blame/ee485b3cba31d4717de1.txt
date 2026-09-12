@@ -1,0 +1,142 @@
+ffcdc29ef225d28e54f094e2b430b707f85d1167 1 1 66
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+filename packages/viz-core/src/registry/viz-classification.v1.schema.json
+	{
+ffcdc29ef225d28e54f094e2b430b707f85d1167 2 2
+	  "$schema": "https://json-schema.org/draft/2020-12/schema",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 3 3
+	  "$id": "https://oods.dev/schemas/viz-classification.v1.schema.json",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 4 4
+	  "title": "Visualization classification v1",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 5 5
+	  "description": "The sole authored family and primary core-cell assignments for registered chart types and pattern specifications.",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 6 6
+	  "type": "object",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 7 7
+	  "additionalProperties": false,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 8 8
+	  "required": ["schemaVersion", "families", "assignments"],
+ffcdc29ef225d28e54f094e2b430b707f85d1167 9 9
+	  "properties": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 10 10
+	    "$schema": { "type": "string" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 11 11
+	    "schemaVersion": { "const": 1 },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 12 12
+	    "families": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 13 13
+	      "type": "array",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 14 14
+	      "minItems": 8,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 15 15
+	      "maxItems": 8,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 16 16
+	      "items": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 17 17
+	        "type": "object",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 18 18
+	        "additionalProperties": false,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 19 19
+	        "required": ["id", "definition", "coreCells"],
+ffcdc29ef225d28e54f094e2b430b707f85d1167 20 20
+	        "properties": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 21 21
+	          "id": { "$ref": "#/$defs/name" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 22 22
+	          "definition": { "$ref": "#/$defs/prose" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 23 23
+	          "coreCells": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 24 24
+	            "type": "array",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 25 25
+	            "minItems": 1,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 26 26
+	            "items": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 27 27
+	              "type": "object",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 28 28
+	              "additionalProperties": false,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 29 29
+	              "required": ["cell", "definition", "gapReason"],
+ffcdc29ef225d28e54f094e2b430b707f85d1167 30 30
+	              "properties": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 31 31
+	                "cell": { "$ref": "#/$defs/name" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 32 32
+	                "definition": { "$ref": "#/$defs/prose" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 33 33
+	                "gapReason": { "$ref": "#/$defs/prose" }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 34 34
+	              }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 35 35
+	            }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 36 36
+	          }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 37 37
+	        }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 38 38
+	      }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 39 39
+	    },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 40 40
+	    "assignments": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 41 41
+	      "type": "array",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 42 42
+	      "minItems": 1,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 43 43
+	      "items": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 44 44
+	        "type": "object",
+ffcdc29ef225d28e54f094e2b430b707f85d1167 45 45
+	        "additionalProperties": false,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 46 46
+	        "required": ["id", "family", "role", "coreCell"],
+ffcdc29ef225d28e54f094e2b430b707f85d1167 47 47
+	        "properties": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 48 48
+	          "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9_:-]*$" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 49 49
+	          "family": { "$ref": "#/$defs/name" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 50 50
+	          "role": { "enum": ["core", "extension"] },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 51 51
+	          "coreCell": { "anyOf": [{ "$ref": "#/$defs/name" }, { "type": "null" }] }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 52 52
+	        },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 53 53
+	        "allOf": [
+ffcdc29ef225d28e54f094e2b430b707f85d1167 54 54
+	          {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 55 55
+	            "if": { "properties": { "role": { "const": "core" } } },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 56 56
+	            "then": { "properties": { "coreCell": { "$ref": "#/$defs/name" } } }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 57 57
+	          }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 58 58
+	        ]
+ffcdc29ef225d28e54f094e2b430b707f85d1167 59 59
+	      }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 60 60
+	    }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 61 61
+	  },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 62 62
+	  "$defs": {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 63 63
+	    "name": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 64 64
+	    "prose": { "type": "string", "minLength": 1, "pattern": "\\S" }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 65 65
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 66 66
+	}

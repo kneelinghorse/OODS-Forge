@@ -1,0 +1,632 @@
+a3158282bba25713171d7216181bde28b69a80a1 56 56 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c schemas/traits/mark-point.parameters.schema.json
+filename schemas/traits/mark-point.parameters.schema.json
+	    },
+a3158282bba25713171d7216181bde28b69a80a1 57 57
+	    "chart": {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 58 58 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 schemas/traits/mark-point.parameters.schema.json
+filename schemas/traits/mark-point.parameters.schema.json
+	      "title": "MarkPointChartDeclaration",
+a3158282bba25713171d7216181bde28b69a80a1 59 59 80
+	      "description": "Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.",
+a3158282bba25713171d7216181bde28b69a80a1 60 60
+	      "oneOf": [
+a3158282bba25713171d7216181bde28b69a80a1 61 61
+	        {
+a3158282bba25713171d7216181bde28b69a80a1 62 62
+	          "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 63 63
+	          "additionalProperties": false,
+a3158282bba25713171d7216181bde28b69a80a1 64 64
+	          "required": [
+a3158282bba25713171d7216181bde28b69a80a1 65 65
+	            "chartType",
+a3158282bba25713171d7216181bde28b69a80a1 66 66
+	            "source",
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	            "dataField",
+a3158282bba25713171d7216181bde28b69a80a1 68 68
+	            "encodings",
+a3158282bba25713171d7216181bde28b69a80a1 69 69
+	            "sampleRows"
+a3158282bba25713171d7216181bde28b69a80a1 70 70
+	          ],
+a3158282bba25713171d7216181bde28b69a80a1 71 71
+	          "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 72 72
+	            "chartType": {
+a3158282bba25713171d7216181bde28b69a80a1 73 73
+	              "const": "scatter"
+a3158282bba25713171d7216181bde28b69a80a1 74 74
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 75 75
+	            "source": {
+a3158282bba25713171d7216181bde28b69a80a1 76 76
+	              "const": "record-array"
+a3158282bba25713171d7216181bde28b69a80a1 77 77
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 78 78
+	            "dataField": {
+a3158282bba25713171d7216181bde28b69a80a1 79 79
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 80 80
+	              "minLength": 1,
+a3158282bba25713171d7216181bde28b69a80a1 81 81
+	              "description": "Declared objectSchema array field containing the chart rows."
+a3158282bba25713171d7216181bde28b69a80a1 82 82
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 83 83
+	            "encodings": {
+a3158282bba25713171d7216181bde28b69a80a1 84 84
+	              "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 85 85
+	              "description": "Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).",
+a3158282bba25713171d7216181bde28b69a80a1 86 86
+	              "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 87 87
+	                "x": {
+a3158282bba25713171d7216181bde28b69a80a1 88 88
+	                  "$ref": "#/$defs/chartEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 89 89
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 90 90
+	                "y": {
+a3158282bba25713171d7216181bde28b69a80a1 91 91
+	                  "$ref": "#/$defs/chartEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 92 92
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 93 93
+	                "color": {
+a3158282bba25713171d7216181bde28b69a80a1 94 94
+	                  "$ref": "#/$defs/chartColorEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 95 95
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 96 96
+	                "size": {
+a3158282bba25713171d7216181bde28b69a80a1 97 97
+	                  "$ref": "#/$defs/chartEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 98 98
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 99 99
+	                "shape": {
+a3158282bba25713171d7216181bde28b69a80a1 100 100
+	                  "$ref": "#/$defs/chartEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 101 101
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 102 102
+	                "detail": {
+a3158282bba25713171d7216181bde28b69a80a1 103 103
+	                  "$ref": "#/$defs/chartEncodingBinding"
+a3158282bba25713171d7216181bde28b69a80a1 104 104
+	                }
+a3158282bba25713171d7216181bde28b69a80a1 105 105
+	              },
+a3158282bba25713171d7216181bde28b69a80a1 106 106
+	              "additionalProperties": false,
+a3158282bba25713171d7216181bde28b69a80a1 107 107
+	              "required": [
+a3158282bba25713171d7216181bde28b69a80a1 108 108
+	                "x",
+a3158282bba25713171d7216181bde28b69a80a1 109 109
+	                "y"
+a3158282bba25713171d7216181bde28b69a80a1 110 110
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 111 111
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 112 112
+	            "sampleRows": {
+a3158282bba25713171d7216181bde28b69a80a1 113 113
+	              "type": "array",
+a3158282bba25713171d7216181bde28b69a80a1 114 114
+	              "minItems": 1,
+a3158282bba25713171d7216181bde28b69a80a1 115 115
+	              "items": {
+a3158282bba25713171d7216181bde28b69a80a1 116 116
+	                "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 117 117
+	                "minProperties": 1,
+a3158282bba25713171d7216181bde28b69a80a1 118 118
+	                "additionalProperties": true
+a3158282bba25713171d7216181bde28b69a80a1 119 119
+	              },
+a3158282bba25713171d7216181bde28b69a80a1 120 120
+	              "description": "Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented."
+a3158282bba25713171d7216181bde28b69a80a1 121 121
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 122 122
+	            "brand": {
+a3158282bba25713171d7216181bde28b69a80a1 123 123
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 124 124
+	                "A",
+a3158282bba25713171d7216181bde28b69a80a1 125 125
+	                "B"
+a3158282bba25713171d7216181bde28b69a80a1 126 126
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 127 127
+	            }
+a3158282bba25713171d7216181bde28b69a80a1 128 128
+	          }
+a3158282bba25713171d7216181bde28b69a80a1 129 129
+	        }
+a3158282bba25713171d7216181bde28b69a80a1 130 130
+	      ]
+a3158282bba25713171d7216181bde28b69a80a1 131 131
+	    },
+a3158282bba25713171d7216181bde28b69a80a1 132 132
+	    "title": {
+a3158282bba25713171d7216181bde28b69a80a1 133 133
+	      "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 134 134
+	      "description": "Title of the read-only chart projection."
+a3158282bba25713171d7216181bde28b69a80a1 135 135
+	    },
+a3158282bba25713171d7216181bde28b69a80a1 136 136
+	    "description": {
+a3158282bba25713171d7216181bde28b69a80a1 137 137
+	      "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 138 138
+	      "description": "Accessible description of the read-only chart projection."
+a3158282bba25713171d7216181bde28b69a80a1 151 151 3
+	  ],
+a3158282bba25713171d7216181bde28b69a80a1 152 152
+	  "$defs": {
+a3158282bba25713171d7216181bde28b69a80a1 153 153
+	    "chartEncodingBinding": {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 154 154 1
+	      "title": "MarkPointChartEncodingBinding",
+a3158282bba25713171d7216181bde28b69a80a1 155 155 104
+	      "description": "An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+a3158282bba25713171d7216181bde28b69a80a1 156 156
+	      "oneOf": [
+a3158282bba25713171d7216181bde28b69a80a1 157 157
+	        {
+a3158282bba25713171d7216181bde28b69a80a1 158 158
+	          "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 159 159
+	          "minLength": 1
+a3158282bba25713171d7216181bde28b69a80a1 160 160
+	        },
+a3158282bba25713171d7216181bde28b69a80a1 161 161
+	        {
+a3158282bba25713171d7216181bde28b69a80a1 162 162
+	          "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 163 163
+	          "required": [
+a3158282bba25713171d7216181bde28b69a80a1 164 164
+	            "field"
+a3158282bba25713171d7216181bde28b69a80a1 165 165
+	          ],
+a3158282bba25713171d7216181bde28b69a80a1 166 166
+	          "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 167 167
+	            "field": {
+a3158282bba25713171d7216181bde28b69a80a1 168 168
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 169 169
+	              "minLength": 1
+a3158282bba25713171d7216181bde28b69a80a1 170 170
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 171 171
+	            "aggregate": {
+a3158282bba25713171d7216181bde28b69a80a1 172 172
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 173 173
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 174 174
+	                "sum",
+a3158282bba25713171d7216181bde28b69a80a1 175 175
+	                "count",
+a3158282bba25713171d7216181bde28b69a80a1 176 176
+	                "average",
+a3158282bba25713171d7216181bde28b69a80a1 177 177
+	                "median",
+a3158282bba25713171d7216181bde28b69a80a1 178 178
+	                "min",
+a3158282bba25713171d7216181bde28b69a80a1 179 179
+	                "max",
+a3158282bba25713171d7216181bde28b69a80a1 180 180
+	                "distinct"
+a3158282bba25713171d7216181bde28b69a80a1 181 181
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 182 182
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 183 183
+	            "scale": {
+a3158282bba25713171d7216181bde28b69a80a1 184 184
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 185 185
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 186 186
+	                "linear",
+a3158282bba25713171d7216181bde28b69a80a1 187 187
+	                "temporal",
+a3158282bba25713171d7216181bde28b69a80a1 188 188
+	                "log",
+a3158282bba25713171d7216181bde28b69a80a1 189 189
+	                "sqrt",
+a3158282bba25713171d7216181bde28b69a80a1 190 190
+	                "band",
+a3158282bba25713171d7216181bde28b69a80a1 191 191
+	                "point",
+a3158282bba25713171d7216181bde28b69a80a1 192 192
+	                "diverging"
+a3158282bba25713171d7216181bde28b69a80a1 193 193
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 194 194
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 195 195
+	            "type": {
+a3158282bba25713171d7216181bde28b69a80a1 196 196
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 197 197
+	              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.",
+a3158282bba25713171d7216181bde28b69a80a1 198 198
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 199 199
+	                "quantitative",
+a3158282bba25713171d7216181bde28b69a80a1 200 200
+	                "temporal",
+a3158282bba25713171d7216181bde28b69a80a1 201 201
+	                "ordinal",
+a3158282bba25713171d7216181bde28b69a80a1 202 202
+	                "nominal"
+a3158282bba25713171d7216181bde28b69a80a1 203 203
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 204 204
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 205 205
+	            "timeUnit": {
+a3158282bba25713171d7216181bde28b69a80a1 206 206
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 207 207
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 208 208
+	                "year",
+a3158282bba25713171d7216181bde28b69a80a1 209 209
+	                "quarter",
+a3158282bba25713171d7216181bde28b69a80a1 210 210
+	                "month",
+a3158282bba25713171d7216181bde28b69a80a1 211 211
+	                "week",
+a3158282bba25713171d7216181bde28b69a80a1 212 212
+	                "day",
+a3158282bba25713171d7216181bde28b69a80a1 213 213
+	                "hour",
+a3158282bba25713171d7216181bde28b69a80a1 214 214
+	                "minute",
+a3158282bba25713171d7216181bde28b69a80a1 215 215
+	                "second"
+a3158282bba25713171d7216181bde28b69a80a1 216 216
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 217 217
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 218 218
+	            "sort": {
+a3158282bba25713171d7216181bde28b69a80a1 219 219
+	              "oneOf": [
+a3158282bba25713171d7216181bde28b69a80a1 220 220
+	                {
+a3158282bba25713171d7216181bde28b69a80a1 221 221
+	                  "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 222 222
+	                  "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 223 223
+	                    "none",
+a3158282bba25713171d7216181bde28b69a80a1 224 224
+	                    "ascending",
+a3158282bba25713171d7216181bde28b69a80a1 225 225
+	                    "descending"
+a3158282bba25713171d7216181bde28b69a80a1 226 226
+	                  ]
+a3158282bba25713171d7216181bde28b69a80a1 227 227
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 228 228
+	                {
+a3158282bba25713171d7216181bde28b69a80a1 229 229
+	                  "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 230 230
+	                  "required": [
+a3158282bba25713171d7216181bde28b69a80a1 231 231
+	                    "field",
+a3158282bba25713171d7216181bde28b69a80a1 232 232
+	                    "order"
+a3158282bba25713171d7216181bde28b69a80a1 233 233
+	                  ],
+a3158282bba25713171d7216181bde28b69a80a1 234 234
+	                  "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 235 235
+	                    "field": {
+a3158282bba25713171d7216181bde28b69a80a1 236 236
+	                      "type": "string"
+a3158282bba25713171d7216181bde28b69a80a1 237 237
+	                    },
+a3158282bba25713171d7216181bde28b69a80a1 238 238
+	                    "order": {
+a3158282bba25713171d7216181bde28b69a80a1 239 239
+	                      "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 240 240
+	                      "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 241 241
+	                        "ascending",
+a3158282bba25713171d7216181bde28b69a80a1 242 242
+	                        "descending"
+a3158282bba25713171d7216181bde28b69a80a1 243 243
+	                      ]
+a3158282bba25713171d7216181bde28b69a80a1 244 244
+	                    }
+a3158282bba25713171d7216181bde28b69a80a1 245 245
+	                  },
+a3158282bba25713171d7216181bde28b69a80a1 246 246
+	                  "additionalProperties": false
+a3158282bba25713171d7216181bde28b69a80a1 247 247
+	                }
+a3158282bba25713171d7216181bde28b69a80a1 248 248
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 249 249
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 250 250
+	            "title": {
+a3158282bba25713171d7216181bde28b69a80a1 251 251
+	              "type": "string"
+a3158282bba25713171d7216181bde28b69a80a1 252 252
+	            }
+a3158282bba25713171d7216181bde28b69a80a1 253 253
+	          },
+a3158282bba25713171d7216181bde28b69a80a1 254 254
+	          "additionalProperties": false
+a3158282bba25713171d7216181bde28b69a80a1 255 255
+	        }
+a3158282bba25713171d7216181bde28b69a80a1 256 256
+	      ]
+a3158282bba25713171d7216181bde28b69a80a1 257 257
+	    },
+a3158282bba25713171d7216181bde28b69a80a1 258 258
+	    "chartColorEncodingBinding": {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 259 259 1
+	      "title": "MarkPointChartColorEncodingBinding",
+a3158282bba25713171d7216181bde28b69a80a1 260 260 113
+	      "description": "A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.",
+a3158282bba25713171d7216181bde28b69a80a1 261 261
+	      "oneOf": [
+a3158282bba25713171d7216181bde28b69a80a1 262 262
+	        {
+a3158282bba25713171d7216181bde28b69a80a1 263 263
+	          "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 264 264
+	          "minLength": 1
+a3158282bba25713171d7216181bde28b69a80a1 265 265
+	        },
+a3158282bba25713171d7216181bde28b69a80a1 266 266
+	        {
+a3158282bba25713171d7216181bde28b69a80a1 267 267
+	          "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 268 268
+	          "required": [
+a3158282bba25713171d7216181bde28b69a80a1 269 269
+	            "field"
+a3158282bba25713171d7216181bde28b69a80a1 270 270
+	          ],
+a3158282bba25713171d7216181bde28b69a80a1 271 271
+	          "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 272 272
+	            "field": {
+a3158282bba25713171d7216181bde28b69a80a1 273 273
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 274 274
+	              "minLength": 1
+a3158282bba25713171d7216181bde28b69a80a1 275 275
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 276 276
+	            "aggregate": {
+a3158282bba25713171d7216181bde28b69a80a1 277 277
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 278 278
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 279 279
+	                "sum",
+a3158282bba25713171d7216181bde28b69a80a1 280 280
+	                "count",
+a3158282bba25713171d7216181bde28b69a80a1 281 281
+	                "average",
+a3158282bba25713171d7216181bde28b69a80a1 282 282
+	                "median",
+a3158282bba25713171d7216181bde28b69a80a1 283 283
+	                "min",
+a3158282bba25713171d7216181bde28b69a80a1 284 284
+	                "max",
+a3158282bba25713171d7216181bde28b69a80a1 285 285
+	                "distinct"
+a3158282bba25713171d7216181bde28b69a80a1 286 286
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 287 287
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 288 288
+	            "scale": {
+a3158282bba25713171d7216181bde28b69a80a1 289 289
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 290 290
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 291 291
+	                "linear",
+a3158282bba25713171d7216181bde28b69a80a1 292 292
+	                "temporal",
+a3158282bba25713171d7216181bde28b69a80a1 293 293
+	                "log",
+a3158282bba25713171d7216181bde28b69a80a1 294 294
+	                "sqrt",
+a3158282bba25713171d7216181bde28b69a80a1 295 295
+	                "band",
+a3158282bba25713171d7216181bde28b69a80a1 296 296
+	                "point",
+a3158282bba25713171d7216181bde28b69a80a1 297 297
+	                "diverging"
+a3158282bba25713171d7216181bde28b69a80a1 298 298
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 299 299
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 300 300
+	            "type": {
+a3158282bba25713171d7216181bde28b69a80a1 301 301
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 302 302
+	              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.",
+a3158282bba25713171d7216181bde28b69a80a1 303 303
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 304 304
+	                "quantitative",
+a3158282bba25713171d7216181bde28b69a80a1 305 305
+	                "temporal",
+a3158282bba25713171d7216181bde28b69a80a1 306 306
+	                "ordinal",
+a3158282bba25713171d7216181bde28b69a80a1 307 307
+	                "nominal"
+a3158282bba25713171d7216181bde28b69a80a1 308 308
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 309 309
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 310 310
+	            "timeUnit": {
+a3158282bba25713171d7216181bde28b69a80a1 311 311
+	              "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 312 312
+	              "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 313 313
+	                "year",
+a3158282bba25713171d7216181bde28b69a80a1 314 314
+	                "quarter",
+a3158282bba25713171d7216181bde28b69a80a1 315 315
+	                "month",
+a3158282bba25713171d7216181bde28b69a80a1 316 316
+	                "week",
+a3158282bba25713171d7216181bde28b69a80a1 317 317
+	                "day",
+a3158282bba25713171d7216181bde28b69a80a1 318 318
+	                "hour",
+a3158282bba25713171d7216181bde28b69a80a1 319 319
+	                "minute",
+a3158282bba25713171d7216181bde28b69a80a1 320 320
+	                "second"
+a3158282bba25713171d7216181bde28b69a80a1 321 321
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 322 322
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 323 323
+	            "sort": {
+a3158282bba25713171d7216181bde28b69a80a1 324 324
+	              "oneOf": [
+a3158282bba25713171d7216181bde28b69a80a1 325 325
+	                {
+a3158282bba25713171d7216181bde28b69a80a1 326 326
+	                  "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 327 327
+	                  "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 328 328
+	                    "none",
+a3158282bba25713171d7216181bde28b69a80a1 329 329
+	                    "ascending",
+a3158282bba25713171d7216181bde28b69a80a1 330 330
+	                    "descending"
+a3158282bba25713171d7216181bde28b69a80a1 331 331
+	                  ]
+a3158282bba25713171d7216181bde28b69a80a1 332 332
+	                },
+a3158282bba25713171d7216181bde28b69a80a1 333 333
+	                {
+a3158282bba25713171d7216181bde28b69a80a1 334 334
+	                  "type": "object",
+a3158282bba25713171d7216181bde28b69a80a1 335 335
+	                  "required": [
+a3158282bba25713171d7216181bde28b69a80a1 336 336
+	                    "field",
+a3158282bba25713171d7216181bde28b69a80a1 337 337
+	                    "order"
+a3158282bba25713171d7216181bde28b69a80a1 338 338
+	                  ],
+a3158282bba25713171d7216181bde28b69a80a1 339 339
+	                  "properties": {
+a3158282bba25713171d7216181bde28b69a80a1 340 340
+	                    "field": {
+a3158282bba25713171d7216181bde28b69a80a1 341 341
+	                      "type": "string"
+a3158282bba25713171d7216181bde28b69a80a1 342 342
+	                    },
+a3158282bba25713171d7216181bde28b69a80a1 343 343
+	                    "order": {
+a3158282bba25713171d7216181bde28b69a80a1 344 344
+	                      "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 345 345
+	                      "enum": [
+a3158282bba25713171d7216181bde28b69a80a1 346 346
+	                        "ascending",
+a3158282bba25713171d7216181bde28b69a80a1 347 347
+	                        "descending"
+a3158282bba25713171d7216181bde28b69a80a1 348 348
+	                      ]
+a3158282bba25713171d7216181bde28b69a80a1 349 349
+	                    }
+a3158282bba25713171d7216181bde28b69a80a1 350 350
+	                  },
+a3158282bba25713171d7216181bde28b69a80a1 351 351
+	                  "additionalProperties": false
+a3158282bba25713171d7216181bde28b69a80a1 352 352
+	                }
+a3158282bba25713171d7216181bde28b69a80a1 353 353
+	              ]
+a3158282bba25713171d7216181bde28b69a80a1 354 354
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 355 355
+	            "title": {
+a3158282bba25713171d7216181bde28b69a80a1 356 356
+	              "type": "string"
+a3158282bba25713171d7216181bde28b69a80a1 357 357
+	            },
+a3158282bba25713171d7216181bde28b69a80a1 358 358
+	            "range": {
+a3158282bba25713171d7216181bde28b69a80a1 359 359
+	              "type": "array",
+a3158282bba25713171d7216181bde28b69a80a1 360 360
+	              "description": "Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.",
+a3158282bba25713171d7216181bde28b69a80a1 361 361
+	              "items": {
+a3158282bba25713171d7216181bde28b69a80a1 362 362
+	                "type": "string",
+a3158282bba25713171d7216181bde28b69a80a1 363 363
+	                "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+a3158282bba25713171d7216181bde28b69a80a1 364 364
+	              },
+a3158282bba25713171d7216181bde28b69a80a1 365 365
+	              "minItems": 2
+a3158282bba25713171d7216181bde28b69a80a1 366 366
+	            }
+a3158282bba25713171d7216181bde28b69a80a1 367 367
+	          },
+a3158282bba25713171d7216181bde28b69a80a1 368 368
+	          "additionalProperties": false
+a3158282bba25713171d7216181bde28b69a80a1 369 369
+	        }
+a3158282bba25713171d7216181bde28b69a80a1 370 370
+	      ]
+a3158282bba25713171d7216181bde28b69a80a1 371 371
+	    }
+a3158282bba25713171d7216181bde28b69a80a1 372 372
+	  }

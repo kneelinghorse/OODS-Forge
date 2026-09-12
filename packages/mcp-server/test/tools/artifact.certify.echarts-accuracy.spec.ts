@@ -26,7 +26,7 @@ const ir = (trait: string, chartType: string): NormalizedVizSpec => echartsPrima
 
 describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)', () => {
   it.each(ECHARTS_OPERAND_CASES.map((c) => [c.chartType, c] as const))(
-    '%s: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran',
+    '%s: the representative operand reports measured accuracy under the declared rule set',
     async (_label, operand) => {
       const rendered = await vizRender(renderInputFor(operand) as never);
       const out = await certify({
@@ -40,15 +40,15 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
         sunburst: 2,
         sankey: 3,
         chord: 1,
-        force_graph: 0,
+        force_graph: 1,
         choropleth: 1,
-        bubble_map: 0,
-        flow_map: 0,
+        bubble_map: 3,
+        flow_map: 2,
       };
       const expected = EXPECTED_RULES[operand.chartType];
       expect(out.accuracySummary?.rulesEvaluated).toBe(expected);
-      expect(out.accuracySummary?.failing).toBe(0);
-      expect(out.pillars?.accuracy).toBe(expected > 0 ? 'pass' : 'unchecked');
+      expect(out.accuracySummary?.failing).toBe(operand.chartType === 'bubble_map' ? 1 : 0);
+      expect(out.pillars?.accuracy).toBe(operand.chartType === 'bubble_map' ? 'fail' : 'pass');
       // DECLARED MOVER (s174 m01). The clean-operand verdict carries ZERO accuracy findings
       // — the claim this line was making — but findings[] is no longer accuracy-only: the
       // warn-first a11y engine now writes into it. Both halves are pinned exactly.
@@ -57,31 +57,27 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
         RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType],
       );
       expect((out.findings ?? []).length).toBe(
-        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType].length,
+        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType].length + (operand.chartType === 'bubble_map' ? 1 : 0),
       );
       expect(validateOutput(out)).toBe(true);
     },
   );
 
-  it.each(['force_graph', 'bubble_map', 'flow_map'] as const)(
-    '%s offers NO rule: rulesEvaluated 0, failing 0, and a note that says the offered SET is empty',
-    async (chartType) => {
-      const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === chartType)!;
-      const rendered = await vizRender(renderInputFor(operand) as never);
-      const out = await certify({
-        spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
-        data: { [operand.branch]: operand.branchData } as never,
-      });
-      expect(out.accuracySummary).toEqual({ rulesEvaluated: 0, failing: 0 });
-      expect((out.notes ?? []).some((n) => n.includes('offered set is empty'))).toBe(true);
-      // NOT 'pass'. Zero resolved rules can never be a pass on this path — an empty offered
-      // set means nothing was checked, and saying 'pass' would be the exact overclaim the
-      // accuracy pillar exists to avoid.
-      expect(out.pillars?.accuracy).toBe('unchecked');
-    },
-  );
+  it.each([
+    ['force_graph', ['OODS-V173']],
+    ['bubble_map', ['OODS-V168', 'OODS-V169', 'OODS-V170']],
+    ['flow_map', ['OODS-V171', 'OODS-V172']],
+  ] as const)('%s advertises its exact newly offered rules and retires the empty-set claim', async (chartType, codes) => {
+    const operand = ECHARTS_OPERAND_CASES.find(c => c.chartType === chartType)!;
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    const out = await certify({ spec: rendered.normalizedSpec as unknown as NormalizedVizSpec, data: { [operand.branch]: operand.branchData } as never });
+    expect(out.accuracyRules).toEqual(codes);
+    expect(out.accuracySummary?.rulesEvaluated).toBe(codes.length);
+    expect(out.notes?.some(note => note.includes('offered set is empty'))).toBe(false);
+    expect(validateOutput(out)).toBe(true);
+  });
 
-  it('the two flavours of unchecked are DISTINGUISHABLE: no operand vs nothing offered', async () => {
+  it('no operand is unchecked while the supplied force-graph operand is evaluated', async () => {
     const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'force_graph')!;
     const rendered = await vizRender(renderInputFor(operand) as never);
     const spec = rendered.normalizedSpec as unknown as NormalizedVizSpec;
@@ -94,13 +90,12 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
     expect(withoutData.accuracySummary).toBeUndefined();
     expect((withoutData.notes ?? []).some((n) => n.startsWith('Accuracy is unchecked for'))).toBe(true);
 
-    // With the operand and an empty set: STILL 'unchecked' (nothing ran), but now the
-    // accuracySummary is PRESENT at 0/0 and the note says the offered set is empty rather
-    // than that the operand is missing. Those two devices are the whole difference.
-    expect(withData.pillars?.accuracy).toBe('unchecked');
-    expect(withData.accuracySummary).toEqual({ rulesEvaluated: 0, failing: 0 });
+    // s195 supplies a real directed-link rule for force_graph. Missing data cannot
+    // claim that pass: the populated summary is evidence that a rule actually ran.
+    expect(withData.pillars?.accuracy).toBe('pass');
+    expect(withData.accuracySummary).toEqual({ rulesEvaluated: 1, failing: 0 });
     expect((withData.notes ?? []).some((n) => n.startsWith('Accuracy is unchecked for'))).toBe(false);
-    expect((withData.notes ?? []).some((n) => n.includes('offered set is empty'))).toBe(true);
+    expect((withData.notes ?? []).some((n) => n.includes('offered set is empty'))).toBe(false);
   });
 });
 
@@ -213,14 +208,14 @@ describe('artifact.certify — a firing ECharts accuracy rule reaches the agent 
     expect(out.findings?.find((f) => f.code === 'OODS-V158')?.severity).toBe('error');
   });
 
-  it('conformant STAYS null on an accuracy fail — the uncertified path makes no folded claim (s141 Design A)', async () => {
+  it('an accuracy failure prevents conformance under the declared operand profile', async () => {
     const out = await certify({
       spec: ir('MarkChord', 'chord'),
       data: { chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B', value: -5 }] } } as never,
     });
     expect(out.pillars?.accuracy).toBe('fail');
-    expect(out.conformant).toBeNull();
-    expect(out.coverage).toBe('uncertified');
+    expect(out.conformant).toBe(false);
+    expect(out.coverage).toBe('certified');
   });
 
   it('an accuracy fail does NOT disturb the determinism proof — the rules are readers (#110)', async () => {

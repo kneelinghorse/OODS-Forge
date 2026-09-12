@@ -1,0 +1,374 @@
+{
+  "request": {
+    "chartType": "chord",
+    "chord": {
+      "nodes": [
+        {
+          "name": "North"
+        },
+        {
+          "name": "South"
+        },
+        {
+          "name": "East"
+        }
+      ],
+      "links": [
+        {
+          "source": "North",
+          "target": "South",
+          "value": 12
+        },
+        {
+          "source": "South",
+          "target": "East",
+          "value": 8
+        },
+        {
+          "source": "East",
+          "target": "North",
+          "value": 5
+        }
+      ]
+    },
+    "name": "Regional trade",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "compact": true,
+      "echarts": false
+    },
+    "theme": "hc",
+    "brand": "B",
+    "strictFields": false,
+    "a11yEquivalence": true
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "chord",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "color": [
+        "oklch(0.56 0.1737 264.97)",
+        "oklch(0.46 0.1875 274.17)",
+        "oklch(0.6001 0.1195 161.58)",
+        "oklch(0.6558 0.122 80.37)",
+        "oklch(0.5824 0.1655 23.89)",
+        "oklch(0.4755 0.1421 47.13)"
+      ],
+      "series": [
+        {
+          "type": "chord",
+          "name": "Regional trade",
+          "coordinateSystem": "none",
+          "nodes": [
+            {
+              "name": "North",
+              "itemStyle": {
+                "color": "oklch(0.56 0.1737 264.97)"
+              }
+            },
+            {
+              "name": "South",
+              "itemStyle": {
+                "color": "oklch(0.46 0.1875 274.17)"
+              }
+            },
+            {
+              "name": "East",
+              "itemStyle": {
+                "color": "oklch(0.6001 0.1195 161.58)"
+              }
+            }
+          ],
+          "links": [
+            {
+              "source": "North",
+              "target": "South",
+              "value": 12
+            },
+            {
+              "source": "South",
+              "target": "East",
+              "value": 8
+            },
+            {
+              "source": "East",
+              "target": "North",
+              "value": 5
+            }
+          ],
+          "clockwise": true,
+          "startAngle": 90,
+          "padAngle": 3,
+          "minAngle": 0,
+          "label": {
+            "show": true,
+            "position": "outside",
+            "color": "CanvasText"
+          },
+          "lineStyle": {
+            "color": "source",
+            "curveness": 0.5,
+            "opacity": 0.5
+          },
+          "itemStyle": {
+            "borderWidth": 1,
+            "borderColor": "CanvasText"
+          },
+          "emphasis": {
+            "focus": "adjacency"
+          }
+        }
+      ],
+      "tooltip": {
+        "trigger": "item",
+        "formatter": "{b}: {c}"
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Chord diagram of Regional trade."
+      },
+      "title": {
+        "text": "Regional trade",
+        "textStyle": {
+          "color": "CanvasText"
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:chord",
+          "name": "Regional trade",
+          "a11y": {
+            "description": "Chord diagram of Regional trade."
+          }
+        }
+      }
+    },
+    "a11yDescription": "Chord diagram of Regional trade.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "includeA11y": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkChord",
+      "rowCount": 3,
+      "fields": []
+    },
+    "a11y": {
+      "narrative": {
+        "summary": "Regional trade covers 3 data points totaling 25 Flow.",
+        "keyFindings": [
+          "High Flow: Flow 12 (North → South)",
+          "Low Flow: Flow 5 (East → North)",
+          "Total Flow: 25"
+        ]
+      },
+      "table": {
+        "caption": "Data table for Regional trade",
+        "columns": [
+          {
+            "field": "source",
+            "label": "Source",
+            "isNumeric": false
+          },
+          {
+            "field": "target",
+            "label": "Target",
+            "isNumeric": false
+          },
+          {
+            "field": "value",
+            "label": "Value",
+            "isNumeric": true
+          }
+        ],
+        "rows": [
+          {
+            "cells": [
+              {
+                "field": "source",
+                "text": "North"
+              },
+              {
+                "field": "target",
+                "text": "South"
+              },
+              {
+                "field": "value",
+                "text": "12"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "source",
+                "text": "South"
+              },
+              {
+                "field": "target",
+                "text": "East"
+              },
+              {
+                "field": "value",
+                "text": "8"
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "field": "source",
+                "text": "East"
+              },
+              {
+                "field": "target",
+                "text": "North"
+              },
+              {
+                "field": "value",
+                "text": "5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:chord",
+      "name": "Regional trade",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkChord"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Chord diagram of Regional trade."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-9baf5d3a",
+    "specRefCreatedAt": "2026-09-11T21:27:26.501Z",
+    "specRefExpiresAt": "2026-09-11T21:57:26.501Z",
+    "contentHash": "0a94d5690e033c1cc196f33a096220445160aa192230422cabb52f8aae2c21e3",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M300 60A140 140 0 0 1 439.3 185.9C341.8 195.8 335.5 222.5 418.3 274.9A140 140 0 0 1 237.4 325.2C281.2 237.6 300 158 300 60Z\" fill=\"oklch(0.56 0.1737 264.97)\" fill-opacity=\"0.5\" stroke=\"source\" stroke-width=\"0\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M237.4 325.2A140 140 0 0 1 161.1 217.7C258.3 205.3 258.1 203.1 160.4 210.4A140 140 0 0 1 213.6 89.8C274.1 166.9 281.2 237.6 237.4 325.2Z\" fill=\"oklch(0.46 0.1875 274.17)\" fill-opacity=\"0.5\" stroke=\"source\" stroke-width=\"0\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M213.6 89.8A140 140 0 0 1 292.7 60.2C297.8 158.1 341.8 195.8 439.3 185.9A140 140 0 0 1 422 268.6C336.6 220.6 274.1 166.9 213.6 89.8Z\" fill=\"oklch(0.6001 0.1195 161.58)\" fill-opacity=\"0.5\" stroke=\"source\" stroke-width=\"0\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M300 45.1A5 5 0 0 1 305.2 40.1A160 160 0 0 1 441.9 273.9A5 5 0 0 1 435 275.9L422 268.6A140 140 0 0 0 300 60Z\" fill=\"oklch(0.56 0.1737 264.97)\" stroke=\"CanvasText\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M430.9 282.9A5 5 0 0 1 432.4 289.9A160 160 0 0 1 142 225.3A5 5 0 0 1 146.3 219.6L161.1 217.7A140 140 0 0 0 418.3 274.9Z\" fill=\"oklch(0.46 0.1875 274.17)\" stroke=\"CanvasText\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M145.5 211.5A5 5 0 0 1 140.1 206.7A160 160 0 0 1 286.5 40.6A5 5 0 0 1 291.9 45.3L292.7 60.2A140 140 0 0 0 160.4 210.4Z\" fill=\"oklch(0.6001 0.1195 161.58)\" stroke=\"CanvasText\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" y=\"-6\" transform=\"translate(442.4167 116.6784)\" fill=\"CanvasText\">North</text>\n<text dominant-baseline=\"central\" text-anchor=\"end\" style=\"font-size:12px;font-family:sans-serif;\" y=\"6\" transform=\"translate(264.175 361.0639)\" fill=\"CanvasText\">South</text>\n<text dominant-baseline=\"central\" text-anchor=\"end\" style=\"font-size:12px;font-family:sans-serif;\" y=\"-6\" transform=\"translate(176.1746 90.9484)\" fill=\"CanvasText\">East</text>\n<path d=\"M-63.8 -5l127.5 0l0 28l-127.5 0Z\" transform=\"translate(300 20)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#3c3c41\" stroke-width=\"0\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"CanvasText\">Regional trade</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\n}\n.oods-zr-1:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "ef08397fc397b4554dabed23cc5b0b353acfb6de0d6235719df920df08c4c851",
+    "svgBytes": 3122,
+    "svgRef": "viz.render-3e4e0a59",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "B"
+    }
+  },
+  "certification": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V156"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "0a94d5690e033c1cc196f33a096220445160aa192230422cabb52f8aae2c21e3",
+      "renderHash": "ef08397fc397b4554dabed23cc5b0b353acfb6de0d6235719df920df08c4c851"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkChord is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/B.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "B",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/B.",
+        "reason": "forced-colors"
+      }
+    ]
+  },
+  "paints": [
+    "Canvas",
+    "oklch(0.56 0.1737 264.97)",
+    "source",
+    "oklch(0.46 0.1875 274.17)",
+    "oklch(0.6001 0.1195 161.58)",
+    "CanvasText",
+    "rgb(0,0,0)",
+    "#3c3c41"
+  ]
+}

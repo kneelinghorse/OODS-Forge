@@ -1,0 +1,998 @@
+{
+  "mission": "s193-m03",
+  "object": "Invoice",
+  "cellReports": [
+    {
+      "framework": "react",
+      "report": "react/receipt.json",
+      "sha256": "sha256:168cf51bd4a9b77032ead381c949b73a7d0b5e5dfe0505bf958dc6ff5ada28f0"
+    },
+    {
+      "framework": "vue",
+      "report": "vue/receipt.json",
+      "sha256": "sha256:29154f1924759821b9c2f3c52ba2ad1f6c17d476985ced0f7934fbea9244c34e"
+    }
+  ],
+  "sourceHead": "4787733b6bfd48aedde0d5f850a0e9d87643356f",
+  "builderSelfCertified": false,
+  "cells": [
+    {
+      "framework": "react",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:5357c18126b47508d8abbd82763c57c9c82431485571d7cbea363f7ac0e9795c",
+            "generatedEntry": "src/ssr.tsx"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-5SGq5Gu8.css"
+            ],
+            "bytes": 146638,
+            "sha256": "sha256:9aae511f97fd2b47a3109b1838d7fe549b0a35816b7297b227d0c504b3d47075",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "detail": {
+            "flowRows": 5,
+            "stateObservations": 16,
+            "screenshots": 12,
+            "errors": []
+          }
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/tmp/oods-s188-app-react-7T2H5q",
+      "browserErrors": [],
+      "accessibilityTree": "react/accessibility-tree.txt",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "invoice-001",
+              "invoice-002",
+              "invoice-003",
+              "invoice-004",
+              "invoice-005",
+              "invoice-006",
+              "invoice-007",
+              "invoice-008",
+              "invoice-009",
+              "invoice-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "invoice-003",
+            "heading": "invoice-003",
+            "mounts": [
+              {
+                "nodeId": "detail-ve-header-24",
+                "component": "VizMarkPreview",
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "invoice-003",
+            "field": "invoice_number",
+            "plan": "invoice-number sample 3"
+          }
+        },
+        {
+          "name": "save-record-field",
+          "status": "passed",
+          "detail": {
+            "heading": "invoice-003"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "No events yet.",
+            "id": "invoice-003",
+            "disposition": "The declared timeline collection has no lifecycle-history or payment-event source; its empty state is visible."
+          }
+        }
+      ]
+    },
+    {
+      "framework": "vue",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:8ffc3d3e45971b426c1741b1d11ece73481bc572a91a3aff5f770ba87dfb6100",
+            "generatedEntry": "src/ssr.ts"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-5SGq5Gu8.css"
+            ],
+            "bytes": 146638,
+            "sha256": "sha256:9aae511f97fd2b47a3109b1838d7fe549b0a35816b7297b227d0c504b3d47075",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "detail": {
+            "flowRows": 5,
+            "stateObservations": 16,
+            "screenshots": 12,
+            "errors": []
+          }
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/tmp/oods-s188-app-vue-Qhil0M",
+      "browserErrors": [],
+      "accessibilityTree": "vue/accessibility-tree.txt",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "invoice-001",
+              "invoice-002",
+              "invoice-003",
+              "invoice-004",
+              "invoice-005",
+              "invoice-006",
+              "invoice-007",
+              "invoice-008",
+              "invoice-009",
+              "invoice-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "invoice-003",
+            "heading": "invoice-003",
+            "mounts": [
+              {
+                "nodeId": "detail-ve-header-24",
+                "component": "VizMarkPreview",
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "invoice-003",
+            "field": "invoice_number",
+            "plan": "invoice-number sample 3"
+          }
+        },
+        {
+          "name": "save-record-field",
+          "status": "passed",
+          "detail": {
+            "heading": "invoice-003"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "No events yet.",
+            "id": "invoice-003",
+            "disposition": "The declared timeline collection has no lifecycle-history or payment-event source; its empty state is visible."
+          }
+        }
+      ]
+    }
+  ],
+  "stateObservations": [
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Search\nStatus\nAll states\nSort\nName A–Z\nName Z–A\ninvoice-001\nSep 1, 2026, 12:00 PM\ninvoice-002\nSep 1, 2026, 12:00 PM\ninvoice-003\nSep 1, 2026, 12:00 PM\ninvoice-004\nSep 1, 2026, 12:00 PM\ninvoice-005\nSep 1, 2026, 12:00 PM\ninvoice-006\nSep 1, 2026, 12:00 PM\ninvoice-007\nSep 1, 2026, 12:00 PM\ninvoice-008\nSep 1, 2026, 12:00 PM\ninvoice-009\nSep 1, 2026, 12:00 PM\ninvoice-010\nSep 1, 2026, 12:00 PM\n10 records\nShowing 1–10 of 10\n‹\n1\n›\nPage 1 of 1"
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Billing contact name\nScale plan\nLine item\n0\n200,000\nAmount (minor units)\nInvoice line item amounts\n\nLine-item amounts in minor currency units; matching descriptions are summed.\n\nDetails\nStatus Timeline\nstatus sample 1\n2026-09-01T12:00:00.000Z\n2026-09-01T12:00:00.000Z"
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Billing contact name\nStatus\n*\n\nCanonical invoice status after provider mapping.\n\nIssued at\n*\n\nTimestamp when the invoice was finalized or posted.\n\nCurrency\n*\n\nISO 4217 currency for the invoice.\n\nCollection state\n\nDunning phase or retry program detail presented to success teams.\n\nAttempt count\n\nNumber of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.\n\nAging bucket days\n\nNumber of days outstanding grouped for aging reports.\n\nRefund policy url\n\nLink to customer facing refund or cancellation policy.\n\nInvoice number\n*\n\nHuman readable invoice identifier presented to customers.\n\nTotal minor\n*\n\nTotal amount due expressed in minor currency units.\n\nBalance minor\n\nRemaining amount outstanding in minor units.\n\nSave"
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "invoice-001\n\nNo events yet."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Search\nStatus\nAll states\nSort\nName A–Z\nName Z–A\ninvoice-001\nSep 1, 2026, 12:00 PM\ninvoice-002\nSep 1, 2026, 12:00 PM\ninvoice-003\nSep 1, 2026, 12:00 PM\ninvoice-004\nSep 1, 2026, 12:00 PM\ninvoice-005\nSep 1, 2026, 12:00 PM\ninvoice-006\nSep 1, 2026, 12:00 PM\ninvoice-007\nSep 1, 2026, 12:00 PM\ninvoice-008\nSep 1, 2026, 12:00 PM\ninvoice-009\nSep 1, 2026, 12:00 PM\ninvoice-010\nSep 1, 2026, 12:00 PM\n10 records\nShowing 1–10 of 10\n‹\n1\n›\nPage 1 of 1"
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Billing contact name\nScale plan\nLine item\n0\n200,000\nAmount (minor units)\nInvoice line item amounts\n\nLine-item amounts in minor currency units; matching descriptions are summed.\n\nDetails\nStatus Timeline\nstatus sample 1\n2026-09-01T12:00:00.000Z\n2026-09-01T12:00:00.000Z"
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Billing contact name\nStatus\n*\n\nCanonical invoice status after provider mapping.\n\nIssued at\n*\n\nTimestamp when the invoice was finalized or posted.\n\nCurrency\n*\n\nISO 4217 currency for the invoice.\n\nCollection state\n\nDunning phase or retry program detail presented to success teams.\n\nAttempt count\n\nNumber of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.\n\nAging bucket days\n\nNumber of days outstanding grouped for aging reports.\n\nRefund policy url\n\nLink to customer facing refund or cancellation policy.\n\nInvoice number\n*\n\nHuman readable invoice identifier presented to customers.\n\nTotal minor\n*\n\nTotal amount due expressed in minor currency units.\n\nBalance minor\n\nRemaining amount outstanding in minor units.\n\nSave"
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "invoice-001\nNo events yet."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    }
+  ],
+  "screenshots": [
+    {
+      "framework": "react",
+      "screen": "list",
+      "width": 390,
+      "file": "screenshots/react-list-390.png",
+      "sha256": "sha256:28612d33b74256cab54aba8bfdbd882c95afd387d0257e03e77a5d8b7e6df8c4",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "width": 390,
+      "file": "screenshots/react-detail-390.png",
+      "sha256": "sha256:4f7b80a995a83d9bcc244f2fe9928bdd9a41872dc8c34eade0a0ac59b1076c48",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "width": 390,
+      "file": "screenshots/react-form-390.png",
+      "sha256": "sha256:307ff5865d7ab95be4c8256a550e62bc607a70d4b9f9be1d4577ce57cb9abe8b",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "width": 390,
+      "file": "screenshots/react-timeline-390.png",
+      "sha256": "sha256:a3e185c3d3a0d56c528684ce9dc16325b64f75938bc3b419353840c02aebeb2e",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "width": 820,
+      "file": "screenshots/react-list-820.png",
+      "sha256": "sha256:bfa1cad605ad5fe844aa25c27672b3a9591be86d8d143b3bb03a4c60224cf8e9",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "width": 820,
+      "file": "screenshots/react-detail-820.png",
+      "sha256": "sha256:440a99b112fd9807e0e6a1455efa38f2980065da9460f1ea5b87dfda4ecf6e5d",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "width": 820,
+      "file": "screenshots/react-form-820.png",
+      "sha256": "sha256:f0de5ab3e0319b47d03e42323a82a413fcd4c0b6f27f4d27af8106e546b1314e",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "width": 820,
+      "file": "screenshots/react-timeline-820.png",
+      "sha256": "sha256:33a8a79f73e35de67525cb0743244e84425974087997bbe9e0489047f24a52c2",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "width": 1440,
+      "file": "screenshots/react-list-1440.png",
+      "sha256": "sha256:5adbe754398be50dd1c7f06972e3b29288e1a5b7497deffe2a8c671699860b0d",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "width": 1440,
+      "file": "screenshots/react-detail-1440.png",
+      "sha256": "sha256:036364e69535eade42f89957a436c250c7220d701ccb79cac7e6e88a8dadfd49",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "width": 1440,
+      "file": "screenshots/react-form-1440.png",
+      "sha256": "sha256:a76648f44797c773c6b24514c3fe75d0f268e0e2041b9849c113328424b0c40c",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "width": 1440,
+      "file": "screenshots/react-timeline-1440.png",
+      "sha256": "sha256:44227104cf48141ac8efd4e6d84ec2511c80326cdce94abdbc7f66f530bf008b",
+      "artifactHash": "sha256:eeffd62a0e24b110e72925387309d5c40832f437bb34f3ea9ce57b6763ca3806",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "width": 390,
+      "file": "screenshots/vue-list-390.png",
+      "sha256": "sha256:0b1235257d54e653ffdb1720d6c24dc0e1a33d852c183afea7b847ebf7f41f62",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "width": 390,
+      "file": "screenshots/vue-detail-390.png",
+      "sha256": "sha256:27b192ab685ac36b61db99740c70e4b6b1c80fdb477de487abaecdcb1ef656a5",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "width": 390,
+      "file": "screenshots/vue-form-390.png",
+      "sha256": "sha256:a24315b909332cce05d7d937ec2e1527a95dad44b23dcb55a419a8cceabffdc5",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "width": 390,
+      "file": "screenshots/vue-timeline-390.png",
+      "sha256": "sha256:5f3ba3ce3124515d9caad588cd010d81d0ae76b89ff1f152c7b3e32da02322ff",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "width": 820,
+      "file": "screenshots/vue-list-820.png",
+      "sha256": "sha256:d6f53e1d62aa2582a8289de075e2f4bdb607ba6cb2ecc6267be501f92344a764",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "width": 820,
+      "file": "screenshots/vue-detail-820.png",
+      "sha256": "sha256:8feac692b399a772607f4ec5a49fd148ef64933777d8944d895540c039c0a452",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "width": 820,
+      "file": "screenshots/vue-form-820.png",
+      "sha256": "sha256:424d12f534b144bd9ba8556e3bd46355746578c0178f27e3f3a9b92170e17e9d",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "width": 820,
+      "file": "screenshots/vue-timeline-820.png",
+      "sha256": "sha256:69e3f188ec47c6003f0eebdc1a033bd88649ba1abfd34302d92461953f515415",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 820,
+        "documentWidth": 820,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "width": 1440,
+      "file": "screenshots/vue-list-1440.png",
+      "sha256": "sha256:c57a1711c429208cc8ea535d7db01ccd71bf1a8e10ada797e3230d1a29e94505",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-001",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "width": 1440,
+      "file": "screenshots/vue-detail-1440.png",
+      "sha256": "sha256:4f09df6fb0d3188387b530d9b26aa4a2c6188a529d53f3c81eb8641f7fe0691b",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "width": 1440,
+      "file": "screenshots/vue-form-1440.png",
+      "sha256": "sha256:da4deaf842d4d945dc7a9c931abd5df91043bb6e618a1d94ad865259c2a3fd2b",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "width": 1440,
+      "file": "screenshots/vue-timeline-1440.png",
+      "sha256": "sha256:871c46b3b9984622e8b6d36ae537c8a5603b24160f6c2a3fbe743257171da47a",
+      "artifactHash": "sha256:368d975e13abc451d67844756116e5ff3d27a268fc1d65159850e963a5984221",
+      "selectedId": "invoice-003",
+      "layout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "overflowing": []
+      }
+    }
+  ]
+}

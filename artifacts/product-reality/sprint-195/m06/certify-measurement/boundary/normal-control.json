@@ -1,0 +1,105 @@
+{
+  "request": {
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:bar",
+      "name": "Bar chart",
+      "data": {
+        "values": [
+          {
+            "category": "One",
+            "amount": 8,
+            "series": "First"
+          },
+          {
+            "category": "Two",
+            "amount": 12,
+            "series": "Second"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "category",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "type": "nominal",
+          "title": "Category"
+        },
+        "y": {
+          "field": "amount",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "type": "quantitative",
+          "title": "Amount"
+        },
+        "color": {
+          "field": "series",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "type": "nominal",
+          "title": "Series"
+        }
+      },
+      "a11y": {
+        "description": "Bar chart of amount by category, split by series.",
+        "ariaLabel": "Bar chart of Amount by Category"
+      },
+      "portability": {
+        "tableColumnOrder": [
+          "category",
+          "amount",
+          "series"
+        ]
+      }
+    },
+    "theme": "light",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "a64ec403e3a27e33920579635468e352e07868497ede69612e5db06e608a3d8f",
+      "renderHash": "bdbf7f1c6fcb0dc30f938b89f3217b9c9b1d6fca4c17b51a6a937792f2b8d96e"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

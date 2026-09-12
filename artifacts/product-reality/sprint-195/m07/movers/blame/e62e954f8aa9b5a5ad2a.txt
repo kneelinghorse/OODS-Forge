@@ -1,0 +1,198 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 142 142 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e scripts/product-reality/component-theme-proof.mjs
+filename scripts/product-reality/component-theme-proof.mjs
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 143 143
+	// The chart proof uses the same browser/theme boundary as the component proof.
+52b0da991705c4c565987bc9faf7738ba00d885e 144 144
+	// Callers mount real public outputs; this harness only observes computed paints.
+a3158282bba25713171d7216181bde28b69a80a1 145 145 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c scripts/product-reality/component-theme-proof.mjs
+filename scripts/product-reality/component-theme-proof.mjs
+	export async function runVizThemeProof({ cases, output, chromium, mission = 's195-m05' }) {
+52b0da991705c4c565987bc9faf7738ba00d885e 146 146 7
+	  await mkdir(output, { recursive: true });
+52b0da991705c4c565987bc9faf7738ba00d885e 147 147
+	  const browser = process.env.OODS_PLAYWRIGHT_WS_ENDPOINT
+52b0da991705c4c565987bc9faf7738ba00d885e 148 148
+	    ? await chromium.connect(process.env.OODS_PLAYWRIGHT_WS_ENDPOINT, { exposeNetwork: '<loopback>' })
+52b0da991705c4c565987bc9faf7738ba00d885e 149 149
+	    : await chromium.launch({ headless: true });
+52b0da991705c4c565987bc9faf7738ba00d885e 150 150
+	  const cells = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 151 151
+	  try {
+52b0da991705c4c565987bc9faf7738ba00d885e 152 152
+	    for (const specimen of cases) {
+a3158282bba25713171d7216181bde28b69a80a1 153 153 1
+	      const theme = specimen.theme ?? 'hc';
+52b0da991705c4c565987bc9faf7738ba00d885e 153 154 2
+	      const errors = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 154 155
+	      const page = await browser.newPage({ viewport: { width: 1280, height: 1000 }, deviceScaleFactor: 1,
+a3158282bba25713171d7216181bde28b69a80a1 156 156 1
+	        colorScheme: theme === 'light' ? 'light' : 'dark', forcedColors: theme === 'hc' ? 'active' : 'none' });
+52b0da991705c4c565987bc9faf7738ba00d885e 156 157 5
+	      page.on('pageerror', error => errors.push(error.message));
+52b0da991705c4c565987bc9faf7738ba00d885e 157 158
+	      page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+52b0da991705c4c565987bc9faf7738ba00d885e 158 159
+	      await page.clock.setFixedTime(new Date('2026-09-10T12:00:00Z'));
+52b0da991705c4c565987bc9faf7738ba00d885e 159 160
+	      try {
+52b0da991705c4c565987bc9faf7738ba00d885e 160 161
+	        await specimen.mount(page);
+a3158282bba25713171d7216181bde28b69a80a1 162 162 1
+	        const proof = await page.evaluate(({ selector, expectedSvg }) => {
+52b0da991705c4c565987bc9faf7738ba00d885e 162 163 6
+	          const probe = document.createElement('span');
+52b0da991705c4c565987bc9faf7738ba00d885e 163 164
+	          probe.style.cssText = 'color:CanvasText;background:Canvas'; document.body.append(probe);
+52b0da991705c4c565987bc9faf7738ba00d885e 164 165
+	          const system = { foreground: getComputedStyle(probe).color, background: getComputedStyle(probe).backgroundColor };
+52b0da991705c4c565987bc9faf7738ba00d885e 165 166
+	          probe.remove();
+52b0da991705c4c565987bc9faf7738ba00d885e 166 167
+	          const charts = [...document.querySelectorAll(selector)].map(svg => {
+52b0da991705c4c565987bc9faf7738ba00d885e 167 168
+	            const bounds = svg.getBoundingClientRect();
+a3158282bba25713171d7216181bde28b69a80a1 169 169 3
+	            const expected = document.createElement('div');
+a3158282bba25713171d7216181bde28b69a80a1 170 170
+	            if (expectedSvg) expected.innerHTML = expectedSvg;
+a3158282bba25713171d7216181bde28b69a80a1 171 171
+	            const canvasRect = svg.querySelector(':scope > rect');
+52b0da991705c4c565987bc9faf7738ba00d885e 168 172 8
+	            const paints = [...svg.querySelectorAll('path,rect,line,circle,polygon,text')].map(element => {
+52b0da991705c4c565987bc9faf7738ba00d885e 169 173
+	              const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
+52b0da991705c4c565987bc9faf7738ba00d885e 170 174
+	              return { tag: element.tagName, mark: Boolean(element.closest('.role-mark')), text: element.textContent?.trim() || null,
+52b0da991705c4c565987bc9faf7738ba00d885e 171 175
+	                fill: style.fill, stroke: style.stroke, color: style.color, background: style.backgroundColor,
+52b0da991705c4c565987bc9faf7738ba00d885e 172 176
+	                fillOpacity: style.fillOpacity, strokeOpacity: style.strokeOpacity, opacity: style.opacity,
+52b0da991705c4c565987bc9faf7738ba00d885e 173 177
+	                width: rect.width, height: rect.height, visibility: style.visibility,
+52b0da991705c4c565987bc9faf7738ba00d885e 174 178
+	                declaredFill: element.getAttribute('fill'), declaredStroke: element.getAttribute('stroke') };
+52b0da991705c4c565987bc9faf7738ba00d885e 175 179
+	            });
+a3158282bba25713171d7216181bde28b69a80a1 180 180 3
+	            return { width: bounds.width, height: bounds.height, paints,
+a3158282bba25713171d7216181bde28b69a80a1 181 181
+	              canvas: canvasRect ? getComputedStyle(canvasRect).fill : getComputedStyle(svg).backgroundColor,
+a3158282bba25713171d7216181bde28b69a80a1 182 182
+	              ...(expectedSvg ? { matchesPublicSvg: expected.querySelector('svg')?.outerHTML === svg.outerHTML } : {}) };
+52b0da991705c4c565987bc9faf7738ba00d885e 177 183 4
+	          });
+52b0da991705c4c565987bc9faf7738ba00d885e 178 184
+	          return { brand: document.documentElement.dataset.brand, theme: document.documentElement.dataset.theme,
+52b0da991705c4c565987bc9faf7738ba00d885e 179 185
+	            forcedColours: matchMedia('(forced-colors: active)').matches, system, charts,
+52b0da991705c4c565987bc9faf7738ba00d885e 180 186
+	            placeholders: document.querySelectorAll('[data-viz-preview-placeholder]').length };
+a3158282bba25713171d7216181bde28b69a80a1 187 187 1
+	        }, { selector: specimen.selector ?? 'svg', expectedSvg: specimen.expectedSvg });
+52b0da991705c4c565987bc9faf7738ba00d885e 182 188 2
+	        const failures = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 183 189
+	        const check = (ok, message) => { if (!ok) failures.push(message); };
+a3158282bba25713171d7216181bde28b69a80a1 190 190 3
+	        check(proof.brand === specimen.brand && proof.theme === theme, 'Wrong theme scope');
+a3158282bba25713171d7216181bde28b69a80a1 191 191
+	        check(proof.forcedColours === (theme === 'hc'), 'Forced-colours media differs from the requested scope');
+a3158282bba25713171d7216181bde28b69a80a1 192 192
+	        if (theme === 'hc') check(proof.system.foreground !== proof.system.background, 'System foreground is indistinguishable from canvas');
+52b0da991705c4c565987bc9faf7738ba00d885e 187 193 2
+	        check(proof.charts.length === specimen.svgCount, `Expected ${specimen.svgCount} actual chart SVGs, found ${proof.charts.length}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 188 194
+	        check(proof.placeholders === 0, 'A chart placeholder replaced the public SVG');
+a3158282bba25713171d7216181bde28b69a80a1 195 195 3
+	        const visiblePaint = (paint, canvas) => paint.visibility === 'visible' && Number(paint.opacity) > 0
+a3158282bba25713171d7216181bde28b69a80a1 196 196
+	          && ((paint.fill !== 'none' && paint.fill !== canvas && Number(paint.fillOpacity) > 0)
+a3158282bba25713171d7216181bde28b69a80a1 197 197
+	            || (paint.stroke !== 'none' && paint.stroke !== canvas && Number(paint.strokeOpacity) > 0));
+52b0da991705c4c565987bc9faf7738ba00d885e 192 198 2
+	        for (const chart of proof.charts) {
+52b0da991705c4c565987bc9faf7738ba00d885e 193 199
+	          check(chart.width > 0 && chart.height > 0, 'Chart has no visible bounds');
+a3158282bba25713171d7216181bde28b69a80a1 200 200 4
+	          if (specimen.expectedSvg) check(chart.matchesPublicSvg, 'Mounted chart differs from the public SVG');
+a3158282bba25713171d7216181bde28b69a80a1 201 201
+	          const canvas = theme === 'hc' ? proof.system.background : chart.canvas;
+a3158282bba25713171d7216181bde28b69a80a1 202 202
+	          check(chart.paints.some(paint => paint.mark && (paint.width > 0 || paint.height > 0) && visiblePaint(paint, canvas)), 'No distinguishable data mark');
+a3158282bba25713171d7216181bde28b69a80a1 203 203
+	          check(chart.paints.some(paint => paint.tag === 'text' && paint.text && visiblePaint(paint, canvas)), 'No distinguishable chart label');
+52b0da991705c4c565987bc9faf7738ba00d885e 196 204 1
+	        }
+a3158282bba25713171d7216181bde28b69a80a1 205 205 1
+	        if (specimen.accessibleName) check(await page.getByRole('img', { name: specimen.accessibleName, exact: true }).isVisible(), 'The named chart is missing from the accessible tree');
+52b0da991705c4c565987bc9faf7738ba00d885e 197 206 2
+	        check(errors.length === 0, `Browser errors: ${errors.join('; ')}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 198 207
+	        const screenshot = `${specimen.id}.png`;
+a3158282bba25713171d7216181bde28b69a80a1 208 208 3
+	        const accessibilityTree = await page.locator('body').ariaSnapshot();
+a3158282bba25713171d7216181bde28b69a80a1 209 209
+	        check(Boolean(accessibilityTree.trim()), 'Accessible tree is empty');
+a3158282bba25713171d7216181bde28b69a80a1 210 210
+	        await writeFile(resolve(output, `${specimen.id}-accessibility-tree.txt`), accessibilityTree + '\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 199 211 9
+	        await page.screenshot({ path: resolve(output, screenshot), fullPage: true, animations: 'disabled' });
+52b0da991705c4c565987bc9faf7738ba00d885e 200 212
+	        cells.push({ id: specimen.id, status: failures.length ? 'failed' : 'passed', ...proof, errors, failures, screenshot,
+52b0da991705c4c565987bc9faf7738ba00d885e 201 213
+	          screenshotSha256: createHash('sha256').update(await readFile(resolve(output, screenshot))).digest('hex') });
+52b0da991705c4c565987bc9faf7738ba00d885e 202 214
+	      } catch (error) {
+52b0da991705c4c565987bc9faf7738ba00d885e 203 215
+	        cells.push({ id: specimen.id, status: 'failed', errors, failures: [String(error)] });
+52b0da991705c4c565987bc9faf7738ba00d885e 204 216
+	        await writeFile(resolve(output, `${specimen.id}-failure.html`), await page.content());
+52b0da991705c4c565987bc9faf7738ba00d885e 205 217
+	      } finally { await page.close(); }
+52b0da991705c4c565987bc9faf7738ba00d885e 206 218
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 207 219
+	    const failures = cells.flatMap(cell => cell.failures.map(failure => `${cell.id}: ${failure}`));
+a3158282bba25713171d7216181bde28b69a80a1 220 220 2
+	    const report = { mission, status: failures.length ? 'failed' : 'passed',
+a3158282bba25713171d7216181bde28b69a80a1 221 221
+	      browser: { name: 'chromium', version: browser.version() }, forcedColors: cases.every(specimen => (specimen.theme ?? 'hc') === 'hc') ? 'active' : 'by-theme',
+52b0da991705c4c565987bc9faf7738ba00d885e 210 222 2
+	      selected: cases.length, skipped: 0, failed: failures.length, failures, cells };
+52b0da991705c4c565987bc9faf7738ba00d885e 211 223
+	    await writeFile(resolve(output, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+a3158282bba25713171d7216181bde28b69a80a1 224 224 1
+	    assert.deepEqual(failures, [], 'Public charts must remain visible in their requested theme scope');
+52b0da991705c4c565987bc9faf7738ba00d885e 213 225 3
+	    return report;
+52b0da991705c4c565987bc9faf7738ba00d885e 214 226
+	  } finally { await browser.close(); }
+52b0da991705c4c565987bc9faf7738ba00d885e 215 227
+	}
+a3158282bba25713171d7216181bde28b69a80a1 228 228 2
+	
+a3158282bba25713171d7216181bde28b69a80a1 229 229
+	export const runVizForcedColourProof = runVizThemeProof;

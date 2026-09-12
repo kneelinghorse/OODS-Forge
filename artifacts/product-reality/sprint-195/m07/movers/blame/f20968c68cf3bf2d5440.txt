@@ -1,0 +1,105 @@
+a3158282bba25713171d7216181bde28b69a80a1 31 31 47
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c docs/authoring-traits-viz.md
+filename docs/authoring-traits-viz.md
+	## Bound charts in public objects
+a3158282bba25713171d7216181bde28b69a80a1 32 32
+	
+a3158282bba25713171d7216181bde28b69a80a1 33 33
+	The current public placement path accepts a `chart` parameter on MarkArea,
+a3158282bba25713171d7216181bde28b69a80a1 34 34
+	MarkBar, MarkLine, MarkPoint and MarkRect. Their previews are VizAreaPreview,
+a3158282bba25713171d7216181bde28b69a80a1 35 35
+	VizMarkPreview, VizLinePreview, VizPointPreview and VizHeatmapPreview respectively.
+a3158282bba25713171d7216181bde28b69a80a1 36 36
+	A bound declaration projects existing domain fields rather than adding mark
+a3158282bba25713171d7216181bde28b69a80a1 37 37
+	controls or requiring standalone encoding traits. Its `title` and `description`
+a3158282bba25713171d7216181bde28b69a80a1 38 38
+	parameters describe the chart and its units. Detail is projected; dashboard is
+a3158282bba25713171d7216181bde28b69a80a1 39 39
+	projected when authored by the trait. MarkBar and MarkLine currently author both.
+a3158282bba25713171d7216181bde28b69a80a1 40 40
+	Unknown bound marks or mismatched chart types fail loudly.
+a3158282bba25713171d7216181bde28b69a80a1 41 41
+	
+a3158282bba25713171d7216181bde28b69a80a1 42 42
+	Invoice's bar declaration binds `line_items` and preserves minor currency units.
+a3158282bba25713171d7216181bde28b69a80a1 43 43
+	Usage's line declaration binds `samples` and seeds explicitly synthetic API-call
+a3158282bba25713171d7216181bde28b69a80a1 44 44
+	examples. For example, its canonical object includes:
+a3158282bba25713171d7216181bde28b69a80a1 45 45
+	
+a3158282bba25713171d7216181bde28b69a80a1 46 46
+	```yaml
+a3158282bba25713171d7216181bde28b69a80a1 47 47
+	- name: viz/MarkLine
+a3158282bba25713171d7216181bde28b69a80a1 48 48
+	  parameters:
+a3158282bba25713171d7216181bde28b69a80a1 49 49
+	    title: Example API-call usage
+a3158282bba25713171d7216181bde28b69a80a1 50 50
+	    description: Synthetic API-call counts for generated example records.
+a3158282bba25713171d7216181bde28b69a80a1 51 51
+	    chart:
+a3158282bba25713171d7216181bde28b69a80a1 52 52
+	      chartType: line
+a3158282bba25713171d7216181bde28b69a80a1 53 53
+	      source: record-array
+a3158282bba25713171d7216181bde28b69a80a1 54 54
+	      dataField: samples
+a3158282bba25713171d7216181bde28b69a80a1 55 55
+	      encodings:
+a3158282bba25713171d7216181bde28b69a80a1 56 56
+	        x: {field: timestamp, scale: temporal, title: Recorded at}
+a3158282bba25713171d7216181bde28b69a80a1 57 57
+	        y: {field: value, title: API calls}
+a3158282bba25713171d7216181bde28b69a80a1 58 58
+	      sampleRows:
+a3158282bba25713171d7216181bde28b69a80a1 59 59
+	        - {timestamp: "2025-06-15T00:00:00Z", value: 1200}
+a3158282bba25713171d7216181bde28b69a80a1 60 60
+	        - {timestamp: "2025-06-20T00:00:00Z", value: 1800}
+a3158282bba25713171d7216181bde28b69a80a1 61 61
+	        - {timestamp: "2025-06-25T00:00:00Z", value: 1500}
+a3158282bba25713171d7216181bde28b69a80a1 62 62
+	```
+a3158282bba25713171d7216181bde28b69a80a1 63 63
+	
+a3158282bba25713171d7216181bde28b69a80a1 64 64
+	The host's schema must declare the data array. `sampleRows` seeds that array in
+a3158282bba25713171d7216181bde28b69a80a1 65 65
+	generated example records, and generation passes each record's actual rows to
+a3158282bba25713171d7216181bde28b69a80a1 66 66
+	public `viz.render`. One distinct chart declaration is supported per object;
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	identical repeated projections share assets. React/Vue applications and isolated HTML chart nodes receive static
+a3158282bba25713171d7216181bde28b69a80a1 68 68
+	SVG. Full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs
+a3158282bba25713171d7216181bde28b69a80a1 69 69
+	normalization limit. Editing a local record does not regenerate its SVG. Consumers can replace
+a3158282bba25713171d7216181bde28b69a80a1 70 70
+	the typed `svg` prop. The passive preview rejects active or external SVG content.
+a3158282bba25713171d7216181bde28b69a80a1 71 71
+	
+a3158282bba25713171d7216181bde28b69a80a1 72 72
+	Subscription retains its existing `payment-events` Area declaration and
+a3158282bba25713171d7216181bde28b69a80a1 73 73
+	major-unit conversion. ECharts placement remains an explicit carry under decision
+a3158282bba25713171d7216181bde28b69a80a1 74 74
+	#1944: a new placement needs an authored object operand and a governed preview
+a3158282bba25713171d7216181bde28b69a80a1 75 75
+	trait, including any required node/link transformation and component proof loops.
+a3158282bba25713171d7216181bde28b69a80a1 76 76
+	
+a3158282bba25713171d7216181bde28b69a80a1 77 77
+	## Standalone Composition Rules

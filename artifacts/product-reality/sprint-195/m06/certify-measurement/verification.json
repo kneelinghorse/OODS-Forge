@@ -1,0 +1,164 @@
+{
+  "missionId": "s195-m06",
+  "capturedAt": "2026-09-11T22:25:34.069Z",
+  "sourceFreeze": true,
+  "commands": [
+    {
+      "cmd": "S195_CERTIFY_MEASUREMENT_RECEIPTS=\"$PWD/artifacts/product-reality/sprint-195/m06/certify-measurement/boundary\" pnpm --filter @oods/mcp-server exec vitest run test/product-reality/certify-missing-palette.s195.spec.ts test/tools/artifact.certify.contrast-fault.spec.ts test/tools/artifact.certify.unchecked-tristate.spec.ts > artifacts/product-reality/sprint-195/m06/certify-measurement/boundary-initial.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 0,
+      "log": "boundary-initial.log",
+      "logSha256": "69696825ee3386c48189ca270099fd762ecb16437131a98a2b9832057122be46",
+      "tests": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "cmd": "pnpm --filter @oods/mcp-server exec vitest run test/tools/certify-contrast.spec.ts > artifacts/product-reality/sprint-195/m06/certify-measurement/evaluator.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 0,
+      "log": "evaluator.log",
+      "logSha256": "601038cf01a7c41c68195dd462678a7390abb2ffe816002d0f96e03e2d7c1f59",
+      "tests": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "cmd": "pnpm --filter @oods/mcp-server exec tsc --noEmit > artifacts/product-reality/sprint-195/m06/certify-measurement/typecheck.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s195/OODS-Forge",
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "distinctTests": 43,
+  "builds": [],
+  "sources": [
+    {
+      "path": "packages/mcp-server/src/tools/artifact.certify.ts",
+      "sha256": "6071e2ea9fff7bd5d533a4e5d90f92a30fef6b0e5b7a552e7fa5dfe0b53100d8"
+    },
+    {
+      "path": "packages/mcp-server/src/tools/certify-contrast.ts",
+      "sha256": "0cf23a1f66065bdef8fe59e8bc1e67c30bbd5627b7de96e161b8dfb10a29c6d3"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/certify-missing-palette.s195.spec.ts",
+      "sha256": "a36056f10a631f8cf9ba879d1fb5e176b44ecdd2125e868d4ef0cfa34d721861"
+    },
+    {
+      "path": "packages/mcp-server/test/tools/certify-contrast.spec.ts",
+      "sha256": "184b5055b92cb8c33259923001f7b13227bc2e9d798654d788e3f32f947e602e"
+    }
+  ],
+  "cases": [
+    {
+      "path": "artifacts/product-reality/sprint-195/m06/certify-measurement/boundary/mixed-layers.json",
+      "sha256": "8d07cc740e2339a38d3b22eabdd3e166624bc77f5b63a88ddf5660f76d27ebc1",
+      "status": "ok",
+      "coverage": "certified",
+      "conformant": false,
+      "contrast": "fail",
+      "determinism": {
+        "stable": true,
+        "contentHash": "13765e3054b8e892893abce74c39775055c1a2ce866d545c2fdca8fca5b49b19",
+        "renderHash": "3725fbf9f079dd127eb84c0b63522967b0efc9e9efd9d9aaf002ca5075e2d408"
+      },
+      "contrastResults": [
+        {
+          "theme": "light",
+          "brand": "A",
+          "verdict": "fail",
+          "measured": false,
+          "evidence": "none",
+          "note": "Categorical color encoding is missing its baked palette; the renderer default cannot establish categorical contrast conformance. No categorical canvas ratio is graded for the missing-palette unit. Scope: light/A."
+        }
+      ],
+      "privateMarkerSerialized": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m06/certify-measurement/boundary/nominal.json",
+      "sha256": "6c0e8c8c42a2deffa9b1917217aab96775693ddd666792b79d23d7a2196e0c4f",
+      "status": "ok",
+      "coverage": "certified",
+      "conformant": false,
+      "contrast": "fail",
+      "determinism": {
+        "stable": true,
+        "contentHash": "3419f861d2a7b7764d61576c59c2a0001fc3da282b9c4006f7f33879940d3677",
+        "renderHash": "94a75aa4e9eeff8b0512920bb13fd10c1d8ed679d3af825936365b16008939e6"
+      },
+      "contrastResults": [
+        {
+          "theme": "light",
+          "brand": "A",
+          "verdict": "fail",
+          "measured": false,
+          "evidence": "none",
+          "note": "Categorical color encoding is missing its baked palette; the renderer default cannot establish categorical contrast conformance. No categorical canvas ratio is graded for the missing-palette unit. Scope: light/A."
+        }
+      ],
+      "privateMarkerSerialized": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m06/certify-measurement/boundary/normal-control.json",
+      "sha256": "d24be1e0b9d96efe8291c29c4976373cf3521432db5787221c15e23c3294bac3",
+      "status": "ok",
+      "coverage": "certified",
+      "conformant": true,
+      "contrast": "pass",
+      "determinism": {
+        "stable": true,
+        "contentHash": "a64ec403e3a27e33920579635468e352e07868497ede69612e5db06e608a3d8f",
+        "renderHash": "bdbf7f1c6fcb0dc30f938b89f3217b9c9b1d6fca4c17b51a6a937792f2b8d96e"
+      },
+      "contrastResults": [
+        {
+          "theme": "light",
+          "brand": "A",
+          "verdict": "pass",
+          "measured": true,
+          "evidence": "render",
+          "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+        }
+      ],
+      "privateMarkerSerialized": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m06/certify-measurement/boundary/ordinal.json",
+      "sha256": "be96ea86d02f2970debbd7bbdcfb7cd5178074e9ffe88aed859ad1f0dd35f430",
+      "status": "ok",
+      "coverage": "certified",
+      "conformant": false,
+      "contrast": "fail",
+      "determinism": {
+        "stable": true,
+        "contentHash": "3a101186f1f0a77ac54d4bd20f3032d8427472d39197c7508e9143373ca38e14",
+        "renderHash": "3921f2f2aa885d1e7102a2e22866cc272f36d54a795f3f9e5b2cfd743c7c42ec"
+      },
+      "contrastResults": [
+        {
+          "theme": "light",
+          "brand": "A",
+          "verdict": "fail",
+          "measured": false,
+          "evidence": "none",
+          "note": "Categorical color encoding is missing its baked palette; the renderer default cannot establish categorical contrast conformance. No categorical canvas ratio is graded for the missing-palette unit. Scope: light/A."
+        }
+      ],
+      "privateMarkerSerialized": false
+    }
+  ],
+  "cmos": {
+    "sessionId": "PS-2026-09-11-008",
+    "decisionId": 1947,
+    "learningId": 587
+  },
+  "limitations": [
+    "This boundary removes a real compiled range with a module mock; the physical adapter mutation and final build belong to the sibling bite receipts.",
+    "No public schema fields were added.",
+    "No full-suite capture was run."
+  ]
+}

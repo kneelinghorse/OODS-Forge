@@ -1,0 +1,58 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "⚖️ **Decision Captured**\n\n**Session**: PS-2026-09-11-008\n**Content**: The initial frozen closeout at execution C2 6e779776a7efa3b6e7b26a12966f0c4186dba1d6 and bootstrap review e812ecd466f015d57a36b792d5a9f0496bb0c2fe passed the producer and producer --check, but the independent auditor failed solely because the generated notices say uppercase 'Spec-only' while the unchanged auditor requires lowercase 'spec-only'. The contract meaning is already correct. Preserve the original C2 generator/source/notices and failed bootstrap receipts immutably. Prepare a NEW closeout/reconnect/notice-plan.json through exact buildNotices base reproduction, then a separately declared editorial sentence amendment: 'For spec-only ECharts, coverage remains uncertified and conformant remains null.' Retain the existing requestHash. Do not claim unchanged-generator --check for the amended output. Make no source edit, capture rerun or sends. Freeze a new bootstrap review and rerun the full checks, then proceed to final R1. This is the chosen pending correction, not a successful audit claim.\n**Capture #28** in this session\n**Mission**: s195-m07\nStructured materialization: materialized — immediate → strategic_decisions\nDecision ID: #1949\n\n**Decision Extraction**: Auto-extracted (1)\n\n⚠️ **Supersession Suggestion**\nPotential supersession detected:\n  - Decision #1948 (sprint-195): \"Retain implementation B2 39deb793a3161621b5a0893618f9d40201c22256 and final test...\" (23 keyword overlap)\n  - Decision #740: \"CLOSEOUT-GATE GAP surfaced by s111 (process correction for future closeouts) — t...\" (15 keyword overlap)\n  - Decision #1813 (sprint-187): \"Change for Sprint 188 onward: a certification decision names the remote CI run a...\" (10 keyword overlap)\n\nTo mark a candidate as superseded:\n  cmos_decisions(action=\"update\", decisionId=1948, supersededBy=1949)\n  cmos_decisions(action=\"update\", decisionId=740, supersededBy=1949)\n  cmos_decisions(action=\"update\", decisionId=1813, supersededBy=1949)"
+    }
+  ],
+  "structuredContent": {
+    "success": true,
+    "data": {
+      "sessionId": "PS-2026-09-11-008",
+      "category": "decision",
+      "content": "The initial frozen closeout at execution C2 6e779776a7efa3b6e7b26a12966f0c4186dba1d6 and bootstrap review e812ecd466f015d57a36b792d5a9f0496bb0c2fe passed the producer and producer --check, but the independent auditor failed solely because the generated notices say uppercase 'Spec-only' while the unchanged auditor requires lowercase 'spec-only'. The contract meaning is already correct. Preserve the original C2 generator/source/notices and failed bootstrap receipts immutably. Prepare a NEW closeout/reconnect/notice-plan.json through exact buildNotices base reproduction, then a separately declared editorial sentence amendment: 'For spec-only ECharts, coverage remains uncertified and conformant remains null.' Retain the existing requestHash. Do not claim unchanged-generator --check for the amended output. Make no source edit, capture rerun or sends. Freeze a new bootstrap review and rerun the full checks, then proceed to final R1. This is the chosen pending correction, not a successful audit claim.",
+      "timestamp": "2026-09-12T03:09:25.660Z",
+      "captureCount": 28,
+      "message": "Captured decision in session 'PS-2026-09-11-008' (28 total captures)",
+      "structuredMaterialization": {
+        "target": "strategic_decisions",
+        "timing": "immediate",
+        "outcome": "materialized"
+      },
+      "writeFailures": [],
+      "missionId": "s195-m07",
+      "decisionExtractionCount": 1,
+      "decisionAlreadyExtracted": false,
+      "decisionId": 1949,
+      "supersessionCandidates": [
+        {
+          "id": 1948,
+          "decisionText": "Retain implementation B2 39deb793a3161621b5a0893618f9d40201c22256 and final test capture C2 6e779776a7efa3b6e7b26a12966f0c4186dba1d6 as distinct immutable heads. Capture 2 completed with 16,383 passed, 0 failed and 32 historical skipped executions after the preserved failed C1 54def3aa88683d81f1f942558a24715c064021e9 capture (16,365 passed, 17 failed, 32 skipped); both allowed attempts under decision 1833 are consumed. Resolve literal output-check evidence using the existing tools at C2/R0 with a provisional-input bootstrap. Then R1 binds only real successful R0 command receipts and must itself pass the full C2/R1 producer, producer --check and independent auditor sequence. This is the chosen pending audit sequence, not completed audit evidence. Permit no source changes, third capture, new framework, relabeled heads or builder self-certification.",
+          "sprintId": "sprint-195",
+          "createdAt": "2026-09-12T02:16:03.705Z",
+          "overlapCount": 23
+        },
+        {
+          "id": 740,
+          "decisionText": "CLOSEOUT-GATE GAP surfaced by s111 (process correction for future closeouts) — the s111-m06 closeout gate sweep verified PER-PACKAGE tsc (viz-core + mcp-server) + the package suites + generate:check + test:scale, but did NOT run (a) the ROOT `pnpm typecheck` (tsc over src/**) nor (b) `pnpm install --frozen-lockfile` (CI's install mode). So the sprint closed 'green' locally yet CI went RED on push with two code failures the local gates structurally could not see: (i) ERR_PNPM_OUTDATED_LOCKFILE — m01 added `echarts ^6.0.0` as a type-only devDependency to packages/viz-core/package.json WITHOUT regenerating pnpm-lock.yaml; CI's `--frozen-lockfile` install failed before any build/test, taking down ALL jobs (fixed: commit 692a27b, lockfile-only 4-line add). (ii) TS2739 in src/viz/patterns/scaffold-generator.ts — widening viz-core's ChartType union (+treemap/sunburst/sankey/force_graph) propagates into src/ via the src/viz/patterns RE-EXPORT SHIM, so three exhaustive Record<ChartPattern['chartType'],…> maps (chartMarkByType/layoutFrameByChartType/componentByChartType) no longer compiled; only the ROOT typecheck (not per-package) covers these src/ consumers (fixed: commit cb1a545, additive map entries pointing the new types at MarkTreemap/Sunburst/Sankey/Graph + the existing src/components/viz React components). CONVENTION GOING FORWARD: any sprint that edits a package.json dependency OR widens a shared @oods/viz-core type MUST add `pnpm install --frozen-lockfile` + root `pnpm typecheck` to the closeout gate sweep — the per-package gates are necessary but NOT sufficient. The two non-code reds were pre-existing/unrelated: coverage's lone failure was a flaky hardcoded perf budget (tests/services/classification/ltree-query-service.spec.ts:112 expect(durationMs).toBeLessThan(10) — 10.27ms on a shared runner) which clears on re-run; a11y-contract timed out on the Playwright Chromium install inside a chronically-tight 15m budget (the prior commit's CI was also cancelled near 15m) — bumped to 25m in commit 88581f6 (Derek-authorized). The s111 viz CI additions themselves (viz-determinism + scale-determinism jobs) passed green throughout.",
+          "sprintId": null,
+          "createdAt": "2026-06-17T14:16:51.580Z",
+          "overlapCount": 15
+        },
+        {
+          "id": 1813,
+          "decisionText": "Change for Sprint 188 onward: a certification decision names the remote CI run and PR head it is conditioned on. If remote CI is not yet green when the review certifies on frozen local evidence, the roadmap keeps the sprint at BUILT / REVIEW PENDING and the certification says so explicitly, so 'certified' and 'CI green' are never silently disjoint. Any roadmap or prose edit made by the review runs the roadmap/prose contract tests before it is committed (Sprint 187's review edit to near.md turned the coverage job red, PS-2026-09-07-003). This adds no new closeout framework; it is a two-line rule on the existing review step.",
+          "sprintId": "sprint-187",
+          "createdAt": "2026-09-07T16:45:38.468Z",
+          "overlapCount": 10
+        }
+      ],
+      "supersessionMessage": "Potential supersession detected:\n  - Decision #1948 (sprint-195): \"Retain implementation B2 39deb793a3161621b5a0893618f9d40201c22256 and final test...\" (23 keyword overlap)\n  - Decision #740: \"CLOSEOUT-GATE GAP surfaced by s111 (process correction for future closeouts) — t...\" (15 keyword overlap)\n  - Decision #1813 (sprint-187): \"Change for Sprint 188 onward: a certification decision names the remote CI run a...\" (10 keyword overlap)\n\nTo mark a candidate as superseded:\n  cmos_decisions(action=\"update\", decisionId=1948, supersededBy=1949)\n  cmos_decisions(action=\"update\", decisionId=740, supersededBy=1949)\n  cmos_decisions(action=\"update\", decisionId=1813, supersededBy=1949)",
+      "implicitlyReaffirmedLearningIds": [
+        312,
+        294
+      ]
+    }
+  },
+  "isError": false
+}

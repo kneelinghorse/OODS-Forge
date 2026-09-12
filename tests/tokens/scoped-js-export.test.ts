@@ -45,7 +45,7 @@ describe('scoped JavaScript token export matches shipped CSS', () => {
 });
 
 describe('categorical theme overrides follow the shipped CSS cascade (s191)', () => {
-  for (const brand of ['A', 'B']) for (const theme of ['light', 'dark']) {
+  for (const brand of ['A', 'B']) for (const theme of ['light', 'dark', 'hc']) {
     it(`${brand}/${theme} matches all six CSS values, with a distinct dark palette`, () => {
       const declarations: Record<string, string> = {};
       for (const block of css.split('}')) {

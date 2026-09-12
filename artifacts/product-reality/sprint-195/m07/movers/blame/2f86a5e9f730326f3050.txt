@@ -1,0 +1,379 @@
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 1 1 16
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+filename scripts/product-reality/s195-pattern-census.ts
+	#!/usr/bin/env tsx
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 2 2
+	/** Exact public pattern calls produce the sibling registry; frozen observations reproduce its bytes. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 3 3
+	import assert from 'node:assert/strict';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 4 4
+	import { createHash } from 'node:crypto';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 5 5
+	import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 6 6
+	import { dirname, resolve } from 'node:path';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 7 7
+	import { fileURLToPath } from 'node:url';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 8 8
+	import { VIZ_PATTERN_SOURCES } from '@oods/viz-core';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 9 9
+	import { canonicalPatternValue, validateVizPatternRegistry, type VizPatternCapability, type VizPatternScope } from '../../packages/viz-core/src/registry/viz-patterns.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 10 10
+	import { getAjv } from '../../packages/mcp-server/src/lib/ajv.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 11 11
+	import { handle as render } from '../../packages/mcp-server/src/tools/viz.render.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 12 12
+	import { handle as certify } from '../../packages/mcp-server/src/tools/artifact.certify.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 13 13
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 14 14
+	export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 15 15
+	export const PATTERN_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-patterns.v1.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 16 16
+	export const PATTERN_DOC_PATH = 'docs/viz/pattern-library-v2.md';
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e scripts/product-reality/s195-pattern-census.ts
+filename scripts/product-reality/s195-pattern-census.ts
+	export const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-195/m05/patterns/pattern-observations.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 18 18 162
+	const CLASSIFICATION_PATH = 'packages/viz-core/src/registry/viz-classification.v1.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 19 19
+	const TYPE_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-recipes.v1.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 20 20
+	const INPUT_SCHEMA_PATH = 'packages/mcp-server/src/schemas/viz.render.input.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 21 21
+	const serialize = (value: unknown) => JSON.stringify(value, null, 2) + '\n';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 22 22
+	const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 23 23
+	const read = (root: string, file: string) => readFileSync(resolve(root, file), 'utf8');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 24 24
+	type PatternRequest = { pattern: string; theme: 'light' | 'dark'; brand: 'A' | 'B'; output: { svg: true; includeNormalizedSpec: true; includeA11y: true } };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 25 25
+	type PatternObservation = {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 26 26
+	  id: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 27
+	  request: PatternRequest;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 28 28
+	  rendered: Awaited<ReturnType<typeof render>>;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 29 29
+	  repeatSvgHash?: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 30 30
+	  certified?: Awaited<ReturnType<typeof certify>>;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 31 31
+	};
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 32 32
+	export type PatternCensusObservations = { schemaVersion: 1; inputSchemaSha256: string; cells: PatternObservation[] };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 33 33
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 34 34
+	function sourceInputs(root: string) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 35 35
+	  const sources = VIZ_PATTERN_SOURCES.map(source => {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 36 36
+	    const bytes = read(root, source.specPath);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 37 37
+	    const spec = JSON.parse(bytes);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 38 38
+	    assert.equal(spec.id, source.id, `${source.id}: bundled identity differs from authoring source`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 39 39
+	    assert.equal(sha256(bytes), source.specSha256, `${source.id}: bundled source SHA is stale`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 40 40
+	    assert.equal(canonicalPatternValue(spec), canonicalPatternValue(source.spec), `${source.id}: bundled spec differs from source bytes`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 41 41
+	    assert.equal(canonicalPatternValue(spec.portability), canonicalPatternValue(source.portability));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 42 42
+	    return source;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 43 43
+	  });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 44 44
+	  const classification = JSON.parse(read(root, CLASSIFICATION_PATH)) as { assignments: Array<{ id: string; family: string }> };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 45 45
+	  const recipes = JSON.parse(read(root, TYPE_REGISTRY_PATH)) as Array<{ chartType: string }>;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 46 46
+	  return { sources, classification, recipes };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 47 47
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 48 48
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 49 49
+	export async function measurePatternCensus({ root = ROOT }: { root?: string } = {}): Promise<PatternCensusObservations> {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 50 50
+	  const { sources } = sourceInputs(root);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 51 51
+	  const schemaBytes = read(root, INPUT_SCHEMA_PATH);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 52 52
+	  const inputSchema = JSON.parse(schemaBytes);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 53 53
+	  const ajv = getAjv();
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 54 54
+	  const validate = (inputSchema.$id && ajv.getSchema(inputSchema.$id)) || ajv.compile(inputSchema);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 55 55
+	  const cells: PatternObservation[] = [];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 56 56
+	  for (const source of sources) for (const theme of ['light', 'dark'] as const) for (const brand of ['A', 'B'] as const) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 57 57
+	    const request: PatternRequest = { pattern: source.id, theme, brand, output: { svg: true, includeNormalizedSpec: true, includeA11y: true } };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 58 58
+	    const admitted = structuredClone(request);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 59 59
+	    assert(validate(admitted), `${source.id}/${theme}/${brand}: input boundary rejected ${JSON.stringify(validate.errors)}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 60 60
+	    const rendered = await render(admitted as Parameters<typeof render>[0]);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 61 61
+	    const observation: PatternObservation = { id: source.id, request, rendered };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 62 62
+	    if (rendered.status === 'ok') {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 63 63
+	      assert(rendered.svg && rendered.svgHash && rendered.normalizedSpec, `${source.id}: success must include SVG and exact normalized operand`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 64 64
+	      assert.equal(sha256(rendered.svg), rendered.svgHash, `${source.id}: returned SVG hash differs from bytes`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 65 65
+	      const repeated = await render(structuredClone(admitted) as Parameters<typeof render>[0]);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 66 66
+	      assert.equal(repeated.status, 'ok', `${source.id}: repeat failed`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 67 67
+	      assert.equal(repeated.svg, rendered.svg, `${source.id}: repeat changed SVG bytes`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 68 68
+	      observation.repeatSvgHash = repeated.svgHash;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 69 69
+	      observation.certified = await certify({ spec: rendered.normalizedSpec, theme, brand });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 70 70
+	      assert.equal(observation.certified.status, 'ok', `${source.id}: certification failed ${JSON.stringify(observation.certified.errors)}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 71 71
+	    }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 72 72
+	    cells.push(observation);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 73 73
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 74 74
+	  return { schemaVersion: 1, inputSchemaSha256: sha256(schemaBytes), cells };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 75 75
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 76 76
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 77 77
+	export function derivePatternRegistry(observations: PatternCensusObservations, root = ROOT): VizPatternCapability[] {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 78 78
+	  const { sources, classification, recipes } = sourceInputs(root);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 79 79
+	  assert.equal(observations.schemaVersion, 1, 'Pattern census version differs');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 80 80
+	  assert.equal(observations.inputSchemaSha256, sha256(read(root, INPUT_SCHEMA_PATH)), 'Pattern input schema changed after the census');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 81 81
+	  assert.equal(observations.cells.length, sources.length * 4, 'Exact four-scope pattern census required');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 82 82
+	  const expectedIds = new Set(sources.map(source => source.id));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 83 83
+	  assert(observations.cells.every(cell => expectedIds.has(cell.id)), 'Unknown census identity');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 84 84
+	  const rows = sources.map(source => {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 85 85
+	    const cells = observations.cells.filter(cell => cell.id === source.id);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 86 86
+	    const scopes = cells.map(cell => {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 87 87
+	      const { request, rendered } = cell;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 88 88
+	      assert.deepEqual(request, { pattern: source.id, theme: request.theme, brand: request.brand, output: { svg: true, includeNormalizedSpec: true, includeA11y: true } }, `${source.id}: census request differs from pattern-only boundary`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 89 89
+	      const common = { theme: request.theme, brand: request.brand };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 90 90
+	      if (rendered.status === 'ok') {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 91 91
+	        const grade = cell.certified;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 92 92
+	        assert(rendered.svg && rendered.svgHash && rendered.normalizedSpec && grade?.status === 'ok' && grade.coverage && grade.pillars && grade.determinism, `${source.id}: incomplete rendered/certified observation`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 93 93
+	        assert.equal(sha256(rendered.svg), rendered.svgHash, `${source.id}: retained SVG bytes differ from hash`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 94 94
+	        assert.equal(cell.repeatSvgHash, rendered.svgHash, `${source.id}: retained repeat differs from SVG`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 95 95
+	        assert.equal(rendered.chartType, source.baseChartType, `${source.id}: base type differs from public output`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 96 96
+	        assert.equal(rendered.normalizedSpec.id, source.id, `${source.id}: normalized identity changed`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 97 97
+	        assert.equal(rendered.normalizedSpec.a11y.description, source.spec.a11y.description, `${source.id}: public description changed`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 98 98
+	        assert.equal(grade.determinism.renderHash, rendered.svgHash, `${source.id}: certify rendered a different operand`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 99 99
+	        return { ...common, status: 'public', svgHash: rendered.svgHash,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 100 100
+	          normalizedSpecSha256: sha256(canonicalPatternValue(rendered.normalizedSpec)),
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 101 101
+	          a11yDescription: rendered.normalizedSpec.a11y.description,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 102 102
+	          certify: { coverage: grade.coverage, conformant: grade.conformant!, pillars: grade.pillars,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 103 103
+	            stable: grade.determinism.stable, renderHash: grade.determinism.renderHash! } } satisfies VizPatternScope;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 104 104
+	      }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 105 105
+	      assert.equal(rendered.status, 'error', `${source.id}: unrecognized render status`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 106 106
+	      assert(rendered.errors?.length && rendered.errors.every(error => error.code === 'OODS-V167'), `${source.id}: unexpected failure is not an authoring-only disposition: ${JSON.stringify(rendered.errors)}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 107 107
+	      return { ...common, status: 'authoring-only', errors: rendered.errors.map(({ code, message }) => ({ code, message })) } satisfies VizPatternScope;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 108 108
+	    });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 109 109
+	    const publicSvg = scopes.every(scope => scope.status === 'public');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 110 110
+	    const reasons = [...new Set(scopes.flatMap(scope => 'errors' in scope ? scope.errors.map(error => error.message) : []))];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 111 111
+	    const family = classification.assignments.find(assignment => assignment.id === source.id)?.family;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 112 112
+	    assert(family, `${source.id}: missing classification`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 113 113
+	    return { id: source.id, family, baseChartType: source.baseChartType, specPath: source.specPath,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 114 114
+	      specSha256: source.specSha256, portability: source.portability, publicSvg,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 115 115
+	      status: publicSvg ? 'public' as const : 'authoring-only' as const, ...(!publicSvg ? { reasons } : {}), scopes };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 116 116
+	  });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 117 117
+	  return validateVizPatternRegistry(rows, sources, classification.assignments, recipes.map(recipe => recipe.chartType));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 118 118
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 119 119
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 120 120
+	export function renderPatternLibrary(rows: readonly VizPatternCapability[]): string {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 121 121
+	  const publicRows = rows.filter(row => row.publicSvg);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 122 122
+	  const scopes = publicRows.flatMap(row => row.scopes);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 123 123
+	  const failed = scopes.filter(scope => scope.certify?.conformant === false).length;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 124 124
+	  const cell = (value: string) => value.replaceAll('|', '\\|').replaceAll('\n', ' ');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 125 125
+	  return [
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 126 126
+	    '<!-- Generated by scripts/product-reality/s195-pattern-census.ts. Do not edit. -->',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 127 127
+	    '# Responsive Pattern Library v2', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 128 128
+	    `${rows.length} exact authored pattern identities are registered: ${publicRows.length} produce public SVG and ${rows.length - publicRows.length} remain authoring-only with measured reasons. The census calls every identity in light and dark for brands A and B (${rows.length * 4} cells).`, '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 129 129
+	    `Public cells retain their actual certification verdict: ${scopes.length - failed} conformant and ${failed} nonconformant. A public SVG is not a promise of certification or interactive behavior.`, '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 130 130
+	    '## Public use', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 131 131
+	    'Pass the full identity to `viz.render`, for example `{ "pattern": "pattern:viz:simple-bar", "theme": "dark", "brand": "B", "output": { "svg": true, "includeNormalizedSpec": true } }`. The source supplies rows, encoding, title, description, and presentation. Explicit input fields that conflict with the pattern are rejected. Authoring-only identities return a typed error explaining the unsupported semantics.', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 132 132
+	    '## Catalog', '', '| Identity | Family | Base chart | Public path | Portability | Reason |', '| --- | --- | --- | --- | --- | --- |',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 133 133
+	    ...rows.map(row => `| \`${row.id}\` | ${row.family} | ${row.baseChartType} | ${row.status} | ${cell(canonicalPatternValue(row.portability))} | ${row.reasons?.map(cell).join('; ') ?? '—'} |`), '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 134 134
+	    '## Exact source pins', '', '| Identity | Specification | SHA-256 |', '| --- | --- | --- |',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 135 135
+	    ...rows.map(row => `| \`${row.id}\` | \`${row.specPath}\` | \`${row.specSha256}\` |`), '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 136 136
+	    '## Public SVG and certification receipts', '', '| Identity | Theme / brand | SVG SHA-256 | Coverage | Conformant | A11y / contrast / accuracy |', '| --- | --- | --- | --- | --- | --- |',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 137 137
+	    ...publicRows.flatMap(row => row.scopes.map(scope => `| \`${row.id}\` | ${scope.theme} / ${scope.brand} | \`${scope.svgHash}\` | ${scope.certify!.coverage} | ${String(scope.certify!.conformant)} | ${scope.certify!.pillars.a11yEquivalence} / ${scope.certify!.pillars.contrast} / ${scope.certify!.pillars.accuracy} |`)), '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 138 138
+	    '## Authoring and regeneration', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 139 139
+	    'The original specifications remain available to Storybook and the pattern recommender. The public path preserves supported static authoring semantics; unsupported facets, layering, stacking, interactions, or encodings remain explicit limitations rather than approximate chart substitutions.', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 140 140
+	    '```sh', 'pnpm exec tsx scripts/product-reality/s195-pattern-sources.ts --check',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 141 141
+	    'pnpm exec tsx scripts/product-reality/s195-pattern-census.ts --measure',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 142 142
+	    'pnpm exec tsx scripts/product-reality/s195-pattern-census.ts --check', '```', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 143 143
+	    '`--measure` runs the real public handler and certification before writing observations, registry, and documentation. `--check` derives the generated bytes from the retained observations and current source pins; the contract suite separately reruns the public calls to reject handler drift. `OODS_PATTERN_CENSUS_ROOT` or `--root <path>` selects a repository root; `--observations <path>` selects retained observations.', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 144 144
+	  ].join('\n');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 145 145
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 146 146
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 147 147
+	export function writePatternOutputs(observations: PatternCensusObservations, { root = ROOT, check = false }: { root?: string; check?: boolean } = {}): VizPatternCapability[] {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 148 148
+	  const rows = derivePatternRegistry(observations, root);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 149 149
+	  const outputs: Array<[string, string]> = [[PATTERN_REGISTRY_PATH, serialize(rows)], [PATTERN_DOC_PATH, renderPatternLibrary(rows)]];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 150 150
+	  for (const [file, expected] of outputs) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 151 151
+	    const full = resolve(root, file);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 152 152
+	    if (check) assert(existsSync(full) && readFileSync(full, 'utf8') === expected, `Generated pattern output is stale: ${file}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 153 153
+	    else { mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, expected); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 154 154
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 155 155
+	  return rows;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 156 156
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 157 157
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 158 158
+	if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 159 159
+	  const args = process.argv.slice(2);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 160 160
+	  let root = process.env.OODS_PATTERN_CENSUS_ROOT ?? ROOT;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 161 161
+	  let observationsPath = PATTERN_OBSERVATIONS_PATH;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 162 162
+	  let measure = false;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 163 163
+	  let check = false;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 164 164
+	  for (let index = 0; index < args.length; index += 1) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 165 165
+	    const arg = args[index];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 166 166
+	    if (arg === '--measure') measure = true;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 167 167
+	    else if (arg === '--check') check = true;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 168 168
+	    else if (arg === '--root' || arg === '--observations') {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 169 169
+	      assert(args[index + 1], `${arg} requires a path`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 170 170
+	      if (arg === '--root') root = resolve(args[++index]!); else observationsPath = args[++index]!;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 171 171
+	    } else throw new Error(`Unknown argument: ${arg}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 172 172
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 173 173
+	  assert(!(measure && check), '--measure and --check are separate operations');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 174 174
+	  const observations = measure ? await measurePatternCensus({ root }) : JSON.parse(read(root, observationsPath));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 175 175
+	  const rows = writePatternOutputs(observations, { root, check });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 176 176
+	  if (measure) { const full = resolve(root, observationsPath); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, serialize(observations)); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 177 177
+	  console.log(serialize({ identities: rows.length, cells: observations.cells.length, public: rows.filter(row => row.publicSvg).length,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 178 178
+	    authoringOnly: rows.filter(row => !row.publicSvg).length, nonconformantCells: rows.flatMap(row => row.scopes).filter(scope => scope.certify?.conformant === false).length }).trimEnd());
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 179 179
+	}

@@ -1,0 +1,9 @@
+# s195-m05 HC runtime evidence
+
+`verification.json` records exact executed commands, failure diagnoses, targeted test selection, builds and receipts. The165 current tests across7 files pass through targeted runs; no single165-test run or package-wide coverage result is claimed. Raw logs retain the initial schema-copy error, fixture mistakes, targeted coverage-threshold failure and post-AJV request replay issue.
+
+`probe/` contains the actual pre-guard renderer outputs. Vega bar/line/area/scatter retain Canvas, CanvasText and HC scope oklch declarations. Heatmap substitutes its library palette; ECharts emits defaults and logs illegal oklch fallbacks to black. These probes motivated shared emitted-paint validation; they are not current successful HC verdicts.
+
+`boundary/` contains the current public-AJV/handler observations. `built.json` replays26 HC chart scopes,26 matching certify calls,2 dashboards and real React/Vue generated detail assets through compiled handlers and dist schemas, checking source parity. Eight chart scopes render,18 return typed V165. Failed HC render proofs keep contrast exempt with reason forced-colors, while determinism/conformance fail. Spec-only ECharts stays uncertified/null. Dashboard placeholders/omit behavior retains the four usable chart types.
+
+`migration.json` bounds semantic changes in7 generated tool schemas, including the explicitly recorded code.generate HC theme admission needed by the mandatory generated-app proof. JSON formatting is canonicalized by the generator; unrelated schema semantics are unchanged. Light/dark runtime defaults remain controlled by the95 existing public-SVG/dashboard regressions and21 existing operand-profile cases; the separate palette move and golden migration belong to their owners. Root owns the10-cell forced-colors browser proof under `../browser`.

@@ -1,8 +1,9 @@
 import type { CodegenOptions } from './types.js';
-import { chartNodes } from './chart-declaration.js';
+import { chartMatchesPreview, chartNodes } from './chart-declaration.js';
 import { handle as render } from '../tools/viz.render.js';
 import { assertStaticSvg } from '@oods/component-contracts';
-import type { UiSchema } from '../schemas/generated.js';
+import { canonicalize } from '@oods/artifacts';
+import type { UiSchema, VizRenderInput } from '../schemas/generated.js';
 import { workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Render once at generation time; emitted consumers need no chart runtime. */
@@ -13,42 +14,75 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
   if (!chartNodes(input.screens).length) return { schema: input, files: [] };
   const schema = structuredClone(input);
   const nodes = chartNodes(schema.screens);
-  if (nodes.length !== 1 || nodes[0]!.component !== 'VizAreaPreview') {
-    throw new Error('A payment chart declaration requires exactly one VizAreaPreview.');
+  for (const candidate of nodes) {
+    if (!chartMatchesPreview(candidate)) throw new Error(`Chart type '${candidate.chart!.chartType}' does not match preview '${candidate.component}'.`);
   }
   const node = nodes[0]!;
   const chart = node.chart!;
-  for (const field of [...chart.dateFields, chart.amountField, chart.currencyField]) {
-    if (!schema.objectSchema?.[field]) throw new Error(`Payment chart field '${field}' is absent from objectSchema.`);
+  if (nodes.some(candidate => canonicalize(candidate.chart) !== canonicalize(chart)
+    || candidate.props?.title !== node.props?.title || candidate.props?.description !== node.props?.description)) {
+    throw new Error('Only one distinct chart declaration and presentation is supported per generated object.');
+  }
+  if (chart.source === 'payment-events') {
+    for (const field of [...chart.dateFields, chart.amountField, chart.currencyField]) {
+      if (!schema.objectSchema?.[field]) throw new Error(`Payment chart field '${field}' is absent from objectSchema.`);
+    }
+  } else {
+    const field = schema.objectSchema?.[chart.dataField];
+    if (!field) throw new Error(`Chart field '${chart.dataField}' is absent from objectSchema.`);
+    if (field.type !== 'array' && !field.type.endsWith('[]')) throw new Error(`Chart field '${chart.dataField}' must be a declared array.`);
   }
   const theme = options.theme ?? schema.theme ?? 'light';
-  if (theme !== 'light' && theme !== 'dark') throw new Error(`Payment chart theme '${theme}' is not supported.`);
+  if (theme !== 'light' && theme !== 'dark' && theme !== 'hc') throw new Error(`Payment chart theme '${theme}' is not supported.`);
   const records = workflowSampleRecords(schema);
   const files: Array<{ path: string; contents: string }> = [];
   const byRecord: Record<string, string> = {};
   for (const [index, record] of records.entries()) {
-    const history = record.payment_history as Array<{ at: string; amount: number }>;
-    const rows = history.map(payment => ({ date: payment.at, amount: payment.amount / chart.minorUnits }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-    if (rows.length < 4 || rows.some(row => !Number.isFinite(row.amount) || !Number.isFinite(Date.parse(row.date)))) {
-      throw new Error('Payment chart requires a finite amount and valid payment dates.');
+    let request: VizRenderInput;
+    if (chart.source === 'payment-events') {
+      const history = record.payment_history as Array<{ at: string; amount: number }>;
+      const rows = history.map(payment => ({ date: payment.at, amount: payment.amount / chart.minorUnits }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+      if (rows.length < 4 || rows.some(row => !Number.isFinite(row.amount) || !Number.isFinite(Date.parse(row.date)))) {
+        throw new Error('Payment chart requires a finite amount and valid payment dates.');
+      }
+      request = {
+        chartType: chart.chartType,
+        name: String(node.props?.title ?? 'Payment amounts'),
+        description: `Recorded sample payments in ${String(record[chart.currencyField]).toUpperCase()}, shown in major currency units.`,
+        theme,
+        brand: options.brand ?? chart.brand ?? 'A',
+        rows: [rows[0]!, ...rows.slice(1)],
+        encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
+        output: { svg: true, width: 360, height: 200 },
+      };
+    } else {
+      const rows = record[chart.dataField];
+      if (!Array.isArray(rows) || !rows.length || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row))) {
+        throw new Error(`Chart field '${chart.dataField}' requires non-empty object rows.`);
+      }
+      for (const binding of Object.values(chart.encodings)) {
+        const field = typeof binding === 'string' ? binding : binding.field;
+        if (rows.some(row => !Object.hasOwn(row, field))) throw new Error(`Chart encoding field '${field}' is missing from '${chart.dataField}' rows.`);
+      }
+      request = {
+        chartType: chart.chartType,
+        name: String(node.props?.title ?? `${chart.chartType} chart`),
+        ...(typeof node.props?.description === 'string' ? { description: node.props.description } : {}),
+        theme,
+        brand: options.brand ?? chart.brand ?? 'A',
+        rows: [rows[0]!, ...rows.slice(1)],
+        encodings: chart.encodings,
+        output: { svg: true, width: 360, height: 200 },
+      };
     }
-    const result = await render({
-      chartType: chart.chartType,
-      name: String(node.props?.title ?? 'Payment amounts'),
-      description: `Recorded sample payments in ${String(record[chart.currencyField]).toUpperCase()}, shown in major currency units.`,
-      theme,
-      brand: options.brand ?? chart.brand ?? 'A',
-      rows: [rows[0]!, ...rows.slice(1)],
-      encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
-      output: { svg: true, width: 360, height: 200 },
-    });
-    if (result.status !== 'ok' || !result.svg) throw new Error(`Payment chart render failed: ${JSON.stringify(result.errors)}`);
+    const result = await render(request);
+    if (result.status !== 'ok' || !result.svg) throw new Error(`${chart.source === 'payment-events' ? 'Payment chart' : 'Chart'} render failed: ${JSON.stringify(result.errors)}`);
     const svg = assertStaticSvg(result.svg);
-    if (index === 0) node.props = { ...node.props, svg, width: 360, height: 200 };
+    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, width: 360, height: 200 };
     const id = schema.workflow ? String(record[schema.workflow.data.idField]) : 'seed';
     byRecord[id] = svg;
-    files.push({ path: `src/charts/payment-${String(index + 1).padStart(3, '0')}.svg`, contents: svg });
+    files.push({ path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, contents: svg });
   }
   if (schema.workflow) {
     files.push({ path: 'src/chart-assets.ts', contents: `// Static public viz.render output, keyed by the seed record identity.\nexport const chartSvgByRecord: Readonly<Record<string, string>> = ${JSON.stringify(byRecord, null, 2)};\n` });

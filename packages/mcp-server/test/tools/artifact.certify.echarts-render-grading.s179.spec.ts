@@ -148,8 +148,8 @@ describe("artifact.certify — operand-backed ECharts render grading (s179 m05)"
       const out = capture.certified;
 
       expect(out.status).toBe("ok");
-      expect(out.coverage).toBe("uncertified");
-      expect(out.conformant).toBeNull();
+      expect(out.coverage).toBe("certified");
+      expect(out.conformant).toBe(operand.chartType !== "bubble_map");
       expect(out.determinism).toEqual({
         stable: true,
         contentHash: capture.renderedContentHash,
@@ -227,8 +227,8 @@ describe("artifact.certify — operand-backed ECharts render grading (s179 m05)"
 
     expect(faulted.certified).toMatchObject({
       status: "ok",
-      coverage: "uncertified",
-      conformant: null,
+      coverage: "certified",
+      conformant: false,
       determinism: {
         stable: false,
         contentHash: passing.certified.determinism?.contentHash,

@@ -65,14 +65,26 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
     expect(out.contrastNote).toContain('series-to-paint assignment of the rendered chart');
   });
 
-  it('the repaired six-slot palette clears light/A Role-C with an honest Role-A caution (s191)', async () => {
-    // Fixed hue/chroma, minimal lightness repair: Role-C passes; ΔE00 9.88 stays below the clean target.
+  it('the revised six-slot palette clears Role-C and the Role-A clean threshold (s195)', async () => {
+    // s195 moves only slot05 hue by -0.08 degrees: actual min ΔE00 is 10.01756.
     const out = await grade(
       mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
     );
     expect(out.contrast).toBe('pass');
     expect(out.contrastNote).not.toContain('below 3:1');
+    expect(out.contrastNote).not.toContain('Distinguishability caution');
+  });
+
+  it('the prior below-target palette still emits a caution when explicitly supplied', async () => {
+    const prior = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00'];
+    const out = await grade(mk({
+      color: { field: 'series', type: 'nominal' },
+      values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']),
+      tokens: Object.fromEntries(prior.map((paint, index) => [`--oods-viz-scale-categorical-0${index + 1}`, paint])),
+    }));
+    expect(out.contrast).toBe('pass');
     expect(out.contrastNote).toContain('Distinguishability caution');
+    expect(out.contrastNote).toContain('9.88');
   });
 
   it('a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path)', async () => {
@@ -209,7 +221,38 @@ describe('certify-contrast — F5 explicit agent color range (sprint-147, honest
   });
 });
 
-describe('certify-contrast — role-B (no baked palette) is WCAG-exempt', () => {
+describe('certify-contrast — a missing categorical bake cannot claim the gradient exemption', () => {
+  it.each(['nominal', 'ordinal'])('fails a compiled %s color channel when its actual palette range is removed', async (type) => {
+    const spec = mk({ color: { field: 'series', type }, values: seriesRows(['a', 'b']) });
+    const compiled = structuredClone(toVegaLiteSpec(spec));
+    const unit = compiled as any;
+    expect(unit.encoding.color.scale.range).toHaveLength(6);
+    delete unit.encoding.color.scale.range;
+    const out = await evaluateContrastPillar(spec, compiled);
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastMeasured).toBe(false);
+    expect(out.contrastNote).toContain('Categorical color encoding is missing its baked palette');
+    expect(out.contrastNote).toContain('No categorical canvas ratio is graded');
+  });
+
+  it('a passing sibling or decorative fallback cannot hide the missing categorical bake', async () => {
+    const spec = mkMulti({ marks: [
+      { trait: 'MarkBar', color: { field: 'series', type: 'nominal' } },
+      { trait: 'MarkPoint', color: { field: 'series', type: 'nominal' } },
+    ], values: seriesRows(['a', 'b']) });
+    const compiled = toVegaLiteSpec(spec) as any;
+    const missing = compiled.layer[1];
+    delete missing.encoding.color.scale.range;
+    missing.mark = { ...missing.mark, color: '#eeeeee' };
+    const out = await evaluateContrastPillar(spec, compiled);
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastMeasured).toBe(false);
+    expect(out.contrastNote).toContain('Categorical color encoding is missing its baked palette');
+    expect(out.contrastNote).toContain('No categorical canvas ratio is graded for the missing-palette unit.');
+  });
+});
+
+describe('certify-contrast — continuous/default color without a palette is WCAG-exempt', () => {
   it('a quantitative color encoding (baked NO range) -> exempt (gradient essential exception)', async () => {
     const out = await grade(mk({ color: { field: 'value', type: 'quantitative' } }));
     expect(out.contrast).toBe('exempt');

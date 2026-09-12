@@ -4,7 +4,8 @@
 // route the data BRANCH through the analyzer its family uses, then run the shared table +
 // narrative generators over the resulting VizDataAnalysis. s174 gives artifact.certify the
 // same derivation — it needs the operand-built table and narrative to evaluate the 16-rule
-// equivalence engine warn-first — so the code moves here rather than being transcribed.
+// equivalence engine — initially warn-first, now graded under the declared operand
+// profile — so the code is shared rather than transcribed.
 //
 // STANDING RULE B (s173, "when a private function is LIFTED to a shared module, compare the
 // CALLERS' argument guarding, not just the function body"). The two callers' guarding,

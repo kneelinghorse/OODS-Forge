@@ -1,0 +1,48 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/doc-retirement-gate.spec.ts (10 tests | 1 failed) 2355ms
+   ✓ doc-retirement gate (feedback-73) > no doc references a retired MCP tool by its dotted name (outside history/changelog) 45ms
+   ✓ retired tool reference matcher (s195-m01) > rejects every public spelling of purity.audit, including MCP-prefixed calls 7ms
+   ✓ retired tool reference matcher (s195-m01) > rejects every public spelling of vrt.run, including MCP-prefixed calls 1ms
+   ✓ retired tool reference matcher (s195-m01) > rejects every public spelling of reviewKit.create, including MCP-prefixed calls 1ms
+   ✓ retired tool reference matcher (s195-m01) > rejects every public spelling of release.verify, including MCP-prefixed calls 1ms
+   ✓ retired tool reference matcher (s195-m01) > rejects every public spelling of viz.compose, including MCP-prefixed calls 1ms
+   ✓ retired tool reference matcher (s195-m01) > rejects the retired single-word tool only in callable, wire, registry or instruction contexts 1ms
+   ✓ retired tool reference matcher (s195-m01) > allows distinct prose, longer identifiers and current fidelity/panel/internal APIs 4ms
+   × Sprint 194 retired public surfaces (CMOS #1922) > does not reintroduce any retired tool outside retained evidence and planning 2290ms
+     → expected [ Array(1) ] to deeply equal []
+   ✓ Sprint 194 retired public surfaces (CMOS #1922) > removes all retired tools from every registered and advertised surface 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/doc-retirement-gate.spec.ts > Sprint 194 retired public surfaces (CMOS #1922) > does not reintroduce any retired tool outside retained evidence and planning
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "tests/s195-retirement-gate-bite.tmp.md → release.verify",
++ ]
+
+ ❯ test/contracts/doc-retirement-gate.spec.ts:153:23
+    151|       for (const name of retiredReferences(content)) offenders.push(`$…
+    152|     }
+    153|     expect(offenders).toEqual([]);
+       |                       ^
+    154|   });
+    155| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  15:30:19
+   Duration  2.62s (transform 39ms, setup 20ms, collect 24ms, tests 2.35s, environment 0ms, prepare 80ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/doc-retirement-gate.spec.ts

@@ -1,0 +1,757 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7 82
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/schemas/viz.render.output.json
+filename packages/mcp-server/src/schemas/viz.render.output.json
+	  "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	    "status",
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	    "warnings"
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	  ],
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	  "allOf": [
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	    {
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	      "if": {
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	        "properties": {
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	          "status": {
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	            "const": "ok"
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	          },
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	          "chartType": {
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	            "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	              "bar",
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	              "line",
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	              "area",
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	              "scatter",
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	              "heatmap"
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	            ]
+52b0da991705c4c565987bc9faf7738ba00d885e 26 26
+	          }
+52b0da991705c4c565987bc9faf7738ba00d885e 27 27
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 28 28
+	        "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29
+	          "status",
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	          "chartType"
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	        ]
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	      "then": {
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	        "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 35 35
+	          "spec"
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36
+	        ]
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 39 39
+	    {
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40
+	      "if": {
+52b0da991705c4c565987bc9faf7738ba00d885e 41 41
+	        "properties": {
+52b0da991705c4c565987bc9faf7738ba00d885e 42 42
+	          "status": {
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43
+	            "const": "ok"
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	          },
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	          "chartType": {
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	            "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	              "treemap",
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	              "sunburst",
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	              "sankey",
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	              "force_graph",
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	              "chord",
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	              "choropleth",
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	              "bubble_map",
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	              "flow_map"
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	            ]
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	          }
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	        "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	          "status",
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	          "chartType"
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	        ]
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	      "then": {
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	        "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	          "echartsSpec",
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	          "output"
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	        ],
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	        "not": {
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	          "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	            "spec"
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	        "properties": {
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	          "output": {
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	            "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	              "echarts",
+52b0da991705c4c565987bc9faf7738ba00d885e 77 77
+	              "reason"
+52b0da991705c4c565987bc9faf7738ba00d885e 78 78
+	            ],
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79
+	            "properties": {
+52b0da991705c4c565987bc9faf7738ba00d885e 80 80
+	              "echarts": {
+52b0da991705c4c565987bc9faf7738ba00d885e 81 81
+	                "const": true
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	            }
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	          }
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	  ],
+52b0da991705c4c565987bc9faf7738ba00d885e 92 92 4
+	      "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 93 93
+	        "ok",
+52b0da991705c4c565987bc9faf7738ba00d885e 94 94
+	        "error"
+52b0da991705c4c565987bc9faf7738ba00d885e 95 95
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 104 104 4
+	      "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105
+	        "explicit",
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	        "suggest"
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 136 136 5
+	          "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 137 137
+	            "caption",
+52b0da991705c4c565987bc9faf7738ba00d885e 138 138
+	            "columns",
+52b0da991705c4c565987bc9faf7738ba00d885e 139 139
+	            "rows"
+52b0da991705c4c565987bc9faf7738ba00d885e 140 140
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 142 142 3
+	            "caption": {
+52b0da991705c4c565987bc9faf7738ba00d885e 143 143
+	              "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 144 144
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 149 149 5
+	                "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 150 150
+	                  "field",
+52b0da991705c4c565987bc9faf7738ba00d885e 151 151
+	                  "label",
+52b0da991705c4c565987bc9faf7738ba00d885e 152 152
+	                  "isNumeric"
+52b0da991705c4c565987bc9faf7738ba00d885e 153 153
+	                ],
+52b0da991705c4c565987bc9faf7738ba00d885e 155 155 9
+	                  "field": {
+52b0da991705c4c565987bc9faf7738ba00d885e 156 156
+	                    "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 157 157
+	                  },
+52b0da991705c4c565987bc9faf7738ba00d885e 158 158
+	                  "label": {
+52b0da991705c4c565987bc9faf7738ba00d885e 159 159
+	                    "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 160 160
+	                  },
+52b0da991705c4c565987bc9faf7738ba00d885e 161 161
+	                  "isNumeric": {
+52b0da991705c4c565987bc9faf7738ba00d885e 162 162
+	                    "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 163 163
+	                  }
+52b0da991705c4c565987bc9faf7738ba00d885e 172 172 3
+	                "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 173 173
+	                  "cells"
+52b0da991705c4c565987bc9faf7738ba00d885e 174 174
+	                ],
+52b0da991705c4c565987bc9faf7738ba00d885e 180 180 4
+	                      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 181 181
+	                        "field",
+52b0da991705c4c565987bc9faf7738ba00d885e 182 182
+	                        "text"
+52b0da991705c4c565987bc9faf7738ba00d885e 183 183
+	                      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 185 185 6
+	                        "field": {
+52b0da991705c4c565987bc9faf7738ba00d885e 186 186
+	                          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 187 187
+	                        },
+52b0da991705c4c565987bc9faf7738ba00d885e 188 188
+	                        "text": {
+52b0da991705c4c565987bc9faf7738ba00d885e 189 189
+	                          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 190 190
+	                        }
+52b0da991705c4c565987bc9faf7738ba00d885e 205 205 4
+	          "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 206 206
+	            "summary",
+52b0da991705c4c565987bc9faf7738ba00d885e 207 207
+	            "keyFindings"
+52b0da991705c4c565987bc9faf7738ba00d885e 208 208
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 210 210 9
+	            "summary": {
+52b0da991705c4c565987bc9faf7738ba00d885e 211 211
+	              "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 212 212
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 213 213
+	            "keyFindings": {
+52b0da991705c4c565987bc9faf7738ba00d885e 214 214
+	              "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 215 215
+	              "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 216 216
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 217 217
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 218 218
+	            }
+52b0da991705c4c565987bc9faf7738ba00d885e 228 228 4
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 229 229
+	        "patternId",
+52b0da991705c4c565987bc9faf7738ba00d885e 230 230
+	        "score"
+52b0da991705c4c565987bc9faf7738ba00d885e 231 231
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 233 233 6
+	        "patternId": {
+52b0da991705c4c565987bc9faf7738ba00d885e 234 234
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 235 235
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 236 236
+	        "score": {
+52b0da991705c4c565987bc9faf7738ba00d885e 237 237
+	          "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 238 238
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 241 241 3
+	          "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 242 242
+	            "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 243 243
+	          },
+52b0da991705c4c565987bc9faf7738ba00d885e 257 257 5
+	            "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 258 258
+	              "patternId",
+52b0da991705c4c565987bc9faf7738ba00d885e 259 259
+	              "score",
+52b0da991705c4c565987bc9faf7738ba00d885e 260 260
+	              "chartType"
+52b0da991705c4c565987bc9faf7738ba00d885e 261 261
+	            ],
+52b0da991705c4c565987bc9faf7738ba00d885e 263 263 9
+	              "patternId": {
+52b0da991705c4c565987bc9faf7738ba00d885e 264 264
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 265 265
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 266 266
+	              "score": {
+52b0da991705c4c565987bc9faf7738ba00d885e 267 267
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 268 268
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 269 269
+	              "chartType": {
+52b0da991705c4c565987bc9faf7738ba00d885e 270 270
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 271 271
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 283 283 59
+	    "svg": {
+52b0da991705c4c565987bc9faf7738ba00d885e 284 284
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 285 285
+	      "description": "Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles."
+52b0da991705c4c565987bc9faf7738ba00d885e 286 286
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 287 287
+	    "svgHash": {
+52b0da991705c4c565987bc9faf7738ba00d885e 288 288
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 289 289
+	      "pattern": "^[a-f0-9]{64}$",
+52b0da991705c4c565987bc9faf7738ba00d885e 290 290
+	      "description": "SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash."
+52b0da991705c4c565987bc9faf7738ba00d885e 291 291
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 292 292
+	    "svgBytes": {
+52b0da991705c4c565987bc9faf7738ba00d885e 293 293
+	      "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 294 294
+	      "minimum": 1,
+52b0da991705c4c565987bc9faf7738ba00d885e 295 295
+	      "description": "UTF-8 byte length of svg."
+52b0da991705c4c565987bc9faf7738ba00d885e 296 296
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 297 297
+	    "svgRef": {
+52b0da991705c4c565987bc9faf7738ba00d885e 298 298
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 299 299
+	      "description": "Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef."
+52b0da991705c4c565987bc9faf7738ba00d885e 300 300
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 301 301
+	    "render": {
+52b0da991705c4c565987bc9faf7738ba00d885e 302 302
+	      "type": "object",
+52b0da991705c4c565987bc9faf7738ba00d885e 303 303
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 304 304
+	        "engine",
+52b0da991705c4c565987bc9faf7738ba00d885e 305 305
+	        "width",
+52b0da991705c4c565987bc9faf7738ba00d885e 306 306
+	        "height",
+52b0da991705c4c565987bc9faf7738ba00d885e 307 307
+	        "theme",
+52b0da991705c4c565987bc9faf7738ba00d885e 308 308
+	        "brand"
+52b0da991705c4c565987bc9faf7738ba00d885e 309 309
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 310 310
+	      "properties": {
+52b0da991705c4c565987bc9faf7738ba00d885e 311 311
+	        "engine": {
+52b0da991705c4c565987bc9faf7738ba00d885e 312 312
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 313 313
+	            "vega-lite",
+52b0da991705c4c565987bc9faf7738ba00d885e 314 314
+	            "echarts"
+52b0da991705c4c565987bc9faf7738ba00d885e 315 315
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 316 316
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 317 317
+	        "width": {
+52b0da991705c4c565987bc9faf7738ba00d885e 318 318
+	          "type": "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 319 319
+	          "exclusiveMinimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 320 320
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 321 321
+	        "height": {
+52b0da991705c4c565987bc9faf7738ba00d885e 322 322
+	          "type": "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 323 323
+	          "exclusiveMinimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 324 324
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 325 325
+	        "theme": {
+52b0da991705c4c565987bc9faf7738ba00d885e 326 326
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 327 327
+	            "light",
+52b0da991705c4c565987bc9faf7738ba00d885e 328 328
+	            "dark",
+52b0da991705c4c565987bc9faf7738ba00d885e 329 329
+	            "hc"
+52b0da991705c4c565987bc9faf7738ba00d885e 330 330
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 331 331
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 332 332
+	        "brand": {
+52b0da991705c4c565987bc9faf7738ba00d885e 333 333
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 334 334
+	            "A",
+52b0da991705c4c565987bc9faf7738ba00d885e 335 335
+	            "B"
+52b0da991705c4c565987bc9faf7738ba00d885e 336 336
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 337 337
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 338 338
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 339 339
+	      "additionalProperties": false,
+52b0da991705c4c565987bc9faf7738ba00d885e 340 340
+	      "description": "Actual SVG dimensions, primary engine and rendered scope."
+52b0da991705c4c565987bc9faf7738ba00d885e 341 341
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 365 365 3
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 366 366
+	        "compact"
+52b0da991705c4c565987bc9faf7738ba00d885e 367 367
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 369 369 27
+	        "svg": {
+52b0da991705c4c565987bc9faf7738ba00d885e 370 370
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 371 371
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 372 372
+	        "width": {
+52b0da991705c4c565987bc9faf7738ba00d885e 373 373
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 374 374
+	          "minimum": 1
+52b0da991705c4c565987bc9faf7738ba00d885e 375 375
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 376 376
+	        "height": {
+52b0da991705c4c565987bc9faf7738ba00d885e 377 377
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 378 378
+	          "minimum": 1
+52b0da991705c4c565987bc9faf7738ba00d885e 379 379
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 380 380
+	        "compact": {
+52b0da991705c4c565987bc9faf7738ba00d885e 381 381
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 382 382
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 383 383
+	        "echarts": {
+52b0da991705c4c565987bc9faf7738ba00d885e 384 384
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 385 385
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 386 386
+	        "reason": {
+52b0da991705c4c565987bc9faf7738ba00d885e 387 387
+	          "const": "echarts-primary-family",
+52b0da991705c4c565987bc9faf7738ba00d885e 388 388
+	          "description": "This chart family requires ECharts, so output.echarts is forced true even when omitted or false."
+52b0da991705c4c565987bc9faf7738ba00d885e 389 389
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 390 390
+	        "includeNormalizedSpec": {
+52b0da991705c4c565987bc9faf7738ba00d885e 391 391
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 392 392
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 393 393
+	        "includeA11y": {
+52b0da991705c4c565987bc9faf7738ba00d885e 394 394
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 395 395
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 401 401 3
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 402 402
+	        "$ref": "#/$defs/issue"
+52b0da991705c4c565987bc9faf7738ba00d885e 403 403
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 408 408 3
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 409 409
+	        "$ref": "#/$defs/issue"
+52b0da991705c4c565987bc9faf7738ba00d885e 410 410
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 418 418 4
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 419 419
+	            "vega-lite",
+52b0da991705c4c565987bc9faf7738ba00d885e 420 420
+	            "echarts"
+52b0da991705c4c565987bc9faf7738ba00d885e 421 421
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 435 435 3
+	          "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 436 436
+	            "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 437 437
+	          },
+52b0da991705c4c565987bc9faf7738ba00d885e 445 445 5
+	            "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 446 446
+	              "name",
+52b0da991705c4c565987bc9faf7738ba00d885e 447 447
+	              "type",
+52b0da991705c4c565987bc9faf7738ba00d885e 448 448
+	              "role"
+52b0da991705c4c565987bc9faf7738ba00d885e 449 449
+	            ],
+52b0da991705c4c565987bc9faf7738ba00d885e 451 451 78
+	              "name": {
+52b0da991705c4c565987bc9faf7738ba00d885e 452 452
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 453 453
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 454 454
+	              "type": {
+52b0da991705c4c565987bc9faf7738ba00d885e 455 455
+	                "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 456 456
+	                "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 457 457
+	                  "quantitative",
+52b0da991705c4c565987bc9faf7738ba00d885e 458 458
+	                  "temporal",
+52b0da991705c4c565987bc9faf7738ba00d885e 459 459
+	                  "nominal",
+52b0da991705c4c565987bc9faf7738ba00d885e 460 460
+	                  "ordinal"
+52b0da991705c4c565987bc9faf7738ba00d885e 461 461
+	                ]
+52b0da991705c4c565987bc9faf7738ba00d885e 462 462
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 463 463
+	              "role": {
+52b0da991705c4c565987bc9faf7738ba00d885e 464 464
+	                "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 465 465
+	                "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 466 466
+	                  "measure",
+52b0da991705c4c565987bc9faf7738ba00d885e 467 467
+	                  "dimension"
+52b0da991705c4c565987bc9faf7738ba00d885e 468 468
+	                ]
+52b0da991705c4c565987bc9faf7738ba00d885e 469 469
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 470 470
+	              "cardinality": {
+52b0da991705c4c565987bc9faf7738ba00d885e 471 471
+	                "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 472 472
+	                "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 473 473
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 474 474
+	              "distinctRatio": {
+52b0da991705c4c565987bc9faf7738ba00d885e 475 475
+	                "type": "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 476 476
+	                "minimum": 0,
+52b0da991705c4c565987bc9faf7738ba00d885e 477 477
+	                "maximum": 1
+52b0da991705c4c565987bc9faf7738ba00d885e 478 478
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 479 479
+	              "min": {
+52b0da991705c4c565987bc9faf7738ba00d885e 480 480
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 481 481
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 482 482
+	              "max": {
+52b0da991705c4c565987bc9faf7738ba00d885e 483 483
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 484 484
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 485 485
+	              "mean": {
+52b0da991705c4c565987bc9faf7738ba00d885e 486 486
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 487 487
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 488 488
+	              "stddev": {
+52b0da991705c4c565987bc9faf7738ba00d885e 489 489
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 490 490
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 491 491
+	              "skew": {
+52b0da991705c4c565987bc9faf7738ba00d885e 492 492
+	                "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 493 493
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 494 494
+	              "outlierCount": {
+52b0da991705c4c565987bc9faf7738ba00d885e 495 495
+	                "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 496 496
+	                "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 497 497
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 498 498
+	              "hasNegative": {
+52b0da991705c4c565987bc9faf7738ba00d885e 499 499
+	                "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 500 500
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 501 501
+	              "hasZero": {
+52b0da991705c4c565987bc9faf7738ba00d885e 502 502
+	                "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 503 503
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 504 504
+	              "isInteger": {
+52b0da991705c4c565987bc9faf7738ba00d885e 505 505
+	                "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 506 506
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 507 507
+	              "temporalGranularity": {
+52b0da991705c4c565987bc9faf7738ba00d885e 508 508
+	                "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 509 509
+	                "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 510 510
+	                  "year",
+52b0da991705c4c565987bc9faf7738ba00d885e 511 511
+	                  "quarter",
+52b0da991705c4c565987bc9faf7738ba00d885e 512 512
+	                  "month",
+52b0da991705c4c565987bc9faf7738ba00d885e 513 513
+	                  "day",
+52b0da991705c4c565987bc9faf7738ba00d885e 514 514
+	                  "time"
+52b0da991705c4c565987bc9faf7738ba00d885e 515 515
+	                ]
+52b0da991705c4c565987bc9faf7738ba00d885e 516 516
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 517 517
+	              "temporalRegular": {
+52b0da991705c4c565987bc9faf7738ba00d885e 518 518
+	                "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 519 519
+	              },
+52b0da991705c4c565987bc9faf7738ba00d885e 520 520
+	              "geoKind": {
+52b0da991705c4c565987bc9faf7738ba00d885e 521 521
+	                "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 522 522
+	                "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 523 523
+	                  "lat",
+52b0da991705c4c565987bc9faf7738ba00d885e 524 524
+	                  "lon",
+52b0da991705c4c565987bc9faf7738ba00d885e 525 525
+	                  "region",
+52b0da991705c4c565987bc9faf7738ba00d885e 526 526
+	                  "none"
+52b0da991705c4c565987bc9faf7738ba00d885e 527 527
+	                ]
+52b0da991705c4c565987bc9faf7738ba00d885e 528 528
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 541 541 4
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 542 542
+	        "code",
+52b0da991705c4c565987bc9faf7738ba00d885e 543 543
+	        "message"
+52b0da991705c4c565987bc9faf7738ba00d885e 544 544
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 546 546 19
+	        "code": {
+52b0da991705c4c565987bc9faf7738ba00d885e 547 547
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 548 548
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 549 549
+	        "message": {
+52b0da991705c4c565987bc9faf7738ba00d885e 550 550
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 551 551
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 552 552
+	        "path": {
+52b0da991705c4c565987bc9faf7738ba00d885e 553 553
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 554 554
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 555 555
+	        "hint": {
+52b0da991705c4c565987bc9faf7738ba00d885e 556 556
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 557 557
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 558 558
+	        "severity": {
+52b0da991705c4c565987bc9faf7738ba00d885e 559 559
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 560 560
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 561 561
+	            "error",
+52b0da991705c4c565987bc9faf7738ba00d885e 562 562
+	            "warning"
+52b0da991705c4c565987bc9faf7738ba00d885e 563 563
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 564 564
+	        }

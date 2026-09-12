@@ -197,6 +197,20 @@ describe('collectViewExtensions — context coverage', () => {
 /* ------------------------------------------------------------------ */
 
 describe('collectDashboardViewExtensions — dashboard projection', () => {
+  it('adds an explicitly authored chart without removing the existing domain dashboard panels', () => {
+    const composed = getSubscription();
+    const before = collectDashboardViewExtensions(composed);
+    expect(before.plan.every(entry => !entry.props.chart)).toBe(true);
+    const mark = composed.traits.find(trait => trait.definition.trait.name === 'MarkArea')!;
+    mark.definition.view_extensions!.dashboard = structuredClone(mark.definition.view_extensions!.detail);
+    const after = collectDashboardViewExtensions(composed);
+    const charts = after.plan.filter(entry => entry.props.chart);
+    expect(charts).toHaveLength(1);
+    expect(charts[0]).toMatchObject({ component: 'VizAreaPreview', targetSlot: 'main-content' });
+    expect(after.plan.filter(entry => !entry.props.chart)).toEqual(before.plan);
+    expect(after.warnings).toEqual([]);
+  });
+
   it('projects Subscription dashboard slots from compact and detail contexts', () => {
     const composed = getSubscription();
     const result = collectDashboardViewExtensions(composed);

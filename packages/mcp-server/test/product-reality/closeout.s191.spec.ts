@@ -27,13 +27,23 @@ describe('Sprint 191 bounded closeout',()=>{
     expect(()=>assertEvidenceOnlyHeadChanges([{status:'A',path:file}],'sprint-191')).not.toThrow();
     for(const row of [{status:'M',path:file},{status:'A',path:'scripts/runtime/new.mjs'},{status:'M',path:'artifacts/product-reality/sprint-191/m01/README.md'}]) expect(()=>assertEvidenceOnlyHeadChanges([row],'sprint-191')).toThrow();
   });
-  it('current capability prose derives contrast from the registry and keeps review separate',()=>{
+  it('current capability prose derives scope counts from the registry and keeps historical review separate',()=>{
     const registry=JSON.parse(read('packages/viz-core/src/registry/viz-recipes.v1.json'));
-    for(const filename of ['near.md','product-reality-program.md']) {
+    // The program table retains the Sprint 191 contrast snapshot.
+    for(const filename of ['product-reality-program.md']) {
       const prose=read('cmos/foundational-docs/roadmap/'+filename);
       expect(prose).toContain(`contrastPassed light/dark for ${registry.filter((row:any)=>row.contrastPassed.length===2).length} categorical types, [] for ${registry.filter((row:any)=>row.contrastPassed.length===0).length} exempt`);
     }
     const near=read('cmos/foundational-docs/roadmap/near.md');
+    const renderScopes=registry.flatMap((row:any)=>row.renderScopes);
+    const certifyScopes=registry.flatMap((row:any)=>row.certifyScopes);
+    const rendered=renderScopes.filter((row:any)=>row.status==='rendered').length;
+    const deferred=renderScopes.filter((row:any)=>row.status==='typed-deferred').length;
+    const certified=registry.filter((row:any)=>row.certifyCoverage==='certified').length;
+    const conformant=certifyScopes.filter((row:any)=>row.conformant===true).length;
+    expect(near).toContain(`**${rendered} rendered /${deferred} typed HC-deferred** scopes out of ${renderScopes.length}`);
+    expect(near).toContain(`All ${certified} types have a declared certification path; ${conformant} rendered scopes conform`);
+    expect(near).toContain('HC contrast is typed forced-colors exemption, not a numerical contrast measurement. Spec-only ECharts stays uncertified/null.');
     for(const text of ['## Increment 10 — Sprint 191: Carry-forward pay-down — CERTIFIED AND CLOSED','Sprint 191 is **Completed**, independently certified by review `PS-2026-09-10-008` and decision `#1880`.','77/77 schemas and 154/154','6/6','builderSelfCertified:false','separateReviewRequired:true','`#1315` remains pending']) expect(near).toContain(text);
     expect(near).not.toContain('Carry-forward pay-down — BUILT, REVIEW PENDING');
   });

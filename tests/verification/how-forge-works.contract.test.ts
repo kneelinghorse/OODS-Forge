@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { BRAND_CONTRAST_PAIRS, BRAND_CONTRAST_RULES } from "@oods/a11y-tools";
 import { NUCLEUS_COMPONENT_IDS } from "@oods/component-contracts";
+import { ACCURACY_RULES, ECHARTS_ACCURACY_RULES } from "@oods/viz-core";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(resolve(projectRoot, path), "utf8");
@@ -101,7 +102,7 @@ describe("how Forge works narrative truth", () => {
     for (const tool of registry.onDemand) {
       expect(onDemandRow).toContain(tool);
     }
-    expect(onDemandRow).not.toContain("review (resolve, chain)");
+    expect(onDemandRow).not.toContain(["review", "(resolve, chain)"].join(" "));
     expect(html).toContain(
       "map (create, list, resolve, update, delete, apply)",
     );
@@ -111,20 +112,81 @@ describe("how Forge works narrative truth", () => {
     const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
     const certify = JSON.parse(read("packages/mcp-server/src/schemas/artifact.certify.input.json"));
     expect(render.properties.chartType.enum).toHaveLength(13);
-    expect(html).toContain("server-rendered SVG for all 13 registered chart types");
+    const dashboardInput = JSON.parse(read("packages/mcp-server/src/schemas/dashboard.render.input.json"));
+    const panelTypes = dashboardInput.$defs.ChartPanel.properties.chartType.enum;
+    expect(panelTypes).toHaveLength(11);
+    expect(panelTypes).not.toContain("chord");
+    expect(panelTypes).not.toContain("flow_map");
+    expect(html).toContain(`server-rendered SVG for its ${panelTypes.length} admitted chart types`);
     const dashboard = read("packages/mcp-server/src/tools/dashboard.render.html.ts");
     expect(dashboard).toContain("await renderVegaLiteToSvg(");
     expect(dashboard).toContain("await renderEChartsToSvg(");
     expect(html).not.toContain("the others appear as described placeholders");
     expect(certify.properties.brand.enum).toEqual(["A", "B"]);
     expect(certify.properties.brand.default).toBe("A");
-    expect(certify.properties.theme.enum).toEqual(["light", "dark"]);
+    expect(certify.properties.theme.enum).toEqual(["light", "dark", "hc"]);
     expect(certify.properties.theme.default).toBe("light");
-    expect(html).toContain("It accepts brand A or B and theme light or dark (defaults A/light)");
-    expect(html).toContain("server-side high-contrast chart pixels are unsupported");
+    expect(html).toContain("It accepts brand A or B and theme light, dark or hc (defaults A/light)");
+    expect(html).toContain("HC contrast alone is exempt with reason forced-colors");
+    expect(html).not.toContain("server-side high-contrast chart pixels are unsupported");
+    const recipes = JSON.parse(read("packages/viz-core/src/registry/viz-recipes.v1.json"));
+    const supported = recipes.filter((row: { themes: { hc: boolean } }) => row.themes.hc);
+    expect(supported.map((row: { chartType: string }) => row.chartType)).toEqual(["bar", "line", "area", "scatter"]);
+    for (const tool of ["viz-render", "dashboard-render", "artifact-certify"]) {
+      expect(read(`docs/api/${tool}.md`)).toContain(`hc (${supported.length}/${recipes.length} with measured SVGs; ${recipes.length - supported.length}/${recipes.length} typed-deferred)`);
+    }
     expect(html).not.toContain("takes no brand input");
     expect(html).not.toContain("light theme, brand-independent");
     expect(html).not.toContain("Light theme only.");
+  });
+
+  it("distinguishes authored object charts from executed proof and labels API-call examples truthfully (s195)", () => {
+    const invoice = read("domains/saas-billing/objects/Invoice.object.yaml");
+    const usage = read("domains/saas-billing/objects/Usage.object.yaml");
+    expect(invoice).toContain("dataField: line_items");
+    expect(invoice).toContain("title: Amount (minor units)");
+    expect(usage).toContain("unit: api_calls");
+    expect(usage).toContain("description: Synthetic API-call counts for generated example records.");
+    const examples = JSON.parse(read("domains/saas-billing/examples/usage-api-calls.json"));
+    expect(examples.usage.unit_label).toBe("api_calls");
+    expect(examples.description).toContain("not provider observations");
+    expect(html).toContain("Invoice and Usage author detail and dashboard placements");
+    expect(html).toContain("synthetic API-call counts");
+    expect(html).toContain("capability inventory observes composed declarations");
+    expect(html).toContain("generated-application runtime proof is recorded separately");
+    expect(html).toContain("ECharts placement is carried under decision #1944");
+    expect(html).toContain("explicit directed nodes/links transformation");
+    expect(html).not.toContain("MarkHeatmap");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(descriptions["code.generate"]).toContain("Bound record-array charts");
+    expect(descriptions["code.generate"]).toContain("full Invoice/Usage detail HTML retains OODS-V007");
+    expect(html).toContain("full Invoice/Usage detail HTML retains OODS-V007");
+  });
+
+  it("pins the taxonomy sentence to classified identities without claiming every pattern has public pixels", () => {
+    const taxonomy = JSON.parse(read("packages/viz-core/src/registry/viz-taxonomy.v1.json"));
+    expect(taxonomy.summary).toMatchObject({ types: 13, patterns: 21, families: 8, classified: 34 });
+    expect(html).toContain("classifies 34 chart identities (13 types and 21 patterns) across eight families");
+    expect(html).toContain("each Core Analytics Profile cell as surface-complete or a typed gap");
+    expect(html).toContain('href="viz/taxonomy.md"');
+    expect(read("docs/viz/taxonomy.md")).toContain("Core Analytics Profile");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    expect(descriptions.health).toContain("productReality.viz");
+    expect(read("docs/api/health.md")).toContain("productReality.viz");
+  });
+
+  it("describes pattern rendering and typed authoring limits using the public source identities", () => {
+    const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
+    const patterns = JSON.parse(read("packages/viz-core/src/registry/viz-patterns.v1.json"));
+    expect(render.properties.pattern.enum).toEqual(patterns.map((row: { id: string }) => row.id));
+    expect(patterns).toHaveLength(21);
+    expect(html).toContain("Four input modes: a catalog pattern identity");
+    expect(html).toContain("typed authoring-only result (OODS-V167)");
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    for (const code of ["OODS-V166", "OODS-V167"]) {
+      expect(descriptions["viz.render"]).toContain(code);
+      expect(read("docs/api/viz-render.md")).toContain(code);
+    }
   });
 
   it("Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes", () => {
@@ -167,6 +229,29 @@ describe("how Forge works narrative truth", () => {
     ).toHaveLength(4);
   });
 
+  it("describes the declared ECharts operand profile and the complete offered accuracy vocabulary", () => {
+    const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
+    const api = read("docs/api/artifact-certify.md");
+    const specs = read("docs/mcp/Tool-Specs.md");
+    const recipes = JSON.parse(read("packages/viz-core/src/registry/viz-recipes.v1.json")) as Array<{ specEngine: string; accuracyRules: string[]; certifyScopes: Array<{ conformant: boolean | null }> }>;
+    const scopes = recipes.flatMap(row => row.certifyScopes);
+    const offered = [...new Set(recipes.filter(row => row.specEngine === "echarts").flatMap(row => row.accuracyRules))].sort();
+    expect(api).toContain(`Measured scope verdicts: ${scopes.filter(scope => scope.conformant === true).length} conformant / ${scopes.filter(scope => scope.conformant === false).length} nonconformant / ${scopes.filter(scope => scope.conformant === null).length} uncertified`);
+    expect(api).toContain(`ECharts offered rules: ${offered.join(", ")}`);
+    expect(html).toContain(`${ACCURACY_RULES.length + ECHARTS_ACCURACY_RULES.length} reader-only structural-distortion rules`);
+    expect(html).toContain("Spec-only ECharts calls remain uncertified with null conformance");
+    expect(html).toContain("Certified coverage can carry a measured false conformance result");
+    for (const text of [descriptions["artifact.certify"], api, specs]) {
+      expect(text).toContain("declared operand profile");
+    }
+    for (const rule of ECHARTS_ACCURACY_RULES.filter(rule => Number(rule.code.slice(-3)) >= 168)) {
+      expect(descriptions["artifact.certify"]).toContain(rule.code);
+      expect(api).toContain(rule.code);
+    }
+    expect(descriptions["artifact.certify"]).not.toContain("runs WARN-FIRST");
+    expect(html).not.toContain('advanced chart types are "uncertified" by design');
+  });
+
   it("derives the published token, bridge, and brand-contrast counts", () => {
     const generatedCss = read("packages/tokens/dist/css/tokens.css");
     const uniqueCssVariables = new Set(
@@ -181,20 +266,20 @@ describe("how Forge works narrative truth", () => {
     const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
 
     expect(uniqueCssVariables.size).toBe(916);
-    expect(countTokenLeaves(brandBase)).toBe(44);
+    expect(countTokenLeaves(brandBase)).toBe(45);
     expect(bridgedSlots).toHaveLength(41);
     expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
     expect(BRAND_CONTRAST_RULES).toHaveLength(228);
 
     expect(html).toContain("CSS custom properties (916 variables)");
-    expect(html).toContain("44 leaves each");
+    expect(html).toContain("45 leaves each");
     expect(html).toContain("re-assigns 41 shared theme slots");
     expect(html).toContain(
       "228 brand-contrast rules (57 text/icon pairs per brand per theme)",
     );
   });
 
-  it("derives current Sprint 193 claims from the served ledger without approving the proposal", () => {
+  it("keeps the historical component ledger separate from current public runtime placement", () => {
     const ledger = JSON.parse(read("packages/component-contracts/registry/component-capability-ledger.v1.json"));
     const counts = (surface: string, state: string) => ledger.rows.filter((row: { surfaces: Record<string, { state: string }> }) => row.surfaces[surface].state === state).length;
     expect(ledger.rows).toHaveLength(109);
@@ -214,7 +299,10 @@ describe("how Forge works narrative truth", () => {
     expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED");
     expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
     expect(counts("generatedConsumer", "unavailable")).toBe(43);
-    expect(nearRoadmap).toContain("66/109");
+    const runtime = JSON.parse(read("artifacts/product-reality/sprint-195/m06/runtime-final/runtime-cells.v1.json"));
+    const placed = new Set(runtime.rows.flatMap((row: { components: string[] }) => row.components));
+    expect(placed.size).toBe(68);
+    expect(nearRoadmap).toContain(`${placed.size}/109`);
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s195-m06",
+  "builderSelfCertified": false,
+  "records": [
+    {
+      "id": "palette",
+      "path": "packages/viz-core/src/adapters/vega-lite-adapter.ts",
+      "beforeSha256": "023d723256b7791442a2ef28b324b983f6ad51e05d19a5f598ef59b330cd6073",
+      "disabledSha256": "da2ef7249ac805b9a4d69890ffbd480fafd56dc5f36f7b82c3ba25d0bc46ad35",
+      "commands": [
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/viz-core",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "log": "palette/disabled-build.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s195-viz-bite-probe.ts",
+            "--expect-fail"
+          ],
+          "exitCode": 0,
+          "log": "palette/disabled-contrast.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s190-viz-census.ts",
+            "--check"
+          ],
+          "exitCode": 1,
+          "log": "palette/disabled-census.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/viz-core",
+            "run",
+            "build"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-build.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s195-viz-bite-probe.ts",
+            "--expect-pass"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-contrast.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "exec",
+            "tsx",
+            "scripts/product-reality/s190-viz-census.ts",
+            "--check"
+          ],
+          "exitCode": 0,
+          "log": "palette/restored-census.log"
+        }
+      ],
+      "restoredByteIdentically": true,
+      "status": "passed"
+    },
+    {
+      "id": "registry",
+      "path": "packages/viz-core/src/registry/viz-recipes.v1.json",
+      "beforeSha256": "95a4a287326aa4d200c9b023e7ba19ab3bb16c53f77a5c88be4cc4e33d25122e",
+      "disabledSha256": "35de956be1cb4a57121f7de6119e6ad538e9c10a54d1d0f4ab4aaa3996be0596",
+      "commands": [
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/mcp-server",
+            "exec",
+            "vitest",
+            "run",
+            "test/contracts/viz-recipes.s190.spec.ts"
+          ],
+          "exitCode": 1,
+          "log": "registry/disabled-contract.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/mcp-server",
+            "exec",
+            "vitest",
+            "run",
+            "test/contracts/viz-recipes.s190.spec.ts"
+          ],
+          "exitCode": 0,
+          "log": "registry/restored-contract.log"
+        }
+      ],
+      "restoredByteIdentically": true,
+      "status": "passed"
+    },
+    {
+      "id": "pattern-sha",
+      "path": "examples/viz/patterns-v2/simple-bar.spec.json",
+      "beforeSha256": "2cb6b5dec452802c810e3135ac0f068cc3143e44a855c1920da5ceed12dfd12a",
+      "disabledSha256": "ab15e0359417a3a78857288c742330a1b40b4f1916b7f7b897d470e0635fea1d",
+      "commands": [
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/mcp-server",
+            "exec",
+            "vitest",
+            "run",
+            "test/contracts/viz-pattern-registry.s195.spec.ts"
+          ],
+          "exitCode": 1,
+          "log": "pattern-sha/disabled-contract.log"
+        },
+        {
+          "command": [
+            "pnpm",
+            "--filter",
+            "@oods/mcp-server",
+            "exec",
+            "vitest",
+            "run",
+            "test/contracts/viz-pattern-registry.s195.spec.ts"
+          ],
+          "exitCode": 0,
+          "log": "pattern-sha/restored-contract.log"
+        }
+      ],
+      "restoredByteIdentically": true,
+      "status": "passed"
+    }
+  ]
+}

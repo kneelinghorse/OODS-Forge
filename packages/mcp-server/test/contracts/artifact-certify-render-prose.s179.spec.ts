@@ -64,18 +64,18 @@ describe("artifact.certify advertised ECharts render truth (s179 m05)", () => {
   );
 
   it("advertises both hashes and the certified runtime-matrix identity", () => {
-    expect(outputSchema.description).toContain(
-      "contentHash identifies the projected ECharts option",
+    expect(outputSchema.properties.determinism.description).toContain(
+      "contentHash identifies the retained projected option",
     );
-    expect(outputSchema.description).toContain(
-      "renderHash identifies the first normalized SVG",
+    expect(outputSchema.properties.determinism.description).toContain(
+      "renderHash is present whenever that projected option was rendered successfully",
     );
-    expect(outputSchema.description).toContain(
+    expect(JSON.stringify(outputSchema)).toContain(
       "packages/viz-render/certified-matrix.json",
     );
   });
 
-  it("describes the brand-invariant ECharts paint source as the rendered projection", () => {
+  it("describes scoped ECharts paints as the rendered projection while preserving geo exemptions", () => {
     expect(inputSchema.description).toContain(
       "data-backed ECharts paints come from the rendered projected option",
     );
@@ -86,7 +86,7 @@ describe("artifact.certify advertised ECharts render truth (s179 m05)", () => {
       "colour hexes baked into the compiled spec",
     );
     expect(adapterDescriptions["artifact.certify"]).toContain(
-      "geo render evidence remains exempt with no canvas ratio",
+      "The three geo families retain the standing contrast exemption with their render evidence",
     );
     expect(outputSchema.properties.contrastNote.description).toContain(
       "no canvas ratio is graded",
@@ -94,16 +94,20 @@ describe("artifact.certify advertised ECharts render truth (s179 m05)", () => {
   });
 
   it("advertises render-measured ECharts contrast on the adapter and bridge surfaces", () => {
+    // A reconnect must not receive the retired spec-only or warn-first contract from the bridge.
+    expect(policyDescription).toBe(adapterDescriptions["artifact.certify"]);
     for (const description of [
       adapterDescriptions["artifact.certify"],
       policyDescription,
     ]) {
       expect(description).toContain(
-        "ECharts contrast is render-measured when `data` is supplied",
+        "Cartesian charts and ECharts calls with data grade actual rendered paints",
       );
       expect(description).toContain(
-        "spec-only calls retain the reconstructed baked-palette verdict",
+        "Spec-only ECharts calls retain the reconstructed palette grade and caveat",
       );
+      expect(description).toContain("HC contrast returns exempt, measured:false");
+      expect(description).toContain("The eight ECharts-primary types certify under the declared operand profile");
     }
   });
 });

@@ -1,0 +1,51 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server
+
+ ❯ src/tools/artifact.certify.scope.test.ts (6 tests | 1 failed) 820ms
+   ✓ certification describes the pixels at the requested scope > default certification bytes equal explicit light/A, including after dark/B calls  385ms
+   × certification describes the pixels at the requested scope > an ECharts canvas override is graded against the rendered background, while spec-only evidence stays reconstructed 379ms
+     → expected { a11yEquivalence: 'fail', …(3) } to match object { a11yEquivalence: 'pass', …(3) }
+   ✓ certification describes the pixels at the requested scope > HC/A is admitted with forced-colors contrast exemption and the other pillars still evaluated 34ms
+   ✓ certification describes the pixels at the requested scope > HC/B is admitted with forced-colors contrast exemption and the other pillars still evaluated 21ms
+   ✓ certification describes the pixels at the requested scope > rejects unsupported scope {"theme":"sepia"} before creating measurement rows 1ms
+   ✓ certification describes the pixels at the requested scope > rejects unsupported scope {"brand":"C"} before creating measurement rows 0ms
+ ✓ test/product-reality/closeout.s191.spec.ts (3 tests) 484ms
+   ✓ Sprint 191 bounded closeout > the advertised diff includes the maintenance executable boundary and component repairs  472ms
+ ✓ test/tools/echarts-role-a-assignment.s179.spec.ts (14 tests) 71ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/artifact.certify.scope.test.ts > certification describes the pixels at the requested scope > an ECharts canvas override is graded against the rendered background, while spec-only evidence stays reconstructed
+AssertionError: expected { a11yEquivalence: 'fail', …(3) } to match object { a11yEquivalence: 'pass', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "a11yEquivalence": "pass",
++   "a11yEquivalence": "fail",
+    "accuracy": "pass",
+    "contrast": "fail",
+    "determinism": "pass",
+  }
+
+ ❯ src/tools/artifact.certify.scope.test.ts:40:28
+     38|     // The declared operand profile is evaluated even when rendered co…
+     39|     expect(backed.coverage).toBe('certified'); expect(backed.conforman…
+     40|     expect(backed.pillars).toMatchObject({ a11yEquivalence: 'pass', co…
+       |                            ^
+     41|     expect(validateOutput(backed), JSON.stringify(validateOutput.error…
+     42|     const specOnly = await certify({ spec, theme: 'dark', brand: 'B' }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 22 passed (23)
+   Start at  19:53:57
+   Duration  2.95s (transform 473ms, setup 21ms, collect 1.01s, tests 1.38s, environment 0ms, prepare 149ms)
+
+JSON report written to /Users/systemsystems/.codex/worktrees/s195/OODS-Forge/artifacts/product-reality/sprint-195/m07/corrective/mcp-contracts/tests.json
+undefined
+/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/artifact.certify.scope.test.ts test/tools/echarts-role-a-assignment.s179.spec.ts test/product-reality/closeout.s191.spec.ts --reporter=default --reporter=json --outputFile=/Users/systemsystems/.codex/worktrees/s195/OODS-Forge/artifacts/product-reality/sprint-195/m07/corrective/mcp-contracts/tests.json

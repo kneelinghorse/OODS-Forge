@@ -47,13 +47,12 @@ const cases = SPEC_ONLY_CASES(buildVizSpecFromRows);
 // s190 #1850: retain the immutable historical fixture. Only the named scope deltas
 // are admitted: cartesian content/render hashes and the full-palette ECharts Role-C
 // failure against the corrected --oods-sys-surface-canvas. All other bytes stay pinned.
-const SCOPED_ROLE_A_PREFIX = 'Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = 9.88 (below the 10 best-practice target but >= 2, so not a failure). ';
 const CATEGORICAL_ECHARTS = new Set(['MarkTreemap', 'MarkSunburst', 'MarkSankey', 'MarkGraph', 'MarkChord']);
 function expectedAtLightScope(trait: string): Record<string, unknown> {
   const expected = structuredClone(baseline[trait]);
   if (CATEGORICAL_ECHARTS.has(trait)) {
     (expected.pillars as Record<string, unknown>).contrast = 'pass';
-    expected.contrastNote = SCOPED_ROLE_A_PREFIX + expected.contrastNote;
+    // s195 measured min ΔE00 >=10 removes the s191 caution; historical fixture remains pristine.
   }
   const caveat = String(expected.contrastNote);
   expected.contrastNote = caveat.replace(
@@ -69,7 +68,8 @@ function expectedAtLightScope(trait: string): Record<string, unknown> {
 const OFFERED: Record<string, string[]> = {
   MarkTreemap: ['OODS-V154', 'OODS-V155'], MarkSunburst: ['OODS-V154', 'OODS-V155'],
   MarkSankey: ['OODS-V156', 'OODS-V157', 'OODS-V158'], MarkChord: ['OODS-V156'],
-  MarkGraph: [], MarkChoropleth: ['OODS-V159'], MarkBubble: [], MarkFlow: [],
+  MarkGraph: ['OODS-V173'], MarkChoropleth: ['OODS-V159'],
+  MarkBubble: ['OODS-V168', 'OODS-V169', 'OODS-V170'], MarkFlow: ['OODS-V171', 'OODS-V172'],
 };
 function checkScopedMetadata(out: Record<string, unknown>, trait: string): Record<string, unknown> {
   const { accuracyRules, contrastResults, ...body } = out;
@@ -106,7 +106,11 @@ const DECLARED_NOTE_ADDITIONS: readonly string[] = [];
  * matches nothing and both replacement fragments live in the baseline's own note); it is
  * done by hand per the header doctrine.
  */
-const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContains: string }> = [];
+// s195 m04 corrects the old shared note: enforcement now applies WITH data, while
+// the spec-only path retains its missing-operand explanation and all nonprose fields.
+const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContains: string }> = [
+  { baselineContains: 'A11y-equivalence runs WARN-FIRST here', nowContains: 'Without the `data` operand there is nothing to evaluate' },
+];
 
 /**
  * THE MOVEMENT THAT IS NOT IN notes[].
@@ -218,7 +222,7 @@ describe(`artifact.certify — {spec}-only byte compatibility, ECharts half (bas
   );
 
   it.each(ECHARTS_MARK_TRAITS)(
-    '%s: contrastNote changes only by the declared s191 light/A Role-A caution',
+    '%s: contrastNote retains its declared scoped caveat after s195 clears the Role-A caution',
     async (trait) => {
       const out = (await handle({ spec: cases[trait] })) as { contrastNote?: string };
       const base = expectedAtLightScope(trait).contrastNote as string | undefined;

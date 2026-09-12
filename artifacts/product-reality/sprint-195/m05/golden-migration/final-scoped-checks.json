@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/viz-render",
+      "exec",
+      "vitest",
+      "run",
+      "test/emitter.spec.ts",
+      "test/echarts-normalized-hash-matrix.s179.spec.ts",
+      "test/certified-runtime-matrix.spec.ts",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 0,
+    "log": "render-scoped-final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-server",
+      "exec",
+      "vitest",
+      "run",
+      "src/tools/viz.render.fidelity.test.ts",
+      "src/tools/viz.render.geo-fidelity.test.ts",
+      "src/tools/viz.render.network-fidelity.test.ts",
+      "src/tools/dashboard.render.fidelity.test.ts",
+      "test/contracts/viz-recipes.s190.spec.ts",
+      "test/contracts/viz-pattern-registry.s195.spec.ts",
+      "test/contracts/viz-taxonomy.s195.spec.ts",
+      "test/product-reality/viz-certification.s195.spec.ts",
+      "test/product-reality/viz-golden-migration.s195.spec.ts",
+      "test/tools/artifact.certify.echarts-s179-baseline.spec.ts"
+    ],
+    "exitCode": 1,
+    "log": "mcp-final.log"
+  }
+]

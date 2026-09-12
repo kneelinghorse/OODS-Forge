@@ -1,0 +1,439 @@
+{
+  "sprint": {
+    "id": "sprint-195",
+    "title": "Sprint 195 — Visualization breadth and certification: every chart identity classified, certified or typed, rendered in every declared theme, placeable, and bitten",
+    "focus": "Derek's go 2026-09-11 after the Sprint 194 review (\"yes, confirmed. proceed with s195 planning … proceed with increment 14\"). Increment 14 = phase-map milestone M4 (#1893): a versioned taxonomy and Core Analytics Profile over the 13 registered chart types and the 21 pattern specs (34/34 classified; core cells surface-complete or typed gaps; financial and scientific typed); the 21 patterns promoted to recipe identities with public pixel proof through a viz.render `pattern` input; the ECharts certification architecture decided as the declared operand profile (a11y pillar graded, conformant folded, bubble_map/flow_map accuracy rules, force_graph decided) so 13/13 types are certified or typed-uncertified with a pinned reason; the Role-A hue revision (≥10 ΔE00 over CVD with Role-C ≥3:1) as a declared palette mover; high-contrast pixels as the HC scope's CSS system-colour keywords verified under forced-colours emulation, theme hc admitted on viz.render/dashboard.render/artifact.certify; charts placeable beyond area through a general Mark*-trait placement rule (bar, line and one ECharts family placed; the rest typed not-placed); three viz mutation bites; #1442 soak bounded. Base = certified Sprint 194 head 5b25c3c9 (public implementation 71538162; PR #100 draft) merged with origin/OODS-pro 3872feaf → c36eadc5. Measured at the base: registry 13 rows (5 vega-lite certified / 8 echarts uncertified), themes light/dark only (hc:false ×13), contrastPassed light+dark for 9 and [] for 4 exempt, accuracy rules 0 for force_graph/bubble_map/flow_map, chartInApp placed for area only, dashboardDrawn 11 (chord/flow_map excluded #881); no taxonomy; 21 pattern specs in examples/viz/patterns-v2 with no public pixel path; Role-A 9.8774 light / 9.9513 dark; health.productReality serves runtime and tools only; no viz bite. Seven serial missions: m01 deliver 5b25c3c9 (or the PR #100 merge) + send the three prepared notices + widen the retirement gate · m02 taxonomy + Core Analytics Profile generated and served · m03 patterns promoted with proof · m04 ECharts operand certification profile · m05 Role-A revision + HC pixels · m06 placement + bites + soak · m07 closeout. Settled decisions, movers, descope ladder and never-cut line in cmos/planning/forge-s195-visualization-breadth-decision-memo.md; handoff cmos/planning/forge-s195-build-handoff.md. Worktree ~/.codex/worktrees/s195/OODS-Forge, branch codex/sprint-195-visualization-breadth. Sprint 194 rules in force: no inert options, generated registries, boundary specs for every schema change, ledger 19/19 product-reality, one capture under #1833, pace rule, builderSelfCertified:false. Carries placed: #1935 portable limits → Sprint 196; #1915 craft → the craft pass after M5; #1438 → Derek.",
+    "status": "Active",
+    "projectId": "forge"
+  },
+  "missions": [
+    {
+      "id": "s195-m01",
+      "name": "Deliver the certified Sprint 194 head to the live bridge, send the three prepared notices, and widen the retirement gate",
+      "status": "Completed",
+      "objective": "Measured: the live bridge serves reviewed 1f69c957 (Sprint 194 m01); Sprint 194 is certified at 5b25c3c9 (public implementation 71538162; PR #100 draft to OODS-pro, not merged at planning). Sprint 194 m07 prepared and did not send the Sprint 195 reconnect (artifacts/product-reality/sprint-194/m07/reconnect-plan.json: cmos-dashboard, forge-demos, aquex-mcp; dashboard-demos is archived and is never messaged). packages/mcp-server/test/contracts/doc-retirement-gate.spec.ts scans repo-wide only for the viz.compose spellings (:60-79) while RETIRED_TOOL_NAMES (:22) and the review/release.verify test (:89) check named surfaces; the issue-template drift was fixed at 5b25c3c9. This is the only mission that touches the primary checkout (/Users/systemsystems/portfolio/Design-Tools/OODS-Forge, the served bridge checkout and CMOS database location) and the PM2 process. Build: (1) in the primary checkout, fetch and check out 5b25c3c9 (or fast-forward to the PR #100 merge if it has landed; identical runtime bytes; record which), pnpm install --frozen-lockfile, build:tokens, build:packages, the bridge build, pkg:build, pm2 restart oods-forge-bridge and pm2 save; (2) prove the delivered revision through the bridge: /health revision equals the delivered commit, 19 tools, productReality.tools entries 24, productReality.runtime {cells:154, pass:154, typedGap:0, fail:0, head:71538162}, catalog_list serving 109/109 React and Vue implemented-evidence-complete with zero unverified cells, viz_render brand A dark line svgHash equal to the Sprint 194 retained row, code_generate Subscription/workflow React with options.theme dark emitting data-theme=\"dark\", the 17 store hashes unchanged, structuredDataManifestHash before/after recorded; (3) send the three messages exactly as prepared (bodies byte-identical to the plan file's request objects; requestSha256 and returned message ids recorded, server readback compared); (4) in the SPRINT WORKTREE, widen the gate's repo-wide scan to every name in RETIRED_TOOL_NAMES plus review and viz.compose in dot, underscore and camel spellings (excluding artifacts/ and cmos/ and the ledger's retired array as today) and prove it with a bite: a scratch file naming release.verify makes the test red, removing it makes it green (receipt retained; the scratch file is never committed); (5) receipts under artifacts/product-reality/sprint-195/m01/ (before/after health, pm2 logs, behaviour proofs, send receipts, gate bite, rollback backup location outside Git). Nothing else in the primary checkout moves; the untracked artifacts/product-reality/sprint-190/delivery/ folder there is left untouched.",
+      "context": null,
+      "successCriteria": [
+        "/health revision equals the delivered commit; 19 tools; ledger 24; runtime 154/154 at 71538162; catalog 109/109 with zero unverified",
+        "17 store hashes unchanged; manifest hash before/after recorded",
+        "Exactly three messages sent; ids recorded; no other message",
+        "Gate bite red then green; no test removed or weakened"
+      ],
+      "deliverables": [
+        "Primary checkout on 5b25c3c9 or the PR #100 merge, rebuilt, PM2 restarted and saved; before/after health receipts",
+        "Three notices sent byte-identical with request hashes, message ids and readbacks",
+        "doc-retirement-gate.spec.ts scanning every retired name repo-wide, with a red→green bite receipt",
+        "artifacts/product-reality/sprint-195/m01/ receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "cmos/planning/forge-s195-build-handoff.md",
+        "artifacts/product-reality/sprint-194/m07/reconnect-plan.json",
+        "artifacts/product-reality/sprint-194/m01/README.md"
+      ],
+      "domainFields": null,
+      "notes": "[Started] [Started] Build session on planning head 943d2562 in the prepared sprint worktree. Deliver certified 5b25c3c9 (or verified PR merge), prove bridge and unchanged stores, send the exact three prepared notices, widen retirement gate and retain mutation evidence. | [Completed] [Completed] Sprint worktree commit 5f71d0818a913830812e05dca123b628e0d83abe. Delivered certified 5b25c3c9 to primary/PM2 (PR100 still open): 19 tools, ledger24, runtime154/154 at71538162, catalog109/109 React/Vue zero unverified, A/dark line hash matches Sprint194 and dark workflow shell. 17 store hashes, prior delivery folder, manifest993644cc unchanged. Exactly three byte-identical sends with SHA/readbacks: 4cfa464d-cd49-4309-94c7-983c19de3e8f, 5d7ea13d-989d-4da5-86fc-331c0a935c75, ada20203-9432-4fce-a802-6feaf79cf55d. Gate bite1failed/9passed→10passed; other targeted checks66passed; server typecheck passed; no skips/full capture. Receipts artifacts/product-reality/sprint-195/m01, private rollback865files verified.",
+      "completedAt": "2026-09-11T20:31:16.504Z",
+      "createdAt": "2026-09-11T18:50:53.526Z",
+      "startedAt": "2026-09-11T20:21:22.993Z",
+      "updatedAt": "2026-09-11T20:31:16.504Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m02",
+      "name": "A versioned visualization taxonomy and the Core Analytics Profile, generated, tested and served",
+      "status": "Completed",
+      "objective": "Measured at 5b25c3c9: no taxonomy artifact exists; packages/viz-core/src/registry/viz-recipes.v1.json has 13 rows (bar, line, area, scatter, heatmap on vega-lite; treemap, sunburst, sankey, chord, force_graph, choropleth, bubble_map, flow_map on echarts) with no family field; the program (product-reality-program.md:204) names eight families: statistical, temporal, financial, hierarchy, network, flow, geo, scientific; 21 pattern specs live in examples/viz/patterns-v2/*.spec.json; health.productReality serves runtime and tools only (health.ts:35,225). Build, per settled decision 1: (1) a hand-authored classification table packages/viz-core/src/registry/viz-classification.v1.json with its own JSON schema (identity id → family, role core|extension, core-cell name) — the only human input; (2) scripts/product-reality/s195-viz-taxonomy.ts generates packages/viz-core/src/registry/viz-taxonomy.v1.json (schemaVersion 1) from the registry, the 21 pattern specs (id + sha256) and the table: eight families with one-sentence definitions; every identity (13 types + 21 patterns = 34) in exactly one family with a role; the Core Analytics Profile as enumerated cells per family (statistical: distribution, comparison, part-to-whole, correlation; temporal: trend, multi-series, target, cumulative; hierarchy: containment, radial; network: relation, adjacency; flow: directed flow; geo: choropleth, proportional symbol; financial and scientific: their cells named and typed as gaps), each cell surface-complete (backed by a registry identity with public pixels per the registry's publicSvg) or {status:'typed-gap', reason}; an identity or family in the table that the registry or spec set does not know is a generation error; (3) a contract test pins 34/34 classified, zero untyped cell, zero identity outside the registry or spec set, and --check byte-identity of the generated artifact; (4) health.productReality.viz serves {types, patterns, families, classified, coreCells, coreSurfaceComplete, typedGaps} on host and portable builds (the artifact is copied into dist like the tool ledger; the portable-boundary and extracted-health assertions move with the reason); output schema and generated types extend; (5) docs/viz/taxonomy.md is generated from the artifact with --check (small generator; wider doc generation is Increment 15); the docs/how-forge-works.html §09 paragraph gains one taxonomy sentence pinned by the narrative test; (6) the taxonomy census and receipts under artifacts/product-reality/sprint-195/m02/. No chart type is invented to fill a family; financial and scientific are typed gaps this sprint. No hand-edited registry or taxonomy artifact.",
+      "context": null,
+      "successCriteria": [
+        "34/34 identities classified into exactly one of eight families with a role",
+        "Every Core Analytics Profile cell surface-complete or a typed gap with a reason; financial and scientific typed",
+        "Artifact byte-identical under --check; health serves the summary in host and portable builds",
+        "Zero hand-edited registry rows"
+      ],
+      "deliverables": [
+        "viz-classification.v1.json + schema (hand input) and generated viz-taxonomy.v1.json",
+        "s195-viz-taxonomy.ts generator with --check; contract test",
+        "health.productReality.viz on host and portable",
+        "docs/viz/taxonomy.md generated with --check; how-forge-works sentence pinned",
+        "artifacts/product-reality/sprint-195/m02/ census and receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "cmos/foundational-docs/roadmap/product-reality-program.md",
+        "packages/viz-core/src/registry/viz-recipes.v1.json",
+        "scripts/product-reality/s190-viz-census.ts"
+      ],
+      "domainFields": null,
+      "notes": "[Started] [Started] Base5f71d081; implement versioned classification/taxonomy with same-cell public evidence, generated docs, host/portable health summary and boundary tests. Expected initial20cells=11surface-complete+9typed-gap; exact patterns do not inherit base-type proof. | [Completed] [Completed] Implementation ffcdc29ef225d28e54f094e2b430b707f85d1167; receipts/ledger86736ca4dd44b978ded37cc9c5cbc266cbf19429. Generated taxonomy34/34(13types+21source-pattern ids),8families,20core cells=11surface-complete+9reasoned gaps; financial/scientific explicit. Same-cell evidence decision1938 already captured. Classification+taxonomy shipped; host/staged native/staged MCP adapter health summary proven; invalid/missing files→degraded/null. Tool output schema migration/generated types, API/narrative docs moved; tool ledger24 with19/19 advertised product-reality.92targeted tests pass,0fail/skip; generator/docs byte check and build/typechecks pass. No full capture/portable campaign. Receipts artifacts/product-reality/sprint-195/m02; health raw-log nonretention explicitly disclosed, actual dist-health retained. Primary untouched.",
+      "completedAt": "2026-09-11T20:41:04.998Z",
+      "createdAt": "2026-09-11T18:51:09.395Z",
+      "startedAt": "2026-09-11T20:31:16.745Z",
+      "updatedAt": "2026-09-11T20:41:04.998Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m03",
+      "name": "The 21 patterns promoted to recipe identities with public pixel proof through a viz.render pattern input",
+      "status": "Completed",
+      "objective": "Measured at 5b25c3c9: the 21 pattern specs in examples/viz/patterns-v2/ use their own schema (id, name, marks, encoding, data, a11y, config, portability), not viz.render's explicit input (chartType, encodings, rows, …; viz.render.input.json); their consumers are pnpm viz:suggest and Storybook (Visualization/Patterns/Responsive Library); docs/viz/pattern-library-v2.md is a hand-written 21-row table; zero public pixel path; not registry identities. Build, per settled decision 2: (1) one deterministic translation in viz-core from a patterns-v2 spec to viz.render's explicit input (chartType from marks, encodings, rows from the spec's data, a11y description, config that the public input expresses), unit-tested against all 21 specs; (2) viz.render gains an input property `pattern` (enum of the 21 ids generated into the schema from the spec set) that resolves through that translation; supplying `pattern` together with conflicting explicit fields is a typed OODS-V error (new code registered with a message naming viz.render); product-reality boundary spec (getAjv-validated wire input, real handler), description updated, docs/api regenerated, the tool ledger re-derived with viz.render still product-reality; (3) a sibling registry packages/viz-core/src/registry/viz-patterns.v1.json generated by the census (the 13-row viz-recipes.v1.json and its pins stay intact): per pattern id, family (from m02), base chartType, spec sha256, portability, light/dark × A/B svgHash (84 cells) and the certify verdict where the base type is certified; a pattern the public path cannot express is recorded authoring-only with the reason, never dropped; (4) docs/viz/pattern-library-v2.md's catalog table generated from the pattern registry with --check; (5) a contract spec pins 21 rows, sha256 equality with the spec files (a byte change in any spec is red) and the census counts; (6) receipts and the pattern census under artifacts/product-reality/sprint-195/m03/. No per-pattern hand-written inputs; no hand-edited registry.",
+      "context": null,
+      "successCriteria": [
+        "21/21 pattern identities in the registry with pixel proof or a typed authoring-only reason",
+        "viz.render pattern input has a read site, a boundary spec and a typed conflict error; ledger row stays product-reality",
+        "Spec byte change turns the contract spec red",
+        "13-row registry pins unchanged"
+      ],
+      "deliverables": [
+        "viz-core patterns-v2 → explicit-input translation with unit tests over all 21",
+        "viz.render `pattern` input with typed conflict error, boundary spec, description, docs/api",
+        "viz-patterns.v1.json generated by the census (84 SVG cells or typed authoring-only rows)",
+        "pattern-library-v2.md table generated with --check; contract spec with sha pins",
+        "artifacts/product-reality/sprint-195/m03/ receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "docs/viz/pattern-library-v2.md",
+        "examples/viz/patterns-v2/",
+        "packages/mcp-server/src/schemas/viz.render.input.json"
+      ],
+      "domainFields": null,
+      "notes": "[Started] [Started] Base86736ca4. One generic translation with internal config/a11y/mark presentation into fresh IR; public pattern enum uses exact21source ids. Source audit suggests8renderable/13authoring-only, to be measured; no dropping interactions/layout semantics. ReserveV166conflict,V167authoring-only; m04accuracy beginsV168+. | [Completed] Implemented and verified at b8f4220f0ba730d871dc75e0aea0467aa53eeb10; receipts+ledger commit a10afdff. Generated21-ID pattern enum, portable source bundle, faithful translator, V166 conflict/V167 typed structural limits, measured21-row sibling registry and84scope census.8public identities/32conformant cells;13authoring-only. Taxonomy34/34,20cells=13complete/7gaps and portable health integrity verified.387 targeted test passes across translator40,handler232,census/taxonomy/health/portable79,root narrative+legacy25,ledger11; none skipped. Builds/generators/typechecks passed, historical13types/11panels unchanged. All19advertised tools remain product-reality. Decision1939 captured. Full-suite capture reserved m07; builderSelfCertified:false.",
+      "completedAt": "2026-09-11T21:00:54.308Z",
+      "createdAt": "2026-09-11T18:51:23.315Z",
+      "startedAt": "2026-09-11T20:41:05.262Z",
+      "updatedAt": "2026-09-11T21:00:54.308Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m04",
+      "name": "The ECharts certification architecture decided and implemented: the declared operand profile, 13/13 certified or typed",
+      "status": "Completed",
+      "objective": "Measured at 5b25c3c9: artifact.certify returns coverage 'uncertified' and conformant null for the 8 ECharts-primary types by design (packages/mcp-server/src/tools/artifact.certify.ts:337-354); with the `data` operand that path already carries render-measured contrast (s179; certify-echarts-render-contrast.ts), a real determinism pillar and per-type accuracy rules (treemap/sunburst 2, sankey 3, chord 1, choropleth 1; force_graph, bubble_map and flow_map 0 — packages/viz-core/src/accuracy/echarts-index.ts:119, whose header records the s173 correction that bubble_map/flow_map distortions are authorable); accuracy 'pass' on that path requires rulesEvaluated > 0, so the three 0-rule types can never pass; the 16 a11y-equivalence rules evaluate warn-first into findings[] with the pillar 'unchecked' (s174); test/contracts/viz-recipes.s190.spec.ts:29 pins certified = 5; docs/how-forge-works.html §10, docs/mcp/Tool-Specs.md:759 and tool-descriptions.json say the eight types are labelled uncertified on purpose; free validation codes start at OODS-V166. Build, per settled decision 3 (no Vega compile leg): (1) on the operand path the a11y-equivalence pillar is graded — fail when any of the 16 rules fails at error severity, findings retained — and conformant folds as a11y pass ∧ contrast not fail ∧ determinism stable ∧ accuracy evaluated-and-clean (rulesEvaluated > 0, none fired); coverage becomes 'certified' on that path; the spec-only path is unchanged (uncertified/null, its note retained); (2) accuracy rules for bubble_map (negative or non-finite size values; size encoded as radius rather than area; duplicate region rows with conflicting values) and flow_map (negative or non-finite strength; duplicate directed flows), codes OODS-V166+ registered with messages naming the tool and pinned by the registry integrity test (learning #580: include src/errors/registry.test.ts); force_graph gains at least one data-level rule (self-loop, duplicate undirected edge, negative weight drawn as width) or is typed-uncertified with the reason pinned in the registry row and the description; (3) the certify output schema prose, tool-descriptions.json, docs/mcp/Tool-Specs.md, docs/how-forge-works.html §10 and docs/api move to the truth; certify contract tests and goldens move with reasons (declared mover); (4) the viz census calls certify with the operand for the 8 types and the registry certifyCoverage/conformant re-measure; a measured conformant:false is retained, never tuned away; viz-recipes pins move to the measured counts with reasons; (5) bite: disabling one accuracy rule flips the census red, restored, receipt retained; (6) the tool ledger re-derives with artifact.certify at product-reality tier (boundary spec extended for the operand-certified path); receipts under artifacts/product-reality/sprint-195/m04/. Descope rung: force_graph typed-uncertified; bubble_map/flow_map rules and the operand profile for the five types that already have rules are never cut.",
+      "context": null,
+      "successCriteria": [
+        "13/13 types certified on their declared path or typed-uncertified with a pinned reason",
+        "Every conformant boolean is measured, none tuned; failures retained",
+        "Accuracy bite red then green",
+        "artifact.certify stays product-reality tier in the re-derived ledger"
+      ],
+      "deliverables": [
+        "Operand-path certification: graded a11y pillar, folded conformant, coverage certified; spec-only path unchanged",
+        "bubble_map and flow_map accuracy rules (OODS-V166+); force_graph rule or pinned typed-uncertified reason",
+        "Schema prose, descriptions, Tool-Specs, how-forge-works §10, docs/api and goldens moved with reasons",
+        "Registry certifyCoverage/conformant re-measured by the census; accuracy bite receipt",
+        "artifacts/product-reality/sprint-195/m04/ receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "packages/mcp-server/src/tools/artifact.certify.ts",
+        "packages/viz-core/src/accuracy/echarts-index.ts",
+        "cmos/planning/forge-s179-echarts-render-grading-draft-charter.md"
+      ],
+      "domainFields": null,
+      "notes": "[Started] Starting after completed m03 commit a10afdff. Implement declared operand profile without Vega compile leg; spec-only stays uncertified/null. New accuracy codes start OODS-V168 because m03 reserves V166 pattern conflicts and V167 authoring-only. Read exact adapters/operand contracts before rule design; retain measured false conformance. Source work only in sprint worktree, PM2 untouched. Targeted checks and actual census+rule-disable bite; no full capture before m07. | [Completed] Implemented at86b44639489552329a627219fe527918a6c08420; receipts+ledger9c75a1dbb495ca26c16f2f75ce52095e72adb16e. Declared data profile for all8ECharts, graded a11y and fault-safe fold; spec-only uncertified/null retained with corrected missing-operand prose. V168–V173 pure data rules; duplicate directed graph edges give force_graph real coverage. Census13certified types/52scopes:48conformant,4bubble_map failuresV169 retained, all52SVG hashes/unrelated registryfields unchanged. Physical V171 predicate-disabled build made full census red for missingfinding; exactrestore/rebuild green.111accuracy+26registry tests,391currentcertifytests,6census/migration tests,57rootnarrative/pattern/equivalence checks and11ledgertests verified; none skipped. Initial isolated14test coverage-threshold exit retained; targeted rerun passed without changingglobal thresholds. Final builds/types/schemas/docs generators pass. All19advertised product-reality. Decision1940/learning583 captured. No full capture; builderSelfCertified:false.",
+      "completedAt": "2026-09-11T21:21:52.126Z",
+      "createdAt": "2026-09-11T18:51:40.391Z",
+      "startedAt": "2026-09-11T21:01:02.176Z",
+      "updatedAt": "2026-09-11T21:21:52.126Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m05",
+      "name": "Palette Role-A revision and high-contrast chart pixels under recorded decisions",
+      "status": "Completed",
+      "objective": "Measured at 5b25c3c9: Role-A min pairwise ΔE00 over CVD is 9.8774 light / 9.9513 dark (#1863), below the 10 best-practice target and above the fail floor 2, so certify emits the caution (packages/mcp-server/src/tools/certify-echarts-render-contrast.ts:148, certify-contrast.ts:346-352); Role-C passes all 24 slot checks ≥ 3:1; the `theme` enum is light|dark on viz.render, dashboard.render and artifact.certify input schemas; the registry has themes.hc:false on all 13 types; HC token scopes A/B are exported (packages/tokens/src/tokens/brands/{A,B}/hc.json carry viz keys; #1863 kept both HC maps byte-identical); #1851's reason: HC canvas/text tokens resolve to CSS system colours Canvas/CanvasText and a headless renderer has no user forced-colour palette; forced-colours browser proof exists for components (packages/component-styles/test/high-contrast.browser.spec.ts; scripts/product-reality/component-theme-proof.mjs six-scope harness). Build: (1) Role-A, per settled decision 5: move the categorical slot hues in the A/B light and dark canonical sources (brands/{A,B}/{base,dark}.json) so min pairwise ΔE00 over CVD ≥ 10 for both brands and both themes with all 24 Role-C checks still ≥ 3:1, selected by a script whose search receipt is retained; rebuild through the real token build; one-time golden migration with BEFORE/AFTER hashes for every moved SVG golden and every retained matrix row (s190/191/193/194) superseded by reason and listed by class; the certify cautions disappear only by measurement; if 10 is unreachable with Role-C intact, pin the measured ceiling in a decision and keep the caution (descope rung); (2) HC, per settled decision 4: theme 'hc' admitted on the three tools' input schemas; chart paints resolve from the HC token scope and are emitted verbatim in the SVG (system-colour keywords or the scope's declared values; no invented hex); certify's contrast pillar on hc returns 'exempt' typed forced-colors with a note; determinism, accuracy and a11y-equivalence unaffected; (3) proof: Playwright with forcedColors 'active' in the existing theme harness measures computed paints for a viz.render bar and line SVG, a dashboard.render HTML export and VizAreaPreview on Subscription/detail in the hc cell in React and Vue; the viz census extends to 13 × 3 themes × 2 brands = 78 rows and registry themes.hc re-measures per type; if a renderer rejects keyword colours, HC stays typed-deferred with the measured failure pinned in the registry and docs (descope rung), never a server-side hex palette; (4) schemas, generated types, descriptions, docs/api, Tool-Specs and the how-forge-works HC sentences move to the truth; boundary specs for the new theme value on all three tools; the tool ledger re-derives; (5) receipts (palette search, BEFORE/AFTER, forced-colours screenshots and computed paints) under artifacts/product-reality/sprint-195/m05/. Canonical brand sources change only in the categorical slots named in the receipt.",
+      "context": null,
+      "successCriteria": [
+        "Every moved golden has a BEFORE/AFTER receipt and a class; no silent re-bake",
+        "hc renders and is measured under forced colours, or is typed-deferred with the measured renderer failure",
+        "No invented HC hex palette; #1851's reasoning preserved",
+        "All three tools stay product-reality tier after the schema change"
+      ],
+      "deliverables": [
+        "Role-A ≥ 10 light/dark for A and B with Role-C ≥ 3:1, or a pinned measured ceiling; palette search receipt",
+        "One-time golden migration with BEFORE/AFTER and superseded matrix rows by class",
+        "theme hc admitted on viz.render/dashboard.render/artifact.certify with verbatim HC scope paints; certify hc contrast exempt typed",
+        "Forced-colours browser proof for chart SVG, dashboard HTML and VizAreaPreview (React and Vue); census 78 rows or typed",
+        "artifacts/product-reality/sprint-195/m05/ receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "packages/mcp-server/src/tools/certify-contrast.ts",
+        "packages/component-styles/test/high-contrast.browser.spec.ts",
+        "scripts/product-reality/component-theme-proof.mjs",
+        "artifacts/product-reality/sprint-191/m01/"
+      ],
+      "domainFields": null,
+      "notes": "[Started] Starting from completedm04 clean9c75a1db. Role-A hue search through canonical A/B base,dark categoricalslots; keepRoleC≥3 and recordactual≥10 orboundedceiling. HC admission/render/certify accepts declaredscope paints verbatim, no inventedhex; measure forcedColorsactive publicSVG/dashboard/ReactVuepreview orretainactualtypedfailure. Allmovedgoldens/matrixrows need before/after attribution, source-only generatedschemas/registries, onefullcapture reservedm07. PrimaryPM2 untouched. | [Completed] Implemented at52b0da991705c4c565987bc9faf7738ba00d885e; qualified receipts3c8a7a56 and local-cache tracking cleanup22c674c5. Deterministic canonical hue search yields Role-A10.0175619523 light/10.2363931628 dark bothbrands, all24Role-C/chroma and240pair distances pass through realtokenbuild. HC admitted on3tools plusnecessary code.generate caller; actualscope paints preserved, fourHCtypes render andnine types retain measuredV165 fallback-paint failures. HCcontrast exempt reasonforced-colors; otherpillars stillgraded andrenderfailurefailstability/conformance. TenactualforcedColorsactive browsercells pass (bar,line,dashboard,React/VueSubscriptiondetail×AB). Census78=60rendered/18typed;56true/4bubblefalse. Patterns84remeasured,32publicSVGbytes unchanged. Four of52prior chartSVGs move;14snapshotentries,910matrixrows/231historical supersessions attributedatqualifiedhead; historicalrawunchanged. Verified170palette/certify,165HC,144golden/registry tests plus15narrative and15qualifiedmigration/ledger assertions, allsuccessfulcommandsnoskips; rawinitialharness/stalehash/targetcoverage failuresretainedwithresolvedreruns. Source/types/builds/generatorcheckspass. Ledger24total19advertisedproduct-reality/5contract. No fullsuitecampaign, primaryPM2change ornewnotices. builderSelfCertified:false.",
+      "completedAt": "2026-09-11T21:48:29.714Z",
+      "createdAt": "2026-09-11T18:51:58.325Z",
+      "startedAt": "2026-09-11T21:21:52.338Z",
+      "updatedAt": "2026-09-11T21:48:29.714Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m06",
+      "name": "Charts placeable beyond area through a general placement rule, three viz mutation bites, the soak bounded",
+      "status": "Completed",
+      "objective": "Measured at 5b25c3c9: chartInApp is 'placed' for area only via src/registry/parameter-applier.ts:63-77 (a MarkArea trait bound with a `chart` parameter projects VizAreaPreview into the detail view extension with a fixed title); VizHeatmapPreview, VizLinePreview, VizMarkPreview, VizPointPreview and VizScatterPreview exist in React and Vue (packages/components-react/src/viz-recipes.tsx and the Vue package, measured 109/109 in the component ledger); no other Mark trait has a placement rule; the HTML renderer maps VizAreaPreview (render/component-map.ts:1563) and codegen binds its props (codegen/binding-utils.ts:1171); no viz mutation bite exists; #1442's optional echarts-render-soak heap-slope failure reproduces on unchanged controls (learning #561) and has never been investigated. Build, per settled decision 6: (1) generalise the placement rule: any Mark* trait bound with a `chart` parameter projects its preview recipe (MarkLine → VizLinePreview, MarkBar → VizMarkPreview or a bar preview, MarkPoint → VizPointPreview, MarkHeatmap → VizHeatmapPreview, and one ECharts family through a new preview recipe born on the Sprint 192 proof loops with HTML, React, Vue, a11y and theme cells) into the detail view extension and the dashboard context where the object has one, with title and description from the trait parameters, through the same parameter-applier path area uses; (2) at least bar, line and one ECharts family are placed on public objects whose traits declare suitable data, chosen from the trait declarations and recorded with the reason; generated React/Vue/HTML carry real renderer SVG (never a placeholder); the composition census enumerates the objects that gained a chart as a movement class; runtime cells are re-swept (154 plus any new cells, one pack) with a11y/theme cells for the new placements; every other type records not-placed with a reason in the census; (3) three viz bites, each red→green with receipts: the palette bake removed → certify contrast fail and the viz census red; a registry row hand-edited → the contract test red; the m03 pattern sha changed → red; restored after each; (4) #1442: reproduce the soak on the head and on the unchanged control, record the heap slope and the allocation site if found, fix the cause if it fits the mission, otherwise narrow the job to a typed observation in its summary; no threshold change without a measured cause; (5) receipts under artifacts/product-reality/sprint-195/m06/. Descope rung: the ECharts placement may carry with the reason; bar and line never. No hand-edited composed schema.",
+      "context": null,
+      "successCriteria": [
+        "At least bar and line placed (ECharts family placed or carried with reason)",
+        "Runtime cells pass for every placed screen in both frameworks",
+        "Every bite is red then green; none skipped",
+        "No threshold change on the soak without a measured cause"
+      ],
+      "deliverables": [
+        "General Mark*-trait placement rule in the parameter applier with previews for line, bar, point, heatmap and one ECharts family",
+        "bar, line and one ECharts family placed on public objects with real SVG in HTML, React and Vue; runtime re-swept",
+        "chartInApp census: placed / not-placed with reasons for all 13",
+        "Three viz bites red→green with receipts",
+        "#1442 soak measured: cause fixed or typed observation",
+        "artifacts/product-reality/sprint-195/m06/ receipts"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "src/registry/parameter-applier.ts",
+        "packages/components-react/src/viz-recipes.tsx",
+        "packages/mcp-server/test/product-reality/runtime-cells.s193.spec.ts"
+      ],
+      "domainFields": null,
+      "notes": "[Started] Starting from clean 22c674c5 after completed m05. Generalize authored Mark chart placement, implement mandatory bar and line public object projections with real generated SVGs, and assess the permitted ECharts placement carry from actual trait/data/theme constraints. Keep all existing area behavior unless an explicit mover is recorded. Reuse the composition and 154-cell runtime producers with one pack; retain three actual red/green visualization mutations and investigate soak #1442 on the head plus an unchanged control without changing thresholds. No primary or PM2 mutations, no notices, no full-suite campaign before m07. | [Completed] [Completed] Implementation a3158282bba25713171d7216181bde28b69a80a1; teardown/final proof head c6453c97883feb38dda203628684a7bb9643765d; receipt commit 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19. Fresh run b15ab6f1-d3a8-456c-85cc-d39b7b2f22bb passed 154/154 canonical runtime cells, 4/4 supplemental dashboard cells and 48/48 theme cells; verifier and final emitter bite passed with exact source restoration. The interrupted initial 24-pass sweep remains separate (exit 143), never unioned. Public 77-composition/154-generation census: four chart additions, 73 otherwise unchanged, DetailHeader retained. 88 layout/context requests yielded eight declarations across three chart types. Canonical MarkArea/Bar/Line/Point/Rect bindings carry actual renderer SVGs; mandatory Invoice bar and Usage line are placed; legacy Subscription area remains. Three viz bites pass: final palette attempt 3 and registry/pattern attempt 2 are red then green. Missing categorical bake now fails contrast/conformance with measured:false/evidence:none. Strict soak is 2 passes/1 statistical failure/0 skips, retained as typed observation under decision 1946 with unchanged thresholds. ECharts placement carry under 1944 and full detail HTML Tabs OODS-V007 limitation remain explicit. Tool ledger 24 entries/19 advertised product-reality; final integration 11 tests pass. artifacts/product-reality/sprint-195/m06/integration-results.json and README bind the receipts. Decisions 1944–1947 and learnings 586–588 were already captured and are not duplicated.",
+      "completedAt": "2026-09-11T23:06:13.627Z",
+      "createdAt": "2026-09-11T18:52:13.518Z",
+      "startedAt": "2026-09-11T21:48:48.541Z",
+      "updatedAt": "2026-09-11T23:06:13.627Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    },
+    {
+      "id": "s195-m07",
+      "name": "Final proof, one five-suite capture under #1833, censuses, advertised diff from 5b25c3c9, reconnect prepared, near.md Increment 14, PR, review handoff",
+      "status": "In Progress",
+      "objective": "Freeze the sprint's implementation, run the pre-freeze verifier pass (learning #574: mcp-server and root contract verifiers, narrative and link tests, colocated registry integrity tests per learning #580), capture the five suites once under decision #1833 (viz-core, viz-render, mcp-server, root-core, component-packages; two attempts allowed, a third needs a decision receipt), regenerate the ledgers (tool ledger 24 re-derived with all 19 advertised tools at product-reality tier after the m03/m04/m05 schema changes; component ledger 109 unchanged unless m06's new preview recipe added a row — then regenerated and the export refreshed with a date tag; runtime cells re-swept because m06 changed generated output), the viz census (13 types × measured themes × 2 brands, 21 patterns, taxonomy 34/34 with core cells), the composition census (77/77 with class-enumerated movement: objects gaining charts), the saved-store reports (17 primary store files unchanged), the advertised diff from 5b25c3c9 over the advertised path set attributing every changed tool description, input/output schema, registry entry and doc sentence to its mission, the m05 golden migration receipt, the bites index (m01 gate, m04 accuracy, m06 three), prepare (not send) the Sprint 196 reconnect naming the hc theme, the pattern input, the certify contract change and the health viz summary (cmos-dashboard, forge-demos, aquex-mcp), write near.md Increment 14 at BUILT, REVIEW PENDING with the measured-state Visualization row updated from the registries and the phase-map sequence (release proof 196) unchanged, open the PR to OODS-pro, observe CI (per-run attribution as #1933), and hand off for independent review with builderSelfCertified:false. Reuse the Sprint 185–194 closeout producer, independent auditor, suite accounting, mover derivation, reachability census, viz census and reconnect tooling with a bounded s195 mode; no new closeout framework. Verifiers record the implementation head in the receipt and compare the product-path diff, never git rev-parse HEAD equality (learning #565). Receipts under artifacts/product-reality/sprint-195/m07/ with the handoff at m07/closeout/handoff.md.",
+      "context": null,
+      "successCriteria": [
+        "Every mission criterion in the claim ledger proven or explicitly decision-qualified",
+        "Independent auditor and producer --check pass at the frozen heads",
+        "Tool ledger 19/19 advertised product-reality; runtime cells all pass at one head",
+        "No relabeled run; every CI job attributed to its actual source head"
+      ],
+      "deliverables": [
+        "Pre-freeze verifier pass receipt",
+        "One five-suite capture with suite accounting versus Sprint 194",
+        "Regenerated tool, component (if moved) and runtime ledgers; viz, taxonomy, pattern, composition and saved-store censuses",
+        "Advertised diff from 5b25c3c9 attributed by mission; golden migration receipt; bites index",
+        "Sprint 196 reconnect prepared unsent; near.md Increment 14 BUILT/REVIEW PENDING; PR; CI observations; handoff builderSelfCertified:false"
+      ],
+      "referenceDocs": [
+        "cmos/planning/forge-s195-visualization-breadth-decision-memo.md",
+        "artifacts/product-reality/sprint-194/m07/closeout/handoff.md",
+        "scripts/product-reality/s185-closeout.mjs",
+        "scripts/product-reality/s185-audit-closeout.mjs"
+      ],
+      "domainFields": null,
+      "notes": "[Started] [Started] m06 is completed with receipts at 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 and final runtime proof c6453c97883feb38dda203628684a7bb9643765d. Implement bounded s195 modes in existing closeout/accounting/auditor/mover/reconnect tooling, run the pre-freeze verifier selection, then freeze a new implementation head. Refresh component themes for changed tokens and run a fresh one-head m07 runtime sweep after proof modes and pointers settle. Capture five suites once with --runs 1 under decision 1833, retaining any failed attempt; compare literal criteria and actual output at frozen implementation/execution/review heads. Re-derive 24/19 tool ledger, viz/pattern/taxonomy/composition/store reports, advertised movement from 5b25c3c9 and golden/bite evidence. Preserve explicit carries and all raw failed or interrupted observations. Prepare Sprint 196 notices unsent and hand off builderSelfCertified:false; no delivery or primary PM2 changes.",
+      "completedAt": null,
+      "createdAt": "2026-09-11T18:52:28.123Z",
+      "startedAt": "2026-09-11T23:06:27.745Z",
+      "updatedAt": "2026-09-11T23:06:27.745Z",
+      "metadata": null,
+      "projectId": "forge",
+      "localProjectId": "forge"
+    }
+  ],
+  "decisions": [
+    {
+      "id": 1947,
+      "decision": "The physical palette-bake bite exposed a false contrast exemption. Compiled nominal/ordinal color without its baked range now fails contrast and makes conformant false; continuous/default-gradient and decorative/no-color exemptions remain unchanged. This structural failure reports measured:false and evidence:none even if determinism independently renders an SVG; a measured passing layer cannot relabel a missing-palette winning failure as measured. Preserve per-unit notes and strip the internal measurement marker from public output. Evidence: m06/bites/attempt-2/palette and the final palette rerun under m06/bites/attempt-3, plus four actual-AJV boundary/control receipts in artifacts/product-reality/sprint-195/m06/certify-measurement/boundary.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m06",
+      "createdAt": "2026-09-11T22:24:49.501Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1946,
+      "decision": "Keep #1442 as typed observation OODS-SOAK-1442 after the head and unchanged-source/dependency-control strict runs both exit 1 on the existing statistical positive-trend lower bound (head heap; control RSS). The full three-case run retains strict exit 1, two passes and one failure with zero skips; its observation wrapper returns 0 only for that named statistical failure. Original hard heap/RSS limits, statistics, disposal and forced-fault cleanup, bounded map alias/latest geometry, deterministic realm invariants, concurrency and latency remain enforced and pass. No renderer source or threshold changes are authorized, and no retained OODS cause is proven. Keep raw failures and allocation-profile interpretation in artifacts/product-reality/sprint-195/m06/soak/investigation.json; retention certification is not established.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m06",
+      "createdAt": "2026-09-11T22:16:06.183Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1945,
+      "decision": "Supplemental Invoice/Usage dashboard layouts preserve fallback domain panels and reuse canonical runtime sweep head/runId/tarballs; four layout cells are reported separately from the 154-cell health ratio. Usage sampleRows are explicitly synthetic API-call examples (1200/1800/1500) preserving canonical api_calls unit, not relabeled provider seat counts. Bound charts carry the selected record-array SVG into passive previews; no generalized sample field override is added.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m06",
+      "createdAt": "2026-09-11T22:10:14.599Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1944,
+      "decision": "Use Invoice.line_items with description/amount_minor for bar and Usage.samples timestamp/value for line, preserving declared units and rendering actual record arrays. Generalize canonical MarkArea/Bar/Line/Point/Rect; MarkRect is the authored heatmap trait, not the memo name MarkHeatmap. Exercise the approved ECharts placement carry: no authored ECharts Mark trait or preview exists, and Relationship edge fields need a separately specified edge-to-network projection before a faithful NetworkInput. A new trait/preview requires birth proof and every ECharts HC path currently has measured paint failures. Keep this carry explicit; complete mandatory bar/line and retain existing area.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m06",
+      "createdAt": "2026-09-11T21:57:00.157Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1943,
+      "decision": "HC outcome is measured4types×2brands withrawdeclaredpaints and9typed-deferredtypes×2brands; undeclared renderer fallbacks remain actualV165 failures. Palette Role-A≥10 achieved by minimal light05/dark04 hue shifts withallRoleC preserved; no descope needed forpalette. Decisions1941/1942 constrain immediatecaller/schema andsame-valuebrandbase precedence; learnings584/585 preserve browsercache/raw-input andcommit-qualified historicalreceipt disciplines.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m05",
+      "createdAt": "2026-09-11T21:48:29.714Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1942,
+      "decision": "Refine s195-m05 decision1941 token precedence after reading the actual source list: both A/base and B/base are intentionally present in every scope for global brand aliases. Allow a shared categorical leaf followed by A/B base overrides only when both base values are identical, then at most the selected brand's dark/HC overlay. Keep different base values, cross-brand theme overlays, unrelated paths and files rejected by discriminating collision tests. This enables the measured same-valued light slot05 change without changing source loading or any nonpalette canonical leaf.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m05",
+      "createdAt": "2026-09-11T21:31:45.122Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1941,
+      "decision": "s195-m05 HC proof requires the actual public code.generate React/Vue Subscription/detail asset path. Admit options.theme=hc there too, through the schema generator and CodegenOptions, as an immediate-caller schema mover in addition to the three explicitly named render/certify tools; no unscoped workaround. Palette search may add only its named categorical leaves to A/B base and dark files. Make only the matching token collision/categorical-export plumbing changes needed to support shared→same-brand base→theme precedence; reject unrelated collisions. Any HC renderer output that substitutes undeclared paints is a measured typed failure under the agreed descope rung, not permission to synthesize a server-side hex palette; test actual SVG paints against the declared HC scope rather than using an engine denylist.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m05",
+      "createdAt": "2026-09-11T21:29:05.963Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1940,
+      "decision": "s195-m04 adopts the declared ECharts data-operand certification profile, preserving the existing fault-is-not-pass rule: contrast fail OR ungradeable prevents conformance. This explicitly clarifies the memo's abbreviated 'contrast not fail' conjunction; evaluator faults must not become conformant:true. Spec-only coverage/null/pillars/hash behavior remains, but its shared note is rewritten to describe only the no-operand path because retaining the old future/warn-first enforcement prose would be false. New pure data rules use V168 bubble invalid size, V169 radius scaling, V170 coordinate conflicts, V171 flow strength, V172 directed flow duplicates, V173 directed graph duplicates. Reciprocal edges remain distinct; public graph values do not drive width, so negative-weight-as-width was rejected as an unsupported premise. Existing bubble default linear sizing may fail V169; retain the verdict and pixels. The explicit new-rule requirement authorizes accuracyRules registry metadata movement despite the memo's generic nonmover list; all SVG hashes and unrelated prior fields remain pinned.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m04",
+      "createdAt": "2026-09-11T21:11:47.721Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1939,
+      "decision": "s195-m03 promotes exact authored pattern IDs through a generated package-owned source bundle and a measured sibling registry, retaining property-based OODS-V167 authoring-only reasons instead of flattening unsupported structures. OODS-V166 rejects source-data/identity/presentation conflicts. The 84-cell light/dark A/B census measured 8 public identities (32 conformant cells) and 13 authoring-only identities. Only exact same-cell public proof promotes taxonomy coverage; distribution and part-to-whole become complete, temporal/multi-series remains a gap. Health validates exact source ID, bytes SHA, base chart type, portability, and four measured scopes. The 13-row type registry and historical pixels are unchanged.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m03",
+      "createdAt": "2026-09-11T20:58:52.062Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1938,
+      "decision": "Taxonomy uses one primary coreCell per identity; a cell is surface-complete only when a public registry identity assigned to that same cell has SVG proof. Patterns never inherit public proof from their base chart type. Generic heatmap remains extension/null because the census shows revenue intensity rather than distribution; area/cumulative requires caller-supplied accumulated values. Initial20cells:11complete/9typed gaps. Ship canonical classification alongside taxonomy so host/portable health can validate assignments and counts without duplicating a family table.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m02",
+      "createdAt": "2026-09-11T20:34:54.973Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1937,
+      "decision": "The s195 repo-wide retirement gate supersedes keeping unregistered retired helper source in the live source tree: preserve release helper bytes under m01/gate/retired-source, remove its unused source path, archive dated diagnostics rows, and remove stale addon/smoke/ledger references. Match dot/underscore/camel spellings and contextual single-word review tool references while preserving generic human-review prose and valid fidelity/internal values. The separate m01 commit provides a bisection boundary before visualization movers.",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": "s195-m01",
+      "createdAt": "2026-09-11T20:31:16.504Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    },
+    {
+      "id": 1936,
+      "decision": "Lock Sprint 195 — Visualization breadth and certification (Increment 14, phase-map milestone M4, #1893) — as seven serial missions on codex/sprint-195-visualization-breadth from the certified Sprint 194 head 5b25c3c9 (#1934; public implementation 71538162; PR #100 draft) merged with origin/OODS-pro 3872feaf at planning (c36eadc5; planning commit 943d2562 pushed; worktree ~/.codex/worktrees/s195/OODS-Forge built: install, build:tokens, build:packages exit 0). Derek's go 2026-09-11 after the Sprint 194 review: \"yes, confirmed. proceed with s195 planning … proceed with increment 14\". Measured at the base: registry 13 rows (5 vega-lite certified, 8 echarts uncertified/conformant null), themes light/dark only (hc:false ×13), contrastPassed light+dark for 9 and [] for 4 exempt, accuracy rules 0 for force_graph/bubble_map/flow_map, chartInApp placed for area only, dashboardDrawn 11 (chord/flow_map excluded #881); no taxonomy or Core Analytics Profile; 21 pattern specs in examples/viz/patterns-v2 with no public pixel path; Role-A 9.8774 light / 9.9513 dark below the 10 target; health.productReality serves runtime and tools only; no viz bite. Missions: s195-m01 deliver 5b25c3c9 (or the PR #100 merge) to the bridge, send the three prepared notices byte-identical, widen doc-retirement-gate to every retired name with a bite · s195-m02 generated versioned taxonomy viz-taxonomy.v1.json from one hand-authored classification table (34/34 identities in eight families; Core Analytics Profile cells surface-complete or typed gaps; financial and scientific typed), served by health.productReality.viz, docs/viz/taxonomy.md with --check · s195-m03 the 21 patterns promoted to recipe identities via one patterns-v2→explicit-input translation, a viz.render `pattern` input with a typed conflict error and boundary spec, sibling viz-patterns.v1.json with 84 SVG cells or typed authoring-only rows, pattern-library table generated with --check · s195-m04 ECharts certification = the declared operand profile (no Vega compile leg): a11y pillar graded, conformant folded, coverage certified on the operand path, spec-only path unchanged; bubble_map/flow_map accuracy rules OODS-V166+; force_graph rule or typed-uncertified pinned; docs/schemas/goldens moved with reasons; accuracy bite · s195-m05 Role-A hue revision to ≥10 ΔE00 over CVD with Role-C ≥3:1 as a declared palette mover (one-time golden migration BEFORE/AFTER, ceiling pinned if unreachable); HC pixels = the HC scope's CSS system-colour keywords emitted verbatim, theme hc admitted on viz.render/dashboard.render/artifact.certify, certify hc contrast exempt typed forced-colors, forced-colours Playwright proof for chart SVG, dashboard HTML and VizAreaPreview; typed-deferred with the measured failure if a renderer rejects keywords (#1851 stands) · s195-m06 general Mark*-trait placement rule; bar, line and one ECharts family placed on public objects with real SVG in HTML/React/Vue; runtime re-swept; chartInApp census; three viz bites (palette bake, registry hand-edit, pattern sha); #1442 soak measured, cause fixed or typed observation, no threshold change without a cause · s195-m07 pre-freeze verifier pass, one five-suite capture under #1833, censuses, advertised diff from 5b25c3c9, golden migration receipt, bites index, reconnect prepared unsent, near.md Increment 14 BUILT/REVIEW PENDING, PR, handoff builderSelfCertified:false. Declared movers: categorical palette bytes; certify operand output; viz.render/dashboard.render/artifact.certify input schemas (pattern, hc); generated app output for objects gaining charts. Descope ladder: m06 ECharts placement carries; m03 authoring-only rows; m04 force_graph typed; m05 Role-A ceiling / HC typed-deferred; m06 soak narrowed. Never cut: m01 delivery, sends and gate; the taxonomy 34/34 with every core cell surface-complete or typed; the operand profile for the five types with rules; hc admitted or typed with a measured reason; one capture; zero hand-edited schemas or registry rows; ledger 19/19 product-reality after every schema change. Sprint 194 rules in force. Carries placed: #1935 portable limits → Sprint 196; #1915 craft → the craft pass after M5 (named in near.md); #1438 → Derek. Memo cmos/planning/forge-s195-visualization-breadth-decision-memo.md; handoff cmos/planning/forge-s195-build-handoff.md (fresh-session prompt inside).",
+      "domain": null,
+      "sprintId": "sprint-195",
+      "snapshotId": null,
+      "missionId": null,
+      "createdAt": "2026-09-11T18:53:21.421Z",
+      "source": "strategic",
+      "category": null,
+      "status": "active",
+      "supersededBy": null,
+      "evidence": null,
+      "projectId": "forge"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+diff --git a/scripts/product-reality/s184-m06-live-consumers.ts b/scripts/product-reality/s184-m06-live-consumers.ts
+index e3b084bb..052c8c07 100644
+--- a/scripts/product-reality/s184-m06-live-consumers.ts
++++ b/scripts/product-reality/s184-m06-live-consumers.ts
+@@ -1107 +1107,6 @@ async function withStaticServer<T>(directory: string, callback: (url: string) =>
+-    await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
++    await new Promise<void>((resolve, reject) => {
++      server.close((error) => (error ? reject(error) : resolve()));
++      // Proof work is finished; forwarded browser connections may still hold
++      // an incomplete request open. Stop accepting first, then release them.
++      server.closeAllConnections();
++    });

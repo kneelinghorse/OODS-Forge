@@ -1,0 +1,95 @@
+{
+  "status": "inspected",
+  "recordedAtUTC": "2026-09-12T01:17:23.871980+00:00",
+  "captureHead": "39deb793a3161621b5a0893618f9d40201c22256",
+  "freshInspectionExecuted": true,
+  "inspectedScreenshots": 2,
+  "availableScreenshots": 12,
+  "screenshots": [
+    {
+      "framework": "react",
+      "brand": "A",
+      "theme": "hc",
+      "screenshot": {
+        "path": "artifacts/product-reality/sprint-195/m07/react-theme/react-A-hc.png",
+        "sha256": "bed48541b84f2a5dbb3ccd274aa8e94165b2de1c5885efc4d17ce4b9f6f79a65",
+        "width": 1280,
+        "height": 16018
+      },
+      "nativeReport": {
+        "path": "artifacts/product-reality/sprint-195/m07/react-theme/report.json",
+        "sha256": "bf189bdb7757ecc7665225d2068e30429277d6e32863ad7dc726d3d7f276d246"
+      },
+      "actualInspection": "Viewed the fresh file with view_image, then requested original detail; the model-visible full-page image was resized to the recorded dimensions.",
+      "displayedDimensions": [
+        479,
+        6000
+      ]
+    },
+    {
+      "framework": "vue",
+      "brand": "B",
+      "theme": "dark",
+      "screenshot": {
+        "path": "artifacts/product-reality/sprint-195/m07/vue-theme/vue-B-dark.png",
+        "sha256": "c378a7bc59729469d682a1e062ffd277e17841aa14673b5f330bc430d31b2f6d",
+        "width": 1280,
+        "height": 15985
+      },
+      "nativeReport": {
+        "path": "artifacts/product-reality/sprint-195/m07/vue-theme/report.json",
+        "sha256": "fa75c009c33daa74e1b612a3d06615996fbf206765c313bce3da4ba105553801"
+      },
+      "actualInspection": "Viewed the fresh file with view_image, then requested original detail; the model-visible full-page image was resized to the recorded dimensions.",
+      "displayedDimensions": [
+        480,
+        6000
+      ]
+    }
+  ],
+  "observations": [
+    "Both fresh images show the full two-column component gallery through the final VizSizeSummary card; no blank page, fatal render error, or obvious overlap is visible at the displayed scale.",
+    "React A/hc shows black surfaces with system-colored controls/text; Vue B/dark shows dark blue surfaces with its status and control colors.",
+    "The five static chart previews retain pale cream canvases and blue graphics (with a multicolor heatmap) in both inspected theme galleries. The area preview visibly contains the authored preview text instead of plotted data."
+  ],
+  "sourceTrace": [
+    {
+      "path": "packages/component-contracts/fixtures/viz-preview-samples.v1.json",
+      "sha256": "cfdaef78055dd38030765c5e8b66bfb4c6b8a6567818af443b414413912288b6"
+    },
+    {
+      "path": "packages/component-contracts/src/scenarios.ts",
+      "sha256": "8293f39ca171b19bdac502c9b71698a5c46cd677cfc520c9d863d52b4fdff49f"
+    },
+    {
+      "path": "packages/components-react/src/breadth.tsx",
+      "sha256": "8b589d15b8aa6be7948f92a887ed7134d6069b75d0d77074bc07c74ef6b9eca5"
+    },
+    {
+      "path": "packages/components-vue/src/breadth.ts",
+      "sha256": "14094d262cf3b427e09dd3fe8da42104c1c13db5be8eb7d1e2162cdaac8fd85d"
+    },
+    {
+      "path": "scripts/product-reality/component-theme-proof.mjs",
+      "sha256": "2d6faaa28759a00f3b715a930adca79a2433c9b92b2ebd4329a9d8761acf5087"
+    },
+    {
+      "path": "scripts/product-reality/s193-runtime-cells.ts",
+      "sha256": "2cc6e31b0c4121e78a1e871c09464ec95f4fd94da5d2168bd8aa2f7f41010178"
+    }
+  ],
+  "fixtureBoundary": {
+    "authoredFixture": "packages/component-contracts/fixtures/viz-preview-samples.v1.json contains the fixed #FDF3DE canvas and #416CD9 graphics supplied by scenario SVG props. The React and Vue breadth components insert the validated static SVG directly.",
+    "areaFixture": "packages/component-contracts/src/scenarios.ts explicitly labels its authored area-slot case as rendering no chart pixels and not visualization evidence.",
+    "nativeThemeMeasurement": "component-theme-proof.mjs measures component roots, text, backgrounds, and focus visibility/contrast. Its native gallery checks do not certify theme adaptation of every authored SVG fill or stroke.",
+    "generatedCharts": "The real generated Invoice/Usage path in s193-runtime-cells.ts invokes the separate chart-paint proof against public SVG bytes. Its fresh runtime sweep is separate and still running; this inspection does not declare those scopes passed."
+  },
+  "limits": [
+    "The full-page images were resized for model viewing; this is a bounded gallery inspection, not a pixel-by-pixel audit of every label.",
+    "Two of the twelve screenshots were directly inspected. All twelve were independently hash-verified in component-screenshot-comparison.json.",
+    "No new accepted limitation or craft approval is declared."
+  ],
+  "claimAssessment": "The native root/text/focus theme claims are consistent with what the harness measures. A claim that this native gallery proves all chart SVG marks adopt HC paints would exceed this evidence.",
+  "craftApproval": false,
+  "builderSelfCertified": false
+}

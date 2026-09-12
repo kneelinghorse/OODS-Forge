@@ -969,6 +969,25 @@ describe('component map coverage', () => {
   });
 
   it.each([
+    { component: 'VizAreaPreview', label: 'Payment amounts' },
+    { component: 'VizMarkPreview', label: 'Mark chart' },
+    { component: 'VizLinePreview', label: 'Line chart' },
+    { component: 'VizPointPreview', label: 'Point chart' },
+    { component: 'VizScatterPreview', label: 'Scatter chart' },
+    { component: 'VizHeatmapPreview', label: 'Heatmap chart' },
+  ])('embeds passive SVG for $component with its own accessible default', ({ component, label }) => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 10L10 0"/></svg>';
+    const html = renderMappedComponent(makeNode(component, { svg }));
+    expect(html).toContain(svg);
+    expect(html).toContain(`aria-label="${label}"`);
+    expect(html).toContain('data-viz-rendered="true"');
+    expect(html).not.toContain('data-viz-preview-placeholder');
+    const described = renderMappedComponent(makeNode(component, { svg, title: 'Recorded counts', description: 'Measured example series.' }));
+    expect(described).toContain('aria-label="Recorded counts"');
+    expect(described).toContain('data-viz-description="true">Measured example series.');
+  });
+
+  it.each([
     {
       component: 'VizColorLegendConfig',
       props: { title: 'Legend', field: 'segment', scheme: 'viridis', redundancy: 'shape' },

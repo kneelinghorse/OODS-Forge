@@ -33,7 +33,7 @@ type StdioResponse = {
 
 type InitializeResponse = {
   id?: number;
-  result?: { serverInfo?: { name?: string; version?: string } };
+  result?: { serverInfo?: { name?: string; version?: string }; isError?: boolean; content?: Array<{ type: string; text: string }> };
   error?: unknown;
 };
 
@@ -135,8 +135,7 @@ async function waitForStartupExit(stagedServer: string): Promise<{ code: number 
   return { code, stderr };
 }
 
-async function requestAdapterInitialize(): Promise<{ response: InitializeResponse; stderr: string }> {
-  const adapterDir = path.join(REPO_ROOT, 'packages', 'mcp-adapter');
+async function requestAdapterInitialize(adapterDir = path.join(REPO_ROOT, 'packages', 'mcp-adapter'), callHealth = false): Promise<{ response: InitializeResponse; stderr: string }> {
   const child = spawn(process.execPath, ['index.js'], {
     cwd: adapterDir,
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -169,7 +168,10 @@ async function requestAdapterInitialize(): Promise<{ response: InitializeRespons
         newline = stdout.indexOf('\n');
         if (!line) continue;
         const payload = JSON.parse(line) as InitializeResponse;
-        if (payload.id === 1) {
+        if (payload.id === 1 && callHealth) {
+          child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })}\n`, 'utf8');
+          child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'health', arguments: {} } })}\n`, 'utf8');
+        } else if (payload.id === (callHealth ? 2 : 1)) {
           clearTimeout(timeout);
           resolve(payload);
           return;
@@ -218,6 +220,14 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(fs.existsSync(path.join(SERVER_DIST, 'schemas', 'component-schema.json'))).toBe(true);
     const stagedServer = stageDistOnlyServer();
     expect(fs.readdirSync(stagedServer).sort()).toEqual(['dist', 'node_modules', 'package.json']);
+    // s195-m02 adds a generated taxonomy plus its classification authority to
+    // dist: the Core Profile stays available even without host planning data.
+    // s195-m03 adds exact-source pattern proof; core coverage follows those measured scopes.
+    for (const name of ['viz-taxonomy.v1.json', 'viz-classification.v1.json', 'viz-patterns.v1.json']) {
+      expect(fs.readFileSync(path.join(stagedServer, 'dist/registry', name)).equals(
+        fs.readFileSync(path.join(REPO_ROOT, 'packages/viz-core/src/registry', name)),
+      )).toBe(true);
+    }
     const { response, aliveAtResponse, stderr } = await requestHealth(stagedServer);
 
     expect(stderr).toBe('');
@@ -227,11 +237,41 @@ describe('s181 portable-runtime publish boundary', () => {
       status: 'degraded',
       registry: { components: 0, traits: 0, objects: 0 },
       tokens: { built: false, brands: [], themes: [], scopes: {}, defaultScope: null },
+      productReality: { viz: JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary },
       warnings: expect.arrayContaining([
         expect.stringContaining('registry subsystem unavailable'),
         expect.stringContaining('tokens subsystem unavailable'),
       ]),
     });
+  }, 30_000);
+
+  it.each(['viz-taxonomy.v1.json', 'viz-classification.v1.json', 'viz-patterns.v1.json'])('s195 serves null viz with a warning when shipped %s is absent', async name => {
+    const stagedServer = stageDistOnlyServer();
+    fs.rmSync(path.join(stagedServer, 'dist/registry', name));
+    const { response, aliveAtResponse, stderr } = await requestHealth(stagedServer);
+    expect(stderr).toBe('');
+    expect(aliveAtResponse).toBe(true);
+    expect(response.error).toBeUndefined();
+    expect(response.result).toMatchObject({
+      status: 'degraded',
+      productReality: { viz: null },
+      warnings: expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]),
+    });
+  }, 30_000);
+
+  it('s195 serves the same generated viz summary through the staged MCP adapter', async () => {
+    const stagedServer = stageDistOnlyServer();
+    const adapterDir = path.join(path.dirname(stagedServer), 'mcp-adapter');
+    const sourceAdapter = path.join(REPO_ROOT, 'packages/mcp-adapter');
+    fs.mkdirSync(adapterDir);
+    for (const file of ['index.js', 'sanitize-schema.js', 'tool-descriptions.json', 'package.json']) fs.copyFileSync(path.join(sourceAdapter, file), path.join(adapterDir, file));
+    fs.symlinkSync(path.join(sourceAdapter, 'node_modules'), path.join(adapterDir, 'node_modules'), 'dir');
+    const { response } = await requestAdapterInitialize(adapterDir, true);
+    expect(response.error).toBeUndefined();
+    expect(response.result?.isError).not.toBe(true);
+    const health = JSON.parse(response.result!.content!.find(block => block.type === 'text')!.text);
+    expect(health.productReality.viz).toEqual(JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary);
+    expect(health.warnings ?? []).not.toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
   }, 30_000);
 
   it('B-12 proves the relocated schema is load-bearing by deleting it from the staged dist', async () => {

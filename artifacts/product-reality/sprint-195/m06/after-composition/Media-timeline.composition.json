@@ -1,0 +1,501 @@
+{
+  "status": "ok",
+  "layout": "timeline",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-timeline-14",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "timeline-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "timeline-header-1-title",
+                "component": "Text",
+                "props": {
+                  "field": "media_id"
+                }
+              }
+            ]
+          },
+          {
+            "id": "timeline-entries-13",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "timeline-entries-13-entry",
+                "component": "Card",
+                "collectionControl": "event",
+                "children": [
+                  {
+                    "id": "ve-entry-0-15",
+                    "component": "TimelineEntryLabel",
+                    "props": {
+                      "field": "label",
+                      "compact": true,
+                      "label": "Label"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "timeline-entries-13-empty",
+                "component": "Banner",
+                "props": {
+                  "message": "No events yet."
+                },
+                "collectionControl": "empty"
+              }
+            ],
+            "collection": {
+              "source": "events",
+              "keyField": "id",
+              "labelField": "title",
+              "historyField": "state_history"
+            }
+          },
+          {
+            "id": "timeline-entries-13-trait-events",
+            "component": "Stack",
+            "children": [
+              {
+                "id": "ve-entry-0-16",
+                "component": "StateTransitionEvent",
+                "props": {
+                  "historyField": "state_history",
+                  "labelField": "status",
+                  "showActor": true,
+                  "showReason": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "media_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the media asset across services.",
+        "semanticType": "media.asset.id"
+      },
+      "asset_type": {
+        "type": "string",
+        "required": true,
+        "description": "Media form factor guiding viewer presentation.",
+        "enum": [
+          "image",
+          "video",
+          "audio",
+          "document"
+        ],
+        "semanticType": "media.asset.type"
+      },
+      "mime_type": {
+        "type": "string",
+        "required": true,
+        "description": "IANA MIME type recorded at ingestion.",
+        "semanticType": "media.asset.mime"
+      },
+      "storage_bucket": {
+        "type": "string",
+        "required": true,
+        "description": "Storage namespace (S3 bucket, GCS bucket) backing the asset."
+      },
+      "object_key": {
+        "type": "string",
+        "required": true,
+        "description": "Provider-specific path or key referencing the binary object."
+      },
+      "source_url": {
+        "type": "string",
+        "required": false,
+        "description": "Canonical CDN URL for public consumption."
+      },
+      "checksum": {
+        "type": "string",
+        "required": false,
+        "description": "Hex-encoded checksum (SHA-256) for deduplication."
+      },
+      "file_size_bytes": {
+        "type": "number",
+        "required": true,
+        "description": "Size of the binary payload in bytes.",
+        "semanticType": "media.asset.size"
+      },
+      "width_px": {
+        "type": "number",
+        "required": false,
+        "description": "Pixel width for images/videos when available."
+      },
+      "height_px": {
+        "type": "number",
+        "required": false,
+        "description": "Pixel height for images/videos when available."
+      },
+      "duration_seconds": {
+        "type": "number",
+        "required": false,
+        "description": "Media playback duration for video/audio assets.",
+        "semanticType": "media.asset.duration"
+      },
+      "transcoding_profiles": {
+        "type": "string[]",
+        "required": false,
+        "description": "List of transcoding profiles generated for the asset."
+      }
+    }
+  },
+  "schemaRef": "compose-4a8ab96d",
+  "schemaRefCreatedAt": "2026-09-11T22:10:20.769Z",
+  "schemaRefExpiresAt": "2026-09-11T22:40:20.769Z",
+  "selections": [
+    {
+      "slotName": "entry-0",
+      "intent": "timeline-entry",
+      "selectedComponent": "TimelineEntryLabel",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "TimelineEntryLabel was selected for slot \"entry-0\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "TimelineEntryLabel",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StateTransitionEvent",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "Text",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"header\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "entry-1",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-2",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-3",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-4",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    }
+  ],
+  "objectUsed": {
+    "name": "Media",
+    "version": "1.0.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "core/Classifiable"
+    ],
+    "fieldsComposed": 29,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 4,
+      "form": 3,
+      "card": 2,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Media timeline view",
+    "layoutDetected": "context-inferred: timeline (from context=\"timeline\")",
+    "slotCount": 6,
+    "nodeCount": 9,
+    "intentSynthetic": true,
+    "warnings": [
+      "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.74
+    }
+  }
+}

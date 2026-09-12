@@ -69,7 +69,7 @@ describe('Subscription payment chart is an actual public render', () => {
     const rendered = vi.spyOn(viz, 'handle');
     const { schema } = await compose({ object: 'Subscription', context: 'detail' });
     // HTML chart embedding is independently supported; full detail Tabs have an existing HTML normalization gate.
-    if (framework === 'html') schema.screens = chartNodes(schema.screens);
+    if (framework === 'html') { const charts = chartNodes(schema.screens); schema.screens = [charts[0]!, ...charts.slice(1)]; }
     const result = await generate({ schema, framework, profile: 'build' });
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
     expect(rendered).toHaveBeenCalledTimes(1);
@@ -89,7 +89,9 @@ describe('Subscription payment chart is an actual public render', () => {
   it('fails loudly for missing fields or a public renderer failure, without a placeholder artifact', async () => {
     const { schema } = await compose({ object: 'Subscription', context: 'detail' });
     const broken = structuredClone(schema) as UiSchema;
-    chartNodes(broken.screens)[0]!.chart!.amountField = 'nonexistent';
+    const chart = chartNodes(broken.screens)[0]!.chart!;
+    if (chart.source !== 'payment-events') throw new Error('Expected the legacy payment projection');
+    chart.amountField = 'nonexistent';
     const invalid = await generate({ schema: broken, framework: 'react', profile: 'build' });
     expect(invalid.status).toBe('error');
     expect(invalid.errors?.[0]?.message).toContain('nonexistent');
