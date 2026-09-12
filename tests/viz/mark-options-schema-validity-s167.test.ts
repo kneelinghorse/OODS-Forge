@@ -752,24 +752,22 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
 
   // ── THE COMMITTED CORPUS ────────────────────────────────────────────────────────
   it('every committed mark-bearing fixture emits schema-valid mark defs', () => {
-    // DEFINITION, stated because "42" was contested: a `.json` file under the repo whose
+    // DEFINITION: a source `.json` file under the repo whose
     // TOP-LEVEL object has a `marks` array containing at least one entry whose `trait`
-    // starts with "Mark". Under that definition there are 42 — but only 31 are distinct
-    // by content: `examples/viz/patterns/` and `examples/viz/patterns-v2/` hold 11
-    // byte-identical twins, which is the duplication that inflates the figure. Twelve of
-    // the 42 carry `mark.options` at all, between them 7 distinct keys — which is why the
-    // synthetic probes above exist.
+    // starts with "Mark". Generated outputs and root artifacts/ receipts are excluded.
+    // s196 m07 measured 43 with receipts included: m05's retained timezone-bite input
+    // duplicates running-total-area.spec.json. Evidence retention must not add a new
+    // product fixture; the actual source corpus remains the same 42 examples.
     //
-    // Enumerated by walking the tree rather than by `git ls-files`, so the test carries no
-    // external-process dependency. VERIFIED EQUIVALENT: the walk and the git-tracked set
-    // yield the identical 42 files, zero either way. (The two differ hugely at the .json
-    // level — 7,908 walked vs 460 tracked — which is the gap behind the inherited "7,735
-    // specs swept" figure: that sweep counted untracked files too.)
+    // Walk source locations without a Git dependency, then require exact agreement with
+    // the independent examples discovery used by the whole-spec oracle below. A new
+    // source fixture still requires an explicit corpus reconciliation.
     const collected: string[] = [];
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
         if (entry.isDirectory()) {
           if (SKIP_DIRS.has(entry.name)) continue;
+          if (dir === repoRoot && entry.name === 'artifacts') continue;
           walk(path.join(dir, entry.name));
         } else if (entry.name.endsWith('.json')) {
           collected.push(path.join(dir, entry.name));
@@ -779,7 +777,7 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     walk(repoRoot);
 
     const failures: string[] = [];
-    let checked = 0;
+    const checked: string[] = [];
     for (const abs of collected) {
       const rel = path.relative(repoRoot, abs);
       let doc: { marks?: { trait?: unknown }[] };
@@ -792,7 +790,7 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
         Array.isArray(doc?.marks) &&
         doc.marks.some((m) => typeof m?.trait === 'string' && m.trait.startsWith('Mark'));
       if (!isMarkBearing) continue;
-      checked += 1;
+      checked.push(rel);
       let compiled: unknown;
       try {
         compiled = toVegaLiteSpec(doc as unknown as NormalizedVizSpec);
@@ -804,7 +802,8 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
       if (errors.length) failures.push(`${rel} :: ${errors.join(' ; ')}`);
     }
 
-    expect(checked, 'the corpus definition stopped matching — re-derive it').toBe(42);
+    expect(checked, 'the corpus definition stopped matching — re-derive it').toHaveLength(42);
+    expect(checked.sort()).toEqual(wholeSpecFixtures().map(({ rel }) => rel).sort());
     expect(failures, `schema-invalid mark defs:\n  ${failures.join('\n  ')}`).toEqual([]);
   }, 60_000);
 });

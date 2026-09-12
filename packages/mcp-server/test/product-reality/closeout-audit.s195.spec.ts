@@ -9,7 +9,15 @@ import {
 } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 
 const root = resolve(import.meta.dirname, '../../../..');
-const bytes = (file: string) => readFileSync(resolve(root, file));
+// These source operands belong to the retained Sprint195 proofs; UTC intentionally
+// changed the live registry and renderer in Sprint196. Do not rewrite old receipts.
+const historicalVizPaths = new Set(['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts']);
+const historicalViz = new Map<string, Buffer>();
+const bytes = (file: string): Buffer => {
+  if (!historicalVizPaths.has(file)) return readFileSync(resolve(root, file));
+  if (!historicalViz.has(file)) historicalViz.set(file, execFileSync('git', ['show', `1d100e20bcc0911031192406625357638adecbe5:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
+  return historicalViz.get(file)!;
+};
 const json = (file: string): any => JSON.parse(bytes(file).toString());
 const hash = (file: string) => createHash('sha256').update(bytes(file)).digest('hex');
 const runtimePath = 'artifacts/product-reality/sprint-195/m06/runtime-final/runtime-cells.v1.json';

@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s196-m07",
+  "status": "passed",
+  "skipped": 0,
+  "builderSelfCertified": false,
+  "fullFiveSuiteCapture": false,
+  "measuredWorkingTreeBase": "2bae454ad3094042c9f0113e1ef852c9d440a088",
+  "sourceState": "worktree",
+  "reports": [
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/pre-freeze/mcp-server.json",
+      "bytes": 367869,
+      "sha256": "a1adc723cde7aecca42eeb1df733ba81f0614226e65944e85e1eac92a22bcc96",
+      "passed": 1005,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/pre-freeze/root-corrections.json",
+      "bytes": 29348,
+      "sha256": "6efe2712ba5f25ae21d74382bcf4db1433f83b0d1bec5c675b8b56b1552f2829",
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/pre-freeze/viz-core-targeted.json",
+      "bytes": 58337,
+      "sha256": "0381361bd15f4d8e99af538409ea73e24df332452a930146c842669a98304a95",
+      "passed": 153,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/pre-freeze/component-ledger.json",
+      "bytes": 1549,
+      "sha256": "a2e768aa1903fa70f638cb9b87ee2ca96e1b26535886a9b2f880dc698ec862a4",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tests-final.json",
+      "bytes": 20655,
+      "sha256": "e612370993496faa3124ab4694178c6dc54cb7477de69f9304d11b53f2fed6aa",
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-final.json",
+      "bytes": 38752,
+      "sha256": "9a88d211eeb6ebe81500ec2aca129136c1d5a6395a93222766110e06aa9776c0",
+      "passed": 95,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "commands": [
+    {
+      "name": "freeze-docs",
+      "argv": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-docs.log"
+    },
+    {
+      "name": "freeze-tool-ledger",
+      "argv": [
+        "node",
+        "scripts/product-reality/s193-tool-truth.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-tool-ledger.log"
+    },
+    {
+      "name": "freeze-gate2",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-gate2.log"
+    },
+    {
+      "name": "freeze-golden",
+      "argv": [
+        "python3",
+        "scripts/product-reality/s196-attribute-temporal-goldens.py",
+        "--check",
+        "--head",
+        "2a7d0a7ce4060fc78c12df1648bd318e0658317b"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-golden.log"
+    },
+    {
+      "name": "freeze-types",
+      "argv": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-types.log"
+    }
+  ],
+  "nativeVerification": {
+    "path": "artifacts/product-reality/sprint-196/m07/pre-freeze/native-verification.json",
+    "bytes": 17244,
+    "sha256": "e7d772741a2fff61608fd7adc19eb18268ccc9fba03092dab8abfba9df3a0651"
+  },
+  "closeoutVerification": {
+    "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-verification.json",
+    "bytes": 4689,
+    "sha256": "2b1383d6dbbb740283de02c7336b6414548d1c250cf8f37080a343facc6553b6"
+  },
+  "sourceHashes": [
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/ci-historical/run-34679856153/verify-runtime.py",
+      "bytes": 7092,
+      "sha256": "58031e1f4655273aa0d58e0453c6dffc077e7894732f2a1e5eaba3cf7789c5ad"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/movers/derive-attribution.py",
+      "bytes": 12404,
+      "sha256": "3ecf3dceab037905458a8d914c7470bfa7e69044f860db3872a41eefbec21e1f"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/verify-census.py",
+      "bytes": 4732,
+      "sha256": "e9a28d1cd526eb2917711bb8e522ccbbdd63afbfb77f303b3767677796a130e9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/verify-components.mjs",
+      "bytes": 6092,
+      "sha256": "0847feb21c4b71b99667a2dbf2530c33337c0da93d0c648c17281e02b412132b"
+    },
+    {
+      "path": "docs/mcp/Tool-Specs.md",
+      "bytes": 156832,
+      "sha256": "3d77e4eebc12cf0669b72c49e3ec49ccb36f1c39ea61d2261f8e3ff527b9ad2c"
+    },
+    {
+      "path": "generated/types/traits/scale-temporal.parameters.ts",
+      "bytes": 976,
+      "sha256": "d745af5e893c685e3e4dd555c369f734679a670f7e586e8edecef03406d1777a"
+    },
+    {
+      "path": "packages/mcp-server/registry/tool-capability-ledger.v1.json",
+      "bytes": 142244,
+      "sha256": "7d9f41fa4065c41ff0cb238bdfb3fbcd0e12f6c6faf8ae74067b21d3676e72cb"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout-audit.s195.spec.ts",
+      "bytes": 18459,
+      "sha256": "3513c3812bcb023bc3162101cbcd7153fd63d42641652791b71af55f7441e52b"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout-producer.s195.spec.ts",
+      "bytes": 21882,
+      "sha256": "785179b272e0e0acdb200bfdac98465b50fc521d602e711bee5634e663d7a7f1"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout.s196.spec.ts",
+      "bytes": 16344,
+      "sha256": "8b58aa0098a39685bd12e4c95ed8bad70cd404a7f525e6c696fff94d62f49ebb"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/suite-accounting.s196.spec.ts",
+      "bytes": 18453,
+      "sha256": "f77323a868043fc816b4415c52ce6a60655a921f8c89fb80184d311017a3b31f"
+    },
+    {
+      "path": "scripts/product-reality/s185-audit-closeout.mjs",
+      "bytes": 234409,
+      "sha256": "2ff11ace8fd4d0e2d7eb10ba36268ea2fe950e425070b679b5f5d8cad7406c24"
+    },
+    {
+      "path": "scripts/product-reality/s185-closeout.mjs",
+      "bytes": 186001,
+      "sha256": "01be59536257016a33124aaffb86c7eb910fd59ea7d251a763b707fed0ec59d8"
+    },
+    {
+      "path": "scripts/product-reality/s185-reconnect.mjs",
+      "bytes": 39913,
+      "sha256": "3827c6220fc57b673f22719b25123c6a4818204b4ebadee77e8b07ec06b4f7a1"
+    },
+    {
+      "path": "scripts/product-reality/s185-sprint-wide-movers.mjs",
+      "bytes": 23980,
+      "sha256": "372bfef8219117bf47f342c80dbbdb51f1be0150c4fc8d550edb7243e1dd01a5"
+    },
+    {
+      "path": "scripts/product-reality/s185-suite-accounting.mjs",
+      "bytes": 60340,
+      "sha256": "62a6ee8ae77db85ef5ab063a05e61ae81f6344ca84ef4a0589bfc96e7ca1d83b"
+    },
+    {
+      "path": "tests/viz/mark-options-schema-validity-s167.test.ts",
+      "bytes": 41020,
+      "sha256": "94216945415d424b5eb96818b01c22316f9c4c40bb0934e950dd4c243bf5c6a0"
+    }
+  ],
+  "qualifications": [
+    "Reports overlap and are not summed as distinct tests.",
+    "The original root subset had four failures; rebuilt dist/pkg and a source-corpus exclusion of retained receipt copies resolve all four in the 78-test whole-file rerun. The source corpus remains42.",
+    "The original selected viz command passed153 assertions but failed full-package coverage thresholds; the retained final subset explicitly disables coverage only for that command. Full capture thresholds remain unchanged.",
+    "The initial MCP1005 source batch preceded final closeout amendments; the95-test final whole-file closeout regression binds the amended source bytes. Prior uncommitted verifier bytes were not hash-snapshotted and are not reconstructed.",
+    "Two generated outputs were stale and regenerated: ScaleTemporal JSDoc and Tool-Specs census head. All five final root checks pass.",
+    "Historical s195 fixtures use their immutable original registry/adapter bytes; no historical receipts or old predicates were changed."
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "scope": "Generator-only correction of stale m05 UTC metadata type and m07 tool-ledger census-head propagation before implementation freeze.",
+  "head": "2bae454ad3094042c9f0113e1ef852c9d440a088",
+  "files": [
+    {
+      "path": "generated/types/traits/scale-temporal.parameters.ts",
+      "beforeSha256": "878afaba6799769143cbcc72cacfe4f709654f3c284a4ba837ad80d1fecc3235",
+      "before": "artifacts/product-reality/sprint-196/m07/pre-freeze/generated-corrections/scale-temporal.parameters.ts.before",
+      "afterSha256": "d745af5e893c685e3e4dd555c369f734679a670f7e586e8edecef03406d1777a",
+      "after": "artifacts/product-reality/sprint-196/m07/pre-freeze/generated-corrections/scale-temporal.parameters.ts.after"
+    },
+    {
+      "path": "docs/mcp/Tool-Specs.md",
+      "beforeSha256": "3ed752004c0f363d8af5e689bae851875e3eda8b9e21bf29b978bfc094a4b31f",
+      "before": "artifacts/product-reality/sprint-196/m07/pre-freeze/generated-corrections/Tool-Specs.md.before",
+      "afterSha256": "3d77e4eebc12cf0669b72c49e3ec49ccb36f1c39ea61d2261f8e3ff527b9ad2c",
+      "after": "artifacts/product-reality/sprint-196/m07/pre-freeze/generated-corrections/Tool-Specs.md.after"
+    }
+  ],
+  "executions": [
+    {
+      "name": "root-schema-types-regenerate",
+      "argv": [
+        "pnpm",
+        "run",
+        "generate:schema-types"
+      ],
+      "startedAt": "2026-09-12T08:12:41.630424+00:00",
+      "endedAt": "2026-09-12T08:12:42.537137+00:00",
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/root-schema-types-regenerate.log"
+    },
+    {
+      "name": "tool-specs-regenerate",
+      "argv": [
+        "pnpm",
+        "run",
+        "docs:tools"
+      ],
+      "startedAt": "2026-09-12T08:12:42.537494+00:00",
+      "endedAt": "2026-09-12T08:12:43.385445+00:00",
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/tool-specs-regenerate.log"
+    },
+    {
+      "name": "root-schema-types-verified",
+      "argv": [
+        "pnpm",
+        "run",
+        "generate:schema-types",
+        "--",
+        "--check"
+      ],
+      "startedAt": "2026-09-12T08:12:43.385732+00:00",
+      "endedAt": "2026-09-12T08:12:44.154320+00:00",
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/root-schema-types-verified.log"
+    },
+    {
+      "name": "docs-verified",
+      "argv": [
+        "pnpm",
+        "run",
+        "docs:check"
+      ],
+      "startedAt": "2026-09-12T08:12:44.154732+00:00",
+      "endedAt": "2026-09-12T08:12:47.736867+00:00",
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/docs-verified.log"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "scope": "Focused Sprint 196 suite-accounting mode and NUL-safe Git path regression tests; not a full-suite capture.",
+  "recordedAt": "2026-09-12T08:10:47.173281+00:00",
+  "head": "2bae454ad3094042c9f0113e1ef852c9d440a088",
+  "dirty": true,
+  "commands": [
+    {
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/product-reality/suite-accounting.s196.spec.ts",
+        "test/product-reality/suite-accounting.s195.spec.ts",
+        "test/product-reality/suite-accounting.s185.spec.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=../../artifacts/product-reality/sprint-196/m07/accounting-mode/tests-final.json"
+      ],
+      "exitCode": 0,
+      "log": "tests-final.log",
+      "report": "tests-final.json",
+      "tests": {
+        "passed": 42,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "tsc",
+        "--noEmit",
+        "-p",
+        "../../artifacts/product-reality/sprint-196/m07/accounting-mode/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "log": "typecheck-final.log"
+    }
+  ],
+  "developmentAttempts": [
+    {
+      "log": "tests.log",
+      "report": "tests.json",
+      "outcome": "41 passed, zero skipped before the additional timeout-route regression test."
+    },
+    {
+      "log": "typecheck.log",
+      "exitCode": 2,
+      "outcome": "Test property access had a TypeScript inference error; changed to the same structural assertion with toMatchObject. Final typecheck passed."
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/product-reality/s185-suite-accounting.mjs",
+      "sha256": "71500288a8606dd4c270fa581f89faa5ec9895db9f97b33151e6cc92a55349fe"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/suite-accounting.s196.spec.ts",
+      "sha256": "f63b84356bd24c0a5a23aacbbf88ce6b595194e245ddb568782907949298503c"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tests-final.json",
+      "sha256": "e612370993496faa3124ab4694178c6dc54cb7477de69f9304d11b53f2fed6aa",
+      "bytes": 20655
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tests-final.log",
+      "sha256": "2c6dbb349ae1919a7c8f68c93cfcfd41e01824fe0c930fea78c6a3c24864e841",
+      "bytes": 3687
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tests.json",
+      "sha256": "478d4ff3f32f0667041ce05a7ed63c19eb3927bae37f3cd82b4ad2e08470a186",
+      "bytes": 20140
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tests.log",
+      "sha256": "f9cfcd60d787d46d80957ab93a5cb9ff04ac100f08e2284886f38a7045173676",
+      "bytes": 3140
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/tsconfig.json",
+      "sha256": "8ba6c9d9e89d189a0c365aa4074253410b6ccc473059dc80bb9b72e27b54a4d6",
+      "bytes": 352
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/typecheck-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m07/accounting-mode/typecheck.log",
+      "sha256": "1568ccdc57e82df1f5f4721c08249c6d84849a07ada0e84ef7ce51c2867ebea8",
+      "bytes": 620
+    }
+  ]
+}
