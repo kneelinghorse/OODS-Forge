@@ -1,0 +1,229 @@
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 3 3 100
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 generated/types/traits/mark-area.parameters.ts
+filename generated/types/traits/mark-area.parameters.ts
+	/**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 4 4
+	 * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 5 5
+	 */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 6 6
+	export type MarkAreaChartDeclaration =
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 7 7
+	  | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 8 8
+	      chartType: 'area';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 9 9
+	      source: 'payment-events';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 10 10
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 11 11
+	       * @minItems 2
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 12 12
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 13 13
+	      dateFields: [string, string, ...string[]];
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 14 14
+	      amountField: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 15 15
+	      minorUnits: number;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 16 16
+	      currencyField: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 17 17
+	      brand?: 'A' | 'B';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 18 18
+	    }
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 19 19
+	  | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 20 20
+	      chartType: 'area';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 21 21
+	      source: 'record-array';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 22 22
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 23 23
+	       * Declared objectSchema array field containing the chart rows.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 24 24
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 25 25
+	      dataField: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 26 26
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 27 27
+	       * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 28 28
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 29 29
+	      encodings: {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 30 30
+	        x: MarkAreaChartEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 31 31
+	        y: MarkAreaChartEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 32 32
+	        color?: MarkAreaChartColorEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 33 33
+	        size?: MarkAreaChartEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 34 34
+	        shape?: MarkAreaChartEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 35 35
+	        detail?: MarkAreaChartEncodingBinding;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 36 36
+	      };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 37 37
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 38 38
+	       * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 39 39
+	       *
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 40 40
+	       * @minItems 1
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 41 41
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 42 42
+	      sampleRows: [
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 43 43
+	        {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 44 44
+	          [k: string]: unknown;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 45 45
+	        },
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 46 46
+	        ...{
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 47 47
+	          [k: string]: unknown;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 48 48
+	        }[]
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 49 49
+	      ];
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 50 50
+	      brand?: 'A' | 'B';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 51 51
+	    };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 52 52
+	/**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 53 53
+	 * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 54 54
+	 */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 55 55
+	export type MarkAreaChartEncodingBinding =
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 56 56
+	  | string
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 57 57
+	  | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 58 58
+	      field: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 59 59
+	      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 60 60
+	      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 61 61
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 62 62
+	       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 63 63
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 64 64
+	      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 65 65
+	      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 66 66
+	      sort?:
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 67 67
+	        | ('none' | 'ascending' | 'descending')
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 68 68
+	        | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 69 69
+	            field: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 70 70
+	            order: 'ascending' | 'descending';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 71 71
+	          };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 72 72
+	      title?: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 73 73
+	    };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 74 74
+	/**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 75 75
+	 * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 76 76
+	 */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 77 77
+	export type MarkAreaChartColorEncodingBinding =
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 78 78
+	  | string
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 79 79
+	  | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 80 80
+	      field: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 81 81
+	      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 82 82
+	      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 83 83
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 84 84
+	       * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 85 85
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 86 86
+	      type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 87 87
+	      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 88 88
+	      sort?:
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 89 89
+	        | ('none' | 'ascending' | 'descending')
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 90 90
+	        | {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 91 91
+	            field: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 92 92
+	            order: 'ascending' | 'descending';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 93 93
+	          };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 94 94
+	      title?: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 95 95
+	      /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 96 96
+	       * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 97 97
+	       *
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 98 98
+	       * @minItems 2
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 99 99
+	       */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 100 100
+	      range?: [string, string, ...string[]];
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 101 101
+	    };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 102 102
+	
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 120 120 1
+	  chart?: MarkAreaChartDeclaration;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 129 129 8
+	  /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 130 130
+	   * Title of the read-only chart projection.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 131 131
+	   */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 132 132
+	  title?: string;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 133 133
+	  /**
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 134 134
+	   * Accessible description of the read-only chart projection.
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 135 135
+	   */
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 136 136
+	  description?: string;

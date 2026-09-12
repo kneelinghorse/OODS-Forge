@@ -1,0 +1,25 @@
+ffcdc29ef225d28e54f094e2b430b707f85d1167 10 10 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+previous 5f71d0818a913830812e05dca123b628e0d83abe packages/mcp-server/src/tools/health.ts
+filename packages/mcp-server/src/tools/health.ts
+	import { readVizSummary, type VizSummary } from '../lib/viz-taxonomy.js';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 36 36 1
+	  productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null; viz: VizSummary | null };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 213 213 4
+	  let viz: VizSummary | null = null;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 214 214
+	  try { viz = readVizSummary(); }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 215 215
+	  catch (error) { warnings.push(`viz taxonomy unavailable: ${(error as Error).message}`); }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 216 216
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 230 230 1
+	    productReality: { runtime, tools, viz },

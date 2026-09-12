@@ -1,0 +1,45 @@
+a3158282bba25713171d7216181bde28b69a80a1 14 14 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c traits/viz/mark-bar.trait.ts
+filename traits/viz/mark-bar.trait.ts
+	    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
+a3158282bba25713171d7216181bde28b69a80a1 16 16
+	    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
+a3158282bba25713171d7216181bde28b69a80a1 187 187 13
+	    dashboard: [
+a3158282bba25713171d7216181bde28b69a80a1 188 188
+	      {
+a3158282bba25713171d7216181bde28b69a80a1 189 189
+	        component: 'VizMarkPreview',
+a3158282bba25713171d7216181bde28b69a80a1 190 190
+	        position: 'top',
+a3158282bba25713171d7216181bde28b69a80a1 191 191
+	        priority: 60,
+a3158282bba25713171d7216181bde28b69a80a1 192 192
+	        props: {
+a3158282bba25713171d7216181bde28b69a80a1 193 193
+	          svgParameter: 'previewSvg',
+a3158282bba25713171d7216181bde28b69a80a1 194 194
+	          typeField: 'viz_mark_type',
+a3158282bba25713171d7216181bde28b69a80a1 195 195
+	          orientationField: 'viz_mark_orientation',
+a3158282bba25713171d7216181bde28b69a80a1 196 196
+	          stackingField: 'viz_mark_stacking',
+a3158282bba25713171d7216181bde28b69a80a1 197 197
+	        },
+a3158282bba25713171d7216181bde28b69a80a1 198 198
+	      },
+a3158282bba25713171d7216181bde28b69a80a1 199 199
+	    ],
+a3158282bba25713171d7216181bde28b69a80a1 241 241 1
+	    regionsUsed: ['detail', 'dashboard', 'form', 'list'],

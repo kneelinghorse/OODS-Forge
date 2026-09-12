@@ -1,0 +1,153 @@
+{
+  "missionId": "s195-m07",
+  "kind": "frozen-advertised-mover-attribution",
+  "status": "passed",
+  "base": "5b25c3c9ec795315bf52a698d135c96bffd66393",
+  "implementationHead": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+  "censusHead": "833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4",
+  "builderSelfCertified": false,
+  "summary": {
+    "paths": 140,
+    "canonicalPaths": 18,
+    "hunks": 768,
+    "addedLines": 23885,
+    "removedLines": 1630,
+    "alignmentDisclosures": 4
+  },
+  "processEnvironment": {
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "core.quotePath",
+    "GIT_CONFIG_VALUE_0": "false"
+  },
+  "sourceInputs": [
+    {
+      "path": "scripts/product-reality/s185-sprint-wide-movers.mjs",
+      "head": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "sha256": "cfdba76332a46efc57686f03c52e6e1e2cad10c618ed9a03a692714918526ac4",
+      "byteIdenticalToFrozenHead": true
+    },
+    {
+      "path": "scripts/product-reality/s185-closeout.mjs",
+      "head": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "sha256": "6cb1897033b0da40f04608b36815e61983448001a5dc14fda8dd473850cecab2",
+      "byteIdenticalToFrozenHead": true
+    },
+    {
+      "path": "scripts/product-reality/s185-audit-closeout.mjs",
+      "head": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "sha256": "1d789171cec9c9bac33238fd887c7b1a43713cb9c1887001caddbe5e5f3502ed",
+      "byteIdenticalToFrozenHead": true
+    },
+    {
+      "path": "scripts/product-reality/s185-reconnect.mjs",
+      "head": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "sha256": "6ae4f284051c12c91978d265a6e5c83c51fea73632646613bf5d769f96cab451",
+      "byteIdenticalToFrozenHead": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/declared-movers.json",
+      "sha256": "bed9382267717e01597c6990e141be61e8781b370f6bec8d8dde0c693bcaf348"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/sprint-wide-movers.json",
+      "sha256": "8c8c6eacdf0fdb882f114069b38f7fb8b69095d504c8e1ec9857792583ca731d"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/advertised.patch",
+      "sha256": "740d2adaf1ce275ddb894bc9b0a6c07b6a81ad2a33bf059d32ef7d2cf25b930e"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/patch-command.json",
+      "sha256": "faf961d50ab9f21c328a51f54f5e47b14ab889a8377c8f3d70442a7141a3a303"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/attribution.json",
+      "sha256": "fe6bace45f3078c4479347b2b12000ff31606e5c7a49dd9c534da7e738b5efc1"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/derive-attribution.py",
+      "sha256": "687a71e011e73d3470f9203d952032452c626a1d25f0e27666b479d83c716034"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/movers/verify-attribution.mjs",
+      "sha256": "82087c0730c6aa696f9dce82e76f5b703ee12f7e8f6753d92afcd0bdbbc9a9a9"
+    }
+  ],
+  "checks": [
+    {
+      "name": "existing mover --check",
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-195/m07/movers/movers-check.log",
+        "sha256": "e00fd9c90f182cc32b1a394e9a8f9fda97212a99b1e3957b037f8c3fc707cb22"
+      }
+    },
+    {
+      "name": "producer and independent attribution auditor",
+      "exitCode": 0,
+      "result": {
+        "status": "passed",
+        "producer": "passed",
+        "independentAuditor": {
+          "paths": 140,
+          "historicalMatrixRows": 910,
+          "superseded": 231
+        },
+        "builderSelfCertified": false,
+        "summary": {
+          "paths": 140,
+          "canonicalPaths": 18,
+          "hunks": 768,
+          "addedLines": 23885,
+          "removedLines": 1630,
+          "alignmentDisclosures": 4
+        }
+      },
+      "command": "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.quotePath GIT_CONFIG_VALUE_0=false node artifacts/product-reality/sprint-195/m07/movers/verify-attribution.mjs",
+      "log": {
+        "path": "artifacts/product-reality/sprint-195/m07/movers/verification.log",
+        "sha256": "b0ee3708bab362cf7db3dfdddc765bfc5b3553a927b1d3b3bf4079f52be47b19"
+      }
+    },
+    {
+      "name": "existing reconnect --check",
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-195/m07/movers/reconnect-check.log",
+        "sha256": "70cbee4ef76058bbd676015a0f3b9c230a82c770ce9bcf00538a4d4e25e4cbf2"
+      }
+    }
+  ],
+  "reconnect": {
+    "status": "prepared-unsent",
+    "deliverySprint": "sprint-196",
+    "notices": 3,
+    "sendsExecuted": 0,
+    "artifact": {
+      "path": "artifacts/product-reality/sprint-195/m07/reconnect/notice-plan.json",
+      "sha256": "fcc5013f2786cd948f34d36eea59c45993edfe3b53a133aafe1d4dd0e3c2ec50"
+    }
+  },
+  "historicalQualifications": {
+    "paletteQualificationHead": "52b0da991705c4c565987bc9faf7738ba00d885e",
+    "earlierMissionEvidence": "Historical receipts retain their own recorded heads; m07 attribution does not relabel their execution."
+  },
+  "retainedDevelopmentAttempts": [
+    {
+      "path": "attempt-1-quoted-paths",
+      "status": "rejected-path-representation",
+      "reason": "Git default quoted Unicode names; selected process environment preserves actual filenames."
+    },
+    {
+      "log": {
+        "path": "artifacts/product-reality/sprint-195/m07/movers/derive-attribution-initial.log",
+        "sha256": "c787e5c80ba37af6dd5b87682dab1125b03506232378c08a83f16874d0a97d02"
+      },
+      "status": "failed",
+      "reason": "Local artifact helper initially did not handle alternate Git missing-file diagnostic; corrected before complete derivation."
+    }
+  ],
+  "runtimeQualification": "Not performed by this artifact task; root owns fresh m07 runtime."
+}

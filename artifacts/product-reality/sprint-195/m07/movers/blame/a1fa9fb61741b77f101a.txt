@@ -1,0 +1,135 @@
+a3158282bba25713171d7216181bde28b69a80a1 282 282 11
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c docs/mcp/Tool-Specs.md
+filename docs/mcp/Tool-Specs.md
+	`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. Invoice adds
+a3158282bba25713171d7216181bde28b69a80a1 283 283
+	`VizMarkPreview` over `line_items` in detail and dashboard layouts, with amounts
+a3158282bba25713171d7216181bde28b69a80a1 284 284
+	kept in minor currency units and matching descriptions summed. Usage adds
+a3158282bba25713171d7216181bde28b69a80a1 285 285
+	`VizLinePreview` over timestamp/value `samples` in those layouts. Its seed rows
+a3158282bba25713171d7216181bde28b69a80a1 286 286
+	are explicitly labelled synthetic API-call examples; the canonical meter unit
+a3158282bba25713171d7216181bde28b69a80a1 287 287
+	remains `api_calls`.
+a3158282bba25713171d7216181bde28b69a80a1 288 288
+	
+a3158282bba25713171d7216181bde28b69a80a1 289 289
+	Bound canonical MarkArea, MarkBar, MarkLine, MarkPoint and MarkRect declarations
+a3158282bba25713171d7216181bde28b69a80a1 290 290
+	use trait `title` and `description` parameters. Detail is projected; dashboard is
+a3158282bba25713171d7216181bde28b69a80a1 291 291
+	projected when the trait authors that context. MarkRect maps to the heatmap
+a3158282bba25713171d7216181bde28b69a80a1 292 292
+	preview. Unknown bound marks and mismatched chart types fail. Each public
+52b0da991705c4c565987bc9faf7738ba00d885e 284 294 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e docs/mcp/Tool-Specs.md
+filename docs/mcp/Tool-Specs.md
+	the requested `options.theme` (light/dark/hc) and brand (default light/A). The generated HC Subscription/detail area assets are verified in React and Vue under forced colours. React and Vue receive an optional
+a3158282bba25713171d7216181bde28b69a80a1 303 303 13
+	The `record-array` chart source binds a declared object array, public chart
+a3158282bba25713171d7216181bde28b69a80a1 304 304
+	encodings, and explicit `sampleRows` used to seed generated example records.
+a3158282bba25713171d7216181bde28b69a80a1 305 305
+	Generation reads the rows from each resulting record. One distinct chart
+a3158282bba25713171d7216181bde28b69a80a1 306 306
+	declaration is supported per generated object; identical repeated projections
+a3158282bba25713171d7216181bde28b69a80a1 307 307
+	share its assets. ECharts placement is carried under decision #1944: no matching
+a3158282bba25713171d7216181bde28b69a80a1 308 308
+	authored preview trait or object operand is present. Relationship's scalar edge
+a3158282bba25713171d7216181bde28b69a80a1 309 309
+	fields require an explicit directed nodes/links transformation before a graph
+a3158282bba25713171d7216181bde28b69a80a1 310 310
+	placement can claim the public network contract. The visualization census
+a3158282bba25713171d7216181bde28b69a80a1 311 311
+	records composed chart declarations; executed application proof is separate.
+a3158282bba25713171d7216181bde28b69a80a1 312 312
+	React/Vue application generation and isolated HTML chart nodes carry the real
+a3158282bba25713171d7216181bde28b69a80a1 313 313
+	SVG. Full Invoice/Usage detail HTML retains OODS-V007 for the existing Tabs
+a3158282bba25713171d7216181bde28b69a80a1 314 314
+	normalization limit; chart-node proof does not certify a full HTML application.
+a3158282bba25713171d7216181bde28b69a80a1 315 315
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 588 611 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+previous 5f71d0818a913830812e05dca123b628e0d83abe docs/mcp/Tool-Specs.md
+filename docs/mcp/Tool-Specs.md
+	Reports live readiness, component/trait/object counts, saved schemas, and validated runtime/tool-ledger summaries. `productReality.viz` reports the generated taxonomy's type, pattern, family, classification and Core Analytics Profile counts; surface-complete cells require public pixels from an identity assigned to that cell, while gaps have explicit reasons. Missing or invalid taxonomy returns null and degrades health. `tokens` lists built scopes and a labelled configured `defaultScope`; it does not observe a consumer. Missing subsystems degrade health explicitly.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 668 691 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 docs/mcp/Tool-Specs.md
+filename docs/mcp/Tool-Specs.md
+	- **Pattern mode**: supply an exact source identity such as `pattern:viz:simple-bar`. Bundled rows, bindings and authored presentation drive the same public renderer. The generated [pattern catalog](../viz/pattern-library-v2.md) records each identity's pixel proof or authoring-only reasons. Unsupported interactions and structural layouts return `OODS-V167`; pattern with explicit data, encodings, intent or identity/presentation overrides returns `OODS-V166`. Brand, theme, strict-field checks and output controls remain available.
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 675 698 10
+	Example input (pattern mode):
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 676 699
+	```json
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 677 700
+	{
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 678 701
+	  "pattern": "pattern:viz:simple-bar",
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 679 702
+	  "brand": "A",
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 680 703
+	  "theme": "dark",
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 681 704
+	  "output": { "svg": true, "includeNormalizedSpec": true }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 682 705
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 683 706
+	```
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 684 707
+	
+86b44639489552329a627219fe527918a6c08420 770 793 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+previous a10afdffe708055fa241e110eb1881bbd16c2968 docs/mcp/Tool-Specs.md
+filename docs/mcp/Tool-Specs.md
+	Grades the normalized IR returned by `viz.render`. The five Cartesian families certify from the IR alone. ECharts-primary families use the declared operand profile: pass the same `data` branch used to render the chart. That path grades accessibility equivalence, determinism, contrast and the offered accuracy rules, then returns a measured conformance boolean. Conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and at least one evaluated accuracy rule with no detected distortion. Warning-severity accessibility findings and named not-applicable rules remain visible. A certified result may be nonconformant; the measured failures are retained.
+86b44639489552329a627219fe527918a6c08420 771 794
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 772 795 1
+	Without an ECharts data operand, coverage remains `uncertified` and conformance remains `null`; notes name what could not be evaluated. No Vega-Lite compile is added to the ECharts profile. HTML is rejected with OODS-V126. Scope is A/B and light/dark/hc. HC contrast is exempt with `reason: forced-colors` and no numeric grade; accessibility, accuracy and determinism still evaluate normally. HC SVG proof covers bar, line, area and scatter. Heatmap and all eight ECharts types retain OODS-V165 undeclared-paint failures, which fail certification determinism and conformance. The registry pins the measured failures; no server-side system-colour hex palette is invented.

@@ -1,0 +1,877 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/schemas/dashboard.render.output.json
+filename packages/mcp-server/src/schemas/dashboard.render.output.json
+	  "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	    "status",
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	    "panels",
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	    "warnings"
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	  ],
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14 12
+	    "status": {
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	      "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	        "ok",
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	        "error"
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	      "description": "Whether the dashboard composed successfully (ok even when individual panels failed to a placeholder)."
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	    "schemaVersion": {
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	      "description": "Echoes the DashboardSpec IR version."
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29 3
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	        "$ref": "#/$defs/panelResult"
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36 3
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	        "$ref": "#/$defs/placement"
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43 34
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	        "type": "object",
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	        "additionalProperties": true
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	    "a11y": {
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	      "$ref": "#/$defs/dashboardA11y"
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	    "tokenCssRef": {
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	      "description": "Deferred token CSS reference when compact mode is on (use tokens.build)."
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	    "html": {
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	      "description": "Opt-in self-contained dashboard HTML with scoped chart SVG, KPI tiles and error placeholders. Light/dark renders all admitted chart types. HC chart rendering preserves declared token colors; unsupported renderer paints become typed error panels under the existing placeholder/omit policy."
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	    "specRef": {
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	      "description": "One dashboard-level reference to the composed payload for pipeline reuse."
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	    "specRefCreatedAt": {
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	      "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	    "specRefExpiresAt": {
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	      "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	    "contentHash": {
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	      "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs (sprint-134 m02)."
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	    "outputHtmlHash": {
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	      "description": "SHA-256 over the exact returned HTML bytes. Successful panels contain scoped SVG; failed panels follow the declared placeholder/omit policy, including measured HC render deferrals. This per-call identity is distinct from a certified runtime-matrix renderHashEpoch claim."
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82 39
+	        "compact": {
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	        "echarts": {
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	        "includeNormalizedSpec": {
+52b0da991705c4c565987bc9faf7738ba00d885e 89 89
+	          "type": "boolean",
+52b0da991705c4c565987bc9faf7738ba00d885e 90 90
+	          "description": "Echoes the call-level opt-in that emits panels[].normalizedSpec for successful chart panels."
+52b0da991705c4c565987bc9faf7738ba00d885e 91 91
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 92 92
+	        "html": {
+52b0da991705c4c565987bc9faf7738ba00d885e 93 93
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 94 94
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 95 95
+	        "dataTable": {
+52b0da991705c4c565987bc9faf7738ba00d885e 96 96
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 97 97
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 98 98
+	        "contrastScan": {
+52b0da991705c4c565987bc9faf7738ba00d885e 99 99
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 100 100
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 101 101
+	        "includeA11y": {
+52b0da991705c4c565987bc9faf7738ba00d885e 102 102
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 103 103
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 104 104
+	        "theme": {
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	            "light",
+52b0da991705c4c565987bc9faf7738ba00d885e 108 108
+	            "dark",
+52b0da991705c4c565987bc9faf7738ba00d885e 109 109
+	            "hc"
+52b0da991705c4c565987bc9faf7738ba00d885e 110 110
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 111 111
+	          "description": "Echoes an explicitly requested CSS token theme."
+52b0da991705c4c565987bc9faf7738ba00d885e 112 112
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 113 113
+	        "brand": {
+52b0da991705c4c565987bc9faf7738ba00d885e 114 114
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 115 115
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 116 116
+	            "A",
+52b0da991705c4c565987bc9faf7738ba00d885e 117 117
+	            "B"
+52b0da991705c4c565987bc9faf7738ba00d885e 118 118
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 119 119
+	          "description": "Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed."
+52b0da991705c4c565987bc9faf7738ba00d885e 120 120
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 127 127 28
+	        "panelCount": {
+52b0da991705c4c565987bc9faf7738ba00d885e 128 128
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 129 129
+	          "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 130 130
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 131 131
+	        "datasetCount": {
+52b0da991705c4c565987bc9faf7738ba00d885e 132 132
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 133 133
+	          "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 134 134
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 135 135
+	        "crossFiltered": {
+52b0da991705c4c565987bc9faf7738ba00d885e 136 136
+	          "type": "boolean",
+52b0da991705c4c565987bc9faf7738ba00d885e 137 137
+	          "description": "True when an active selection was applied."
+52b0da991705c4c565987bc9faf7738ba00d885e 138 138
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 139 139
+	        "errorPanelCount": {
+52b0da991705c4c565987bc9faf7738ba00d885e 140 140
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 141 141
+	          "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 142 142
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 143 143
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 144 144
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 145 145
+	    "errors": {
+52b0da991705c4c565987bc9faf7738ba00d885e 146 146
+	      "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 147 147
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 148 148
+	        "$ref": "#/$defs/issue"
+52b0da991705c4c565987bc9faf7738ba00d885e 149 149
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 150 150
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 151 151
+	    "warnings": {
+52b0da991705c4c565987bc9faf7738ba00d885e 152 152
+	      "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 153 153
+	      "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 154 154
+	        "$ref": "#/$defs/issue"
+52b0da991705c4c565987bc9faf7738ba00d885e 157 157 3
+	    "a11yContrast": {
+52b0da991705c4c565987bc9faf7738ba00d885e 158 158
+	      "$ref": "#/$defs/a11yContrast"
+52b0da991705c4c565987bc9faf7738ba00d885e 159 159
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 164 164 7
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 165 165
+	        "id",
+52b0da991705c4c565987bc9faf7738ba00d885e 166 166
+	        "x",
+52b0da991705c4c565987bc9faf7738ba00d885e 167 167
+	        "y",
+52b0da991705c4c565987bc9faf7738ba00d885e 168 168
+	        "w",
+52b0da991705c4c565987bc9faf7738ba00d885e 169 169
+	        "h"
+52b0da991705c4c565987bc9faf7738ba00d885e 170 170
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 173 173 19
+	        "id": {
+52b0da991705c4c565987bc9faf7738ba00d885e 174 174
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 175 175
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 176 176
+	        "x": {
+52b0da991705c4c565987bc9faf7738ba00d885e 177 177
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 178 178
+	          "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 179 179
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 180 180
+	        "y": {
+52b0da991705c4c565987bc9faf7738ba00d885e 181 181
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 182 182
+	          "minimum": 0
+52b0da991705c4c565987bc9faf7738ba00d885e 183 183
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 184 184
+	        "w": {
+52b0da991705c4c565987bc9faf7738ba00d885e 185 185
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 186 186
+	          "minimum": 1
+52b0da991705c4c565987bc9faf7738ba00d885e 187 187
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 188 188
+	        "h": {
+52b0da991705c4c565987bc9faf7738ba00d885e 189 189
+	          "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 190 190
+	          "minimum": 1
+52b0da991705c4c565987bc9faf7738ba00d885e 191 191
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 197 197 9
+	        {
+52b0da991705c4c565987bc9faf7738ba00d885e 198 198
+	          "$ref": "#/$defs/chartPanelResult"
+52b0da991705c4c565987bc9faf7738ba00d885e 199 199
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 200 200
+	        {
+52b0da991705c4c565987bc9faf7738ba00d885e 201 201
+	          "$ref": "#/$defs/kpiPanelResult"
+52b0da991705c4c565987bc9faf7738ba00d885e 202 202
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 203 203
+	        {
+52b0da991705c4c565987bc9faf7738ba00d885e 204 204
+	          "$ref": "#/$defs/errorPanelResult"
+52b0da991705c4c565987bc9faf7738ba00d885e 205 205
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 210 210 6
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 211 211
+	        "id",
+52b0da991705c4c565987bc9faf7738ba00d885e 212 212
+	        "kind",
+52b0da991705c4c565987bc9faf7738ba00d885e 213 213
+	        "chartType",
+52b0da991705c4c565987bc9faf7738ba00d885e 214 214
+	        "renderer"
+52b0da991705c4c565987bc9faf7738ba00d885e 215 215
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 218 218 44
+	        "id": {
+52b0da991705c4c565987bc9faf7738ba00d885e 219 219
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 220 220
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 221 221
+	        "kind": {
+52b0da991705c4c565987bc9faf7738ba00d885e 222 222
+	          "const": "chart"
+52b0da991705c4c565987bc9faf7738ba00d885e 223 223
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 224 224
+	        "title": {
+52b0da991705c4c565987bc9faf7738ba00d885e 225 225
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 226 226
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 227 227
+	        "chartType": {
+52b0da991705c4c565987bc9faf7738ba00d885e 228 228
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 229 229
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 230 230
+	        "renderer": {
+52b0da991705c4c565987bc9faf7738ba00d885e 231 231
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 232 232
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 233 233
+	            "vega-lite",
+52b0da991705c4c565987bc9faf7738ba00d885e 234 234
+	            "echarts"
+52b0da991705c4c565987bc9faf7738ba00d885e 235 235
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 236 236
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 237 237
+	        "spec": {
+52b0da991705c4c565987bc9faf7738ba00d885e 238 238
+	          "type": "object",
+52b0da991705c4c565987bc9faf7738ba00d885e 239 239
+	          "additionalProperties": true,
+52b0da991705c4c565987bc9faf7738ba00d885e 240 240
+	          "description": "Compiled Vega-Lite spec (tabular), or {} for ECharts-primary panels."
+52b0da991705c4c565987bc9faf7738ba00d885e 241 241
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 242 242
+	        "echartsSpec": {
+52b0da991705c4c565987bc9faf7738ba00d885e 243 243
+	          "type": "object",
+52b0da991705c4c565987bc9faf7738ba00d885e 244 244
+	          "additionalProperties": true,
+52b0da991705c4c565987bc9faf7738ba00d885e 245 245
+	          "description": "Compiled ECharts option (ECharts-primary panels + opt-in tabular). Geo panels carry the FeatureCollection on echartsSpec.__registration."
+52b0da991705c4c565987bc9faf7738ba00d885e 246 246
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 247 247
+	        "contentHash": {
+52b0da991705c4c565987bc9faf7738ba00d885e 248 248
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 249 249
+	          "description": "The successful panel's viz.render contentHash, equal to a standalone viz.render call over the identical resolved spec and data. Attached after the dashboard hash and outside its {panels, layout} projection. This receipt is brand-INVARIANT because brand applies later at dashboard HTML/SVG emission; it proves this-call content determinism, not certified-matrix renderHashEpoch coverage."
+52b0da991705c4c565987bc9faf7738ba00d885e 250 250
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 251 251
+	        "normalizedSpec": {
+52b0da991705c4c565987bc9faf7738ba00d885e 252 252
+	          "type": "object",
+52b0da991705c4c565987bc9faf7738ba00d885e 253 253
+	          "additionalProperties": true,
+52b0da991705c4c565987bc9faf7738ba00d885e 254 254
+	          "description": "The panel's intermediate NormalizedVizSpec IR, present only when output.includeNormalizedSpec=true. Attached after the dashboard hash and outside its {panels, layout} projection for direct artifact.certify round-trips."
+52b0da991705c4c565987bc9faf7738ba00d885e 255 255
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 256 256
+	        "a11yDescription": {
+52b0da991705c4c565987bc9faf7738ba00d885e 257 257
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 258 258
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 259 259
+	        "a11y": {
+52b0da991705c4c565987bc9faf7738ba00d885e 260 260
+	          "$ref": "#/$defs/structuredA11y"
+52b0da991705c4c565987bc9faf7738ba00d885e 261 261
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 271 271 5
+	          "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 272 272
+	            "caption",
+52b0da991705c4c565987bc9faf7738ba00d885e 273 273
+	            "columns",
+52b0da991705c4c565987bc9faf7738ba00d885e 274 274
+	            "rows"
+52b0da991705c4c565987bc9faf7738ba00d885e 275 275
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 278 278 3
+	            "caption": {
+52b0da991705c4c565987bc9faf7738ba00d885e 279 279
+	              "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 280 280
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 285 285 5
+	                "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 286 286
+	                  "field",
+52b0da991705c4c565987bc9faf7738ba00d885e 287 287
+	                  "label",
+52b0da991705c4c565987bc9faf7738ba00d885e 288 288
+	                  "isNumeric"
+52b0da991705c4c565987bc9faf7738ba00d885e 289 289
+	                ],
+52b0da991705c4c565987bc9faf7738ba00d885e 292 292 9
+	                  "field": {
+52b0da991705c4c565987bc9faf7738ba00d885e 293 293
+	                    "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 294 294
+	                  },
+52b0da991705c4c565987bc9faf7738ba00d885e 295 295
+	                  "label": {
+52b0da991705c4c565987bc9faf7738ba00d885e 296 296
+	                    "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 297 297
+	                  },
+52b0da991705c4c565987bc9faf7738ba00d885e 298 298
+	                  "isNumeric": {
+52b0da991705c4c565987bc9faf7738ba00d885e 299 299
+	                    "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 300 300
+	                  }
+52b0da991705c4c565987bc9faf7738ba00d885e 308 308 3
+	                "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 309 309
+	                  "cells"
+52b0da991705c4c565987bc9faf7738ba00d885e 310 310
+	                ],
+52b0da991705c4c565987bc9faf7738ba00d885e 317 317 4
+	                      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 318 318
+	                        "field",
+52b0da991705c4c565987bc9faf7738ba00d885e 319 319
+	                        "text"
+52b0da991705c4c565987bc9faf7738ba00d885e 320 320
+	                      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 323 323 6
+	                        "field": {
+52b0da991705c4c565987bc9faf7738ba00d885e 324 324
+	                          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 325 325
+	                        },
+52b0da991705c4c565987bc9faf7738ba00d885e 326 326
+	                        "text": {
+52b0da991705c4c565987bc9faf7738ba00d885e 327 327
+	                          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 328 328
+	                        }
+52b0da991705c4c565987bc9faf7738ba00d885e 339 339 4
+	          "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 340 340
+	            "summary",
+52b0da991705c4c565987bc9faf7738ba00d885e 341 341
+	            "keyFindings"
+52b0da991705c4c565987bc9faf7738ba00d885e 342 342
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 345 345 9
+	            "summary": {
+52b0da991705c4c565987bc9faf7738ba00d885e 346 346
+	              "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 347 347
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 348 348
+	            "keyFindings": {
+52b0da991705c4c565987bc9faf7738ba00d885e 349 349
+	              "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 350 350
+	              "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 351 351
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 352 352
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 353 353
+	            }
+52b0da991705c4c565987bc9faf7738ba00d885e 360 360 6
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 361 361
+	        "id",
+52b0da991705c4c565987bc9faf7738ba00d885e 362 362
+	        "kind",
+52b0da991705c4c565987bc9faf7738ba00d885e 363 363
+	        "value",
+52b0da991705c4c565987bc9faf7738ba00d885e 364 364
+	        "trendDirection"
+52b0da991705c4c565987bc9faf7738ba00d885e 365 365
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 368 368 50
+	        "id": {
+52b0da991705c4c565987bc9faf7738ba00d885e 369 369
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 370 370
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 371 371
+	        "kind": {
+52b0da991705c4c565987bc9faf7738ba00d885e 372 372
+	          "const": "kpi"
+52b0da991705c4c565987bc9faf7738ba00d885e 373 373
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 374 374
+	        "title": {
+52b0da991705c4c565987bc9faf7738ba00d885e 375 375
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 376 376
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 377 377
+	        "value": {
+52b0da991705c4c565987bc9faf7738ba00d885e 378 378
+	          "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 379 379
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 380 380
+	        "formatted": {
+52b0da991705c4c565987bc9faf7738ba00d885e 381 381
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 382 382
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 383 383
+	        "delta": {
+52b0da991705c4c565987bc9faf7738ba00d885e 384 384
+	          "type": [
+52b0da991705c4c565987bc9faf7738ba00d885e 385 385
+	            "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 386 386
+	            "null"
+52b0da991705c4c565987bc9faf7738ba00d885e 387 387
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 388 388
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 389 389
+	        "deltaPct": {
+52b0da991705c4c565987bc9faf7738ba00d885e 390 390
+	          "type": [
+52b0da991705c4c565987bc9faf7738ba00d885e 391 391
+	            "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 392 392
+	            "null"
+52b0da991705c4c565987bc9faf7738ba00d885e 393 393
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 394 394
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 395 395
+	        "trendDirection": {
+52b0da991705c4c565987bc9faf7738ba00d885e 396 396
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 397 397
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 398 398
+	            "increasing",
+52b0da991705c4c565987bc9faf7738ba00d885e 399 399
+	            "decreasing",
+52b0da991705c4c565987bc9faf7738ba00d885e 400 400
+	            "flat"
+52b0da991705c4c565987bc9faf7738ba00d885e 401 401
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 402 402
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 403 403
+	        "sparkline": {
+52b0da991705c4c565987bc9faf7738ba00d885e 404 404
+	          "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 405 405
+	          "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 406 406
+	            "type": "number"
+52b0da991705c4c565987bc9faf7738ba00d885e 407 407
+	          }
+52b0da991705c4c565987bc9faf7738ba00d885e 408 408
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 409 409
+	        "thresholdBreached": {
+52b0da991705c4c565987bc9faf7738ba00d885e 410 410
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 411 411
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 412 412
+	        "anomaly": {
+52b0da991705c4c565987bc9faf7738ba00d885e 413 413
+	          "type": "boolean"
+52b0da991705c4c565987bc9faf7738ba00d885e 414 414
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 415 415
+	        "a11yDescription": {
+52b0da991705c4c565987bc9faf7738ba00d885e 416 416
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 417 417
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 422 422 5
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 423 423
+	        "id",
+52b0da991705c4c565987bc9faf7738ba00d885e 424 424
+	        "kind",
+52b0da991705c4c565987bc9faf7738ba00d885e 425 425
+	        "error"
+52b0da991705c4c565987bc9faf7738ba00d885e 426 426
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 430 430 18
+	        "id": {
+52b0da991705c4c565987bc9faf7738ba00d885e 431 431
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 432 432
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 433 433
+	        "kind": {
+52b0da991705c4c565987bc9faf7738ba00d885e 434 434
+	          "const": "error"
+52b0da991705c4c565987bc9faf7738ba00d885e 435 435
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 436 436
+	        "title": {
+52b0da991705c4c565987bc9faf7738ba00d885e 437 437
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 438 438
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 439 439
+	        "chartType": {
+52b0da991705c4c565987bc9faf7738ba00d885e 440 440
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 441 441
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 442 442
+	        "error": {
+52b0da991705c4c565987bc9faf7738ba00d885e 443 443
+	          "$ref": "#/$defs/issue"
+52b0da991705c4c565987bc9faf7738ba00d885e 444 444
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 445 445
+	        "a11yDescription": {
+52b0da991705c4c565987bc9faf7738ba00d885e 446 446
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 447 447
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 452 452 3
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 453 453
+	        "description"
+52b0da991705c4c565987bc9faf7738ba00d885e 454 454
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 457 457 20
+	        "description": {
+52b0da991705c4c565987bc9faf7738ba00d885e 458 458
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 459 459
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 460 460
+	        "ariaLabel": {
+52b0da991705c4c565987bc9faf7738ba00d885e 461 461
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 462 462
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 463 463
+	        "readingOrder": {
+52b0da991705c4c565987bc9faf7738ba00d885e 464 464
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 465 465
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 466 466
+	            "kpi-first",
+52b0da991705c4c565987bc9faf7738ba00d885e 467 467
+	            "declared"
+52b0da991705c4c565987bc9faf7738ba00d885e 468 468
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 469 469
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 470 470
+	        "panelOrder": {
+52b0da991705c4c565987bc9faf7738ba00d885e 471 471
+	          "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 472 472
+	          "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 473 473
+	            "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 474 474
+	          },
+52b0da991705c4c565987bc9faf7738ba00d885e 475 475
+	          "description": "Panel ids in reading/focus order (KPI row first by default)."
+52b0da991705c4c565987bc9faf7738ba00d885e 476 476
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 481 481 9
+	            "summary": {
+52b0da991705c4c565987bc9faf7738ba00d885e 482 482
+	              "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 483 483
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 484 484
+	            "keyFindings": {
+52b0da991705c4c565987bc9faf7738ba00d885e 485 485
+	              "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 486 486
+	              "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 487 487
+	                "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 488 488
+	              }
+52b0da991705c4c565987bc9faf7738ba00d885e 489 489
+	            }
+52b0da991705c4c565987bc9faf7738ba00d885e 496 496 4
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 497 497
+	        "code",
+52b0da991705c4c565987bc9faf7738ba00d885e 498 498
+	        "message"
+52b0da991705c4c565987bc9faf7738ba00d885e 499 499
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 502 502 13
+	        "code": {
+52b0da991705c4c565987bc9faf7738ba00d885e 503 503
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 504 504
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 505 505
+	        "message": {
+52b0da991705c4c565987bc9faf7738ba00d885e 506 506
+	          "type": "string"
+52b0da991705c4c565987bc9faf7738ba00d885e 507 507
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 508 508
+	        "severity": {
+52b0da991705c4c565987bc9faf7738ba00d885e 509 509
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 510 510
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 511 511
+	            "error",
+52b0da991705c4c565987bc9faf7738ba00d885e 512 512
+	            "warning"
+52b0da991705c4c565987bc9faf7738ba00d885e 513 513
+	          ]
+52b0da991705c4c565987bc9faf7738ba00d885e 514 514
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 519 519 6
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 520 520
+	        "pair",
+52b0da991705c4c565987bc9faf7738ba00d885e 521 521
+	        "ratio",
+52b0da991705c4c565987bc9faf7738ba00d885e 522 522
+	        "threshold",
+52b0da991705c4c565987bc9faf7738ba00d885e 523 523
+	        "severity"
+52b0da991705c4c565987bc9faf7738ba00d885e 524 524
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 527 527 20
+	        "pair": {
+52b0da991705c4c565987bc9faf7738ba00d885e 528 528
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 529 529
+	          "description": "The contrast pair id (e.g. 'fg-on-bg')."
+52b0da991705c4c565987bc9faf7738ba00d885e 530 530
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 531 531
+	        "ratio": {
+52b0da991705c4c565987bc9faf7738ba00d885e 532 532
+	          "type": "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 533 533
+	          "description": "Measured WCAG contrast ratio (e.g. 3.2)."
+52b0da991705c4c565987bc9faf7738ba00d885e 534 534
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 535 535
+	        "threshold": {
+52b0da991705c4c565987bc9faf7738ba00d885e 536 536
+	          "type": "number",
+52b0da991705c4c565987bc9faf7738ba00d885e 537 537
+	          "description": "Required minimum ratio (e.g. 4.5)."
+52b0da991705c4c565987bc9faf7738ba00d885e 538 538
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 539 539
+	        "severity": {
+52b0da991705c4c565987bc9faf7738ba00d885e 540 540
+	          "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 541 541
+	          "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 542 542
+	            "error",
+52b0da991705c4c565987bc9faf7738ba00d885e 543 543
+	            "warning"
+52b0da991705c4c565987bc9faf7738ba00d885e 544 544
+	          ],
+52b0da991705c4c565987bc9faf7738ba00d885e 545 545
+	          "description": "Always 'warning' — a failing pair, mirroring the OODS-V135 warning."
+52b0da991705c4c565987bc9faf7738ba00d885e 546 546
+	        }
+52b0da991705c4c565987bc9faf7738ba00d885e 551 551 3
+	      "required": [
+52b0da991705c4c565987bc9faf7738ba00d885e 552 552
+	        "findings"
+52b0da991705c4c565987bc9faf7738ba00d885e 553 553
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 557 557 6
+	        "findings": {
+52b0da991705c4c565987bc9faf7738ba00d885e 558 558
+	          "type": "array",
+52b0da991705c4c565987bc9faf7738ba00d885e 559 559
+	          "items": {
+52b0da991705c4c565987bc9faf7738ba00d885e 560 560
+	            "$ref": "#/$defs/contrastFinding"
+52b0da991705c4c565987bc9faf7738ba00d885e 561 561
+	          }
+52b0da991705c4c565987bc9faf7738ba00d885e 562 562
+	        },
+52b0da991705c4c565987bc9faf7738ba00d885e 568 568 10
+	            "failing": {
+52b0da991705c4c565987bc9faf7738ba00d885e 569 569
+	              "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 570 570
+	              "minimum": 0,
+52b0da991705c4c565987bc9faf7738ba00d885e 571 571
+	              "description": "Number of brand-token pairs below their WCAG threshold."
+52b0da991705c4c565987bc9faf7738ba00d885e 572 572
+	            },
+52b0da991705c4c565987bc9faf7738ba00d885e 573 573
+	            "gradedPairs": {
+52b0da991705c4c565987bc9faf7738ba00d885e 574 574
+	              "type": "integer",
+52b0da991705c4c565987bc9faf7738ba00d885e 575 575
+	              "minimum": 0,
+52b0da991705c4c565987bc9faf7738ba00d885e 576 576
+	              "description": "How many brand-token pairs were actually MEASURED (s169 m04). `failing: 0` on its own cannot distinguish \"checked every pair and all passed\" from \"checked nothing\" — and until s169 it silently meant the second, because the resolved tokens are rgb() strings the ratio function rejected and the rejection was swallowed. A consumer should treat gradedPairs < the expected pair count as an incomplete scan, not a clean one."
+52b0da991705c4c565987bc9faf7738ba00d885e 577 577
+	            }

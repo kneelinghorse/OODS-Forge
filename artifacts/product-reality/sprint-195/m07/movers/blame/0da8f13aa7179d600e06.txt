@@ -1,0 +1,134 @@
+86b44639489552329a627219fe527918a6c08420 1 1 62
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+filename scripts/product-reality/s195-viz-accuracy-bite.mjs
+	#!/usr/bin/env node
+86b44639489552329a627219fe527918a6c08420 2 2
+	/** One bounded physical predicate mutation; always restore and rebuild before returning. */
+86b44639489552329a627219fe527918a6c08420 3 3
+	import assert from 'node:assert/strict';
+86b44639489552329a627219fe527918a6c08420 4 4
+	import { createHash } from 'node:crypto';
+86b44639489552329a627219fe527918a6c08420 5 5
+	import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+86b44639489552329a627219fe527918a6c08420 6 6
+	import { dirname, resolve } from 'node:path';
+86b44639489552329a627219fe527918a6c08420 7 7
+	import { spawnSync } from 'node:child_process';
+86b44639489552329a627219fe527918a6c08420 8 8
+	import { fileURLToPath } from 'node:url';
+86b44639489552329a627219fe527918a6c08420 9 9
+	
+86b44639489552329a627219fe527918a6c08420 10 10
+	const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
+86b44639489552329a627219fe527918a6c08420 11 11
+	const output = resolve(process.env.OODS_VIZ_ACCURACY_BITE_OUTPUT ?? resolve(root, 'artifacts/product-reality/sprint-195/m04/bite'));
+86b44639489552329a627219fe527918a6c08420 12 12
+	const relative = 'packages/viz-core/src/accuracy/echarts-index.ts';
+86b44639489552329a627219fe527918a6c08420 13 13
+	const file = resolve(root, relative);
+86b44639489552329a627219fe527918a6c08420 14 14
+	const before = readFileSync(file, 'utf8');
+86b44639489552329a627219fe527918a6c08420 15 15
+	const block = /const V171: EChartsAccuracyRule = \{[\s\S]*?\n\};/.exec(before)?.[0];
+86b44639489552329a627219fe527918a6c08420 16 16
+	assert(block, 'The real V171 registration must exist before running its predicate bite');
+86b44639489552329a627219fe527918a6c08420 17 17
+	const evaluatorMatch = /evaluate: ([A-Za-z0-9_]+),/.exec(block);
+86b44639489552329a627219fe527918a6c08420 18 18
+	assert(evaluatorMatch, 'V171 must use a real named predicate');
+86b44639489552329a627219fe527918a6c08420 19 19
+	const evaluator = evaluatorMatch[0];
+86b44639489552329a627219fe527918a6c08420 20 20
+	// Retain the import reference so noUnusedLocals cannot substitute a build error for the intended red.
+86b44639489552329a627219fe527918a6c08420 21 21
+	const disabledEvaluator = `evaluate: () => { void ${evaluatorMatch[1]}; return { evaluated: true }; },`;
+86b44639489552329a627219fe527918a6c08420 22 22
+	const disabled = block.replace(evaluator, disabledEvaluator);
+86b44639489552329a627219fe527918a6c08420 23 23
+	const mutant = before.replace(block, disabled);
+86b44639489552329a627219fe527918a6c08420 24 24
+	assert.notEqual(mutant, before);
+86b44639489552329a627219fe527918a6c08420 25 25
+	const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+86b44639489552329a627219fe527918a6c08420 26 26
+	mkdirSync(output, { recursive: true });
+86b44639489552329a627219fe527918a6c08420 27 27
+	const record = {
+86b44639489552329a627219fe527918a6c08420 28 28
+	  schemaVersion: 1, missionId: 's195-m04', builderSelfCertified: false,
+86b44639489552329a627219fe527918a6c08420 29 29
+	  mutation: { path: relative, code: 'OODS-V171', before: evaluator, after: disabledEvaluator,
+86b44639489552329a627219fe527918a6c08420 30 30
+	    sourceSha256Before: sha256(before), sourceSha256Disabled: sha256(mutant),
+86b44639489552329a627219fe527918a6c08420 31 31
+	    invariant: 'The offered rule list and evaluated count remain intact; only the negative-strength predicate is disabled.' },
+86b44639489552329a627219fe527918a6c08420 32 32
+	  commands: [], restoredByteIdentically: false,
+86b44639489552329a627219fe527918a6c08420 33 33
+	};
+86b44639489552329a627219fe527918a6c08420 34 34
+	function run(name, args) {
+86b44639489552329a627219fe527918a6c08420 35 35
+	  const result = spawnSync('pnpm', args, { cwd: root, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+86b44639489552329a627219fe527918a6c08420 36 36
+	  const text = `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ? String(result.error) : ''}`;
+86b44639489552329a627219fe527918a6c08420 37 37
+	  const log = `${name}.log`;
+86b44639489552329a627219fe527918a6c08420 38 38
+	  writeFileSync(resolve(output, log), text);
+86b44639489552329a627219fe527918a6c08420 39 39
+	  record.commands.push({ name, command: ['pnpm', ...args], exitCode: result.status, log });
+86b44639489552329a627219fe527918a6c08420 40 40
+	  return { exitCode: result.status, text };
+86b44639489552329a627219fe527918a6c08420 41 41
+	}
+86b44639489552329a627219fe527918a6c08420 42 42
+	let failure;
+86b44639489552329a627219fe527918a6c08420 43 43
+	try {
+86b44639489552329a627219fe527918a6c08420 44 44
+	  writeFileSync(file, mutant);
+86b44639489552329a627219fe527918a6c08420 45 45
+	  assert.equal(run('disabled-build', ['--filter', '@oods/viz-core', 'run', 'build']).exitCode, 0, 'The disabled predicate must build before its red is meaningful');
+86b44639489552329a627219fe527918a6c08420 46 46
+	  const red = run('disabled-census', ['exec', 'tsx', 'scripts/product-reality/s190-viz-census.ts', '--check']);
+86b44639489552329a627219fe527918a6c08420 47 47
+	  assert.notEqual(red.exitCode, 0, 'A disabled accuracy predicate must make the live census red');
+86b44639489552329a627219fe527918a6c08420 48 48
+	  assert.match(red.text, /flow_map: census missed required OODS-V171 accuracy finding/, 'The red must expose the missing production predicate, not another failure');
+86b44639489552329a627219fe527918a6c08420 49 49
+	} catch (error) { failure = error; }
+86b44639489552329a627219fe527918a6c08420 50 50
+	finally {
+86b44639489552329a627219fe527918a6c08420 51 51
+	  // Never overwrite an unrelated edit made during the coordinated mutation window.
+86b44639489552329a627219fe527918a6c08420 52 52
+	  assert.equal(readFileSync(file, 'utf8'), mutant, 'Source changed during the bite; manual reconciliation is required');
+86b44639489552329a627219fe527918a6c08420 53 53
+	  writeFileSync(file, before);
+86b44639489552329a627219fe527918a6c08420 54 54
+	  record.restoredByteIdentically = readFileSync(file, 'utf8') === before;
+86b44639489552329a627219fe527918a6c08420 55 55
+	  const restoredBuild = run('restored-build', ['--filter', '@oods/viz-core', 'run', 'build']);
+86b44639489552329a627219fe527918a6c08420 56 56
+	  const green = restoredBuild.exitCode === 0 ? run('restored-census', ['exec', 'tsx', 'scripts/product-reality/s190-viz-census.ts', '--check']) : undefined;
+86b44639489552329a627219fe527918a6c08420 57 57
+	  record.status = !failure && record.restoredByteIdentically && restoredBuild.exitCode === 0 && green?.exitCode === 0 ? 'passed' : 'failed';
+86b44639489552329a627219fe527918a6c08420 58 58
+	  writeFileSync(resolve(output, 'accuracy-bite.json'), JSON.stringify(record, null, 2) + '\n');
+86b44639489552329a627219fe527918a6c08420 59 59
+	}
+86b44639489552329a627219fe527918a6c08420 60 60
+	if (failure) throw failure;
+86b44639489552329a627219fe527918a6c08420 61 61
+	assert.equal(record.status, 'passed', 'Restored source and full live census must be green');
+86b44639489552329a627219fe527918a6c08420 62 62
+	console.log(JSON.stringify({ status: record.status, rule: 'OODS-V171', restoredByteIdentically: record.restoredByteIdentically }));

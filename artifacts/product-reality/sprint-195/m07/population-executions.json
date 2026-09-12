@@ -1,0 +1,118 @@
+{
+  "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+  "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+  "status": "passed",
+  "sourceDiff": [],
+  "executions": [
+    {
+      "id": "mcp-build",
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/mcp-build.log",
+          "sha256": "8ce8e498fee226a15a89c153e3b8258052de65fcfe4aa7959592510880a8219d"
+        }
+      ]
+    },
+    {
+      "id": "component-census",
+      "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/component-census --fresh --full-population --mission s195-m07",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/component-census.log",
+          "sha256": "10fe0918e29bfe5bd715644e5d92bb654c54d453c23e408d0a0edd8e2cffe459"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/component-census/report.json",
+          "sha256": "a749f08ff271fa8a5fa5feafae44a1b4bd9b1f002f4412575e1be9194878f37f"
+        }
+      ]
+    },
+    {
+      "id": "saved-original",
+      "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/saved-original --mission s195-m07",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/saved-original.log",
+          "sha256": "07b2eac42b0d246303e27c997193eb5cde1a0cb9b016627bc5aafd26641ff9c2"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/saved-original/report.json",
+          "sha256": "9365a5f0faacb395635c1fb0a861739aeeea9cd2a7fb37a4dadc0b26ff9a610c"
+        }
+      ]
+    },
+    {
+      "id": "saved-successor",
+      "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/saved-successor --store artifacts/product-reality/sprint-187/m05/delivery-final/recomposed-store --mission s195-m07",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/saved-successor.log",
+          "sha256": "c7b43f630d779e4f71ff78094af1bfeb840b07186d57a8d530cdcd33c7f3007e"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/saved-successor/report.json",
+          "sha256": "13218b85154702d73993e27eb4a618e16ce552a5b3328341b5fc2468e4b95905"
+        }
+      ]
+    },
+    {
+      "id": "census-verification",
+      "command": "python3 artifacts/product-reality/sprint-195/m07/verify-census.py",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/census-verification.log",
+          "sha256": "87b93b6c90a1b33e466307f68821161724c1dc14b9a18e458098263e0298702e"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/schema-movement.json",
+          "sha256": "c2c02b182090a9e08132abd323b35cc84a44d9bd6c1eb3da7374c2b94a0123e6"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/saved-compatibility.json",
+          "sha256": "becebf6abadc8e01bdf63d3ce71dde94e185b8fe455d158cea6f294d724d5d6c"
+        }
+      ]
+    },
+    {
+      "id": "component-verification",
+      "command": "node artifacts/product-reality/sprint-195/m07/verify-components.mjs",
+      "exitCode": 0,
+      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/component-verification.log",
+          "sha256": "33da87e65ddaa7cd02730e39ec4028fb04eb71ee18706c6029a0a0e85434fe49"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/component-proof.json",
+          "sha256": "1059463646d9d2f4ae86f865d966f2269baa835874decff00f24e0637041a9bd"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/health-dist.json",
+          "sha256": "632b9980821d98422205cedb2e307b07dd2b988d699b9c26c188bb561149fba0"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/tool-proof.json",
+          "sha256": "e11d4cdb553c186ac9ffd8b63bf3ae353d1c4e2a7037ec3986b477cd2e6cb4d8"
+        }
+      ]
+    }
+  ]
+}

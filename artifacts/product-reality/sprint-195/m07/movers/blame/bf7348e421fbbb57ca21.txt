@@ -1,0 +1,388 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 189
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+filename scripts/product-reality/s195-palette.ts
+	/** s195-m05: deterministic hue-only search, canonical application and built-token proof.
+52b0da991705c4c565987bc9faf7738ba00d885e 2 2
+	 * Run --select before edits, then --apply, the real token build, and --verify.
+52b0da991705c4c565987bc9faf7738ba00d885e 3 3
+	 * --select never mutates token sources. --replay recomputes the saved selection.
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4
+	 */
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5
+	import assert from 'node:assert/strict';
+52b0da991705c4c565987bc9faf7738ba00d885e 6 6
+	import { createHash } from 'node:crypto';
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+	import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	import { pathToFileURL } from 'node:url';
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	import Color from 'colorjs.io';
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	import { contrastRatio } from '@oods/a11y-tools';
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	import { createRequire } from 'node:module';
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	import { resolveCategoricalPalette, resolveTokenToColor, type NormalizedVizSpec } from '@oods/viz-core';
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	import { evaluateCategoricalRoleA } from '../../packages/mcp-server/src/tools/certify-contrast.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	import { CVD_TYPES, simulateCvd } from '../../packages/mcp-server/src/tools/cvd-machado.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	const PACKET = 'artifacts/product-reality/sprint-195/m05/palette';
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	const BRANDS = ['A', 'B'] as const;
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	const THEMES = ['light', 'dark'] as const;
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	const SLOT_KEYS = Array.from({ length: 6 }, (_, index) => `--oods-viz-scale-categorical-0${index + 1}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	type TokenMap = Record<string, string>;
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	const bundle = createRequire(import.meta.url)('../../packages/tokens/dist/index.cjs') as {
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	  cssVariables: TokenMap;
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	  cssVariablesByScope: Record<string, Record<string, TokenMap>>;
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	};
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	type SourceDoc = Record<string, any>;
+52b0da991705c4c565987bc9faf7738ba00d885e 26 26
+	interface Selection {
+52b0da991705c4c565987bc9faf7738ba00d885e 27 27
+	  theme: string;
+52b0da991705c4c565987bc9faf7738ba00d885e 28 28
+	  candidateCount: number;
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29
+	  hueStepDegrees: number;
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	  candidates: Array<{ slot: number; hueDelta: number; value: string; palette: string[]; minimumDeltaE: number; minimumContrast: number }>;
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	  chosen: { slot: number; hueDelta: number; value: string; palette: string[]; minimumDeltaE: number; minimumContrast: number };
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	const read = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+52b0da991705c4c565987bc9faf7738ba00d885e 35 35
+	const save = (name: string, value: unknown) => writeFileSync(`${PACKET}/${name}`, JSON.stringify(value, null, 2) + '\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36
+	export const hex = (raw: string): string => '#' + new Color(raw).to('srgb').coords
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	  .map(channel => Math.round(Math.max(0, Math.min(1, channel!)) * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	const maps = (): Record<string, TokenMap> => ({
+52b0da991705c4c565987bc9faf7738ba00d885e 39 39
+	  flat: bundle.cssVariables,
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40
+	  ...Object.fromEntries(BRANDS.flatMap(brand => ['light', 'dark', 'hc'].map(theme => [`${brand}/${theme}`, bundle.cssVariablesByScope[brand][theme]]))),
+52b0da991705c4c565987bc9faf7738ba00d885e 41 41
+	});
+52b0da991705c4c565987bc9faf7738ba00d885e 42 42
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43
+	export function grades(rawPalette: string[], canvas: string) {
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	  const palette = rawPalette.map(hex);
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	  const pairwise = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	  for (let i = 0; i < palette.length; i++) for (let j = i + 1; j < palette.length; j++) {
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	    for (const mode of ['normal', ...CVD_TYPES] as const) {
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	      const a = mode === 'normal' ? palette[i]! : simulateCvd(palette[i]!, mode);
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	      const b = mode === 'normal' ? palette[j]! : simulateCvd(palette[j]!, mode);
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	      pairwise.push({ slots: [i + 1, j + 1], mode, deltaE: new Color(a).deltaE(new Color(b), '2000') });
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	  return {
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	    rawPalette, palette, canvas,
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	    roleA: evaluateCategoricalRoleA(palette),
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	    slots: palette.map((paint, index) => ({ slot: index + 1, paint, chroma: new Color(paint).oklch[1], contrast: contrastRatio(paint, canvas) })),
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	    pairwise,
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	  };
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	/** Exhaust each smaller 0.01-degree radius first; change one hue only, never L/C.
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	 * At the first feasible radius, prefer fewer/deterministically earlier slot changes,
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	 * then negative before positive. The bound is five degrees, not an unbounded search.
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	 */
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	export function selectMinimalHue(theme: string, raw: string[], canvases: string[]): Selection {
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	  let candidateCount = 0;
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	  for (let radius = 1; radius <= 500; radius++) {
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	    const candidates: Selection['candidates'] = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	    for (let slot = 0; slot < raw.length; slot++) for (const sign of [-1, 1]) {
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	      // Preserve authored L/C exactly, avoiding parse/serialize roundoff in Colorjs.
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	      const source = raw[slot]!.match(/^oklch\((\S+) (\S+) ([0-9.]+)\)$/);
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	      assert(source, `Expected canonical inline OKLCH: ${raw[slot]}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	      const hueDelta = sign * radius / 100;
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	      const hue = Math.round((Number(source[3]) + hueDelta) * 100) / 100;
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	      const value = `oklch(${source[1]} ${source[2]} ${hue})`;
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	      const palette = raw.map((paint, index) => hex(index === slot ? value : paint));
+52b0da991705c4c565987bc9faf7738ba00d885e 77 77
+	      candidateCount++;
+52b0da991705c4c565987bc9faf7738ba00d885e 78 78
+	      const minimumContrast = Math.min(...palette.flatMap(paint => canvases.map(canvas => contrastRatio(paint, canvas))));
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79
+	      if (minimumContrast < 3) continue;
+52b0da991705c4c565987bc9faf7738ba00d885e 80 80
+	      const roleA = evaluateCategoricalRoleA(palette);
+52b0da991705c4c565987bc9faf7738ba00d885e 81 81
+	      if (roleA.verdict === 'pass' && roleA.minimumDeltaE !== undefined && roleA.minimumDeltaE >= 10) {
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82
+	        candidates.push({ slot: slot + 1, hueDelta, value, palette, minimumDeltaE: roleA.minimumDeltaE, minimumContrast });
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	      }
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	    if (candidates.length) return { theme, candidateCount, hueStepDegrees: 0.01, candidates, chosen: candidates[0]! };
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	  throw new Error(`${theme}: no one-slot hue-only solution within ±5 degrees at 0.01-degree precision; record the measured search before widening scope.`);
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 89 89
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 90 90
+	function leaves(doc: SourceDoc, prefix = ''): Record<string, unknown> {
+52b0da991705c4c565987bc9faf7738ba00d885e 91 91
+	  if ('$value' in doc) return { [prefix]: doc.$value };
+52b0da991705c4c565987bc9faf7738ba00d885e 92 92
+	  return Object.fromEntries(Object.entries(doc).filter(([, value]) => value && typeof value === 'object' && !Array.isArray(value))
+52b0da991705c4c565987bc9faf7738ba00d885e 93 93
+	    .flatMap(([key, value]) => Object.entries(leaves(value, prefix ? `${prefix}.${key}` : key))));
+52b0da991705c4c565987bc9faf7738ba00d885e 94 94
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 95 95
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 96 96
+	function selectionFrom(before: any): Selection[] {
+52b0da991705c4c565987bc9faf7738ba00d885e 97 97
+	  return THEMES.map(theme => {
+52b0da991705c4c565987bc9faf7738ba00d885e 98 98
+	    const raw = SLOT_KEYS.map(key => before.maps[`A/${theme}`][key]);
+52b0da991705c4c565987bc9faf7738ba00d885e 99 99
+	    assert.deepEqual(raw, SLOT_KEYS.map(key => before.maps[`B/${theme}`][key]), 'This bounded shared-hue search requires equal A/B palettes.');
+52b0da991705c4c565987bc9faf7738ba00d885e 100 100
+	    return selectMinimalHue(theme, raw, BRANDS.map(brand => hex(before.maps[`${brand}/${theme}`]['--oods-sys-surface-canvas'])));
+52b0da991705c4c565987bc9faf7738ba00d885e 101 101
+	  });
+52b0da991705c4c565987bc9faf7738ba00d885e 102 102
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 103 103
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 104 104
+	async function main() {
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105
+	  const mode = process.argv[2];
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	  mkdirSync(PACKET, { recursive: true });
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	  if (mode === '--select') {
+52b0da991705c4c565987bc9faf7738ba00d885e 108 108
+	    const sourcePaths = BRANDS.flatMap(brand => ['base', 'dark', 'hc'].map(theme => `packages/tokens/src/tokens/brands/${brand}/${theme}.json`));
+52b0da991705c4c565987bc9faf7738ba00d885e 109 109
+	    sourcePaths.push('packages/tokens/src/viz-scales.json');
+52b0da991705c4c565987bc9faf7738ba00d885e 110 110
+	    const before = {
+52b0da991705c4c565987bc9faf7738ba00d885e 111 111
+	      base: '9c75a1dbb495ca26c16f2f75ce52095e72adb16e',
+52b0da991705c4c565987bc9faf7738ba00d885e 112 112
+	      maps: maps(),
+52b0da991705c4c565987bc9faf7738ba00d885e 113 113
+	      sources: Object.fromEntries(sourcePaths.map(path => [path, read(path)])),
+52b0da991705c4c565987bc9faf7738ba00d885e 114 114
+	      sourceLeafCounts: Object.fromEntries(sourcePaths.map(path => [path, Object.keys(leaves(read(path))).length])),
+52b0da991705c4c565987bc9faf7738ba00d885e 115 115
+	      scopes: BRANDS.flatMap(brand => THEMES.map(theme => {
+52b0da991705c4c565987bc9faf7738ba00d885e 116 116
+	        const map = maps()[`${brand}/${theme}`]!;
+52b0da991705c4c565987bc9faf7738ba00d885e 117 117
+	        return { scope: `${brand}/${theme}`, ...grades(SLOT_KEYS.map(key => map[key]!), hex(map['--oods-sys-surface-canvas']!)) };
+52b0da991705c4c565987bc9faf7738ba00d885e 118 118
+	      })),
+52b0da991705c4c565987bc9faf7738ba00d885e 119 119
+	    };
+52b0da991705c4c565987bc9faf7738ba00d885e 120 120
+	    if (existsSync(`${PACKET}/before.json`)) assert.deepEqual(read(`${PACKET}/before.json`), before, 'Refusing to overwrite historical before evidence; use --replay.');
+52b0da991705c4c565987bc9faf7738ba00d885e 121 121
+	    else save('before.json', before);
+52b0da991705c4c565987bc9faf7738ba00d885e 122 122
+	    const selection = selectionFrom(before);
+52b0da991705c4c565987bc9faf7738ba00d885e 123 123
+	    save('selection.json', { algorithm: 'One slot; smallest absolute hue offset on 0.01-degree grid within ±5 degrees; L/C fixed; Role-A >=10 normal + three Machado CVD modes, Role-C >=3 on both canvases, chroma >=0.03.', selection });
+52b0da991705c4c565987bc9faf7738ba00d885e 124 124
+	    console.log(JSON.stringify(selection, null, 2));
+52b0da991705c4c565987bc9faf7738ba00d885e 125 125
+	    return;
+52b0da991705c4c565987bc9faf7738ba00d885e 126 126
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 127 127
+	  const before = read(`${PACKET}/before.json`);
+52b0da991705c4c565987bc9faf7738ba00d885e 128 128
+	  const selection = read(`${PACKET}/selection.json`).selection as Selection[];
+52b0da991705c4c565987bc9faf7738ba00d885e 129 129
+	  if (mode === '--replay') {
+52b0da991705c4c565987bc9faf7738ba00d885e 130 130
+	    assert.deepEqual(selectionFrom(before), selection);
+52b0da991705c4c565987bc9faf7738ba00d885e 131 131
+	    console.log('Deterministic selection replay matches byte-for-byte JSON values.');
+52b0da991705c4c565987bc9faf7738ba00d885e 132 132
+	    return;
+52b0da991705c4c565987bc9faf7738ba00d885e 133 133
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 134 134
+	  if (mode === '--apply') {
+52b0da991705c4c565987bc9faf7738ba00d885e 135 135
+	    for (const selected of selection) for (const brand of BRANDS) {
+52b0da991705c4c565987bc9faf7738ba00d885e 136 136
+	      const theme = selected.theme === 'light' ? 'base' : 'dark';
+52b0da991705c4c565987bc9faf7738ba00d885e 137 137
+	      const path = `packages/tokens/src/tokens/brands/${brand}/${theme}.json`;
+52b0da991705c4c565987bc9faf7738ba00d885e 138 138
+	      assert.deepEqual(read(path), before.sources[path], `Source changed since baseline: ${path}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 139 139
+	      const doc = read(path);
+52b0da991705c4c565987bc9faf7738ba00d885e 140 140
+	      doc.viz ??= {}; doc.viz.scale ??= {}; doc.viz.scale.categorical ??= {};
+52b0da991705c4c565987bc9faf7738ba00d885e 141 141
+	      const slot = String(selected.chosen.slot).padStart(2, '0');
+52b0da991705c4c565987bc9faf7738ba00d885e 142 142
+	      doc.viz.scale.categorical[slot] = {
+52b0da991705c4c565987bc9faf7738ba00d885e 143 143
+	        ...(doc.viz.scale.categorical[slot] ?? { $type: 'color' }),
+52b0da991705c4c565987bc9faf7738ba00d885e 144 144
+	        $value: selected.chosen.value,
+52b0da991705c4c565987bc9faf7738ba00d885e 145 145
+	        $description: `${selected.theme === 'light' ? 'Light' : 'Dark'} categorical slot ${slot}; minimal hue revision with fixed lightness/chroma, measured Role-A >=10 and Role-C >=3:1 on both brand canvases (s195-m05).`,
+52b0da991705c4c565987bc9faf7738ba00d885e 146 146
+	      };
+52b0da991705c4c565987bc9faf7738ba00d885e 147 147
+	      const serialized = JSON.stringify(doc, null, 2);
+52b0da991705c4c565987bc9faf7738ba00d885e 148 148
+	      // Base sources use ASCII JSON escapes; retain unrelated source bytes.
+52b0da991705c4c565987bc9faf7738ba00d885e 149 149
+	      const formatted = theme === 'base' ? serialized.replace(/[^\x00-\x7F]/g, character => '\\u' + character.charCodeAt(0).toString(16).padStart(4, '0')) : serialized;
+52b0da991705c4c565987bc9faf7738ba00d885e 150 150
+	      writeFileSync(path, formatted + '\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 151 151
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 152 152
+	    console.log('Applied one categorical slot in each of four canonical brand files.');
+52b0da991705c4c565987bc9faf7738ba00d885e 153 153
+	    return;
+52b0da991705c4c565987bc9faf7738ba00d885e 154 154
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 155 155
+	  assert.equal(mode, '--verify', 'Expected --select, --replay, --apply or --verify');
+52b0da991705c4c565987bc9faf7738ba00d885e 156 156
+	  const afterMaps = maps();
+52b0da991705c4c565987bc9faf7738ba00d885e 157 157
+	  const mapChanges = Object.entries(afterMaps).map(([scope, map]) => {
+52b0da991705c4c565987bc9faf7738ba00d885e 158 158
+	    const changed = [...new Set([...Object.keys(map), ...Object.keys(before.maps[scope])])].filter(key => map[key] !== before.maps[scope][key]).sort();
+52b0da991705c4c565987bc9faf7738ba00d885e 159 159
+	    const selected = selection.find(item => item.theme === (scope.endsWith('dark') ? 'dark' : 'light'))!;
+52b0da991705c4c565987bc9faf7738ba00d885e 160 160
+	    assert.deepEqual(changed, [`--oods-viz-scale-categorical-0${selected.chosen.slot}`], `Unexpected scoped token drift: ${scope}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 161 161
+	    return { scope, beforeSha256: hash(before.maps[scope]), afterSha256: hash(map), changed };
+52b0da991705c4c565987bc9faf7738ba00d885e 162 162
+	  });
+52b0da991705c4c565987bc9faf7738ba00d885e 163 163
+	  const sourceChanges = Object.entries(before.sources as Record<string, SourceDoc>).map(([path, old]) => {
+52b0da991705c4c565987bc9faf7738ba00d885e 164 164
+	    const current = read(path); const previousLeaves = leaves(old); const currentLeaves = leaves(current);
+52b0da991705c4c565987bc9faf7738ba00d885e 165 165
+	    const changed = [...new Set([...Object.keys(previousLeaves), ...Object.keys(currentLeaves)])].filter(key => currentLeaves[key] !== previousLeaves[key]).sort();
+52b0da991705c4c565987bc9faf7738ba00d885e 166 166
+	    const theme = path.endsWith('/base.json') ? 'light' : path.endsWith('/dark.json') ? 'dark' : undefined;
+52b0da991705c4c565987bc9faf7738ba00d885e 167 167
+	    const selected = selection.find(item => item.theme === theme);
+52b0da991705c4c565987bc9faf7738ba00d885e 168 168
+	    const expected = selected ? [`viz.scale.categorical.0${selected.chosen.slot}`] : [];
+52b0da991705c4c565987bc9faf7738ba00d885e 169 169
+	    assert.deepEqual(changed, expected, `Unexpected canonical leaf drift: ${path}`);
+52b0da991705c4c565987bc9faf7738ba00d885e 170 170
+	    return { path, beforeLeafCount: Object.keys(previousLeaves).length, afterLeafCount: Object.keys(currentLeaves).length, changed };
+52b0da991705c4c565987bc9faf7738ba00d885e 171 171
+	  });
+52b0da991705c4c565987bc9faf7738ba00d885e 172 172
+	  const scopes = BRANDS.flatMap(brand => THEMES.map(theme => {
+52b0da991705c4c565987bc9faf7738ba00d885e 173 173
+	    const map = afterMaps[`${brand}/${theme}`]!;
+52b0da991705c4c565987bc9faf7738ba00d885e 174 174
+	    const result = grades(SLOT_KEYS.map(key => map[key]!), hex(map['--oods-sys-surface-canvas']!));
+52b0da991705c4c565987bc9faf7738ba00d885e 175 175
+	    const resolved = resolveCategoricalPalette({} as NormalizedVizSpec, { brand, theme });
+52b0da991705c4c565987bc9faf7738ba00d885e 176 176
+	    assert.deepEqual(resolved, result.palette, 'Colorjs candidate conversion must equal actual renderer-resolved built token bytes.');
+52b0da991705c4c565987bc9faf7738ba00d885e 177 177
+	    assert.deepEqual(resolved, selection.find(item => item.theme === theme)!.chosen.palette);
+52b0da991705c4c565987bc9faf7738ba00d885e 178 178
+	    assert.equal(hex(resolveTokenToColor('--sys-surface-canvas', { brand, theme })!), result.canvas);
+52b0da991705c4c565987bc9faf7738ba00d885e 179 179
+	    assert(result.roleA.minimumDeltaE! >= 10 && result.roleA.lowChromaPaints.length === 0);
+52b0da991705c4c565987bc9faf7738ba00d885e 180 180
+	    assert(result.slots.every(slot => slot.contrast >= 3 && slot.chroma >= 0.03));
+52b0da991705c4c565987bc9faf7738ba00d885e 181 181
+	    assert.equal(result.pairwise.length, 60);
+52b0da991705c4c565987bc9faf7738ba00d885e 182 182
+	    assert(result.pairwise.every(pair => pair.deltaE >= 10));
+52b0da991705c4c565987bc9faf7738ba00d885e 183 183
+	    return { scope: `${brand}/${theme}`, ...result };
+52b0da991705c4c565987bc9faf7738ba00d885e 184 184
+	  }));
+52b0da991705c4c565987bc9faf7738ba00d885e 185 185
+	  save('after.json', { mapChanges, sourceChanges, scopes, checks: { roleC: 24, pairwise: 240, chroma: 24, unrelatedLeavesChanged: 0 } });
+52b0da991705c4c565987bc9faf7738ba00d885e 186 186
+	  console.log(JSON.stringify({ scopes: scopes.map(({ scope, roleA, slots }) => ({ scope, minimumDeltaE: roleA.minimumDeltaE, minimumContrast: Math.min(...slots.map(slot => slot.contrast)) })), sourceChanges, mapChanges }, null, 2));
+52b0da991705c4c565987bc9faf7738ba00d885e 187 187
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 188 188
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 189 189
+	if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

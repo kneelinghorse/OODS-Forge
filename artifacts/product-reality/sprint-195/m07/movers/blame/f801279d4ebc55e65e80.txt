@@ -1,0 +1,140 @@
+a3158282bba25713171d7216181bde28b69a80a1 2 2 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c packages/mcp-server/src/codegen/chart-assets.ts
+filename packages/mcp-server/src/codegen/chart-assets.ts
+	import { chartMatchesPreview, chartNodes } from './chart-declaration.js';
+a3158282bba25713171d7216181bde28b69a80a1 5 5 2
+	import { canonicalize } from '@oods/artifacts';
+a3158282bba25713171d7216181bde28b69a80a1 6 6
+	import type { UiSchema, VizRenderInput } from '../schemas/generated.js';
+a3158282bba25713171d7216181bde28b69a80a1 17 17 2
+	  for (const candidate of nodes) {
+a3158282bba25713171d7216181bde28b69a80a1 18 18
+	    if (!chartMatchesPreview(candidate)) throw new Error(`Chart type '${candidate.chart!.chartType}' does not match preview '${candidate.component}'.`);
+a3158282bba25713171d7216181bde28b69a80a1 22 22 12
+	  if (nodes.some(candidate => canonicalize(candidate.chart) !== canonicalize(chart)
+a3158282bba25713171d7216181bde28b69a80a1 23 23
+	    || candidate.props?.title !== node.props?.title || candidate.props?.description !== node.props?.description)) {
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	    throw new Error('Only one distinct chart declaration and presentation is supported per generated object.');
+a3158282bba25713171d7216181bde28b69a80a1 25 25
+	  }
+a3158282bba25713171d7216181bde28b69a80a1 26 26
+	  if (chart.source === 'payment-events') {
+a3158282bba25713171d7216181bde28b69a80a1 27 27
+	    for (const field of [...chart.dateFields, chart.amountField, chart.currencyField]) {
+a3158282bba25713171d7216181bde28b69a80a1 28 28
+	      if (!schema.objectSchema?.[field]) throw new Error(`Payment chart field '${field}' is absent from objectSchema.`);
+a3158282bba25713171d7216181bde28b69a80a1 29 29
+	    }
+a3158282bba25713171d7216181bde28b69a80a1 30 30
+	  } else {
+a3158282bba25713171d7216181bde28b69a80a1 31 31
+	    const field = schema.objectSchema?.[chart.dataField];
+a3158282bba25713171d7216181bde28b69a80a1 32 32
+	    if (!field) throw new Error(`Chart field '${chart.dataField}' is absent from objectSchema.`);
+a3158282bba25713171d7216181bde28b69a80a1 33 33
+	    if (field.type !== 'array' && !field.type.endsWith('[]')) throw new Error(`Chart field '${chart.dataField}' must be a declared array.`);
+52b0da991705c4c565987bc9faf7738ba00d885e 25 36 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/codegen/chart-assets.ts
+filename packages/mcp-server/src/codegen/chart-assets.ts
+	  if (theme !== 'light' && theme !== 'dark' && theme !== 'hc') throw new Error(`Payment chart theme '${theme}' is not supported.`);
+a3158282bba25713171d7216181bde28b69a80a1 41 41 37
+	    let request: VizRenderInput;
+a3158282bba25713171d7216181bde28b69a80a1 42 42
+	    if (chart.source === 'payment-events') {
+a3158282bba25713171d7216181bde28b69a80a1 43 43
+	      const history = record.payment_history as Array<{ at: string; amount: number }>;
+a3158282bba25713171d7216181bde28b69a80a1 44 44
+	      const rows = history.map(payment => ({ date: payment.at, amount: payment.amount / chart.minorUnits }))
+a3158282bba25713171d7216181bde28b69a80a1 45 45
+	        .sort((a, b) => a.date.localeCompare(b.date));
+a3158282bba25713171d7216181bde28b69a80a1 46 46
+	      if (rows.length < 4 || rows.some(row => !Number.isFinite(row.amount) || !Number.isFinite(Date.parse(row.date)))) {
+a3158282bba25713171d7216181bde28b69a80a1 47 47
+	        throw new Error('Payment chart requires a finite amount and valid payment dates.');
+a3158282bba25713171d7216181bde28b69a80a1 48 48
+	      }
+a3158282bba25713171d7216181bde28b69a80a1 49 49
+	      request = {
+a3158282bba25713171d7216181bde28b69a80a1 50 50
+	        chartType: chart.chartType,
+a3158282bba25713171d7216181bde28b69a80a1 51 51
+	        name: String(node.props?.title ?? 'Payment amounts'),
+a3158282bba25713171d7216181bde28b69a80a1 52 52
+	        description: `Recorded sample payments in ${String(record[chart.currencyField]).toUpperCase()}, shown in major currency units.`,
+a3158282bba25713171d7216181bde28b69a80a1 53 53
+	        theme,
+a3158282bba25713171d7216181bde28b69a80a1 54 54
+	        brand: options.brand ?? chart.brand ?? 'A',
+a3158282bba25713171d7216181bde28b69a80a1 55 55
+	        rows: [rows[0]!, ...rows.slice(1)],
+a3158282bba25713171d7216181bde28b69a80a1 56 56
+	        encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
+a3158282bba25713171d7216181bde28b69a80a1 57 57
+	        output: { svg: true, width: 360, height: 200 },
+a3158282bba25713171d7216181bde28b69a80a1 58 58
+	      };
+a3158282bba25713171d7216181bde28b69a80a1 59 59
+	    } else {
+a3158282bba25713171d7216181bde28b69a80a1 60 60
+	      const rows = record[chart.dataField];
+a3158282bba25713171d7216181bde28b69a80a1 61 61
+	      if (!Array.isArray(rows) || !rows.length || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row))) {
+a3158282bba25713171d7216181bde28b69a80a1 62 62
+	        throw new Error(`Chart field '${chart.dataField}' requires non-empty object rows.`);
+a3158282bba25713171d7216181bde28b69a80a1 63 63
+	      }
+a3158282bba25713171d7216181bde28b69a80a1 64 64
+	      for (const binding of Object.values(chart.encodings)) {
+a3158282bba25713171d7216181bde28b69a80a1 65 65
+	        const field = typeof binding === 'string' ? binding : binding.field;
+a3158282bba25713171d7216181bde28b69a80a1 66 66
+	        if (rows.some(row => !Object.hasOwn(row, field))) throw new Error(`Chart encoding field '${field}' is missing from '${chart.dataField}' rows.`);
+a3158282bba25713171d7216181bde28b69a80a1 67 67
+	      }
+a3158282bba25713171d7216181bde28b69a80a1 68 68
+	      request = {
+a3158282bba25713171d7216181bde28b69a80a1 69 69
+	        chartType: chart.chartType,
+a3158282bba25713171d7216181bde28b69a80a1 70 70
+	        name: String(node.props?.title ?? `${chart.chartType} chart`),
+a3158282bba25713171d7216181bde28b69a80a1 71 71
+	        ...(typeof node.props?.description === 'string' ? { description: node.props.description } : {}),
+a3158282bba25713171d7216181bde28b69a80a1 72 72
+	        theme,
+a3158282bba25713171d7216181bde28b69a80a1 73 73
+	        brand: options.brand ?? chart.brand ?? 'A',
+a3158282bba25713171d7216181bde28b69a80a1 74 74
+	        rows: [rows[0]!, ...rows.slice(1)],
+a3158282bba25713171d7216181bde28b69a80a1 75 75
+	        encodings: chart.encodings,
+a3158282bba25713171d7216181bde28b69a80a1 76 76
+	        output: { svg: true, width: 360, height: 200 },
+a3158282bba25713171d7216181bde28b69a80a1 77 77
+	      };
+a3158282bba25713171d7216181bde28b69a80a1 79 79 2
+	    const result = await render(request);
+a3158282bba25713171d7216181bde28b69a80a1 80 80
+	    if (result.status !== 'ok' || !result.svg) throw new Error(`${chart.source === 'payment-events' ? 'Payment chart' : 'Chart'} render failed: ${JSON.stringify(result.errors)}`);
+a3158282bba25713171d7216181bde28b69a80a1 82 82 1
+	    if (index === 0) for (const candidate of nodes) candidate.props = { ...candidate.props, svg, width: 360, height: 200 };
+a3158282bba25713171d7216181bde28b69a80a1 85 85 1
+	    files.push({ path: `src/charts/${chart.source === 'payment-events' ? 'payment' : chart.chartType}-${String(index + 1).padStart(3, '0')}.svg`, contents: svg });

@@ -1,0 +1,282 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 136
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+filename scripts/product-reality/s195-qualify-viz-matrix.ts
+	import { createHash } from "node:crypto";
+52b0da991705c4c565987bc9faf7738ba00d885e 2 2
+	import { readFileSync, writeFileSync } from "node:fs";
+52b0da991705c4c565987bc9faf7738ba00d885e 3 3
+	import assert from "node:assert/strict";
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4
+	import { resolve, dirname } from "node:path";
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5
+	import { fileURLToPath } from "node:url";
+52b0da991705c4c565987bc9faf7738ba00d885e 6 6
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+	import { renderEChartsToSvg } from "../../packages/viz-render/dist/index.js";
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	import {
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	  ECHARTS_OPERAND_CASES,
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	  type EChartsOperandCase,
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	} from "../../packages/viz-core/test/fixtures/s172-echarts-operands.js";
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	import { buildProjectedOption } from "../../packages/viz-core/test/s179-echarts-render-harness.js";
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), "../.."));
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	const MATRIX_FAMILIES = [
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	  "treemap",
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	  "sunburst",
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	  "sankey",
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	  "chord",
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	  "force_graph",
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	  "choropleth",
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	  "bubble_map",
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	  "flow_map",
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	] as const;
+52b0da991705c4c565987bc9faf7738ba00d885e 26 26
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 27 27
+	type MatrixFamily = (typeof MATRIX_FAMILIES)[number];
+52b0da991705c4c565987bc9faf7738ba00d885e 28 28
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29
+	const TEXT_CARRIERS = {
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	  ascii: "ASCII label",
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	  cjk: "漢字標籤",
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	  combining: "Cafe\u0301 combining",
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	  emoji: "Emoji 🧭📊",
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	  long: "A deliberately long label that must be truncated by the fixed snapshot policy",
+52b0da991705c4c565987bc9faf7738ba00d885e 35 35
+	} as const;
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	const sha256 = (value: string): string =>
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	  createHash("sha256").update(value).digest("hex");
+52b0da991705c4c565987bc9faf7738ba00d885e 39 39
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40
+	function canonicalOperand(family: MatrixFamily): EChartsOperandCase {
+52b0da991705c4c565987bc9faf7738ba00d885e 41 41
+	  const operand = ECHARTS_OPERAND_CASES.find(
+52b0da991705c4c565987bc9faf7738ba00d885e 42 42
+	    ({ chartType }) => chartType === family,
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43
+	  );
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	  if (!operand) {
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	    throw new Error(`Missing canonical ${family} operand.`);
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	  return operand;
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	function matrixOption(family: MatrixFamily): Record<string, unknown> {
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	  const option = buildProjectedOption(canonicalOperand(family));
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	  option.title = [
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	    { text: TEXT_CARRIERS.ascii, left: 8, top: 4 },
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	    { text: TEXT_CARRIERS.cjk, left: 110, top: 4 },
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	    { text: TEXT_CARRIERS.combining, left: 190, top: 4 },
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	    { text: TEXT_CARRIERS.emoji, left: 330, top: 4 },
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	    {
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	      text: TEXT_CARRIERS.long,
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	      left: 430,
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	      top: 4,
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	      textStyle: {
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	        width: 120,
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	        overflow: "truncate",
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	        ellipsis: "…",
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	  ];
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	  if (family === "sunburst") {
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	    const series = (option.series as Array<Record<string, unknown>>)[0];
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	    series.itemStyle = {
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	      ...(series.itemStyle as Record<string, unknown> | undefined),
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	      color: {
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	        type: "linear",
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	        x: 0,
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	        y: 0,
+52b0da991705c4c565987bc9faf7738ba00d885e 77 77
+	        x2: 1,
+52b0da991705c4c565987bc9faf7738ba00d885e 78 78
+	        y2: 1,
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79
+	        colorStops: [
+52b0da991705c4c565987bc9faf7738ba00d885e 80 80
+	          { offset: 0, color: "#416CD9" },
+52b0da991705c4c565987bc9faf7738ba00d885e 81 81
+	          { offset: 1, color: "#D94F70" },
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82
+	        ],
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	      shadowBlur: 7,
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	      shadowColor: "rgba(17,24,39,0.6)",
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	      decal: {
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	        symbol: "rect",
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	        symbolSize: 0.7,
+52b0da991705c4c565987bc9faf7738ba00d885e 89 89
+	        dashArrayX: [4, 2],
+52b0da991705c4c565987bc9faf7738ba00d885e 90 90
+	        dashArrayY: [3, 2],
+52b0da991705c4c565987bc9faf7738ba00d885e 91 91
+	        color: "rgba(255,255,255,0.35)",
+52b0da991705c4c565987bc9faf7738ba00d885e 92 92
+	      },
+52b0da991705c4c565987bc9faf7738ba00d885e 93 93
+	    };
+52b0da991705c4c565987bc9faf7738ba00d885e 94 94
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 95 95
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 96 96
+	  return option;
+52b0da991705c4c565987bc9faf7738ba00d885e 97 97
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 98 98
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 99 99
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 100 100
+	function epochPayload(matrix: any): string {
+52b0da991705c4c565987bc9faf7738ba00d885e 101 101
+	  return [
+52b0da991705c4c565987bc9faf7738ba00d885e 102 102
+	    `echarts=${matrix.resolvedDependencies.echarts}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 103 103
+	    `zrender=${matrix.resolvedDependencies.zrender}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 104 104
+	    `rendererNormalizerContractVersion=${matrix.rendererNormalizerContractVersion}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105
+	    `tokenVersion=${matrix.tokenVersion.package}@${matrix.tokenVersion.version}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	    `dimensions=${matrix.dimensions.width}x${matrix.dimensions.height}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	    `snapshot.renderer=${matrix.snapshotPolicy.renderer}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 108 108
+	    `snapshot.ssr=${String(matrix.snapshotPolicy.ssr)}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 109 109
+	    `snapshot.useViewBox=${String(matrix.snapshotPolicy.useViewBox)}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 110 110
+	    `snapshot.rootAnimation=${String(matrix.snapshotPolicy.rootAnimation)}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 111 111
+	    `snapshot.forceLayoutAnimation=${String(matrix.snapshotPolicy.forceLayoutAnimation)}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 112 112
+	    `snapshot.forceSeedVersion=${matrix.snapshotPolicy.forceSeedVersion}`,
+52b0da991705c4c565987bc9faf7738ba00d885e 113 113
+	    ...Object.entries(matrix.normalizedSvgHashes)
+52b0da991705c4c565987bc9faf7738ba00d885e 114 114
+	      .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+52b0da991705c4c565987bc9faf7738ba00d885e 115 115
+	      .map(([family, hash]) => `normalizedSvg.${family}=${hash}`),
+52b0da991705c4c565987bc9faf7738ba00d885e 116 116
+	  ].join("\n");
+52b0da991705c4c565987bc9faf7738ba00d885e 117 117
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 118 118
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 119 119
+	const matrixPath = resolve(root, 'packages/viz-render/certified-matrix.json');
+52b0da991705c4c565987bc9faf7738ba00d885e 120 120
+	const matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
+52b0da991705c4c565987bc9faf7738ba00d885e 121 121
+	const changes = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 122 122
+	for (const family of MATRIX_FAMILIES) {
+52b0da991705c4c565987bc9faf7738ba00d885e 123 123
+	 const option = matrixOption(family), first = await renderEChartsToSvg(option), second = await renderEChartsToSvg(option);
+52b0da991705c4c565987bc9faf7738ba00d885e 124 124
+	 assert.equal(first, second);
+52b0da991705c4c565987bc9faf7738ba00d885e 125 125
+	 const next = sha256(first), previous = matrix.normalizedSvgHashes[family];
+52b0da991705c4c565987bc9faf7738ba00d885e 126 126
+	 if (previous !== next) changes.push({ family, before: previous, after: next, reason: 's195-m05 measured Role-A categorical palette revision; normalized-SVG contract and inputs unchanged' });
+52b0da991705c4c565987bc9faf7738ba00d885e 127 127
+	 matrix.normalizedSvgHashes[family] = next;
+52b0da991705c4c565987bc9faf7738ba00d885e 128 128
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 129 129
+	matrix.renderHashEpoch = 'sha256:' + sha256(epochPayload(matrix));
+52b0da991705c4c565987bc9faf7738ba00d885e 130 130
+	if (process.argv.includes('--check')) {
+52b0da991705c4c565987bc9faf7738ba00d885e 131 131
+	 assert.equal(changes.length, 0, 'Measured certified SVG hashes differ from the qualified matrix');
+52b0da991705c4c565987bc9faf7738ba00d885e 132 132
+	} else {
+52b0da991705c4c565987bc9faf7738ba00d885e 133 133
+	writeFileSync(matrixPath, JSON.stringify(matrix,null,2)+'\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 134 134
+	writeFileSync(resolve(root, 'artifacts/product-reality/sprint-195/m05/golden-migration/certified-matrix-attribution.json'), JSON.stringify({changes,renderHashEpoch:matrix.renderHashEpoch},null,2)+'\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 135 135
+	}
+52b0da991705c4c565987bc9faf7738ba00d885e 136 136
+	console.log(JSON.stringify({families:8,changes,check:process.argv.includes('--check')}));

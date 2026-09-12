@@ -1,0 +1,129 @@
+a3158282bba25713171d7216181bde28b69a80a1 1 1 40
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+filename scripts/product-reality/s195-chart-declaration-schema.ts
+	import fs from 'node:fs';
+a3158282bba25713171d7216181bde28b69a80a1 2 2
+	import path from 'node:path';
+a3158282bba25713171d7216181bde28b69a80a1 3 3
+	import { fileURLToPath } from 'node:url';
+a3158282bba25713171d7216181bde28b69a80a1 4 4
+	
+a3158282bba25713171d7216181bde28b69a80a1 5 5
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+a3158282bba25713171d7216181bde28b69a80a1 6 6
+	const target = path.join(root, 'packages/mcp-server/src/schemas/repl.ui.schema.json');
+a3158282bba25713171d7216181bde28b69a80a1 7 7
+	const schema = JSON.parse(fs.readFileSync(target, 'utf8'));
+a3158282bba25713171d7216181bde28b69a80a1 8 8
+	const viz = JSON.parse(fs.readFileSync(path.join(path.dirname(target), 'viz.render.input.json'), 'utf8'));
+a3158282bba25713171d7216181bde28b69a80a1 9 9
+	const legacy = schema.$defs.chartDeclaration.oneOf?.[0] ?? schema.$defs.chartDeclaration;
+a3158282bba25713171d7216181bde28b69a80a1 10 10
+	const remap = (value: unknown) => JSON.parse(JSON.stringify(value).replaceAll('#/$defs/encodingBinding', '#/$defs/chartEncodingBinding').replaceAll('#/$defs/colorEncodingBinding', '#/$defs/chartColorEncodingBinding'));
+a3158282bba25713171d7216181bde28b69a80a1 11 11
+	schema.$defs.chartEncodingBinding = { title: 'ChartEncodingBinding', ...remap(viz.$defs.encodingBinding) };
+a3158282bba25713171d7216181bde28b69a80a1 12 12
+	schema.$defs.chartColorEncodingBinding = { title: 'ChartColorEncodingBinding', ...remap(viz.$defs.colorEncodingBinding) };
+a3158282bba25713171d7216181bde28b69a80a1 13 13
+	schema.$defs.chartDeclaration = {
+a3158282bba25713171d7216181bde28b69a80a1 14 14
+	  title: 'ChartDeclaration',
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	  description: 'Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.',
+a3158282bba25713171d7216181bde28b69a80a1 16 16
+	  oneOf: [legacy, {
+a3158282bba25713171d7216181bde28b69a80a1 17 17
+	    type: 'object',
+a3158282bba25713171d7216181bde28b69a80a1 18 18
+	    additionalProperties: false,
+a3158282bba25713171d7216181bde28b69a80a1 19 19
+	    required: ['chartType', 'source', 'dataField', 'encodings', 'sampleRows'],
+a3158282bba25713171d7216181bde28b69a80a1 20 20
+	    properties: {
+a3158282bba25713171d7216181bde28b69a80a1 21 21
+	      chartType: { enum: ['bar', 'line', 'area', 'scatter', 'heatmap'] },
+a3158282bba25713171d7216181bde28b69a80a1 22 22
+	      source: { const: 'record-array' },
+a3158282bba25713171d7216181bde28b69a80a1 23 23
+	      dataField: { type: 'string', minLength: 1, description: 'Declared objectSchema array field containing the chart rows.' },
+a3158282bba25713171d7216181bde28b69a80a1 24 24
+	      encodings: { ...remap(viz.properties.encodings), required: ['x', 'y'] },
+a3158282bba25713171d7216181bde28b69a80a1 25 25
+	      sampleRows: { type: 'array', minItems: 1, items: { type: 'object', minProperties: 1, additionalProperties: true }, description: 'Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.' },
+a3158282bba25713171d7216181bde28b69a80a1 26 26
+	      brand: { enum: ['A', 'B'] },
+a3158282bba25713171d7216181bde28b69a80a1 27 27
+	    },
+a3158282bba25713171d7216181bde28b69a80a1 28 28
+	  }],
+a3158282bba25713171d7216181bde28b69a80a1 29 29
+	};
+a3158282bba25713171d7216181bde28b69a80a1 30 30
+	function writeOrCheck(filename: string, value: unknown) {
+a3158282bba25713171d7216181bde28b69a80a1 31 31
+	  const bytes = JSON.stringify(value, null, 2) + '\n';
+a3158282bba25713171d7216181bde28b69a80a1 32 32
+	  if (process.argv.includes('--check')) {
+a3158282bba25713171d7216181bde28b69a80a1 33 33
+	    if (bytes !== fs.readFileSync(filename, 'utf8')) throw new Error(`Chart declaration schema drift: ${filename}`);
+a3158282bba25713171d7216181bde28b69a80a1 34 34
+	  } else fs.writeFileSync(filename, bytes);
+a3158282bba25713171d7216181bde28b69a80a1 35 35
+	}
+a3158282bba25713171d7216181bde28b69a80a1 36 36
+	writeOrCheck(target, schema);
+a3158282bba25713171d7216181bde28b69a80a1 37 37
+	for (const [mark, chartType] of Object.entries({ area: 'area', bar: 'bar', line: 'line', point: 'scatter', rect: 'heatmap' })) {
+a3158282bba25713171d7216181bde28b69a80a1 38 38
+	  const filename = path.join(root, `schemas/traits/mark-${mark}.parameters.schema.json`);
+a3158282bba25713171d7216181bde28b69a80a1 39 39
+	  const parameters = JSON.parse(fs.readFileSync(filename, 'utf8'));
+a3158282bba25713171d7216181bde28b69a80a1 40 40
+	  const declaration = structuredClone(schema.$defs.chartDeclaration);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 41 41 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 scripts/product-reality/s195-chart-declaration-schema.ts
+filename scripts/product-reality/s195-chart-declaration-schema.ts
+	  const traitName = `Mark${mark[0].toUpperCase()}${mark.slice(1)}`;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 42 42
+	  declaration.title = `${traitName}ChartDeclaration`;
+a3158282bba25713171d7216181bde28b69a80a1 41 43 5
+	  declaration.oneOf = declaration.oneOf.filter((branch: any) => chartType === 'area' || branch.properties.source.const !== 'payment-events');
+a3158282bba25713171d7216181bde28b69a80a1 42 44
+	  for (const branch of declaration.oneOf) branch.properties.chartType = { const: chartType };
+a3158282bba25713171d7216181bde28b69a80a1 43 45
+	  parameters.properties.chart = declaration;
+a3158282bba25713171d7216181bde28b69a80a1 44 46
+	  parameters.properties.title = { type: 'string', description: 'Title of the read-only chart projection.' };
+a3158282bba25713171d7216181bde28b69a80a1 45 47
+	  parameters.properties.description = { type: 'string', description: 'Accessible description of the read-only chart projection.' };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 48 48 5
+	  parameters.$defs = {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 49 49
+	    ...parameters.$defs,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 50 50
+	    chartEncodingBinding: { ...schema.$defs.chartEncodingBinding, title: `${traitName}ChartEncodingBinding` },
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 51 51
+	    chartColorEncodingBinding: { ...schema.$defs.chartColorEncodingBinding, title: `${traitName}ChartColorEncodingBinding` },
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 52 52
+	  };
+a3158282bba25713171d7216181bde28b69a80a1 47 53 2
+	  writeOrCheck(filename, parameters);
+a3158282bba25713171d7216181bde28b69a80a1 48 54
+	}

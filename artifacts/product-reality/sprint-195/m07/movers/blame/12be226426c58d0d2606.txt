@@ -1,0 +1,63 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+previous 9c75a1dbb495ca26c16f2f75ce52095e72adb16e packages/mcp-server/src/schemas/dashboard.render.input.json
+filename packages/mcp-server/src/schemas/dashboard.render.input.json
+	  "$comment": "FROZEN SEAMS — mission-start audit (s113-m01, Rule 1). These 5 integration seams are frozen NOW so m02/m03/m04 add code, not schema churn. (a) CROSS-PANEL DATA-SHARING: shared dataset-level rows at `datasets[]`; panels reference a dataset by `datasetId` + field refs in `encodings` — NOT inline-rows-per-panel, which bloats payload AND blocks cross-filter (tabular panels must share a dimensional space). Non-tabular branches (hierarchy/sankey/network/geo) are structurally distinct and carried inline on the panel. (b) PARTIAL-PANEL ERROR policy: `onPanelError` default 'placeholder' — render an a11y-described error panel in-place, don't void the whole dashboard. (c) CROSS-SOURCE LINK combination: `crossFilter` default { combine:'and', ignoreSelfSource:true } — each active source ANDs a predicate; a panel ignores its OWN source selection; per-link override via `links[].combine`. (d) DASHBOARD-LEVEL A11Y: `a11y` (required) carries a cross-panel summary + `readingOrder` default 'kpi-first' (KPI row read/focused before charts); the per-chart AccessibilitySpec stays per-panel. (e) TOKEN strategy: one dashboard-level `tokenCssRef` (deferred to the consumer CSS bundle per viz.render's compact/tokenCssRef posture); KPI threshold metadata is SEMANTIC only (`threshold.direction`/`value`) — colors do NOT resolve inline. ALSO frozen in m01 (as hand-authored TS, not this schema, since they are runtime interaction state not declarative config): the Selection / SelectionState types in packages/viz-core/src/spec/dashboard-selection.ts, so m03 (cross-filter resolver) and m04 (linked-selection reducer) depend ONLY on m01. The links predicate vocabulary reuses the SectionFilter operator grammar (==|!=|in|not_in|>|>=|<|<=). DEFERRED: brush/interval RANGE selections (point/categorical only v1); anomaly narration (threshold/outlier flag only); the general composer (fixed template first). DOWNSTREAM CONTRACT CLARIFICATIONS (frozen so m02-m05 add code, not schema): (i) KPI TIME AXIS — the KPI sparkline, comparison.basis 'window', and aggregate 'latest' ALL read DATASET ROW ORDER as the time axis (rows arrive pre-ordered from the producer); there is no separate KPI period/time field in v1 (an explicit period axis would be a v0.2 additive field — the most likely future churn point). (ii) CROSS-FILTER SOURCE DIMENSION — DashboardLink.sourceField defaults to the source panel's primary dimension = a TABULAR panel's encodings.x field; a non-tabular source panel (hierarchy/sankey/network/geo) has no encodings block and MUST set links[].sourceField explicitly, else it is not a valid v1 cross-filter source. (iii) SELECTION VALUES — cross-filter Selection.values are string|number ONLY in v1 (boolean dimensions out of scope), so the m04 canonical-ordering normalizer never sorts a boolean. (iv) VENDORED COPY — packages/viz-core/src/spec/dashboard-spec.schema.json is a hand-synced byte-identical copy of this source (the validator inlines it); a viz-core parity test asserts identity, but re-copy on every edit and keep it in the s113 closeout gate sweep.",
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16 10
+	    "theme": {
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	      "type": "string",
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	      "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	        "light",
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	        "dark",
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	        "hc"
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	      "default": "light",
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	      "description": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	    },
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74 1
+	      "description": "SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout."
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79 1
+	      "description": "Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels)."
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84 1
+	      "description": "Field-presence STRICT switch (sprint-118 m05). When true, a referenced field absent from EVERY resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). DEFAULT false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence ONLY — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi."
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105 4
+	      "enum": [
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	        "A",
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	        "B"
+52b0da991705c4c565987bc9faf7738ba00d885e 108 108
+	      ],
+52b0da991705c4c565987bc9faf7738ba00d885e 211 211 1
+	      "description": "A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
+52b0da991705c4c565987bc9faf7738ba00d885e 430 430 1
+	      "description": "A KPI tile — the only NEW panel primitive (trend/breakdown/geo already ship as chart types). Reserves value/aggregate/comparison/threshold metadata; the actual compute is deferred to m03 (which reduces the cross-filtered dataset rows to a renderer-agnostic payload).",
+52b0da991705c4c565987bc9faf7738ba00d885e 531 531 1
+	      "description": "Threshold / anomaly metadata. SEMANTIC only (direction/value) — colors do NOT resolve inline (SEAM e: tokens deferred to the consumer CSS bundle). m03 computes the breach/anomaly flag (reusing stats.ts stddev/tukey for the outlier detector).",
+52b0da991705c4c565987bc9faf7738ba00d885e 550 550 1
+	          "description": "Optional anomaly detector to flag (Phase-4 narration deferred — flag only)."
+52b0da991705c4c565987bc9faf7738ba00d885e 683 683 1
+	      "description": "Hierarchy data for treemap/sunburst panels — discriminated union on 'type' (mirrors the viz.render hierarchy branch).",
+52b0da991705c4c565987bc9faf7738ba00d885e 776 776 1
+	      "description": "Flow data for a sankey panel — nodes plus value-weighted links (mirrors the viz.render sankey branch).",
+52b0da991705c4c565987bc9faf7738ba00d885e 833 833 1
+	      "description": "Network data for a force_graph panel — nodes plus directed links (mirrors the viz.render network branch). An empty links array is allowed.",
+52b0da991705c4c565987bc9faf7738ba00d885e 887 887 1
+	      "description": "Geo data for choropleth/bubble_map panels — inline geometry + per-type encoding (mirrors the viz.render geo branch). Geometry is supplied INLINE, never fetched.",

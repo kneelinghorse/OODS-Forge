@@ -1,0 +1,375 @@
+ffcdc29ef225d28e54f094e2b430b707f85d1167 1 1 8
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+filename scripts/product-reality/s195-viz-taxonomy.ts
+	#!/usr/bin/env tsx
+ffcdc29ef225d28e54f094e2b430b707f85d1167 2 2
+	/** Derive taxonomy from the measured type registry, exact pattern bytes, and one authored table. */
+ffcdc29ef225d28e54f094e2b430b707f85d1167 3 3
+	import assert from 'node:assert/strict';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 4 4
+	import { createHash } from 'node:crypto';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 5 5
+	import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 6 6
+	import { dirname, resolve } from 'node:path';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 7 7
+	import { fileURLToPath } from 'node:url';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 8 8
+	import { Ajv2020 } from 'ajv/dist/2020.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 9 9 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 scripts/product-reality/s195-viz-taxonomy.ts
+filename scripts/product-reality/s195-viz-taxonomy.ts
+	import { validateVizPatternRegistry } from '../../packages/viz-core/src/registry/viz-patterns.js';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 10 10
+	import { derivePatternSources } from './s195-pattern-sources.js';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 9 11 6
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 10 12
+	export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 11 13
+	export const CLASSIFICATION_PATH = 'packages/viz-core/src/registry/viz-classification.v1.json';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 12 14
+	export const TAXONOMY_PATH = 'packages/viz-core/src/registry/viz-taxonomy.v1.json';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 13 15
+	export const DOC_PATH = 'docs/viz/taxonomy.md';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 14 16
+	const REGISTRY_PATH = 'packages/viz-core/src/registry/viz-recipes.v1.json';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 17 17 1
+	const PATTERN_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-patterns.v1.json';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 15 18 34
+	const PATTERN_DIRECTORY = 'examples/viz/patterns-v2';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 16 19
+	const SCHEMA_PATH = 'packages/viz-core/src/registry/viz-classification.v1.schema.json';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 17 20
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 18 21
+	type Assignment = { id: string; family: string; role: 'core' | 'extension'; coreCell: string | null };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 19 22
+	type CellDefinition = { cell: string; definition: string; gapReason: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 20 23
+	export type Classification = {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 21 24
+	  schemaVersion: 1;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 22 25
+	  families: Array<{ id: string; definition: string; coreCells: CellDefinition[] }>;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 23 26
+	  assignments: Assignment[];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 24 27
+	};
+ffcdc29ef225d28e54f094e2b430b707f85d1167 25 28
+	export type TaxonomyIdentity = Assignment & {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 26 29
+	  kind: 'type' | 'pattern';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 27 30
+	  publicSvg: boolean;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 28 31
+	  specPath?: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 29 32
+	  specSha256?: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 30 33
+	};
+ffcdc29ef225d28e54f094e2b430b707f85d1167 31 34
+	export type TaxonomyCell = {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 32 35
+	  family: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 33 36
+	  cell: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 34 37
+	  definition: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 35 38
+	  status: 'surface-complete' | 'typed-gap';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 36 39
+	  /** All primary assignments, including patterns without public proof. */
+ffcdc29ef225d28e54f094e2b430b707f85d1167 37 40
+	  identities: string[];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 38 41
+	  reason?: string;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 39 42
+	};
+ffcdc29ef225d28e54f094e2b430b707f85d1167 40 43
+	export type VizTaxonomy = {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 41 44
+	  schemaVersion: 1;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 42 45
+	  families: Array<{ id: string; definition: string }>;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 43 46
+	  identities: TaxonomyIdentity[];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 44 47
+	  coreCells: TaxonomyCell[];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 45 48
+	  summary: { types: number; patterns: number; families: number; classified: number; coreCells: number; coreSurfaceComplete: number; typedGaps: number };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 46 49
+	};
+ffcdc29ef225d28e54f094e2b430b707f85d1167 47 50
+	type PatternSource = { path: string; bytes: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 48 51
+	type RegistryRow = { chartType: string; publicSvg: boolean };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 52 52 1
+	export type TaxonomyInputs = { classification: Classification; registry: RegistryRow[]; patterns: PatternSource[]; patternRegistry: unknown };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 50 53 9
+	export const serialize = (value: unknown): string => JSON.stringify(value, null, 2) + '\n';
+ffcdc29ef225d28e54f094e2b430b707f85d1167 51 54
+	const read = (root: string, path: string): string => readFileSync(resolve(root, path), 'utf8');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 52 55
+	const schema = JSON.parse(read(ROOT, SCHEMA_PATH));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 53 56
+	const validateClassification = new Ajv2020({ strict: false, allErrors: true }).compile(schema);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 54 57
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 55 58
+	export function readTaxonomyInputs(root = ROOT): TaxonomyInputs {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 56 59
+	  return {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 57 60
+	    classification: JSON.parse(read(root, CLASSIFICATION_PATH)),
+ffcdc29ef225d28e54f094e2b430b707f85d1167 58 61
+	    registry: JSON.parse(read(root, REGISTRY_PATH)),
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 62 62 1
+	    patternRegistry: JSON.parse(read(root, PATTERN_REGISTRY_PATH)),
+ffcdc29ef225d28e54f094e2b430b707f85d1167 59 63 28
+	    patterns: readdirSync(resolve(root, PATTERN_DIRECTORY)).filter(name => name.endsWith('.spec.json')).sort()
+ffcdc29ef225d28e54f094e2b430b707f85d1167 60 64
+	      .map(name => ({ path: `${PATTERN_DIRECTORY}/${name}`, bytes: read(root, `${PATTERN_DIRECTORY}/${name}`) })),
+ffcdc29ef225d28e54f094e2b430b707f85d1167 61 65
+	  };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 62 66
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 63 67
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 64 68
+	/** A primary assignment cannot borrow public proof from another cell or a pattern's base type. */
+ffcdc29ef225d28e54f094e2b430b707f85d1167 65 69
+	export function deriveVizTaxonomy(inputs: TaxonomyInputs): VizTaxonomy {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 66 70
+	  const { classification, registry, patterns } = inputs;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 67 71
+	  assert(validateClassification(classification), `Invalid classification: ${JSON.stringify(validateClassification.errors)}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 68 72
+	  const familyCells = new Map<string, Set<string>>();
+ffcdc29ef225d28e54f094e2b430b707f85d1167 69 73
+	  for (const family of classification.families) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 70 74
+	    assert(!familyCells.has(family.id), `Duplicate family: ${family.id}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 71 75
+	    const cells = new Set(family.coreCells.map(row => row.cell));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 72 76
+	    assert.equal(cells.size, family.coreCells.length, `Duplicate core cell: ${family.id}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 73 77
+	    familyCells.set(family.id, cells);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 74 78
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 75 79
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 76 80
+	  const population = new Map<string, Omit<TaxonomyIdentity, keyof Assignment>>();
+ffcdc29ef225d28e54f094e2b430b707f85d1167 77 81
+	  for (const row of registry) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 78 82
+	    assert(typeof row.chartType === 'string' && row.chartType && typeof row.publicSvg === 'boolean', 'Invalid type registry row');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 79 83
+	    assert(!population.has(row.chartType), `Duplicate registry identity: ${row.chartType}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 80 84
+	    population.set(row.chartType, { kind: 'type', publicSvg: row.publicSvg });
+ffcdc29ef225d28e54f094e2b430b707f85d1167 81 85
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 82 86
+	  for (const pattern of [...patterns].sort((left, right) => left.path.localeCompare(right.path))) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 83 87
+	    const spec = JSON.parse(pattern.bytes) as { id?: string };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 84 88
+	    assert(typeof spec.id === 'string' && /^pattern:viz:[a-z0-9-]+$/.test(spec.id), `Invalid pattern identity: ${pattern.path}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 85 89
+	    assert.equal(pattern.path, `${PATTERN_DIRECTORY}/${spec.id.slice('pattern:viz:'.length)}.spec.json`, `Pattern path differs from identity: ${spec.id}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 86 90
+	    assert(!population.has(spec.id), `Duplicate registry identity: ${spec.id}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 91 91 1
+	    // Start unproved; only an exact-source sibling registry row may promote it below.
+ffcdc29ef225d28e54f094e2b430b707f85d1167 88 92 15
+	    population.set(spec.id, { kind: 'pattern', publicSvg: false, specPath: pattern.path,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 89 93
+	      specSha256: createHash('sha256').update(pattern.bytes).digest('hex') });
+ffcdc29ef225d28e54f094e2b430b707f85d1167 90 94
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 91 95
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 92 96
+	  const assignments = new Map<string, Assignment>();
+ffcdc29ef225d28e54f094e2b430b707f85d1167 93 97
+	  for (const assignment of classification.assignments) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 94 98
+	    assert(population.has(assignment.id), `Unknown identity: ${assignment.id}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 95 99
+	    assert(!assignments.has(assignment.id), `Duplicate assignment: ${assignment.id}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 96 100
+	    const cells = familyCells.get(assignment.family);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 97 101
+	    assert(cells, `Unknown family: ${assignment.family}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 98 102
+	    assert(assignment.coreCell === null || cells.has(assignment.coreCell), `Unknown core cell: ${assignment.family}/${assignment.coreCell}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 99 103
+	    assignments.set(assignment.id, assignment);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 100 104
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 101 105
+	  const missing = [...population.keys()].filter(id => !assignments.has(id));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 102 106
+	  assert.equal(missing.length, 0, `Missing assignments: ${missing.join(', ')}`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 107 107 4
+	  const measuredPatterns = validateVizPatternRegistry(inputs.patternRegistry,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 108 108
+	    derivePatternSources(patterns.map(pattern => ({ specPath: pattern.path, bytes: pattern.bytes }))),
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 109 109
+	    classification.assignments, registry.map(row => row.chartType));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 110 110
+	  for (const row of measuredPatterns) population.get(row.id)!.publicSvg = row.publicSvg;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 103 111 34
+	  const identities = [...population].map(([id, source]) => ({ ...assignments.get(id)!, ...source }));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 104 112
+	  const families = classification.families.map(({ id, definition }) => ({ id, definition }));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 105 113
+	  const coreCells = classification.families.flatMap(family => family.coreCells.map(cell => {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 106 114
+	    const candidates = identities.filter(row => row.family === family.id && row.coreCell === cell.cell);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 107 115
+	    const complete = candidates.some(row => row.publicSvg);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 108 116
+	    return { family: family.id, cell: cell.cell, definition: cell.definition,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 109 117
+	      status: complete ? 'surface-complete' as const : 'typed-gap' as const,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 110 118
+	      identities: candidates.map(row => row.id), ...(!complete ? { reason: cell.gapReason } : {}) };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 111 119
+	  }));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 112 120
+	  return { schemaVersion: 1, families, identities, coreCells, summary: {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 113 121
+	    types: identities.filter(row => row.kind === 'type').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 114 122
+	    patterns: identities.filter(row => row.kind === 'pattern').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 115 123
+	    families: families.length, classified: identities.length, coreCells: coreCells.length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 116 124
+	    coreSurfaceComplete: coreCells.filter(row => row.status === 'surface-complete').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 117 125
+	    typedGaps: coreCells.filter(row => row.status === 'typed-gap').length,
+ffcdc29ef225d28e54f094e2b430b707f85d1167 118 126
+	  } };
+ffcdc29ef225d28e54f094e2b430b707f85d1167 119 127
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 120 128
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 121 129
+	export function renderTaxonomyDocs(taxonomy: VizTaxonomy): string {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 122 130
+	  const { summary } = taxonomy;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 123 131
+	  const lines = [
+ffcdc29ef225d28e54f094e2b430b707f85d1167 124 132
+	    '<!-- Generated by scripts/product-reality/s195-viz-taxonomy.ts. Do not edit. -->',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 125 133
+	    '# Visualization taxonomy and Core Analytics Profile', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 126 134
+	    `Version ${taxonomy.schemaVersion} classifies ${summary.classified} identities: ${summary.types} registered chart types and ${summary.patterns} pattern specifications in ${summary.families} families.`, '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 127 135
+	    `The Core Analytics Profile has ${summary.coreCells} named cells: ${summary.coreSurfaceComplete} surface-complete and ${summary.typedGaps} typed gaps.`, '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 128 136
+	    'Each identity has one primary family and at most one primary core cell. Core identities cover the basic profile; extensions add authoring, composition, interaction, or geographic capabilities. An extension may retain the core cell it elaborates.', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 129 137
+	    'A cell is surface-complete only when an identity assigned to that exact family and cell has public SVG proof. The identity lists below include unproved pattern candidates; a pattern does not inherit proof from its base chart type. Surface-complete describes public pixels, not certification, every theme, dashboard placement, or interaction support.', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 130 138
+	    '## Families', '', '| Family | Definition |', '| --- | --- |',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 131 139
+	    ...taxonomy.families.map(row => `| ${row.id} | ${row.definition} |`), '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 132 140
+	    '## Core Analytics Profile', '', '| Family / cell | Definition | State | Assigned identities | Gap reason |', '| --- | --- | --- | --- | --- |',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 133 141
+	    ...taxonomy.coreCells.map(row => `| ${row.family} / ${row.cell} | ${row.definition} | ${row.status} | ${row.identities.map(id => `\`${id}\``).join(', ') || 'None'} | ${row.reason ?? '—'} |`), '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 134 142
+	    '## Identity census', '', '| Identity | Kind | Family | Role | Primary core cell | Public SVG |', '| --- | --- | --- | --- | --- | --- |',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 135 143
+	    ...taxonomy.identities.map(row => `| \`${row.id}\` | ${row.kind} | ${row.family} | ${row.role} | ${row.coreCell ?? '—'} | ${row.publicSvg ? 'yes' : 'no'} |`), '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 136 144
+	    '## Pattern source pins', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 145 145 1
+	    'These hashes identify the exact authoring specifications included in the census. Public pattern flags require matching identity, source hash, and four measured SVG scopes in the sibling pattern registry.', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 138 146 3
+	    '| Identity | Specification | SHA-256 |', '| --- | --- | --- |',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 139 147
+	    ...taxonomy.identities.filter(row => row.kind === 'pattern').map(row => `| \`${row.id}\` | \`${row.specPath}\` | \`${row.specSha256}\` |`), '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 140 148
+	    '## Regeneration', '',
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 149 149 1
+	    `Edit only \`${CLASSIFICATION_PATH}\` for family, role, primary-cell, definition, and typed-gap decisions. The type population and public SVG flags come from \`${REGISTRY_PATH}\`; pattern IDs and hashes come from the specification files, and their public proof comes from \`${PATTERN_REGISTRY_PATH}\`.`, '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 142 150 28
+	    '```sh', 'pnpm exec tsx scripts/product-reality/s195-viz-taxonomy.ts', 'pnpm exec tsx scripts/product-reality/s195-viz-taxonomy.ts --check', '```', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 143 151
+	    'The generator rejects unknown, duplicated, missing, or cross-family assignments. `--check` checks both the canonical JSON artifact and this document byte for byte. `OODS_VIZ_TAXONOMY_ROOT` or `--root <path>` selects another repository root.', '',
+ffcdc29ef225d28e54f094e2b430b707f85d1167 144 152
+	  ];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 145 153
+	  return lines.join('\n');
+ffcdc29ef225d28e54f094e2b430b707f85d1167 146 154
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 147 155
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 148 156
+	export function generateTaxonomy({ root = ROOT, check = false }: { root?: string; check?: boolean } = {}): VizTaxonomy {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 149 157
+	  const taxonomy = deriveVizTaxonomy(readTaxonomyInputs(root));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 150 158
+	  const outputs: Array<[string, string]> = [[TAXONOMY_PATH, serialize(taxonomy)], [DOC_PATH, renderTaxonomyDocs(taxonomy)]];
+ffcdc29ef225d28e54f094e2b430b707f85d1167 151 159
+	  for (const [file, expected] of outputs) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 152 160
+	    const full = resolve(root, file);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 153 161
+	    if (check) assert(existsSync(full) && readFileSync(full, 'utf8') === expected, `Generated taxonomy output is stale: ${file}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 154 162
+	    else { mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, expected); }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 155 163
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 156 164
+	  return taxonomy;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 157 165
+	}
+ffcdc29ef225d28e54f094e2b430b707f85d1167 158 166
+	
+ffcdc29ef225d28e54f094e2b430b707f85d1167 159 167
+	if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 160 168
+	  const args = process.argv.slice(2);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 161 169
+	  let root = process.env.OODS_VIZ_TAXONOMY_ROOT ?? ROOT;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 162 170
+	  let check = false;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 163 171
+	  for (let index = 0; index < args.length; index += 1) {
+ffcdc29ef225d28e54f094e2b430b707f85d1167 164 172
+	    if (args[index] === '--check') check = true;
+ffcdc29ef225d28e54f094e2b430b707f85d1167 165 173
+	    else if (args[index] === '--root') { assert(args[index + 1], '--root requires a path'); root = resolve(args[++index]!); }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 166 174
+	    else throw new Error(`Unknown argument: ${args[index]}`);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 167 175
+	  }
+ffcdc29ef225d28e54f094e2b430b707f85d1167 168 176
+	  console.log(serialize(generateTaxonomy({ root, check }).summary).trimEnd());
+ffcdc29ef225d28e54f094e2b430b707f85d1167 169 177
+	}

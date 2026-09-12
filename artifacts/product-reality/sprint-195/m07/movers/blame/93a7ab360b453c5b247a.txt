@@ -1,0 +1,178 @@
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 1 1 84
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+filename packages/viz-core/src/registry/viz-patterns.ts
+	export type VizPatternScope = {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 2 2
+	  theme: 'light' | 'dark';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 3 3
+	  brand: 'A' | 'B';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 4 4
+	  status: 'public' | 'authoring-only';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 5 5
+	  svgHash?: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 6 6
+	  normalizedSpecSha256?: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 7 7
+	  a11yDescription?: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 8 8
+	  certify?: {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 9 9
+	    coverage: 'certified' | 'uncertified';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 10 10
+	    conformant: boolean | null;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 11 11
+	    pillars: { a11yEquivalence: string; determinism: string; contrast: string; accuracy: string };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 12 12
+	    stable: boolean;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 13 13
+	    renderHash: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 14 14
+	  };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 15 15
+	  errors?: Array<{ code: string; message: string }>;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 16 16
+	};
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 17 17
+	export type VizPatternCapability = {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 18 18
+	  id: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 19 19
+	  family: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 20 20
+	  baseChartType: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 21 21
+	  specPath: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 22 22
+	  specSha256: string;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 23 23
+	  portability: unknown;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 24 24
+	  publicSvg: boolean;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 25 25
+	  status: 'public' | 'authoring-only';
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 26 26
+	  reasons?: string[];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 27 27
+	  scopes: VizPatternScope[];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 28 28
+	};
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 29 29
+	export type VizPatternProvenance = { id: string; specPath: string; specSha256: string; baseChartType: string; portability?: unknown };
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 30 30
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 31 31
+	export function canonicalPatternValue(value: unknown): string {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 32 32
+	  const sort = (item: unknown): unknown => Array.isArray(item) ? item.map(sort)
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 33 33
+	    : item && typeof item === 'object' ? Object.fromEntries(Object.keys(item).sort().map(key => [key, sort((item as Record<string, unknown>)[key])])) : item;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 34 34
+	  return JSON.stringify(sort(value));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 35 35
+	}
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 36 36
+	
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 37 37
+	/** The measured sibling registry may promote only the exact source identity and four proved scopes. */
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 38 38
+	export function validateVizPatternRegistry(
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 39 39
+	  value: unknown,
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 40 40
+	  sources: readonly VizPatternProvenance[],
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 41 41
+	  assignments: readonly { id: string; family: string }[],
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 42 42
+	  chartTypes: readonly string[],
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 43 43
+	): VizPatternCapability[] {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 44 44
+	  function reject(reason: string): never { throw new Error(`Viz pattern registry rejected: ${reason}`); }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 45 45
+	  const hash = (input: unknown): input is string => typeof input === 'string' && /^[a-f0-9]{64}$/.test(input);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 46 46
+	  const text = (input: unknown): input is string => typeof input === 'string' && input.trim().length > 0;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 47 47
+	  if (!Array.isArray(value) || value.length !== sources.length) reject('exact source population required');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 48 48
+	  const rows = value as VizPatternCapability[];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 49 49
+	  const sourceById = new Map(sources.map(source => [source.id, source]));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 50 50
+	  const familyById = new Map(assignments.map(assignment => [assignment.id, assignment.family]));
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 51 51
+	  if (sourceById.size !== sources.length || new Set(rows.map(row => row?.id)).size !== sources.length) reject('duplicate source or registry identity');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 52 52
+	  for (const row of rows) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 53 53
+	    const source = sourceById.get(row?.id);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 54 54
+	    if (!source || row.family !== familyById.get(row.id) || !text(row.family)) reject(`${row?.id}: unknown identity or family`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 55 55
+	    if (row.specPath !== source.specPath || !hash(row.specSha256) || row.specSha256 !== source.specSha256
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 56 56
+	      || canonicalPatternValue(row.portability) !== canonicalPatternValue(source.portability)) reject(`${row.id}: source provenance mismatch`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 57 57
+	    if (!chartTypes.includes(row.baseChartType) || row.baseChartType !== source.baseChartType) reject(`${row.id}: base chart type differs from source`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 58 58
+	    if (!Array.isArray(row.scopes) || row.scopes.length !== 4) reject(`${row.id}: four measured scopes required`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 59 59
+	    const scopeIds = row.scopes.map(scope => `${scope?.theme}/${scope?.brand}`).sort();
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 60 60
+	    if (JSON.stringify(scopeIds) !== JSON.stringify(['dark/A', 'dark/B', 'light/A', 'light/B'])) reject(`${row.id}: exact light/dark and A/B scopes required`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 61 61
+	    const allPublic = row.scopes.every(scope => scope.status === 'public');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 62 62
+	    const allAuthoring = row.scopes.every(scope => scope.status === 'authoring-only');
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 63 63
+	    if ((!allPublic && !allAuthoring) || row.publicSvg !== allPublic || row.status !== (allPublic ? 'public' : 'authoring-only')) reject(`${row.id}: status differs from scope proof`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 64 64
+	    if (allPublic && row.reasons !== undefined) reject(`${row.id}: public identity cannot retain an authoring-only reason`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 65 65
+	    const measuredReasons = [...new Set(row.scopes.flatMap(scope => scope.errors?.map(error => error.message) ?? []))];
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 66 66
+	    if (allAuthoring && (!Array.isArray(row.reasons) || !row.reasons.length || row.reasons.some(reason => !text(reason))
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 67 67
+	      || canonicalPatternValue(row.reasons) !== canonicalPatternValue(measuredReasons))) reject(`${row.id}: exact measured authoring-only reasons required`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 68 68
+	    for (const scope of row.scopes) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 69 69
+	      if (scope.status === 'public') {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 70 70
+	        const grade = scope.certify;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 71 71
+	        if (!hash(scope.svgHash) || !hash(scope.normalizedSpecSha256) || !text(scope.a11yDescription) || scope.errors !== undefined) reject(`${row.id}: incomplete public pixel proof`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 72 72
+	        if (!grade || !['certified', 'uncertified'].includes(grade.coverage) || (grade.coverage === 'certified' ? typeof grade.conformant !== 'boolean' : grade.conformant !== null)
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 73 73
+	          || grade.stable !== true || grade.renderHash !== scope.svgHash) reject(`${row.id}: incomplete or different certification operand`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 74 74
+	        if (!grade.pillars || !['pass', 'fail', 'unchecked'].includes(grade.pillars.a11yEquivalence)
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 75 75
+	          || grade.pillars.determinism !== 'pass' || !['pass', 'fail', 'exempt', 'ungradeable', 'unchecked'].includes(grade.pillars.contrast)
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 76 76
+	          || !['pass', 'fail', 'ungradeable', 'unchecked'].includes(grade.pillars.accuracy)) reject(`${row.id}: invalid certification pillars`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 77 77
+	      } else if (!Array.isArray(scope.errors) || !scope.errors.length || scope.errors.some(error => error.code !== 'OODS-V167' || !text(error.message))
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 78 78
+	        || scope.svgHash !== undefined || scope.normalizedSpecSha256 !== undefined || scope.certify !== undefined || scope.a11yDescription !== undefined) {
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 79 79
+	        reject(`${row.id}: authoring-only scope lacks its public rejection`);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 80 80
+	      }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 81 81
+	    }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 82 82
+	  }
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 83 83
+	  return rows;
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 84 84
+	}

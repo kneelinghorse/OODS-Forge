@@ -1,0 +1,226 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 108
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+filename scripts/product-reality/s195-attribute-viz-goldens.py
+	"""Bounded s191-style attribution of m05 palette goldens and superseded matrix rows."""
+52b0da991705c4c565987bc9faf7738ba00d885e 2 2
+	import argparse
+52b0da991705c4c565987bc9faf7738ba00d885e 3 3
+	import hashlib
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4
+	import json
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5
+	import os
+52b0da991705c4c565987bc9faf7738ba00d885e 6 6
+	import re
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+	import subprocess
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	from pathlib import Path
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	root = Path(os.environ.get('OODS_VIZ_CENSUS_ROOT', Path(__file__).resolve().parents[2]))
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	out = root / 'artifacts/product-reality/sprint-195/m05/golden-migration'
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	read = lambda path: json.loads((root / path).read_text())
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	sha = lambda data: hashlib.sha256(data).hexdigest()
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	baseline = read(out.relative_to(root) / 'baseline.json')
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	parser = argparse.ArgumentParser(description=__doc__)
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	parser.add_argument('--check', action='store_true')
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	parser.add_argument('--head', help='Exact 40-character implementation commit for tracked after-state bytes')
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	args = parser.parse_args()
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	if args.head:
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	    assert re.fullmatch(r'[a-f0-9]{40}', args.head), '--head requires an exact 40-character commit'
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	    assert subprocess.check_output(['git', 'cat-file', '-t', args.head], cwd=root, text=True).strip() == 'commit'
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	changed = subprocess.check_output(['git', 'diff', '--name-only', '--diff-filter=M', baseline['beforeHead'], *([args.head] if args.head else [])], cwd=root, text=True).splitlines()
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	def tracked_bytes(path):
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	    return subprocess.check_output(['git', 'show', f'{args.head}:{path}'], cwd=root) if args.head else (root / path).read_bytes()
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	current_matrix = read(out.relative_to(root) / 'matrix/matrix.json')
+52b0da991705c4c565987bc9faf7738ba00d885e 26 26
+	current_census = read('artifacts/product-reality/sprint-195/m05/viz/viz-observations.json')
+52b0da991705c4c565987bc9faf7738ba00d885e 27 27
+	current_patterns = read('artifacts/product-reality/sprint-195/m05/patterns/pattern-observations.json')
+52b0da991705c4c565987bc9faf7738ba00d885e 28 28
+	key = lambda kind, theme, brand: f'{kind}/{theme}/{brand}'
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29
+	chart_hashes = {key(row['chartType'], row['theme'], row['brand']): row['svgHash'] for row in current_matrix['table']}
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	census_hashes = {key(row['chartType'], scope['theme'], scope['brand']): scope.get('svgHash') for row in current_census['observations'] for scope in row['scopes']}
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	dashboard_hashes = {key('dashboard', row['theme'], row['brand']): row['outputHtmlHash'] for row in current_matrix['dashboards']}
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	pattern_hashes = {key(row['id'], row['request']['theme'], row['request']['brand']): row['rendered'].get('svgHash') for row in current_patterns['cells']}
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	reason = 's195-m05 categorical Role-A palette revision selected by measured CVD separation with Role-C preserved; inputs and renderer contract retained'
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	files, snapshots = [], []
+52b0da991705c4c565987bc9faf7738ba00d885e 35 35
+	snapshot_entries = lambda text: dict(re.findall(r'exports\[`(.*?)`\] = `(.*?)`;\n', text, re.S))
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36
+	for prior in baseline['trackedFiles']:
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	    path = root / prior['path']
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	    if prior['path'].startswith('artifacts/'):
+52b0da991705c4c565987bc9faf7738ba00d885e 39 39
+	        assert sha(path.read_bytes()) == prior['sha256'], f'Historical golden mutated: {path}'
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 41 41
+	    if args.head and prior['path'] not in changed:
+52b0da991705c4c565987bc9faf7738ba00d885e 42 42
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43
+	    now = tracked_bytes(prior['path'])
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	    if sha(now) == prior['sha256']:
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	    assert not prior['path'].startswith('artifacts/'), f'Historical golden mutated: {path}'
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	    cls = prior['class']
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	    why = reason if cls in ['snapshot', 'svg', 'token', 'certified-matrix'] else 's195-m05 public HC scope admission, measured pixel/certification metadata, or explicit palette migration assertions; historical raw fixtures remain unchanged'
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	    files.append({'file': prior['path'], 'class': cls, 'beforeSha256': prior['sha256'], 'afterSha256': sha(now), 'reason': why})
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	    if cls == 'snapshot':
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	        old = snapshot_entries((out / 'before' / prior['path']).read_text())
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	        new = snapshot_entries(now.decode())
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	        assert old.keys() == new.keys(), f'Unexpected snapshot identity change: {path}'
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	        for identity in old:
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	            if old[identity] != new[identity]:
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	                snapshots.append({'file': prior['path'], 'identity': identity, 'class': 'svg-or-html' if '<svg' in old[identity] else 'render-spec-or-option', 'beforeSha256': sha(old[identity].encode()), 'afterSha256': sha(new[identity].encode()), 'reason': reason})
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	# s191 attribution also records modified prose and colocated test pins from the fixed base.
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	known = {row['file'] for row in files}
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	for path in changed:
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	    if path in known or path.startswith('artifacts/'):
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	    cls = 'documentation' if path.startswith('docs/') or path.endswith('tool-descriptions.json') else 'test-or-fixture' if re.search(r'\.(spec|test)\.', path) else None
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	    if cls is None:
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	    previous = subprocess.check_output(['git', 'show', f"{baseline['beforeHead']}:{path}"], cwd=root)
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	    files.append({'file': path, 'class': cls, 'beforeSha256': sha(previous), 'afterSha256': sha(tracked_bytes(path)), 'reason': 's195-m05 documents measured Role-A separation and four public HC types/nine typed deferrals, or asserts that exact public contract; frozen historical records are unchanged'})
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	files.sort(key=lambda row: row['file'])
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	new_svg_evidence = [{'path': str(path.relative_to(root)), 'sha256': sha(path.read_bytes()), 'class': 'forced-colors-browser-proof' if '/browser/' in str(path) else 'remeasured-legacy-matrix', 'reason': 'New m05 evidence; no previous golden is overwritten.'} for path in sorted((out.parent).rglob('*.svg')) if '/before/' not in str(path)]
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	rows = []
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	def record(source, pointer, cls, identity, previous, current):
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	    assert current, f'No measured replacement for {source}/{pointer}/{identity}'
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	    rows.append({'source': source, 'pointer': pointer, 'class': cls, 'identity': identity, 'beforeHash': previous, 'afterHash': current, 'status': 'unchanged' if previous == current else 'superseded', 'reason': 'Current palette emits identical bytes for this cell.' if previous == current else ('s195-m05 palette epoch supersedes this historical row; prior historical deltas retain their original receipts. ' + reason)})
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	for item in baseline['historicalMatrices']:
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	    source, data = item['path'], item['value']
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	    assert sha((root / source).read_bytes()) == item['sha256'], f'Historical matrix changed: {source}'
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	    if not isinstance(data, dict):
+52b0da991705c4c565987bc9faf7738ba00d885e 77 77
+	        continue
+52b0da991705c4c565987bc9faf7738ba00d885e 78 78
+	    for index, row in enumerate(data.get('table', [])):
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79
+	        theme = row.get('theme', row.get('render', {}).get('theme', 'light'))
+52b0da991705c4c565987bc9faf7738ba00d885e 80 80
+	        brand = row.get('brand', row.get('render', {}).get('brand', 'A'))
+52b0da991705c4c565987bc9faf7738ba00d885e 81 81
+	        identity = key(row['chartType'], theme, brand)
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82
+	        record(source, f'/table/{index}', 'public-chart-matrix', identity, row['svgHash'], chart_hashes[identity])
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	    for index, row in enumerate(data.get('observations', [])):
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	        for scope_index, scope in enumerate(row['scopes']):
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	            identity = key(row['chartType'], scope['theme'], scope['brand'])
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	            record(source, f'/observations/{index}/scopes/{scope_index}', 'public-census', identity, scope['svgHash'], census_hashes[identity])
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	    dashboards = data.get('dashboards', [data['dashboard']] if 'dashboard' in data else [])
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	    for index, row in enumerate(dashboards):
+52b0da991705c4c565987bc9faf7738ba00d885e 89 89
+	        identity = key('dashboard', row.get('theme', 'light'), row.get('brand', 'A'))
+52b0da991705c4c565987bc9faf7738ba00d885e 90 90
+	        previous = row.get('outputHtmlHash', row.get('htmlHash'))
+52b0da991705c4c565987bc9faf7738ba00d885e 91 91
+	        assert previous, f'Missing dashboard hash: {source}'
+52b0da991705c4c565987bc9faf7738ba00d885e 92 92
+	        record(source, f'/dashboards/{index}', 'dashboard-html', identity, previous, dashboard_hashes[identity])
+52b0da991705c4c565987bc9faf7738ba00d885e 93 93
+	    for index, row in enumerate(data.get('cells', []) if isinstance(data.get('cells'), list) else []):
+52b0da991705c4c565987bc9faf7738ba00d885e 94 94
+	        if row.get('rendered', {}).get('svgHash'):
+52b0da991705c4c565987bc9faf7738ba00d885e 95 95
+	            identity = key(row['id'], row['request']['theme'], row['request']['brand'])
+52b0da991705c4c565987bc9faf7738ba00d885e 96 96
+	            record(source, f'/cells/{index}', 'public-pattern', identity, row['rendered']['svgHash'], pattern_hashes[identity])
+52b0da991705c4c565987bc9faf7738ba00d885e 97 97
+	old_certified = json.loads((out / 'before/packages/viz-render/certified-matrix.json').read_text())
+52b0da991705c4c565987bc9faf7738ba00d885e 98 98
+	new_certified = json.loads(tracked_bytes('packages/viz-render/certified-matrix.json'))
+52b0da991705c4c565987bc9faf7738ba00d885e 99 99
+	for family, previous in old_certified['normalizedSvgHashes'].items():
+52b0da991705c4c565987bc9faf7738ba00d885e 100 100
+	    record('packages/viz-render/certified-matrix.json', f'/normalizedSvgHashes/{family}', 'certified-render-matrix', family, previous, new_certified['normalizedSvgHashes'][family])
+52b0da991705c4c565987bc9faf7738ba00d885e 101 101
+	inputs = ['artifacts/product-reality/sprint-195/m05/viz/viz-observations.json', 'artifacts/product-reality/sprint-195/m05/patterns/pattern-observations.json', str(out.relative_to(root) / 'baseline.json'), str(out.relative_to(root) / 'matrix/matrix.json')]
+52b0da991705c4c565987bc9faf7738ba00d885e 102 102
+	report = {'schemaVersion': 1, 'missionId': 's195-m05', 'builderSelfCertified': False, 'beforeHead': baseline['beforeHead'], **({'qualificationHead': args.head} if args.head else {}), 'sourceHashes': [{'path': path, 'sha256': sha((root / path).read_bytes())} for path in inputs], 'historicalRawFilesUnchanged': True, 'files': files, 'snapshotEntries': snapshots, 'newSvgEvidence': new_svg_evidence, 'matrixRows': rows, 'summary': {'changedFiles': len(files), 'changedSnapshotFiles': sum(row['class'] == 'snapshot' for row in files), 'changedTestFiles': sum(row['class'] == 'test-or-fixture' for row in files), 'changedDocumentationFiles': sum(row['class'] == 'documentation' for row in files), 'newSvgEvidence': len(new_svg_evidence), 'movedSnapshotEntries': len(snapshots), 'matrixRows': len(rows), 'supersededMatrixRows': sum(row['status'] == 'superseded' for row in rows), 'previousMissionScopes': sum(row['source'] == 'artifacts/product-reality/sprint-195/m04/viz/viz-observations.json' for row in rows), 'previousMissionMovedScopes': sum(row['source'] == 'artifacts/product-reality/sprint-195/m04/viz/viz-observations.json' and row['status'] == 'superseded' for row in rows), 'classes': {cls: {'total': sum(row['class'] == cls for row in rows), 'superseded': sum(row['class'] == cls and row['status'] == 'superseded' for row in rows)} for cls in sorted(set(row['class'] for row in rows))}}}
+52b0da991705c4c565987bc9faf7738ba00d885e 103 103
+	text = json.dumps(report, indent=2) + '\n'
+52b0da991705c4c565987bc9faf7738ba00d885e 104 104
+	if args.check:
+52b0da991705c4c565987bc9faf7738ba00d885e 105 105
+	    assert (out / 'golden-attribution.json').read_text() == text, 'Golden attribution is stale'
+52b0da991705c4c565987bc9faf7738ba00d885e 106 106
+	else:
+52b0da991705c4c565987bc9faf7738ba00d885e 107 107
+	    (out / 'golden-attribution.json').write_text(text)
+52b0da991705c4c565987bc9faf7738ba00d885e 108 108
+	print(json.dumps(report['summary']))

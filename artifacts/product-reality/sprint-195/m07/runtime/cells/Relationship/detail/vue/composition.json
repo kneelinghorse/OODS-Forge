@@ -1,0 +1,754 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-22",
+                    "component": "DetailHeader",
+                    "props": {
+                      "titleField": "label",
+                      "subtitleField": "description",
+                      "headingLevel": 1
+                    }
+                  },
+                  {
+                    "id": "ve-header-23",
+                    "component": "StatusTimeline",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "statesParameter": "states",
+                      "showActorId": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "ve-header-24",
+                    "component": "OwnershipSummary",
+                    "props": {
+                      "ownerIdField": "owner_id",
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role",
+                      "transferredAtField": "ownership_transferred_at",
+                      "allowTransferParameter": "allowTransfer"
+                    }
+                  },
+                  {
+                    "id": "ve-header-25",
+                    "component": "TagSummary",
+                    "props": {
+                      "field": "tags",
+                      "countField": "tag_count",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "sidebar",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0",
+                          "notes": "pattern-group:status-timeline"
+                        },
+                        "props": {
+                          "patternComponent": "StatusTimeline",
+                          "fields": [
+                            "status",
+                            "allowed_transitions"
+                          ]
+                        },
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "pg-status-timeline-27",
+                            "component": "Text",
+                            "props": {
+                              "field": "status",
+                              "label": "Status"
+                            }
+                          },
+                          {
+                            "id": "pg-status-timeline-28",
+                            "component": "Text",
+                            "props": {
+                              "field": "allowed_transitions",
+                              "label": "Allowed transitions"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-2-8",
+                        "component": "Text",
+                        "meta": {
+                          "intent": "slot:tab-2",
+                          "label": "tab-2",
+                          "confidence": 0.76,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "created_at",
+                          "label": "Created at"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              },
+              {
+                "id": "detail-meta-11",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": []
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onViewTimeline": "handleViewTimeline"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier of the owning principal scoped by owner_type.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": true,
+        "description": "Categorical owner type sourced from the ownerTypes parameter.",
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "relationship_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the relationship edge.",
+        "semanticType": "graph.relationship.id"
+      },
+      "source_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the source node in the relationship."
+      },
+      "target_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the target node in the relationship."
+      },
+      "relationship_type": {
+        "type": "string",
+        "required": true,
+        "description": "Semantic type describing the edge between the source and target.",
+        "enum": [
+          "membership",
+          "ownership",
+          "follows",
+          "depends_on",
+          "references"
+        ],
+        "semanticType": "graph.relationship.type"
+      },
+      "direction": {
+        "type": "string",
+        "required": true,
+        "description": "Directionality applied when traversing the relationship.",
+        "enum": [
+          "unidirectional",
+          "bidirectional"
+        ],
+        "semanticType": "graph.relationship.direction"
+      },
+      "strength": {
+        "type": "string",
+        "required": false,
+        "description": "Signal representing how strongly the entities are connected.",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "semanticType": "graph.relationship.strength"
+      },
+      "origin_source": {
+        "type": "string",
+        "required": false,
+        "description": "System that originated or inferred the relationship.",
+        "enum": [
+          "manual",
+          "ingestion",
+          "analytics",
+          "integration"
+        ],
+        "semanticType": "graph.relationship.origin"
+      },
+      "is_bidirectional": {
+        "type": "boolean",
+        "required": true,
+        "description": "Flag indicating whether the relationship is symmetric."
+      }
+    }
+  },
+  "schemaRef": "compose-0c0a37e6",
+  "schemaRefCreatedAt": "2026-09-12T00:02:33.026Z",
+  "schemaRefExpiresAt": "2026-09-12T00:32:33.026Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "DetailHeader was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StatusTimeline",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "OwnershipSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-0",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"tab-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-1\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-2\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.94,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.58,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "AuditTimeline",
+      "confidence": 0.4,
+      "confidenceLevel": "low",
+      "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagSummary (0.95), TagManager (0.90). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+      "candidates": [
+        {
+          "name": "AuditTimeline",
+          "confidence": 1,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "alternativeCandidates": [
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed."
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-3\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-4\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-5\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-6\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    }
+  ],
+  "objectUsed": {
+    "name": "Relationship",
+    "version": "1.0.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "behavioral/Taggable"
+    ],
+    "fieldsComposed": 25,
+    "viewExtensionsApplied": {
+      "list": 5,
+      "detail": 5,
+      "form": 3,
+      "card": 4,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Relationship detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 9,
+    "nodeCount": 15,
+    "intentSynthetic": true,
+    "warnings": [
+      "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 4,
+      "expansionReason": "Expanded from 3 to 7 tabs for 25 fields",
+      "patternsApplied": 1,
+      "patternGroups": [
+        {
+          "slotName": "tab-0",
+          "patternId": "status-timeline",
+          "compositeComponent": "StatusTimeline",
+          "matchedFields": [
+            "status",
+            "allowed_transitions"
+          ],
+          "confidence": 1
+        }
+      ],
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.74,
+      "lowConfidenceSlots": 1,
+      "lowConfidenceSlotNames": [
+        "metadata"
+      ]
+    }
+  }
+}

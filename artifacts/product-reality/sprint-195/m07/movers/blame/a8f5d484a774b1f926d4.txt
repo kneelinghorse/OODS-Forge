@@ -1,0 +1,67 @@
+a3158282bba25713171d7216181bde28b69a80a1 47 47 8
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c packages/mcp-server/src/objects/trait-composer.ts
+filename packages/mcp-server/src/objects/trait-composer.ts
+	const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; component: string }>> = {
+a3158282bba25713171d7216181bde28b69a80a1 48 48
+	  MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
+a3158282bba25713171d7216181bde28b69a80a1 49 49
+	  MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
+a3158282bba25713171d7216181bde28b69a80a1 50 50
+	  MarkLine: { chartType: 'line', component: 'VizLinePreview' },
+a3158282bba25713171d7216181bde28b69a80a1 51 51
+	  MarkPoint: { chartType: 'scatter', component: 'VizPointPreview' },
+a3158282bba25713171d7216181bde28b69a80a1 52 52
+	  MarkRect: { chartType: 'heatmap', component: 'VizHeatmapPreview' },
+a3158282bba25713171d7216181bde28b69a80a1 53 53
+	};
+a3158282bba25713171d7216181bde28b69a80a1 54 54
+	
+a3158282bba25713171d7216181bde28b69a80a1 85 85 12
+	    if (traitDef.trait.name.startsWith('Mark') && ref.parameters?.chart) {
+a3158282bba25713171d7216181bde28b69a80a1 86 86
+	      const preview = BOUND_MARK_PREVIEWS[traitDef.trait.name];
+a3158282bba25713171d7216181bde28b69a80a1 87 87
+	      if (!preview) throw new Error(`Bound chart trait "${traitDef.trait.name}" has no supported preview projection.`);
+a3158282bba25713171d7216181bde28b69a80a1 88 88
+	      const chart = ref.parameters.chart;
+a3158282bba25713171d7216181bde28b69a80a1 89 89
+	      if (typeof chart !== 'object' || Array.isArray(chart) || !('chartType' in chart) || chart.chartType !== preview.chartType) {
+a3158282bba25713171d7216181bde28b69a80a1 90 90
+	        throw new Error(`Bound chart trait "${traitDef.trait.name}" requires chartType "${preview.chartType}".`);
+a3158282bba25713171d7216181bde28b69a80a1 91 91
+	      }
+a3158282bba25713171d7216181bde28b69a80a1 92 92
+	      const parameters = {
+a3158282bba25713171d7216181bde28b69a80a1 93 93
+	        ...Object.fromEntries(traitDef.parameters.filter(parameter => parameter.default !== undefined).map(parameter => [parameter.name, parameter.default])),
+a3158282bba25713171d7216181bde28b69a80a1 94 94
+	        ...ref.parameters,
+a3158282bba25713171d7216181bde28b69a80a1 95 95
+	      };
+a3158282bba25713171d7216181bde28b69a80a1 96 96
+	      const contexts = traitDef.view_extensions?.dashboard ? ['detail', 'dashboard'] : ['detail'];
+a3158282bba25713171d7216181bde28b69a80a1 101 101 8
+	        dependencies: [],
+a3158282bba25713171d7216181bde28b69a80a1 102 102
+	        view_extensions: Object.fromEntries(contexts.map(context => [context, [{
+a3158282bba25713171d7216181bde28b69a80a1 103 103
+	          component: preview.component, position: 'top', priority: 55, props: {
+a3158282bba25713171d7216181bde28b69a80a1 104 104
+	            chart: structuredClone(chart),
+a3158282bba25713171d7216181bde28b69a80a1 105 105
+	            ...(parameters.title !== undefined ? { title: parameters.title } : {}),
+a3158282bba25713171d7216181bde28b69a80a1 106 106
+	            ...(parameters.description !== undefined ? { description: parameters.description } : {}),
+a3158282bba25713171d7216181bde28b69a80a1 107 107
+	          },
+a3158282bba25713171d7216181bde28b69a80a1 108 108
+	        }]])),

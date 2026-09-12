@@ -1,0 +1,71 @@
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 55 55 15
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 scripts/product-reality/s185-sprint-wide-movers.mjs
+filename scripts/product-reality/s185-sprint-wide-movers.mjs
+	export const S195_BASE = '5b25c3c9ec795315bf52a698d135c96bffd66393';
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 56 56
+	export const S195_PUBLIC_RUNTIME_SCOPE = Object.freeze([...S194_PUBLIC_RUNTIME_SCOPE,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 57 57
+	  'domains/saas-billing', 'src/core/trait-definition.ts', 'docs/viz', 'docs/authoring-traits-viz.md',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 58 58
+	  'examples/viz/patterns-v2', 'scripts/product-reality/s190-viz-census.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 59 59
+	  'scripts/product-reality/s195-attribute-viz-goldens.py', 'scripts/product-reality/s195-certify-profile-migration.mjs',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 60 60
+	  'scripts/product-reality/s195-certify-profile-receipt.ts', 'scripts/product-reality/s195-certify-profile-schema.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 61 61
+	  'scripts/product-reality/s195-chart-declaration-schema.ts', 'scripts/product-reality/s195-hc-browser.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 62 62
+	  'scripts/product-reality/s195-hc-built-receipt.ts', 'scripts/product-reality/s195-hc-schema.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 63 63
+	  'scripts/product-reality/s195-health-viz-schema.ts', 'scripts/product-reality/s195-palette.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 64 64
+	  'scripts/product-reality/s195-pattern-census.ts', 'scripts/product-reality/s195-pattern-input-schema.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 65 65
+	  'scripts/product-reality/s195-pattern-sources.ts', 'scripts/product-reality/s195-qualify-viz-matrix.ts',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 66 66
+	  'scripts/product-reality/s195-soak-observation.mjs', 'scripts/product-reality/s195-viz-accuracy-bite.mjs',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 67 67
+	  'scripts/product-reality/s195-viz-bite-probe.ts', 'scripts/product-reality/s195-viz-certification-migration.mjs',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 68 68
+	  'scripts/product-reality/s195-viz-matrix.ts', 'scripts/product-reality/s195-viz-mutation-bites.mjs',
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 69 69
+	  'scripts/product-reality/s195-viz-taxonomy.ts']);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 119 119 12
+	  if (options.sprintId === 'sprint-195') {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 120 120
+	    assert(options.missionId === 's195-m07' && resolveCommit(options.base, root) === S195_BASE, 'Sprint195 requires its mission and locked build base.');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 121 121
+	    const range = deriveRange(S195_BASE, head, root, S195_PUBLIC_RUNTIME_SCOPE), comparison = { s195: {} };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 122 122
+	    for (const surface of ['canonicalPaths', 'publicPaths']) {
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 123 123
+	      assert(Array.isArray(declaration?.s195?.[surface]), `Missing s195/${surface} declaration.`);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 124 124
+	      const result = compareDeclaredPaths(range[surface], declaration.s195[surface]);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 125 125
+	      assert(result.missingFromDeclaration.length === 0 && result.extraInDeclaration.length === 0, `s195/${surface}: declared mover union differs: ${canonical(result)}`);
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 126 126
+	      comparison.s195[surface] = result;
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 127 127
+	    }
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 128 128
+	    return { missionId: 's195-m07', sprintId: 'sprint-195', status: 'passed', canonicalScope: CANONICAL_ADVERTISED_SCOPE,
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 129 129
+	      publicScope: S195_PUBLIC_RUNTIME_SCOPE, s195: range, comparison };
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 130 130
+	  }
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 177 177 1
+	  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195'].includes(options.sprintId), 'Unsupported sprint.');
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 186 186 1
+	      ...(options.sprintId === 'sprint-195' ? { s195: deriveRange(options.base, head, ROOT, S195_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-194' ? { s194: deriveRange(options.base, head, ROOT, S194_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-193' ? { s193: deriveRange(options.base, head, ROOT, S193_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-192' ? { s192: deriveRange(options.base, head, ROOT, S192_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-191' ? { s191: deriveRange(options.base, head, ROOT, S191_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-190' ? { s190: deriveRange(options.base, head, ROOT, S190_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-189' ? { s189: deriveRange(options.base, head, ROOT, S189_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-188' ? { s188: deriveRange(options.base, head, ROOT, S188_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 194 194 1
+	  process.stdout.write(canonical(options.sprintId === 'sprint-195' ? { head, s195: { canonical: report.s195.canonicalPaths.length, public: report.s195.publicPaths.length } } : options.sprintId === 'sprint-194' ? { head, s194: { canonical: report.s194.canonicalPaths.length, public: report.s194.publicPaths.length } } : options.sprintId === 'sprint-193' ? { head, s193: { canonical: report.s193.canonicalPaths.length, public: report.s193.publicPaths.length } } : options.sprintId === 'sprint-192' ? { head, s192: { canonical: report.s192.canonicalPaths.length, public: report.s192.publicPaths.length } } : options.sprintId === 'sprint-191' ? { head, s191: { canonical: report.s191.canonicalPaths.length, public: report.s191.publicPaths.length } } : options.sprintId === 'sprint-190' ? { head, s190: { canonical: report.s190.canonicalPaths.length, public: report.s190.publicPaths.length } } : options.sprintId === 'sprint-189' ? { head, s189: { canonical: report.s189.canonicalPaths.length, public: report.s189.publicPaths.length } } : options.sprintId === 'sprint-188' ? { head, s188: { canonical: report.s188.canonicalPaths.length, public: report.s188.publicPaths.length } } : options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,

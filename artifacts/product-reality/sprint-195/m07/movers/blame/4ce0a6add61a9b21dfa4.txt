@@ -1,0 +1,186 @@
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 88
+author System Systems
+author-mail <systems@example.com>
+author-time 1789163103
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789163103
+committer-tz -0500
+summary feat(viz): qualify palette separation and high-contrast rendering
+filename scripts/product-reality/s195-hc-browser.ts
+	import assert from 'node:assert/strict';
+52b0da991705c4c565987bc9faf7738ba00d885e 2 2
+	import fs from 'node:fs/promises';
+52b0da991705c4c565987bc9faf7738ba00d885e 3 3
+	import path from 'node:path';
+52b0da991705c4c565987bc9faf7738ba00d885e 4 4
+	import { createRequire } from 'node:module';
+52b0da991705c4c565987bc9faf7738ba00d885e 5 5
+	import { fileURLToPath } from 'node:url';
+52b0da991705c4c565987bc9faf7738ba00d885e 6 6
+	import { chromium, type Page } from 'playwright';
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+	import { handle as render } from '../../packages/mcp-server/src/tools/viz.render.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 8 8
+	import { handle as dashboard } from '../../packages/mcp-server/src/tools/dashboard.render.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 9 9
+	import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+	import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 11 11
+	import { SALES, CASES } from '../../packages/mcp-server/src/tools/__fixtures__/cartesian-render.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 12 12
+	import { createConsumerFiles } from './s184-m06-live-consumers.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 13 13
+	import { deriveConsumerModel } from './s185-m04-consumer-contract.js';
+52b0da991705c4c565987bc9faf7738ba00d885e 14 14
+	import { runVizForcedColourProof } from './component-theme-proof.mjs';
+52b0da991705c4c565987bc9faf7738ba00d885e 15 15
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 16 16
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+52b0da991705c4c565987bc9faf7738ba00d885e 17 17
+	const output = path.join(root, 'artifacts/product-reality/sprint-195/m05/browser');
+52b0da991705c4c565987bc9faf7738ba00d885e 18 18
+	const requireVue = createRequire(path.join(root, 'packages/components-vue/package.json'));
+52b0da991705c4c565987bc9faf7738ba00d885e 19 19
+	const { createServer } = await import(requireVue.resolve('vite'));
+52b0da991705c4c565987bc9faf7738ba00d885e 20 20
+	const { default: vue } = await import(requireVue.resolve('@vitejs/plugin-vue'));
+52b0da991705c4c565987bc9faf7738ba00d885e 21 21
+	const tokenCss = await fs.readFile(path.join(root, 'packages/tokens/dist/css/tokens.css'), 'utf8');
+52b0da991705c4c565987bc9faf7738ba00d885e 22 22
+	const cases: { id: string; brand: 'A' | 'B'; svgCount: number; selector?: string; mount(page: Page): Promise<void> }[] = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 23 23
+	const servers: { close(): Promise<void> }[] = [];
+52b0da991705c4c565987bc9faf7738ba00d885e 24 24
+	const write = async (name: string, value: unknown) => {
+52b0da991705c4c565987bc9faf7738ba00d885e 25 25
+	  const file = path.join(output, name); await fs.mkdir(path.dirname(file), { recursive: true });
+52b0da991705c4c565987bc9faf7738ba00d885e 26 26
+	  await fs.writeFile(file, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
+52b0da991705c4c565987bc9faf7738ba00d885e 27 27
+	};
+52b0da991705c4c565987bc9faf7738ba00d885e 28 28
+	try {
+52b0da991705c4c565987bc9faf7738ba00d885e 29 29
+	  for (const brand of ['A', 'B'] as const) {
+52b0da991705c4c565987bc9faf7738ba00d885e 30 30
+	    for (const chart of CASES.slice(0, 2)) {
+52b0da991705c4c565987bc9faf7738ba00d885e 31 31
+	      const id = `${chart.chartType}-${brand}-hc`;
+52b0da991705c4c565987bc9faf7738ba00d885e 32 32
+	      const request = { chartType: chart.chartType, encodings: chart.encodings, rows: [...SALES], theme: 'hc' as const, brand, output: { svg: true, includeNormalizedSpec: true } };
+52b0da991705c4c565987bc9faf7738ba00d885e 33 33
+	      const result = await render(request); assert.equal(result.status, 'ok', JSON.stringify(result.errors));
+52b0da991705c4c565987bc9faf7738ba00d885e 34 34
+	      const html = `<!doctype html><html data-brand="${brand}" data-theme="hc"><head><style>${tokenCss}</style></head><body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">${result.svg}</body></html>`;
+52b0da991705c4c565987bc9faf7738ba00d885e 35 35
+	      await write(`${id}.json`, { request, result }); await write(`${id}.html`, html);
+52b0da991705c4c565987bc9faf7738ba00d885e 36 36
+	      cases.push({ id, brand, svgCount: 1, mount: async page => { await page.setContent(html); } });
+52b0da991705c4c565987bc9faf7738ba00d885e 37 37
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 38 38
+	    const id = `dashboard-${brand}-hc`;
+52b0da991705c4c565987bc9faf7738ba00d885e 39 39
+	    const request = { schemaVersion: 'v0.1' as const, theme: 'hc' as const, brand,
+52b0da991705c4c565987bc9faf7738ba00d885e 40 40
+	      datasets: [{ id: 'sales', rows: [...SALES] }],
+52b0da991705c4c565987bc9faf7738ba00d885e 41 41
+	      panels: CASES.slice(0, 2).map(({ chartType, encodings }) => ({ id: chartType, kind: 'chart' as const, chartType, encodings, datasetId: 'sales' })),
+52b0da991705c4c565987bc9faf7738ba00d885e 42 42
+	      a11y: { description: 'Sales by region and month, rendered with the high-contrast scope.' }, output: { html: true, contrastScan: true } };
+52b0da991705c4c565987bc9faf7738ba00d885e 43 43
+	    const result = await dashboard(request); assert.equal(result.status, 'ok', JSON.stringify(result.errors));
+52b0da991705c4c565987bc9faf7738ba00d885e 44 44
+	    assert(result.html); await write(`${id}.json`, { request, result }); await write(`${id}.html`, result.html);
+52b0da991705c4c565987bc9faf7738ba00d885e 45 45
+	    cases.push({ id, brand, svgCount: 2, mount: async page => { await page.setContent(result.html!); } });
+52b0da991705c4c565987bc9faf7738ba00d885e 46 46
+	
+52b0da991705c4c565987bc9faf7738ba00d885e 47 47
+	    for (const framework of ['react', 'vue'] as const) {
+52b0da991705c4c565987bc9faf7738ba00d885e 48 48
+	      const id = `Subscription-detail-${framework}-${brand}-hc`;
+52b0da991705c4c565987bc9faf7738ba00d885e 49 49
+	      const composition = await compose({ object: 'Subscription', context: 'detail', preferences: { theme: 'hc', brand } });
+52b0da991705c4c565987bc9faf7738ba00d885e 50 50
+	      assert.equal(composition.status, 'ok', JSON.stringify(composition.errors));
+52b0da991705c4c565987bc9faf7738ba00d885e 51 51
+	      const generated = await generate({ schema: composition.schema, framework, profile: 'build', options: { theme: 'hc', brand } });
+52b0da991705c4c565987bc9faf7738ba00d885e 52 52
+	      assert.equal(generated.status, 'ok', JSON.stringify(generated.errors)); assert(generated.artifact);
+52b0da991705c4c565987bc9faf7738ba00d885e 53 53
+	      await write(`${id}/composition.json`, composition); await write(`${id}/generation.json`, generated);
+52b0da991705c4c565987bc9faf7738ba00d885e 54 54
+	      const files = createConsumerFiles({ framework, source: generated.code, actions: generated.artifact.actions,
+52b0da991705c4c565987bc9faf7738ba00d885e 55 55
+	        schemaName: 'fresh-Subscription-detail', model: deriveConsumerModel(composition.schema), mission: 's195-m05' });
+52b0da991705c4c565987bc9faf7738ba00d885e 56 56
+	      const entry = framework === 'react' ? 'src/main.tsx' : 'src/main.ts';
+52b0da991705c4c565987bc9faf7738ba00d885e 57 57
+	      // Reuse the runtime consumer's client mount; public generated source stays byte-identical.
+52b0da991705c4c565987bc9faf7738ba00d885e 58 58
+	      files[entry] = framework === 'react'
+52b0da991705c4c565987bc9faf7738ba00d885e 59 59
+	        ? files[entry]!.replace('import { hydrateRoot }', 'import { createRoot }')
+52b0da991705c4c565987bc9faf7738ba00d885e 60 60
+	          .replace('hydrateRoot(root, React.createElement(GeneratedUI,', 'createRoot(root).render(React.createElement(GeneratedUI,').replace(/\}\)\);\s*$/, '}));\n')
+52b0da991705c4c565987bc9faf7738ba00d885e 61 61
+	        : files[entry]!.replaceAll('createSSRApp', 'createApp');
+52b0da991705c4c565987bc9faf7738ba00d885e 62 62
+	      files['index.html'] = files['index.html']!.replace('data-brand="A" data-theme="dark"', `data-brand="${brand}" data-theme="hc"`);
+52b0da991705c4c565987bc9faf7738ba00d885e 63 63
+	      const consumer = path.join(output, id, 'consumer');
+52b0da991705c4c565987bc9faf7738ba00d885e 64 64
+	      await fs.mkdir(consumer, { recursive: true });
+52b0da991705c4c565987bc9faf7738ba00d885e 65 65
+	      // Preserve every handler asset alongside the existing live-consumer entry/model.
+52b0da991705c4c565987bc9faf7738ba00d885e 66 66
+	      for (const file of generated.artifact.files) await write(`${id}/consumer/${file.path}`, file.contents);
+52b0da991705c4c565987bc9faf7738ba00d885e 67 67
+	      for (const [name, source] of Object.entries(files)) await write(`${id}/consumer/${name}`, source);
+52b0da991705c4c565987bc9faf7738ba00d885e 68 68
+	      const server = await createServer({ root: consumer, configFile: false, logLevel: 'error', cacheDir: path.join(consumer, 'node_modules/.vite'),
+52b0da991705c4c565987bc9faf7738ba00d885e 69 69
+	        plugins: framework === 'vue' ? [vue()] : [],
+52b0da991705c4c565987bc9faf7738ba00d885e 70 70
+	        resolve: { alias: {
+52b0da991705c4c565987bc9faf7738ba00d885e 71 71
+	          '@oods/component-styles/css': path.join(root, 'packages/component-styles/dist/components.css'),
+52b0da991705c4c565987bc9faf7738ba00d885e 72 72
+	          '@oods/components-react': path.join(root, 'packages/components-react/dist/index.js'),
+52b0da991705c4c565987bc9faf7738ba00d885e 73 73
+	          '@oods/components-vue': path.join(root, 'packages/components-vue/dist/index.js'),
+52b0da991705c4c565987bc9faf7738ba00d885e 74 74
+	          vue: requireVue.resolve('vue/dist/vue.runtime.esm-bundler.js'),
+52b0da991705c4c565987bc9faf7738ba00d885e 75 75
+	        } }, server: { host: '127.0.0.1', port: 0, fs: { allow: [root] } } });
+52b0da991705c4c565987bc9faf7738ba00d885e 76 76
+	      servers.push(server); await server.listen();
+52b0da991705c4c565987bc9faf7738ba00d885e 77 77
+	      const origin = `http://127.0.0.1:${(server.httpServer!.address() as { port: number }).port}`;
+52b0da991705c4c565987bc9faf7738ba00d885e 78 78
+	      cases.push({ id, brand, svgCount: 1, selector: '[data-oods-component="VizAreaPreview"] svg', mount: async page => {
+52b0da991705c4c565987bc9faf7738ba00d885e 79 79
+	        await page.goto(origin, { waitUntil: 'networkidle' });
+52b0da991705c4c565987bc9faf7738ba00d885e 80 80
+	        const chart = page.locator('[data-oods-component="VizAreaPreview"] svg');
+52b0da991705c4c565987bc9faf7738ba00d885e 81 81
+	        if (!await chart.isVisible()) for (const tab of await page.getByRole('tab').all()) { await tab.click(); if (await chart.isVisible()) break; }
+52b0da991705c4c565987bc9faf7738ba00d885e 82 82
+	        await chart.waitFor({ state: 'visible' });
+52b0da991705c4c565987bc9faf7738ba00d885e 83 83
+	      } });
+52b0da991705c4c565987bc9faf7738ba00d885e 84 84
+	    }
+52b0da991705c4c565987bc9faf7738ba00d885e 85 85
+	  }
+52b0da991705c4c565987bc9faf7738ba00d885e 86 86
+	  const report = await runVizForcedColourProof({ cases, output, chromium });
+52b0da991705c4c565987bc9faf7738ba00d885e 87 87
+	  console.log(`${report.selected} public forced-colour cells, ${report.failed} failures, ${report.skipped} skipped`);
+52b0da991705c4c565987bc9faf7738ba00d885e 88 88
+	} finally { await Promise.all(servers.map(server => server.close())); }

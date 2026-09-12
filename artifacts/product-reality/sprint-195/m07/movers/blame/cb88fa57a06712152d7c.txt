@@ -1,0 +1,38 @@
+ffcdc29ef225d28e54f094e2b430b707f85d1167 723 723 4
+author System Systems
+author-mail <systems@example.com>
+author-time 1789159171
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789159171
+committer-tz -0500
+summary Add generated visualization taxonomy and portable health summary
+previous 5f71d0818a913830812e05dca123b628e0d83abe scripts/runtime/e2e.mjs
+filename scripts/runtime/e2e.mjs
+	    // s195-m02: the extracted runtime carries the authored classification and
+ffcdc29ef225d28e54f094e2b430b707f85d1167 724 724
+	    // generated taxonomy; health must expose their reconciled Core Profile.
+ffcdc29ef225d28e54f094e2b430b707f85d1167 725 725
+	    const vizTaxonomy = await loadJson(path.join(runtimeRoot, 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json'));
+ffcdc29ef225d28e54f094e2b430b707f85d1167 726 726
+	    assert.deepEqual(health.productReality.viz, vizTaxonomy.summary);
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 727 727 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789160384
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789160384
+committer-tz -0500
+summary feat(viz): expose source-faithful pattern identities and measured coverage
+previous 86736ca4dd44b978ded37cc9c5cbc266cbf19429 scripts/runtime/e2e.mjs
+filename scripts/runtime/e2e.mjs
+	    assert.deepEqual(Object.fromEntries(['types', 'patterns', 'families', 'classified', 'coreCells'].map(key => [key, health.productReality.viz[key]])), { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20 });
+b8f4220f0ba730d871dc75e0aea0467aa53eeb10 728 728
+	    assert.equal(health.productReality.viz.coreSurfaceComplete + health.productReality.viz.typedGaps, 20);
+ffcdc29ef225d28e54f094e2b430b707f85d1167 848 849 1
+	      health: { outcome: 'pass', tokens: health.tokens, viz: health.productReality.viz },
+ffcdc29ef225d28e54f094e2b430b707f85d1167 861 862 1
+	        viz: health.productReality.viz,

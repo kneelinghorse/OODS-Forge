@@ -1,0 +1,45 @@
+a3158282bba25713171d7216181bde28b69a80a1 3 3 17
+author System Systems
+author-mail <systems@example.com>
+author-time 1789165554
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789165554
+committer-tz -0500
+summary feat(viz): place bound domain charts and verify missing palette failures
+previous 22c674c548b6f3859c462e150a4601222366c25c packages/mcp-server/src/codegen/chart-declaration.ts
+filename packages/mcp-server/src/codegen/chart-declaration.ts
+	const previewTypes: Readonly<Record<string, string>> = {
+a3158282bba25713171d7216181bde28b69a80a1 4 4
+	  VizAreaPreview: 'area',
+a3158282bba25713171d7216181bde28b69a80a1 5 5
+	  VizMarkPreview: 'bar',
+a3158282bba25713171d7216181bde28b69a80a1 6 6
+	  VizLinePreview: 'line',
+a3158282bba25713171d7216181bde28b69a80a1 7 7
+	  VizPointPreview: 'scatter',
+a3158282bba25713171d7216181bde28b69a80a1 8 8
+	  VizScatterPreview: 'scatter',
+a3158282bba25713171d7216181bde28b69a80a1 9 9
+	  VizHeatmapPreview: 'heatmap',
+a3158282bba25713171d7216181bde28b69a80a1 10 10
+	};
+a3158282bba25713171d7216181bde28b69a80a1 11 11
+	
+a3158282bba25713171d7216181bde28b69a80a1 12 12
+	export function isChartPreview(component: string): boolean {
+a3158282bba25713171d7216181bde28b69a80a1 13 13
+	  return Object.hasOwn(previewTypes, component);
+a3158282bba25713171d7216181bde28b69a80a1 14 14
+	}
+a3158282bba25713171d7216181bde28b69a80a1 15 15
+	
+a3158282bba25713171d7216181bde28b69a80a1 16 16
+	export function chartMatchesPreview(node: UiElement): boolean {
+a3158282bba25713171d7216181bde28b69a80a1 17 17
+	  return isChartPreview(node.component) && previewTypes[node.component] === node.chart?.chartType;
+a3158282bba25713171d7216181bde28b69a80a1 18 18
+	}
+a3158282bba25713171d7216181bde28b69a80a1 19 19
+	

@@ -1,0 +1,76 @@
+86b44639489552329a627219fe527918a6c08420 1 1 33
+author System Systems
+author-mail <systems@example.com>
+author-time 1789161640
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789161640
+committer-tz -0500
+summary feat(viz): certify ECharts operands with graded accessibility and accuracy
+filename scripts/product-reality/s195-certify-profile-schema.ts
+	import fs from 'node:fs';
+86b44639489552329a627219fe527918a6c08420 2 2
+	import path from 'node:path';
+86b44639489552329a627219fe527918a6c08420 3 3
+	import { fileURLToPath } from 'node:url';
+86b44639489552329a627219fe527918a6c08420 4 4
+	import { ACCURACY_RULES } from '../../packages/viz-core/src/accuracy/index.js';
+86b44639489552329a627219fe527918a6c08420 5 5
+	import { ECHARTS_ACCURACY_RULES } from '../../packages/viz-core/src/accuracy/echarts-index.js';
+86b44639489552329a627219fe527918a6c08420 6 6
+	
+86b44639489552329a627219fe527918a6c08420 7 7
+	// Recorded profile prose and offered accuracy-code migration, derived from source rules.
+86b44639489552329a627219fe527918a6c08420 8 8
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+86b44639489552329a627219fe527918a6c08420 9 9
+	const target = path.join(root, 'packages/mcp-server/src/schemas/artifact.certify.output.json');
+86b44639489552329a627219fe527918a6c08420 10 10
+	const before = fs.readFileSync(target, 'utf8');
+86b44639489552329a627219fe527918a6c08420 11 11
+	const schema = JSON.parse(before);
+86b44639489552329a627219fe527918a6c08420 12 12
+	schema.description = 'Certification of a Forge NormalizedVizSpec. Cartesian charts use the existing Vega-Lite profile; ECharts-primary charts with matching data use the declared operand profile without a Vega compile leg. Both report coverage certified and a boolean folded conformance verdict. The operand profile requires passing a11y-equivalence, stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule. Spec-only ECharts calls remain uncertified with conformant null and explicit missing-operand notes. Findings, not-applicable rules, rule counts and per-pillar verdicts expose what actually ran; evaluator or render faults never become a passing operand verdict. Render determinism identifies the projected option and independently repeated normalized SVG where available, within the certified runtime matrix; a geometry-free bubble map retains only its option proof with its stated limitation.';
+86b44639489552329a627219fe527918a6c08420 13 13
+	const descriptions: Record<string, string> = {
+86b44639489552329a627219fe527918a6c08420 14 14
+	  coverage: 'Certified identifies the Cartesian or declared ECharts data-operand profile, not a passing result: read conformant and the pillars. Uncertified identifies a spec-only ECharts call or an unmodeled mark. Spec-only ECharts contrast may still be reconstructed or exempt, while data-dependent a11y, determinism and accuracy remain unchecked. Absent on error.',
+86b44639489552329a627219fe527918a6c08420 15 15
+	  conformant: 'Boolean for a certified profile; null for uncertified calls; absent on error. The ECharts operand profile is true only when a11y-equivalence passes, determinism is stable, contrast is neither fail nor ungradeable, and accuracy passes with rulesEvaluated greater than zero and no accuracy findings. Error-severity a11y findings and evaluation faults fail that pillar; ordinary warning findings and not-applicable rules do not. Cartesian behavior is unchanged: its four pillars fold together, with contrast/accuracy fail or ungradeable preventing conformance. Accuracy unchecked cannot pass the operand profile. A measured false is retained, never converted into uncertified.',
+86b44639489552329a627219fe527918a6c08420 16 16
+	  findings: 'One entry per failing a11y-equivalence or accuracy rule, at native severity. A11y codes use OODS-A11Y-<rule.id>; accuracy codes use their registered OODS-V codes. Warnings remain visible without failing a11y, while error-severity a11y findings and any accuracy findings prevent operand conformance. An evaluator fault is reported separately in the pillar and notes, so empty findings alone never imply a pass.',
+86b44639489552329a627219fe527918a6c08420 17 17
+	  a11yNotApplicable: 'One entry per a11y-equivalence rule whose declared precondition was absent, in rule order with the precondition named. Present, possibly empty, when the ECharts operand engine returns the complete rule population; absent without data, on Cartesian calls, on tool error, or when the engine throws or returns an incomplete population. An individual rule evaluator fault retains the completed engine population and native findings, while failing the a11y pillar. Not-applicable rules never enter findings and are not counted as failures.',
+86b44639489552329a627219fe527918a6c08420 18 18
+	  accuracySummary: 'How the accuracy pillar was reached. Present when rules completed: on Cartesian calls and ECharts calls with data. Absent without an ECharts operand or on an evaluator fault. rulesEvaluated counts resolved rule operands; a rule whose precondition is absent is not counted and explains why in notes. The ECharts operand profile requires at least one evaluated rule and zero failing rules.',
+86b44639489552329a627219fe527918a6c08420 19 19
+	  pillars: 'Per-pillar verdicts on successful tool responses, including nonconformant results. Data-backed ECharts calls grade a11y over the shared operand-built table/narrative, repeat option emission and available rendering for determinism, measure or exempt contrast, and run the per-type accuracy rules. Spec-only ECharts calls keep data-dependent pillars unchecked and retain legacy contrast behavior. A fault cannot silently produce a passing profile.',
+86b44639489552329a627219fe527918a6c08420 20 20
+	  notes: 'Path-specific scope and missing-operand explanations, runtime-matrix limits, unmet rule preconditions and evaluator faults. The operand note describes the enforced profile; the spec-only note explains why coverage remains uncertified and conformant null. Empty offered/resolved rule sets remain explicit and cannot pass the operand profile.',
+86b44639489552329a627219fe527918a6c08420 21 21
+	};
+86b44639489552329a627219fe527918a6c08420 22 22
+	for (const [name, description] of Object.entries(descriptions)) schema.properties[name].description = description;
+86b44639489552329a627219fe527918a6c08420 23 23
+	schema.properties.pillars.properties.a11yEquivalence.description = 'Pass when the complete rule evaluation has no error-severity failure or evaluator fault; fail otherwise. Ordinary warnings and declared not-applicable rules retain their channels without failing the pillar. ECharts evaluates the same operand-built table and narrative as viz.render; without data it stays unchecked. A whole-engine fault or incomplete rule population is fail with a note, never unchecked or pass.';
+86b44639489552329a627219fe527918a6c08420 24 24
+	schema.properties.pillars.properties.accuracy.description = 'Structural accuracy from the four Cartesian rules or the per-type ECharts data rules. Fail means a registered rule found a distortion; ungradeable means evaluation faulted; unchecked means no operand or no resolved rule. ECharts pass requires at least one evaluated rule with no findings. Its operand profile fails on fail, ungradeable or unchecked. Cartesian zero-rule semantics remain unchanged. Offered rules and evaluated rules are distinct; pass does not claim complete chart accuracy.';
+86b44639489552329a627219fe527918a6c08420 25 25
+	delete schema.properties.accuracyRules.items.pattern;
+86b44639489552329a627219fe527918a6c08420 26 26
+	schema.properties.accuracyRules.items.enum = [...new Set([...ACCURACY_RULES, ...ECHARTS_ACCURACY_RULES].map(rule => rule.code))].sort();
+86b44639489552329a627219fe527918a6c08420 27 27
+	schema.properties.accuracySummary.properties.rulesEvaluated.description = 'How many offered rules resolved their operand and ran. Cartesian charts offer four rules; each ECharts-primary type offers one to three. An unresolved precondition is excluded from this count and explained in notes. Always read accuracy pass together with this number.';
+86b44639489552329a627219fe527918a6c08420 28 28
+	schema.properties.accuracySummary.properties.failing.description = 'How many evaluated accuracy rules positively detected a distortion. Equals the number of accuracy-rule findings, excluding a11y findings; offered accuracy codes are listed in accuracyRules.';
+86b44639489552329a627219fe527918a6c08420 29 29
+	schema.$defs.finding.properties.code.description = 'A per-rule equivalence code OODS-A11Y-<rule.id>, a registered accuracy-rule code listed in accuracyRules, or an OODS-V error code on the error path. The literal OODS-A11Y-A11Y-R-12 retains the full rule identity.';
+86b44639489552329a627219fe527918a6c08420 30 30
+	const after = JSON.stringify(schema, null, 2) + '\n';
+86b44639489552329a627219fe527918a6c08420 31 31
+	if (process.argv.includes('--check')) {
+86b44639489552329a627219fe527918a6c08420 32 32
+	  if (before !== after) throw new Error('artifact.certify.output.json differs from the declared operand profile schema');
+86b44639489552329a627219fe527918a6c08420 33 33
+	} else fs.writeFileSync(target, after);
