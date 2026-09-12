@@ -1,0 +1,148 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/category-tree.md
+filename docs/history/components/category-tree.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 61
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/category-tree.md
+	# CategoryTree
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	CategoryTree renders hierarchical taxonomy data (ltree-backed `CategoryNode[]`) with keyboard navigation, drag-and-drop reordering, and breadcrumb context that satisfies the Classifiable trait success criteria.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## Highlights
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- **Keyboard tree pattern** – Implements the WAI-ARIA tree interaction model. Arrow keys traverse nodes, `Space` toggles expansion, and `Enter` toggles selection. Focus is roved so only one treeitem is tabbable at a time.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- **Drag-and-drop** – Native drag events reorder nodes without mutating source data until the consumer handles the `onReorder` callback. Drops default to “inside”; hold `Shift` to insert before and `Alt/⌘` to insert after the drop target.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	- **Search-aware rendering** – `useCategoryTree` powers automatic ancestor expansion and match-highlighting for thousands of nodes. Filtering runs in `O(n)` and was profiled with 1,000-node fixtures (<7 ms on M4).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	- **Breadcrumb context** – `showBreadcrumbs` renders the focused node path through the dedicated `CategoryBreadcrumb` component, aligning with the Classifiable trait semantics.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	- **Token compliant** – Styling uses `--cmp-*`/`--sys-*` CSS variables only, with HC fallbacks.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	import { CategoryTree } from '@/components/classification/CategoryTree.js';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	const taxonomy: CategoryNode[] = fetchCategories(); // normalized nodes
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	export function TaxonomyPanel() {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  return (
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	    <CategoryTree
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	      nodes={taxonomy}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	      defaultExpandedDepth={2}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	      onSelectionChange={({ ids }) => console.log(ids)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	      onReorder={({ sourceId, targetId, dropPosition }) => {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	        console.log('move', sourceId, '=>', targetId, dropPosition);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	      }}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	      showBreadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	      renderNodeBadge={(node) => node.childCount || undefined}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	    />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	  );
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	### Drop intent modifiers
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	| Modifier | Drop behavior | Notes |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	| --- | --- | --- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	| default | `inside` | Moves source under the target (appends to children). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	| `Shift` | `before` | Inserts before target within the same parent/root list. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	| `Alt`/`⌘` | `after` | Inserts after target. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	Override with `resolveDropIntent` when a different mapping is preferred.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	## Hook API
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	`useCategoryTree(nodes, options)` exposes the full tree model, roving focus state, search helpers, and reorder utilities. Pass the resulting state to `CategoryTreeView` for custom experiences (e.g., CategoryPicker). The hook never mutates the incoming array; local reorders clone the view-only model and still emit `onReorder` payloads.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	## Testing & A11y
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	- Interaction tests: `tests/components/classification/CategoryTree.test.tsx`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	- axe guard: `tests/components/classification/CategoryTree.a11y.test.tsx`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	Both suites cover keyboard flows, filtering, drag events, and accessibility violations. Add new scenarios there when extending the component.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	## Related Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	- **CategoryBreadcrumb** – Renders the ancestor path for the currently focused node. Exposed separately for Classifiable panels.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	- **CategoryPicker** – Form-ready variant with search, chips, recently-used helpers, and hidden form inputs.

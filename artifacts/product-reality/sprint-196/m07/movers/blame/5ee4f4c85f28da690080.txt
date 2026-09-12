@@ -1,0 +1,502 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 246
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+filename scripts/docs/generate-component-docs.ts
+	#!/usr/bin/env tsx
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	/** Governed component references; authored historical guides live outside this output directory. */
+944f4dda5f784e266310978b31f65b3d452e6387 3 3
+	import fs from 'node:fs';
+944f4dda5f784e266310978b31f65b3d452e6387 4 4
+	import path from 'node:path';
+944f4dda5f784e266310978b31f65b3d452e6387 5 5
+	import { fileURLToPath, pathToFileURL } from 'node:url';
+944f4dda5f784e266310978b31f65b3d452e6387 6 6
+	import type { ComponentContract, SharedScenario } from '../../packages/component-contracts/src/types.js';
+944f4dda5f784e266310978b31f65b3d452e6387 7 7
+	
+944f4dda5f784e266310978b31f65b3d452e6387 8 8
+	export const ROOT = fileURLToPath(new URL('../../', import.meta.url));
+944f4dda5f784e266310978b31f65b3d452e6387 9 9
+	export const OUTPUT_DIRECTORY = 'docs/components';
+944f4dda5f784e266310978b31f65b3d452e6387 10 10
+	export const LEDGER_PATH = 'packages/component-contracts/registry/component-capability-ledger.v1.json';
+944f4dda5f784e266310978b31f65b3d452e6387 11 11
+	export const CONTRACTS_PATH = 'packages/component-contracts/src/contracts.ts';
+944f4dda5f784e266310978b31f65b3d452e6387 12 12
+	export const SCENARIOS_PATH = 'packages/component-contracts/src/scenarios.ts';
+944f4dda5f784e266310978b31f65b3d452e6387 13 13
+	export const MANIFEST_PATH = 'artifacts/structured-data/manifest.json';
+944f4dda5f784e266310978b31f65b3d452e6387 14 14
+	export const SURFACES = ['contract', 'metadata', 'html', 'react', 'vue', 'generatedConsumer', 'accessibility', 'theme', 'interaction'] as const;
+944f4dda5f784e266310978b31f65b3d452e6387 15 15
+	
+944f4dda5f784e266310978b31f65b3d452e6387 16 16
+	type Surface = { state: string; evidence: string[]; reason?: string };
+944f4dda5f784e266310978b31f65b3d452e6387 17 17
+	export type CapabilityRow = {
+944f4dda5f784e266310978b31f65b3d452e6387 18 18
+	  id: string;
+944f4dda5f784e266310978b31f65b3d452e6387 19 19
+	  proposedClassification: string;
+944f4dda5f784e266310978b31f65b3d452e6387 20 20
+	  reconciliationState: string;
+944f4dda5f784e266310978b31f65b3d452e6387 21 21
+	  surfaces: Record<(typeof SURFACES)[number], Surface>;
+944f4dda5f784e266310978b31f65b3d452e6387 22 22
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 23 23
+	export type CatalogComponent = {
+944f4dda5f784e266310978b31f65b3d452e6387 24 24
+	  id: string;
+944f4dda5f784e266310978b31f65b3d452e6387 25 25
+	  displayName: string;
+944f4dda5f784e266310978b31f65b3d452e6387 26 26
+	  categories: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 27 27
+	  tags: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 28 28
+	  contexts: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 29 29
+	  regions: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 30 30
+	  sourceFiles: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 31 31
+	  traitUsages: Array<{
+944f4dda5f784e266310978b31f65b3d452e6387 32 32
+	    trait: string; traitCategory: string; context: string; position: string | null;
+944f4dda5f784e266310978b31f65b3d452e6387 33 33
+	    priority: number | null; props: Record<string, unknown>; source: string;
+944f4dda5f784e266310978b31f65b3d452e6387 34 34
+	  }>;
+944f4dda5f784e266310978b31f65b3d452e6387 35 35
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 36 36
+	export type ComponentDocInputs = {
+944f4dda5f784e266310978b31f65b3d452e6387 37 37
+	  ledger: { rows: CapabilityRow[] };
+944f4dda5f784e266310978b31f65b3d452e6387 38 38
+	  contracts: Readonly<Record<string, ComponentContract>>;
+944f4dda5f784e266310978b31f65b3d452e6387 39 39
+	  scenarios: readonly SharedScenario[];
+944f4dda5f784e266310978b31f65b3d452e6387 40 40
+	  catalog: { components: CatalogComponent[] };
+944f4dda5f784e266310978b31f65b3d452e6387 41 41
+	  catalogPath: string;
+944f4dda5f784e266310978b31f65b3d452e6387 42 42
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 43 43
+	
+944f4dda5f784e266310978b31f65b3d452e6387 44 44
+	const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
+944f4dda5f784e266310978b31f65b3d452e6387 45 45
+	const json = <T>(root: string, file: string): T => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8')) as T;
+944f4dda5f784e266310978b31f65b3d452e6387 46 46
+	
+944f4dda5f784e266310978b31f65b3d452e6387 47 47
+	export async function readComponentDocInputs(root = ROOT): Promise<ComponentDocInputs> {
+944f4dda5f784e266310978b31f65b3d452e6387 48 48
+	  const manifest = json<{ artifacts: Array<{ name: string; path: string }> }>(root, MANIFEST_PATH);
+944f4dda5f784e266310978b31f65b3d452e6387 49 49
+	  const catalogs = manifest.artifacts.filter(artifact => artifact.name === 'components');
+944f4dda5f784e266310978b31f65b3d452e6387 50 50
+	  if (catalogs.length !== 1) throw new Error('Structured-data manifest must select exactly one components catalog.');
+944f4dda5f784e266310978b31f65b3d452e6387 51 51
+	  const catalogPath = catalogs[0]!.path;
+944f4dda5f784e266310978b31f65b3d452e6387 52 52
+	  assertRepositoryPath(catalogPath);
+944f4dda5f784e266310978b31f65b3d452e6387 53 53
+	  // Import public source values: the authored literals omit behavior-injected fields and scenarios.
+944f4dda5f784e266310978b31f65b3d452e6387 54 54
+	  const [{ componentContracts }, { sharedScenarios }] = await Promise.all([
+944f4dda5f784e266310978b31f65b3d452e6387 55 55
+	    import(pathToFileURL(path.join(root, CONTRACTS_PATH)).href),
+944f4dda5f784e266310978b31f65b3d452e6387 56 56
+	    import(pathToFileURL(path.join(root, SCENARIOS_PATH)).href),
+944f4dda5f784e266310978b31f65b3d452e6387 57 57
+	  ]);
+944f4dda5f784e266310978b31f65b3d452e6387 58 58
+	  return {
+944f4dda5f784e266310978b31f65b3d452e6387 59 59
+	    ledger: json(root, LEDGER_PATH),
+944f4dda5f784e266310978b31f65b3d452e6387 60 60
+	    contracts: componentContracts,
+944f4dda5f784e266310978b31f65b3d452e6387 61 61
+	    scenarios: sharedScenarios,
+944f4dda5f784e266310978b31f65b3d452e6387 62 62
+	    catalog: json(root, catalogPath),
+944f4dda5f784e266310978b31f65b3d452e6387 63 63
+	    catalogPath,
+944f4dda5f784e266310978b31f65b3d452e6387 64 64
+	  };
+944f4dda5f784e266310978b31f65b3d452e6387 65 65
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 66 66
+	
+944f4dda5f784e266310978b31f65b3d452e6387 67 67
+	function assertRepositoryPath(reference: string): void {
+944f4dda5f784e266310978b31f65b3d452e6387 68 68
+	  const file = reference.split('#')[0]!;
+944f4dda5f784e266310978b31f65b3d452e6387 69 69
+	  if (!file || path.isAbsolute(file) || file.split(/[\\/]/).includes('..') || file.includes('\\') || /^[a-z]+:/i.test(file)) {
+944f4dda5f784e266310978b31f65b3d452e6387 70 70
+	    throw new Error(`Component source reference must be repository-relative: ${reference}`);
+944f4dda5f784e266310978b31f65b3d452e6387 71 71
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 72 72
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 73 73
+	
+944f4dda5f784e266310978b31f65b3d452e6387 74 74
+	function uniqueIds(ids: string[], source: string): string[] {
+944f4dda5f784e266310978b31f65b3d452e6387 75 75
+	  if (new Set(ids).size !== ids.length) throw new Error(`${source} contains duplicate IDs.`);
+944f4dda5f784e266310978b31f65b3d452e6387 76 76
+	  return [...ids].sort(compare);
+944f4dda5f784e266310978b31f65b3d452e6387 77 77
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 78 78
+	
+944f4dda5f784e266310978b31f65b3d452e6387 79 79
+	function sameIds(expected: string[], actual: string[], source: string): void {
+944f4dda5f784e266310978b31f65b3d452e6387 80 80
+	  const missing = expected.filter(id => !actual.includes(id));
+944f4dda5f784e266310978b31f65b3d452e6387 81 81
+	  const extra = actual.filter(id => !expected.includes(id));
+944f4dda5f784e266310978b31f65b3d452e6387 82 82
+	  if (missing.length || extra.length) throw new Error(`${source} differs from the component ledger: missing [${missing.join(', ')}]; extra [${extra.join(', ')}].`);
+944f4dda5f784e266310978b31f65b3d452e6387 83 83
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 84 84
+	
+944f4dda5f784e266310978b31f65b3d452e6387 85 85
+	export function validateComponentDocInputs(inputs: ComponentDocInputs): string[] {
+944f4dda5f784e266310978b31f65b3d452e6387 86 86
+	  const ids = uniqueIds(inputs.ledger.rows.map(row => row.id), 'Component ledger');
+944f4dda5f784e266310978b31f65b3d452e6387 87 87
+	  if (!ids.length || ids.some(id => !/^[A-Z][A-Za-z0-9]*$/.test(id))) throw new Error('Component ledger must contain safe, nonempty component IDs.');
+944f4dda5f784e266310978b31f65b3d452e6387 88 88
+	  sameIds(ids, Object.keys(inputs.contracts).sort(compare), 'Contracts');
+944f4dda5f784e266310978b31f65b3d452e6387 89 89
+	  for (const [id, contract] of Object.entries(inputs.contracts)) {
+944f4dda5f784e266310978b31f65b3d452e6387 90 90
+	    if (contract.id !== id) throw new Error(`Contract key ${id} differs from its ID ${contract.id}.`);
+944f4dda5f784e266310978b31f65b3d452e6387 91 91
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 92 92
+	  sameIds(ids, uniqueIds(inputs.catalog.components.map(component => component.id), 'Catalog'), 'Catalog');
+944f4dda5f784e266310978b31f65b3d452e6387 93 93
+	  uniqueIds(inputs.scenarios.map(scenario => scenario.id), 'Shared scenarios');
+944f4dda5f784e266310978b31f65b3d452e6387 94 94
+	  sameIds(ids, [...new Set(inputs.scenarios.map(scenario => scenario.oodsComponentId))].sort(compare), 'Shared scenarios');
+944f4dda5f784e266310978b31f65b3d452e6387 95 95
+	  for (const row of inputs.ledger.rows) {
+944f4dda5f784e266310978b31f65b3d452e6387 96 96
+	    const actual = Object.keys(row.surfaces).sort(compare);
+944f4dda5f784e266310978b31f65b3d452e6387 97 97
+	    if (JSON.stringify(actual) !== JSON.stringify([...SURFACES].sort(compare))) throw new Error(`${row.id} must declare all nine capability surfaces, without extras.`);
+944f4dda5f784e266310978b31f65b3d452e6387 98 98
+	    for (const surface of SURFACES) {
+944f4dda5f784e266310978b31f65b3d452e6387 99 99
+	      const value = row.surfaces[surface];
+944f4dda5f784e266310978b31f65b3d452e6387 100 100
+	      if (!value.state || !Array.isArray(value.evidence)) throw new Error(`${row.id}/${surface} lacks a state or evidence list.`);
+944f4dda5f784e266310978b31f65b3d452e6387 101 101
+	      value.evidence.forEach(assertRepositoryPath);
+944f4dda5f784e266310978b31f65b3d452e6387 102 102
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 103 103
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 104 104
+	  assertRepositoryPath(inputs.catalogPath);
+944f4dda5f784e266310978b31f65b3d452e6387 105 105
+	  for (const component of inputs.catalog.components) {
+944f4dda5f784e266310978b31f65b3d452e6387 106 106
+	    component.sourceFiles.forEach(assertRepositoryPath);
+944f4dda5f784e266310978b31f65b3d452e6387 107 107
+	    component.traitUsages.forEach(usage => assertRepositoryPath(usage.source));
+944f4dda5f784e266310978b31f65b3d452e6387 108 108
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 109 109
+	  return ids;
+944f4dda5f784e266310978b31f65b3d452e6387 110 110
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 111 111
+	
+944f4dda5f784e266310978b31f65b3d452e6387 112 112
+	const text = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\|/g, '\\|').replace(/\r?\n/g, '<br>');
+944f4dda5f784e266310978b31f65b3d452e6387 113 113
+	const code = (value: string) => `\`${text(value).replace(/`/g, '&#96;')}\``;
+944f4dda5f784e266310978b31f65b3d452e6387 114 114
+	const names = (values: readonly string[]) => values.length ? values.map(code).join(', ') : 'None declared';
+944f4dda5f784e266310978b31f65b3d452e6387 115 115
+	const prose = (values: readonly string[]) => values.length ? values.map(value => `- ${text(value)}`).join('\n') : 'None declared.';
+944f4dda5f784e266310978b31f65b3d452e6387 116 116
+	
+944f4dda5f784e266310978b31f65b3d452e6387 117 117
+	function sourceLink(reference: string): string {
+944f4dda5f784e266310978b31f65b3d452e6387 118 118
+	  // Symbol names and JSON pointers are provenance labels, not Markdown heading anchors.
+944f4dda5f784e266310978b31f65b3d452e6387 119 119
+	  const file = reference.split('#')[0]!;
+944f4dda5f784e266310978b31f65b3d452e6387 120 120
+	  return `[${text(reference)}](../../${encodeURI(file).replace(/\(/g, '%28').replace(/\)/g, '%29')})`;
+944f4dda5f784e266310978b31f65b3d452e6387 121 121
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 122 122
+	
+944f4dda5f784e266310978b31f65b3d452e6387 123 123
+	const generated = '<!-- Generated by scripts/docs/generate-component-docs.ts. Do not edit; run pnpm exec tsx scripts/docs/generate-component-docs.ts. -->';
+944f4dda5f784e266310978b31f65b3d452e6387 124 124
+	
+944f4dda5f784e266310978b31f65b3d452e6387 125 125
+	function renderComponent(row: CapabilityRow, inputs: ComponentDocInputs): string {
+944f4dda5f784e266310978b31f65b3d452e6387 126 126
+	  const contract = inputs.contracts[row.id]!;
+944f4dda5f784e266310978b31f65b3d452e6387 127 127
+	  const component = inputs.catalog.components.find(value => value.id === row.id)!;
+944f4dda5f784e266310978b31f65b3d452e6387 128 128
+	  const scenarios = inputs.scenarios.filter(value => value.oodsComponentId === row.id).sort((a, b) => compare(a.id, b.id));
+944f4dda5f784e266310978b31f65b3d452e6387 129 129
+	  const lines = [
+944f4dda5f784e266310978b31f65b3d452e6387 130 130
+	    `# ${row.id}`, '', generated, '', '[All governed components](./README.md)', '',
+944f4dda5f784e266310978b31f65b3d452e6387 131 131
+	    `Display name: ${text(component.displayName)}. Contract version: ${code(contract.version)}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 132 132
+	    '## Contract', '',
+944f4dda5f784e266310978b31f65b3d452e6387 133 133
+	    `Source: ${sourceLink(`${CONTRACTS_PATH}#${row.id}`)}. Names below describe the declared surface; types and defaults are not inferred.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 134 134
+	    '| Field | Declared names |', '| --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 135 135
+	    ...(['props', 'slots', 'events', 'states', 'tokenRoles'] as const).map(field => `| ${code(field)} | ${names(contract[field])} |`), '',
+944f4dda5f784e266310978b31f65b3d452e6387 136 136
+	    '### Accessibility and behavior', '', prose(contract.accessibility), '',
+944f4dda5f784e266310978b31f65b3d452e6387 137 137
+	    `Role: ${contract.role ? code(contract.role) : 'Not declared'}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 138 138
+	    `Accessible name: ${contract.name ? `${code(contract.name.strategy)} strategy targeting ${code(contract.name.target)}` : 'Not declared'}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 139 139
+	    '| Keyboard input | Declared outcome |', '| --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 140 140
+	    ...(Object.keys(contract.keyboard ?? {}).length
+944f4dda5f784e266310978b31f65b3d452e6387 141 141
+	      ? Object.entries(contract.keyboard!).map(([key, outcome]) => `| ${code(key)} | ${text(outcome)} |`)
+944f4dda5f784e266310978b31f65b3d452e6387 142 142
+	      : ['| None declared | No component-owned keyboard behavior is declared. |']), '',
+944f4dda5f784e266310978b31f65b3d452e6387 143 143
+	    '### Compatibility', '', text(contract.compatibility), '',
+944f4dda5f784e266310978b31f65b3d452e6387 144 144
+	    '## Capability evidence', '',
+944f4dda5f784e266310978b31f65b3d452e6387 145 145
+	    `Proposed classification: ${code(row.proposedClassification)}. Reconciliation state: ${code(row.reconciliationState)}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 146 146
+	    'Classification remains a proposal where the ledger says so. These surface records retain their own evidence scope; they do not imply a newly approved runtime census.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 147 147
+	    `Source: ${sourceLink(LEDGER_PATH)}. Evidence links open the source file; labels retain its symbol or JSON-pointer reference.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 148 148
+	    '| Surface | State | Evidence | Reason |', '| --- | --- | --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 149 149
+	    ...SURFACES.map(surface => {
+944f4dda5f784e266310978b31f65b3d452e6387 150 150
+	      const value = row.surfaces[surface];
+944f4dda5f784e266310978b31f65b3d452e6387 151 151
+	      return `| ${code(surface)} | ${code(value.state)} | ${value.evidence.length ? value.evidence.map(sourceLink).join('<br>') : 'None recorded'} | ${value.reason ? text(value.reason) : '—'} |`;
+944f4dda5f784e266310978b31f65b3d452e6387 152 152
+	    }), '',
+944f4dda5f784e266310978b31f65b3d452e6387 153 153
+	    '## Catalog metadata', '', `Source: ${sourceLink(inputs.catalogPath)}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 154 154
+	    '| Field | Values |', '| --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 155 155
+	    ...(['categories', 'tags', 'contexts', 'regions'] as const).map(field => `| ${code(field)} | ${names(component[field])} |`), '',
+944f4dda5f784e266310978b31f65b3d452e6387 156 156
+	    '### Trait usages', '',
+944f4dda5f784e266310978b31f65b3d452e6387 157 157
+	    '| Trait | Category | Context | Position | Priority | Props | Source |', '| --- | --- | --- | --- | --- | --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 158 158
+	    ...(component.traitUsages.length ? component.traitUsages.map(usage => `| ${code(usage.trait)} | ${code(usage.traitCategory)} | ${code(usage.context)} | ${usage.position === null ? 'Not recorded' : code(usage.position)} | ${usage.priority ?? 'Not recorded'} | ${code(JSON.stringify(usage.props))} | ${sourceLink(usage.source)} |`)
+944f4dda5f784e266310978b31f65b3d452e6387 159 159
+	      : ['| None recorded | — | — | — | — | — | — |']), '',
+944f4dda5f784e266310978b31f65b3d452e6387 160 160
+	    'Source files:', '', ...component.sourceFiles.map(file => `- ${sourceLink(file)}`), '',
+944f4dda5f784e266310978b31f65b3d452e6387 161 161
+	    `## Shared scenarios (${scenarios.length})`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 162 162
+	    `Source: ${sourceLink(SCENARIOS_PATH)}. This count describes authored scenarios, not executed passes; execution claims remain in the evidence above.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 163 163
+	  ];
+944f4dda5f784e266310978b31f65b3d452e6387 164 164
+	  for (const scenario of scenarios) {
+944f4dda5f784e266310978b31f65b3d452e6387 165 165
+	    lines.push(`### ${code(scenario.id)}`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 166 166
+	      `Interaction: ${code(scenario.interaction)}.${scenario.interactionReason ? ` ${text(scenario.interactionReason)}` : ''}`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 167 167
+	      `Expectation ${code(scenario.renderExpectation.name)}: ${text(scenario.renderExpectation.trigger)} → ${text(scenario.renderExpectation.expected)}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 168 168
+	      prose(scenario.assertions), '',
+944f4dda5f784e266310978b31f65b3d452e6387 169 169
+	      '| Trigger | Target | Input | Expected effect |', '| --- | --- | --- | --- |');
+944f4dda5f784e266310978b31f65b3d452e6387 170 170
+	    lines.push(...(scenario.event.length ? scenario.event.map(event => `| ${code(event.trigger)} | ${code(event.target)} | ${code(event.key ?? event.action ?? '')}${event.value === undefined ? '' : `: ${code(event.value)}`} | ${code(JSON.stringify(event.effect))} |`)
+944f4dda5f784e266310978b31f65b3d452e6387 171 171
+	      : ['| None declared | — | — | — |']), '');
+944f4dda5f784e266310978b31f65b3d452e6387 172 172
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 173 173
+	  return lines.join('\n');
+944f4dda5f784e266310978b31f65b3d452e6387 174 174
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 175 175
+	
+944f4dda5f784e266310978b31f65b3d452e6387 176 176
+	function renderIndex(inputs: ComponentDocInputs, ids: string[]): string {
+944f4dda5f784e266310978b31f65b3d452e6387 177 177
+	  const rows = ids.map(id => inputs.ledger.rows.find(row => row.id === id)!);
+944f4dda5f784e266310978b31f65b3d452e6387 178 178
+	  const lines = [
+944f4dda5f784e266310978b31f65b3d452e6387 179 179
+	    '# Governed components', '', generated, '',
+944f4dda5f784e266310978b31f65b3d452e6387 180 180
+	    `${ids.length} component pages join the capability ledger, exported contracts, manifest-selected catalog and ${inputs.scenarios.length} shared scenarios.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 181 181
+	    `Sources: ${[LEDGER_PATH, CONTRACTS_PATH, SCENARIOS_PATH, inputs.catalogPath].map(sourceLink).join(', ')}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 182 182
+	    'The classification column is the recorded proposal; each page preserves reconciliation state and evidence for all nine surfaces. Scenario counts are authored coverage, not execution claims.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 183 183
+	    '[Historical Foundry component guides](../history/components/) are retained reference material outside this governed census.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 184 184
+	    '## Components', '', '| Component | Proposed classification | React | Vue | Shared scenarios |', '| --- | --- | --- | --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 185 185
+	    ...rows.map(row => `| [${row.id}](./${row.id}.md) | ${code(row.proposedClassification)} | ${code(row.surfaces.react.state)} | ${code(row.surfaces.vue.state)} | ${inputs.scenarios.filter(scenario => scenario.oodsComponentId === row.id).length} |`), '',
+944f4dda5f784e266310978b31f65b3d452e6387 186 186
+	    '## Recorded surface counts', '', '| Surface | State | Components |', '| --- | --- | --- |',
+944f4dda5f784e266310978b31f65b3d452e6387 187 187
+	  ];
+944f4dda5f784e266310978b31f65b3d452e6387 188 188
+	  for (const surface of SURFACES) {
+944f4dda5f784e266310978b31f65b3d452e6387 189 189
+	    const counts = new Map<string, number>();
+944f4dda5f784e266310978b31f65b3d452e6387 190 190
+	    for (const row of rows) counts.set(row.surfaces[surface].state, (counts.get(row.surfaces[surface].state) ?? 0) + 1);
+944f4dda5f784e266310978b31f65b3d452e6387 191 191
+	    for (const [state, count] of [...counts.entries()].sort(([a], [b]) => compare(a, b))) lines.push(`| ${code(surface)} | ${code(state)} | ${count} |`);
+944f4dda5f784e266310978b31f65b3d452e6387 192 192
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 193 193
+	  lines.push('', 'Regenerate with `pnpm exec tsx scripts/docs/generate-component-docs.ts`; append `--check` to reject stale, missing or orphan pages without writing files.', '');
+944f4dda5f784e266310978b31f65b3d452e6387 194 194
+	  return lines.join('\n');
+944f4dda5f784e266310978b31f65b3d452e6387 195 195
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 196 196
+	
+944f4dda5f784e266310978b31f65b3d452e6387 197 197
+	export function renderComponentDocs(inputs: ComponentDocInputs): Map<string, string> {
+944f4dda5f784e266310978b31f65b3d452e6387 198 198
+	  const ids = validateComponentDocInputs(inputs);
+944f4dda5f784e266310978b31f65b3d452e6387 199 199
+	  const files = new Map<string, string>([[`${OUTPUT_DIRECTORY}/README.md`, renderIndex(inputs, ids)]]);
+944f4dda5f784e266310978b31f65b3d452e6387 200 200
+	  for (const id of ids) files.set(`${OUTPUT_DIRECTORY}/${id}.md`, renderComponent(inputs.ledger.rows.find(row => row.id === id)!, inputs));
+944f4dda5f784e266310978b31f65b3d452e6387 201 201
+	  return files;
+944f4dda5f784e266310978b31f65b3d452e6387 202 202
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 203 203
+	
+944f4dda5f784e266310978b31f65b3d452e6387 204 204
+	function markdownFiles(root: string, directory: string): string[] {
+944f4dda5f784e266310978b31f65b3d452e6387 205 205
+	  if (!fs.existsSync(path.join(root, directory))) return [];
+944f4dda5f784e266310978b31f65b3d452e6387 206 206
+	  return fs.readdirSync(path.join(root, directory), { withFileTypes: true }).flatMap(entry => {
+944f4dda5f784e266310978b31f65b3d452e6387 207 207
+	    const relative = `${directory}/${entry.name}`;
+944f4dda5f784e266310978b31f65b3d452e6387 208 208
+	    return entry.isDirectory() ? markdownFiles(root, relative) : entry.name.endsWith('.md') ? [relative] : [];
+944f4dda5f784e266310978b31f65b3d452e6387 209 209
+	  }).sort(compare);
+944f4dda5f784e266310978b31f65b3d452e6387 210 210
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 211 211
+	
+944f4dda5f784e266310978b31f65b3d452e6387 212 212
+	export async function generateComponentDocs({ root = ROOT, check = false, inputs }: { root?: string; check?: boolean; inputs?: ComponentDocInputs } = {}) {
+944f4dda5f784e266310978b31f65b3d452e6387 213 213
+	  const source = inputs ?? await readComponentDocInputs(root);
+944f4dda5f784e266310978b31f65b3d452e6387 214 214
+	  const files = renderComponentDocs(source);
+944f4dda5f784e266310978b31f65b3d452e6387 215 215
+	  // A published evidence link must resolve, even when its label carries an opaque source symbol.
+944f4dda5f784e266310978b31f65b3d452e6387 216 216
+	  for (const content of files.values()) for (const match of content.matchAll(/\]\(\.\.\/\.\.\/([^\n)]+)\)/g)) {
+944f4dda5f784e266310978b31f65b3d452e6387 217 217
+	    const target = decodeURI(match[1]!);
+944f4dda5f784e266310978b31f65b3d452e6387 218 218
+	    if (!fs.existsSync(path.join(root, target))) throw new Error(`Component documentation source is missing: ${target}`);
+944f4dda5f784e266310978b31f65b3d452e6387 219 219
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 220 220
+	  const stale = [...files.entries()].filter(([file, content]) => !fs.existsSync(path.join(root, file)) || fs.readFileSync(path.join(root, file), 'utf8') !== content).map(([file]) => file);
+944f4dda5f784e266310978b31f65b3d452e6387 221 221
+	  const orphans = markdownFiles(root, OUTPUT_DIRECTORY).filter(file => !files.has(file));
+944f4dda5f784e266310978b31f65b3d452e6387 222 222
+	  if (!check) {
+944f4dda5f784e266310978b31f65b3d452e6387 223 223
+	    fs.mkdirSync(path.join(root, OUTPUT_DIRECTORY), { recursive: true });
+944f4dda5f784e266310978b31f65b3d452e6387 224 224
+	    for (const [file, content] of files) fs.writeFileSync(path.join(root, file), content);
+944f4dda5f784e266310978b31f65b3d452e6387 225 225
+	    for (const file of orphans) fs.unlinkSync(path.join(root, file));
+944f4dda5f784e266310978b31f65b3d452e6387 226 226
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 227 227
+	  return { ok: !check || (!stale.length && !orphans.length), files: [...files.keys()], stale, orphans };
+944f4dda5f784e266310978b31f65b3d452e6387 228 228
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 229 229
+	
+944f4dda5f784e266310978b31f65b3d452e6387 230 230
+	if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+944f4dda5f784e266310978b31f65b3d452e6387 231 231
+	  const args = process.argv.slice(2);
+944f4dda5f784e266310978b31f65b3d452e6387 232 232
+	  let root = ROOT;
+944f4dda5f784e266310978b31f65b3d452e6387 233 233
+	  let check = false;
+944f4dda5f784e266310978b31f65b3d452e6387 234 234
+	  for (let index = 0; index < args.length; index += 1) {
+944f4dda5f784e266310978b31f65b3d452e6387 235 235
+	    if (args[index] === '--') continue;
+944f4dda5f784e266310978b31f65b3d452e6387 236 236
+	    if (args[index] === '--check') check = true;
+944f4dda5f784e266310978b31f65b3d452e6387 237 237
+	    else if (args[index] === '--root' && args[index + 1]) root = path.resolve(args[++index]!);
+944f4dda5f784e266310978b31f65b3d452e6387 238 238
+	    else throw new Error(`Unknown or incomplete option: ${args[index]}`);
+944f4dda5f784e266310978b31f65b3d452e6387 239 239
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 240 240
+	  generateComponentDocs({ root, check }).then(result => {
+944f4dda5f784e266310978b31f65b3d452e6387 241 241
+	    if (!result.ok) {
+944f4dda5f784e266310978b31f65b3d452e6387 242 242
+	      console.error(`Component docs are stale or missing:\n${result.stale.join('\n')}\nOrphan pages:\n${result.orphans.join('\n')}`);
+944f4dda5f784e266310978b31f65b3d452e6387 243 243
+	      process.exitCode = 1;
+944f4dda5f784e266310978b31f65b3d452e6387 244 244
+	    } else console.log(`Component docs ${check ? 'check passed' : 'generated'}: ${result.files.length - 1} pages + index.`);
+944f4dda5f784e266310978b31f65b3d452e6387 245 245
+	  }).catch(error => { console.error(error); process.exitCode = 1; });
+944f4dda5f784e266310978b31f65b3d452e6387 246 246
+	}

@@ -1,0 +1,162 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1 1 76
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+filename scripts/runtime/readiness-attestation.mjs
+	import assert from "node:assert/strict";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 2 2
+	import { execFileSync } from "node:child_process";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 3 3
+	import fs from "node:fs";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 4 4
+	import path from "node:path";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 5 5
+	import { pathToFileURL } from "node:url";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 6 6
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 7 7
+	import { verifyReadinessRefs } from "../product-reality/verify-readiness-refs.mjs";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 8 8
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 9 9
+	/** Run after pruning and package stamping, before deriving the release manifest. */
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 10 10
+	export async function assembleReadinessAttestation({ repositoryRoot, bundleRoot, sourceHead, generatedAt }) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 11 11
+	  const root = path.resolve(repositoryRoot);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 12 12
+	  const payloadRoot = path.resolve(bundleRoot);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 13 13
+	  sourceHead ??= execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 14 14
+	  assert.match(sourceHead, /^[a-f0-9]{40}$/, "Readiness source head must be a full commit hash.");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 15 15
+	  generatedAt ??= execFileSync("git", ["show", "-s", "--format=%cI", sourceHead], { cwd: root, encoding: "utf8" }).trim();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 16 16
+	  assert(Number.isFinite(Date.parse(generatedAt)), "Readiness generation date must be a source commit date.");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 17 17
+	  const readiness = await import(pathToFileURL(path.join(root, "packages/mcp-server/dist/codegen/target-readiness.js")).href);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 18 18
+	  const helpers = await import(pathToFileURL(path.join(root, "packages/mcp-server/dist/codegen/readiness-attestation.js")).href);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 19 19
+	  // The independent AST oracle also checks named exports, so a comment or
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 20 20
+	  // obsolete truthy evidence flag cannot turn into a portable readiness claim.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 21 21
+	  const oracle = verifyReadinessRefs(root, "s196-m02");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 22 22
+	  assert.equal(oracle.status, "passed", `Source readiness verification failed: ${JSON.stringify(oracle.failures)}`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 23 23
+	  const documents = Object.fromEntries(Object.entries(helpers.READINESS_DOCUMENT_PATHS).map(([target, relative]) => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 24 24
+	    const sourceBytes = fs.readFileSync(path.join(root, relative));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 25 25
+	    assert(sourceBytes.equals(fs.readFileSync(path.join(payloadRoot, relative))), `Shipped ${target} readiness differs from the host.`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 26 26
+	    return [target, JSON.parse(sourceBytes.toString("utf8"))];
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 27 27
+	  }));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 28 28
+	  const sourceCache = new Map();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 29 29
+	  for (const [target, document] of Object.entries(documents)) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 30 30
+	    for (const row of document.rows) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 31 31
+	      const failures = readiness.resolveReadinessRowReferences(row, { repositoryRoot: root }, sourceCache);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 32 32
+	      assert.deepEqual(failures, [], `Unresolved ${target}/${row.componentId} readiness.`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 33 33
+	    }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 34 34
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 35 35
+	  const sourceHashes = new Map();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 36 36
+	  const targets = Object.fromEntries(Object.entries(helpers.readinessAttestationClaims(documents, readiness.READINESS_EVIDENCE_CLASSES))
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 37 37
+	    .map(([target, { rows }]) => [target, {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 38 38
+	      rows: rows.map(({ references, ...row }) => ({
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 39 39
+	        ...row,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 40 40
+	        references: references.map((reference) => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 41 41
+	          const relative = reference.path;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 42 42
+	          if (!sourceHashes.has(relative)) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 43 43
+	            sourceHashes.set(relative, helpers.readinessSha256(fs.readFileSync(path.join(root, relative))));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 44 44
+	          }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 45 45
+	          return { ...reference, sha256: sourceHashes.get(relative) };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 46 46
+	        }),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 47 47
+	      })),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 48 48
+	    }]));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 49 49
+	  const payload = {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 50 50
+	    schemaVersion: "forge-readiness-attestation/v1",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 51 51
+	    generatedAt,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 52 52
+	    sourceHead,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 53 53
+	    targets,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 54 54
+	    shippedPackageHashes: helpers.shippedReadinessPackageFiles(payloadRoot),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 55 55
+	  };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 56 56
+	  const attestation = { ...payload, sha256: helpers.readinessSha256(helpers.readinessAttestationJson(payload)) };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 57 57
+	  const destination = path.join(payloadRoot, helpers.READINESS_ATTESTATION_PATH);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 58 58
+	  fs.mkdirSync(path.dirname(destination), { recursive: true });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 59 59
+	  fs.writeFileSync(destination, helpers.readinessAttestationJson(attestation), { flag: "wx", mode: 0o644 });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 60 60
+	  assert.deepEqual(
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 61 61
+	    helpers.verifyReadinessAttestation(payloadRoot, documents, readiness.READINESS_EVIDENCE_CLASSES),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 62 62
+	    { status: "verified" },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 63 63
+	    "Generated readiness attestation did not verify against the shipped package bytes.",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 64 64
+	  );
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 65 65
+	  return {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 66 66
+	    path: helpers.READINESS_ATTESTATION_PATH,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 67 67
+	    sha256: helpers.readinessSha256(fs.readFileSync(destination)),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 68 68
+	    payloadSha256: attestation.sha256,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 69 69
+	    generatedAt,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 70 70
+	    sourceHead,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 71 71
+	    targets: Object.fromEntries(Object.entries(targets).map(([target, { rows }]) => [target, { rows: rows.length, emissionEligible: rows.filter((row) => row.emissionEligible).length }])),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 72 72
+	    references: Object.values(targets).flatMap(({ rows }) => rows.flatMap(({ references }) => references)).length,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 73 73
+	    sourceFiles: sourceHashes.size,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 74 74
+	    packageFiles: payload.shippedPackageHashes.length,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 75 75
+	  };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 76 76
+	}

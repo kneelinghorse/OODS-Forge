@@ -1,0 +1,506 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 1 1 248
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+filename scripts/product-reality/s196-m05-doc-bites.mjs
+	#!/usr/bin/env node
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 2 2
+	/** Physical doc mutations in an archived checkout, with measured red and exact restoration. */
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 3 3
+	import assert from 'node:assert/strict';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 4 4
+	import { createHash } from 'node:crypto';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 5 5
+	import fs from 'node:fs';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 6 6
+	import os from 'node:os';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 7 7
+	import path from 'node:path';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 8 8
+	import { execFileSync, spawnSync } from 'node:child_process';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 9 9
+	import { createRequire } from 'node:module';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 10 10
+	import { fileURLToPath } from 'node:url';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 11 11
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 12 12
+	const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 13 13
+	const DEFAULT_HEAD = '944f4dda5f784e266310978b31f65b3d452e6387';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 14 14
+	const TRACKED_PATHS = ['package.json', 'pnpm-workspace.yaml', 'tsconfig.json', 'src', 'packages', 'scripts/docs', 'traits', 'objects', 'domains', 'schemas', 'configs', 'artifacts/structured-data', 'docs', 'README.md', '.storybook', 'tools/agents-smoke'];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 15 15
+	const options = { head: DEFAULT_HEAD, frozen: undefined, output: path.join(ROOT, 'artifacts/product-reality/sprint-196/m05/doc-bites'), execute: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 16 16
+	for (let index = 2; index < process.argv.length; index++) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 17 17
+	  const arg = process.argv[index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 18 18
+	  if (arg === '--') continue;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 19 19
+	  if (arg === '--execute') { options.execute = true; continue; }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 20 20
+	  const key = { '--source-head': 'head', '--frozen': 'frozen', '--output': 'output' }[arg];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 21 21
+	  assert(key && process.argv[index + 1] && !process.argv[index + 1].startsWith('--'), `Unknown or incomplete option: ${arg}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 22 22
+	  options[key] = process.argv[++index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 23 23
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 24 24
+	assert(options.execute, 'Use --execute to run the isolated physical mutations.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 25 25
+	assert.match(options.head, /^[a-f0-9]{40}$/);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 26 26
+	const output = path.resolve(options.output);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 27 27
+	fs.mkdirSync(output, { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 28 28
+	const sha256 = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 29 29
+	const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 30 30
+	const writeJson = (file, value) => fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 31 31
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 32 32
+	function files(directory) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 33 33
+	  return fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 34 34
+	    const file = path.join(directory, entry.name);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 35 35
+	    return entry.isDirectory() ? files(file) : [file];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 36 36
+	  });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 37 37
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 38 38
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 39 39
+	function freezeInputs() {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 40 40
+	  const changed = execFileSync('git', ['diff', '--name-only', options.head, '--', 'packages', 'src', 'traits', 'objects', 'domains', 'configs', 'schemas', 'scripts', '.storybook', 'tools/agents-smoke', 'artifacts/structured-data'], { cwd: ROOT, encoding: 'utf8' }).trim();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 41 41
+	  assert.equal(changed, '', 'Capture built inputs before changing baseline source, or pass the previously captured --frozen directory.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 42 42
+	  const frozen = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-s196-m05-doc-frozen-'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 43 43
+	  const target = path.join(frozen, 'repository');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 44 44
+	  fs.mkdirSync(target);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 45 45
+	  execFileSync('git', ['archive', '--format=tar', '--output', path.join(frozen, 'tracked.tar'), options.head, ...TRACKED_PATHS], { cwd: ROOT });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 46 46
+	  execFileSync('tar', ['-xf', path.join(frozen, 'tracked.tar'), '-C', target]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 47 47
+	  const builtDirectories = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 48 48
+	  for (const name of fs.readdirSync(path.join(ROOT, 'packages'))) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 49 49
+	    const relative = `packages/${name}/dist`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 50 50
+	    if (!fs.existsSync(path.join(ROOT, relative))) continue;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 51 51
+	    fs.cpSync(path.join(ROOT, relative), path.join(target, relative), { recursive: true, dereference: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 52 52
+	    builtDirectories.push(relative);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 53 53
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 54 54
+	  writeJson(path.join(frozen, 'freeze.json'), { head: options.head, trackedPaths: TRACKED_PATHS, builtDirectories, target });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 55 55
+	  return frozen;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 56 56
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 57 57
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 58 58
+	const frozen = path.resolve(options.frozen ?? freezeInputs());
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 59 59
+	const freeze = json(path.join(frozen, 'freeze.json'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 60 60
+	assert.equal(freeze.head, options.head, 'The frozen source must be the recorded mission baseline.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 61 61
+	const target = fs.realpathSync(path.join(frozen, 'repository'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 62 62
+	assert.notEqual(target, fs.realpathSync(ROOT), 'Mutations must never use the working checkout.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 63 63
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 64 64
+	// Component references also require their historical evidence links to exist.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 65 65
+	// Materialize those exact blobs from the same commit, never from the live tree.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 66 66
+	const missingReferences = [...new Set(files(path.join(target, 'docs/components')).filter(file => file.endsWith('.md')).flatMap(file =>
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 67 67
+	  [...fs.readFileSync(file, 'utf8').matchAll(/\]\(\.\.\/\.\.\/([^\n)]+)\)/g)].map(match => decodeURI(match[1]))
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 68 68
+	))].filter(relative => !fs.existsSync(path.join(target, relative))).sort();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 69 69
+	if (missingReferences.length) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 70 70
+	  for (const relative of missingReferences) assert(!path.isAbsolute(relative) && !relative.split('/').includes('..'), `Unsafe reference: ${relative}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 71 71
+	  const archive = 'references.tar';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 72 72
+	  execFileSync('git', ['archive', '--format=tar', '--output', path.join(frozen, archive), options.head, ...missingReferences], { cwd: ROOT });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 73 73
+	  execFileSync('tar', ['-xf', path.join(frozen, archive), '-C', target]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 74 74
+	  freeze.trackedPaths.push(...missingReferences);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 75 75
+	  freeze.referenceArchive = archive;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 76 76
+	  writeJson(path.join(frozen, 'freeze.json'), freeze);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 77 77
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 78 78
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 79 79
+	// Verify copied tracked inputs against Git blob identities, not the changing live tree.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 80 80
+	const tree = execFileSync('git', ['ls-tree', '-rz', options.head, '--', ...freeze.trackedPaths], { cwd: ROOT, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 81 81
+	const tracked = tree.split('\0').filter(Boolean).map(line => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 82 82
+	  const [header, relative] = line.split('\t');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 83 83
+	  const [mode, type, blob] = header.split(' ');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 84 84
+	  assert.equal(type, 'blob', `Unexpected tracked input ${relative}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 85 85
+	  const bytes = mode === '120000' ? Buffer.from(fs.readlinkSync(path.join(target, relative))) : fs.readFileSync(path.join(target, relative));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 86 86
+	  const actual = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 87 87
+	  assert.equal(actual, blob, `Frozen tracked input differs from ${options.head}: ${relative}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 88 88
+	  return { path: relative, gitBlob: blob, sha256: sha256(bytes), size: bytes.length, ...(mode === '120000' ? { symlink: true } : {}) };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 89 89
+	});
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 90 90
+	const built = freeze.builtDirectories.flatMap(directory => files(path.join(target, directory)).map(file => ({ path: path.relative(target, file), sha256: sha256(fs.readFileSync(file)) })));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 91 91
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 92 92
+	// External dependencies can share the immutable installed pnpm store. First-party
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 93 93
+	// links always point inside the frozen checkout; never symlink its whole node_modules.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 94 94
+	const packages = new Map();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 95 95
+	for (const directory of fs.readdirSync(path.join(target, 'packages'))) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 96 96
+	  const file = path.join(target, 'packages', directory, 'package.json');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 97 97
+	  if (fs.existsSync(file)) packages.set(json(file).name, path.dirname(file));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 98 98
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 99 99
+	const firstPartyLinks = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 100 100
+	function linkDependencies(source, destination) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 101 101
+	  if (!fs.existsSync(source)) return;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 102 102
+	  fs.mkdirSync(destination, { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 103 103
+	  for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 104 104
+	    if (entry.name === '.bin') continue;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 105 105
+	    const names = entry.name.startsWith('@') ? fs.readdirSync(path.join(source, entry.name)).map(name => `${entry.name}/${name}`) : [entry.name];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 106 106
+	    for (const name of names) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 107 107
+	      const link = path.join(destination, name);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 108 108
+	      const resolved = packages.get(name) ?? fs.realpathSync(path.join(source, name));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 109 109
+	      if (!fs.existsSync(link)) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 110 110
+	        fs.mkdirSync(path.dirname(link), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 111 111
+	        fs.symlinkSync(resolved, link, fs.statSync(resolved).isDirectory() ? 'dir' : 'file');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 112 112
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 113 113
+	      if (packages.has(name)) assert.equal(fs.realpathSync(link), fs.realpathSync(resolved), `${name} first-party link escaped the frozen checkout`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 114 114
+	      if (packages.has(name)) firstPartyLinks.push({ name, link: path.relative(target, link), resolvesTo: path.relative(target, fs.realpathSync(link)) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 115 115
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 116 116
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 117 117
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 118 118
+	linkDependencies(path.join(ROOT, 'node_modules'), path.join(target, 'node_modules'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 119 119
+	for (const [name, directory] of packages) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 120 120
+	  const link = path.join(target, 'node_modules', name);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 121 121
+	  if (!fs.existsSync(link)) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 122 122
+	    fs.mkdirSync(path.dirname(link), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 123 123
+	    fs.symlinkSync(directory, link, 'dir');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 124 124
+	    firstPartyLinks.push({ name, link: path.relative(target, link), resolvesTo: path.relative(target, directory) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 125 125
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 126 126
+	  linkDependencies(path.join(ROOT, path.relative(target, directory), 'node_modules'), path.join(directory, 'node_modules'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 127 127
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 128 128
+	const requireFromTarget = createRequire(path.join(target, 'package.json'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 129 129
+	const resolutions = ['@oods/component-contracts', '@oods/viz-core', '@oods/tokens', '@oods/a11y-tools'].map(name => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 130 130
+	  const resolved = fs.realpathSync(requireFromTarget.resolve(name));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 131 131
+	  assert(resolved.startsWith(`${target}${path.sep}`), `${name} escaped to current first-party bytes`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 132 132
+	  return { name, entry: path.relative(target, resolved), sha256: sha256(fs.readFileSync(resolved)) };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 133 133
+	});
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 134 134
+	const lock = execFileSync('git', ['show', `${options.head}:pnpm-lock.yaml`], { cwd: ROOT, maxBuffer: 8 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 135 135
+	assert.equal(sha256(fs.readFileSync(path.join(ROOT, 'pnpm-lock.yaml'))), sha256(lock), 'Installed dependency lock changed since the baseline.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 136 136
+	writeJson(path.join(output, 'snapshot.json'), { sourceHead: options.head, archiveSha256: sha256(fs.readFileSync(path.join(frozen, 'tracked.tar'))), ...(freeze.referenceArchive ? { referenceArchiveSha256: sha256(fs.readFileSync(path.join(frozen, freeze.referenceArchive))) } : {}), dependencyLockSha256: sha256(lock), tracked, built, firstPartyLinks, resolutions, method: 'Git archive for tracked inputs; built inputs copied once before mutation; target-local first-party links; only external dependencies share the installed store.' });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 137 137
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 138 138
+	const environment = { ...process.env, TZ: 'America/Chicago', TSX_TSCONFIG_PATH: path.join(target, 'tsconfig.json') };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 139 139
+	for (const key of Object.keys(environment)) if (/^(OODS_|MCP_|BRIDGE_)/.test(key) || key === 'NODE_PATH') delete environment[key];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 140 140
+	const generators = {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 141 141
+	  components: 'scripts/docs/generate-component-docs.ts', tools: 'scripts/docs/generate-tool-specs.ts',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 142 142
+	  claims: 'scripts/docs/generate-forge-claims.ts', api: 'scripts/docs/generate-api-reference.ts',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 143 143
+	};
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 144 144
+	const report = { schemaVersion: 1, missionId: 's196-m05', sourceHead: options.head, runner: { path: 'scripts/product-reality/s196-m05-doc-bites.mjs', sha256: sha256(fs.readFileSync(fileURLToPath(import.meta.url))), node: process.version }, builderSelfCertified: false, sourceIsolation: 'archived-source-and-copied-build-inputs', baselineChecks: [], records: [], allRestoredByteIdentically: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 145 145
+	function save() { writeJson(path.join(output, 'bites.json'), report); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 146 146
+	function run(record, name, generator, check = true) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 147 147
+	  const command = ['--import', 'tsx', path.join(target, generators[generator]), ...(check ? ['--check'] : [])];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 148 148
+	  const result = spawnSync(process.execPath, command, { cwd: target, env: environment, encoding: 'utf8', timeout: 60000, maxBuffer: 16 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 149 149
+	  const log = `${record.id}/${name}.log`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 150 150
+	  fs.mkdirSync(path.dirname(path.join(output, log)), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 151 151
+	  const text = `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ?? ''}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 152 152
+	  fs.writeFileSync(path.join(output, log), text.replaceAll(target, '<frozen-repository>'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 153 153
+	  const receipt = { name, command: ['node', '--import', 'tsx', generators[generator], ...(check ? ['--check'] : [])], cwd: '<frozen-repository>', exitCode: result.status, signal: result.signal, log };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 154 154
+	  record.commands.push(receipt);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 155 155
+	  return { ...receipt, text };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 156 156
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 157 157
+	function green(record, name, generator) { const result = run(record, name, generator); assert.equal(result.exitCode, 0, `${record.id}/${name}: ${result.text}`); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 158 158
+	const baselineRecord = { id: 'baseline', commands: report.baselineChecks };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 159 159
+	for (const generator of Object.keys(generators)) green(baselineRecord, generator, generator);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 160 160
+	save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 161 161
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 162 162
+	function replaceOnce(before, from, to) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 163 163
+	  assert.equal(before.split(from).length, 2, `Mutation operand must occur exactly once: ${from}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 164 164
+	  return before.replace(from, to);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 165 165
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 166 166
+	async function docBite(id, relative, generator, mutate) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 167 167
+	  const file = path.join(target, relative), before = fs.readFileSync(file);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 168 168
+	  const mutant = Buffer.from(mutate(before.toString('utf8')));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 169 169
+	  assert.notEqual(sha256(before), sha256(mutant));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 170 170
+	  const record = { id, kind: 'hand-edited-generated-document', path: relative, beforeSha256: sha256(before), mutatedSha256: sha256(mutant), commands: [], restoredByteIdentically: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 171 171
+	  let failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 172 172
+	  try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 173 173
+	    fs.writeFileSync(file, mutant);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 174 174
+	    const red = run(record, 'mutated-check', generator);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 175 175
+	    assert.equal(red.exitCode, 1, `${id}: hand edit must fail --check`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 176 176
+	    assert.match(red.text, /stale/i, `${id}: failure must identify stale docs, not an import or environment failure`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 177 177
+	    assert(red.text.includes(relative) || (generator === 'api' && red.text.includes('docs/api')), `${id}: red must identify the edited document`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 178 178
+	  } catch (error) { failure = error; record.failure = String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 179 179
+	  finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 180 180
+	    assert.equal(sha256(fs.readFileSync(file)), sha256(mutant), `${id}: unexpected competing edit in isolated copy`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 181 181
+	    fs.writeFileSync(file, before);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 182 182
+	    record.restoredSha256 = sha256(fs.readFileSync(file));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 183 183
+	    record.restoredByteIdentically = record.restoredSha256 === record.beforeSha256;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 184 184
+	    try { green(record, 'restored-check', generator); } catch (error) { failure ??= error; record.restoreFailure = String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 185 185
+	    record.status = failure ? 'failed' : 'passed';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 186 186
+	    report.records.push(record); save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 187 187
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 188 188
+	  if (failure) throw failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 189 189
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 190 190
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 191 191
+	await docBite('component-page', 'docs/components/Button.md', 'components', before => replaceOnce(before, 'Proposed classification: `native`', 'Proposed classification: `alias`'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 192 192
+	await docBite('component-index', 'docs/components/README.md', 'components', before => replaceOnce(before, '109 component pages', '108 component pages'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 193 193
+	await docBite('tool-specs', 'docs/mcp/Tool-Specs.md', 'tools', before => replaceOnce(before, 'The 24 live tools', 'The 25 live tools'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 194 194
+	await docBite('html-claim', 'docs/how-forge-works.html', 'claims', before => replaceOnce(before, 'The trait inventory (45)</h2>', 'The trait inventory (46)</h2>'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 195 195
+	await docBite('connections', 'docs/mcp/Connections.md', 'claims', before => replaceOnce(before, '`default` = 19 auto tools', '`default` = 20 auto tools'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 196 196
+	await docBite('api-page', 'docs/api/design-compose.md', 'api', before => replaceOnce(before, 'default TTL: 30 minutes', 'default TTL: 31 minutes'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 197 197
+	await docBite('server-readme', 'packages/mcp-server/README.md', 'claims', before => replaceOnce(before, '19 tools by default', '20 tools by default'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 198 198
+	await docBite('bridge-readme', 'packages/mcp-bridge/README.md', 'claims', before => replaceOnce(before, '19 tools by default', '20 tools by default'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 199 199
+	await docBite('docs-readme', 'docs/README.md', 'claims', before => replaceOnce(before, 'composes 6 traits', 'composes 7 traits'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 200 200
+	await docBite('root-readme', 'README.md', 'claims', before => replaceOnce(before, '## MCP tool surface (24 tools)', '## MCP tool surface (25 tools)'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 201 201
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 202 202
+	// Preserve valid membership and the unapproved census. One proposal classification
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 203 203
+	// moves recipe -> native, changing the derived category counts without fake IDs.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 204 204
+	const ledgerPath = 'packages/component-contracts/registry/component-capability-ledger.v1.json';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 205 205
+	const ledgerFile = path.join(target, ledgerPath), ledgerBefore = fs.readFileSync(ledgerFile);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 206 206
+	const ledger = JSON.parse(ledgerBefore);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 207 207
+	assert.equal(ledger.approvedRuntimeCensus, null);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 208 208
+	const row = ledger.rows.find(value => value.proposedClassification === 'recipe');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 209 209
+	assert(row && row.reconciliationState === 'proposed-awaiting-derek-approval');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 210 210
+	const countClasses = rows => Object.fromEntries(['native', 'recipe', 'alias'].map(kind => [kind, rows.filter(value => value.proposedClassification === kind).length]));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 211 211
+	const beforeCounts = countClasses(ledger.rows);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 212 212
+	row.proposedClassification = 'native';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 213 213
+	const ledgerMutant = Buffer.from(`${JSON.stringify(ledger, null, 2)}\n`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 214 214
+	const generatedFiles = [...files(path.join(target, 'docs')), path.join(target, 'README.md'), path.join(target, 'packages/mcp-server/README.md'), path.join(target, 'packages/mcp-bridge/README.md')];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 215 215
+	const documentBytes = new Map(generatedFiles.map(file => [file, fs.readFileSync(file)]));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 216 216
+	const ledgerRecord = { id: 'ledger-classification-counts', kind: 'valid-source-change-requires-regeneration', path: ledgerPath, componentId: row.id, sourceChange: { from: 'recipe', to: 'native', beforeCounts, afterCounts: countClasses(ledger.rows), membership: ledger.rows.length, approvedRuntimeCensus: ledger.approvedRuntimeCensus }, beforeSha256: sha256(ledgerBefore), mutatedSha256: sha256(ledgerMutant), commands: [], restoredByteIdentically: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 217 217
+	let ledgerFailure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 218 218
+	try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 219 219
+	  fs.writeFileSync(ledgerFile, ledgerMutant);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 220 220
+	  for (const generator of ['components', 'claims']) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 221 221
+	    const red = run(ledgerRecord, `${generator}-mutated-check`, generator);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 222 222
+	    assert.equal(red.exitCode, 1); assert.match(red.text, /stale/i);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 223 223
+	    const regenerated = run(ledgerRecord, `${generator}-regenerate`, generator, false);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 224 224
+	    assert.equal(regenerated.exitCode, 0, regenerated.text);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 225 225
+	    green(ledgerRecord, `${generator}-regenerated-check`, generator);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 226 226
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 227 227
+	  ledgerRecord.changedOutputs = [...documentBytes].filter(([file, before]) => !fs.readFileSync(file).equals(before)).map(([file, before]) => ({ path: path.relative(target, file), beforeSha256: sha256(before), regeneratedSha256: sha256(fs.readFileSync(file)) }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 228 228
+	  assert(ledgerRecord.changedOutputs.some(file => file.path === `docs/components/${row.id}.md`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 229 229
+	  assert(ledgerRecord.changedOutputs.some(file => file.path === 'docs/components/README.md'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 230 230
+	  assert(ledgerRecord.changedOutputs.some(file => file.path === 'docs/how-forge-works.html'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 231 231
+	  assert(fs.readFileSync(path.join(target, 'docs/how-forge-works.html'), 'utf8').includes('25 native, 83 recipe and 1 alias'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 232 232
+	} catch (error) { ledgerFailure = error; ledgerRecord.failure = String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 233 233
+	finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 234 234
+	  assert.equal(sha256(fs.readFileSync(ledgerFile)), sha256(ledgerMutant));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 235 235
+	  fs.writeFileSync(ledgerFile, ledgerBefore);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 236 236
+	  for (const [file, before] of documentBytes) fs.writeFileSync(file, before);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 237 237
+	  ledgerRecord.restoredByteIdentically = fs.readFileSync(ledgerFile).equals(ledgerBefore) && [...documentBytes].every(([file, before]) => fs.readFileSync(file).equals(before));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 238 238
+	  ledgerRecord.restoredSha256 = sha256(fs.readFileSync(ledgerFile));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 239 239
+	  for (const generator of ['components', 'claims']) try { green(ledgerRecord, `${generator}-restored-check`, generator); } catch (error) { ledgerFailure ??= error; ledgerRecord.restoreFailure = String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 240 240
+	  ledgerRecord.status = ledgerFailure ? 'failed' : 'passed'; report.records.push(ledgerRecord); save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 241 241
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 242 242
+	if (ledgerFailure) throw ledgerFailure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 243 243
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 244 244
+	for (const file of [...tracked, ...built]) assert.equal(sha256(file.symlink ? fs.readlinkSync(path.join(target, file.path)) : fs.readFileSync(path.join(target, file.path))), file.sha256, `Final snapshot differs: ${file.path}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 245 245
+	report.allRestoredByteIdentically = report.records.every(record => record.restoredByteIdentically);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 246 246
+	report.summary = { bites: report.records.length, passed: report.records.filter(record => record.status === 'passed').length, failed: report.records.filter(record => record.status === 'failed').length, checkedTrackedFiles: tracked.length, checkedBuiltFiles: built.length };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 247 247
+	save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 248 248
+	console.log(JSON.stringify({ ...report.summary, allRestoredByteIdentically: report.allRestoredByteIdentically }));

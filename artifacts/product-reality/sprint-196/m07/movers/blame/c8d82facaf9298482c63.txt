@@ -1,0 +1,63 @@
+944f4dda5f784e266310978b31f65b3d452e6387 61 61 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/mcp/Connections.md
+filename docs/mcp/Connections.md
+	<!-- forge-claim:adapter-environment -->
+944f4dda5f784e266310978b31f65b3d452e6387 64 64 1
+	| `MCP_TOOLSET` | `default` | `default` = 19 auto tools; `all` = all 24 tools |
+944f4dda5f784e266310978b31f65b3d452e6387 68 68 1
+	<!-- /forge-claim:adapter-environment -->
+944f4dda5f784e266310978b31f65b3d452e6387 72 72 3
+	<!-- forge-claim:adapter-features -->
+944f4dda5f784e266310978b31f65b3d452e6387 73 73
+	- 24 tools with human-readable descriptions and typed JSON Schema input parameters
+944f4dda5f784e266310978b31f65b3d452e6387 74 74
+	<!-- /forge-claim:adapter-features -->
+944f4dda5f784e266310978b31f65b3d452e6387 81 81 3
+	<!-- forge-claim:fresh-install-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 82 82
+	The fresh-install smoke check installs the adapter into a clean temp directory (outside the workspace) and confirms `tools/list` returns the full enabled tool surface. With `MCP_TOOLSET=all`, that is currently 24 tools. This catches phantom dependencies and hardcoded path regressions.
+944f4dda5f784e266310978b31f65b3d452e6387 83 83
+	<!-- /forge-claim:fresh-install-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 99 99 1
+	<!-- forge-claim:bridge-default -->
+944f4dda5f784e266310978b31f65b3d452e6387 101 101 1
+	# Start the bridge with the default 19 auto tools
+944f4dda5f784e266310978b31f65b3d452e6387 107 107 1
+	<!-- /forge-claim:bridge-default -->
+944f4dda5f784e266310978b31f65b3d452e6387 109 109 1
+	<!-- forge-claim:bridge-port -->
+944f4dda5f784e266310978b31f65b3d452e6387 111 111 1
+	<!-- /forge-claim:bridge-port -->
+944f4dda5f784e266310978b31f65b3d452e6387 119 119 1
+	<!-- forge-claim:bridge-profile-3 -->
+944f4dda5f784e266310978b31f65b3d452e6387 130 130 1
+	<!-- /forge-claim:bridge-profile-3 -->
+944f4dda5f784e266310978b31f65b3d452e6387 142 142 1
+	<!-- forge-claim:bridge-api-url -->
+944f4dda5f784e266310978b31f65b3d452e6387 144 144 1
+	<!-- /forge-claim:bridge-api-url -->
+944f4dda5f784e266310978b31f65b3d452e6387 181 181 1
+	<!-- forge-claim:smoke-defaults -->
+944f4dda5f784e266310978b31f65b3d452e6387 183 183 1
+	<!-- /forge-claim:smoke-defaults -->
+944f4dda5f784e266310978b31f65b3d452e6387 187 187 3
+	<!-- forge-claim:smoke-tool-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 188 188
+	If you keep the default 19-tool bridge surface, either start the bridge with `MCP_EXTRA_TOOLS=diag.snapshot` or run the harness against a default tool with `--tool structuredData_fetch`.
+944f4dda5f784e266310978b31f65b3d452e6387 189 189
+	<!-- /forge-claim:smoke-tool-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 192 192 3
+	<!-- forge-claim:smoke-timeout -->
+944f4dda5f784e266310978b31f65b3d452e6387 193 193
+	The smoke harness defaults to `BRIDGE_TIMEOUT=120000` milliseconds; increase it if diagnostics collection needs a longer wait.
+944f4dda5f784e266310978b31f65b3d452e6387 194 194
+	<!-- /forge-claim:smoke-timeout -->

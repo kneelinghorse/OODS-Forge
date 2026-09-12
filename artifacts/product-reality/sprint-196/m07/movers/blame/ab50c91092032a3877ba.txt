@@ -1,0 +1,224 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 1 1 107
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+filename scripts/product-reality/s196-attribute-temporal-goldens.py
+	"""Bounded s195-style attribution of the UTC migration; historical bytes are immutable."""
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 2 2
+	import argparse
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 3 3
+	import hashlib
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 4 4
+	import json
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 5 5
+	import re
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 6 6
+	import subprocess
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 7 7
+	from pathlib import Path
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 8 8
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 9 9
+	root = Path(__file__).resolve().parents[2]
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 10 10
+	out = root / 'artifacts/product-reality/sprint-196/m05/golden-migration'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 11 11
+	parser = argparse.ArgumentParser(description=__doc__)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 12 12
+	parser.add_argument('--check', action='store_true')
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 13 13
+	parser.add_argument('--head', help='Exact implementation commit for tracked after-state bytes')
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 14 14
+	args = parser.parse_args()
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 15 15
+	read = lambda path: json.loads((root / path).read_text())
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 16 16
+	sha = lambda data: hashlib.sha256(data).hexdigest()
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 17 17
+	baseline = read(out.relative_to(root) / 'baseline.json')
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 18 18
+	if args.head:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 19 19
+	    assert re.fullmatch(r'[a-f0-9]{40}', args.head), 'Expected exact implementation commit'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 20 20
+	    assert subprocess.check_output(['git', 'cat-file', '-t', args.head], cwd=root, text=True).strip() == 'commit'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 21 21
+	git_bytes = lambda head, path: subprocess.check_output(['git', 'show', f'{head}:{path}'], cwd=root)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 22 22
+	after_bytes = lambda path: git_bytes(args.head, path) if args.head else (root / path).read_bytes()
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 23 23
+	reason = 's196-m05 UTC temporal scales, time units and adapter-generated parsing; host TZ no longer selects chart pixels'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 24 24
+	snapshot_entries = lambda text: dict(re.findall(r'exports\[`(.*?)`\] = `(.*?)`;\n', text, re.S))
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 25 25
+	files, snapshots = [], []
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 26 26
+	for prior in baseline['trackedFiles']:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 27 27
+	    path = prior['path']
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 28 28
+	    if path.startswith('artifacts/'):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 29 29
+	        assert sha((root / path).read_bytes()) == prior['sha256'], f'Historical golden changed: {path}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 30 30
+	        continue
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 31 31
+	    now = after_bytes(path)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 32 32
+	    if sha(now) == prior['sha256']:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 33 33
+	        continue
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 34 34
+	    assert prior['class'] in ['snapshot', 'registry'], f'Undeclared golden class changed: {path}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 35 35
+	    # Host/release registries are refreshed in m07 and must not be silently rebaked here.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 36 36
+	    assert path not in ['packages/mcp-server/registry/runtime-cells.v1.json', 'packages/mcp-server/registry/release-cells.v1.json'], f'Runtime ledger changed outside m07: {path}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 37 37
+	    files.append({'file': path, 'class': prior['class'], 'beforeSha256': prior['sha256'], 'afterSha256': sha(now), 'reason': reason})
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 38 38
+	    if prior['class'] == 'snapshot':
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 39 39
+	        old = snapshot_entries(git_bytes(baseline['beforeHead'], path).decode())
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 40 40
+	        new = snapshot_entries(now.decode())
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 41 41
+	        assert old.keys() == new.keys(), f'Snapshot identities changed: {path}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 42 42
+	        for identity in old:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 43 43
+	            if old[identity] == new[identity]:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 44 44
+	                continue
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 45 45
+	            # Existing composite dashboard snapshots carry temporal panels; their
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 46 46
+	            # independent non-temporal counterparts are checked in the matrix below.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 47 47
+	            temporal = re.search(r'"type": "temporal"|"type": "time"|timeParse\(|month:|date:|timestamp:', old[identity])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 48 48
+	            assert temporal, f'Non-temporal snapshot moved: {path}/{identity}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 49 49
+	            snapshots.append({'file': path, 'identity': identity, 'class': 'temporal-svg-or-html' if '<svg' in old[identity] else 'temporal-spec-or-option', 'beforeSha256': sha(old[identity].encode()), 'afterSha256': sha(new[identity].encode()), 'reason': reason})
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 50 50
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 51 51
+	current_matrix_path = str(out.relative_to(root) / 'matrix/matrix.json')
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 52 52
+	census_path = 'artifacts/product-reality/sprint-196/m05/viz/viz-observations.json'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 53 53
+	patterns_path = 'artifacts/product-reality/sprint-196/m05/patterns/pattern-observations.json'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 54 54
+	matrix, census, patterns = map(read, [current_matrix_path, census_path, patterns_path])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 55 55
+	key = lambda kind, theme, brand: f'{kind}/{theme}/{brand}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 56 56
+	chart_hashes = {key(row['chartType'], row['theme'], row['brand']): row['svgHash'] for row in matrix['table']}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 57 57
+	census_hashes = {key(row['chartType'], scope['theme'], scope['brand']): scope.get('svgHash') for row in census['observations'] for scope in row['scopes']}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 58 58
+	dashboard_hashes = {key('dashboard', row['theme'], row['brand']): row['outputHtmlHash'] for row in matrix['dashboards']}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 59 59
+	pattern_hashes = {key(row['id'], row['request']['theme'], row['request']['brand']): row['rendered'].get('svgHash') for row in patterns['cells']}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 60 60
+	rows = []
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 61 61
+	def record(source, pointer, cls, identity, previous, current):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 62 62
+	    if previous is None and current is None:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 63 63
+	        return  # Retained typed HC deferral, never treated as a rendered cell.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 64 64
+	    assert previous and current, f'Render disposition changed: {source}/{pointer}/{identity}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 65 65
+	    temporal = identity.split('/')[0] in ['line', 'area', 'pattern:viz:running-total-area', 'running-total-area', 'dashboard']
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 66 66
+	    current_epoch = '/sprint-195/m05/' in source
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 67 67
+	    changed = previous != current
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 68 68
+	    assert not (current_epoch and changed and not temporal), f'Non-temporal current-epoch pixels moved: {source}/{identity}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 69 69
+	    rows.append({'source': source, 'pointer': pointer, 'class': cls, 'identity': identity, 'temporal': temporal,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 70 70
+	                 'beforeHash': previous, 'afterHash': current, 'status': 'superseded' if changed else 'unchanged',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 71 71
+	                 'reason': reason if changed and temporal else 'Earlier epoch differences retain their original palette receipts; this migration does not change current non-temporal pixels.' if changed else 'Byte-identical current output.'})
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 72 72
+	for item in baseline['historicalMatrices']:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 73 73
+	    source = item['path']
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 74 74
+	    assert sha((root / source).read_bytes()) == item['sha256'], f'Historical matrix changed: {source}'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 75 75
+	    data = read(source)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 76 76
+	    if not isinstance(data, dict):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 77 77
+	        continue
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 78 78
+	    for index, row in enumerate(data.get('table', [])):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 79 79
+	        identity = key(row['chartType'], row.get('theme', row.get('render', {}).get('theme', 'light')), row.get('brand', row.get('render', {}).get('brand', 'A')))
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 80 80
+	        record(source, f'/table/{index}', 'public-chart-matrix', identity, row['svgHash'], chart_hashes[identity])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 81 81
+	    for index, row in enumerate(data.get('observations', [])):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 82 82
+	        for scope_index, scope in enumerate(row['scopes']):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 83 83
+	            identity = key(row['chartType'], scope['theme'], scope['brand'])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 84 84
+	            record(source, f'/observations/{index}/scopes/{scope_index}', 'public-census', identity, scope.get('svgHash'), census_hashes[identity])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 85 85
+	    for index, row in enumerate(data.get('dashboards', [data['dashboard']] if 'dashboard' in data else [])):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 86 86
+	        identity = key('dashboard', row.get('theme', 'light'), row.get('brand', 'A'))
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 87 87
+	        pointer = f'/dashboards/{index}' if 'dashboards' in data else '/dashboard'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 88 88
+	        record(source, pointer, 'dashboard-html', identity, row.get('outputHtmlHash', row.get('htmlHash')), dashboard_hashes[identity])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 89 89
+	    for index, row in enumerate(data.get('cells', []) if isinstance(data.get('cells'), list) else []):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 90 90
+	        if row.get('rendered', {}).get('svgHash'):
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 91 91
+	            identity = key(row['id'], row['request']['theme'], row['request']['brand'])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 92 92
+	            record(source, f'/cells/{index}', 'public-pattern', identity, row['rendered']['svgHash'], pattern_hashes[identity])
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 93 93
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 94 94
+	inputs = [str(out.relative_to(root) / 'baseline.json'), current_matrix_path, census_path, patterns_path]
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 95 95
+	report = {'schemaVersion': 1, 'missionId': 's196-m05', 'builderSelfCertified': False, 'beforeHead': baseline['beforeHead'],
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 96 96
+	          **({'qualificationHead': args.head} if args.head else {}), 'historicalRawFilesUnchanged': True,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 97 97
+	          'sourceHashes': [{'path': path, 'sha256': sha((root / path).read_bytes())} for path in inputs],
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 98 98
+	          'files': files, 'snapshotEntries': snapshots, 'matrixRows': rows,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 99 99
+	          'summary': {'changedGoldenFiles': len(files), 'movedSnapshotEntries': len(snapshots), 'matrixRows': len(rows),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 100 100
+	                      'currentEpochMovedRows': sum('/sprint-195/m05/' in row['source'] and row['status'] == 'superseded' for row in rows),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 101 101
+	                      'classes': {cls: {'total': sum(row['class'] == cls for row in rows), 'superseded': sum(row['class'] == cls and row['status'] == 'superseded' for row in rows)} for cls in sorted({row['class'] for row in rows})}}}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 102 102
+	text = json.dumps(report, indent=2) + '\n'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 103 103
+	if args.check:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 104 104
+	    assert (out / 'golden-attribution.json').read_text() == text, 'Temporal golden attribution is stale'
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 105 105
+	else:
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 106 106
+	    (out / 'golden-attribution.json').write_text(text)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 107 107
+	print(json.dumps(report['summary']))

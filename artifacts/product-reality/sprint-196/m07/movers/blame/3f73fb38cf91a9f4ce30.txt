@@ -1,0 +1,250 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 12 12 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e docs/runtime/portable-runtime.md
+filename docs/runtime/portable-runtime.md
+	`>=20.11.1`, which is the highest declared floor among the thirteen bundled
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 13 13
+	workspaces. The portable-runtime CI job builds on Node 24 and runs the extracted
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 14 14
+	E2E on Node 24 and Node 20.11.1 within its 15-minute budget.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 23 23 1
+	pnpm --filter @oods/mcp-bridge run build
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 53 53 3
+	- `forge-runtime.manifest.json` — the detached inspection manifest. It retains
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 54 54
+	  the embedded payload metadata and adds `archive {file, byteSize, sha256}`
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 55 55
+	  after packing.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 63 63 4
+	`forge-runtime.tar.gz.sha256`. The detached manifest adds the archive filename,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 64 64
+	measured byte size and SHA-256; the embedded manifest retains only payload
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 65 65
+	metadata. Their bytes therefore differ.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 66 66
+	The manifest also records the source commit and source commit date, package
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 82 82 4
+	from the bundle SBOM. The current lock-derived third-party closure is 283
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 83 83
+	packages, up from 245 before the bridge joined the bundle. Assembly derives this
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 84 84
+	count once from the lock and requires the installed closure, SBOM and manifest
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 85 85
+	to agree with that value. The repository install remains
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 122 122 2
+	| 2. Runtime version contract                       | **Satisfied.** The manifest declares `nodeFloor` `>=20.11.1` and `ciNode` 24. CI builds on Node 24 and exercises the extracted runtime on Node 24 and Node 20.11.1. pnpm is pinned to 9.12.2 for the build.                                                                                                                                                                                                                                                                  |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 123 123
+	| 3. Adapter-only operation                         | **Satisfied, with an optional bridge.** The adapter lazily starts the bundled native server over stdio. `mcp-bridge` is the thirteenth package; it can independently start the same bundled server over HTTP.                                                                                                                                                                                                                                                                        |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 126 126 1
+	| 6. Consumer E2E                                   | **Satisfied and extended.** The primary adapter makes 29 calls across all 19 tools. Restart adds health, for 30 adapter calls. Outcomes are 17 executed passes and two typed limits. Separate bridge checks cover `/health`, `/tools`, `/run` render parity and clean shutdown. |
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 127 127 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789193151
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789193151
+committer-tz -0500
+summary test(runtime): retain all 42 bundled reference app proofs
+previous 2148c93e6ee28ea0220560ce9a327e1d05ce3d67 docs/runtime/portable-runtime.md
+filename docs/runtime/portable-runtime.md
+	| 7. Lifecycle, persistence, and environment        | **Satisfied with the corrections below.** Readiness is the first successful `health` `tools/call`, not `tools/list`. The E2E measures shutdown on stdin close and restart/termination behavior. Persistent writers and 26 documented operational environment variables are explicit below.                                                                                                                                                                |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 134 134 2
+	- The thirteen runtime workspaces with their `package.json` and built runtime
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 135 135
+	  output: `mcp-server`, `mcp-adapter`, `mcp-bridge`, `tokens`, `viz-core`, `viz-render`,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 142 142 3
+	- The production dependency closure installed for the MCP server, adapter and bridge.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 143 143
+	- `configs/agent/policy.json`, required by the bridge. Missing policy refuses
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 144 144
+	  startup with `BRIDGE_POLICY_MISSING`; no substitute tool roster is used.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 150 150 7
+	  brand A/B CSS and the legacy `dist/ts/tokens.ts` output. Token source under
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 151 151
+	  `packages/tokens/src/` does not ship.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 152 152
+	- `packages/mcp-server/dist/registry/readiness-attestation.v1.json`, generated
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 153 153
+	  during assembly from host-resolved React/Vue evidence references. Each reference
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 154 154
+	  records its hash and evidence class, and the attestation binds those claims to
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 155 155
+	  all shipped first-party package bytes. Generation verifies it before accepting
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 156 156
+	  readiness without host source or test files.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 163 163 2
+	prunes `.map`, `.test.` and source `.ts` files inside `packages/*/dist`, while
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 164 164
+	keeping `.d.ts` declarations and `dist/ts/*.ts` built token outputs.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 169 169 1
+	fixtures, consumer intake data, brand source, `stories/`, source code or tests. Three
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 213 213 2
+	| `configs/agent/policy.json`                                               | Required bridge policy                                               | Included                                 |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 214 214
+	| `packages/mcp-server/dist/registry/readiness-attestation.v1.json`          | Hash-bound portable React/Vue readiness                              | Generated at assembly                    |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 246 246 1
+	Advertisement includes two typed portable limits. `brand.apply` requires canonical brand source, which Gate 1 omits; even its dry-run returns `OODS-N020` at the adapter wire. `brand.intake` validates inline documents entirely in memory and succeeds without canonical brand source. `tokens.build apply:true` exports five artifacts from shipped outputs without rebuilding; dry-run remains preview/transcript only. A missing portable output returns `OODS-N011` with `buildAttempted:false`. `fidelity.preview` works with inline manifests; named fixtures are host-only. The optional catalog stories facet remains empty when stories are absent.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 248 248 1
+	`design.preview` requires the local design-loop server and returns retryable `OODS-N019` when it is unavailable. Adapter v0.3.0 retains structured native failures as JSON text content shaped `{error:{...native,retryable,data}}` with `isError:true`; the native code is preserved at `tools/call`. React/Vue `code.generate` and `pipeline` emit real artifacts using the assembly-time readiness attestation. Missing or tampered attestation evidence returns `OODS-N015` without an artifact. The tool ledger therefore retains two `portableLimits` rows: `brand.apply` and `design.preview`.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 252 252 1
+	`scripts/runtime/e2e.mjs` initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary adapter process makes 29 calls across all 19 advertised tools. It retains the four two/four-panel dashboard renders, positive and negative chart certification, and adds a content-pinned recipe per advertised tool. Dynamic schema/spec references bind directly to prior tool output without editing schemas. Map create/resolve/delete and schema save/load/delete prove scoped persistence. Token dry-run confirms B/dark metadata and writes only a transcript/index; an additional apply call checks all five exported artifacts against shipped outputs. Health separately checks the built scopes. A second code-generation call exercises Vue alongside React, and pipeline returns a real artifact. Brand-source absence and unavailable preview are asserted with their wire codes as the two typed limits.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 256 256 2
+	Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 30 adapter calls across two processes. The E2E separately launches the bundled bridge on an ephemeral port, checks `/health` revision against the manifest commit and structured-data hash, checks the 19-name `/tools` roster, compares a `/run` `viz.render` svgHash to the same adapter operand, and stops the bridge and its child cleanly. Per-tool outcomes, fixture hashes, lifecycle results and restored tree hashes are retained in CI's `portable-runtime-e2e` artifact. The source-derived ledger counts literal calls; the separate E2E receipt proves execution.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 257 257
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 258 258 52
+	## Reference applications from the bundle
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 259 259
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 260 260
+	The runtime-cell harness has a bundle mode for 42 fixed cells: Organization,
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 261 261
+	Subscription and User × card, detail, form, inline, list, timeline and workflow
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 262 262
+	× React and Vue. Supply both the extracted directory and its original archive;
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 263 263
+	the extraction must be outside the repository. Use the pinned Linux Playwright
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 264 264
+	browser environment required by the host runtime sweep.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 265 265
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 266 266
+	```sh
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 267 267
+	pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts \
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 268 268
+	  artifacts/product-reality/sprint-196/m03/bootstrap-runtime \
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 269 269
+	  --bundle-dir "$forge_extract_tmp" \
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 270 270
+	  --bundle-archive "$forge_runtime_tmp/out/forge-runtime.tar.gz"
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 271 271
+	```
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 272 272
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 273 273
+	Bundle mode fixes the application/context/framework scope, including workflows.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 274 274
+	It verifies the extracted payload against the archive and checks host product
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 275 275
+	sources against the manifest's recorded commit before and after execution.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 276 276
+	Documentation and proof-ledger updates may follow that commit; product-source
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 277 277
+	changes fail the comparison. The current checkout's HEAD never replaces the
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 278 278
+	recorded bundle identity.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 279 279
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 280 280
+	One packing phase per sweep runs `npm pack --ignore-scripts` for the five
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 281 281
+	foundation packages directly from the extracted bundle: tokens,
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 282 282
+	component-contracts, component-styles, components-react and components-vue.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 283 283
+	Every isolated consumer installs those same five tarballs. Composition and code
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 284 284
+	generation run through the bundled adapter, then the generated applications
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 285 285
+	undergo typechecking, production builds and the existing browser gates for
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 286 286
+	mounting, accessibility trees, screenshots, context states and chart themes.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 287 287
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 288 288
+	For each operand, the harness retains host and bundle composition responses,
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 289 289
+	generation requests, complete generated artifacts and comparison receipts.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 290 290
+	Composition schemas must match on the JSON wire; successful generation requires
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 291 291
+	exact `contentHash` equality with host output from the same recorded source.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 292 292
+	An unequal artifact remains a retained failure. Passing rows bind their artifact
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 293 293
+	hash, host hash, browser gates, bundle commit and archive SHA-256.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 294 294
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 295 295
+	The canonical host census is
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 296 296
+	`packages/mcp-server/registry/runtime-cells.v1.json`; a valid bundle sweep writes
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 297 297
+	`packages/mcp-server/registry/release-cells.v1.json` and retains a copy under its
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 298 298
+	receipt directory. The build copies both available ledgers into the server's
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 299 299
+	`dist/registry/`. `health.productReality.runtime` reports the host census, while
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 300 300
+	`health.productReality.release` reports the 42-cell release summary with the
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 301 301
+	executed `bundleHead` and `archiveSha256`. Those fields identify the measured
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 302 302
+	archive, even when a later bundle carries the evidence. Missing or invalid
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 303 303
+	release evidence yields `release: null` and a warning.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 304 304
+	
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 305 305
+	The first s196-m03 sweep passed all 42 cells with host artifact hash equality.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 306 306
+	Its bootstrap archive predates the first release ledger. Recorded identity and retained evidence are
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 307 307
+	in the [m03 receipt index](../../artifacts/product-reality/sprint-196/m03/README.md);
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 308 308
+	neither a complete 42-cell result nor a hosted CI pass is claimed yet.
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 309 309
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 258 310 13
+	## Bridge entry point
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 259 311
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 260 312
+	From any working directory, start the bridge from its extracted package:
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 261 313
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 262 314
+	```sh
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 263 315
+	MCP_BRIDGE_PORT=4466 node "$forge_extract_tmp/packages/mcp-bridge/dist/server.js"
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 264 316
+	```
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 265 317
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 266 318
+	The bridge spawns `packages/mcp-server/dist/index.js` from the same bundle.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 267 319
+	Its `/health` revision is stamped at assembly from the manifest source commit
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 268 320
+	and structured-data hash; runtime startup never calls git. `/artifacts/` serves
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 269 321
+	the parent of the server policy's resolved `artifactsBase`, and `/runs` reads
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 270 322
+	that exact run directory. SIGINT or SIGTERM closes both bridge and native child.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 282 334 1
+	| `tokens.build`                               | Policy run bundles containing five artifacts copied or resolved from shipped dist outputs. Portable calls never rebuild or rewrite `packages/tokens/dist`. |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 289 341 1
+	The native server and bridge load `<bundle-root>/.env` through dotenv when the
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 342 342 1
+	file is present. None of these 26 operational variables is required for the Gate 1
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 298 350 3
+	| `MCP_BRIDGE_PORT`           | Loopback HTTP bridge port; default 4466, explicit 0 selects an ephemeral port. If the unset default is busy, the bridge selects an ephemeral port. |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 299 351
+	| `BRIDGE_TOKEN`              | Optional shared token required in `X-Bridge-Token` for `/run`; unset disables this gate. |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 300 352
+	| `MCP_BRIDGE_CORS_ORIGIN`     | Comma-separated allowed origins; default `http://localhost:6006,http://localhost:3000`. |
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 364 364 2
+	| `MCP_RUNTIME_CELLS_PATH`    | Optional path to a validated 154-cell runtime ledger; default is the canonical registry, then shipped dist registry. |
+415c7cc02822e64d64e2c8a9696d852d7faa2db7 365 365
+	| `MCP_RELEASE_CELLS_PATH`    | Optional path to a validated 42-cell release ledger; default is the canonical registry, then shipped dist registry. Invalid or absent proof degrades health. |

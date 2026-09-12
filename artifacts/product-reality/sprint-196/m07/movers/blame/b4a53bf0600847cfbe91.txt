@@ -1,0 +1,57 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 10 10 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-server/src/lib/tool-ledger.ts
+filename packages/mcp-server/src/lib/tool-ledger.ts
+	type PortableOutcome = { outcome: 'pass' | 'typed'; code?: string; retryable?: boolean; receiptSha256: string };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 11 11
+	type PortableLimit = { tool: string; status: string; kind: string; code: string; retryable: boolean; receipt: { path: string; sha256: string; bundleHead: string } };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 12 12
+	type PortableExecution = { path: string; sha256: string; bundleHead: string; dirty: boolean; tools: number; pass: number; typed: number };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 13 13
+	type ToolRow = { portableE2E: boolean; portableOutcome?: PortableOutcome; portableLimits?: PortableLimit[]; caveats: Array<{ kind: string }>; name: string; registration: 'auto' | 'on-demand'; proofTier: Tier; testImports: Record<Exclude<Tier, 'none'>, ImportRef[]>; advertisedClaim: { description: string; inputSchemaDescription: string }; claimHash: string };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 14 14
+	type ToolLedger = { mode?: 's194' | 's196'; portableExecution?: PortableExecution; schemaVersion: string; head: string; builderSelfCertified: false; rows: ToolRow[]; summary: { entries: number; auto: number; onDemand: number; byTier: Record<Tier, number>; autoByTier: Record<Tier, number>; onDemandByTier: Record<Tier, number>; portableE2E: number } };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 23 23 3
+	  if (ledger.mode !== undefined && ledger.mode !== 's194' && ledger.mode !== 's196') reject('unknown mode');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 24 24
+	  const execution = ledger.portableExecution;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 25 25
+	  if (ledger.mode === 's196' && (!execution || execution.path !== 'artifacts/product-reality/sprint-196/m02/e2e-host.json' || !/^sha256:[0-9a-f]{64}$/.test(execution.sha256) || !/^[0-9a-f]{40}$/.test(execution.bundleHead) || typeof execution.dirty !== 'boolean' || execution.tools !== 19 || execution.pass !== 17 || execution.typed !== 2)) reject('portable execution proof missing or malformed');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 36 36 1
+	    if (ledger.mode === 's194' || ledger.mode === 's196') {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 41 41 14
+	    if (ledger.mode === 's196') {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 42 42
+	      const outcome = row.portableOutcome;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 43 43
+	      const limits = row.portableLimits;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 44 44
+	      if (!Array.isArray(limits)) reject(`${row.name}: portable limits missing`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 45 45
+	      if (row.registration === 'auto') {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 46 46
+	        if (!outcome || !['pass', 'typed'].includes(outcome.outcome) || outcome.receiptSha256 !== execution!.sha256) reject(`${row.name}: portable outcome not bound to receipt`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 47 47
+	        const expectedCode = row.name === 'brand.apply' ? 'OODS-N020' : row.name === 'design.preview' ? 'OODS-N019' : undefined;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 48 48
+	        if (expectedCode) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 49 49
+	          if (outcome!.outcome !== 'typed' || outcome!.code !== expectedCode || outcome!.retryable !== (row.name === 'design.preview')) reject(`${row.name}: typed portable dependency code missing`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 50 50
+	          const limit = limits![0];
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 51 51
+	          if (limits!.length !== 1 || limit?.tool !== row.name || limit.status !== 'typed' || limit.kind !== 'documented-limit' || limit.code !== expectedCode || limit.retryable !== outcome!.retryable || limit.receipt?.path !== execution!.path || limit.receipt.sha256 !== execution!.sha256 || limit.receipt.bundleHead !== execution!.bundleHead) reject(`${row.name}: portable limit not bound to typed outcome`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 52 52
+	        } else if (outcome!.outcome !== 'pass' || outcome!.code !== undefined || limits!.length !== 0) reject(`${row.name}: successful portable execution required`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 53 53
+	      } else if (outcome !== undefined || limits!.length !== 0) reject(`${row.name}: unexecuted on-demand portable claim`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 54 54
+	    }

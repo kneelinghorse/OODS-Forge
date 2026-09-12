@@ -1,0 +1,131 @@
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 24 24 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789192404
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789192404
+committer-tz -0500
+summary feat(runtime): measure reference apps from the portable bundle
+previous decba77cd1680409f6caf091230e9262bc653e70 scripts/product-reality/s193-runtime-cells.ts
+filename scripts/product-reality/s193-runtime-cells.ts
+	import { RELEASE_OBJECTS, validateReleaseLedger, type ReleaseCell, type ReleaseLedger } from '../../packages/mcp-server/src/lib/release-ledger.js';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 25 25
+	import {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 26 26
+	  assertBundleSourceMatches, bundleRuntimeFromEnvironment, createRuntimeToolset, prepareBundleRuntime, releaseCellProvenance,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 27 27
+	  type BundleRuntimeInput, type BundleRuntimeConfiguration, type RuntimeToolset,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 28 28
+	} from './s196-bundle-runtime.js';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 127 127 1
+	async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser, layout?: 'dashboard', bundle?: BundleRuntimeConfiguration): Promise<RuntimeCell> {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 132 132 1
+	  let tools: RuntimeToolset | undefined;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 137 137 2
+	    tools = await createRuntimeToolset(path.join(cellRoot, 'parity'), bundle);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 138 138
+	    const { compose, generate, renderChart, certifyChart } = tools;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 270 270 6
+	    if (bundle) releaseCellProvenance(row, { configuration: bundle, comparisons: tools?.comparisons ?? [] });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 271 271
+	    try { await tools?.close(); }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 272 272
+	    catch (error) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 273 273
+	      row.status = 'fail';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 274 274
+	      row.gates.push({ name: 'adapter-lifecycle', status: 'fail', reason: error instanceof Error ? error.message : String(error) });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 275 275
+	    }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 292 292 1
+	export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string, layout?: 'dashboard', bundle?: BundleRuntimeConfiguration): Promise<RuntimeCell> {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 298 298 4
+	    const environment = { ...process.env };
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 299 299
+	    delete environment.OODS_RUNTIME_BUNDLE_CONFIG;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 300 300
+	    if (bundle) environment.OODS_RUNTIME_BUNDLE_CONFIG = JSON.stringify(bundle);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 301 301
+	    const child = spawn(process.execPath, args, { cwd: REPOSITORY_ROOT, env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 344 344 1
+	export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false, dashboardObjects: readonly string[] = [], bundleInput?: BundleRuntimeInput) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 346 346 7
+	  const bundle = bundleInput ? await prepareBundleRuntime(REPOSITORY_ROOT, bundleInput, output) : undefined;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 347 347
+	  if (bundle) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 348 348
+	    objects = RELEASE_OBJECTS;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 349 349
+	    contexts = CONTEXTS;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 350 350
+	    workflows = true;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 351 351
+	    assert.equal(dashboardObjects.length, 0, 'Release scope is the declared 42 cells, without dashboard variants.');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 352 352
+	  }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 354 354 3
+	  const head = bundle?.bundleHead ?? commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim();
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 355 355
+	  const ledger: RuntimeLedger = { schemaVersion: '1.0.0', head, runId: randomUUID(), historicalReceiptsUnioned: false, packCount: 1, browserImage: BROWSER_IMAGE, receiptRoot: path.relative(REPOSITORY_ROOT, output).split(path.sep).join('/'), rows: [], summary: summarize([]) };
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 356 356
+	  await packFoundationPackages(output, bundle ? { packageSourceRoot: bundle.bundleDirectory, ignoreScripts: true } : undefined);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 376 376 1
+	      const cell = await cellProcess(output, output, input.object, input.context, input.framework, head, ledger.runId, undefined, bundle);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 384 384 12
+	  if (bundle) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 385 385
+	    const { head: _head, ...base } = ledger;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 386 386
+	    const release: ReleaseLedger = { ...base, bundleHead: bundle.bundleHead, archiveSha256: bundle.archiveSha256, rows: ledger.rows as ReleaseCell[] };
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 387 387
+	    await write(path.join(output, 'release-cells.v1.json'), release);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 388 388
+	    const issues = validateReleaseLedger(release);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 389 389
+	    await write(path.join(output, 'validation.json'), { issues });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 390 390
+	    // Retain every failed comparison before refusing the release claim.
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 391 391
+	    const source = assertBundleSourceMatches(REPOSITORY_ROOT, bundle.bundleHead);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 392 392
+	    await write(path.join(output, 'source-after.json'), source);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 393 393
+	    if (!issues.length) await write(path.join(REPOSITORY_ROOT, 'packages/mcp-server/registry/release-cells.v1.json'), release);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 394 394
+	    return release;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 395 395
+	  }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 412 412 4
+	  if (validateRuntimeLedger(ledger, workflows).length === 0) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 413 413
+	    await emitterBite(output, ledger);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 414 414
+	    if (workflows) await write(path.join(REPOSITORY_ROOT, 'packages/mcp-server/registry/runtime-cells.v1.json'), ledger);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 415 415
+	  }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 424 424 1
+	    await runWorkflowCells(output!, object!, head!, runId!, await submittedPackages(packages!), bundleRuntimeFromEnvironment());
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 428 428 1
+	    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser, layout as 'dashboard' | undefined, bundleRuntimeFromEnvironment()); }
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 436 436 10
+	  const option = (name: string) => process.argv.find(value => value.startsWith(`${name}=`))?.slice(name.length + 1)
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 437 437
+	    ?? (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 438 438
+	  const bundleDirectory = option('--bundle-dir') ?? process.env.OODS_RUNTIME_BUNDLE_DIR;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 439 439
+	  const archivePath = option('--bundle-archive') ?? process.env.OODS_RUNTIME_BUNDLE_ARCHIVE;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 440 440
+	  assert.equal(Boolean(bundleDirectory), Boolean(archivePath), '--bundle-dir and --bundle-archive must be supplied together.');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 441 441
+	  const bundle = bundleDirectory && archivePath ? { bundleDirectory, archivePath } : undefined;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 442 442
+	  runRuntimeCells(output, objects, contexts, workflows, dashboardObjects, bundle).then(ledger => {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 443 443
+	    const issues = 'bundleHead' in ledger ? validateReleaseLedger(ledger) : validateRuntimeLedger(ledger, workflows);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 444 444
+	    if (issues.length) process.exitCode = 1;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 445 445
+	  }).catch(error => { console.error(error); process.exitCode = 1; });

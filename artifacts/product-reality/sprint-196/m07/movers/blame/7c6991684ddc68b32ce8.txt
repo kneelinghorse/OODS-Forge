@@ -1,0 +1,121 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/map-controls.md
+filename docs/history/components/map-controls.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 1 3 48
+author System Systems
+author-mail <systems@example.com>
+author-time 1764563961
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764563961
+committer-tz -0600
+summary Add comprehensive tests for spatial components and performance benchmarks
+filename docs/components/map-controls.md
+	# MapControls Component
+729bb2787d9832b5c10979e49b403ab0c1050774 2 4
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 3 5
+	Interactive zoom and layer toggles for spatial visualizations. Designed to pair with `SpatialContainer`, `ChoroplethMap`, and `BubbleMap`.
+729bb2787d9832b5c10979e49b403ab0c1050774 4 6
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 5 7
+	## When to Use
+729bb2787d9832b5c10979e49b403ab0c1050774 6 8
+	- Provide zoom/reset controls for keyboard and pointer users
+729bb2787d9832b5c10979e49b403ab0c1050774 7 9
+	- Allow users to toggle map layers (regions, symbols, routes)
+729bb2787d9832b5c10979e49b403ab0c1050774 8 10
+	- Surface current zoom level in an accessible way
+729bb2787d9832b5c10979e49b403ab0c1050774 9 11
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 10 12
+	## Props
+729bb2787d9832b5c10979e49b403ab0c1050774 11 13
+	- `onZoomIn`, `onZoomOut`, `onZoomReset`
+729bb2787d9832b5c10979e49b403ab0c1050774 12 14
+	- `zoomLevel`, `minZoom`, `maxZoom`
+729bb2787d9832b5c10979e49b403ab0c1050774 13 15
+	- `layers`: `{ id, label, visible }[]`
+729bb2787d9832b5c10979e49b403ab0c1050774 14 16
+	- `onLayerToggle(layerId, visible)`
+729bb2787d9832b5c10979e49b403ab0c1050774 15 17
+	- `position`: `'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'`
+729bb2787d9832b5c10979e49b403ab0c1050774 16 18
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 17 19
+	## Usage
+729bb2787d9832b5c10979e49b403ab0c1050774 18 20
+	```tsx
+729bb2787d9832b5c10979e49b403ab0c1050774 19 21
+	import { MapControls } from '@/components/viz/spatial/MapControls';
+729bb2787d9832b5c10979e49b403ab0c1050774 20 22
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 21 23
+	const layers = [
+729bb2787d9832b5c10979e49b403ab0c1050774 22 24
+	  { id: 'regions', label: 'Regions', visible: true },
+729bb2787d9832b5c10979e49b403ab0c1050774 23 25
+	  { id: 'symbols', label: 'Symbols', visible: true },
+729bb2787d9832b5c10979e49b403ab0c1050774 24 26
+	];
+729bb2787d9832b5c10979e49b403ab0c1050774 25 27
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 26 28
+	<MapControls
+729bb2787d9832b5c10979e49b403ab0c1050774 27 29
+	  onZoomIn={() => map.zoomIn()}
+729bb2787d9832b5c10979e49b403ab0c1050774 28 30
+	  onZoomOut={() => map.zoomOut()}
+729bb2787d9832b5c10979e49b403ab0c1050774 29 31
+	  onZoomReset={() => map.resetZoom()}
+729bb2787d9832b5c10979e49b403ab0c1050774 30 32
+	  zoomLevel={1.0}
+729bb2787d9832b5c10979e49b403ab0c1050774 31 33
+	  minZoom={0.5}
+729bb2787d9832b5c10979e49b403ab0c1050774 32 34
+	  maxZoom={4}
+729bb2787d9832b5c10979e49b403ab0c1050774 33 35
+	  layers={layers}
+729bb2787d9832b5c10979e49b403ab0c1050774 34 36
+	  onLayerToggle={(id, visible) => toggleLayer(id, visible)}
+729bb2787d9832b5c10979e49b403ab0c1050774 35 37
+	  position="top-right"
+729bb2787d9832b5c10979e49b403ab0c1050774 36 38
+	/>;
+729bb2787d9832b5c10979e49b403ab0c1050774 37 39
+	```
+729bb2787d9832b5c10979e49b403ab0c1050774 38 40
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 39 41
+	## Accessibility
+729bb2787d9832b5c10979e49b403ab0c1050774 40 42
+	- Buttons expose `aria-label` for zoom actions and reset
+729bb2787d9832b5c10979e49b403ab0c1050774 41 43
+	- Layer toggles use native checkboxes with focus ring styles
+729bb2787d9832b5c10979e49b403ab0c1050774 42 44
+	- Layer changes announce via live region (`announceLayerChange`)
+729bb2787d9832b5c10979e49b403ab0c1050774 43 45
+	- Keyboard: Tab to focus, Enter/Space to activate buttons and toggles
+729bb2787d9832b5c10979e49b403ab0c1050774 44 46
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 45 47
+	## Testing
+729bb2787d9832b5c10979e49b403ab0c1050774 46 48
+	- Zoom buttons call provided handlers and update displayed zoom level
+729bb2787d9832b5c10979e49b403ab0c1050774 47 49
+	- Layer toggles update visibility state and fire `onLayerToggle`
+729bb2787d9832b5c10979e49b403ab0c1050774 48 50
+	- Buttons and checkboxes have visible focus outlines and `aria-label`

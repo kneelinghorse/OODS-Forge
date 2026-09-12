@@ -1,0 +1,304 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 1 1 147
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+filename scripts/product-reality/s196-temporal-bite.mjs
+	#!/usr/bin/env node
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 2 2
+	/** Exclusive-window UTC-pin mutation; public probes retain every temporal cell. */
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 3 3
+	import assert from 'node:assert/strict';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 4 4
+	import { createHash, randomUUID } from 'node:crypto';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 5 5
+	import fs from 'node:fs';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 6 6
+	import path from 'node:path';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 7 7
+	import { execFileSync, spawnSync } from 'node:child_process';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 8 8
+	import { fileURLToPath } from 'node:url';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 9 9
+	import { treeDigest } from '../runtime/manifest.mjs';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 10 10
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 11 11
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 12 12
+	const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 13 13
+	const serialize = value => JSON.stringify(value, null, 2) + '\n';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 14 14
+	const read = relative => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 15 15
+	const PROBE = 'scripts/product-reality/s196-temporal-probe.ts';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 16 16
+	const VIZ_REGISTRY = 'packages/viz-core/src/registry/viz-recipes.v1.json';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 17 17
+	const PATTERN_REGISTRY = 'packages/viz-core/src/registry/viz-patterns.v1.json';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 18 18
+	const OPERANDS = 'scripts/product-reality/s190-viz-operands.json';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 19 19
+	const ADAPTERS = ['packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/adapters/echarts-adapter.ts'];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 20 20
+	const build = ['--filter', '@oods/viz-core', 'run', 'build'];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 21 21
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 22 22
+	function replaceOnce(source, before, after) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 23 23
+	  assert.equal(source.split(before).length, 2, `Expected exactly one UTC pin: ${before}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 24 24
+	  return source.replace(before, after);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 25 25
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 26 26
+	function disableUtc(source, file) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 27 27
+	  if (file.endsWith('/echarts-adapter.ts')) return replaceOnce(source,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 28 28
+	    "useUTC: xAxis?.type === 'time' || yAxis?.type === 'time' ? true : undefined,",
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 29 29
+	    "useUTC: xAxis?.type === 'time' || yAxis?.type === 'time' ? false : undefined,");
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 30 30
+	  let changed = replaceOnce(source, "const scaleType = definition.type === 'temporal' ? 'utc' : mapScaleType(binding.scale);", "const scaleType = definition.type === 'temporal' ? 'time' : mapScaleType(binding.scale);");
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 31 31
+	  changed = replaceOnce(changed, 'definition.timeUnit = `utc${unit}`;', 'definition.timeUnit = unit;');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 32 32
+	  changed = replaceOnce(changed, "if (scale === 'temporal') {\n    return 'utc';\n  }", "if (scale === 'temporal') {\n    return 'time';\n  }");
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 33 33
+	  return replaceOnce(changed, 'calculate: `utcParse(datum[', 'calculate: `timeParse(datum[');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 34 34
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 35 35
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 36 36
+	async function main() {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 37 37
+	  assert(process.argv.includes('--execute'), 'Requires --execute during the explicitly granted exclusive source/build window');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 38 38
+	  const outputIndex = process.argv.indexOf('--out');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 39 39
+	  const output = outputIndex < 0 ? path.join(root, 'artifacts/product-reality/sprint-196/m05/timezone-bite') : path.resolve(process.argv[outputIndex + 1]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 40 40
+	  assert(!fs.existsSync(output), 'Output exists; retain earlier runs and choose another --out');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 41 41
+	  fs.mkdirSync(output, { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 42 42
+	  const save = (relative, value) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 43 43
+	    const file = path.join(output, relative); fs.mkdirSync(path.dirname(file), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 44 44
+	    fs.writeFileSync(file, typeof value === 'string' ? value : serialize(value));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 45 45
+	  };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 46 46
+	  const report = { schemaVersion: 1, missionId: 's196-m05', runId: randomUUID(), builderSelfCertified: false, status: 'running',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 47 47
+	    startedAt: new Date().toISOString(), sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 48 48
+	    dirty: execFileSync('git', ['status', '--porcelain', '-z'], { cwd: root }).length > 0,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 49 49
+	    command: [process.execPath, ...process.argv.slice(1)], cwd: root, nodeVersion: process.version,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 50 50
+	    methodology: 'Exact 16 temporal registry identities, public viz.render SVG bytes, opt-in JSON-projected ECharts options and renderer availability measured in independent processes with TZ=America/Chicago and TZ=UTC. Four Vega UTC pin sites and the ECharts useUTC pin are physically disabled, rebuilt, observed red, restored and rebuilt. No golden or registry changes occur during the bite.',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 51 51
+	    commands: [], sources: [], inputs: [] };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 52 52
+	  const persist = () => save('bite.json', report);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 53 53
+	  const environment = timezone => ({ PATH: process.env.PATH ?? '', LANG: 'C.UTF-8', LC_ALL: 'C.UTF-8', TZ: timezone, NODE_ENV: 'production', NO_COLOR: '1' });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 54 54
+	  function run(name, commandArgs, timezone = 'UTC') {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 55 55
+	    const startedAt = new Date().toISOString();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 56 56
+	    const result = spawnSync('pnpm', commandArgs, { cwd: root, env: environment(timezone), encoding: 'utf8', timeout: 180000, maxBuffer: 32 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 57 57
+	    save(`${name}.stdout.log`, result.stdout ?? ''); save(`${name}.stderr.log`, result.stderr ?? '');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 58 58
+	    const command = { name, command: ['pnpm', ...commandArgs], cwd: root, environment: environment(timezone), startedAt, completedAt: new Date().toISOString(), exitCode: result.status, signal: result.signal,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 59 59
+	      ...(result.error ? { error: String(result.error) } : {}), stdout: `${name}.stdout.log`, stderr: `${name}.stderr.log`, stdoutSha256: hash(result.stdout ?? ''), stderrSha256: hash(result.stderr ?? '') };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 60 60
+	    report.commands.push(command); persist();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 61 61
+	    return { ...command, text: (result.stdout ?? '') + (result.stderr ?? '') };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 62 62
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 63 63
+	  const recipes = read(VIZ_REGISTRY), patterns = read(PATTERN_REGISTRY), operands = read(OPERANDS);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 64 64
+	  const cells = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 65 65
+	  for (const identity of ['line', 'area']) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 66 66
+	    const recipe = recipes.find(row => row.chartType === identity), operand = operands.find(row => row.chartType === identity);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 67 67
+	    assert(recipe && operand); assert.equal(recipe.renderScopes.length, 6);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 68 68
+	    for (const scope of recipe.renderScopes) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 69 69
+	      assert.equal(scope.status, 'rendered'); assert(scope.svgHash);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 70 70
+	      cells.push({ id: `${identity}/${scope.theme}/${scope.brand}`, identity, registrySvgHash: scope.svgHash,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 71 71
+	        request: { ...operand, theme: scope.theme, brand: scope.brand, output: { svg: true, includeNormalizedSpec: true, echarts: true } } });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 72 72
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 73 73
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 74 74
+	  const pattern = patterns.find(row => row.id === 'pattern:viz:running-total-area');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 75 75
+	  assert(pattern); assert.equal(pattern.scopes.length, 4);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 76 76
+	  for (const scope of pattern.scopes) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 77 77
+	    assert.equal(scope.status, 'public');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 78 78
+	    cells.push({ id: `running-total-area/${scope.theme}/${scope.brand}`, identity: pattern.id, registrySvgHash: scope.svgHash,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 79 79
+	      request: { pattern: pattern.id, theme: scope.theme, brand: scope.brand, output: { svg: true, includeNormalizedSpec: true, includeA11y: true, echarts: true } } });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 80 80
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 81 81
+	  assert.equal(cells.length, 16); save('requests.json', { schemaVersion: 1, cells });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 82 82
+	  report.requestsSha256 = hash(fs.readFileSync(path.join(output, 'requests.json')));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 83 83
+	  for (const file of [VIZ_REGISTRY, PATTERN_REGISTRY, OPERANDS, pattern.specPath, PROBE]) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 84 84
+	    const bytes = fs.readFileSync(path.join(root, file)); const destination = `inputs/${file}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 85 85
+	    save(destination, bytes.toString()); report.inputs.push({ source: file, path: destination, sha256: hash(bytes), bytes: bytes.length });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 86 86
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 87 87
+	  const originals = ADAPTERS.map(file => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 88 88
+	    const before = fs.readFileSync(path.join(root, file), 'utf8'), mutated = disableUtc(before, file), mode = fs.statSync(path.join(root, file)).mode & 0o777;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 89 89
+	    assert.notEqual(before, mutated);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 90 90
+	    save(`source-before/${file}`, before); save(`source-mutated/${file}`, mutated);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 91 91
+	    report.sources.push({ file, mode, beforeSha256: hash(before), mutatedSha256: hash(mutated) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 92 92
+	    return { file, before, mutated, mode };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 93 93
+	  });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 94 94
+	  persist();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 95 95
+	  async function phase(name, expectEqual, checkRegistry) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 96 96
+	    for (const [timezone, label] of [['America/Chicago', 'chicago'], ['UTC', 'utc']]) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 97 97
+	      const capture = run(`${name}-${label}`, ['exec', 'tsx', PROBE, '--requests', path.join(output, 'requests.json'), '--out', path.join(output, name, label)], timezone);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 98 98
+	      assert.equal(capture.exitCode, 0, capture.text);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 99 99
+	      const observation = JSON.parse(fs.readFileSync(path.join(output, name, label, 'observations.json'), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 100 100
+	      for (const cell of observation.cells) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 101 101
+	        const option = JSON.parse(fs.readFileSync(path.join(output, name, label, cell.directory, 'echarts-option.json'), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 102 102
+	        assert.equal(option.useUTC, expectEqual, `${name}/${cell.id}: physical ECharts pin must be reflected in the actual compiled option`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 103 103
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 104 104
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 105 105
+	    const compared = run(`${name}-compare`, ['exec', 'tsx', PROBE, '--compare', '--left', path.join(output, name, 'chicago/observations.json'), '--right', path.join(output, name, 'utc/observations.json'), '--out', path.join(output, name, 'comparison.json'), ...(checkRegistry ? ['--check-registry'] : [])]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 106 106
+	    const comparison = JSON.parse(fs.readFileSync(path.join(output, name, 'comparison.json'), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 107 107
+	    report[name] = comparison;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 108 108
+	    if (expectEqual) { assert.equal(compared.exitCode, 0, compared.text); assert.equal(comparison.primaryEqual, 16); assert.equal(comparison.registryEqual, 16); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 109 109
+	    else { assert.equal(compared.exitCode, 1); assert.match(compared.text, /Cross-timezone SVG equality failed/); assert(comparison.primaryEqual < 16, 'Disabling UTC must change at least one actual public SVG across timezones'); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 110 110
+	    persist();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 111 111
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 112 112
+	  let failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 113 113
+	  try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 114 114
+	    assert.equal(run('baseline-build', build).exitCode, 0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 115 115
+	    report.distBefore = await treeDigest(path.join(root, 'packages/viz-core/dist'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 116 116
+	    await phase('baseline', true, true);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 117 117
+	    for (const item of originals) fs.writeFileSync(path.join(root, item.file), item.mutated);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 118 118
+	    assert.equal(run('mutated-build', build).exitCode, 0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 119 119
+	    report.distMutated = await treeDigest(path.join(root, 'packages/viz-core/dist'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 120 120
+	    assert.notEqual(report.distMutated.sha256, report.distBefore.sha256);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 121 121
+	    await phase('mutated', false, false);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 122 122
+	  } catch (error) { failure = error; report.failure = error.stack ?? String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 123 123
+	  finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 124 124
+	    for (const item of originals) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 125 125
+	      const current = fs.readFileSync(path.join(root, item.file), 'utf8');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 126 126
+	      assert(current === item.before || current === item.mutated, `Unexpected concurrent edit to ${item.file}; refusing to overwrite`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 127 127
+	      fs.writeFileSync(path.join(root, item.file), item.before); fs.chmodSync(path.join(root, item.file), item.mode);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 128 128
+	      save(`source-restored/${item.file}`, fs.readFileSync(path.join(root, item.file), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 129 129
+	      report.sources.find(source => source.file === item.file).restoredSha256 = hash(fs.readFileSync(path.join(root, item.file)));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 130 130
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 131 131
+	    try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 132 132
+	      assert.equal(run('restored-build', build).exitCode, 0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 133 133
+	      report.distRestored = await treeDigest(path.join(root, 'packages/viz-core/dist'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 134 134
+	      if (report.distBefore) assert.deepEqual(report.distRestored, report.distBefore, 'Restored compiled dist bytes differ from baseline');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 135 135
+	      await phase('restored', true, true);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 136 136
+	      for (const input of report.inputs) assert.equal(hash(fs.readFileSync(path.join(root, input.source))), input.sha256, `Source input moved during exclusive bite: ${input.source}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 137 137
+	    } catch (error) { failure ??= error; report.restoreFailure = error.stack ?? String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 138 138
+	    report.status = failure ? 'failed' : 'passed';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 139 139
+	    report.completedAt = new Date().toISOString();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 140 140
+	    report.restoredByteIdentically = report.sources.every(source => source.beforeSha256 === source.restoredSha256)
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 141 141
+	      && report.distBefore?.sha256 === report.distRestored?.sha256;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 142 142
+	    persist();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 143 143
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 144 144
+	  if (failure) throw failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 145 145
+	  console.log(serialize({ status: report.status, temporalCells: 16, mutatedDifferent: report.mutated.different, restoredByteIdentically: report.restoredByteIdentically, report: path.join(output, 'bite.json') }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 146 146
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 147 147
+	main().catch(error => { console.error(error.stack ?? error); process.exitCode = 1; });

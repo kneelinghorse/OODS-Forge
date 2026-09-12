@@ -1,0 +1,584 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 287
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+filename scripts/docs/generate-tool-specs.ts
+	#!/usr/bin/env tsx
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	/** Generate the operator contract from the schemas selected by the live dispatcher. */
+944f4dda5f784e266310978b31f65b3d452e6387 3 3
+	import fs from 'node:fs';
+944f4dda5f784e266310978b31f65b3d452e6387 4 4
+	import path from 'node:path';
+944f4dda5f784e266310978b31f65b3d452e6387 5 5
+	import { fileURLToPath } from 'node:url';
+944f4dda5f784e266310978b31f65b3d452e6387 6 6
+	import ts from 'typescript';
+944f4dda5f784e266310978b31f65b3d452e6387 7 7
+	
+944f4dda5f784e266310978b31f65b3d452e6387 8 8
+	const ROOT = path.resolve(import.meta.dirname, '../..');
+944f4dda5f784e266310978b31f65b3d452e6387 9 9
+	export const TOOL_SPECS_PATH = 'docs/mcp/Tool-Specs.md';
+944f4dda5f784e266310978b31f65b3d452e6387 10 10
+	const REGISTRY = 'packages/mcp-server/src/tools/registry.json';
+944f4dda5f784e266310978b31f65b3d452e6387 11 11
+	const DISPATCH = 'packages/mcp-server/src/index.ts';
+944f4dda5f784e266310978b31f65b3d452e6387 12 12
+	const LEDGER = 'packages/mcp-server/registry/tool-capability-ledger.v1.json';
+944f4dda5f784e266310978b31f65b3d452e6387 13 13
+	const COMPONENTS = 'packages/component-contracts/registry/component-capability-ledger.v1.json';
+944f4dda5f784e266310978b31f65b3d452e6387 14 14
+	
+944f4dda5f784e266310978b31f65b3d452e6387 15 15
+	export type Schema = {
+944f4dda5f784e266310978b31f65b3d452e6387 16 16
+	  [keyword: string]: unknown;
+944f4dda5f784e266310978b31f65b3d452e6387 17 17
+	  $ref?: string;
+944f4dda5f784e266310978b31f65b3d452e6387 18 18
+	  title?: string;
+944f4dda5f784e266310978b31f65b3d452e6387 19 19
+	  description?: string;
+944f4dda5f784e266310978b31f65b3d452e6387 20 20
+	  type?: string | string[];
+944f4dda5f784e266310978b31f65b3d452e6387 21 21
+	  properties?: Record<string, Schema>;
+944f4dda5f784e266310978b31f65b3d452e6387 22 22
+	  required?: string[];
+944f4dda5f784e266310978b31f65b3d452e6387 23 23
+	  items?: Schema;
+944f4dda5f784e266310978b31f65b3d452e6387 24 24
+	  allOf?: Schema[];
+944f4dda5f784e266310978b31f65b3d452e6387 25 25
+	  anyOf?: Schema[];
+944f4dda5f784e266310978b31f65b3d452e6387 26 26
+	  oneOf?: Schema[];
+944f4dda5f784e266310978b31f65b3d452e6387 27 27
+	  if?: Schema;
+944f4dda5f784e266310978b31f65b3d452e6387 28 28
+	  then?: Schema;
+944f4dda5f784e266310978b31f65b3d452e6387 29 29
+	  else?: Schema;
+944f4dda5f784e266310978b31f65b3d452e6387 30 30
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 31 31
+	type ToolSchema = { input: string; output: string };
+944f4dda5f784e266310978b31f65b3d452e6387 32 32
+	type Limit = { id: string; code: string; retryable: boolean; blocker: string; transportOutcome: string };
+944f4dda5f784e266310978b31f65b3d452e6387 33 33
+	type LedgerRow = {
+944f4dda5f784e266310978b31f65b3d452e6387 34 34
+	  name: string;
+944f4dda5f784e266310978b31f65b3d452e6387 35 35
+	  registration: string;
+944f4dda5f784e266310978b31f65b3d452e6387 36 36
+	  proofTier: string;
+944f4dda5f784e266310978b31f65b3d452e6387 37 37
+	  portableOutcome?: { outcome: string; code?: string; receiptSha256: string };
+944f4dda5f784e266310978b31f65b3d452e6387 38 38
+	  portableLimits: Limit[];
+944f4dda5f784e266310978b31f65b3d452e6387 39 39
+	  caveats: Array<{ kind: string; reason: string; file: string; line: number }>;
+944f4dda5f784e266310978b31f65b3d452e6387 40 40
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 41 41
+	export type ToolSpecSources = {
+944f4dda5f784e266310978b31f65b3d452e6387 42 42
+	  registry: { auto: string[]; onDemand: string[] };
+944f4dda5f784e266310978b31f65b3d452e6387 43 43
+	  dispatch: Record<string, ToolSchema>;
+944f4dda5f784e266310978b31f65b3d452e6387 44 44
+	  schemas: Record<string, Schema>;
+944f4dda5f784e266310978b31f65b3d452e6387 45 45
+	  descriptions: Record<string, string>;
+944f4dda5f784e266310978b31f65b3d452e6387 46 46
+	  ledger: {
+944f4dda5f784e266310978b31f65b3d452e6387 47 47
+	    head: string;
+944f4dda5f784e266310978b31f65b3d452e6387 48 48
+	    methodology: { proofTier: string; receiptRefs: string };
+944f4dda5f784e266310978b31f65b3d452e6387 49 49
+	    portableExecution: { path: string; sha256: string; bundleHead: string; dirty: boolean; tools: number; pass: number; typed: number };
+944f4dda5f784e266310978b31f65b3d452e6387 50 50
+	    rows: LedgerRow[];
+944f4dda5f784e266310978b31f65b3d452e6387 51 51
+	    retired: Array<{ name: string; reason: string; decisionIds: number[] }>;
+944f4dda5f784e266310978b31f65b3d452e6387 52 52
+	  };
+944f4dda5f784e266310978b31f65b3d452e6387 53 53
+	  components: { controllingObligationDenominator: number; approvedRuntimeCensus: unknown; rows: Array<{ id: string; surfaces: Record<string, { state: string }> }> };
+944f4dda5f784e266310978b31f65b3d452e6387 54 54
+	  policies: Array<{ tool: string; allow: string[]; readOnly?: boolean; writes?: string[]; timeoutMs: number; ratePerMinute: number; concurrency: number }>;
+944f4dda5f784e266310978b31f65b3d452e6387 55 55
+	  notes: Record<string, string>;
+944f4dda5f784e266310978b31f65b3d452e6387 56 56
+	};
+944f4dda5f784e266310978b31f65b3d452e6387 57 57
+	
+944f4dda5f784e266310978b31f65b3d452e6387 58 58
+	/** Read literal mappings without importing index.ts, which starts the MCP server. */
+944f4dda5f784e266310978b31f65b3d452e6387 59 59
+	export function parseDispatchSchemas(source: string): Record<string, ToolSchema> {
+944f4dda5f784e266310978b31f65b3d452e6387 60 60
+	  const file = ts.createSourceFile('index.ts', source, ts.ScriptTarget.Latest, true);
+944f4dda5f784e266310978b31f65b3d452e6387 61 61
+	  const result: Record<string, ToolSchema> = {};
+944f4dda5f784e266310978b31f65b3d452e6387 62 62
+	  const nameOf = (node: ts.PropertyName): string => {
+944f4dda5f784e266310978b31f65b3d452e6387 63 63
+	    if (ts.isIdentifier(node) || ts.isStringLiteral(node)) return node.text;
+944f4dda5f784e266310978b31f65b3d452e6387 64 64
+	    throw new Error('Nonliteral dispatcher property cannot be documented');
+944f4dda5f784e266310978b31f65b3d452e6387 65 65
+	  };
+944f4dda5f784e266310978b31f65b3d452e6387 66 66
+	  for (const statement of file.statements) {
+944f4dda5f784e266310978b31f65b3d452e6387 67 67
+	    if (!ts.isVariableStatement(statement)) continue;
+944f4dda5f784e266310978b31f65b3d452e6387 68 68
+	    for (const declaration of statement.declarationList.declarations) {
+944f4dda5f784e266310978b31f65b3d452e6387 69 69
+	      if (!ts.isIdentifier(declaration.name) || declaration.name.text !== 'toolSpecs') continue;
+944f4dda5f784e266310978b31f65b3d452e6387 70 70
+	      if (!declaration.initializer || !ts.isObjectLiteralExpression(declaration.initializer)) throw new Error('toolSpecs must be a literal object');
+944f4dda5f784e266310978b31f65b3d452e6387 71 71
+	      for (const property of declaration.initializer.properties) {
+944f4dda5f784e266310978b31f65b3d452e6387 72 72
+	        if (!ts.isPropertyAssignment(property) || !ts.isObjectLiteralExpression(property.initializer)) throw new Error('Nonliteral tool mapping');
+944f4dda5f784e266310978b31f65b3d452e6387 73 73
+	        const values: Record<string, string> = {};
+944f4dda5f784e266310978b31f65b3d452e6387 74 74
+	        for (const field of property.initializer.properties) {
+944f4dda5f784e266310978b31f65b3d452e6387 75 75
+	          if (!ts.isPropertyAssignment(field) || !ts.isStringLiteral(field.initializer)) throw new Error('Nonliteral schema mapping');
+944f4dda5f784e266310978b31f65b3d452e6387 76 76
+	          values[nameOf(field.name)] = field.initializer.text;
+944f4dda5f784e266310978b31f65b3d452e6387 77 77
+	        }
+944f4dda5f784e266310978b31f65b3d452e6387 78 78
+	        if (!values.inputSchema || !values.outputSchema) throw new Error('Missing dispatch schema pair');
+944f4dda5f784e266310978b31f65b3d452e6387 79 79
+	        const tool = nameOf(property.name);
+944f4dda5f784e266310978b31f65b3d452e6387 80 80
+	        if (result[tool]) throw new Error(`Duplicate dispatcher tool: ${tool}`);
+944f4dda5f784e266310978b31f65b3d452e6387 81 81
+	        result[tool] = {
+944f4dda5f784e266310978b31f65b3d452e6387 82 82
+	          input: path.posix.join('packages/mcp-server/src', values.inputSchema),
+944f4dda5f784e266310978b31f65b3d452e6387 83 83
+	          output: path.posix.join('packages/mcp-server/src', values.outputSchema),
+944f4dda5f784e266310978b31f65b3d452e6387 84 84
+	        };
+944f4dda5f784e266310978b31f65b3d452e6387 85 85
+	      }
+944f4dda5f784e266310978b31f65b3d452e6387 86 86
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 87 87
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 88 88
+	  if (!Object.keys(result).length) throw new Error('Missing toolSpecs dispatcher mapping');
+944f4dda5f784e266310978b31f65b3d452e6387 89 89
+	  return result;
+944f4dda5f784e266310978b31f65b3d452e6387 90 90
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 91 91
+	
+944f4dda5f784e266310978b31f65b3d452e6387 92 92
+	export function loadToolSpecSources(root = ROOT): ToolSpecSources {
+944f4dda5f784e266310978b31f65b3d452e6387 93 93
+	  const read = <T>(relative: string): T => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8')) as T;
+944f4dda5f784e266310978b31f65b3d452e6387 94 94
+	  const registry = read<ToolSpecSources['registry']>(REGISTRY);
+944f4dda5f784e266310978b31f65b3d452e6387 95 95
+	  const dispatch = parseDispatchSchemas(fs.readFileSync(path.join(root, DISPATCH), 'utf8'));
+944f4dda5f784e266310978b31f65b3d452e6387 96 96
+	  const schemas: Record<string, Schema> = {};
+944f4dda5f784e266310978b31f65b3d452e6387 97 97
+	  // Local $refs can point to a different schema. Load the actual schema directory,
+944f4dda5f784e266310978b31f65b3d452e6387 98 98
+	  // while the dispatcher alone selects each tool's root input and output schema.
+944f4dda5f784e266310978b31f65b3d452e6387 99 99
+	  const directory = 'packages/mcp-server/src/schemas';
+944f4dda5f784e266310978b31f65b3d452e6387 100 100
+	  for (const file of fs.readdirSync(path.join(root, directory)).filter(name => name.endsWith('.json')).sort()) {
+944f4dda5f784e266310978b31f65b3d452e6387 101 101
+	    schemas[`${directory}/${file}`] = read<Schema>(`${directory}/${file}`);
+944f4dda5f784e266310978b31f65b3d452e6387 102 102
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 103 103
+	  const notes: Record<string, string> = {};
+944f4dda5f784e266310978b31f65b3d452e6387 104 104
+	  const notesDirectory = path.join(root, 'docs/mcp/tool-notes');
+944f4dda5f784e266310978b31f65b3d452e6387 105 105
+	  if (fs.existsSync(notesDirectory)) {
+944f4dda5f784e266310978b31f65b3d452e6387 106 106
+	    for (const file of fs.readdirSync(notesDirectory).filter(name => name.endsWith('.md')).sort()) {
+944f4dda5f784e266310978b31f65b3d452e6387 107 107
+	      const tool = file.slice(0, -3);
+944f4dda5f784e266310978b31f65b3d452e6387 108 108
+	      if (![...registry.auto, ...registry.onDemand].includes(tool)) throw new Error(`Orphan tool note: ${file}`);
+944f4dda5f784e266310978b31f65b3d452e6387 109 109
+	      notes[tool] = fs.readFileSync(path.join(notesDirectory, file), 'utf8').trim();
+944f4dda5f784e266310978b31f65b3d452e6387 110 110
+	      if (/^### /m.test(notes[tool])) throw new Error(`Tool notes cannot add tool headings: ${file}`);
+944f4dda5f784e266310978b31f65b3d452e6387 111 111
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 112 112
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 113 113
+	  return {
+944f4dda5f784e266310978b31f65b3d452e6387 114 114
+	    registry, dispatch, schemas, notes,
+944f4dda5f784e266310978b31f65b3d452e6387 115 115
+	    descriptions: read('packages/mcp-adapter/tool-descriptions.json'),
+944f4dda5f784e266310978b31f65b3d452e6387 116 116
+	    ledger: read(LEDGER), components: read(COMPONENTS),
+944f4dda5f784e266310978b31f65b3d452e6387 117 117
+	    policies: read<{ rules: ToolSpecSources['policies'] }>('packages/mcp-server/src/security/policy.json').rules,
+944f4dda5f784e266310978b31f65b3d452e6387 118 118
+	  };
+944f4dda5f784e266310978b31f65b3d452e6387 119 119
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 120 120
+	
+944f4dda5f784e266310978b31f65b3d452e6387 121 121
+	const cell = (value: string): string => value.replaceAll('|', '\\|').replace(/\r?\n/g, '<br>');
+944f4dda5f784e266310978b31f65b3d452e6387 122 122
+	const json = (value: unknown): string => `\`${cell(JSON.stringify(value))}\``;
+944f4dda5f784e266310978b31f65b3d452e6387 123 123
+	const link = (file: string): string => `[${file}](../../${file})`;
+944f4dda5f784e266310978b31f65b3d452e6387 124 124
+	function typeOf(schema: Schema): string {
+944f4dda5f784e266310978b31f65b3d452e6387 125 125
+	  if (schema.const !== undefined) return json(schema.const);
+944f4dda5f784e266310978b31f65b3d452e6387 126 126
+	  if (Array.isArray(schema.enum)) return schema.enum.map(json).join(' or ');
+944f4dda5f784e266310978b31f65b3d452e6387 127 127
+	  if (schema.$ref) return `ref ${json(schema.$ref)}`;
+944f4dda5f784e266310978b31f65b3d452e6387 128 128
+	  if (schema.oneOf || schema.anyOf) return (schema.oneOf ?? schema.anyOf)!.map(typeOf).join(' or ');
+944f4dda5f784e266310978b31f65b3d452e6387 129 129
+	  if (schema.type === 'array') return `array of ${schema.items ? typeOf(schema.items) : 'any'}`;
+944f4dda5f784e266310978b31f65b3d452e6387 130 130
+	  return Array.isArray(schema.type) ? schema.type.join(' or ') : schema.type ?? 'any';
+944f4dda5f784e266310978b31f65b3d452e6387 131 131
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 132 132
+	
+944f4dda5f784e266310978b31f65b3d452e6387 133 133
+	/** Render root/branch properties; never turn oneOf/anyOf requirements into unconditional ones. */
+944f4dda5f784e266310978b31f65b3d452e6387 134 134
+	export function renderSchema(schema: Schema, file: string, sources: ToolSpecSources['schemas'], label: string, inheritedRequired: string[] = [], stack: string[] = []): string {
+944f4dda5f784e266310978b31f65b3d452e6387 135 135
+	  const lines: string[] = [];
+944f4dda5f784e266310978b31f65b3d452e6387 136 136
+	  if (schema.$ref) {
+944f4dda5f784e266310978b31f65b3d452e6387 137 137
+	    const [relative, pointer = ''] = schema.$ref.split('#');
+944f4dda5f784e266310978b31f65b3d452e6387 138 138
+	    const targetFile = relative ? path.posix.normalize(path.posix.join(path.posix.dirname(file), relative)) : file;
+944f4dda5f784e266310978b31f65b3d452e6387 139 139
+	    const identity = `${targetFile}#${pointer}`;
+944f4dda5f784e266310978b31f65b3d452e6387 140 140
+	    if (stack.includes(identity)) return `Reference: ${link(targetFile)} (${json(pointer)}; recursive).\n`;
+944f4dda5f784e266310978b31f65b3d452e6387 141 141
+	    let target: unknown = sources[targetFile];
+944f4dda5f784e266310978b31f65b3d452e6387 142 142
+	    for (const part of pointer.split('/').slice(1)) target = (target as Record<string, unknown>)?.[part.replaceAll('~1', '/').replaceAll('~0', '~')];
+944f4dda5f784e266310978b31f65b3d452e6387 143 143
+	    if (!target || typeof target !== 'object') throw new Error(`Unresolved schema reference: ${identity}`);
+944f4dda5f784e266310978b31f65b3d452e6387 144 144
+	    return `Reference: ${link(targetFile)} (${json(pointer)}).\n\n${renderSchema(target as Schema, targetFile, sources, label, inheritedRequired, [...stack, identity])}`;
+944f4dda5f784e266310978b31f65b3d452e6387 145 145
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 146 146
+	  if (schema.description) lines.push(schema.description, '');
+944f4dda5f784e266310978b31f65b3d452e6387 147 147
+	  const required = new Set([...inheritedRequired, ...(schema.required ?? [])]);
+944f4dda5f784e266310978b31f65b3d452e6387 148 148
+	  if (Object.keys(schema.properties ?? {}).length) {
+944f4dda5f784e266310978b31f65b3d452e6387 149 149
+	    lines.push('| Parameter / field | Type | Required in this branch | Default | Description / constraints |', '|---|---|---|---|---|');
+944f4dda5f784e266310978b31f65b3d452e6387 150 150
+	    for (const [name, property] of Object.entries(schema.properties!)) {
+944f4dda5f784e266310978b31f65b3d452e6387 151 151
+	      const constraints = Object.entries(property).filter(([key]) => ['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'minLength', 'maxLength', 'pattern', 'format', 'minItems', 'maxItems', 'uniqueItems', 'additionalProperties'].includes(key));
+944f4dda5f784e266310978b31f65b3d452e6387 152 152
+	      const details = [property.description ? cell(property.description) : '', ...constraints.map(([key, value]) => `${key}: ${json(value)}`)].filter(Boolean).join('; ');
+944f4dda5f784e266310978b31f65b3d452e6387 153 153
+	      lines.push(`| \`${cell(name)}\` | ${typeOf(property)} | ${required.has(name) ? 'Yes' : 'No'} | ${property.default === undefined ? '—' : json(property.default)} | ${details || '—'} |`);
+944f4dda5f784e266310978b31f65b3d452e6387 154 154
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 155 155
+	    lines.push('');
+944f4dda5f784e266310978b31f65b3d452e6387 156 156
+	  } else if (schema.type === 'array' && schema.items) {
+944f4dda5f784e266310978b31f65b3d452e6387 157 157
+	    lines.push('This response is a bare array. Item fields:', '', renderSchema(schema.items, file, sources, `${label} item`, [], stack));
+944f4dda5f784e266310978b31f65b3d452e6387 158 158
+	  } else if (!schema.allOf && !schema.anyOf && !schema.oneOf && !schema.if) {
+944f4dda5f784e266310978b31f65b3d452e6387 159 159
+	    lines.push(schema.type === 'object' ? 'No properties declared in this branch.' : `Shape: ${typeOf(schema)}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 160 160
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 161 161
+	  if (schema.required?.length) lines.push(`Required keys in this branch: ${schema.required.map(json).join(', ')}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 162 162
+	  if (schema.additionalProperties !== undefined) lines.push(`Additional properties: ${json(schema.additionalProperties)}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 163 163
+	  if (schema.not) lines.push(`Must not match: ${json(schema.not)}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 164 164
+	  if (schema.if) {
+944f4dda5f784e266310978b31f65b3d452e6387 165 165
+	    const action = schema.if.properties?.action?.const;
+944f4dda5f784e266310978b31f65b3d452e6387 166 166
+	    lines.push(`##### ${label}${action === undefined ? ' condition' : ` action: ${json(action)}`}`, '', `If ${json(schema.if)}:`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 167 167
+	    if (schema.then) lines.push(renderSchema(schema.then, file, sources, `${label} then`, [...required], stack));
+944f4dda5f784e266310978b31f65b3d452e6387 168 168
+	    if (schema.else) lines.push('Otherwise:', '', renderSchema(schema.else, file, sources, `${label} else`, [...required], stack));
+944f4dda5f784e266310978b31f65b3d452e6387 169 169
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 170 170
+	  for (const keyword of ['allOf', 'anyOf', 'oneOf'] as const) {
+944f4dda5f784e266310978b31f65b3d452e6387 171 171
+	    const variants = schema[keyword];
+944f4dda5f784e266310978b31f65b3d452e6387 172 172
+	    if (!variants?.length) continue;
+944f4dda5f784e266310978b31f65b3d452e6387 173 173
+	    lines.push(`${keyword}: ${keyword === 'allOf' ? 'all branches must match' : keyword === 'anyOf' ? 'at least one branch must match' : 'exactly one branch must match'}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 174 174
+	    variants.forEach((branch, index) => {
+944f4dda5f784e266310978b31f65b3d452e6387 175 175
+	      const branchLabel = `${label} ${keyword}[${index}]`;
+944f4dda5f784e266310978b31f65b3d452e6387 176 176
+	      if (!branch.if) lines.push(`##### ${branchLabel}${branch.title ? ` — ${branch.title}` : ''}`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 177 177
+	      lines.push(renderSchema(branch, file, sources, branchLabel, [...required], stack));
+944f4dda5f784e266310978b31f65b3d452e6387 178 178
+	    });
+944f4dda5f784e266310978b31f65b3d452e6387 179 179
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 180 180
+	  return lines.join('\n');
+944f4dda5f784e266310978b31f65b3d452e6387 181 181
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 182 182
+	
+944f4dda5f784e266310978b31f65b3d452e6387 183 183
+	export function renderRetiredTools(retired: ToolSpecSources['ledger']['retired']): string {
+944f4dda5f784e266310978b31f65b3d452e6387 184 184
+	  return ['| Tool | Reason | Decision IDs |', '|---|---|---|',
+944f4dda5f784e266310978b31f65b3d452e6387 185 185
+	    ...retired.map(row => `| ${json(row.name)} | ${cell(row.reason)} | ${row.decisionIds.join(', ')} |`),
+944f4dda5f784e266310978b31f65b3d452e6387 186 186
+	  ].join('\n');
+944f4dda5f784e266310978b31f65b3d452e6387 187 187
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 188 188
+	
+944f4dda5f784e266310978b31f65b3d452e6387 189 189
+	export function renderToolSpecs(sources: ToolSpecSources): string {
+944f4dda5f784e266310978b31f65b3d452e6387 190 190
+	  const { registry, ledger, components } = sources;
+944f4dda5f784e266310978b31f65b3d452e6387 191 191
+	  const names = [...registry.auto, ...registry.onDemand];
+944f4dda5f784e266310978b31f65b3d452e6387 192 192
+	  if (new Set(names).size !== names.length) throw new Error('Duplicate registry tool');
+944f4dda5f784e266310978b31f65b3d452e6387 193 193
+	  if (names.some(name => !sources.dispatch[name]) || Object.keys(sources.dispatch).some(name => !names.includes(name))) throw new Error('Dispatcher/registry tool mismatch');
+944f4dda5f784e266310978b31f65b3d452e6387 194 194
+	  if (ledger.rows.length !== names.length || names.some(name => ledger.rows.filter(row => row.name === name).length !== 1)) throw new Error('Ledger/registry tool mismatch');
+944f4dda5f784e266310978b31f65b3d452e6387 195 195
+	  const rootParameters = names.reduce((total, name) => total + Object.keys(sources.schemas[sources.dispatch[name].input]?.properties ?? {}).length, 0);
+944f4dda5f784e266310978b31f65b3d452e6387 196 196
+	  const lines = [
+944f4dda5f784e266310978b31f65b3d452e6387 197 197
+	    '# MCP Tool Specs (v1.0)', '',
+944f4dda5f784e266310978b31f65b3d452e6387 198 198
+	    '<!-- Generated by scripts/docs/generate-tool-specs.ts. Do not edit; run pnpm run docs:tools. -->', '',
+944f4dda5f784e266310978b31f65b3d452e6387 199 199
+	    'This operator contract is generated from the live dispatcher, registry, adapter descriptions, JSON schemas and capability ledgers. Optional policy and usage notes belong in `docs/mcp/tool-notes/<tool>.md`.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 200 200
+	    `The ${names.length} live tools declare ${rootParameters} root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 201 201
+	    '## Registration + enablement', '',
+944f4dda5f784e266310978b31f65b3d452e6387 202 202
+	    `Auto tools are registered by default (${registry.auto.length} at the time of writing). On-demand tools are only registered when enabled (${registry.onDemand.length} at the time of writing).`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 203 203
+	    '- Enable every on-demand tool: `MCP_TOOLSET=all`',
+944f4dda5f784e266310978b31f65b3d452e6387 204 204
+	    '- Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot`', '',
+944f4dda5f784e266310978b31f65b3d452e6387 205 205
+	    `Registry: ${link(REGISTRY)}. Actual schema selection: ${link(DISPATCH)}. [Grouped API index](../api/README.md).`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 206 206
+	    'Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json) and [server policy](../../packages/mcp-server/src/security/policy.json). Per-tool limits below come from the server policy.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 207 207
+	    '## Evidence and portable outcomes', '',
+944f4dda5f784e266310978b31f65b3d452e6387 208 208
+	    `Tool ledger: ${link(LEDGER)}, recorded source head ${json(ledger.head)}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 209 209
+	    `Proof tier methodology: ${ledger.methodology.proofTier}`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 210 210
+	    ledger.methodology.receiptRefs, '',
+944f4dda5f784e266310978b31f65b3d452e6387 211 211
+	    `Recorded portable execution: ${ledger.portableExecution.pass} pass and ${ledger.portableExecution.typed} typed dependency outcomes across ${ledger.portableExecution.tools} tools. Receipt: ${link(ledger.portableExecution.path)}; SHA-256 ${json(ledger.portableExecution.sha256)}; bundle head ${json(ledger.portableExecution.bundleHead)}; dirty=${json(ledger.portableExecution.dirty)}. This records the measured development bundle, not a later clean release.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 212 212
+	    '## Current component capability counts', '',
+944f4dda5f784e266310978b31f65b3d452e6387 213 213
+	    `Generated from ${link(COMPONENTS)}: ${components.rows.length} component rows; controlling obligation denominator ${components.controllingObligationDenominator}; approvedRuntimeCensus=${json(components.approvedRuntimeCensus)}. Classifications remain proposals independently of measured surface availability.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 214 214
+	    '| Surface | State | Component rows |', '|---|---|---|',
+944f4dda5f784e266310978b31f65b3d452e6387 215 215
+	  ];
+944f4dda5f784e266310978b31f65b3d452e6387 216 216
+	  const surfaces = new Set(components.rows.flatMap(row => Object.keys(row.surfaces)));
+944f4dda5f784e266310978b31f65b3d452e6387 217 217
+	  for (const surface of [...surfaces].sort()) {
+944f4dda5f784e266310978b31f65b3d452e6387 218 218
+	    const counts = new Map<string, number>();
+944f4dda5f784e266310978b31f65b3d452e6387 219 219
+	    for (const row of components.rows) {
+944f4dda5f784e266310978b31f65b3d452e6387 220 220
+	      const state = row.surfaces[surface]?.state ?? 'missing';
+944f4dda5f784e266310978b31f65b3d452e6387 221 221
+	      counts.set(state, (counts.get(state) ?? 0) + 1);
+944f4dda5f784e266310978b31f65b3d452e6387 222 222
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 223 223
+	    for (const [state, count] of [...counts].sort()) lines.push(`| ${json(surface)} | ${json(state)} | ${count} |`);
+944f4dda5f784e266310978b31f65b3d452e6387 224 224
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 225 225
+	  lines.push('', '## Retired tools', '', 'This historical roster comes from the tool ledger. These entries are not registered.', '',
+944f4dda5f784e266310978b31f65b3d452e6387 226 226
+	    '<!-- tool-retirements:start -->', renderRetiredTools(ledger.retired), '<!-- tool-retirements:end -->');
+944f4dda5f784e266310978b31f65b3d452e6387 227 227
+	  for (const [registration, tools] of [['auto', registry.auto], ['on-demand', registry.onDemand]] as const) {
+944f4dda5f784e266310978b31f65b3d452e6387 228 228
+	    lines.push('', `## ${registration === 'auto' ? 'Auto' : 'On-demand'} tool contracts (${tools.length} registry entries)`, '', `The ${tools.length} ${registration === 'auto' ? 'default' : 'on-demand'} entries come from \`${REGISTRY}\`.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 229 229
+	    for (const name of tools) {
+944f4dda5f784e266310978b31f65b3d452e6387 230 230
+	      const description = sources.descriptions[name];
+944f4dda5f784e266310978b31f65b3d452e6387 231 231
+	      if (!description) throw new Error(`Missing adapter description: ${name}`);
+944f4dda5f784e266310978b31f65b3d452e6387 232 232
+	      const row = ledger.rows.find(entry => entry.name === name)!;
+944f4dda5f784e266310978b31f65b3d452e6387 233 233
+	      if (row.registration !== registration) throw new Error(`Ledger registration mismatch: ${name}`);
+944f4dda5f784e266310978b31f65b3d452e6387 234 234
+	      const policy = sources.policies.find(entry => entry.tool === name);
+944f4dda5f784e266310978b31f65b3d452e6387 235 235
+	      if (!policy) throw new Error(`Missing server policy: ${name}`);
+944f4dda5f784e266310978b31f65b3d452e6387 236 236
+	      const spec = sources.dispatch[name];
+944f4dda5f784e266310978b31f65b3d452e6387 237 237
+	      lines.push(`### \`${name}\``, '', description, '', `[Complete input/output reference](../api/${name.replaceAll('.', '-')}.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 238 238
+	        `Proof tier: ${json(row.proofTier)} (source-import classification under the methodology above). Portable outcome: ${row.portableOutcome ? json(row.portableOutcome.outcome) : 'not measured by the portable receipt'}${row.portableOutcome?.code ? ` (${json(row.portableOutcome.code)})` : ''}.`, '',
+944f4dda5f784e266310978b31f65b3d452e6387 239 239
+	        `Server policy: roles ${policy.allow.map(json).join(', ')}; ${policy.readOnly ? 'read-only' : `writes ${(policy.writes ?? []).map(json).join(', ') || 'not declared'}`}; timeout ${policy.timeoutMs} ms; rate ${policy.ratePerMinute}/minute; concurrency ${policy.concurrency}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 240 240
+	      for (const limit of row.portableLimits) lines.push(`Portable limit ${json(limit.id)}: ${limit.blocker} Code ${json(limit.code)}; retryable=${json(limit.retryable)}. ${limit.transportOutcome}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 241 241
+	      for (const caveat of row.caveats) lines.push(`Documented limit (${caveat.kind}): ${caveat.reason} Source: ${link(caveat.file)}.`, '');
+944f4dda5f784e266310978b31f65b3d452e6387 242 242
+	      for (const direction of ['input', 'output'] as const) {
+944f4dda5f784e266310978b31f65b3d452e6387 243 243
+	        const schemaFile = spec[direction];
+944f4dda5f784e266310978b31f65b3d452e6387 244 244
+	        const schema = sources.schemas[schemaFile];
+944f4dda5f784e266310978b31f65b3d452e6387 245 245
+	        if (!schema) throw new Error(`Missing dispatched ${direction} schema for ${name}: ${schemaFile}`);
+944f4dda5f784e266310978b31f65b3d452e6387 246 246
+	        const label = direction === 'input' ? 'Input' : 'Output';
+944f4dda5f784e266310978b31f65b3d452e6387 247 247
+	        lines.push(`#### ${label} contract`, '', `Dispatch schema: ${link(schemaFile)}.`, '', renderSchema(schema, schemaFile, sources.schemas, label));
+944f4dda5f784e266310978b31f65b3d452e6387 248 248
+	      }
+944f4dda5f784e266310978b31f65b3d452e6387 249 249
+	      if (sources.notes[name]) lines.push('#### Usage notes', '', sources.notes[name], '');
+944f4dda5f784e266310978b31f65b3d452e6387 250 250
+	    }
+944f4dda5f784e266310978b31f65b3d452e6387 251 251
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 252 252
+	  return lines.join('\n').replace(/\n{3,}/g, '\n\n').trimEnd() + '\n';
+944f4dda5f784e266310978b31f65b3d452e6387 253 253
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 254 254
+	
+944f4dda5f784e266310978b31f65b3d452e6387 255 255
+	export function generateToolSpecs(root = ROOT, check = false): void {
+944f4dda5f784e266310978b31f65b3d452e6387 256 256
+	  const output = renderToolSpecs(loadToolSpecSources(root));
+944f4dda5f784e266310978b31f65b3d452e6387 257 257
+	  const destination = path.join(root, TOOL_SPECS_PATH);
+944f4dda5f784e266310978b31f65b3d452e6387 258 258
+	  if (check) {
+944f4dda5f784e266310978b31f65b3d452e6387 259 259
+	    if (!fs.existsSync(destination) || fs.readFileSync(destination, 'utf8') !== output) throw new Error(`${TOOL_SPECS_PATH} is stale; run pnpm run docs:tools`);
+944f4dda5f784e266310978b31f65b3d452e6387 260 260
+	    console.log('Tool-Specs is fresh (dispatcher schemas, descriptions, ledgers and notes).');
+944f4dda5f784e266310978b31f65b3d452e6387 261 261
+	  } else {
+944f4dda5f784e266310978b31f65b3d452e6387 262 262
+	    fs.mkdirSync(path.dirname(destination), { recursive: true });
+944f4dda5f784e266310978b31f65b3d452e6387 263 263
+	    fs.writeFileSync(destination, output);
+944f4dda5f784e266310978b31f65b3d452e6387 264 264
+	    console.log(`Generated ${TOOL_SPECS_PATH}.`);
+944f4dda5f784e266310978b31f65b3d452e6387 265 265
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 266 266
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 267 267
+	
+944f4dda5f784e266310978b31f65b3d452e6387 268 268
+	export function parseToolSpecsArgs(args: string[]): { root: string; check: boolean } {
+944f4dda5f784e266310978b31f65b3d452e6387 269 269
+	  let root = ROOT;
+944f4dda5f784e266310978b31f65b3d452e6387 270 270
+	  let check = false;
+944f4dda5f784e266310978b31f65b3d452e6387 271 271
+	  for (let index = 0; index < args.length; index++) {
+944f4dda5f784e266310978b31f65b3d452e6387 272 272
+	    const argument = args[index];
+944f4dda5f784e266310978b31f65b3d452e6387 273 273
+	    if (argument === '--') continue; // pnpm run forwards this separator.
+944f4dda5f784e266310978b31f65b3d452e6387 274 274
+	    if (argument === '--check') check = true;
+944f4dda5f784e266310978b31f65b3d452e6387 275 275
+	    else if (argument === '--root') {
+944f4dda5f784e266310978b31f65b3d452e6387 276 276
+	      const value = args[++index];
+944f4dda5f784e266310978b31f65b3d452e6387 277 277
+	      if (!value || value.startsWith('--')) throw new Error('--root requires a repository path');
+944f4dda5f784e266310978b31f65b3d452e6387 278 278
+	      root = path.resolve(value);
+944f4dda5f784e266310978b31f65b3d452e6387 279 279
+	    } else throw new Error(`Unknown argument: ${argument}`);
+944f4dda5f784e266310978b31f65b3d452e6387 280 280
+	  }
+944f4dda5f784e266310978b31f65b3d452e6387 281 281
+	  return { root, check };
+944f4dda5f784e266310978b31f65b3d452e6387 282 282
+	}
+944f4dda5f784e266310978b31f65b3d452e6387 283 283
+	
+944f4dda5f784e266310978b31f65b3d452e6387 284 284
+	if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+944f4dda5f784e266310978b31f65b3d452e6387 285 285
+	  const options = parseToolSpecsArgs(process.argv.slice(2));
+944f4dda5f784e266310978b31f65b3d452e6387 286 286
+	  generateToolSpecs(options.root, options.check);
+944f4dda5f784e266310978b31f65b3d452e6387 287 287
+	}

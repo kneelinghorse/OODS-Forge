@@ -1,0 +1,210 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/communication-ui-guide.md
+filename docs/history/components/communication-ui-guide.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 92
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/communication-ui-guide.md
+	# Communication UI & Hooks Guide
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	Messaging surfaces ship as token-first React components with matching hooks for data access. Everything uses strict TypeScript types, WCAG 2.2 AA semantics, and the communication token slots introduced in Sprint 29.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	### MessageTimeline
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	import { MessageTimeline } from '@/components/communication/MessageTimeline';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	import { useMessages } from '@/hooks/useMessages';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	const { messages, loadMore, hasMore, markAsRead, isLoading } = useMessages({ fetchPage, markAsRead: api.markRead });
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	<MessageTimeline
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	  messages={messages}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	  groupByDate
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	  hasMore={hasMore}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	  onLoadMore={loadMore}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	  onMarkAsRead={markAsRead}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	  isLoading={isLoading}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	- Virtualized with `react-window`; handles 1k+ rows.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	- `role="feed"` with `aria-live="polite"` for new arrivals; Enter/Space marks messages read.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	- Unread rows use `--cmp-communication-unread-bg`; headers use `--cmp-communication-date-header-fg`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	### ChannelPlanEditor
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	<ChannelPlanEditor
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	  policy={policy}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	  channelTypes={['email', 'sms', 'push']}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	  onChange={(next, validation) => save(next, validation)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	- Fieldsets for retry, throttling, and quiet hours; presets: Standard, Urgent, Low.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	- Validation runs on every change; `onChange` receives the normalized policy plus validation result.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	- Borders and form chrome use `--cmp-communication-policy-editor-border`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	### DeliveryHealthWidget
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	<DeliveryHealthWidget metrics={slaMetrics} timeWindow="24h" />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	- Displays success rate, p95 latency, retry exhaustion, and a sparkline.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	- Health colors map to `--cmp-communication-health-{success|warning|critical}`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	- Each metric card exposes `aria-label` and `role="progressbar"` for screen readers.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	### ConversationThread
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	<ConversationThread
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	  conversation={conversation}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	  onReply={(parentId, conversationId) => openComposer(parentId, conversationId)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	  maxDepth={3}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	- Renders threaded replies (collapses after 5 replies per branch).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	- Indentation driven by `--cmp-communication-thread-indent`; respects `aria-level` and `aria-expanded`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	- Reply buttons bubble the parent id and conversation id.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	## Hooks
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	### useMessages
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	- API: `{ messages, isLoading, error, hasMore, loadMore, markAsRead }`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	- Expects `fetchPage(cursor?) => Promise<{ messages, hasMore }>` and optional `markAsRead(id)`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	- Optimistic read state updates; pagination cursor defaults to the last message timestamp.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	### useConversations
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	- API: `{ conversations, isLoading, error, createConversation, addReply, refetch }`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	- Supply a `ConversationsClient` with `listConversations`, `createConversation`, and `addReply`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	- Sorted by `updated_at`/`created_at`; includes optimistic reply insertion.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	### useDeliveryStatus
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	- API: `{ status, retryCount, updatedAt, loading, error, refresh }`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	- Polls via `DeliveryStatusClient.fetchStatus(messageId)`; minimum interval 5s.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	- Supports optimistic transitions (queued → sent → delivered) for UI feedback loops.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	## Accessibility Notes
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	- MessageTimeline: `role="feed"`, row `role="article"`, Enter/Space to mark read, focusable rows, `aria-live="polite"`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	- ChannelPlanEditor: each section wrapped in `fieldset`/`legend`; inputs have labels; validation messages linked via `aria-describedby`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	- DeliveryHealthWidget: progress bars use `role="progressbar"` and `aria-valuenow`; metric badges labeled (`aria-label="Success rate"` etc.).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	- ConversationThread: tree semantics (`role="tree"`), `aria-level` per depth, expand/collapse buttons with `aria-expanded`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	- Keyboard: all interactive controls are tabbable; focus rings derive from tokenized focus variables.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	## Theming
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	- Component tokens: `--cmp-communication-timeline-bg`, `--cmp-communication-timeline-fg`, `--cmp-communication-unread-bg`, `--cmp-communication-date-header-fg`, `--cmp-communication-policy-editor-border`, `--cmp-communication-health-success`, `--cmp-communication-health-warning`, `--cmp-communication-health-critical`, `--cmp-communication-thread-indent`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	- System slots: `--sys-communication-accent`, `--sys-communication-muted`, `--sys-communication-success`, `--sys-communication-error`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	- All communication components read only `--cmp-*` / `--sys-*` tokens—no raw hex literals.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	## Integration Examples
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	- **Explorer surface wiring** (`apps/explorer/src/pages/TimelinePage.tsx`): embeds MessageTimeline + ConversationThread + ChannelPlanEditor + DeliveryHealthWidget, all powered by `useMessages`, `useConversations`, and `useDeliveryStatus`. Demonstrates pagination, optimistic reads, threaded replies, and SLA status badges.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	- **Policy registry**: pass presets or org-level defaults through `policy.metadata.channel_types`; persist via `onChange(nextPolicy, validation)`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	- **Backend hooks**: map `useMessages.fetchPage` to `/communication/messages?cursor=...`, pipe `markAsRead` to `PATCH /communication/messages/:id/read`, and map `useDeliveryStatus` to `/communication/delivery-status/:messageId` for live state.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	- **Token overrides**: adjust communication colors by setting the component tokens in brand CSS; timeline + widget colors respond immediately without component changes.

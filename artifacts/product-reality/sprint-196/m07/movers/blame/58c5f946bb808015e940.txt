@@ -1,0 +1,31 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 3 3 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-server/src/tools/tokens.build.ts
+filename packages/mcp-server/src/tools/tokens.build.ts
+	import { tokenPackageRoot, runTokenBuild, readTokenScopes, canRunTokenBuild } from '../lib/token-build.js';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 32 32 8
+	  const required = [...Object.values(outputs), path.join(TOKENS_DIST_DIR, 'css-variables-by-scope.json')];
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 33 33
+	  const missing = required.filter((filePath) => !isNonEmptyFile(filePath));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 34 34
+	  if (missing.length) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 35 35
+	    if (!canRunTokenBuild()) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 36 36
+	      throw new ToolError('OODS-N011', 'tokens.build: required token dist outputs are missing; this runtime cannot rebuild canonical tokens.', {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 37 37
+	        tool: 'tokens.build', dependency: 'token-dist-outputs', missing, buildAttempted: false,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 38 38
+	      });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 39 39
+	    }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 47 47 1
+	  const stillMissing = required.some((filePath) => !isNonEmptyFile(filePath));

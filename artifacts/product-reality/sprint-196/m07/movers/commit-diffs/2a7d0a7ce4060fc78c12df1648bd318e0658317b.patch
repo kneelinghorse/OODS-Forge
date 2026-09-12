@@ -1,0 +1,1470 @@
+diff --git a/docs/api/README.md b/docs/api/README.md
+index 08709278..8ff763e8 100644
+--- a/docs/api/README.md
++++ b/docs/api/README.md
+@@ -22 +22,3 @@ Auto-generated from JSON schemas and tool-descriptions.json.
+-SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering. |
++SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.
++TEMPORAL RENDERING. Temporal axes render in UTC in both Vega-Lite and ECharts, independent of the host TZ. Adapter-generated parsing of formatted temporal fields also uses UTC; caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a renderer timezone override. Numeric tooltip formatting uses the en-US locale.
++ |
+diff --git a/docs/api/viz-render.md b/docs/api/viz-render.md
+index 9ce92b3d..bd353860 100644
+--- a/docs/api/viz-render.md
++++ b/docs/api/viz-render.md
+@@ -5,0 +6,2 @@ SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve t
++TEMPORAL RENDERING. Temporal axes render in UTC in both Vega-Lite and ECharts, independent of the host TZ. Adapter-generated parsing of formatted temporal fields also uses UTC; caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a renderer timezone override. Numeric tooltip formatting uses the en-US locale.
++
+diff --git a/docs/how-forge-works.html b/docs/how-forge-works.html
+index 8578ffbf..778dbc2f 100644
+--- a/docs/how-forge-works.html
++++ b/docs/how-forge-works.html
+@@ -267 +267 @@ tokens:
+-      <tr><td>ScaleTemporal <small>(alpha)</small></td><td>Temporal scale definition with timezone awareness and &quot;nice&quot; interval rounding. Powers chronological encodings across Position, Area, and Line traits per RDS.7 specification.</td><td>viz_scale_temporal_domain_start, viz_scale_temporal_domain_end, viz_scale_temporal_range_min, viz_scale_temporal_range_max, viz_scale_temporal_timezone, viz_scale_temporal_nice, viz_scale_temporal_output_format, viz_scale_temporal_description</td><td>VizScaleSummary, VizScaleControls</td></tr>
++      <tr><td>ScaleTemporal <small>(alpha)</small></td><td>Temporal scale metadata with UTC rendering and display-layer timezone declarations. The timezone value does not override renderer ticks or tooltips.</td><td>viz_scale_temporal_domain_start, viz_scale_temporal_domain_end, viz_scale_temporal_range_min, viz_scale_temporal_range_max, viz_scale_temporal_timezone, viz_scale_temporal_nice, viz_scale_temporal_output_format, viz_scale_temporal_description</td><td>VizScaleSummary, VizScaleControls</td></tr>
+@@ -431 +431 @@ schema:
+-<!-- forge-claim:viz-vocabulary -->  <p><span class="k">viz.render</span> takes data and returns a chart specification. Thirteen chart types: <b>bar, line, area, scatter, heatmap</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The five Cartesian families return spec; the eight ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The 20 viz-category traits (marks, encodings, scales, layouts, interactions, scatter composition and geocoding) are the vocabulary the spec is normalised into.</p><!-- /forge-claim:viz-vocabulary -->
++<!-- forge-claim:viz-vocabulary -->  <p><span class="k">viz.render</span> takes data and returns a chart specification. Thirteen chart types: <b>bar, line, area, scatter, heatmap</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The five Cartesian families return spec; the eight ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The 20 viz-category traits (marks, encodings, scales, layouts, interactions, scatter composition and geocoding) are the vocabulary the spec is normalised into. Temporal axes and adapter-generated formatted date parsing use UTC, independent of the host timezone. Caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a rendering override; numeric tooltips use en-US.</p><!-- /forge-claim:viz-vocabulary -->
+diff --git a/docs/mcp/Tool-Specs.md b/docs/mcp/Tool-Specs.md
+index b0b49b27..ef837697 100644
+--- a/docs/mcp/Tool-Specs.md
++++ b/docs/mcp/Tool-Specs.md
+@@ -730,0 +731 @@ SCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve t
++TEMPORAL RENDERING. Temporal axes render in UTC in both Vega-Lite and ECharts, independent of the host TZ. Adapter-generated parsing of formatted temporal fields also uses UTC; caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a renderer timezone override. Numeric tooltip formatting uses the en-US locale.
+diff --git a/docs/viz/pattern-library-v2.md b/docs/viz/pattern-library-v2.md
+index e336a98e..bdddfec2 100644
+--- a/docs/viz/pattern-library-v2.md
++++ b/docs/viz/pattern-library-v2.md
+@@ -80,4 +80,4 @@ Pass the full identity to `viz.render`, for example `{ "pattern": "pattern:viz:s
+-| `pattern:viz:running-total-area` | light / A | `e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c` | certified | true | pass / pass / pass |
+-| `pattern:viz:running-total-area` | light / B | `8a6f07e2b50fee3893d83cee6f5dfa779b78053b0fa69b44eaceb586ac013775` | certified | true | pass / pass / pass |
+-| `pattern:viz:running-total-area` | dark / A | `986b9378b1933cfd9e8b58f3cdfaf8a57f5a6609c36bacdca32960db9b39421b` | certified | true | pass / pass / pass |
+-| `pattern:viz:running-total-area` | dark / B | `c75c01916e91145f52cbed012095b3e549f95cc3f6c7148c51b6ade720b8d4f0` | certified | true | pass / pass / pass |
++| `pattern:viz:running-total-area` | light / A | `c4a98e646b50a81bb548494a0b83a26271b115854091c12083c7472fd966b84f` | certified | true | pass / pass / pass |
++| `pattern:viz:running-total-area` | light / B | `0a7ad7cfc42808b8553da72848da82b0aa568178f48932a33574ace2cb43e638` | certified | true | pass / pass / pass |
++| `pattern:viz:running-total-area` | dark / A | `de14fbd664785af212257c982c6aa9b9e92a9dda10cb83ac72c37e15d3503200` | certified | true | pass / pass / pass |
++| `pattern:viz:running-total-area` | dark / B | `256ef73327cd7dd2d299f6fcaa302aee00ca0438a5b0b670c6a91f8220f4f6b9` | certified | true | pass / pass / pass |
+diff --git a/packages/mcp-adapter/tool-descriptions.json b/packages/mcp-adapter/tool-descriptions.json
+index c33fedc9..72c3df46 100644
+--- a/packages/mcp-adapter/tool-descriptions.json
++++ b/packages/mcp-adapter/tool-descriptions.json
+@@ -17 +17 @@
+-  "viz.render": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings \u2014 the deterministic half of NL\u2192viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` \u2014 an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar \u2014 prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link \u2014 chord/force_graph are directed, so A\u2192B and B\u2192A are distinct \u2014 is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.",
++  "viz.render": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.\nTEMPORAL RENDERING. Temporal axes render in UTC in both Vega-Lite and ECharts, independent of the host TZ. Adapter-generated parsing of formatted temporal fields also uses UTC; caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a renderer timezone override. Numeric tooltip formatting uses the en-US locale.\n",
+diff --git a/packages/mcp-server/registry/tool-capability-ledger.v1.json b/packages/mcp-server/registry/tool-capability-ledger.v1.json
+index 904415e7..bafe68d3 100644
+--- a/packages/mcp-server/registry/tool-capability-ledger.v1.json
++++ b/packages/mcp-server/registry/tool-capability-ledger.v1.json
+@@ -716,0 +717,5 @@
++          {
++            "path": "packages/mcp-server/test/product-reality/temporal-placement-migration.s196.spec.ts",
++            "line": 6,
++            "handler": "packages/mcp-server/src/tools/code.generate.ts"
++          },
+@@ -906,0 +912,6 @@
++        },
++        {
++          "path": "artifacts/product-reality/sprint-196/m05/placement/README.md",
++          "line": 3,
++          "kind": "readme-reference",
++          "verifiedReceipt": false
+@@ -1586 +1597 @@
+-        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.",
++        "description": "Render a real, data-bound visualization spec from inline rows (or a datasetRef). Four input modes: supply pattern with an exact catalog id (for example pattern:viz:simple-bar) to render its bundled rows, encodings and presentation; supply chartType+encodings for explicit mode; omit chartType for recommender-driven suggest mode; OR supply a structured `intent` {goal, measures[], dimensions[], chartFamily?, measureRef?} (instead of chartType/encodings — the deterministic half of NL→viz) where the named fields drive encoding, the goal+data drive the recommender pick, an optional chartFamily post-filters it, and an optional governed measureRef lights the measure narrative under output.includeA11y. Returns spec for the five tabular Vega-Lite families (additional ECharts output opt-in). The eight ECharts-primary families return echartsSpec with spec omitted and output.echarts:true plus reason:echarts-primary-family, even if the caller passed false with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in suggest/explicit/intent mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map). On the CARTESIAN color channel you may supply an explicit `encodings.color.range` — an array of 2+ hex colors (e.g. [\"#1F6FEB\",\"#D1242F\"]) applied in order to the distinct series, overriding the baked OODS categorical palette (e.g. a 2-color presence scale). Cartesian nominal/ordinal color only: a range on a non-color channel is rejected, on an ECharts-primary type (treemap/sankey/etc.) fails loud (OODS-V145), and on a continuous color scale is ignored with a warning. certify grades the supplied range exactly as it grades the palette, so a low-chroma or low-contrast 'absent' color truthfully fails the contrast pillar — prefer chromatic colors above the chroma floor. For the categorical ECharts-primary types (treemap/sunburst/sankey/force_graph/chord), more distinct color groups than the 6-slot OODS palette recycles a color across two groups and is surfaced as a never-cycle warning (OODS-V146). For chord and force_graph link integrity, a link naming a node that does not exist fails loud (OODS-V147), and a duplicate directed (source,target) link — chord/force_graph are directed, so A→B and B→A are distinct — is surfaced as a warning (OODS-V148).\n\nSCOPE. theme (light|dark|hc, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. HC emits the scope declarations verbatim, including Canvas/CanvasText; computed paints are verified under forced-colors browser emulation. Bar, line, area and scatter have measured HC SVGs. Heatmap and the eight ECharts-primary types return OODS-V165 for HC SVG requests because their measured renderers substitute undeclared paints. Specs remain available without SVG. No server-side system-color hex palette is invented. Series retain the light palette where tokens declare no theme-specific palette. PATTERNS. All 21 source identities are selectable; patterns requiring unsupported interaction or structural layout return OODS-V167 with named reasons and remain authoring-only in the pattern registry. Combining pattern with explicit data, encodings, intent or identity/presentation overrides returns OODS-V166. Brand, theme, strictFields and output controls remain available; authored source data and presentation are bundled for portable rendering.\nTEMPORAL RENDERING. Temporal axes render in UTC in both Vega-Lite and ECharts, independent of the host TZ. Adapter-generated parsing of formatted temporal fields also uses UTC; caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a renderer timezone override. Numeric tooltip formatting uses the en-US locale.\n",
+@@ -1589 +1600 @@
+-      "claimHash": "sha256:7fa8b122c590a9c64ac0d6a00fae1e5f941aeeea4413b6218152d9191df4e884",
++      "claimHash": "sha256:1f5b24cde67db0dfb72a02768d8bdda26af26acc1778f60a9e8b6ca7f15c6891",
+@@ -1645,0 +1657,5 @@
++          },
++          {
++            "path": "packages/mcp-server/test/contracts/temporal-docs.s196.spec.ts",
++            "line": 4,
++            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+diff --git a/packages/mcp-server/src/tools/__snapshots__/dashboard.render.fidelity.test.ts.snap b/packages/mcp-server/src/tools/__snapshots__/dashboard.render.fidelity.test.ts.snap
+index 5fe03764..eae9cf84 100644
+--- a/packages/mcp-server/src/tools/__snapshots__/dashboard.render.fidelity.test.ts.snap
++++ b/packages/mcp-server/src/tools/__snapshots__/dashboard.render.fidelity.test.ts.snap
+@@ -781 +781 @@ exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the period-
+-  "contentHash": "afcaeb4d13cf63ab1ed4a8a0939d1f4c84eb200eb9dbf4e92ff37a3c3d2514a6",
++  "contentHash": "7c83eb26b58dc4d685df734dabd3bbe48e98d62acc846376d041435b20584129",
+@@ -828 +828 @@ exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the period-
+-      "contentHash": "c093b750871dd381a799b2768dcd4af41566d747e009624bb14b8a4f1c2a4478",
++      "contentHash": "83736368911e6086c3c4fffbc40c52318d90791a267bc3e04b8b91dae9efa399",
+@@ -891,0 +892,3 @@ exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the period-
++            "scale": {
++              "type": "utc",
++            },
+diff --git a/packages/mcp-server/src/tools/__snapshots__/viz.render.fidelity.test.ts.snap b/packages/mcp-server/src/tools/__snapshots__/viz.render.fidelity.test.ts.snap
+index 29cd4f45..aad675df 100644
+--- a/packages/mcp-server/src/tools/__snapshots__/viz.render.fidelity.test.ts.snap
++++ b/packages/mcp-server/src/tools/__snapshots__/viz.render.fidelity.test.ts.snap
+@@ -86 +86 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'area': v
+-        "type": "time",
++        "type": "utc",
+@@ -473 +473 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': v
+-        "type": "time",
++        "type": "utc",
+@@ -741 +741 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > explicit
+-        "type": "time",
++        "type": "utc",
+@@ -880 +880 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest m
+-          "type": "time",
++          "type": "utc",
+diff --git a/packages/viz-core/src/adapters/echarts-adapter.ts b/packages/viz-core/src/adapters/echarts-adapter.ts
+index 2ad6f549..0a2b419a 100644
+--- a/packages/viz-core/src/adapters/echarts-adapter.ts
++++ b/packages/viz-core/src/adapters/echarts-adapter.ts
+@@ -149,0 +150 @@ export interface EChartsOption {
++  readonly useUTC?: boolean;
+@@ -197,0 +199,2 @@ export function toEChartsOption(spec: NormalizedVizSpec, scope: TokenScope = {})
++    // Preserve non-temporal options while fixing temporal ticks to UTC.
++    useUTC: xAxis?.type === 'time' || yAxis?.type === 'time' ? true : undefined,
+diff --git a/packages/viz-core/src/adapters/echarts/hierarchy-utils.ts b/packages/viz-core/src/adapters/echarts/hierarchy-utils.ts
+index 5dfd6ec3..a434a14f 100644
+--- a/packages/viz-core/src/adapters/echarts/hierarchy-utils.ts
++++ b/packages/viz-core/src/adapters/echarts/hierarchy-utils.ts
+@@ -131 +131 @@ function formatValue(value: unknown): string {
+-    return value.toLocaleString();
++    return value.toLocaleString('en-US');
+diff --git a/packages/viz-core/src/adapters/echarts/sankey-adapter.ts b/packages/viz-core/src/adapters/echarts/sankey-adapter.ts
+index fe3f422b..42d0c298 100644
+--- a/packages/viz-core/src/adapters/echarts/sankey-adapter.ts
++++ b/packages/viz-core/src/adapters/echarts/sankey-adapter.ts
+@@ -197 +197 @@ function formatValue(value: number): string {
+-  return value.toLocaleString();
++  return value.toLocaleString('en-US');
+diff --git a/packages/viz-core/src/adapters/vega-lite-adapter.ts b/packages/viz-core/src/adapters/vega-lite-adapter.ts
+index 6d88f8ea..3a7e356b 100644
+--- a/packages/viz-core/src/adapters/vega-lite-adapter.ts
++++ b/packages/viz-core/src/adapters/vega-lite-adapter.ts
+@@ -473 +473,2 @@ function convertBinding(
+-  const scaleType = mapScaleType(binding.scale);
++  // Temporal axes and time-unit buckets must not inherit the host timezone.
++  const scaleType = definition.type === 'temporal' ? 'utc' : mapScaleType(binding.scale);
+@@ -484 +485,3 @@ function convertBinding(
+-    definition.timeUnit = binding.timeUnit;
++    // The normalized vocabulary is singular; Vega uses plural sub-day units.
++    const unit = ['hour', 'minute', 'second'].includes(binding.timeUnit) ? `${binding.timeUnit}s` : binding.timeUnit;
++    definition.timeUnit = `utc${unit}`;
+@@ -716 +719 @@ function mapScaleType(scale?: EncodingBinding['scale']): string | undefined {
+-    return 'time';
++    return 'utc';
+@@ -816 +819 @@ function convertCalculateTransform(params: Record<string, unknown>): AdapterTran
+-      calculate: `timeParse(datum["${params.field}"], "${params.format}")`,
++      calculate: `utcParse(datum["${params.field}"], "${params.format}")`,
+diff --git a/packages/viz-core/src/registry/viz-patterns.v1.json b/packages/viz-core/src/registry/viz-patterns.v1.json
+index a76d70ee..092539e6 100644
+--- a/packages/viz-core/src/registry/viz-patterns.v1.json
++++ b/packages/viz-core/src/registry/viz-patterns.v1.json
+@@ -1000 +1000 @@
+-        "svgHash": "e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c",
++        "svgHash": "c4a98e646b50a81bb548494a0b83a26271b115854091c12083c7472fd966b84f",
+@@ -1013 +1013 @@
+-          "renderHash": "e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c"
++          "renderHash": "c4a98e646b50a81bb548494a0b83a26271b115854091c12083c7472fd966b84f"
+@@ -1020 +1020 @@
+-        "svgHash": "8a6f07e2b50fee3893d83cee6f5dfa779b78053b0fa69b44eaceb586ac013775",
++        "svgHash": "0a7ad7cfc42808b8553da72848da82b0aa568178f48932a33574ace2cb43e638",
+@@ -1033 +1033 @@
+-          "renderHash": "8a6f07e2b50fee3893d83cee6f5dfa779b78053b0fa69b44eaceb586ac013775"
++          "renderHash": "0a7ad7cfc42808b8553da72848da82b0aa568178f48932a33574ace2cb43e638"
+@@ -1040 +1040 @@
+-        "svgHash": "986b9378b1933cfd9e8b58f3cdfaf8a57f5a6609c36bacdca32960db9b39421b",
++        "svgHash": "de14fbd664785af212257c982c6aa9b9e92a9dda10cb83ac72c37e15d3503200",
+@@ -1053 +1053 @@
+-          "renderHash": "986b9378b1933cfd9e8b58f3cdfaf8a57f5a6609c36bacdca32960db9b39421b"
++          "renderHash": "de14fbd664785af212257c982c6aa9b9e92a9dda10cb83ac72c37e15d3503200"
+@@ -1060 +1060 @@
+-        "svgHash": "c75c01916e91145f52cbed012095b3e549f95cc3f6c7148c51b6ade720b8d4f0",
++        "svgHash": "256ef73327cd7dd2d299f6fcaa302aee00ca0438a5b0b670c6a91f8220f4f6b9",
+@@ -1073 +1073 @@
+-          "renderHash": "c75c01916e91145f52cbed012095b3e549f95cc3f6c7148c51b6ade720b8d4f0"
++          "renderHash": "256ef73327cd7dd2d299f6fcaa302aee00ca0438a5b0b670c6a91f8220f4f6b9"
+diff --git a/packages/viz-core/src/registry/viz-recipes.v1.json b/packages/viz-core/src/registry/viz-recipes.v1.json
+index 901484f9..b509c650 100644
+--- a/packages/viz-core/src/registry/viz-recipes.v1.json
++++ b/packages/viz-core/src/registry/viz-recipes.v1.json
+@@ -204 +204 @@
+-        "svgHash": "7d1f247d68556ad71f76b6a122bd41f7fa65484538f5dcd03c945c920970665d"
++        "svgHash": "ac872cb5a2b558267eeb9ecd165d00b95396a4dc1bf1f3cedf0869f41612adca"
+@@ -210 +210 @@
+-        "svgHash": "a07f7f96fab7c8fcd5517138f01ea982fa89ed5f8772c246ab1ceee4d4de79c9"
++        "svgHash": "66d386f6f13fd316718b4461e7c6993d70c183745e6022f86d3f45acb613805c"
+@@ -216 +216 @@
+-        "svgHash": "735fa41dc9704e58698380b5e560719168b8f0ab934092247b1eaff0ad1ca49c"
++        "svgHash": "1af289efaf4871d05df10d25803558fdff209c5fb3fd6cbe32853e7425b0f1f5"
+@@ -222 +222 @@
+-        "svgHash": "d4f39594a28adcfa035465db40b88afc223564842351d8bdbf3d920f922c5255"
++        "svgHash": "d659533d32a5a71337081bc8e6985ad44bc98f37a162da71922cede1162b78d2"
+@@ -228 +228 @@
+-        "svgHash": "c15996b9e09d2a0c6252cac8dfca8c5ea82ffa04a24a753673d0d831570ecc0a"
++        "svgHash": "86a09a203f97c8051ab0438948d96c9f3700529de6e876020ef99b84ea8948ae"
+@@ -234 +234 @@
+-        "svgHash": "735fa41dc9704e58698380b5e560719168b8f0ab934092247b1eaff0ad1ca49c"
++        "svgHash": "1af289efaf4871d05df10d25803558fdff209c5fb3fd6cbe32853e7425b0f1f5"
+@@ -378 +378 @@
+-        "svgHash": "59b129d03ec8539b2ef844d810805ad3c3832ac6e943655d827ead67570ac58d"
++        "svgHash": "4e2d1f3f5d6bc1f572699c6e7a6ca0864a91f68e186992655477ee4820591da1"
+@@ -384 +384 @@
+-        "svgHash": "9d949cc9cd9aefe0e5e648e938dd4124975dd1141b244686e39e423334adcad7"
++        "svgHash": "b6e3e96e93162f15bf1f28a0200aa0603cf4a6b809783302e98a6c610e8f6715"
+@@ -390 +390 @@
+-        "svgHash": "73ea5c16119632836abbd38d0ba6baf386bb6302a5b92a4bddad6e9e0c537cc2"
++        "svgHash": "e943e6473ff306a20b30c293ffb6b81e34429e2f5fb19129b1559a0449db1d84"
+@@ -396 +396 @@
+-        "svgHash": "286e746d1b73952da8e8c4770b1e4176ba794e763b73efe185fe1ae98f00d85f"
++        "svgHash": "aa400d250941b414d017f6a17b3ca5fd09644b1ca17c470b997eb279a9c11bd7"
+@@ -402 +402 @@
+-        "svgHash": "b676c53297abacfc9f647103c5df7b28ac769a86b9515e67616b47e6995f4f50"
++        "svgHash": "b43941116756ec0f52599e905ecbbc4f4091b3f0c21682a1a92aa73ae0738b43"
+@@ -408 +408 @@
+-        "svgHash": "73ea5c16119632836abbd38d0ba6baf386bb6302a5b92a4bddad6e9e0c537cc2"
++        "svgHash": "e943e6473ff306a20b30c293ffb6b81e34429e2f5fb19129b1559a0449db1d84"
+diff --git a/schemas/traits/scale-temporal.parameters.schema.json b/schemas/traits/scale-temporal.parameters.schema.json
+index d49843b0..4017c7ca 100644
+--- a/schemas/traits/scale-temporal.parameters.schema.json
++++ b/schemas/traits/scale-temporal.parameters.schema.json
+@@ -31 +31 @@
+-      "description": "Olson/IANA timezone identifier used when formatting ticks.",
++      "description": "Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.",
+diff --git a/scripts/docs/forge-claims.templates.json b/scripts/docs/forge-claims.templates.json
+index 1d4530dd..a6b8fb5d 100644
+--- a/scripts/docs/forge-claims.templates.json
++++ b/scripts/docs/forge-claims.templates.json
+@@ -37 +37 @@
+-    "viz-vocabulary": "  <p><span class=\"k\">viz.render</span> takes data and returns a chart specification. {{chartTypesWord}} chart types: <b>{{cartesianRoster}}</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>{{primaryRoster}}</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The {{cartesianCountWord}} Cartesian families return spec; the {{primaryCountWord}} ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The {{vizTraits}} viz-category traits (marks, encodings, scales, layouts, interactions, scatter composition and geocoding) are the vocabulary the spec is normalised into.</p>",
++    "viz-vocabulary": "  <p><span class=\"k\">viz.render</span> takes data and returns a chart specification. {{chartTypesWord}} chart types: <b>{{cartesianRoster}}</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>{{primaryRoster}}</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The {{cartesianCountWord}} Cartesian families return spec; the {{primaryCountWord}} ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The {{vizTraits}} viz-category traits (marks, encodings, scales, layouts, interactions, scatter composition and geocoding) are the vocabulary the spec is normalised into. Temporal axes and adapter-generated formatted date parsing use UTC, independent of the host timezone. Caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a rendering override; numeric tooltips use en-US.</p>",
+diff --git a/scripts/product-reality/s195-pattern-census.ts b/scripts/product-reality/s195-pattern-census.ts
+index 44fd0257..6c243148 100644
+--- a/scripts/product-reality/s195-pattern-census.ts
++++ b/scripts/product-reality/s195-pattern-census.ts
+@@ -17 +17 @@ export const PATTERN_DOC_PATH = 'docs/viz/pattern-library-v2.md';
+-export const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-195/m05/patterns/pattern-observations.json';
++export const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-196/m05/patterns/pattern-observations.json';
+diff --git a/scripts/product-reality/s195-viz-matrix.ts b/scripts/product-reality/s195-viz-matrix.ts
+index 9b4fa34e..30c2e3e4 100644
+--- a/scripts/product-reality/s195-viz-matrix.ts
++++ b/scripts/product-reality/s195-viz-matrix.ts
+@@ -16 +16,4 @@ const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURL
+-const out = pathToFileURL(resolve(root, 'artifacts/product-reality/sprint-195/m05/golden-migration/matrix') + '/');
++const args = process.argv.slice(2);
++assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && args[1] === 's196'), 'Supported option: --mode s196');
++const sprint = args[1] === 's196' ? 196 : 195;
++const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/m05/golden-migration/matrix`) + '/');
+@@ -62,2 +65,3 @@ for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] a
+-const head = '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
+-await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState: 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt', builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
++const head = sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
++const sourceState = sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
++await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState, builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
+diff --git a/scripts/product-reality/s196-attribute-temporal-goldens.py b/scripts/product-reality/s196-attribute-temporal-goldens.py
+new file mode 100644
+index 00000000..3c30903a
+--- /dev/null
++++ b/scripts/product-reality/s196-attribute-temporal-goldens.py
+@@ -0,0 +1,107 @@
++"""Bounded s195-style attribution of the UTC migration; historical bytes are immutable."""
++import argparse
++import hashlib
++import json
++import re
++import subprocess
++from pathlib import Path
++
++root = Path(__file__).resolve().parents[2]
++out = root / 'artifacts/product-reality/sprint-196/m05/golden-migration'
++parser = argparse.ArgumentParser(description=__doc__)
++parser.add_argument('--check', action='store_true')
++parser.add_argument('--head', help='Exact implementation commit for tracked after-state bytes')
++args = parser.parse_args()
++read = lambda path: json.loads((root / path).read_text())
++sha = lambda data: hashlib.sha256(data).hexdigest()
++baseline = read(out.relative_to(root) / 'baseline.json')
++if args.head:
++    assert re.fullmatch(r'[a-f0-9]{40}', args.head), 'Expected exact implementation commit'
++    assert subprocess.check_output(['git', 'cat-file', '-t', args.head], cwd=root, text=True).strip() == 'commit'
++git_bytes = lambda head, path: subprocess.check_output(['git', 'show', f'{head}:{path}'], cwd=root)
++after_bytes = lambda path: git_bytes(args.head, path) if args.head else (root / path).read_bytes()
++reason = 's196-m05 UTC temporal scales, time units and adapter-generated parsing; host TZ no longer selects chart pixels'
++snapshot_entries = lambda text: dict(re.findall(r'exports\[`(.*?)`\] = `(.*?)`;\n', text, re.S))
++files, snapshots = [], []
++for prior in baseline['trackedFiles']:
++    path = prior['path']
++    if path.startswith('artifacts/'):
++        assert sha((root / path).read_bytes()) == prior['sha256'], f'Historical golden changed: {path}'
++        continue
++    now = after_bytes(path)
++    if sha(now) == prior['sha256']:
++        continue
++    assert prior['class'] in ['snapshot', 'registry'], f'Undeclared golden class changed: {path}'
++    # Host/release registries are refreshed in m07 and must not be silently rebaked here.
++    assert path not in ['packages/mcp-server/registry/runtime-cells.v1.json', 'packages/mcp-server/registry/release-cells.v1.json'], f'Runtime ledger changed outside m07: {path}'
++    files.append({'file': path, 'class': prior['class'], 'beforeSha256': prior['sha256'], 'afterSha256': sha(now), 'reason': reason})
++    if prior['class'] == 'snapshot':
++        old = snapshot_entries(git_bytes(baseline['beforeHead'], path).decode())
++        new = snapshot_entries(now.decode())
++        assert old.keys() == new.keys(), f'Snapshot identities changed: {path}'
++        for identity in old:
++            if old[identity] == new[identity]:
++                continue
++            # Existing composite dashboard snapshots carry temporal panels; their
++            # independent non-temporal counterparts are checked in the matrix below.
++            temporal = re.search(r'"type": "temporal"|"type": "time"|timeParse\(|month:|date:|timestamp:', old[identity])
++            assert temporal, f'Non-temporal snapshot moved: {path}/{identity}'
++            snapshots.append({'file': path, 'identity': identity, 'class': 'temporal-svg-or-html' if '<svg' in old[identity] else 'temporal-spec-or-option', 'beforeSha256': sha(old[identity].encode()), 'afterSha256': sha(new[identity].encode()), 'reason': reason})
++
++current_matrix_path = str(out.relative_to(root) / 'matrix/matrix.json')
++census_path = 'artifacts/product-reality/sprint-196/m05/viz/viz-observations.json'
++patterns_path = 'artifacts/product-reality/sprint-196/m05/patterns/pattern-observations.json'
++matrix, census, patterns = map(read, [current_matrix_path, census_path, patterns_path])
++key = lambda kind, theme, brand: f'{kind}/{theme}/{brand}'
++chart_hashes = {key(row['chartType'], row['theme'], row['brand']): row['svgHash'] for row in matrix['table']}
++census_hashes = {key(row['chartType'], scope['theme'], scope['brand']): scope.get('svgHash') for row in census['observations'] for scope in row['scopes']}
++dashboard_hashes = {key('dashboard', row['theme'], row['brand']): row['outputHtmlHash'] for row in matrix['dashboards']}
++pattern_hashes = {key(row['id'], row['request']['theme'], row['request']['brand']): row['rendered'].get('svgHash') for row in patterns['cells']}
++rows = []
++def record(source, pointer, cls, identity, previous, current):
++    if previous is None and current is None:
++        return  # Retained typed HC deferral, never treated as a rendered cell.
++    assert previous and current, f'Render disposition changed: {source}/{pointer}/{identity}'
++    temporal = identity.split('/')[0] in ['line', 'area', 'pattern:viz:running-total-area', 'running-total-area', 'dashboard']
++    current_epoch = '/sprint-195/m05/' in source
++    changed = previous != current
++    assert not (current_epoch and changed and not temporal), f'Non-temporal current-epoch pixels moved: {source}/{identity}'
++    rows.append({'source': source, 'pointer': pointer, 'class': cls, 'identity': identity, 'temporal': temporal,
++                 'beforeHash': previous, 'afterHash': current, 'status': 'superseded' if changed else 'unchanged',
++                 'reason': reason if changed and temporal else 'Earlier epoch differences retain their original palette receipts; this migration does not change current non-temporal pixels.' if changed else 'Byte-identical current output.'})
++for item in baseline['historicalMatrices']:
++    source = item['path']
++    assert sha((root / source).read_bytes()) == item['sha256'], f'Historical matrix changed: {source}'
++    data = read(source)
++    if not isinstance(data, dict):
++        continue
++    for index, row in enumerate(data.get('table', [])):
++        identity = key(row['chartType'], row.get('theme', row.get('render', {}).get('theme', 'light')), row.get('brand', row.get('render', {}).get('brand', 'A')))
++        record(source, f'/table/{index}', 'public-chart-matrix', identity, row['svgHash'], chart_hashes[identity])
++    for index, row in enumerate(data.get('observations', [])):
++        for scope_index, scope in enumerate(row['scopes']):
++            identity = key(row['chartType'], scope['theme'], scope['brand'])
++            record(source, f'/observations/{index}/scopes/{scope_index}', 'public-census', identity, scope.get('svgHash'), census_hashes[identity])
++    for index, row in enumerate(data.get('dashboards', [data['dashboard']] if 'dashboard' in data else [])):
++        identity = key('dashboard', row.get('theme', 'light'), row.get('brand', 'A'))
++        pointer = f'/dashboards/{index}' if 'dashboards' in data else '/dashboard'
++        record(source, pointer, 'dashboard-html', identity, row.get('outputHtmlHash', row.get('htmlHash')), dashboard_hashes[identity])
++    for index, row in enumerate(data.get('cells', []) if isinstance(data.get('cells'), list) else []):
++        if row.get('rendered', {}).get('svgHash'):
++            identity = key(row['id'], row['request']['theme'], row['request']['brand'])
++            record(source, f'/cells/{index}', 'public-pattern', identity, row['rendered']['svgHash'], pattern_hashes[identity])
++
++inputs = [str(out.relative_to(root) / 'baseline.json'), current_matrix_path, census_path, patterns_path]
++report = {'schemaVersion': 1, 'missionId': 's196-m05', 'builderSelfCertified': False, 'beforeHead': baseline['beforeHead'],
++          **({'qualificationHead': args.head} if args.head else {}), 'historicalRawFilesUnchanged': True,
++          'sourceHashes': [{'path': path, 'sha256': sha((root / path).read_bytes())} for path in inputs],
++          'files': files, 'snapshotEntries': snapshots, 'matrixRows': rows,
++          'summary': {'changedGoldenFiles': len(files), 'movedSnapshotEntries': len(snapshots), 'matrixRows': len(rows),
++                      'currentEpochMovedRows': sum('/sprint-195/m05/' in row['source'] and row['status'] == 'superseded' for row in rows),
++                      'classes': {cls: {'total': sum(row['class'] == cls for row in rows), 'superseded': sum(row['class'] == cls and row['status'] == 'superseded' for row in rows)} for cls in sorted({row['class'] for row in rows})}}}
++text = json.dumps(report, indent=2) + '\n'
++if args.check:
++    assert (out / 'golden-attribution.json').read_text() == text, 'Temporal golden attribution is stale'
++else:
++    (out / 'golden-attribution.json').write_text(text)
++print(json.dumps(report['summary']))
+diff --git a/scripts/product-reality/s196-bundle-bites.mjs b/scripts/product-reality/s196-bundle-bites.mjs
+new file mode 100644
+index 00000000..9369b83d
+--- /dev/null
++++ b/scripts/product-reality/s196-bundle-bites.mjs
+@@ -0,0 +1,359 @@
++#!/usr/bin/env node
++/** Four physical mutations of independent m02 extractions; no source/build mutations. */
++import assert from 'node:assert/strict';
++import { createHash, randomUUID } from 'node:crypto';
++import fs from 'node:fs';
++import fsp from 'node:fs/promises';
++import net from 'node:net';
++import os from 'node:os';
++import path from 'node:path';
++import { spawn, execFileSync } from 'node:child_process';
++import { fileURLToPath, pathToFileURL } from 'node:url';
++
++const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
++const ARCHIVE_HEAD = '2d80ae017184b6a28d4b2d7a2bb02649a5c33718';
++const ARCHIVE_SHA256 = '4ff4aeb05e5ba937b61d2062fcce2eb4d0d41fc1b3001ae07b472cb2c2663bba';
++const ARCHIVE_BYTES = 32448215;
++const FIXTURES = 'packages/mcp-server/test/fixtures/portable-runtime';
++const hash = bytes => createHash('sha256').update(bytes).digest('hex');
++const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
++const cleanEnv = () => ({ PATH: process.env.PATH ?? '', LANG: 'C.UTF-8', LC_ALL: 'C.UTF-8', TZ: 'UTC', NODE_ENV: 'production', NO_COLOR: '1' });
++
++function options(args) {
++  const result = { archive: '/tmp/forge-s196-m02-final-out-1/forge-runtime.tar.gz', out: path.join(ROOT, 'artifacts/product-reality/sprint-196/m05/bundle-bites') };
++  let execute = false;
++  for (let index = 0; index < args.length; index++) {
++    if (args[index] === '--execute') execute = true;
++    else if (args[index] === '--archive' || args[index] === '--out') {
++      const key = args[index].slice(2), value = args[++index];
++      assert(value && !value.startsWith('--'), `Missing value for --${key}`);
++      result[key] = path.resolve(value);
++    } else throw new Error(`Unknown argument: ${args[index]}`);
++  }
++  assert(execute, 'Use --execute to run the four owned-extraction mutations');
++  return result;
++}
++
++async function main() {
++  const args = options(process.argv.slice(2));
++  assert(!fs.existsSync(args.out), 'Receipt output already exists; use a new --out to retain earlier failures');
++  const archive = await fsp.readFile(args.archive);
++  assert.equal(archive.length, ARCHIVE_BYTES, 'The exact m02 archive is required');
++  assert.equal(hash(archive), ARCHIVE_SHA256, 'The exact m02 archive is required');
++  await fsp.mkdir(args.out, { recursive: true });
++  const arena = await fsp.mkdtemp(path.join(os.tmpdir(), 'forge-s196-m05-bundle-bites-'));
++  const helperHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
++  const report = {
++    schemaVersion: 1, missionId: 's196-m05', runId: randomUUID(), status: 'running', builderSelfCertified: false,
++    startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)], cwd: ROOT,
++    archive: { path: args.archive, sha256: ARCHIVE_SHA256, bytes: ARCHIVE_BYTES, head: ARCHIVE_HEAD },
++    helperHead, nodeVersion: process.version, arena, childEnvironment: cleanEnv(),
++    methodology: 'Each bite owns a separate extraction of the same exact m02 archive. Historical m02 E2E and fixtures are pinned to the archive head; targeted probes use the current committed McpClient helper. Taxonomy corruption is observed natively, while actual E2E rejects it earlier at manifest verification. No manifest is resealed, no production checks are weakened, and no later release ledger is injected.',
++    helpers: [], commands: [], records: [],
++  };
++  const write = async (relative, value) => {
++    const file = path.join(args.out, relative);
++    await fsp.mkdir(path.dirname(file), { recursive: true });
++    await fsp.writeFile(file, typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value, null, 2) + '\n');
++    return relative;
++  };
++  const save = () => write('bites.json', report);
++  const evidence = async relative => {
++    const bytes = await fsp.readFile(path.join(args.out, relative));
++    return { path: relative, sha256: hash(bytes), bytes: bytes.length };
++  };
++  const pin = async (head, source, destination) => {
++    const bytes = execFileSync('git', ['show', `${head}:${source}`], { cwd: ROOT, maxBuffer: 8 * 1024 * 1024 });
++    await write(destination, bytes);
++    report.helpers.push({ head, source, gitCommand: ['git', 'show', `${head}:${source}`], ...await evidence(destination) });
++  };
++  for (const [head, directory] of [[ARCHIVE_HEAD, 'm02'], [helperHead, 'current']]) {
++    for (const file of ['e2e.mjs', 'manifest.mjs']) await pin(head, `scripts/runtime/${file}`, `helpers/${directory}/${file}`);
++  }
++  const fixtureRoot = path.join(args.out, 'helpers/fixtures');
++  const fixtureFiles = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', ARCHIVE_HEAD, '--', FIXTURES], { cwd: ROOT }).toString().split('\0').filter(Boolean);
++  assert(fixtureFiles.length > 19);
++  for (const file of fixtureFiles) await pin(ARCHIVE_HEAD, file, `helpers/fixtures/${file}`);
++  const { verifyEmbeddedManifest, treeDigest } = await import(pathToFileURL(path.join(args.out, 'helpers/current/manifest.mjs')).href);
++  const { McpClient } = await import(pathToFileURL(path.join(args.out, 'helpers/current/e2e.mjs')).href);
++  const historicalE2E = path.join(args.out, 'helpers/m02/e2e.mjs');
++  await save();
++
++  async function run(id, name, command, commandArgs, cwd, timeoutMs = 300000) {
++    const prefix = `${id}/${name}`;
++    await fsp.mkdir(path.join(args.out, id), { recursive: true });
++    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
++    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
++    const entry = { name, command: [command, ...commandArgs], cwd, environment: cleanEnv(), startedAt: new Date().toISOString(), stdout: `${prefix}.stdout.log`, stderr: `${prefix}.stderr.log`, timedOut: false, forcedKill: false };
++    const child = spawn(command, commandArgs, { cwd, env: cleanEnv(), detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
++    entry.pid = child.pid;
++    child.stdout.pipe(stdout); child.stderr.pipe(stderr);
++    let force;
++    const timer = setTimeout(() => {
++      entry.timedOut = true;
++      try { process.kill(-child.pid, 'SIGTERM'); } catch { /* Already closed. */ }
++      force = setTimeout(() => { entry.forcedKill = true; try { process.kill(-child.pid, 'SIGKILL'); } catch { /* Already closed. */ } }, 3000);
++    }, timeoutMs);
++    const ended = await new Promise(resolve => {
++      child.once('error', error => { entry.spawnError = String(error); });
++      child.once('close', (code, signal) => resolve({ code, signal }));
++    });
++    clearTimeout(timer); clearTimeout(force);
++    await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
++    Object.assign(entry, ended, { completedAt: new Date().toISOString() });
++    entry.stdoutEvidence = await evidence(entry.stdout); entry.stderrEvidence = await evidence(entry.stderr);
++    report.commands.push(entry); await save();
++    return { ...entry, text: await fsp.readFile(path.join(args.out, entry.stdout), 'utf8'), errorText: await fsp.readFile(path.join(args.out, entry.stderr), 'utf8') };
++  }
++
++  async function verify(record, phase) {
++    try {
++      const result = await verifyEmbeddedManifest(record.extraction);
++      const proof = { status: 'pass', manifest: result.manifest, payload: result.payload };
++      await write(`${record.id}/${phase}-manifest.json`, proof);
++      return proof;
++    } catch (error) {
++      const proof = { status: 'rejected', name: error.name, code: error.code, message: error.message, stack: error.stack };
++      await write(`${record.id}/${phase}-manifest.json`, proof);
++      return proof;
++    }
++  }
++
++  async function e2e(record, phase, expected) {
++    const result = await run(record.id, `${phase}-e2e`, process.execPath, [historicalE2E, '--extract-dir', record.extraction, '--repo-root', fixtureRoot], arena);
++    if (expected === 'pass') {
++      assert.equal(result.code, 0, result.errorText);
++      const proof = JSON.parse(result.text);
++      assert.equal(proof.status, 'pass');
++      assert.equal(proof.manifest.commit, ARCHIVE_HEAD);
++      assert.equal(proof.calls.totalAcrossProcesses, 30);
++      assert.equal(proof.extractionTree.unchanged, true);
++      assert.equal(proof.lifecycle.stdinClose.exited, true);
++      assert.equal(proof.lifecycle.stdinClose.code, 0);
++      assert.equal(proof.lifecycle.restart.sigterm.forcedKill, false);
++      const outcomes = Object.values(proof.calls.outcomes);
++      assert.equal(outcomes.filter(row => row.outcome === 'pass').length, 17);
++      assert.equal(outcomes.filter(row => row.outcome === 'typed').length, 2);
++      await write(`${record.id}/${phase}-e2e.json`, proof);
++    } else {
++      assert.equal(result.code, 1);
++      assert.match(result.errorText, /embedded payload tree digest mismatch/);
++      record.e2eRejectionBoundary = 'Manifest verification before adapter/health startup; the separate native health probe records taxonomy degradation.';
++    }
++  }
++
++  async function native(record, phase, operation) {
++    const prefix = `${record.id}/${phase}-native`;
++    const adapterPath = path.join(record.extraction, 'packages/mcp-adapter/index.js');
++    const cwd = path.dirname(adapterPath);
++    const client = new McpClient({ adapterPath, cwd, env: cleanEnv() });
++    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
++    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
++    client.child.stdout.on('data', data => stdout.write(data));
++    client.child.stderr.on('data', data => stderr.write(data));
++    const requests = [];
++    const request = async (method, params) => {
++      requests.push({ method, params });
++      return client.request(method, params);
++    };
++    const entry = { command: [process.execPath, adapterPath], cwd, environment: cleanEnv(), pid: client.child.pid, startedAt: new Date().toISOString() };
++    let failed;
++    try {
++      const initialized = await request('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 's196-bundle-bite', version: '1.0.0' } });
++      assert.equal(initialized.serverInfo.version, '0.3.0');
++      client.notify('notifications/initialized'); requests.push({ method: 'notifications/initialized' });
++      const call = async (name, arguments_) => {
++        const response = await request('tools/call', { name, arguments: arguments_ });
++        assert.equal(response.isError, undefined, JSON.stringify(response));
++        assert.equal(response.content[0].type, 'text');
++        return JSON.parse(response.content[0].text);
++      };
++      const result = await operation(call);
++      await write(`${prefix}.json`, result);
++      return result;
++    } catch (error) { failed = error; entry.failure = String(error); throw error; }
++    finally {
++      entry.stdinClose = await client.closeStdinAndObserve();
++      if (!entry.stdinClose.exited) entry.termination = await client.terminate('SIGTERM');
++      entry.completedAt = new Date().toISOString();
++      await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
++      await write(`${prefix}.requests.json`, requests); await write(`${prefix}.lifecycle.json`, entry);
++      record.children.push({ ...entry, stdout: `${prefix}.stdout.log`, stderr: `${prefix}.stderr.log`, requests: `${prefix}.requests.json` });
++      if (!failed) {
++        assert.equal(entry.stdinClose.exited, true, 'Adapter must close without a forced kill');
++        assert.equal(entry.stdinClose.code, 0);
++        assert.equal(entry.stdinClose.signal, null);
++      }
++    }
++  }
++
++  async function portOpen(port) {
++    return new Promise(resolve => {
++      const socket = net.connect({ port, host: '127.0.0.1' });
++      const finish = result => { socket.destroy(); resolve(result); };
++      socket.once('connect', () => finish(true)); socket.once('error', () => finish(false));
++      socket.setTimeout(1000, () => finish(false));
++    });
++  }
++  async function bridge(record, phase, missing) {
++    const reservation = net.createServer();
++    await new Promise(resolve => reservation.listen(0, '127.0.0.1', resolve));
++    const port = reservation.address().port;
++    await new Promise(resolve => reservation.close(resolve));
++    const prefix = `${record.id}/${phase}-bridge`;
++    const cwd = path.join(record.extraction, 'packages/mcp-bridge');
++    const environment = { ...cleanEnv(), MCP_BRIDGE_PORT: String(port), BRIDGE_TOKEN: 's196-bite-owned-token' };
++    const child = spawn(process.execPath, ['dist/server.js'], { cwd, env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
++    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
++    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
++    child.stdout.pipe(stdout); child.stderr.pipe(stderr);
++    const exited = new Promise((resolve, reject) => { child.once('error', reject); child.once('close', (code, signal) => resolve({ code, signal })); });
++    const proof = { command: [process.execPath, 'dist/server.js'], cwd, environment, pid: child.pid, port, startedAt: new Date().toISOString(), forcedKill: false };
++    try {
++      if (missing) {
++        proof.exit = await Promise.race([exited, delay(15000).then(() => null)]);
++        assert(proof.exit, 'Missing policy must refuse promptly');
++        assert.equal(proof.exit.code, 1);
++      } else {
++        for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
++          try {
++            const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(1000) });
++            if (response.ok) { proof.health = await response.json(); break; }
++          } catch { /* Poll only this owned bridge. */ }
++          assert.equal(child.exitCode, null, 'Bridge exited before becoming healthy');
++          await delay(100);
++        }
++        assert(proof.health, 'Restored bridge must listen');
++        assert.equal(proof.health.revision.commit, ARCHIVE_HEAD);
++        child.kill('SIGTERM');
++        proof.exit = await Promise.race([exited, delay(3000).then(() => null)]);
++        assert(proof.exit, 'Bridge must terminate cleanly');
++        assert(proof.exit.code === 0 || proof.exit.signal === 'SIGTERM');
++      }
++    } finally {
++      if (child.exitCode === null && child.signalCode === null) { proof.forcedKill = true; child.kill('SIGKILL'); }
++      proof.exit ??= await exited;
++      await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
++      proof.listenerAbsent = !await portOpen(port); proof.completedAt = new Date().toISOString();
++      proof.stdout = `${prefix}.stdout.log`; proof.stderr = `${prefix}.stderr.log`;
++      await write(`${prefix}.json`, proof); record.children.push(proof);
++    }
++    assert.equal(proof.listenerAbsent, true);
++    assert.equal(proof.forcedKill, false);
++    if (missing) assert.match(await fsp.readFile(path.join(args.out, `${prefix}.stderr.log`), 'utf8'), /BRIDGE_POLICY_MISSING.*startup refused/);
++  }
++
++  async function bite(id, relative, mutate, baseline, disabled, restored) {
++    const extraction = path.join(arena, id);
++    await fsp.mkdir(extraction);
++    const record = { id, extraction, path: relative, status: 'running', children: [], restoredByteIdentically: false };
++    report.records.push(record); await save();
++    const extracted = await run(id, 'extract', 'tar', ['-xzf', args.archive, '-C', extraction], arena, 60000);
++    assert.equal(extracted.code, 0, extracted.errorText);
++    const originalManifest = await verify(record, 'before'); assert.equal(originalManifest.status, 'pass');
++    assert.equal(originalManifest.manifest.commit, ARCHIVE_HEAD);
++    record.treeBefore = await treeDigest(extraction);
++    const file = path.join(extraction, relative), before = await fsp.readFile(file), mode = (await fsp.stat(file)).mode & 0o777;
++    const afterMutation = mutate(before);
++    assert(afterMutation === null || !before.equals(afterMutation));
++    record.fileBefore = { sha256: hash(before), bytes: before.length, mode };
++    record.mutatedFile = afterMutation === null ? { absent: true } : { sha256: hash(afterMutation), bytes: afterMutation.length, mode };
++    await write(`${id}/file-before`, before);
++    if (afterMutation !== null) await write(`${id}/file-mutated`, afterMutation);
++    const ownedPaths = ['.oods/s194-e2e', 'artifacts/current-state'];
++    const oodsExisted = fs.existsSync(path.join(extraction, '.oods'));
++    assert(ownedPaths.every(relative => !fs.existsSync(path.join(extraction, relative))));
++    let failure;
++    try {
++      await baseline(record);
++      assert.deepEqual(await treeDigest(extraction), record.treeBefore, 'Baseline probe changed the shipped tree');
++      if (afterMutation === null) await fsp.unlink(file); else await fsp.writeFile(file, afterMutation);
++      record.treeMutated = await treeDigest(extraction);
++      assert.notEqual(record.treeMutated.sha256, record.treeBefore.sha256);
++      await disabled(record);
++    } catch (error) { failure = error; record.failure = error.stack ?? String(error); }
++    finally {
++      if (!fs.existsSync(file)) assert.equal(afterMutation, null, 'Unexpected deletion during owned bite');
++      else {
++        const current = await fsp.readFile(file);
++        assert(current.equals(before) || (afterMutation !== null && current.equals(afterMutation)), 'Unexpected concurrent edit inside owned extraction');
++      }
++      await fsp.writeFile(file, before, { mode }); await fsp.chmod(file, mode);
++      // The historical E2E cleans on success, but may leave only these owned paths on failure.
++      for (const relative of ownedPaths) await fsp.rm(path.join(extraction, relative), { recursive: true, force: true });
++      if (!oodsExisted && fs.existsSync(path.join(extraction, '.oods'))) await fsp.rmdir(path.join(extraction, '.oods'));
++      try {
++        record.treeRestoredBeforeProbe = await treeDigest(extraction);
++        assert.deepEqual(record.treeRestoredBeforeProbe, record.treeBefore);
++        await restored(record);
++        record.treeAfter = await treeDigest(extraction);
++        assert.deepEqual(record.treeAfter, record.treeBefore);
++        const validation = await verify(record, 'restored'); assert.equal(validation.status, 'pass');
++        record.restoredByteIdentically = before.equals(await fsp.readFile(file));
++        assert(record.restoredByteIdentically);
++      } catch (error) { failure ??= error; record.restoreFailure = error.stack ?? String(error); }
++      record.status = failure ? 'failed' : 'passed';
++      await write(`${id}/record.json`, record); await save();
++    }
++    if (failure) throw failure;
++    console.log(`${id}: red observed; restored byte-identically and green`);
++  }
++
++  const textSchema = { version: '2026.09', screens: [{ id: 'text', component: 'Text', props: { content: 'Pinned portable readiness bite' } }] };
++  async function generated(record, phase, refused) {
++    const outputs = await native(record, phase, async call => {
++      const responses = {};
++      for (const framework of ['react', 'vue']) responses[framework] = await call('code_generate', { framework, profile: 'build', schema: textSchema });
++      return responses;
++    });
++    const { validateGeneratedArtifact } = await import(pathToFileURL(path.join(record.extraction, 'packages/mcp-server/dist/codegen/artifact-envelope.js')).href);
++    for (const [framework, response] of Object.entries(outputs)) {
++      if (refused) {
++        assert.equal(response.status, 'error'); assert.equal(response.artifact, undefined);
++        assert(response.errors.some(error => error.code === 'OODS-N015' && error.message.includes('attestation-invalid')));
++      } else {
++        assert.equal(response.status, 'ok'); assert.equal(response.artifact.framework, framework);
++        assert.deepEqual(validateGeneratedArtifact(response.artifact), []);
++        assert(response.artifact.files.some(file => framework === 'react' ? file.path.endsWith('.tsx') : file.path.endsWith('.vue')));
++        if (phase === 'baseline') (record.baselineArtifacts ??= {})[framework] = response.artifact.contentHash;
++        else assert.equal(response.artifact.contentHash, record.baselineArtifacts[framework]);
++      }
++    }
++  }
++  try {
++    await bite('dist-integrity', 'packages/mcp-server/dist/tools/health.js', bytes => Buffer.concat([bytes, Buffer.from('\n// s196 owned integrity mutation\n')]),
++      async () => {}, async record => {
++        const red = await verify(record, 'mutated'); assert.equal(red.status, 'rejected'); assert.match(red.message, /embedded payload tree digest mismatch/);
++      }, async () => {});
++    await bite('taxonomy-health', 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json', bytes => {
++      const value = JSON.parse(bytes); assert.equal(value.summary.classified, 34); value.summary.classified++;
++      return Buffer.from(JSON.stringify(value, null, 2) + '\n');
++    }, record => e2e(record, 'baseline', 'pass'), async record => {
++      const health = await native(record, 'mutated', call => call('health', {}));
++      assert.equal(health.status, 'degraded'); assert.equal(health.productReality.viz, null);
++      assert(health.warnings.some(warning => warning.includes('Viz taxonomy rejected: summary differs')));
++      await e2e(record, 'mutated', 'rejected');
++    }, async record => {
++      const health = await native(record, 'restored', call => call('health', {}));
++      assert.equal(health.status, 'ok'); assert.equal(health.productReality.viz.classified, 34);
++      await e2e(record, 'restored', 'pass');
++    });
++    await bite('bridge-policy', 'configs/agent/policy.json', () => null,
++      record => bridge(record, 'baseline', false), record => bridge(record, 'mutated', true), record => bridge(record, 'restored', false));
++    await bite('readiness-attestation', 'packages/mcp-server/dist/registry/readiness-attestation.v1.json', bytes => {
++      const value = JSON.parse(bytes); value.sha256 = (value.sha256[0] === '0' ? '1' : '0') + value.sha256.slice(1);
++      return Buffer.from(JSON.stringify(value, null, 2) + '\n');
++    }, record => generated(record, 'baseline', false), record => generated(record, 'mutated', true), record => generated(record, 'restored', false));
++    assert.equal(hash(await fsp.readFile(args.archive)), ARCHIVE_SHA256, 'Original archive changed');
++    report.status = 'passed';
++  } catch (error) { report.status = 'failed'; report.failure = error.stack ?? String(error); process.exitCode = 1; }
++  finally {
++    report.completedAt = new Date().toISOString();
++    report.summary = { bites: report.records.length, passed: report.records.filter(row => row.status === 'passed').length, failed: report.records.filter(row => row.status !== 'passed').length, restored: report.records.filter(row => row.restoredByteIdentically).length };
++    report.driver = { path: path.relative(ROOT, fileURLToPath(import.meta.url)), sha256: hash(await fsp.readFile(fileURLToPath(import.meta.url))), committed: false };
++    await save();
++  }
++  console.log(JSON.stringify({ status: report.status, ...report.summary, report: path.join(args.out, 'bites.json') }));
++}
++
++main().catch(error => { console.error(error.stack ?? error); process.exitCode = 1; });
+diff --git a/scripts/product-reality/s196-m05-doc-bites.mjs b/scripts/product-reality/s196-m05-doc-bites.mjs
+new file mode 100644
+index 00000000..8b9743ee
+--- /dev/null
++++ b/scripts/product-reality/s196-m05-doc-bites.mjs
+@@ -0,0 +1,248 @@
++#!/usr/bin/env node
++/** Physical doc mutations in an archived checkout, with measured red and exact restoration. */
++import assert from 'node:assert/strict';
++import { createHash } from 'node:crypto';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { execFileSync, spawnSync } from 'node:child_process';
++import { createRequire } from 'node:module';
++import { fileURLToPath } from 'node:url';
++
++const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
++const DEFAULT_HEAD = '944f4dda5f784e266310978b31f65b3d452e6387';
++const TRACKED_PATHS = ['package.json', 'pnpm-workspace.yaml', 'tsconfig.json', 'src', 'packages', 'scripts/docs', 'traits', 'objects', 'domains', 'schemas', 'configs', 'artifacts/structured-data', 'docs', 'README.md', '.storybook', 'tools/agents-smoke'];
++const options = { head: DEFAULT_HEAD, frozen: undefined, output: path.join(ROOT, 'artifacts/product-reality/sprint-196/m05/doc-bites'), execute: false };
++for (let index = 2; index < process.argv.length; index++) {
++  const arg = process.argv[index];
++  if (arg === '--') continue;
++  if (arg === '--execute') { options.execute = true; continue; }
++  const key = { '--source-head': 'head', '--frozen': 'frozen', '--output': 'output' }[arg];
++  assert(key && process.argv[index + 1] && !process.argv[index + 1].startsWith('--'), `Unknown or incomplete option: ${arg}`);
++  options[key] = process.argv[++index];
++}
++assert(options.execute, 'Use --execute to run the isolated physical mutations.');
++assert.match(options.head, /^[a-f0-9]{40}$/);
++const output = path.resolve(options.output);
++fs.mkdirSync(output, { recursive: true });
++const sha256 = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
++const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
++const writeJson = (file, value) => fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
++
++function files(directory) {
++  return fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap(entry => {
++    const file = path.join(directory, entry.name);
++    return entry.isDirectory() ? files(file) : [file];
++  });
++}
++
++function freezeInputs() {
++  const changed = execFileSync('git', ['diff', '--name-only', options.head, '--', 'packages', 'src', 'traits', 'objects', 'domains', 'configs', 'schemas', 'scripts', '.storybook', 'tools/agents-smoke', 'artifacts/structured-data'], { cwd: ROOT, encoding: 'utf8' }).trim();
++  assert.equal(changed, '', 'Capture built inputs before changing baseline source, or pass the previously captured --frozen directory.');
++  const frozen = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-s196-m05-doc-frozen-'));
++  const target = path.join(frozen, 'repository');
++  fs.mkdirSync(target);
++  execFileSync('git', ['archive', '--format=tar', '--output', path.join(frozen, 'tracked.tar'), options.head, ...TRACKED_PATHS], { cwd: ROOT });
++  execFileSync('tar', ['-xf', path.join(frozen, 'tracked.tar'), '-C', target]);
++  const builtDirectories = [];
++  for (const name of fs.readdirSync(path.join(ROOT, 'packages'))) {
++    const relative = `packages/${name}/dist`;
++    if (!fs.existsSync(path.join(ROOT, relative))) continue;
++    fs.cpSync(path.join(ROOT, relative), path.join(target, relative), { recursive: true, dereference: true });
++    builtDirectories.push(relative);
++  }
++  writeJson(path.join(frozen, 'freeze.json'), { head: options.head, trackedPaths: TRACKED_PATHS, builtDirectories, target });
++  return frozen;
++}
++
++const frozen = path.resolve(options.frozen ?? freezeInputs());
++const freeze = json(path.join(frozen, 'freeze.json'));
++assert.equal(freeze.head, options.head, 'The frozen source must be the recorded mission baseline.');
++const target = fs.realpathSync(path.join(frozen, 'repository'));
++assert.notEqual(target, fs.realpathSync(ROOT), 'Mutations must never use the working checkout.');
++
++// Component references also require their historical evidence links to exist.
++// Materialize those exact blobs from the same commit, never from the live tree.
++const missingReferences = [...new Set(files(path.join(target, 'docs/components')).filter(file => file.endsWith('.md')).flatMap(file =>
++  [...fs.readFileSync(file, 'utf8').matchAll(/\]\(\.\.\/\.\.\/([^\n)]+)\)/g)].map(match => decodeURI(match[1]))
++))].filter(relative => !fs.existsSync(path.join(target, relative))).sort();
++if (missingReferences.length) {
++  for (const relative of missingReferences) assert(!path.isAbsolute(relative) && !relative.split('/').includes('..'), `Unsafe reference: ${relative}`);
++  const archive = 'references.tar';
++  execFileSync('git', ['archive', '--format=tar', '--output', path.join(frozen, archive), options.head, ...missingReferences], { cwd: ROOT });
++  execFileSync('tar', ['-xf', path.join(frozen, archive), '-C', target]);
++  freeze.trackedPaths.push(...missingReferences);
++  freeze.referenceArchive = archive;
++  writeJson(path.join(frozen, 'freeze.json'), freeze);
++}
++
++// Verify copied tracked inputs against Git blob identities, not the changing live tree.
++const tree = execFileSync('git', ['ls-tree', '-rz', options.head, '--', ...freeze.trackedPaths], { cwd: ROOT, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
++const tracked = tree.split('\0').filter(Boolean).map(line => {
++  const [header, relative] = line.split('\t');
++  const [mode, type, blob] = header.split(' ');
++  assert.equal(type, 'blob', `Unexpected tracked input ${relative}`);
++  const bytes = mode === '120000' ? Buffer.from(fs.readlinkSync(path.join(target, relative))) : fs.readFileSync(path.join(target, relative));
++  const actual = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
++  assert.equal(actual, blob, `Frozen tracked input differs from ${options.head}: ${relative}`);
++  return { path: relative, gitBlob: blob, sha256: sha256(bytes), size: bytes.length, ...(mode === '120000' ? { symlink: true } : {}) };
++});
++const built = freeze.builtDirectories.flatMap(directory => files(path.join(target, directory)).map(file => ({ path: path.relative(target, file), sha256: sha256(fs.readFileSync(file)) })));
++
++// External dependencies can share the immutable installed pnpm store. First-party
++// links always point inside the frozen checkout; never symlink its whole node_modules.
++const packages = new Map();
++for (const directory of fs.readdirSync(path.join(target, 'packages'))) {
++  const file = path.join(target, 'packages', directory, 'package.json');
++  if (fs.existsSync(file)) packages.set(json(file).name, path.dirname(file));
++}
++const firstPartyLinks = [];
++function linkDependencies(source, destination) {
++  if (!fs.existsSync(source)) return;
++  fs.mkdirSync(destination, { recursive: true });
++  for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
++    if (entry.name === '.bin') continue;
++    const names = entry.name.startsWith('@') ? fs.readdirSync(path.join(source, entry.name)).map(name => `${entry.name}/${name}`) : [entry.name];
++    for (const name of names) {
++      const link = path.join(destination, name);
++      const resolved = packages.get(name) ?? fs.realpathSync(path.join(source, name));
++      if (!fs.existsSync(link)) {
++        fs.mkdirSync(path.dirname(link), { recursive: true });
++        fs.symlinkSync(resolved, link, fs.statSync(resolved).isDirectory() ? 'dir' : 'file');
++      }
++      if (packages.has(name)) assert.equal(fs.realpathSync(link), fs.realpathSync(resolved), `${name} first-party link escaped the frozen checkout`);
++      if (packages.has(name)) firstPartyLinks.push({ name, link: path.relative(target, link), resolvesTo: path.relative(target, fs.realpathSync(link)) });
++    }
++  }
++}
++linkDependencies(path.join(ROOT, 'node_modules'), path.join(target, 'node_modules'));
++for (const [name, directory] of packages) {
++  const link = path.join(target, 'node_modules', name);
++  if (!fs.existsSync(link)) {
++    fs.mkdirSync(path.dirname(link), { recursive: true });
++    fs.symlinkSync(directory, link, 'dir');
++    firstPartyLinks.push({ name, link: path.relative(target, link), resolvesTo: path.relative(target, directory) });
++  }
++  linkDependencies(path.join(ROOT, path.relative(target, directory), 'node_modules'), path.join(directory, 'node_modules'));
++}
++const requireFromTarget = createRequire(path.join(target, 'package.json'));
++const resolutions = ['@oods/component-contracts', '@oods/viz-core', '@oods/tokens', '@oods/a11y-tools'].map(name => {
++  const resolved = fs.realpathSync(requireFromTarget.resolve(name));
++  assert(resolved.startsWith(`${target}${path.sep}`), `${name} escaped to current first-party bytes`);
++  return { name, entry: path.relative(target, resolved), sha256: sha256(fs.readFileSync(resolved)) };
++});
++const lock = execFileSync('git', ['show', `${options.head}:pnpm-lock.yaml`], { cwd: ROOT, maxBuffer: 8 * 1024 * 1024 });
++assert.equal(sha256(fs.readFileSync(path.join(ROOT, 'pnpm-lock.yaml'))), sha256(lock), 'Installed dependency lock changed since the baseline.');
++writeJson(path.join(output, 'snapshot.json'), { sourceHead: options.head, archiveSha256: sha256(fs.readFileSync(path.join(frozen, 'tracked.tar'))), ...(freeze.referenceArchive ? { referenceArchiveSha256: sha256(fs.readFileSync(path.join(frozen, freeze.referenceArchive))) } : {}), dependencyLockSha256: sha256(lock), tracked, built, firstPartyLinks, resolutions, method: 'Git archive for tracked inputs; built inputs copied once before mutation; target-local first-party links; only external dependencies share the installed store.' });
++
++const environment = { ...process.env, TZ: 'America/Chicago', TSX_TSCONFIG_PATH: path.join(target, 'tsconfig.json') };
++for (const key of Object.keys(environment)) if (/^(OODS_|MCP_|BRIDGE_)/.test(key) || key === 'NODE_PATH') delete environment[key];
++const generators = {
++  components: 'scripts/docs/generate-component-docs.ts', tools: 'scripts/docs/generate-tool-specs.ts',
++  claims: 'scripts/docs/generate-forge-claims.ts', api: 'scripts/docs/generate-api-reference.ts',
++};
++const report = { schemaVersion: 1, missionId: 's196-m05', sourceHead: options.head, runner: { path: 'scripts/product-reality/s196-m05-doc-bites.mjs', sha256: sha256(fs.readFileSync(fileURLToPath(import.meta.url))), node: process.version }, builderSelfCertified: false, sourceIsolation: 'archived-source-and-copied-build-inputs', baselineChecks: [], records: [], allRestoredByteIdentically: false };
++function save() { writeJson(path.join(output, 'bites.json'), report); }
++function run(record, name, generator, check = true) {
++  const command = ['--import', 'tsx', path.join(target, generators[generator]), ...(check ? ['--check'] : [])];
++  const result = spawnSync(process.execPath, command, { cwd: target, env: environment, encoding: 'utf8', timeout: 60000, maxBuffer: 16 * 1024 * 1024 });
++  const log = `${record.id}/${name}.log`;
++  fs.mkdirSync(path.dirname(path.join(output, log)), { recursive: true });
++  const text = `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ?? ''}`;
++  fs.writeFileSync(path.join(output, log), text.replaceAll(target, '<frozen-repository>'));
++  const receipt = { name, command: ['node', '--import', 'tsx', generators[generator], ...(check ? ['--check'] : [])], cwd: '<frozen-repository>', exitCode: result.status, signal: result.signal, log };
++  record.commands.push(receipt);
++  return { ...receipt, text };
++}
++function green(record, name, generator) { const result = run(record, name, generator); assert.equal(result.exitCode, 0, `${record.id}/${name}: ${result.text}`); }
++const baselineRecord = { id: 'baseline', commands: report.baselineChecks };
++for (const generator of Object.keys(generators)) green(baselineRecord, generator, generator);
++save();
++
++function replaceOnce(before, from, to) {
++  assert.equal(before.split(from).length, 2, `Mutation operand must occur exactly once: ${from}`);
++  return before.replace(from, to);
++}
++async function docBite(id, relative, generator, mutate) {
++  const file = path.join(target, relative), before = fs.readFileSync(file);
++  const mutant = Buffer.from(mutate(before.toString('utf8')));
++  assert.notEqual(sha256(before), sha256(mutant));
++  const record = { id, kind: 'hand-edited-generated-document', path: relative, beforeSha256: sha256(before), mutatedSha256: sha256(mutant), commands: [], restoredByteIdentically: false };
++  let failure;
++  try {
++    fs.writeFileSync(file, mutant);
++    const red = run(record, 'mutated-check', generator);
++    assert.equal(red.exitCode, 1, `${id}: hand edit must fail --check`);
++    assert.match(red.text, /stale/i, `${id}: failure must identify stale docs, not an import or environment failure`);
++    assert(red.text.includes(relative) || (generator === 'api' && red.text.includes('docs/api')), `${id}: red must identify the edited document`);
++  } catch (error) { failure = error; record.failure = String(error); }
++  finally {
++    assert.equal(sha256(fs.readFileSync(file)), sha256(mutant), `${id}: unexpected competing edit in isolated copy`);
++    fs.writeFileSync(file, before);
++    record.restoredSha256 = sha256(fs.readFileSync(file));
++    record.restoredByteIdentically = record.restoredSha256 === record.beforeSha256;
++    try { green(record, 'restored-check', generator); } catch (error) { failure ??= error; record.restoreFailure = String(error); }
++    record.status = failure ? 'failed' : 'passed';
++    report.records.push(record); save();
++  }
++  if (failure) throw failure;
++}
++
++await docBite('component-page', 'docs/components/Button.md', 'components', before => replaceOnce(before, 'Proposed classification: `native`', 'Proposed classification: `alias`'));
++await docBite('component-index', 'docs/components/README.md', 'components', before => replaceOnce(before, '109 component pages', '108 component pages'));
++await docBite('tool-specs', 'docs/mcp/Tool-Specs.md', 'tools', before => replaceOnce(before, 'The 24 live tools', 'The 25 live tools'));
++await docBite('html-claim', 'docs/how-forge-works.html', 'claims', before => replaceOnce(before, 'The trait inventory (45)</h2>', 'The trait inventory (46)</h2>'));
++await docBite('connections', 'docs/mcp/Connections.md', 'claims', before => replaceOnce(before, '`default` = 19 auto tools', '`default` = 20 auto tools'));
++await docBite('api-page', 'docs/api/design-compose.md', 'api', before => replaceOnce(before, 'default TTL: 30 minutes', 'default TTL: 31 minutes'));
++await docBite('server-readme', 'packages/mcp-server/README.md', 'claims', before => replaceOnce(before, '19 tools by default', '20 tools by default'));
++await docBite('bridge-readme', 'packages/mcp-bridge/README.md', 'claims', before => replaceOnce(before, '19 tools by default', '20 tools by default'));
++await docBite('docs-readme', 'docs/README.md', 'claims', before => replaceOnce(before, 'composes 6 traits', 'composes 7 traits'));
++await docBite('root-readme', 'README.md', 'claims', before => replaceOnce(before, '## MCP tool surface (24 tools)', '## MCP tool surface (25 tools)'));
++
++// Preserve valid membership and the unapproved census. One proposal classification
++// moves recipe -> native, changing the derived category counts without fake IDs.
++const ledgerPath = 'packages/component-contracts/registry/component-capability-ledger.v1.json';
++const ledgerFile = path.join(target, ledgerPath), ledgerBefore = fs.readFileSync(ledgerFile);
++const ledger = JSON.parse(ledgerBefore);
++assert.equal(ledger.approvedRuntimeCensus, null);
++const row = ledger.rows.find(value => value.proposedClassification === 'recipe');
++assert(row && row.reconciliationState === 'proposed-awaiting-derek-approval');
++const countClasses = rows => Object.fromEntries(['native', 'recipe', 'alias'].map(kind => [kind, rows.filter(value => value.proposedClassification === kind).length]));
++const beforeCounts = countClasses(ledger.rows);
++row.proposedClassification = 'native';
++const ledgerMutant = Buffer.from(`${JSON.stringify(ledger, null, 2)}\n`);
++const generatedFiles = [...files(path.join(target, 'docs')), path.join(target, 'README.md'), path.join(target, 'packages/mcp-server/README.md'), path.join(target, 'packages/mcp-bridge/README.md')];
++const documentBytes = new Map(generatedFiles.map(file => [file, fs.readFileSync(file)]));
++const ledgerRecord = { id: 'ledger-classification-counts', kind: 'valid-source-change-requires-regeneration', path: ledgerPath, componentId: row.id, sourceChange: { from: 'recipe', to: 'native', beforeCounts, afterCounts: countClasses(ledger.rows), membership: ledger.rows.length, approvedRuntimeCensus: ledger.approvedRuntimeCensus }, beforeSha256: sha256(ledgerBefore), mutatedSha256: sha256(ledgerMutant), commands: [], restoredByteIdentically: false };
++let ledgerFailure;
++try {
++  fs.writeFileSync(ledgerFile, ledgerMutant);
++  for (const generator of ['components', 'claims']) {
++    const red = run(ledgerRecord, `${generator}-mutated-check`, generator);
++    assert.equal(red.exitCode, 1); assert.match(red.text, /stale/i);
++    const regenerated = run(ledgerRecord, `${generator}-regenerate`, generator, false);
++    assert.equal(regenerated.exitCode, 0, regenerated.text);
++    green(ledgerRecord, `${generator}-regenerated-check`, generator);
++  }
++  ledgerRecord.changedOutputs = [...documentBytes].filter(([file, before]) => !fs.readFileSync(file).equals(before)).map(([file, before]) => ({ path: path.relative(target, file), beforeSha256: sha256(before), regeneratedSha256: sha256(fs.readFileSync(file)) }));
++  assert(ledgerRecord.changedOutputs.some(file => file.path === `docs/components/${row.id}.md`));
++  assert(ledgerRecord.changedOutputs.some(file => file.path === 'docs/components/README.md'));
++  assert(ledgerRecord.changedOutputs.some(file => file.path === 'docs/how-forge-works.html'));
++  assert(fs.readFileSync(path.join(target, 'docs/how-forge-works.html'), 'utf8').includes('25 native, 83 recipe and 1 alias'));
++} catch (error) { ledgerFailure = error; ledgerRecord.failure = String(error); }
++finally {
++  assert.equal(sha256(fs.readFileSync(ledgerFile)), sha256(ledgerMutant));
++  fs.writeFileSync(ledgerFile, ledgerBefore);
++  for (const [file, before] of documentBytes) fs.writeFileSync(file, before);
++  ledgerRecord.restoredByteIdentically = fs.readFileSync(ledgerFile).equals(ledgerBefore) && [...documentBytes].every(([file, before]) => fs.readFileSync(file).equals(before));
++  ledgerRecord.restoredSha256 = sha256(fs.readFileSync(ledgerFile));
++  for (const generator of ['components', 'claims']) try { green(ledgerRecord, `${generator}-restored-check`, generator); } catch (error) { ledgerFailure ??= error; ledgerRecord.restoreFailure = String(error); }
++  ledgerRecord.status = ledgerFailure ? 'failed' : 'passed'; report.records.push(ledgerRecord); save();
++}
++if (ledgerFailure) throw ledgerFailure;
++
++for (const file of [...tracked, ...built]) assert.equal(sha256(file.symlink ? fs.readlinkSync(path.join(target, file.path)) : fs.readFileSync(path.join(target, file.path))), file.sha256, `Final snapshot differs: ${file.path}`);
++report.allRestoredByteIdentically = report.records.every(record => record.restoredByteIdentically);
++report.summary = { bites: report.records.length, passed: report.records.filter(record => record.status === 'passed').length, failed: report.records.filter(record => record.status === 'failed').length, checkedTrackedFiles: tracked.length, checkedBuiltFiles: built.length };
++save();
++console.log(JSON.stringify({ ...report.summary, allRestoredByteIdentically: report.allRestoredByteIdentically }));
+diff --git a/scripts/product-reality/s196-temporal-bite.mjs b/scripts/product-reality/s196-temporal-bite.mjs
+new file mode 100644
+index 00000000..2ec9bdb5
+--- /dev/null
++++ b/scripts/product-reality/s196-temporal-bite.mjs
+@@ -0,0 +1,147 @@
++#!/usr/bin/env node
++/** Exclusive-window UTC-pin mutation; public probes retain every temporal cell. */
++import assert from 'node:assert/strict';
++import { createHash, randomUUID } from 'node:crypto';
++import fs from 'node:fs';
++import path from 'node:path';
++import { execFileSync, spawnSync } from 'node:child_process';
++import { fileURLToPath } from 'node:url';
++import { treeDigest } from '../runtime/manifest.mjs';
++
++const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
++const hash = bytes => createHash('sha256').update(bytes).digest('hex');
++const serialize = value => JSON.stringify(value, null, 2) + '\n';
++const read = relative => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
++const PROBE = 'scripts/product-reality/s196-temporal-probe.ts';
++const VIZ_REGISTRY = 'packages/viz-core/src/registry/viz-recipes.v1.json';
++const PATTERN_REGISTRY = 'packages/viz-core/src/registry/viz-patterns.v1.json';
++const OPERANDS = 'scripts/product-reality/s190-viz-operands.json';
++const ADAPTERS = ['packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/adapters/echarts-adapter.ts'];
++const build = ['--filter', '@oods/viz-core', 'run', 'build'];
++
++function replaceOnce(source, before, after) {
++  assert.equal(source.split(before).length, 2, `Expected exactly one UTC pin: ${before}`);
++  return source.replace(before, after);
++}
++function disableUtc(source, file) {
++  if (file.endsWith('/echarts-adapter.ts')) return replaceOnce(source,
++    "useUTC: xAxis?.type === 'time' || yAxis?.type === 'time' ? true : undefined,",
++    "useUTC: xAxis?.type === 'time' || yAxis?.type === 'time' ? false : undefined,");
++  let changed = replaceOnce(source, "const scaleType = definition.type === 'temporal' ? 'utc' : mapScaleType(binding.scale);", "const scaleType = definition.type === 'temporal' ? 'time' : mapScaleType(binding.scale);");
++  changed = replaceOnce(changed, 'definition.timeUnit = `utc${unit}`;', 'definition.timeUnit = unit;');
++  changed = replaceOnce(changed, "if (scale === 'temporal') {\n    return 'utc';\n  }", "if (scale === 'temporal') {\n    return 'time';\n  }");
++  return replaceOnce(changed, 'calculate: `utcParse(datum[', 'calculate: `timeParse(datum[');
++}
++
++async function main() {
++  assert(process.argv.includes('--execute'), 'Requires --execute during the explicitly granted exclusive source/build window');
++  const outputIndex = process.argv.indexOf('--out');
++  const output = outputIndex < 0 ? path.join(root, 'artifacts/product-reality/sprint-196/m05/timezone-bite') : path.resolve(process.argv[outputIndex + 1]);
++  assert(!fs.existsSync(output), 'Output exists; retain earlier runs and choose another --out');
++  fs.mkdirSync(output, { recursive: true });
++  const save = (relative, value) => {
++    const file = path.join(output, relative); fs.mkdirSync(path.dirname(file), { recursive: true });
++    fs.writeFileSync(file, typeof value === 'string' ? value : serialize(value));
++  };
++  const report = { schemaVersion: 1, missionId: 's196-m05', runId: randomUUID(), builderSelfCertified: false, status: 'running',
++    startedAt: new Date().toISOString(), sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
++    dirty: execFileSync('git', ['status', '--porcelain', '-z'], { cwd: root }).length > 0,
++    command: [process.execPath, ...process.argv.slice(1)], cwd: root, nodeVersion: process.version,
++    methodology: 'Exact 16 temporal registry identities, public viz.render SVG bytes, opt-in JSON-projected ECharts options and renderer availability measured in independent processes with TZ=America/Chicago and TZ=UTC. Four Vega UTC pin sites and the ECharts useUTC pin are physically disabled, rebuilt, observed red, restored and rebuilt. No golden or registry changes occur during the bite.',
++    commands: [], sources: [], inputs: [] };
++  const persist = () => save('bite.json', report);
++  const environment = timezone => ({ PATH: process.env.PATH ?? '', LANG: 'C.UTF-8', LC_ALL: 'C.UTF-8', TZ: timezone, NODE_ENV: 'production', NO_COLOR: '1' });
++  function run(name, commandArgs, timezone = 'UTC') {
++    const startedAt = new Date().toISOString();
++    const result = spawnSync('pnpm', commandArgs, { cwd: root, env: environment(timezone), encoding: 'utf8', timeout: 180000, maxBuffer: 32 * 1024 * 1024 });
++    save(`${name}.stdout.log`, result.stdout ?? ''); save(`${name}.stderr.log`, result.stderr ?? '');
++    const command = { name, command: ['pnpm', ...commandArgs], cwd: root, environment: environment(timezone), startedAt, completedAt: new Date().toISOString(), exitCode: result.status, signal: result.signal,
++      ...(result.error ? { error: String(result.error) } : {}), stdout: `${name}.stdout.log`, stderr: `${name}.stderr.log`, stdoutSha256: hash(result.stdout ?? ''), stderrSha256: hash(result.stderr ?? '') };
++    report.commands.push(command); persist();
++    return { ...command, text: (result.stdout ?? '') + (result.stderr ?? '') };
++  }
++  const recipes = read(VIZ_REGISTRY), patterns = read(PATTERN_REGISTRY), operands = read(OPERANDS);
++  const cells = [];
++  for (const identity of ['line', 'area']) {
++    const recipe = recipes.find(row => row.chartType === identity), operand = operands.find(row => row.chartType === identity);
++    assert(recipe && operand); assert.equal(recipe.renderScopes.length, 6);
++    for (const scope of recipe.renderScopes) {
++      assert.equal(scope.status, 'rendered'); assert(scope.svgHash);
++      cells.push({ id: `${identity}/${scope.theme}/${scope.brand}`, identity, registrySvgHash: scope.svgHash,
++        request: { ...operand, theme: scope.theme, brand: scope.brand, output: { svg: true, includeNormalizedSpec: true, echarts: true } } });
++    }
++  }
++  const pattern = patterns.find(row => row.id === 'pattern:viz:running-total-area');
++  assert(pattern); assert.equal(pattern.scopes.length, 4);
++  for (const scope of pattern.scopes) {
++    assert.equal(scope.status, 'public');
++    cells.push({ id: `running-total-area/${scope.theme}/${scope.brand}`, identity: pattern.id, registrySvgHash: scope.svgHash,
++      request: { pattern: pattern.id, theme: scope.theme, brand: scope.brand, output: { svg: true, includeNormalizedSpec: true, includeA11y: true, echarts: true } } });
++  }
++  assert.equal(cells.length, 16); save('requests.json', { schemaVersion: 1, cells });
++  report.requestsSha256 = hash(fs.readFileSync(path.join(output, 'requests.json')));
++  for (const file of [VIZ_REGISTRY, PATTERN_REGISTRY, OPERANDS, pattern.specPath, PROBE]) {
++    const bytes = fs.readFileSync(path.join(root, file)); const destination = `inputs/${file}`;
++    save(destination, bytes.toString()); report.inputs.push({ source: file, path: destination, sha256: hash(bytes), bytes: bytes.length });
++  }
++  const originals = ADAPTERS.map(file => {
++    const before = fs.readFileSync(path.join(root, file), 'utf8'), mutated = disableUtc(before, file), mode = fs.statSync(path.join(root, file)).mode & 0o777;
++    assert.notEqual(before, mutated);
++    save(`source-before/${file}`, before); save(`source-mutated/${file}`, mutated);
++    report.sources.push({ file, mode, beforeSha256: hash(before), mutatedSha256: hash(mutated) });
++    return { file, before, mutated, mode };
++  });
++  persist();
++  async function phase(name, expectEqual, checkRegistry) {
++    for (const [timezone, label] of [['America/Chicago', 'chicago'], ['UTC', 'utc']]) {
++      const capture = run(`${name}-${label}`, ['exec', 'tsx', PROBE, '--requests', path.join(output, 'requests.json'), '--out', path.join(output, name, label)], timezone);
++      assert.equal(capture.exitCode, 0, capture.text);
++      const observation = JSON.parse(fs.readFileSync(path.join(output, name, label, 'observations.json'), 'utf8'));
++      for (const cell of observation.cells) {
++        const option = JSON.parse(fs.readFileSync(path.join(output, name, label, cell.directory, 'echarts-option.json'), 'utf8'));
++        assert.equal(option.useUTC, expectEqual, `${name}/${cell.id}: physical ECharts pin must be reflected in the actual compiled option`);
++      }
++    }
++    const compared = run(`${name}-compare`, ['exec', 'tsx', PROBE, '--compare', '--left', path.join(output, name, 'chicago/observations.json'), '--right', path.join(output, name, 'utc/observations.json'), '--out', path.join(output, name, 'comparison.json'), ...(checkRegistry ? ['--check-registry'] : [])]);
++    const comparison = JSON.parse(fs.readFileSync(path.join(output, name, 'comparison.json'), 'utf8'));
++    report[name] = comparison;
++    if (expectEqual) { assert.equal(compared.exitCode, 0, compared.text); assert.equal(comparison.primaryEqual, 16); assert.equal(comparison.registryEqual, 16); }
++    else { assert.equal(compared.exitCode, 1); assert.match(compared.text, /Cross-timezone SVG equality failed/); assert(comparison.primaryEqual < 16, 'Disabling UTC must change at least one actual public SVG across timezones'); }
++    persist();
++  }
++  let failure;
++  try {
++    assert.equal(run('baseline-build', build).exitCode, 0);
++    report.distBefore = await treeDigest(path.join(root, 'packages/viz-core/dist'));
++    await phase('baseline', true, true);
++    for (const item of originals) fs.writeFileSync(path.join(root, item.file), item.mutated);
++    assert.equal(run('mutated-build', build).exitCode, 0);
++    report.distMutated = await treeDigest(path.join(root, 'packages/viz-core/dist'));
++    assert.notEqual(report.distMutated.sha256, report.distBefore.sha256);
++    await phase('mutated', false, false);
++  } catch (error) { failure = error; report.failure = error.stack ?? String(error); }
++  finally {
++    for (const item of originals) {
++      const current = fs.readFileSync(path.join(root, item.file), 'utf8');
++      assert(current === item.before || current === item.mutated, `Unexpected concurrent edit to ${item.file}; refusing to overwrite`);
++      fs.writeFileSync(path.join(root, item.file), item.before); fs.chmodSync(path.join(root, item.file), item.mode);
++      save(`source-restored/${item.file}`, fs.readFileSync(path.join(root, item.file), 'utf8'));
++      report.sources.find(source => source.file === item.file).restoredSha256 = hash(fs.readFileSync(path.join(root, item.file)));
++    }
++    try {
++      assert.equal(run('restored-build', build).exitCode, 0);
++      report.distRestored = await treeDigest(path.join(root, 'packages/viz-core/dist'));
++      if (report.distBefore) assert.deepEqual(report.distRestored, report.distBefore, 'Restored compiled dist bytes differ from baseline');
++      await phase('restored', true, true);
++      for (const input of report.inputs) assert.equal(hash(fs.readFileSync(path.join(root, input.source))), input.sha256, `Source input moved during exclusive bite: ${input.source}`);
++    } catch (error) { failure ??= error; report.restoreFailure = error.stack ?? String(error); }
++    report.status = failure ? 'failed' : 'passed';
++    report.completedAt = new Date().toISOString();
++    report.restoredByteIdentically = report.sources.every(source => source.beforeSha256 === source.restoredSha256)
++      && report.distBefore?.sha256 === report.distRestored?.sha256;
++    persist();
++  }
++  if (failure) throw failure;
++  console.log(serialize({ status: report.status, temporalCells: 16, mutatedDifferent: report.mutated.different, restoredByteIdentically: report.restoredByteIdentically, report: path.join(output, 'bite.json') }));
++}
++main().catch(error => { console.error(error.stack ?? error); process.exitCode = 1; });
+diff --git a/scripts/product-reality/s196-temporal-placement-receipt.mjs b/scripts/product-reality/s196-temporal-placement-receipt.mjs
+new file mode 100644
+index 00000000..c8e880ae
+--- /dev/null
++++ b/scripts/product-reality/s196-temporal-placement-receipt.mjs
+@@ -0,0 +1,137 @@
++#!/usr/bin/env node
++/** Replay retained placement operands through the built handlers; never rewrite history. */
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++import { createHash } from 'node:crypto';
++import { execFileSync, spawnSync } from 'node:child_process';
++import { fileURLToPath } from 'node:url';
++
++const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
++let output = path.join(root, 'artifacts/product-reality/sprint-196/m05/placement');
++let measure = false;
++let auditOnly = false;
++for (let index = 2; index < process.argv.length; index++) {
++  const arg = process.argv[index];
++  if (arg === '--measure') measure = true;
++  else if (arg === '--audit-only') auditOnly = true;
++  else if (arg === '--output' && process.argv[index + 1]) output = path.resolve(process.argv[++index]);
++  else throw new Error(`Unknown or incomplete argument: ${arg}`);
++}
++const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
++const read = relative => fs.readFileSync(path.join(root, relative));
++const json = relative => JSON.parse(read(relative));
++const save = (relative, value) => {
++  const file = path.join(output, relative); fs.mkdirSync(path.dirname(file), { recursive: true });
++  fs.writeFileSync(file, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
++};
++const cases = [
++  ...['html', 'react', 'vue'].map(framework => ({ id: `Usage-detail-${framework}`, object: 'Usage', framework, context: 'detail', brand: 'B', theme: 'dark', source: `artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-${framework}.json` })),
++  ...['react', 'vue'].map(framework => ({ id: `Usage-workflow-${framework}`, object: 'Usage', framework, context: 'workflow', brand: 'A', theme: 'light', source: `artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-${framework}.json` })),
++  ...['react', 'vue'].map(framework => ({ id: `Subscription-detail-${framework}`, object: 'Subscription', framework, context: 'detail', brand: 'A', theme: 'hc', source: `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json` })),
++];
++
++// This audit does not import handlers, so it can run while another bounded bite
++// temporarily mutates a shared build. Qualify the old bytes against Git itself.
++if (!measure) {
++  const beforeHead = '944f4dda5f784e266310978b31f65b3d452e6387';
++  const sourceJson = execFileSync('rg', ['--files', 'packages', '--glob', '*.json', '--glob', '!**/dist/**', '--glob', '!**/node_modules/**', '--glob', '!**/artifacts/**'], { cwd: root, encoding: 'utf8' }).trim().split('\n').sort();
++  const literalSvgFiles = sourceJson.filter(file => read(file).includes('<svg'));
++  assert.deepEqual(literalSvgFiles, ['packages/component-contracts/fixtures/viz-preview-samples.v1.json']);
++  const sourceGoldenCandidates = sourceJson.filter(file => /"(?:svg|svgHash|renderHash)"/.test(read(file).toString()));
++  const unchangedPaths = [...cases.map(item => item.source), literalSvgFiles[0], 'packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json', 'packages/mcp-server/test/tools/s172-spec-only-cases.ts'];
++  const unchangedSources = unchangedPaths.map(file => {
++    const original = execFileSync('git', ['show', `${beforeHead}:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 });
++    const current = read(file);
++    assert.deepEqual(current, original, `${file}: historical source differs from pre-UTC Git bytes`);
++    return { path: file, beforeSha256: hash(original), currentSha256: hash(current), unchanged: true };
++  });
++  save('source-fixture-audit.json', { schemaVersion: 1, missionId: 's196-m05', beforeHead, sourceJsonFilesScanned: sourceJson.length, literalSvgFiles, sourceGoldenCandidates, unchangedSources, dispositions: [
++    { paths: literalSvgFiles, disposition: 'All six inputs are explicitly non-temporal; line and area use nominal period. Rerendered unchanged in both timezones; see migration.controls.' },
++    { paths: ['packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json'], disposition: 'Hash-only historical fixture. Shared s172-spec-only-cases.ts operands use region North/South/East and numeric revenue; line and area are non-temporal. No UTC rewrite.' },
++    { paths: ['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-render/certified-matrix.json'], disposition: 'Registry/matrix coverage is owned by the parent golden-migration receipt.' },
++    { paths: sourceGoldenCandidates.filter(file => /schemas\/|trait-recipes\.json$|package\.json$/.test(file)), disposition: 'Schema, component recipe, or package metadata; no stored SVG golden.' },
++  ] });
++  if (auditOnly) {
++    console.log(JSON.stringify({ sourceJsonFilesScanned: sourceJson.length, literalSvgFiles: literalSvgFiles.length, unchangedSources: unchangedSources.length }));
++    process.exit(0);
++  }
++}
++assert(!(measure && auditOnly), '--measure and --audit-only are mutually exclusive');
++
++if (measure) {
++  assert(['America/Chicago', 'UTC'].includes(process.env.TZ), 'Use an explicit measured timezone.');
++  const { getAjv } = await import('../../packages/mcp-server/dist/lib/ajv.js');
++  const { handle: generate } = await import('../../packages/mcp-server/dist/tools/code.generate.js');
++  const { handle: render } = await import('../../packages/mcp-server/dist/tools/viz.render.js');
++  const validators = new Map();
++  function wire(tool, side, value) {
++    const key = `${tool}.${side}`;
++    if (!validators.has(key)) {
++      const schema = json(`packages/mcp-server/dist/schemas/${key}.json`);
++      validators.set(key, (schema.$id ? getAjv().getSchema(schema.$id) : undefined) ?? getAjv().compile(schema));
++    }
++    const copy = structuredClone(value), validate = validators.get(key);
++    assert.equal(validate(copy), true, `${key}: ${JSON.stringify(validate.errors)}`);
++    return JSON.parse(JSON.stringify(copy));
++  }
++  const rows = [];
++  for (const item of cases) {
++    const sourceBytes = read(item.source), previous = JSON.parse(sourceBytes);
++    const request = wire('code.generate', 'input', previous.request);
++    assert.deepEqual(request, previous.request, `${item.id}: do not alter the historical operand`);
++    const result = wire('code.generate', 'output', await generate(structuredClone(request)));
++    assert.equal(result.status, 'ok', JSON.stringify(result.errors));
++    const previousAssets = previous.result.artifact.files.filter(file => file.path.endsWith('.svg'));
++    const assets = result.artifact.files.filter(file => file.path.endsWith('.svg'));
++    assert.deepEqual(assets.map(file => file.path), previousAssets.map(file => file.path));
++    const svgs = assets.map((asset, index) => {
++      const before = previousAssets[index];
++      assert.equal(asset.contentHash, hash(asset.contents)); assert.equal(before.contentHash, hash(before.contents));
++      const raw = `${item.id}/${asset.path}`;
++      save(raw, asset.contents);
++      return { path: asset.path, raw, beforeHash: before.contentHash, afterHash: asset.contentHash, changed: asset.contents !== before.contents };
++    });
++    const row = { ...item, sourceSha256: hash(sourceBytes), requestSha256: hash(JSON.stringify(request)), request, result, beforeArtifactHash: previous.result.artifact.contentHash, afterArtifactHash: result.artifact.contentHash, svgs };
++    save(`${item.id}.json`, row); rows.push(row);
++    assert.equal(hash(read(item.source)), row.sourceSha256, 'Historical evidence changed during the producer.');
++  }
++  const samplePath = 'packages/component-contracts/fixtures/viz-preview-samples.v1.json';
++  const samples = json(samplePath).samples;
++  const controls = [];
++  for (const [id, sample] of Object.entries(samples)) {
++    const input = sample.input;
++    const bindings = Object.values(input.encodings);
++    assert(bindings.every(binding => typeof binding !== 'object' || (binding.type !== 'temporal' && binding.scale !== 'temporal')), `${id} is temporal and must be explicitly migrated`);
++    const result = wire('viz.render', 'output', await render(wire('viz.render', 'input', input)));
++    assert.equal(result.status, 'ok', JSON.stringify(result.errors));
++    assert.equal(result.svg, sample.svg, `${id}: non-temporal source golden must not move`);
++    assert.equal(result.svgHash, sample.svgHash);
++    controls.push({ id, source: samplePath, inputSha256: hash(JSON.stringify(input)), encodings: input.encodings, beforeHash: hash(sample.svg), afterHash: hash(result.svg), unchanged: true });
++  }
++  save('measurements.json', { timezone: process.env.TZ, builtRevision: json('packages/mcp-server/dist/build-revision.json'), rows, controls, controlsSourceSha256: hash(read(samplePath)) });
++  console.log(JSON.stringify({ timezone: process.env.TZ, requests: rows.length, svgs: rows.flatMap(row => row.svgs).length, nonTemporalControls: controls.length }));
++} else {
++  fs.mkdirSync(output, { recursive: true });
++  for (const [directory, timezone] of [['chicago', 'America/Chicago'], ['utc', 'UTC']]) {
++    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), '--measure', '--output', path.join(output, directory)], { cwd: root, env: { ...process.env, TZ: timezone }, encoding: 'utf8', timeout: 120000, maxBuffer: 8 * 1024 * 1024 });
++    save(`${directory}.log`, `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ?? ''}`);
++    assert.equal(result.status, 0, `${timezone}: ${result.stderr}`);
++  }
++  const chicago = JSON.parse(fs.readFileSync(path.join(output, 'chicago/measurements.json'), 'utf8'));
++  const utc = JSON.parse(fs.readFileSync(path.join(output, 'utc/measurements.json'), 'utf8'));
++  assert.deepEqual(chicago.controls, utc.controls);
++  const rows = chicago.rows.flatMap((row, index) => {
++    const other = utc.rows[index];
++    assert.equal(row.id, other.id); assert.deepEqual(row.request, other.request);
++    assert.deepEqual(row.result.artifact, other.result.artifact, `${row.id}: UTC output must be byte-identical across host zones`);
++    return row.svgs.map((asset, assetIndex) => {
++      assert.deepEqual(asset, other.svgs[assetIndex]);
++      return { case: row.id, object: row.object, framework: row.framework, context: row.context, brand: row.brand, theme: row.theme, source: row.source, sourceSha256: row.sourceSha256, requestSha256: row.requestSha256, sameOperand: true, crossTimezoneEqual: true, ...asset, chicagoRaw: `chicago/${asset.raw}`, utcRaw: `utc/${asset.raw}` };
++    });
++  });
++  assert.equal(rows.length, 25);
++  assert(rows.every(row => row.changed), 'Every declared temporal placement SVG must be independently attributed.');
++  save('migration.json', { schemaVersion: 1, missionId: 's196-m05', builderSelfCertified: false, reason: 'Temporal axes render in UTC; retained s195 requests and historical bytes are unchanged.', timezones: ['America/Chicago', 'UTC'], counts: { requests: cases.length, temporalAssets: rows.length, changed: rows.filter(row => row.changed).length, crossTimezoneEqual: rows.length, unchangedNominalControls: chicago.controls.length }, rows, controls: chicago.controls, controlsSourceSha256: chicago.controlsSourceSha256 });
++  console.log(JSON.stringify({ requests: cases.length, changedTemporalAssets: rows.length, crossTimezoneEqual: true, unchangedNominalControls: chicago.controls.length }));
++}
+diff --git a/scripts/product-reality/s196-temporal-probe.ts b/scripts/product-reality/s196-temporal-probe.ts
+new file mode 100644
+index 00000000..d6434bdf
+--- /dev/null
++++ b/scripts/product-reality/s196-temporal-probe.ts
+@@ -0,0 +1,140 @@
++#!/usr/bin/env tsx
++/** Capture actual temporal pixels in one timezone, then compare retained bytes. */
++import assert from 'node:assert/strict';
++import { createHash } from 'node:crypto';
++import fs from 'node:fs';
++import path from 'node:path';
++import { fileURLToPath } from 'node:url';
++import type { VizRenderInput } from '../../packages/mcp-server/src/schemas/generated.js';
++
++const hash = (bytes: string | Buffer): string => createHash('sha256').update(bytes).digest('hex');
++const serialize = (value: unknown): string => JSON.stringify(value, null, 2) + '\n';
++type RequestCell = { id: string; identity: string; request: VizRenderInput; registrySvgHash: string };
++type Requests = { schemaVersion: 1; cells: RequestCell[] };
++type Observation = RequestCell & {
++  directory: string; svgHash: string;
++  echarts: { optionHash: string; status: 'rendered'; svgHash: string } | { optionHash: string; status: 'unavailable'; error: { name: string; code?: string; message: string } };
++};
++type Capture = { schemaVersion: 1; timezone: string; resolvedTimezone: string; nodeVersion: string; requestsSha256: string; cells: Observation[] };
++
++export function assertTemporalPopulation(cells: Array<Pick<RequestCell, 'id' | 'identity' | 'request'>>): void {
++  const expected = ['line', 'area'].flatMap(identity => ['A', 'B'].flatMap(brand => ['light', 'dark', 'hc'].map(theme => `${identity}/${theme}/${brand}`)));
++  expected.push(...['A', 'B'].flatMap(brand => ['light', 'dark'].map(theme => `pattern:viz:running-total-area/${theme}/${brand}`)));
++  assert.equal(cells.length, 16, 'Exactly 16 temporal registry cells are required');
++  assert.deepEqual(cells.map(cell => `${cell.identity}/${cell.request.theme}/${cell.request.brand}`).sort(), expected.sort());
++  assert.equal(new Set(cells.map(cell => cell.id)).size, 16, 'Temporal cell IDs must be unique');
++  assert(cells.every(cell => /^[a-zA-Z0-9_/-]+$/.test(cell.id) && !cell.id.includes('..')));
++}
++
++export async function captureTemporal(requestsFile: string, out: string): Promise<Capture> {
++  assert(!fs.existsSync(out), 'Capture output exists; preserve earlier evidence by choosing a new directory');
++  const requestsBytes = fs.readFileSync(requestsFile);
++  const requests = JSON.parse(requestsBytes.toString()) as Requests;
++  assert.equal(requests.schemaVersion, 1); assertTemporalPopulation(requests.cells);
++  assert(['America/Chicago', 'UTC'].includes(process.env.TZ ?? ''), 'Set an explicit probe timezone');
++  const { handle: render } = await import('../../packages/mcp-server/src/tools/viz.render.js');
++  const { getAjv } = await import('../../packages/mcp-server/src/lib/ajv.js');
++  const { renderEChartsToSvg, normalizeEChartsSvg, getEChartsRenderWorkerState } = await import('@oods/viz-render');
++  const inputSchema = JSON.parse(fs.readFileSync(new URL('../../packages/mcp-server/src/schemas/viz.render.input.json', import.meta.url), 'utf8'));
++  const validate = getAjv().getSchema(inputSchema.$id) ?? getAjv().compile(inputSchema);
++  const result: Capture = { schemaVersion: 1, timezone: process.env.TZ!, resolvedTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone, nodeVersion: process.version, requestsSha256: hash(requestsBytes), cells: [] };
++  fs.mkdirSync(out, { recursive: true });
++  for (const cell of requests.cells) {
++    const directory = path.join('cells', cell.id);
++    const destination = path.join(out, directory);
++    fs.mkdirSync(destination, { recursive: true });
++    fs.writeFileSync(path.join(destination, 'request.json'), serialize(cell.request));
++    const admitted = structuredClone(cell.request);
++    assert(validate(admitted), `${cell.id}: request boundary rejected ${JSON.stringify(validate.errors)}`);
++    fs.writeFileSync(path.join(destination, 'admitted-request.json'), serialize(admitted));
++    // JSON projection captures what crosses the tools/call boundary, including
++    // removal of non-transportable tooltip formatter functions.
++    const rendered = JSON.parse(JSON.stringify(await render(admitted)));
++    fs.writeFileSync(path.join(destination, 'response.json'), serialize(rendered));
++    assert.equal(rendered.status, 'ok', `${cell.id}: ${JSON.stringify(rendered.errors)}`);
++    assert(rendered.svg && rendered.normalizedSpec && rendered.echartsSpec, `${cell.id}: both declared compiler outputs and real primary SVG are required`);
++    assert.equal(hash(rendered.svg), rendered.svgHash);
++    fs.writeFileSync(path.join(destination, 'primary.svg'), rendered.svg);
++    const optionBytes = serialize(rendered.echartsSpec);
++    fs.writeFileSync(path.join(destination, 'echarts-option.json'), optionBytes);
++    let echarts: Observation['echarts'];
++    try {
++      const svg = normalizeEChartsSvg(await renderEChartsToSvg(rendered.echartsSpec, { width: 600, height: 400 }));
++      assert(svg.includes('<svg'), `${cell.id}: ECharts returned no SVG`);
++      fs.writeFileSync(path.join(destination, 'echarts.svg'), svg);
++      echarts = { optionHash: hash(optionBytes), status: 'rendered', svgHash: hash(svg) };
++    } catch (error) {
++      const typed = error as Error & { code?: string };
++      // Availability is secondary to the complete 16-cell public SVG proof;
++      // typed renderer limitations remain explicit and must match across zones.
++      assert(typed.name === 'EChartsRenderError' && typed.code === 'ECHARTS_UNSUPPORTED_OPTION'
++        && typed.message === 'Unsupported ECharts SSR series type: "line".', `${cell.id}: unexpected ECharts failure: ${typed.stack}`);
++      echarts = { optionHash: hash(optionBytes), status: 'unavailable', error: { name: typed.name, code: typed.code, message: typed.message } };
++      fs.writeFileSync(path.join(destination, 'echarts-error.json'), serialize(echarts.error));
++    }
++    result.cells.push({ ...cell, directory, svgHash: rendered.svgHash, echarts });
++    fs.writeFileSync(path.join(out, 'observations.json'), serialize(result));
++  }
++  const lifecycle = await getEChartsRenderWorkerState();
++  fs.writeFileSync(path.join(out, 'echarts-worker.json'), serialize(lifecycle));
++  assert.equal(lifecycle.activeCharts, 0); assert.equal(lifecycle.activeJobs, 0);
++  assert.equal(lifecycle.chartsCreated, lifecycle.chartsDisposed);
++  console.log(serialize({ status: 'captured', timezone: result.timezone, cells: result.cells.length, echartsRendered: result.cells.filter(cell => cell.echarts.status === 'rendered').length, out }));
++  return result;
++}
++
++/** A report flag cannot substitute for equality of the actual retained SVG bytes. */
++export function compareTemporal(leftFile: string, rightFile: string) {
++  const read = (file: string): Capture => JSON.parse(fs.readFileSync(file, 'utf8')) as Capture;
++  const left = read(leftFile), right = read(rightFile);
++  assertTemporalPopulation(left.cells); assertTemporalPopulation(right.cells);
++  assert.equal(left.timezone, 'America/Chicago'); assert.equal(right.timezone, 'UTC');
++  assert.equal(left.requestsSha256, right.requestsSha256);
++  const content = (file: string, cell: Observation, name: string): string => fs.readFileSync(path.join(path.dirname(file), cell.directory, name), 'utf8');
++  const checked = (file: string, cell: Observation) => {
++    const response = JSON.parse(content(file, cell, 'response.json'));
++    const svg = content(file, cell, 'primary.svg');
++    assert.equal(response.status, 'ok'); assert.equal(svg, response.svg); assert.equal(hash(svg), response.svgHash); assert.equal(hash(svg), cell.svgHash);
++    assert.deepEqual(JSON.parse(content(file, cell, 'request.json')), cell.request);
++    const option = content(file, cell, 'echarts-option.json');
++    assert.deepEqual(JSON.parse(option), response.echartsSpec); assert.equal(hash(option), cell.echarts.optionHash);
++    const echartsSvg = cell.echarts.status === 'rendered' ? content(file, cell, 'echarts.svg') : undefined;
++    if (echartsSvg !== undefined) assert.equal(hash(echartsSvg), (cell.echarts as { svgHash: string }).svgHash);
++    else assert.deepEqual(JSON.parse(content(file, cell, 'echarts-error.json')), (cell.echarts as { error: unknown }).error);
++    return { svg, option, echartsSvg };
++  };
++  const rows = left.cells.map(cell => {
++    const other = right.cells.find(candidate => candidate.id === cell.id)!;
++    assert(other); assert.deepEqual(cell.request, other.request); assert.equal(cell.registrySvgHash, other.registrySvgHash);
++    const a = checked(leftFile, cell), b = checked(rightFile, other);
++    const errorA = cell.echarts.status === 'unavailable' ? cell.echarts.error : null;
++    const errorB = other.echarts.status === 'unavailable' ? other.echarts.error : null;
++    return { id: cell.id, identity: cell.identity, theme: cell.request.theme, brand: cell.request.brand,
++      chicagoSvgHash: cell.svgHash, utcSvgHash: other.svgHash, registrySvgHash: cell.registrySvgHash,
++      primarySvgEqual: a.svg === b.svg, registryEqual: cell.svgHash === cell.registrySvgHash && other.svgHash === cell.registrySvgHash,
++      echartsOptionEqual: a.option === b.option, echartsStatusEqual: cell.echarts.status === other.echarts.status,
++      echartsRendered: cell.echarts.status === 'rendered' && other.echarts.status === 'rendered',
++      echartsSvgEqual: a.echartsSvg !== undefined && b.echartsSvg !== undefined ? a.echartsSvg === b.echartsSvg : null,
++      echartsErrorsEqual: JSON.stringify(errorA) === JSON.stringify(errorB) };
++  });
++  const different = rows.filter(row => !row.primarySvgEqual || !row.echartsOptionEqual || !row.echartsStatusEqual || row.echartsSvgEqual === false || !row.echartsErrorsEqual).map(row => row.id);
++  return { schemaVersion: 1, status: different.length ? 'different' : 'equal', left: leftFile, right: rightFile, requestsSha256: left.requestsSha256,
++    cells: rows.length, primaryEqual: rows.filter(row => row.primarySvgEqual).length, registryEqual: rows.filter(row => row.registryEqual).length,
++    echartsOptionsEqual: rows.filter(row => row.echartsOptionEqual).length, echartsRendered: rows.filter(row => row.echartsRendered).length,
++    echartsSvgEqual: rows.filter(row => row.echartsSvgEqual).length, different, rows };
++}
++
++async function main() {
++  const args = process.argv.slice(2);
++  const value = (flag: string): string => { const found = args[args.indexOf(flag) + 1]; assert(args.includes(flag) && found && !found.startsWith('--'), `Missing ${flag}`); return path.resolve(found); };
++  if (args.includes('--compare')) {
++    const result = compareTemporal(value('--left'), value('--right'));
++    const out = value('--out'); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, serialize(result));
++    console.log(serialize(result));
++    assert.equal(result.status, 'equal', 'Cross-timezone SVG equality failed');
++    if (args.includes('--check-registry')) assert.equal(result.registryEqual, 16, 'Temporal probe differs from the current registry');
++  } else await captureTemporal(value('--requests'), value('--out'));
++}
++if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
++  main().catch(error => { console.error(error.stack ?? error); process.exitCode = 1; });
++}
+diff --git a/traits/viz/scale-temporal.trait.ts b/traits/viz/scale-temporal.trait.ts
+index 92dd1a36..e1c9299a 100644
+--- a/traits/viz/scale-temporal.trait.ts
++++ b/traits/viz/scale-temporal.trait.ts
+@@ -7 +7 @@ const ScaleTemporalTrait = {
+-    description: 'Temporal scale definition with timezone awareness.',
++    description: 'Temporal scale metadata with UTC rendering and display-layer timezone declarations.',
+@@ -47 +47 @@ const ScaleTemporalTrait = {
+-      description: 'Olson/IANA timezone identifier used when formatting ticks.',
++      description: 'Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.',
+@@ -97 +97 @@ const ScaleTemporalTrait = {
+-      description: 'Olson/IANA timezone identifier for ticks + tooltips.',
++      description: 'Display-layer timezone metadata only; it does not override UTC rendering.',
+@@ -119 +119 @@ const ScaleTemporalTrait = {
+-      default: 'Temporal scale honoring timezone + "nice" intervals.',
++      default: 'Temporal scale rendered in UTC; timezone is display-layer metadata.',
+diff --git a/traits/viz/scale-temporal.trait.yaml b/traits/viz/scale-temporal.trait.yaml
+index 868cd7aa..c019e9ae 100644
+--- a/traits/viz/scale-temporal.trait.yaml
++++ b/traits/viz/scale-temporal.trait.yaml
+@@ -5,3 +5,2 @@ trait:
+-    Temporal scale definition with timezone awareness and "nice" interval
+-    rounding. Powers chronological encodings across Position, Area, and Line
+-    traits per RDS.7 specification.
++    Temporal scale metadata with UTC rendering and display-layer timezone
++    declarations. The timezone value does not override renderer ticks or tooltips.
+@@ -39 +38 @@ parameters:
+-    description: Olson/IANA timezone identifier used when formatting ticks.
++    description: Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.
+@@ -83 +82 @@ schema:
+-    description: Olson/IANA timezone identifier for ticks + tooltips.
++    description: Display-layer timezone metadata only; it does not override UTC rendering.
+@@ -106 +105 @@ schema:
+-    default: Temporal scale honoring timezone + "nice" intervals.
++    default: Temporal scale rendered in UTC; timezone is display-layer metadata.
+@@ -170 +169 @@ metadata:
+-    screenreader: Scale summary announces date range, timezone, and tick interval.
++    screenreader: Timezone metadata does not imply renderer tick or tooltip conversion.

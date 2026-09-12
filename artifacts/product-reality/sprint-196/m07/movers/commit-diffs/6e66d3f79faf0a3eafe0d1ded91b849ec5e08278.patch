@@ -1,0 +1,73 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 0ab3b7de..e8dffbef 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -1007,0 +1008,3 @@ jobs:
++      - name: Verify portable fixture contracts
++        run: pnpm --filter @oods/mcp-server exec vitest run test/contracts/portable-fixtures.s194.spec.ts --reporter=verbose
++
+diff --git a/scripts/product-reality/s185-audit-closeout.mjs b/scripts/product-reality/s185-audit-closeout.mjs
+index eadde724..7c9e18de 100644
+--- a/scripts/product-reality/s185-audit-closeout.mjs
++++ b/scripts/product-reality/s185-audit-closeout.mjs
+@@ -76,2 +76,2 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' })
+-  const paths = scope => execFileSync('git', ['diff', '--name-only', `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
+-    .trim().split('\n').filter(file => file && !testPath(file)).sort();
++  const paths = scope => execFileSync('git', ['diff', '--name-only', '-z', `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
++    .split('\0').filter(file => file && !testPath(file)).sort();
+@@ -83,2 +83,4 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' })
+-    result.patch = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
+-    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(Boolean).sort();
++    // Freeze only the human-readable patch representation to the retained format;
++    // every path inventory uses -z and never relies on quotePath configuration.
++    result.patch = execFileSync('git', ['-c', 'core.quotepath=false', 'diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
++    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean).sort();
+@@ -87,0 +90,18 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' })
++// --no-renames makes every name-status record a status/path pair; tabs and
++// newlines inside paths must never be interpreted as record separators.
++export function auditEvidenceChanges({ root, executionHead, reviewHead }) {
++  const fields = execFileSync('git', ['diff', '--name-status', '--no-renames', '-z', `${executionHead}..${reviewHead}`],
++    { cwd: root, encoding: 'utf8' }).split('\0');
++  assert.equal(fields.pop(), '', 'Git evidence changes must be NUL-terminated');
++  assert.equal(fields.length % 2, 0, 'Git evidence changes must contain status/path pairs');
++  return fields.reduce((changes, field, index) => {
++    if (index % 2 === 0) changes.push({ status: field, path: fields[index + 1] });
++    return changes;
++  }, []);
++}
++
++export function auditCiChangedPaths({ root, head, implementation, scope }) {
++  return execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', head, implementation, '--', ...scope],
++    { cwd: root, encoding: 'utf8' }).split('\0').filter(file => file && !testPath(file)).sort();
++}
++
+@@ -1819,2 +1839 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-    const changes = execFileSync('git', ['diff', '--name-status', '--no-renames', `${executionHead}..${reviewHead}`], { cwd: root, encoding: 'utf8' })
+-      .trim().split('\n').filter(Boolean).map(line => { const [status, file] = line.split('\t'); return { status, path: file }; });
++    const changes = auditEvidenceChanges({ root, executionHead, reviewHead });
+@@ -1836 +1855 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
+-      ciChangedPaths: (head, implementation, scope) => execFileSync('git', ['diff', '--name-only', '--no-renames', head, implementation, '--', ...scope], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(file => file && !testPath(file)).sort(),
++      ciChangedPaths: (head, implementation, scope) => auditCiChangedPaths({ root, head, implementation, scope }),
+diff --git a/scripts/product-reality/s185-sprint-wide-movers.mjs b/scripts/product-reality/s185-sprint-wide-movers.mjs
+index 4ecb719d..3c91450e 100644
+--- a/scripts/product-reality/s185-sprint-wide-movers.mjs
++++ b/scripts/product-reality/s185-sprint-wide-movers.mjs
+@@ -2,0 +3 @@ import fs from 'node:fs';
++import { execFileSync } from 'node:child_process';
+@@ -5 +6 @@ import { fileURLToPath } from 'node:url';
+-import { CANONICAL_ADVERTISED_SCOPE, gitDiffPaths, gitFileBytes, resolveCommit } from './s184-m07-reconnect.mjs';
++import { CANONICAL_ADVERTISED_SCOPE, gitFileBytes, isTestPath, resolveCommit } from './s184-m07-reconnect.mjs';
+@@ -73,0 +75,8 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
++// Git's text path format quotes Unicode and control characters. Preserve the
++// actual paths for both current ranges and historical omission replays.
++function gitDiffPaths(base, head, scope, { repositoryRoot, excludeTests }) {
++  return execFileSync('git', ['diff', '--name-only', '-z', `${base}..${head}`, '--', ...scope],
++    { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
++    .split('\0').filter(file => file && (!excludeTests || !isTestPath(file))).sort();
++}
++
+@@ -87,2 +96,2 @@ export function deriveRange(base, head, root = ROOT, publicScope = PUBLIC_RUNTIM
+-    canonicalCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...CANONICAL_ADVERTISED_SCOPE],
+-    publicCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...publicScope],
++    canonicalCommand: ['git', 'diff', '--name-only', '-z', `${resolvedBase}..${resolvedHead}`, '--', ...CANONICAL_ADVERTISED_SCOPE],
++    publicCommand: ['git', 'diff', '--name-only', '-z', `${resolvedBase}..${resolvedHead}`, '--', ...publicScope],

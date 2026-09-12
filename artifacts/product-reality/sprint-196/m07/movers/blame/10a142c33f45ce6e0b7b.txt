@@ -1,0 +1,91 @@
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 19 19 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789202064
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789202064
+committer-tz -0500
+summary test(release): freeze Sprint 196 proof verifiers and source checks
+previous 2bae454ad3094042c9f0113e1ef852c9d440a088 scripts/product-reality/s185-suite-accounting.mjs
+filename scripts/product-reality/s185-suite-accounting.mjs
+	export const S196_SUITES = S192_SUITES;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 215 215 4
+	  if (sprintId === 'sprint-196') return /^artifacts\/product-reality\/sprint-196\/m07\/(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)$/.test(file)
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 216 216
+	    || /^artifacts\/product-reality\/sprint-196\/m07\/final-archive\/.*\.(?:json|log|md|sha256)$/.test(file)
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 217 217
+	    || /^artifacts\/product-reality\/sprint-196\/m07\/movers\/.*\.(?:json|log|md|patch|txt)$/.test(file)
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 218 218
+	    || /^artifacts\/product-reality\/sprint-196\/m07\/e2e-node(?:20|24)\.json$/.test(file);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 242 242 22
+	/** Git --no-renames emits alternating status and path fields; paths are never lines. */
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 243 243
+	export function parseAccountingChanges(output) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 244 244
+	  const text = Buffer.isBuffer(output) ? output.toString('utf8') : output;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 245 245
+	  if (text === '') return [];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 246 246
+	  assert(text.endsWith('\0'), 'Git name-status output must be NUL terminated.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 247 247
+	  const fields = text.slice(0, -1).split('\0');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 248 248
+	  assert.equal(fields.length % 2, 0, 'Git name-status output has an incomplete record.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 249 249
+	  const rows = [];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 250 250
+	  for (let index = 0; index < fields.length; index += 2) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 251 251
+	    const status = fields[index], file = fields[index + 1];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 252 252
+	    assert(/^[ADMTUXB]$/.test(status), `Unexpected --no-renames status: ${status}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 253 253
+	    assert(file && !path.posix.isAbsolute(file) && !file.split('/').includes('..'), 'Invalid repository path in Git output.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 254 254
+	    rows.push({ status, path: file });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 255 255
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 256 256
+	  return rows;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 257 257
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 258 258
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 259 259
+	export function readAccountingChanges(root, before, after) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 260 260
+	  return parseAccountingChanges(execFileSync('git', ['diff', '--name-status', '-z', '--no-renames', before, after],
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 261 261
+	    { cwd: root, maxBuffer: 64 * 1024 * 1024 }));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 262 262
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 263 263
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 388 388 1
+	  capturePath = sprintId === 'sprint-196' ? 'artifacts/product-reality/sprint-196/m07/five-suite-closeout/four-suite-baseline.json' : sprintId === 'sprint-195' ? 'artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json' : sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 390 390 3
+	  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196'].includes(sprintId), 'Unsupported sprint.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 391 391
+	  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-196' ? 's196-m07' : sprintId === 'sprint-195' ? 's195-m07' : sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 392 392
+	  const baselinePaths = sprintId === 'sprint-196' ? { sprint195Closeout: baselinePath ?? 'artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-195' ? { sprint194Closeout: baselinePath ?? 'artifacts/product-reality/sprint-194/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-194' ? { sprint193Closeout: baselinePath ?? 'artifacts/product-reality/sprint-193/m07/five-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-193'
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 415 415 1
+	  const changedPaths = (before, after) => readAccountingChanges(root, before, after);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 438 438 1
+	      const selected = capture.suiteSelection === 'all' ? (['sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196'].includes(aggregate.sprintId) ? S192_SUITES : SUITES) : capture.suiteSelection;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 519 519 1
+	  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196'].includes(sprintId)) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 568 568 1
+	      assert(['sprint-190','sprint-191','sprint-192','sprint-193','sprint-194','sprint-196'].includes(sprintId));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 582 582 1
+	    for (const currentRun of closeout.runs) for (const baselineRun of baseline.runs) for (const suite of (['sprint-193', 'sprint-194', 'sprint-195', 'sprint-196'].includes(sprintId) ? S192_SUITES : SUITES)) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 640 640 1
+	  const goldenAttribution = sprintId === 'sprint-196' ? json('artifacts/product-reality/sprint-196/m07/golden-attribution.json') : sprintId === 'sprint-195' ? json('artifacts/product-reality/sprint-195/m07/golden-attribution.json') : sprintId === 'sprint-194' ? json('artifacts/product-reality/sprint-194/m07/golden-attribution.json') : sprintId === 'sprint-193' ? json('artifacts/product-reality/sprint-193/m07/golden-attribution.json') : sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 656 656 1
+	  return { schemaVersion: '1.0.0', mission: missionId, kind: ['sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196'].includes(sprintId) ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 681 681 1
+	    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-196' ? 's196-m07' : sprintId === 'sprint-195' ? 's195-m07' : sprintId === 'sprint-194' ? 's194-m07' : sprintId === 'sprint-193' ? 's193-m07' : sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 688 688 1
+	  const output = path.resolve(ROOT, argument('--output') ?? (sprintId === 'sprint-196' ? 'artifacts/product-reality/sprint-196/m07/closeout/suite-accounting.json' : sprintId === 'sprint-195' ? 'artifacts/product-reality/sprint-195/m07/closeout/suite-accounting.json' : sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/accounting.json` : `${EVIDENCE_ROOT}/accounting.json`));

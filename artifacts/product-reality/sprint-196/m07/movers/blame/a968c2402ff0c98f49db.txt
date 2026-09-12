@@ -1,0 +1,274 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/area-chart.md
+filename docs/history/components/area-chart.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 124
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/area-chart.md
+	# Area Chart Component
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	## Overview
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	`<AreaChart>` renders continuous magnitude over time (or ordered categories) and brings the RDV.4 accessibility trio along for the ride. The component composes the normalized viz spec with the new stack transform so multi-series payloads gain deterministic cumulative bands regardless of renderer. Key capabilities include:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- **Stack transform support** – `type: 'stack'` transforms are executed before rendering, producing cumulative start/end fields for Vega-Lite and stack metadata for ECharts. Mixed-positive/negative data keeps a zero baseline.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- **Dual renderers** – Auto-selects Vega-Lite for temporal specs and falls back to ECharts when requested (or when `renderer="echarts"`). Both respect stack metadata, tooltip traits, and highlight interactions.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	- **Motion guardrails** – Applies opacity transitions using motion tokens when data resolves, but automatically disables animation when `prefers-reduced-motion` is set or `animate={false}`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	- **Accessibility surfaces** – Ships with `ChartDescription` (narrative) and `AccessibleTable` (series/dimension columns). Table rows can expose keyboard navigation for dense datasets.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	import type { NormalizedVizSpec } from '@oods/viz';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	import { AreaChart } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	const stackedSpec: NormalizedVizSpec = {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	  $schema: 'https://oods.dev/viz-spec/v1',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	  id: 'example:viz:area:stacked',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	  name: 'Channel Revenue Mix',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  data: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	    values: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	      { month: '2025-08', channel: 'Self-Serve', revenue: 520 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	      { month: '2025-08', channel: 'Sales', revenue: 340 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	      { month: '2025-09', channel: 'Self-Serve', revenue: 560 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	      { month: '2025-09', channel: 'Sales', revenue: 370 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	      { month: '2025-10', channel: 'Self-Serve', revenue: 610 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	      { month: '2025-10', channel: 'Sales', revenue: 420 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	    ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	  transforms: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	    { type: 'calculate', params: { field: 'month', format: '%Y-%m' } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	    {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	      type: 'stack',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	      params: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	        stack: 'revenue',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	        groupby: ['month'],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	        sort: [{ field: 'channel', order: 'ascending' }],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	        as: ['stack_start', 'stack_end'],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	      },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	  ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	  marks: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	    {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	      trait: 'MarkArea',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	      encodings: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	        x: { field: 'month', trait: 'EncodingPositionX', channel: 'x', scale: 'temporal', title: 'Month' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	        y: { field: 'revenue', trait: 'EncodingPositionY', channel: 'y', scale: 'linear', title: 'Revenue ($k)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	        color: { field: 'channel', trait: 'EncodingColor', channel: 'color', legend: { title: 'Channel' } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	      },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	      options: { baseline: 'zero', stack: 'revenue', curve: 'monotone' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	  ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	  encoding: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	    x: { field: 'month', trait: 'EncodingPositionX', channel: 'x', scale: 'temporal', title: 'Month' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	    y: { field: 'revenue', trait: 'EncodingPositionY', channel: 'y', scale: 'linear', title: 'Revenue ($k)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	    color: { field: 'channel', trait: 'EncodingColor', channel: 'color', legend: { title: 'Channel' } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	  config: { theme: 'brand-a', layout: { width: 720, height: 360, padding: 24 } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	  a11y: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	    description: 'Stacked area chart showing how self-serve and sales channels contribute to total revenue.',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	    ariaLabel: 'Channel revenue stacked area chart',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	    narrative: { summary: 'Self-serve gains outpace sales growth entering October.', keyFindings: ['Sales climbs 80k', 'Self-serve adds 90k over the window'] },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	    tableFallback: { enabled: true, caption: 'Monthly revenue by channel' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	  portability: { fallbackType: 'table', tableColumnOrder: ['month', 'channel', 'revenue'] },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	};
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	<AreaChart spec={stackedSpec} renderer="auto" />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	## Props
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	| Prop | Type | Default | Description |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	|------|------|---------|-------------|
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	| `spec` | `NormalizedVizSpec` | — | Normalized spec with `MarkArea` and optional `stack` transform. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	| `renderer` | `'auto' \| 'vega-lite' \| 'echarts'` | `'auto'` | Forces a renderer or defers to `selectVizRenderer` heuristics (temporal → Vega-Lite). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	| `vegaRenderer` | `'svg' \| 'canvas'` | `'svg'` | Forwarded to `vega-embed` when Vega-Lite is selected. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	| `echartsRenderer` | `'canvas' \| 'svg'` | `'canvas'` | Renderer passed to `echarts.init`. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	| `showTable` | `boolean` | `true` | Toggles the `AccessibleTable` fallback. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	| `showDescription` | `boolean` | `true` | Toggles the narrative panel (`ChartDescription`). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	| `responsive` | `boolean` | `true` | Enables width measurement via `ResizeObserver`; height preserves the ratio defined in `spec.config.layout`. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	| `minHeight` | `number` | `320` | Floor applied to the chart surface when responsive mode is active. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	| `animate` | `boolean` | `true` | Controls the opacity ramp once the renderer is ready. Automatically ignored when `prefers-reduced-motion` is true. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	| `enableKeyboardNavigation` | `boolean` | `true` | Adds `tabIndex` + row summaries to the table fallback for keyboard traversal. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	## Stack Transform Semantics
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	- Declare a `type: 'stack'` transform to opt into cumulative behaviour. The adapter looks for `params.stack` (measure field), `params.groupby` (dimension), optional `params.sort`, and `params.as` for start/end field names. Example:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	```json
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 93 95
+	{
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 94 96
+	  "type": "stack",
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 95 97
+	  "params": {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 96 98
+	    "stack": "revenue",
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 97 99
+	    "groupby": ["month"],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 98 100
+	    "sort": [{ "field": "segment", "order": "ascending" }],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 99 101
+	    "as": ["stack_start", "stack_end"]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 100 102
+	  }
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 101 103
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 102 104
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 103 105
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 104 106
+	- Vega-Lite receives the derived `stack_start`/`stack_end` fields to drive `y`/`y2`, guaranteeing consistent stacking even when Vega’s defaults change.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 105 107
+	- ECharts receives the same inline data plus a synthesized `series.stack` name so the renderer accumulates values without additional authoring.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 106 108
+	- Negative values receive their own accumulator so the zero baseline stays intact.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 107 109
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 108 110
+	## Renderer Behaviour
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 109 111
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 110 112
+	- **Vega-Lite**: responsive width/height overrides keep axes crisp. Motion is a simple opacity ramp controlled by motion tokens and suppressed when reduced-motion is active.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 111 113
+	- **ECharts**: instances are initialized with `useDirtyRect` for better performance and resize whenever the responsive observer fires. Stack metadata automatically sets `series.stack` and `yAxis.min` respects the `baseline` specified in the mark options (`'zero'` or `'min'`).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 112 114
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 113 115
+	## Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 114 116
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 115 117
+	- The rendered chart remains `aria-hidden`; screen readers rely on `VizContainer`’s `aria-label`, the narrative summary, and the data table.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 116 118
+	- `AccessibleTable` surfaces the dimension (`groupby` field), series (color channel), and measure columns. When `enableKeyboardNavigation` is true, rows receive `tabIndex=0` plus a synthesized `aria-label` that describes the point.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 117 119
+	- Stack transform guardrails satisfy RDV.4’s requirement that stacked charts expose the baseline range in fallback tables.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 118 120
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 119 121
+	## Testing & Guardrails
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 120 122
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 121 123
+	- Unit tests live in `tests/components/viz/AreaChart.test.tsx` and cover renderer selection, stack encoding, and motion toggles.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 122 124
+	- Accessibility coverage is enforced with `tests/components/viz/AreaChart.a11y.test.tsx`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 123 125
+	- The stack transform algorithm itself is covered by `tests/viz/stack-transform.test.ts`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 124 126
+	- When adding new specs, run `pnpm test --filter AreaChart` (or `pnpm local:pr-check`) to verify vitest + axe coverage plus `pnpm storybook` to review the Storybook variants: **Single**, **Stacked**, **Overlapping**, and **WithGaps**.

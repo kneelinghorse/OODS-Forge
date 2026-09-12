@@ -1,0 +1,682 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/empty-state.md
+filename docs/history/components/empty-state.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 328
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/empty-state.md
+	# EmptyState Component
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	## Overview
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	The `EmptyState` component provides a consistent, accessible layout for moments when there is no data to display. It supports multiple scenarios including first-time use, no search results, task completion, and error states.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	## Anatomy
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	An EmptyState consists of the following slots (all optional except headline):
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	1. **Illustration** (optional): Large visual element (SVG or image)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	2. **Icon** (optional): Smaller icon shown if no illustration provided
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	3. **Headline** (required): Main title text, rendered as `<h2>`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	4. **Body** (optional): Supporting description text
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	5. **Primary action** (optional): Main button/link rendered via `primaryAction`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	6. **Secondary action** (optional): Supporting action rendered via `secondaryAction`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	7. **Additional actions** (optional): Custom markup appended through the `actions` slot
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	### Basic Example
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	import { EmptyState } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	import { Button } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	  headline="No items found"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	  body="There are no items to display at this time."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	  primaryAction={<Button>Create Item</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	### With Intent (Statusables Alignment)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	The `intent` prop maps to Statusables tokens for consistent theming:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	  headline="All caught up!"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	  body="You've completed all tasks."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	  intent="success"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	  icon={<CheckIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	Available intents: `neutral` (default), `info`, `success`, `warning`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	### With Illustration
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	  illustration={<MyCustomSVG />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	  headline="Welcome to your workspace"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	  body="Get started by creating your first project."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	  primaryAction={<Button>Create Project</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	  secondaryAction={<Button variant="outline">Watch Tour</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	## Props
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	| Prop | Type | Default | Description |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	| --- | --- | --- | --- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	| `headline` | `ReactNode` | (required) | Main title content rendered with the configured `headlineLevel`. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	| `body` | `ReactNode` | `undefined` | Supporting descriptive copy under the headline. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	| `illustration` | `ReactNode` | `undefined` | Large hero illustration (SVG/image/Canvas). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	| `icon` | `ReactNode` | `undefined` | Compact glyph shown when no illustration is provided. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	| `primaryAction` | `ReactNode` | `undefined` | Primary call-to-action element, rendered first in the action stack. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	| `secondaryAction` | `ReactNode` | `undefined` | Secondary call-to-action rendered after the primary action. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	| `actions` | `ReactNode` | `undefined` | Additional custom action markup appended after the primary/secondary slots. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	| `intent` | `EmptyStateIntent` | `'neutral'` | Visual intent mapping to Statusables tone tokens. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	| `status` | `string` | `undefined` | Statusables key overriding tone/icon mapping when provided. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	| `domain` | `StatusDomain` | `'subscription'` | Statusables domain used when resolving `status`. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	| `headlineLevel` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h2'` | Heading level applied to the headline element. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	| `className` | `string` | `undefined` | Additional CSS classes for the root element. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	| `...rest` | `HTMLAttributes<HTMLDivElement>` | — | Standard div attributes (id, data-*, aria-*, etc.). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	## Design Tokens
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	`EmptyState` resolves semantic component tokens and exposes CSS custom properties so themes can override spacing, typography, and tone while staying within Statusables guardrails.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	- **Container:** `--empty-state-padding`, `--empty-state-padding-mobile`, `--empty-state-max-width`, `--empty-state-gap`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	- **Content spacing:** `--empty-state-content-gap`, `--empty-state-illustration-gap`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	- **Typography:** `--empty-state-headline-font-size`, `--empty-state-headline-font-weight`, `--empty-state-headline-line-height`, `--empty-state-body-font-size`, `--empty-state-body-line-height`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	- **Actions:** `--empty-state-actions-gap`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	- **Statusables mapping:** `--empty-state-icon-background`, `--empty-state-icon-foreground`, `--empty-state-icon-border`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	Default values trace back to semantic tokens (for example `--empty-state-padding → var(--cmp-spacing-inset-spacious, var(--sys-spacing-inset-xl))`). When `intent` or `status` is supplied, the icon variables resolve to `var(--cmp-status-{tone}-surface|text|border)`, ensuring tone alignment across components.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	## Content Guidelines
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 93 95
+	### Headline
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 94 96
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 95 97
+	✅ **Do:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 96 98
+	- Keep it short and scannable (3-7 words)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 97 99
+	- Start with a verb for action-oriented states ("Create your first...", "Start building...")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 98 100
+	- Be specific about what's missing ("No active subscriptions")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 99 101
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 100 102
+	❌ **Don't:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 101 103
+	- Use vague language ("Nothing here")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 102 104
+	- Write long sentences
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 103 105
+	- End with punctuation (unless it's a question)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 104 106
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 105 107
+	**Examples:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 106 108
+	- ✅ "No search results found"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 107 109
+	- ✅ "Welcome to your dashboard"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 108 110
+	- ❌ "There doesn't seem to be anything here at the moment."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 109 111
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 110 112
+	### Body Text
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 111 113
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 112 114
+	✅ **Do:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 113 115
+	- Explain why the area is empty
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 114 116
+	- Provide context or next steps
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 115 117
+	- Keep it concise (1-2 sentences)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 116 118
+	- Use sentence case with proper punctuation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 117 119
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 118 120
+	❌ **Don't:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 119 121
+	- Repeat the headline verbatim
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 120 122
+	- Write multiple paragraphs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 121 123
+	- Use technical jargon
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 122 124
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 123 125
+	**Examples:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 124 126
+	- ✅ "Try adjusting your filters or search terms to find what you're looking for."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 125 127
+	- ✅ "Projects help you organize work and collaborate with your team."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 126 128
+	- ❌ "The query returned zero results from the database."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 127 129
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 128 130
+	### Call-to-Action (Actions)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 129 131
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 130 132
+	✅ **Do:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 131 133
+	- Drive the main next step through the `primaryAction` slot
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 132 134
+	- Use action verbs ("Create", "Browse", "Learn More")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 133 135
+	- Reserve `secondaryAction` for a single alternate or supporting path
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 134 136
+	- Move tertiary links into the `actions` slot (text links, help anchors)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 135 137
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 136 138
+	❌ **Don't:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 137 139
+	- Stack more than two primary buttons
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 138 140
+	- Use ambiguous labels ("Click here", "OK")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 139 141
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 140 142
+	## Usage Scenarios
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 141 143
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 142 144
+	### 1. First-Time Use (Onboarding)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 143 145
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 144 146
+	Encourage users to try a feature they haven't used yet.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 145 147
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 146 148
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 147 149
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 148 150
+	  icon={<FolderIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 149 151
+	  headline="Welcome to your workspace"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 150 152
+	  body="Get started by creating your first project."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 151 153
+	  intent="neutral"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 152 154
+	  primaryAction={<Button>Create Project</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 153 155
+	  secondaryAction={<Button variant="ghost">Learn More</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 154 156
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 155 157
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 156 158
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 157 159
+	### 2. No Search Results
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 158 160
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 159 161
+	Help users refine their search or explore alternatives.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 160 162
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 161 163
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 162 164
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 163 165
+	  icon={<SearchIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 164 166
+	  headline="No results found"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 165 167
+	  body="We couldn't find anything matching your search. Try different keywords or clear your filters."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 166 168
+	  intent="info"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 167 169
+	  primaryAction={<Button>Browse All</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 168 170
+	  secondaryAction={<Button variant="outline">Clear Filters</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 169 171
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 170 172
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 171 173
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 172 174
+	### 3. Task Completion (Success)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 173 175
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 174 176
+	Celebrate when users have finished all tasks.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 175 177
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 176 178
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 177 179
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 178 180
+	  icon={<CheckIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 179 181
+	  headline="All caught up!"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 180 182
+	  body="You've completed all pending tasks. We'll notify you when new tasks arrive."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 181 183
+	  intent="success"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 182 184
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 183 185
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 184 186
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 185 187
+	### 4. Error / No Access
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 186 188
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 187 189
+	Inform users when they lack permissions or encounter an error.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 188 190
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 189 191
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 190 192
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 191 193
+	  icon={<LockIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 192 194
+	  headline="Access denied"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 193 195
+	  body="You don't have permission to view this content. Contact your administrator."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 194 196
+	  intent="warning"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 195 197
+	  primaryAction={<Button variant="outline">Contact Admin</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 196 198
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 197 199
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 198 200
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 199 201
+	### 5. Zero Data State
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 200 202
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 201 203
+	Simple case when a list/table has no items.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 202 204
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 203 205
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 204 206
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 205 207
+	  headline="No items to display"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 206 208
+	  body="Create your first item to get started."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 207 209
+	  primaryAction={<Button>Create Item</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 208 210
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 209 211
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 210 212
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 211 213
+	## Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 212 214
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 213 215
+	### Semantic Structure
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 214 216
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 215 217
+	- The headline renders as an `<h2>` element by default; adjust `headlineLevel` to maintain page hierarchy
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 216 218
+	- Place the EmptyState within a page section that has its own `<h1>`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 217 219
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 218 220
+	### Decorative Images
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 219 221
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 220 222
+	- Illustrations and icons are marked `aria-hidden` since the text provides context
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 221 223
+	- If the icon conveys critical meaning, include descriptive text in the headline/body
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 222 224
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 223 225
+	### Keyboard Navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 224 226
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 225 227
+	- Ensure action buttons are keyboard-accessible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 226 228
+	- Test that focus moves logically through the component
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 227 229
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 228 230
+	### Screen Reader Testing
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 229 231
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 230 232
+	Verify the component announces correctly:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 231 233
+	1. Headline as a level 2 heading
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 232 234
+	2. Body text as paragraph content
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 233 235
+	3. Action buttons with their labels
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 234 236
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 235 237
+	## High Contrast Mode
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 236 238
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 237 239
+	The component supports forced-colors mode:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 238 240
+	- Icon backgrounds receive a visible border
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 239 241
+	- Text colors map to system colors (`CanvasText`)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 240 242
+	- Focus indicators remain visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 241 243
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 242 244
+	Test with: Windows High Contrast Mode or browser DevTools forced-colors emulation.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 243 245
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 244 246
+	## Responsive Behavior
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 245 247
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 246 248
+	### Desktop (> 640px)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 247 249
+	- Centered layout with max-width of 36rem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 248 250
+	- Actions display in a horizontal row
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 249 251
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 250 252
+	### Mobile (≤ 640px)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 251 253
+	- Illustration scales down to 12rem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 252 254
+	- Actions stack vertically, full-width
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 253 255
+	- Reduced padding for smaller screens
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 254 256
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 255 257
+	## Examples in Production
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 256 258
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 257 259
+	### No Active Subscriptions
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 258 260
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 259 261
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 260 262
+	  headline="No active subscriptions"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 261 263
+	  body="Browse our plans to find one that fits your needs."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 262 264
+	  primaryAction={<Button>View Plans</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 263 265
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 264 266
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 265 267
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 266 268
+	### Inbox Zero
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 267 269
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 268 270
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 269 271
+	  icon={<CheckIcon />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 270 272
+	  headline="Inbox empty"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 271 273
+	  body="You're all caught up! No new messages."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 272 274
+	  intent="success"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 273 275
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 274 276
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 275 277
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 276 278
+	### Onboarding Dashboard
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 277 279
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 278 280
+	<EmptyState
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 279 281
+	  illustration={<OnboardingIllustration />}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 280 282
+	  headline="Welcome to Analytics"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 281 283
+	  body="Connect your data sources to start tracking metrics and insights."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 282 284
+	  primaryAction={<Button>Connect Data</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 283 285
+	  secondaryAction={<Button variant="ghost">Watch Tutorial</Button>}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 284 286
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 285 287
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 286 288
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 287 289
+	## Illustration Guidelines
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 288 290
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 289 291
+	### When to Use Illustrations
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 290 292
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 291 293
+	✅ **Use for:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 292 294
+	- Onboarding / first-time states
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 293 295
+	- Brand-reinforcing moments
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 294 296
+	- High-traffic empty states (dashboard, inbox)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 295 297
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 296 298
+	❌ **Avoid for:**
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 297 299
+	- Transient states (search results)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 298 300
+	- Error messages (use icons instead)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 299 301
+	- High-density interfaces
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 300 302
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 301 303
+	### Illustration Best Practices
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 302 304
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 303 305
+	- Keep illustrations simple and on-brand
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 304 306
+	- Use SVG format for scalability
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 305 307
+	- Ensure sufficient color contrast
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 306 308
+	- Max width: 16rem (256px) on desktop
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 307 309
+	- Provide meaningful alt text if the illustration is informative
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 308 310
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 309 311
+	### Icon vs. Illustration
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 310 312
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 311 313
+	| Use Icon When...                  | Use Illustration When...           |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 312 314
+	| --------------------------------- | ---------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 313 315
+	| Space is limited                  | You want to reinforce brand        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 314 316
+	| State is transient (search)       | It's a first-time/onboarding state |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 315 317
+	| Intent mapping is needed (status) | The page is high-traffic           |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 316 318
+	| Message is simple                 | You want to delight the user       |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 317 319
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 318 320
+	## Related Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 319 321
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 320 322
+	- **Banner**: For in-page notifications with status
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 321 323
+	- **Toast**: For transient feedback messages
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 322 324
+	- **Badge**: For compact status indicators
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 323 325
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 324 326
+	## Further Reading
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 325 327
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 326 328
+	- [Empty States in Design Systems](https://atlassian.design/components/empty-state/overview)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 327 329
+	- [Salesforce Empty State Patterns](https://www.lightningdesignsystem.com/components/empty-state/)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 328 330
+	- [WCAG 2.1 AA Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)

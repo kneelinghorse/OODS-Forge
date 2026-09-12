@@ -1,0 +1,588 @@
+2bae454ad3094042c9f0113e1ef852c9d440a088 1 1 289
+author System Systems
+author-mail <systems@example.com>
+author-time 1789200036
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789200036
+committer-tz -0500
+summary feat(release): prepare measured Gate 2 decision packet and publish guard
+filename scripts/product-reality/s196-release-readiness.ts
+	#!/usr/bin/env tsx
+2bae454ad3094042c9f0113e1ef852c9d440a088 2 2
+	/** Gate 2 facts are observations, not publication or licensing decisions. */
+2bae454ad3094042c9f0113e1ef852c9d440a088 3 3
+	import assert from 'node:assert/strict';
+2bae454ad3094042c9f0113e1ef852c9d440a088 4 4
+	import { createHash } from 'node:crypto';
+2bae454ad3094042c9f0113e1ef852c9d440a088 5 5
+	import { execFileSync } from 'node:child_process';
+2bae454ad3094042c9f0113e1ef852c9d440a088 6 6
+	import fs from 'node:fs';
+2bae454ad3094042c9f0113e1ef852c9d440a088 7 7
+	import path from 'node:path';
+2bae454ad3094042c9f0113e1ef852c9d440a088 8 8
+	import { fileURLToPath } from 'node:url';
+2bae454ad3094042c9f0113e1ef852c9d440a088 9 9
+	import yaml from 'js-yaml';
+2bae454ad3094042c9f0113e1ef852c9d440a088 10 10
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 11 11
+	export const FACTS_PATH = 'artifacts/product-reality/sprint-196/m06/release-readiness-facts.json';
+2bae454ad3094042c9f0113e1ef852c9d440a088 12 12
+	export const BASELINE_PATH = 'artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json';
+2bae454ad3094042c9f0113e1ef852c9d440a088 13 13
+	export const PACKET_PATH = 'cmos/planning/forge-gate2-decision-packet.md';
+2bae454ad3094042c9f0113e1ef852c9d440a088 14 14
+	export const START = '<!-- BEGIN GENERATED GATE2 FACTS -->';
+2bae454ad3094042c9f0113e1ef852c9d440a088 15 15
+	export const END = '<!-- END GENERATED GATE2 FACTS -->';
+2bae454ad3094042c9f0113e1ef852c9d440a088 16 16
+	const PORTABLE = 'artifacts/product-reality/sprint-196/m03/ci';
+2bae454ad3094042c9f0113e1ef852c9d440a088 17 17
+	const RELEASE = 'artifacts/product-reality/sprint-196/m05/ci-followthrough';
+2bae454ad3094042c9f0113e1ef852c9d440a088 18 18
+	const FIELDS = ['private', 'license', 'publishConfig', 'files', 'exports', 'bin', 'engines'] as const;
+2bae454ad3094042c9f0113e1ef852c9d440a088 19 19
+	const hash = (bytes: string | Buffer) => createHash('sha256').update(bytes).digest('hex');
+2bae454ad3094042c9f0113e1ef852c9d440a088 20 20
+	const serialize = (value: unknown) => JSON.stringify(value, null, 2) + '\n';
+2bae454ad3094042c9f0113e1ef852c9d440a088 21 21
+	type Json = Record<string, any>;
+2bae454ad3094042c9f0113e1ef852c9d440a088 22 22
+	type Input = { path: string; bytes: number; sha256: string };
+2bae454ad3094042c9f0113e1ef852c9d440a088 23 23
+	export type PackageFacts = { path: string; name: string; version: string; fields: Json; licenseFiles: Input[]; manifestSha256: string };
+2bae454ad3094042c9f0113e1ef852c9d440a088 24 24
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 25 25
+	function inside(root: string, relative: string): string {
+2bae454ad3094042c9f0113e1ef852c9d440a088 26 26
+	  assert(!path.isAbsolute(relative) && !relative.split('/').includes('..'), `Not a repository-relative input: ${relative}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 27 27
+	  return path.join(root, relative);
+2bae454ad3094042c9f0113e1ef852c9d440a088 28 28
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 29 29
+	function patternsFrom(bytes: string): string[] {
+2bae454ad3094042c9f0113e1ef852c9d440a088 30 30
+	  const document = yaml.load(bytes) as { packages?: unknown };
+2bae454ad3094042c9f0113e1ef852c9d440a088 31 31
+	  assert(Array.isArray(document?.packages) && document.packages.every(item => typeof item === 'string'), 'Missing workspace patterns');
+2bae454ad3094042c9f0113e1ef852c9d440a088 32 32
+	  for (const pattern of document.packages) assert(/^[\w.-]+(?:\/[\w.-]+)*(?:\/\*)?$/.test(pattern) && !pattern.split('/').includes('..'), `Unsupported workspace pattern: ${pattern}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 33 33
+	  return document.packages;
+2bae454ad3094042c9f0113e1ef852c9d440a088 34 34
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 35 35
+	function workspaceMatch(file: string, patterns: string[]): boolean {
+2bae454ad3094042c9f0113e1ef852c9d440a088 36 36
+	  return patterns.some(pattern => new RegExp(`^${pattern.split('/').map(part => part === '*' ? '[^/]+' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/')}/package\\.json$`).test(file));
+2bae454ad3094042c9f0113e1ef852c9d440a088 37 37
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 38 38
+	function packagePaths(root: string, patterns: string[]): string[] {
+2bae454ad3094042c9f0113e1ef852c9d440a088 39 39
+	  const paths = new Set<string>();
+2bae454ad3094042c9f0113e1ef852c9d440a088 40 40
+	  for (const pattern of patterns) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 41 41
+	    const dirs = pattern.endsWith('/*')
+2bae454ad3094042c9f0113e1ef852c9d440a088 42 42
+	      ? fs.readdirSync(inside(root, pattern.slice(0, -2)), { withFileTypes: true }).filter(entry => entry.isDirectory()).map(entry => `${pattern.slice(0, -2)}/${entry.name}`)
+2bae454ad3094042c9f0113e1ef852c9d440a088 43 43
+	      : [pattern];
+2bae454ad3094042c9f0113e1ef852c9d440a088 44 44
+	    for (const directory of dirs) if (fs.existsSync(inside(root, `${directory}/package.json`))) paths.add(`${directory}/package.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 45 45
+	  }
+2bae454ad3094042c9f0113e1ef852c9d440a088 46 46
+	  return ['package.json', ...[...paths].sort()];
+2bae454ad3094042c9f0113e1ef852c9d440a088 47 47
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 48 48
+	function readPackage(root: string, relative: string): PackageFacts {
+2bae454ad3094042c9f0113e1ef852c9d440a088 49 49
+	  const bytes = fs.readFileSync(inside(root, relative));
+2bae454ad3094042c9f0113e1ef852c9d440a088 50 50
+	  const manifest = JSON.parse(bytes.toString());
+2bae454ad3094042c9f0113e1ef852c9d440a088 51 51
+	  assert(typeof manifest.name === 'string' && typeof manifest.version === 'string', `Package identity missing: ${relative}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 52 52
+	  const directory = path.posix.dirname(relative);
+2bae454ad3094042c9f0113e1ef852c9d440a088 53 53
+	  const licenseFiles = fs.readdirSync(inside(root, directory), { withFileTypes: true })
+2bae454ad3094042c9f0113e1ef852c9d440a088 54 54
+	    .filter(entry => entry.isFile() && /^licen[cs]e(?:[.-].+)?$/i.test(entry.name))
+2bae454ad3094042c9f0113e1ef852c9d440a088 55 55
+	    .map(entry => {
+2bae454ad3094042c9f0113e1ef852c9d440a088 56 56
+	      const file = path.posix.join(directory, entry.name), content = fs.readFileSync(inside(root, file));
+2bae454ad3094042c9f0113e1ef852c9d440a088 57 57
+	      return { path: file, bytes: content.length, sha256: hash(content) };
+2bae454ad3094042c9f0113e1ef852c9d440a088 58 58
+	    }).sort((a, b) => a.path.localeCompare(b.path));
+2bae454ad3094042c9f0113e1ef852c9d440a088 59 59
+	  return { path: relative, name: manifest.name, version: manifest.version,
+2bae454ad3094042c9f0113e1ef852c9d440a088 60 60
+	    fields: Object.fromEntries(FIELDS.filter(key => Object.hasOwn(manifest, key)).map(key => [key, manifest[key]])), licenseFiles, manifestSha256: hash(bytes) };
+2bae454ad3094042c9f0113e1ef852c9d440a088 61 61
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 62 62
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 63 63
+	/** Includes the root first, then every package selected by pnpm-workspace.yaml. */
+2bae454ad3094042c9f0113e1ef852c9d440a088 64 64
+	export function collectPackageFacts(root: string): PackageFacts[] {
+2bae454ad3094042c9f0113e1ef852c9d440a088 65 65
+	  const patterns = patternsFrom(fs.readFileSync(inside(root, 'pnpm-workspace.yaml'), 'utf8'));
+2bae454ad3094042c9f0113e1ef852c9d440a088 66 66
+	  const rows = packagePaths(root, patterns).map(file => readPackage(root, file));
+2bae454ad3094042c9f0113e1ef852c9d440a088 67 67
+	  assert.equal(new Set(rows.map(row => row.name)).size, rows.length, 'Duplicate workspace package names');
+2bae454ad3094042c9f0113e1ef852c9d440a088 68 68
+	  return rows;
+2bae454ad3094042c9f0113e1ef852c9d440a088 69 69
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 70 70
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 71 71
+	/** One-time Git measurement; ordinary generation never consults live Git state. */
+2bae454ad3094042c9f0113e1ef852c9d440a088 72 72
+	export function freezePackageBaseline(root: string, head: string): Json {
+2bae454ad3094042c9f0113e1ef852c9d440a088 73 73
+	  assert.match(head, /^[a-f0-9]{40}$/, 'Baseline requires an exact full commit');
+2bae454ad3094042c9f0113e1ef852c9d440a088 74 74
+	  const git = (args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+2bae454ad3094042c9f0113e1ef852c9d440a088 75 75
+	  const workspacePatterns = patternsFrom(git(['show', `${head}:pnpm-workspace.yaml`]));
+2bae454ad3094042c9f0113e1ef852c9d440a088 76 76
+	  const files = git(['ls-tree', '-rz', '--name-only', head, '--', 'package.json', ...new Set(workspacePatterns.map(pattern => pattern.split('/')[0]))]).split('\0').filter(file => file === 'package.json' || workspaceMatch(file, workspacePatterns)).sort();
+2bae454ad3094042c9f0113e1ef852c9d440a088 77 77
+	  const packages = files.map(file => {
+2bae454ad3094042c9f0113e1ef852c9d440a088 78 78
+	    const bytes = git(['show', `${head}:${file}`]), manifest = JSON.parse(bytes);
+2bae454ad3094042c9f0113e1ef852c9d440a088 79 79
+	    return { path: file, name: manifest.name, shape: Object.fromEntries(['private', 'publishConfig', 'license'].filter(key => Object.hasOwn(manifest, key)).map(key => [key, manifest[key]])), manifestSha256: hash(bytes) };
+2bae454ad3094042c9f0113e1ef852c9d440a088 80 80
+	  });
+2bae454ad3094042c9f0113e1ef852c9d440a088 81 81
+	  assert(packages.some(row => row.path === 'package.json'));
+2bae454ad3094042c9f0113e1ef852c9d440a088 82 82
+	  const result = { schemaVersion: 1, sourceHead: head, workspacePatterns, packages };
+2bae454ad3094042c9f0113e1ef852c9d440a088 83 83
+	  const output = inside(root, BASELINE_PATH); fs.mkdirSync(path.dirname(output), { recursive: true });
+2bae454ad3094042c9f0113e1ef852c9d440a088 84 84
+	  fs.writeFileSync(output, serialize(result), { flag: 'wx' });
+2bae454ad3094042c9f0113e1ef852c9d440a088 85 85
+	  return result;
+2bae454ad3094042c9f0113e1ef852c9d440a088 86 86
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 87 87
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 88 88
+	function reader(root: string) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 89 89
+	  const inputs = new Map<string, Input>();
+2bae454ad3094042c9f0113e1ef852c9d440a088 90 90
+	  const bytes = (relative: string): Buffer => {
+2bae454ad3094042c9f0113e1ef852c9d440a088 91 91
+	    const content = fs.readFileSync(inside(root, relative));
+2bae454ad3094042c9f0113e1ef852c9d440a088 92 92
+	    inputs.set(relative, { path: relative, bytes: content.length, sha256: hash(content) });
+2bae454ad3094042c9f0113e1ef852c9d440a088 93 93
+	    return content;
+2bae454ad3094042c9f0113e1ef852c9d440a088 94 94
+	  };
+2bae454ad3094042c9f0113e1ef852c9d440a088 95 95
+	  return { bytes, json: (relative: string): Json => JSON.parse(bytes(relative).toString()),
+2bae454ad3094042c9f0113e1ef852c9d440a088 96 96
+	    inputs: () => [...inputs.values()].sort((a, b) => a.path.localeCompare(b.path)) };
+2bae454ad3094042c9f0113e1ef852c9d440a088 97 97
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 98 98
+	type Reader = ReturnType<typeof reader>;
+2bae454ad3094042c9f0113e1ef852c9d440a088 99 99
+	function identity(read: Reader, base: string) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 100 100
+	  const source = read.json(`${base}/source-commit.remote.json`), merge = read.json(`${base}/merge-commit.remote.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 101 101
+	  assert.match(source.sha, /^[a-f0-9]{40}$/); assert.match(merge.sha, /^[a-f0-9]{40}$/);
+2bae454ad3094042c9f0113e1ef852c9d440a088 102 102
+	  assert.notEqual(source.sha, merge.sha, 'Source and synthetic merge identities must remain distinct');
+2bae454ad3094042c9f0113e1ef852c9d440a088 103 103
+	  assert.equal(source.tree.sha, merge.tree.sha, 'Remote source and synthetic merge trees differ');
+2bae454ad3094042c9f0113e1ef852c9d440a088 104 104
+	  assert.equal(merge.parents[1]?.sha, source.sha, 'Source is not the synthetic merge second parent');
+2bae454ad3094042c9f0113e1ef852c9d440a088 105 105
+	  return { sourceCommit: source.sha as string, executedMergeCommit: merge.sha as string, treeSha: source.tree.sha as string, treesIdentical: true };
+2bae454ad3094042c9f0113e1ef852c9d440a088 106 106
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 107 107
+	function bundle(read: Reader, base: string, provenance: ReturnType<typeof identity>) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 108 108
+	  const manifestPath = `${base}/forge-runtime.manifest.json`, manifest = read.json(manifestPath);
+2bae454ad3094042c9f0113e1ef852c9d440a088 109 109
+	  const sbom = read.json(`${base}/runtime-sbom-lite.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 110 110
+	  const sidecar = read.bytes(`${base}/forge-runtime.tar.gz.sha256`).toString().trim().split(/\s+/);
+2bae454ad3094042c9f0113e1ef852c9d440a088 111 111
+	  assert.equal(manifest.schemaVersion, 'forge-runtime-manifest/v1'); assert.equal(manifest.dirty, false);
+2bae454ad3094042c9f0113e1ef852c9d440a088 112 112
+	  assert.equal(manifest.commit, provenance.executedMergeCommit, 'Bundle does not identify the executed synthetic merge');
+2bae454ad3094042c9f0113e1ef852c9d440a088 113 113
+	  assert.match(manifest.archive.sha256, /^[a-f0-9]{64}$/); assert(manifest.archive.byteSize > 0);
+2bae454ad3094042c9f0113e1ef852c9d440a088 114 114
+	  assert.deepEqual(sidecar, [manifest.archive.sha256, manifest.archive.file], 'Archive sidecar differs from manifest');
+2bae454ad3094042c9f0113e1ef852c9d440a088 115 115
+	  assert.equal(hash(read.bytes(`${base}/runtime-sbom-lite.json`)), manifest.sbomLite.sha256, 'SBOM bytes differ from manifest');
+2bae454ad3094042c9f0113e1ef852c9d440a088 116 116
+	  assert.equal(sbom.packages.length, manifest.thirdPartyCount); assert.equal(sbom.summary.packageCount, manifest.thirdPartyCount);
+2bae454ad3094042c9f0113e1ef852c9d440a088 117 117
+	  assert.equal(manifest.sbomLite.packageCount, manifest.thirdPartyCount);
+2bae454ad3094042c9f0113e1ef852c9d440a088 118 118
+	  assert(Object.hasOwn(manifest.packageVersions, '@oods/mcp-bridge'), 'Bundle omits bridge');
+2bae454ad3094042c9f0113e1ef852c9d440a088 119 119
+	  return { manifestPath, commit: manifest.commit as string, archive: manifest.archive, archiveBinaryRetained: false,
+2bae454ad3094042c9f0113e1ef852c9d440a088 120 120
+	    payloadTreeSha256: manifest.payloadTreeSha256 as string, thirdPartyCount: manifest.thirdPartyCount as number,
+2bae454ad3094042c9f0113e1ef852c9d440a088 121 121
+	    nodeFloor: manifest.nodeFloor as string, buildNodeMajor: manifest.ciNode as number,
+2bae454ad3094042c9f0113e1ef852c9d440a088 122 122
+	    runtimePackages: manifest.packageVersions as Record<string, string>, bridgeIncluded: true,
+2bae454ad3094042c9f0113e1ef852c9d440a088 123 123
+	    structuredDataManifestHash: manifest.structuredDataManifest.sha256 as string,
+2bae454ad3094042c9f0113e1ef852c9d440a088 124 124
+	    determinismCertified: manifest.archivePacking.determinismCertified as boolean };
+2bae454ad3094042c9f0113e1ef852c9d440a088 125 125
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 126 126
+	function canonical(value: any): any {
+2bae454ad3094042c9f0113e1ef852c9d440a088 127 127
+	  if (Array.isArray(value)) return value.map(canonical);
+2bae454ad3094042c9f0113e1ef852c9d440a088 128 128
+	  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+2bae454ad3094042c9f0113e1ef852c9d440a088 129 129
+	  return value;
+2bae454ad3094042c9f0113e1ef852c9d440a088 130 130
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 131 131
+	function portableCell(read: Reader, zone: string, provenance: ReturnType<typeof identity>) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 132 132
+	  const directory = `${PORTABLE}/${zone}`, verification = read.json(`${directory}/verification.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 133 133
+	  // Hash-bind original retained evidence before deriving results from raw E2E/job data.
+2bae454ad3094042c9f0113e1ef852c9d440a088 134 134
+	  for (const entry of verification.evidence) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 135 135
+	    const bytes = read.bytes(`${PORTABLE}/${entry.path}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 136 136
+	    assert.equal(bytes.length, entry.bytes, `Evidence size changed: ${entry.path}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 137 137
+	    assert.equal(hash(bytes), entry.sha256, `Evidence digest changed: ${entry.path}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 138 138
+	  }
+2bae454ad3094042c9f0113e1ef852c9d440a088 139 139
+	  const artifact = bundle(read, `${directory}/forge-runtime-out-1`, provenance);
+2bae454ad3094042c9f0113e1ef852c9d440a088 140 140
+	  const e2e = read.json(`${directory}/portable-runtime-e2e.json`), job = read.json(`${directory}/job.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 141 141
+	  assert.equal(job.conclusion, 'success'); assert.equal(job.status, 'completed');
+2bae454ad3094042c9f0113e1ef852c9d440a088 142 142
+	  assert(job.steps.every((step: Json) => step.conclusion === 'success'), 'Portable CI step did not succeed');
+2bae454ad3094042c9f0113e1ef852c9d440a088 143 143
+	  assert.equal(e2e.status, 'pass'); assert.equal(e2e.manifest.commit, artifact.commit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 144 144
+	  assert.equal(e2e.manifest.payloadTreeSha256, artifact.payloadTreeSha256);
+2bae454ad3094042c9f0113e1ef852c9d440a088 145 145
+	  assert.equal(e2e.manifest.thirdPartyCount, artifact.thirdPartyCount);
+2bae454ad3094042c9f0113e1ef852c9d440a088 146 146
+	  assert.equal(e2e.nodeVersion, verification.nodeVersion); assert.equal(verification.sourceCommit, provenance.sourceCommit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 147 147
+	  assert.equal(verification.executedMergeCommit, provenance.executedMergeCommit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 148 148
+	  assert.equal(verification.archiveSha256, artifact.archive.sha256); assert.equal(verification.archiveBytes, artifact.archive.byteSize);
+2bae454ad3094042c9f0113e1ef852c9d440a088 149 149
+	  assert.equal(job.databaseId, verification.jobId); assert.equal(e2e.tools.count, 19);
+2bae454ad3094042c9f0113e1ef852c9d440a088 150 150
+	  const outcomes = Object.values(e2e.calls.outcomes) as Json[];
+2bae454ad3094042c9f0113e1ef852c9d440a088 151 151
+	  assert.equal(outcomes.length, e2e.tools.count);
+2bae454ad3094042c9f0113e1ef852c9d440a088 152 152
+	  const pass = outcomes.filter(row => row.outcome === 'pass').length, typed = outcomes.filter(row => row.outcome === 'typed').length;
+2bae454ad3094042c9f0113e1ef852c9d440a088 153 153
+	  assert.equal(pass, 17); assert.equal(typed, 2);
+2bae454ad3094042c9f0113e1ef852c9d440a088 154 154
+	  assert.equal(e2e.calls.outcomes['brand.apply'].code, 'OODS-N020'); assert.equal(e2e.calls.outcomes['design.preview'].code, 'OODS-N019');
+2bae454ad3094042c9f0113e1ef852c9d440a088 155 155
+	  assert.equal(e2e.calls.totalAcrossProcesses, 30); assert.equal(e2e.calls.health.status, 'ok');
+2bae454ad3094042c9f0113e1ef852c9d440a088 156 156
+	  assert.deepEqual(e2e.calls.health.warnings, []); assert.equal(e2e.calls.bridge.parity, true);
+2bae454ad3094042c9f0113e1ef852c9d440a088 157 157
+	  assert.equal(e2e.calls.bridge.revision.commit, artifact.commit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 158 158
+	  assert.equal(e2e.calls.bridge.revision.structuredDataManifestHash, `sha256:${artifact.structuredDataManifestHash}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 159 159
+	  assert.equal(e2e.calls.bridge.termination.code, 0); assert.equal(e2e.lifecycle.stdinClose.code, 0);
+2bae454ad3094042c9f0113e1ef852c9d440a088 160 160
+	  assert.equal(e2e.lifecycle.restart.sigterm.code, 0); assert.equal(e2e.lifecycle.restart.sigterm.forcedKill, false);
+2bae454ad3094042c9f0113e1ef852c9d440a088 161 161
+	  assert.equal(e2e.extractionTree.before, e2e.extractionTree.after); assert.equal(e2e.extractionTree.restoredAfterScopedWrites, true);
+2bae454ad3094042c9f0113e1ef852c9d440a088 162 162
+	  const attestationPath = `${directory}/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json`;
+2bae454ad3094042c9f0113e1ef852c9d440a088 163 163
+	  const attestation = read.json(attestationPath), { sha256, ...payload } = attestation;
+2bae454ad3094042c9f0113e1ef852c9d440a088 164 164
+	  assert.equal(hash(serialize(canonical(payload))), sha256, 'Attestation self-digest is invalid');
+2bae454ad3094042c9f0113e1ef852c9d440a088 165 165
+	  assert.equal(attestation.sourceHead, artifact.commit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 166 166
+	  const targets = Object.fromEntries(Object.entries(attestation.targets).map(([target, value]) => {
+2bae454ad3094042c9f0113e1ef852c9d440a088 167 167
+	    const rows = (value as Json).rows;
+2bae454ad3094042c9f0113e1ef852c9d440a088 168 168
+	    assert(rows.length > 0 && new Set(rows.map((row: Json) => row.componentId)).size === rows.length);
+2bae454ad3094042c9f0113e1ef852c9d440a088 169 169
+	    assert(rows.every((row: Json) => row.emissionEligible && row.references.every((ref: Json) => /^[a-f0-9]{64}$/.test(ref.sha256))));
+2bae454ad3094042c9f0113e1ef852c9d440a088 170 170
+	    return [target, { rows: rows.length, emissionEligible: rows.filter((row: Json) => row.emissionEligible).length }];
+2bae454ad3094042c9f0113e1ef852c9d440a088 171 171
+	  }));
+2bae454ad3094042c9f0113e1ef852c9d440a088 172 172
+	  return { ...provenance, runId: verification.runId as number, jobId: job.databaseId as number, jobUrl: job.url as string,
+2bae454ad3094042c9f0113e1ef852c9d440a088 173 173
+	    startedAt: job.startedAt as string, completedAt: job.completedAt as string, nodeVersion: e2e.nodeVersion as string,
+2bae454ad3094042c9f0113e1ef852c9d440a088 174 174
+	    pass, typed, tools: e2e.tools.count as number, calls: e2e.calls.totalAcrossProcesses as number,
+2bae454ad3094042c9f0113e1ef852c9d440a088 175 175
+	    typedCodes: { 'brand.apply': 'OODS-N020', 'design.preview': 'OODS-N019' },
+2bae454ad3094042c9f0113e1ef852c9d440a088 176 176
+	    bridgeParity: true, cleanLifecycle: true, extractedTreeRestored: true, servedRelease: e2e.calls.health.release,
+2bae454ad3094042c9f0113e1ef852c9d440a088 177 177
+	    bundle: artifact, attestation: { path: attestationPath, fileSha256: hash(read.bytes(attestationPath)), payloadSha256: sha256,
+2bae454ad3094042c9f0113e1ef852c9d440a088 178 178
+	      sourceHead: attestation.sourceHead, shippedPackageFiles: attestation.shippedPackageHashes.length, targets,
+2bae454ad3094042c9f0113e1ef852c9d440a088 179 179
+	      scope: 'Retained seal and its digest verified; original CI E2E exercised emitted artifacts. Shipped package bytes are not reverified here because the archive binary was not uploaded.' } };
+2bae454ad3094042c9f0113e1ef852c9d440a088 180 180
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 181 181
+	
+2bae454ad3094042c9f0113e1ef852c9d440a088 182 182
+	export function collectReleaseReadiness(root: string) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 183 183
+	  const read = reader(root), packages = collectPackageFacts(root);
+2bae454ad3094042c9f0113e1ef852c9d440a088 184 184
+	  read.bytes('pnpm-workspace.yaml');
+2bae454ad3094042c9f0113e1ef852c9d440a088 185 185
+	  for (const row of packages) { read.bytes(row.path); for (const license of row.licenseFiles) read.bytes(license.path); }
+2bae454ad3094042c9f0113e1ef852c9d440a088 186 186
+	  const baseline = read.json(BASELINE_PATH);
+2bae454ad3094042c9f0113e1ef852c9d440a088 187 187
+	  const portableIdentity = identity(read, PORTABLE);
+2bae454ad3094042c9f0113e1ef852c9d440a088 188 188
+	  const portable = ['node20', 'node24'].map(zone => portableCell(read, zone, portableIdentity));
+2bae454ad3094042c9f0113e1ef852c9d440a088 189 189
+	  assert.equal(portable[0].nodeVersion, 'v20.11.1'); assert.match(portable[1].nodeVersion, /^v24\./);
+2bae454ad3094042c9f0113e1ef852c9d440a088 190 190
+	  assert.deepEqual(portable[0].bundle.archive, portable[1].bundle.archive, 'Portable Node cells exercised different archives');
+2bae454ad3094042c9f0113e1ef852c9d440a088 191 191
+	  const releaseIdentity = identity(read, RELEASE), releaseBundle = bundle(read, `${RELEASE}/release/archive`, releaseIdentity);
+2bae454ad3094042c9f0113e1ef852c9d440a088 192 192
+	  const job = read.json(`${RELEASE}/release-job.json`), measurement = read.json(`${RELEASE}/release/release-cells.v1.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 193 193
+	  const bundleIdentity = read.json(`${RELEASE}/release/bundle-identity.json`), verification = read.json(`${RELEASE}/verification.json`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 194 194
+	  const releaseLog = read.bytes(`${RELEASE}/release-job.log`).toString();
+2bae454ad3094042c9f0113e1ef852c9d440a088 195 195
+	  assert(releaseLog.includes(releaseBundle.archive.sha256) && releaseLog.includes(String(releaseBundle.archive.byteSize)), 'Hosted log does not corroborate archive bytes and digest');
+2bae454ad3094042c9f0113e1ef852c9d440a088 196 196
+	  assert.equal(job.conclusion, 'success'); assert.equal(job.status, 'completed'); assert.equal(job.head_sha, releaseIdentity.sourceCommit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 197 197
+	  assert.equal(measurement.bundleHead, releaseBundle.commit); assert.equal(measurement.archiveSha256, releaseBundle.archive.sha256);
+2bae454ad3094042c9f0113e1ef852c9d440a088 198 198
+	  assert.equal(bundleIdentity.bundleHead, releaseBundle.commit); assert.equal(bundleIdentity.archiveSha256, releaseBundle.archive.sha256);
+2bae454ad3094042c9f0113e1ef852c9d440a088 199 199
+	  assert.equal(bundleIdentity.manifestVerified, true); assert.equal(bundleIdentity.payload.sha256, releaseBundle.payloadTreeSha256);
+2bae454ad3094042c9f0113e1ef852c9d440a088 200 200
+	  assert.deepEqual(measurement.summary, { cells: 42, pass: 42, typedGap: 0, fail: 0 });
+2bae454ad3094042c9f0113e1ef852c9d440a088 201 201
+	  const expectedCells = ['Organization', 'Subscription', 'User'].flatMap(object => ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow'].flatMap(context => ['react', 'vue'].map(framework => `${object}/${context}/${framework}`)));
+2bae454ad3094042c9f0113e1ef852c9d440a088 202 202
+	  assert.deepEqual(measurement.rows.map((row: Json) => `${row.object}/${row.context}/${row.framework}`).sort(), expectedCells.sort(), 'Release ledger membership changed');
+2bae454ad3094042c9f0113e1ef852c9d440a088 203 203
+	  assert.equal(measurement.rows.length, 42); assert.equal(new Set(measurement.rows.map((row: Json) => `${row.object}/${row.context}/${row.framework}`)).size, 42);
+2bae454ad3094042c9f0113e1ef852c9d440a088 204 204
+	  for (const row of measurement.rows) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 205 205
+	    assert.equal(row.bundleHead, releaseBundle.commit); assert.equal(row.archiveSha256, releaseBundle.archive.sha256);
+2bae454ad3094042c9f0113e1ef852c9d440a088 206 206
+	    assert.equal(row.runId, measurement.runId); assert.equal(row.status, 'pass'); assert.equal(row.hashEqualToHost, true);
+2bae454ad3094042c9f0113e1ef852c9d440a088 207 207
+	    assert.match(row.artifactHash, /^sha256:[a-f0-9]{64}$/); assert.equal(row.artifactHash, row.hostArtifactHash);
+2bae454ad3094042c9f0113e1ef852c9d440a088 208 208
+	    assert(row.gates.length > 0 && row.gates.every((gate: Json) => gate.status === 'pass'));
+2bae454ad3094042c9f0113e1ef852c9d440a088 209 209
+	  }
+2bae454ad3094042c9f0113e1ef852c9d440a088 210 210
+	  assert.equal(verification.release.jobId, job.id); assert.deepEqual(verification.release.archive, releaseBundle.archive);
+2bae454ad3094042c9f0113e1ef852c9d440a088 211 211
+	  assert.equal(verification.provenance.executedMergeCommit, releaseIdentity.executedMergeCommit);
+2bae454ad3094042c9f0113e1ef852c9d440a088 212 212
+	  const inputs = read.inputs();
+2bae454ad3094042c9f0113e1ef852c9d440a088 213 213
+	  return { schemaVersion: 1, builderSelfCertified: false, baselineHead: baseline.sourceHead as string,
+2bae454ad3094042c9f0113e1ef852c9d440a088 214 214
+	    workspacePatterns: patternsFrom(read.bytes('pnpm-workspace.yaml').toString()), root: packages[0], workspaces: packages.slice(1),
+2bae454ad3094042c9f0113e1ef852c9d440a088 215 215
+	    packageSummary: { workspaces: packages.length - 1, workspacePrivate: packages.slice(1).filter(row => row.fields.private === true).length,
+2bae454ad3094042c9f0113e1ef852c9d440a088 216 216
+	      workspaceWithoutLicenseField: packages.slice(1).filter(row => !Object.hasOwn(row.fields, 'license')).length,
+2bae454ad3094042c9f0113e1ef852c9d440a088 217 217
+	      workspacePublishConfig: packages.slice(1).filter(row => Object.hasOwn(row.fields, 'publishConfig')).length,
+2bae454ad3094042c9f0113e1ef852c9d440a088 218 218
+	      workspaceLicenseFiles: packages.slice(1).flatMap(row => row.licenseFiles).length, rootLicenseFiles: packages[0].licenseFiles.length },
+2bae454ad3094042c9f0113e1ef852c9d440a088 219 219
+	    evidenceScope: 'Historical retained CI evidence, predating the s196-m05 UTC implementation. These archives are not the current UTC runtime; current package metadata and recorded bundle identities are separate observations.',
+2bae454ad3094042c9f0113e1ef852c9d440a088 220 220
+	    portable, release: { ...releaseIdentity, runId: job.run_id as number, jobId: job.id as number, jobUrl: job.html_url as string,
+2bae454ad3094042c9f0113e1ef852c9d440a088 221 221
+	      completedAt: job.completed_at as string, bundle: releaseBundle, measuredRelease: { runId: measurement.runId, ...measurement.summary },
+2bae454ad3094042c9f0113e1ef852c9d440a088 222 222
+	      scope: 'Original manifest, SBOM, sidecar, hosted identity and 42-row ledger retained. Detailed app receipts were independently verified in m05; this facts generator validates their retained metadata, not another runtime sweep.' },
+2bae454ad3094042c9f0113e1ef852c9d440a088 223 223
+	    inputs, inputsSha256: hash(serialize(inputs)) };
+2bae454ad3094042c9f0113e1ef852c9d440a088 224 224
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 225 225
+	export type ReleaseReadiness = ReturnType<typeof collectReleaseReadiness>;
+2bae454ad3094042c9f0113e1ef852c9d440a088 226 226
+	const cell = (value: unknown) => value === undefined ? 'absent' : `\`${JSON.stringify(value).replace(/\|/g, '&#124;').replace(/`/g, '&#96;')}\``;
+2bae454ad3094042c9f0113e1ef852c9d440a088 227 227
+	const link = (relative: string) => `[${relative}](../../${relative})`;
+2bae454ad3094042c9f0113e1ef852c9d440a088 228 228
+	function packageTable(rows: PackageFacts[]): string {
+2bae454ad3094042c9f0113e1ef852c9d440a088 229 229
+	  return ['| Package / manifest | Version | private | license field | LICENSE files (direct package directory) | publishConfig | files | exports |',
+2bae454ad3094042c9f0113e1ef852c9d440a088 230 230
+	    '| --- | --- | --- | --- | --- | --- | --- | --- |', ...rows.map(row => `| ${cell(row.name)} — ${link(row.path)} | ${cell(row.version)} | ${cell(row.fields.private)} | ${cell(row.fields.license)} | ${row.licenseFiles.map(file => link(file.path)).join(', ') || 'none'} | ${cell(row.fields.publishConfig)} | ${cell(row.fields.files)} | ${cell(row.fields.exports)} |`)].join('\n');
+2bae454ad3094042c9f0113e1ef852c9d440a088 231 231
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 232 232
+	export function renderReleaseFacts(facts: ReleaseReadiness): string {
+2bae454ad3094042c9f0113e1ef852c9d440a088 233 233
+	  const archiveRow = (label: string, item: ReleaseReadiness['portable'][number] | ReleaseReadiness['release']) =>
+2bae454ad3094042c9f0113e1ef852c9d440a088 234 234
+	    `| ${label} | ${cell(item.sourceCommit)} | ${cell(item.executedMergeCommit)} | ${cell(item.bundle.archive.sha256)} | ${item.bundle.archive.byteSize} | ${item.bundle.thirdPartyCount} | ${cell(item.bundle.nodeFloor)} | ${Object.keys(item.bundle.runtimePackages).length}; bridge ${cell(item.bundle.runtimePackages['@oods/mcp-bridge'])} | ${link(item.bundle.manifestPath)} |`;
+2bae454ad3094042c9f0113e1ef852c9d440a088 235 235
+	  return [START, 'Generated by `pnpm exec tsx scripts/product-reality/s196-release-readiness.ts`; verify with `--check`.',
+2bae454ad3094042c9f0113e1ef852c9d440a088 236 236
+	    `Machine-readable facts and every source/proof digest: ${link(FACTS_PATH)}. Baseline package shapes: ${link(BASELINE_PATH)} at ${cell(facts.baselineHead)}.`,
+2bae454ad3094042c9f0113e1ef852c9d440a088 237 237
+	    '**Current root package (separate from workspace packages)**', packageTable([facts.root]),
+2bae454ad3094042c9f0113e1ef852c9d440a088 238 238
+	    `**Current workspace packages: ${facts.packageSummary.workspaces}**`, packageTable(facts.workspaces),
+2bae454ad3094042c9f0113e1ef852c9d440a088 239 239
+	    `The workspace inventory contains ${facts.packageSummary.workspacePrivate} explicit private packages, ${facts.packageSummary.workspaceWithoutLicenseField} packages without a license field, ${facts.packageSummary.workspacePublishConfig} publishConfig fields and ${facts.packageSummary.workspaceLicenseFiles} direct LICENSE files. The root has ${facts.packageSummary.rootLicenseFiles} LICENSE file. An absent field is preserved as absent; a LICENSE file is not inferred from a package license field.`,
+2bae454ad3094042c9f0113e1ef852c9d440a088 240 240
+	    '**Recorded archives and source identities**', facts.evidenceScope,
+2bae454ad3094042c9f0113e1ef852c9d440a088 241 241
+	    ['| Proof | Source commit | Executed synthetic merge / manifest commit | Archive SHA-256 | Bytes | Third-party closure | Node floor | Runtime packages / bridge | Original manifest |',
+2bae454ad3094042c9f0113e1ef852c9d440a088 242 242
+	    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+2bae454ad3094042c9f0113e1ef852c9d440a088 243 243
+	    archiveRow('m05 hosted release job', facts.release), archiveRow('m03 portable Node 20 / 24 jobs (same archive)', facts.portable[0])].join('\n'),
+2bae454ad3094042c9f0113e1ef852c9d440a088 244 244
+	    'Remote Git responses establish equal source/merge trees and the source as the second merge parent for each proof. The archive binaries were not uploaded; sizes and hashes come from retained original manifests and sidecars, matched to executed payload identities. No archive identity is borrowed from another job.',
+2bae454ad3094042c9f0113e1ef852c9d440a088 245 245
+	    `The m05 release job [${facts.release.jobId}](${facts.release.jobUrl}) retained ${facts.release.measuredRelease.pass}/${facts.release.measuredRelease.cells} passing app cells with zero typed gaps or failures. ${facts.release.scope}`,
+2bae454ad3094042c9f0113e1ef852c9d440a088 246 246
+	    '**Actual portable CI cells**',
+2bae454ad3094042c9f0113e1ef852c9d440a088 247 247
+	    ['| Node actually executed | Run / job | Completed (UTC) | Outcomes | Calls | Bridge parity / lifecycle / restoration |',
+2bae454ad3094042c9f0113e1ef852c9d440a088 248 248
+	    '| --- | --- | --- | --- | --- | --- |',
+2bae454ad3094042c9f0113e1ef852c9d440a088 249 249
+	    ...facts.portable.map(item => `| ${cell(item.nodeVersion)} | ${item.runId} / [${item.jobId}](${item.jobUrl}) | ${item.completedAt} | ${item.pass} executed, ${item.typed} typed (${cell(item.typedCodes)}) | ${item.calls} | passed / clean / byte-identical |`)].join('\n'),
+2bae454ad3094042c9f0113e1ef852c9d440a088 250 250
+	    '**Portable readiness attestation retained with the m03 archive**',
+2bae454ad3094042c9f0113e1ef852c9d440a088 251 251
+	    ...facts.portable.map(item => `${cell(item.nodeVersion)}: ${link(item.attestation.path)}; source ${cell(item.attestation.sourceHead)}, file SHA-256 ${cell(item.attestation.fileSha256)}, payload seal ${cell(item.attestation.payloadSha256)}, ${item.attestation.shippedPackageFiles} shipped package file hashes; targets ${cell(item.attestation.targets)}.`),
+2bae454ad3094042c9f0113e1ef852c9d440a088 252 252
+	    facts.portable[0].attestation.scope,
+2bae454ad3094042c9f0113e1ef852c9d440a088 253 253
+	    `The portable health response carries an earlier measured release ledger: ${cell(facts.portable[0].servedRelease)}. Its bundleHead/archiveSha256 identify that earlier sweep, separately from the archive executing the portable test.`, END].join('\n\n') + '\n';
+2bae454ad3094042c9f0113e1ef852c9d440a088 254 254
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 255 255
+	export function generateReleaseReadiness(root: string, check = false): ReleaseReadiness {
+2bae454ad3094042c9f0113e1ef852c9d440a088 256 256
+	  const facts = collectReleaseReadiness(root), packetFile = inside(root, PACKET_PATH), packet = fs.readFileSync(packetFile, 'utf8');
+2bae454ad3094042c9f0113e1ef852c9d440a088 257 257
+	  assert.equal(packet.split(START).length, 2, 'Packet must contain exactly one facts start marker');
+2bae454ad3094042c9f0113e1ef852c9d440a088 258 258
+	  assert.equal(packet.split(END).length, 2, 'Packet must contain exactly one facts end marker');
+2bae454ad3094042c9f0113e1ef852c9d440a088 259 259
+	  const start = packet.indexOf(START), end = packet.indexOf(END) + END.length;
+2bae454ad3094042c9f0113e1ef852c9d440a088 260 260
+	  assert(start < end - END.length, 'Packet facts markers are reversed');
+2bae454ad3094042c9f0113e1ef852c9d440a088 261 261
+	  const updated = packet.slice(0, start) + renderReleaseFacts(facts).trimEnd() + packet.slice(end);
+2bae454ad3094042c9f0113e1ef852c9d440a088 262 262
+	  for (const [relative, bytes] of [[FACTS_PATH, serialize(facts)], [PACKET_PATH, updated]]) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 263 263
+	    const file = inside(root, relative);
+2bae454ad3094042c9f0113e1ef852c9d440a088 264 264
+	    if (check) assert(fs.existsSync(file) && fs.readFileSync(file, 'utf8') === bytes, `Generated release readiness drift: ${relative}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 265 265
+	    else { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, bytes); }
+2bae454ad3094042c9f0113e1ef852c9d440a088 266 266
+	  }
+2bae454ad3094042c9f0113e1ef852c9d440a088 267 267
+	  return facts;
+2bae454ad3094042c9f0113e1ef852c9d440a088 268 268
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 269 269
+	export function parseReadinessArgs(args: string[]) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 270 270
+	  let root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..'), check = false, baseline: string | undefined;
+2bae454ad3094042c9f0113e1ef852c9d440a088 271 271
+	  const seen = new Set<string>();
+2bae454ad3094042c9f0113e1ef852c9d440a088 272 272
+	  for (let i = 0; i < args.length; i++) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 273 273
+	    const arg = args[i]; assert(!seen.has(arg), `Duplicate argument: ${arg}`); seen.add(arg);
+2bae454ad3094042c9f0113e1ef852c9d440a088 274 274
+	    if (arg === '--check') check = true;
+2bae454ad3094042c9f0113e1ef852c9d440a088 275 275
+	    else if (arg === '--root' || arg === '--freeze-baseline') {
+2bae454ad3094042c9f0113e1ef852c9d440a088 276 276
+	      const value = args[++i]; assert(value && !value.startsWith('--'), `Missing value for ${arg}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 277 277
+	      if (arg === '--root') root = path.resolve(value); else baseline = value;
+2bae454ad3094042c9f0113e1ef852c9d440a088 278 278
+	    } else throw new Error(`Unknown argument: ${arg}`);
+2bae454ad3094042c9f0113e1ef852c9d440a088 279 279
+	  }
+2bae454ad3094042c9f0113e1ef852c9d440a088 280 280
+	  assert(!(check && baseline), '--check cannot create a baseline');
+2bae454ad3094042c9f0113e1ef852c9d440a088 281 281
+	  return { root, check, baseline };
+2bae454ad3094042c9f0113e1ef852c9d440a088 282 282
+	}
+2bae454ad3094042c9f0113e1ef852c9d440a088 283 283
+	if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+2bae454ad3094042c9f0113e1ef852c9d440a088 284 284
+	  try {
+2bae454ad3094042c9f0113e1ef852c9d440a088 285 285
+	    const args = parseReadinessArgs(process.argv.slice(2));
+2bae454ad3094042c9f0113e1ef852c9d440a088 286 286
+	    if (args.baseline) { const result = freezePackageBaseline(args.root, args.baseline); console.log(`Recorded ${result.packages.length} package shapes at ${args.baseline}`); }
+2bae454ad3094042c9f0113e1ef852c9d440a088 287 287
+	    else { const facts = generateReleaseReadiness(args.root, args.check); console.log(`Release readiness ${args.check ? 'checked' : 'generated'}: root + ${facts.workspaces.length} workspaces; ${facts.portable.length} retained passing portable CI cells`); }
+2bae454ad3094042c9f0113e1ef852c9d440a088 288 288
+	  } catch (error) { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }
+2bae454ad3094042c9f0113e1ef852c9d440a088 289 289
+	}

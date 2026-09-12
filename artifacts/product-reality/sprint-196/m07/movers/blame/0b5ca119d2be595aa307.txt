@@ -1,0 +1,85 @@
+944f4dda5f784e266310978b31f65b3d452e6387 37 37 4
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/README.md
+filename docs/README.md
+	<!-- forge-claim:token-architecture -->
+944f4dda5f784e266310978b31f65b3d452e6387 38 38
+	### 1. Four-Layer Token Architecture (conceptual)
+944f4dda5f784e266310978b31f65b3d452e6387 39 39
+	
+944f4dda5f784e266310978b31f65b3d452e6387 40 40
+	This diagram illustrates four design roles. It is not a count of implemented token namespaces; the modifier layer is a conceptual role.
+944f4dda5f784e266310978b31f65b3d452e6387 54 54 1
+	The illustration recommends component-level aliases. The current build also includes system tokens; component implementations may reference those shared roles directly.
+944f4dda5f784e266310978b31f65b3d452e6387 58 58 2
+	<!-- /forge-claim:token-architecture -->
+944f4dda5f784e266310978b31f65b3d452e6387 59 59
+	
+944f4dda5f784e266310978b31f65b3d452e6387 62 62 1
+	**Traits** are reusable building blocks (like `Stateful`, `Timestampable` and `Labelled`).
+944f4dda5f784e266310978b31f65b3d452e6387 65 65 1
+	<!-- forge-claim:subscription-example -->
+944f4dda5f784e266310978b31f65b3d452e6387 67 67 2
+	# Canonical objects/core/Subscription.object.yaml composes 6 traits
+944f4dda5f784e266310978b31f65b3d452e6387 68 68
+	object: { name: Subscription }
+944f4dda5f784e266310978b31f65b3d452e6387 70 70 6
+	  - name: lifecycle/Stateful
+944f4dda5f784e266310978b31f65b3d452e6387 71 71
+	  - name: lifecycle/Cancellable
+944f4dda5f784e266310978b31f65b3d452e6387 72 72
+	  - name: lifecycle/Timestampable
+944f4dda5f784e266310978b31f65b3d452e6387 73 73
+	  - name: financial/Billable
+944f4dda5f784e266310978b31f65b3d452e6387 74 74
+	  - name: lifecycle/Archivable
+944f4dda5f784e266310978b31f65b3d452e6387 75 75
+	  - name: viz/MarkArea
+944f4dda5f784e266310978b31f65b3d452e6387 78 78 3
+	The core Subscription is the canonical tool identity; the separate domain-pack definition does not replace it.
+944f4dda5f784e266310978b31f65b3d452e6387 79 79
+	<!-- /forge-claim:subscription-example -->
+944f4dda5f784e266310978b31f65b3d452e6387 80 80
+	
+944f4dda5f784e266310978b31f65b3d452e6387 86 86 2
+	<!-- forge-claim:canonical-regions -->
+944f4dda5f784e266310978b31f65b3d452e6387 87 87
+	The view engine uses six canonical regions in this order:
+944f4dda5f784e266310978b31f65b3d452e6387 89 89 8
+	- `globalNavigation`
+944f4dda5f784e266310978b31f65b3d452e6387 90 90
+	- `pageHeader`
+944f4dda5f784e266310978b31f65b3d452e6387 91 91
+	- `breadcrumbs`
+944f4dda5f784e266310978b31f65b3d452e6387 92 92
+	- `viewToolbar`
+944f4dda5f784e266310978b31f65b3d452e6387 93 93
+	- `main`
+944f4dda5f784e266310978b31f65b3d452e6387 94 94
+	- `contextPanel`
+944f4dda5f784e266310978b31f65b3d452e6387 95 95
+	
+944f4dda5f784e266310978b31f65b3d452e6387 96 96
+	<!-- /forge-claim:canonical-regions -->
+944f4dda5f784e266310978b31f65b3d452e6387 102 102 3
+	<!-- forge-claim:context-inventory -->
+944f4dda5f784e266310978b31f65b3d452e6387 103 103
+	The view engine registers 8 contexts: `list`, `detail`, `form`, `timeline`, `card`, `inline`, `chart`, `dashboard`. Examples of their presentation differences follow:
+944f4dda5f784e266310978b31f65b3d452e6387 104 104
+	<!-- /forge-claim:context-inventory -->
+944f4dda5f784e266310978b31f65b3d452e6387 219 219 1
+	<!-- forge-claim:quintet-example -->
+944f4dda5f784e266310978b31f65b3d452e6387 221 221 1
+	The original modeling guide groups these examples into a “Universal Quintet.” This is a design vocabulary, not a measured prevalence claim:
+944f4dda5f784e266310978b31f65b3d452e6387 231 231 2
+	<!-- /forge-claim:quintet-example -->
+944f4dda5f784e266310978b31f65b3d452e6387 232 232
+	

@@ -1,0 +1,57 @@
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 23 23 20
+author System Systems
+author-mail <systems@example.com>
+author-time 1789202064
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789202064
+committer-tz -0500
+summary test(release): freeze Sprint 196 proof verifiers and source checks
+previous 2bae454ad3094042c9f0113e1ef852c9d440a088 scripts/product-reality/s185-reconnect.mjs
+filename scripts/product-reality/s185-reconnect.mjs
+	  if (movers.missionId === 's196-m07') {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 24 24
+	    assert(/^[a-f0-9]{40}$/.test(options.measurementHead ?? ''), 'Sprint196 requires a full measurement head.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 25 25
+	    const head = movers.s196.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 26 26
+	    const tools = JSON.parse(source(head, 'packages/mcp-server/registry/tool-capability-ledger.v1.json', root));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 27 27
+	    assert(tools.summary.auto === 19 && tools.summary.onDemand === 5 && tools.summary.autoByTier['product-reality'] === 19, 'Sprint196 reconnect requires the actual tool inventory.');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 28 28
+	    const body = [
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 29 29
+	      `Sprint 196 candidate ${head}; reconnect only after independent review and delivery. Refresh discovery: ${tools.summary.auto} advertised tools and ${tools.summary.onDemand} on-demand tools.`,
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 30 30
+	      'The portable archive now includes the bridge and policy. Its /health revision names the containing bundle commit; /tools and /run use the same registered server boundary as the adapter. Readiness attestation binds source evidence to shipped package bytes, so React/Vue code.generate and pipeline emit real artifacts without shipping source or tests. tokens.build apply:true exports shipped outputs.',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 31 31
+	      'brand.apply remains a typed OODS-N020 canonical-brand-source dependency refusal. design.preview remains OODS-N019 because it needs the design-loop service. Structured native errors retain code, retryable and data across the adapter. These two portable limits are explicit; brand.intake inline validation remains available.',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 32 32
+	      'health.productReality.release reports the measured 42-cell bundle ledger and its original bundleHead/archiveSha256. The containing archive may carry an earlier measured ledger; its own manifest commit is a different identity. Canonical host runtime154 and portable reference-app42 are separate populations, with the latter comparing generated artifacts against identical host operands.',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 33 33
+	      'Temporal Vega-Lite and ECharts rendering is UTC. Documentation counts and rosters are generated from live source inventories with drift checks. Gate 2 is prepared for Derek, not approved: no license grant, public publication, registry entry, MCPB or OCI release is implied.',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 34 34
+	      'Component classification and application craft approval remain pending. This candidate is BUILT, REVIEW PENDING; builderSelfCertified:false. The reconnect notices are prepared-unsent and execute no messages.',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 35 35
+	      `Advertised/public movers from ${movers.s196.base}..${head}:\n${movers.s196.publicPaths.join('\n')}`,
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 36 36
+	    ].join('\n\n');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 37 37
+	    return { missionId: 's196-m07', implementationHead: head, measurementHead: options.measurementHead, status: 'prepared-unsent', sent: false, sendsExecuted: 0,
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 38 38
+	      deliveryState: 'pending-independent-review', targets, notices: targets.map(target => {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 39 39
+	        const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint196 ${head}; reconnect after reviewed delivery`, body };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 40 40
+	        return { request, requestSha256: requestHash(request) };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 41 41
+	      }) };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 42 42
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 291 291 2
+	  const rederived = sprintId === 'sprint-196'
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 292 292
+	    ? deriveMovers(movers.s196.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's196-m07', base: movers.s196.base }) : sprintId === 'sprint-195'
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 299 299 1
+	  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census'), runtimePath: argument('--runtime'), measurementHead: argument('--measurement-head') });

@@ -1,0 +1,302 @@
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 10 10 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789192404
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789192404
+committer-tz -0500
+summary feat(runtime): measure reference apps from the portable bundle
+previous decba77cd1680409f6caf091230e9262bc653e70 scripts/runtime/e2e.mjs
+filename scripts/runtime/e2e.mjs
+	import { fileURLToPath } from "node:url";
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 194 195 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e scripts/runtime/e2e.mjs
+filename scripts/runtime/e2e.mjs
+	  "MCP_BRIDGE_PORT",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 195 196
+	  "BRIDGE_TOKEN",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 196 197
+	  "MCP_BRIDGE_CORS_ORIGIN",
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 291 291 1
+	export class McpClient {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 415 416 4
+	      const error = JSON.parse(result.content?.[0]?.text ?? "{}").error;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 416 417
+	      assert.equal(error?.code, expectedError, `${name} must preserve its native error code`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 417 418
+	      assert.equal(typeof error.retryable, "boolean");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 418 419
+	      return { isError: true, ...error };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 620 621 63
+	function assertGeneratedArtifact(artifact, framework) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 621 622
+	  assert.equal(artifact?.framework, framework);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 622 623
+	  assert.match(artifact.contentHash, /^sha256:[a-f0-9]{64}$/);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 623 624
+	  assert(artifact.files.length > 0);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 624 625
+	  assert(artifact.files.some(file => /\.(?:tsx|vue)$/.test(file.path)), "real framework source must be emitted");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 625 626
+	  for (const file of artifact.files) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 626 627
+	    assert(file.contents.length > 0);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 627 628
+	    assert.equal(file.contentHash, `sha256:${sha256(file.contents)}`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 628 629
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 629 630
+	}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 630 631
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 631 632
+	async function proveBridge(runtimeRoot, env, manifest, expectedToolNames, input, adapterSvgHash) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 632 633
+	  const port = await reserveClosedPort();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 633 634
+	  const base = `http://127.0.0.1:${port}`;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 634 635
+	  const child = spawn(process.execPath, ['dist/server.js'], {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 635 636
+	    cwd: path.join(runtimeRoot, 'packages/mcp-bridge'),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 636 637
+	    env: { ...env, MCP_BRIDGE_PORT: String(port), BRIDGE_TOKEN: 'portable-e2e-owned-token' },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 637 638
+	    stdio: ['ignore', 'pipe', 'pipe'],
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 638 639
+	  });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 639 640
+	  let output = '';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 640 641
+	  child.stdout.on('data', chunk => { output = (output + chunk).slice(-32768); });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 641 642
+	  child.stderr.on('data', chunk => { output = (output + chunk).slice(-32768); });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 642 643
+	  const exited = new Promise((resolve, reject) => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 643 644
+	    child.once('error', reject);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 644 645
+	    child.once('close', (code, signal) => resolve({ code, signal }));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 645 646
+	  });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 646 647
+	  let health;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 647 648
+	  try {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 648 649
+	    for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 649 650
+	      try {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 650 651
+	        const response = await fetch(`${base}/health`, { signal: AbortSignal.timeout(1000) });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 651 652
+	        if (response.ok) { health = await response.json(); break; }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 652 653
+	      } catch { /* Wait for the owned bridge to listen. */ }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 653 654
+	      if (child.exitCode !== null) throw new Error(`Bundled bridge exited: ${output}`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 654 655
+	      await new Promise(resolve => setTimeout(resolve, 100));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 655 656
+	    }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 656 657
+	    assert(health, `Bundled bridge did not become ready: ${output}`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 657 658
+	    assert.deepEqual(health.revision, { commit: manifest.commit,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 658 659
+	      structuredDataManifestHash: `sha256:${manifest.structuredDataManifest.sha256}` });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 659 660
+	    const toolsResponse = await fetch(`${base}/tools`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 660 661
+	    assert(toolsResponse.ok);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 661 662
+	    const tools = await toolsResponse.json();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 662 663
+	    assert.deepEqual([...tools.tools].sort(), [...expectedToolNames].sort());
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 663 664
+	    const response = await fetch(`${base}/run`, { method: 'POST',
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 664 665
+	      headers: { 'content-type': 'application/json', 'x-bridge-token': 'portable-e2e-owned-token' },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 665 666
+	      body: JSON.stringify({ tool: 'viz_render', input }), signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 666 667
+	    const rendered = await response.json();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 667 668
+	    assert(response.ok && rendered.ok, JSON.stringify(rendered));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 668 669
+	    assert(adapterSvgHash, 'adapter SVG proof missing');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 669 670
+	    assert.equal(rendered.result.svgHash, adapterSvgHash);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 670 671
+	    child.kill('SIGTERM');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 671 672
+	    const termination = await Promise.race([exited,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 672 673
+	      new Promise(resolve => setTimeout(() => resolve(null), LIFECYCLE_TIMEOUT_MS))]);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 673 674
+	    assert(termination, 'bridge did not stop cleanly');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 674 675
+	    assert(termination.code === 0 || termination.signal === 'SIGTERM');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 675 676
+	    await assertLoopbackPortClosed(port);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 676 677
+	    return { revision: health.revision, tools: tools.tools, svgHash: adapterSvgHash, parity: true, termination };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 677 678
+	  } finally {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 678 679
+	    if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 679 680
+	    await exited;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 680 681
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 681 682
+	}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 682 683
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 704 705 1
+	  assert(manifest.thirdPartyCount > 0);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 706 707 2
+	  assert.equal(sbom.summary.packageCount, manifest.thirdPartyCount);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 707 708
+	  assert.equal(sbom.summary.integrityCount, manifest.thirdPartyCount);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 715 716 2
+	    "0.3.0",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 716 717
+	    "adapter 0.3.0 preserves structured native errors",
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 787 787 14
+	    const releaseLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/release-cells.v1.json"));
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 788 788
+	    assert.equal(releaseLedger.rows.length, 42, 'The shipped release proof must contain the full reference-app population.');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 789 789
+	    assert(releaseLedger.rows.every(row => row.status === 'pass' && row.hashEqualToHost === true
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 790 790
+	      && row.artifactHash === row.hostArtifactHash), 'Every shipped release cell must have passed with host artifact equality.');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 791 791
+	    assert.deepEqual(health.productReality.release, {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 792 792
+	      bundleHead: releaseLedger.bundleHead,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 793 793
+	      archiveSha256: releaseLedger.archiveSha256,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 794 794
+	      apps: [...new Set(releaseLedger.rows.map(row => row.object))].sort(),
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 795 795
+	      frameworks: [...new Set(releaseLedger.rows.map(row => row.framework))].sort(),
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 796 796
+	      cells: releaseLedger.rows.length,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 797 797
+	      pass: releaseLedger.rows.filter(row => row.status === 'pass').length,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 798 798
+	      typedGap: releaseLedger.rows.filter(row => row.status === 'typed-gap').length,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 799 799
+	      fail: releaseLedger.rows.filter(row => row.status === 'fail').length,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 800 800
+	    });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 848 863 3
+	    const vizInput = operand("viz.render");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 849 864
+	    vizInput.output = { ...vizInput.output, svg: true };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 850 865
+	    const viz = await primary.callTool("viz_render", vizInput); // 6
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 864 879 13
+	    const appliedTokens = await primary.callTool("tokens_build", { ...operand("tokens.build"), apply: true });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 865 880
+	    assert.equal(appliedTokens.artifacts.length, 5, "portable token export must emit all five outputs");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 866 881
+	    for (const file of appliedTokens.artifacts) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 867 882
+	      assert(isInside(artifactsRoot, file));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 868 883
+	      assert((await fsp.stat(file)).size > 0);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 869 884
+	    }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 870 885
+	    const exportedTokens = Object.fromEntries(appliedTokens.artifacts.map(file => [path.basename(file), file]));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 871 886
+	    assert.deepEqual(JSON.parse(await fsp.readFile(exportedTokens['tokens.dark.json'], 'utf8')),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 872 887
+	      { cssVariables: builtScopes.B.dark, meta: { brand: 'B', theme: 'dark', scope: 'requested' } });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 873 888
+	    for (const [exported, shipped] of [['tokens.css', 'css/tokens.css'], ['tokens.ts', 'ts/tokens.ts'], ['tokens.tailwind.json', 'tailwind/tokens.json']]) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 874 889
+	      assert((await fsp.readFile(exportedTokens[exported])).equals(
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 875 890
+	        await fsp.readFile(path.join(runtimeRoot, 'packages/tokens/dist', shipped))), `Export changed shipped token bytes: ${exported}`);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 876 891
+	    }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 879 894 1
+	    const brand = await primary.callTool("brand_apply", operand("brand.apply"), "OODS-N020");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 887 902 1
+	    const preview = await primary.callTool("design_preview", operand("design.preview"), "OODS-N019");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 889 904 5
+	    assert.equal(generated.status, 'ok');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 890 905
+	    assertGeneratedArtifact(generated.artifact, 'react');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 891 906
+	    const generatedVue = await primary.callTool("code_generate", { ...operand("code.generate"), framework: 'vue' });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 892 907
+	    assert.equal(generatedVue.status, 'ok');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 893 908
+	    assertGeneratedArtifact(generatedVue.artifact, 'vue');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 895 910 2
+	    assert.equal(run.error, undefined, JSON.stringify(run.error));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 896 911
+	    assertGeneratedArtifact(run.code?.artifact, 'react');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 917 932 1
+	    assert.equal(primary.callCount, 29, '19 tools plus repeats, stores, real token export and Vue generation');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 920 935 1
+	      'tokens.build': { outcome: 'pass', apply: true, artifacts: appliedTokens.artifacts.length, preview: tokens.preview.summary },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 922 937 1
+	      'brand.apply': { outcome: 'typed', gap: 'portable-brand-source-absent', apply: false, ...brand },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 926 941 3
+	      'design.preview': { outcome: 'typed', gap: 'portable-design-loop-unavailable', adapterCodePreserved: true, ...preview },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 927 942
+	      'code.generate': { outcome: 'pass', reactHash: generated.artifact.contentHash, vueHash: generatedVue.artifact.contentHash },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 928 943
+	      pipeline: { outcome: 'pass', contentHash: run.code.artifact.contentHash },
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 950 950 1
+	      health: { outcome: 'pass', tokens: health.tokens, viz: health.productReality.viz, release: health.productReality.release },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 940 955 4
+	    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 17);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 941 956
+	    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 2);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 942 957
+	    const bridge = await proveBridge(runtimeRoot, childEnvironment, manifest, expectedToolNames,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 943 958
+	      vizInput, viz.svgHash);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 946 961 1
+	      bridge,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 968 968 1
+	        release: health.productReality.release,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1036 1052 2
+	    30,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1037 1053
+	    "portable runtime E2E must make 30 tools/call operations across both adapter processes",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1053 1069 1
+	      nodeVersion: process.version,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1095 1095 8
+	if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1096 1096
+	  main().catch((error) => {
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1097 1097
+	    process.stderr.write(
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1098 1098
+	      `runtime-e2e: ${error.stack ?? error.message ?? String(error)}\n`,
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1099 1099
+	    );
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1100 1100
+	    process.exitCode = 1;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1101 1101
+	  });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1102 1102
+	}
