@@ -1005,6 +1005,9 @@ jobs:
       - name: Verify adapter EOF lifecycle
         run: node --test packages/mcp-adapter/test-s181-lifecycle.js
 
+      - name: Verify portable fixture contracts
+        run: pnpm --filter @oods/mcp-server exec vitest run test/contracts/portable-fixtures.s194.spec.ts --reporter=verbose
+
       - name: Assemble the portable runtime twice
         run: |
           node scripts/runtime/assemble.mjs \

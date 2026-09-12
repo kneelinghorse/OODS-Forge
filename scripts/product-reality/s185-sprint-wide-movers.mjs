@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CANONICAL_ADVERTISED_SCOPE, gitDiffPaths, gitFileBytes, resolveCommit } from './s184-m07-reconnect.mjs';
+import { CANONICAL_ADVERTISED_SCOPE, gitFileBytes, isTestPath, resolveCommit } from './s184-m07-reconnect.mjs';
 
 export { CANONICAL_ADVERTISED_SCOPE };
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -71,6 +72,14 @@ export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.t
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
+// Git's text path format quotes Unicode and control characters. Preserve the
+// actual paths for both current ranges and historical omission replays.
+function gitDiffPaths(base, head, scope, { repositoryRoot, excludeTests }) {
+  return execFileSync('git', ['diff', '--name-only', '-z', `${base}..${head}`, '--', ...scope],
+    { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+    .split('\0').filter(file => file && (!excludeTests || !isTestPath(file))).sort();
+}
+
 export function compareDeclaredPaths(observed, declared) {
   assert(new Set(declared).size === declared.length, 'Declared movers contain duplicates.');
   return { missingFromDeclaration: observed.filter(file => !declared.includes(file)),
@@ -84,8 +93,8 @@ export function deriveRange(base, head, root = ROOT, publicScope = PUBLIC_RUNTIM
   const publicPaths = gitDiffPaths(resolvedBase, resolvedHead, [...publicScope], { repositoryRoot: root, excludeTests: true });
   assert(canonicalPaths.every(file => publicPaths.includes(file)), 'Public scope lost a canonical path.');
   return { base: resolvedBase, head: resolvedHead,
-    canonicalCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...CANONICAL_ADVERTISED_SCOPE],
-    publicCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...publicScope],
+    canonicalCommand: ['git', 'diff', '--name-only', '-z', `${resolvedBase}..${resolvedHead}`, '--', ...CANONICAL_ADVERTISED_SCOPE],
+    publicCommand: ['git', 'diff', '--name-only', '-z', `${resolvedBase}..${resolvedHead}`, '--', ...publicScope],
     excluded: 'Test files only; all commands use the single sprint range, never per-mission ranges.',
     canonicalPaths, publicPaths, supplementalRuntimePaths: publicPaths.filter(file => !canonicalPaths.includes(file)) };
 }

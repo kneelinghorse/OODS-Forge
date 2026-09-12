@@ -73,18 +73,38 @@ export function auditPublicRuntimeBytes({ root, implementationHead, executionHea
 
 export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' }) {
   assert(fullHead(base) && fullHead(head));
-  const paths = scope => execFileSync('git', ['diff', '--name-only', `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
-    .trim().split('\n').filter(file => file && !testPath(file)).sort();
+  const paths = scope => execFileSync('git', ['diff', '--name-only', '-z', `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
+    .split('\0').filter(file => file && !testPath(file)).sort();
   const canonical = ['configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
     'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
     'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json'];
   const result = { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-195' ? publicScope195 : sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
   if (sprintId === 'sprint-195') {
-    result.patch = execFileSync('git', ['diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
-    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(Boolean).sort();
+    // Freeze only the human-readable patch representation to the retained format;
+    // every path inventory uses -z and never relies on quotePath configuration.
+    result.patch = execFileSync('git', ['-c', 'core.quotepath=false', 'diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
+    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean).sort();
   }
   return result;
 }
+// --no-renames makes every name-status record a status/path pair; tabs and
+// newlines inside paths must never be interpreted as record separators.
+export function auditEvidenceChanges({ root, executionHead, reviewHead }) {
+  const fields = execFileSync('git', ['diff', '--name-status', '--no-renames', '-z', `${executionHead}..${reviewHead}`],
+    { cwd: root, encoding: 'utf8' }).split('\0');
+  assert.equal(fields.pop(), '', 'Git evidence changes must be NUL-terminated');
+  assert.equal(fields.length % 2, 0, 'Git evidence changes must contain status/path pairs');
+  return fields.reduce((changes, field, index) => {
+    if (index % 2 === 0) changes.push({ status: field, path: fields[index + 1] });
+    return changes;
+  }, []);
+}
+
+export function auditCiChangedPaths({ root, head, implementation, scope }) {
+  return execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', head, implementation, '--', ...scope],
+    { cwd: root, encoding: 'utf8' }).split('\0').filter(file => file && !testPath(file)).sort();
+}
+
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
   ['reviewCarries', 'behaviorBites', 'near'], ['reviewCarries'], ['bridge'], [],
@@ -1816,8 +1836,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   mkdirSync(outputRoot, { recursive: true });
   try {
     execFileSync('git', ['merge-base', '--is-ancestor', executionHead, reviewHead], { cwd: root });
-    const changes = execFileSync('git', ['diff', '--name-status', '--no-renames', `${executionHead}..${reviewHead}`], { cwd: root, encoding: 'utf8' })
-      .trim().split('\n').filter(Boolean).map(line => { const [status, file] = line.split('\t'); return { status, path: file }; });
+    const changes = auditEvidenceChanges({ root, executionHead, reviewHead });
     const readFrozen = file => execFileSync('git', ['show', `${reviewHead}:${file}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 });
     const readHistorical = (commit, file) => execFileSync('git', ['show', `${commit}:${file}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 });
     const manifestPath = argument('--manifest') ?? defaultManifest;
@@ -1833,7 +1852,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       gitEvidence: { ancestor: true, changes }, publicGitEvidence, rangeGitEvidence, manifestPath,
       readOutput: file => readFileSync(path.join(artifactsRoot, file)),
       readFrozen, readHistorical,
-      ciChangedPaths: (head, implementation, scope) => execFileSync('git', ['diff', '--name-only', '--no-renames', head, implementation, '--', ...scope], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(file => file && !testPath(file)).sort(),
+      ciChangedPaths: (head, implementation, scope) => auditCiChangedPaths({ root, head, implementation, scope }),
     });
     const stdout = `Independent actual-output audit passed: ${report.checkedCriteria} literal criteria, ${report.checkedExecutions} executions, ${report.checkedFrozenPaths} frozen paths.\n`;
     writeFileSync(path.join(outputRoot, 'audit.json'), `${JSON.stringify({ ...report, exitCode: 0, command, host: os.hostname(), stdout }, null, 2)}\n`);
