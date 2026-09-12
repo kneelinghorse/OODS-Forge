@@ -1,18 +1,18 @@
 {
-  "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-  "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+  "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+  "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
   "status": "passed",
-  "sourceDiff": [],
   "executions": [
     {
-      "id": "mcp-build",
+      "id": "mcp-build-before-runtime",
       "command": "pnpm --filter @oods/mcp-server run build",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
+      "purpose": "Build the actual B2 handlers used by the fresh composition/saved/census commands. Final served runtime health is separately rebuilt after the new ledger is complete.",
       "evidence": [
         {
-          "path": "artifacts/product-reality/sprint-195/m07/mcp-build.log",
+          "path": "artifacts/product-reality/sprint-195/m07/correction/population-preparation/mcp-build-before-runtime.log",
           "sha256": "8ce8e498fee226a15a89c153e3b8258052de65fcfe4aa7959592510880a8219d"
         }
       ]
@@ -21,8 +21,8 @@
       "id": "component-census",
       "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/component-census --fresh --full-population --mission s195-m07",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-195/m07/component-census.log",
@@ -30,7 +30,7 @@
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/component-census/report.json",
-          "sha256": "a749f08ff271fa8a5fa5feafae44a1b4bd9b1f002f4412575e1be9194878f37f"
+          "sha256": "b0b7ee7329c01c52980eeda4489bec7455b9049b367ed7904fc55a187b81a862"
         }
       ]
     },
@@ -38,8 +38,8 @@
       "id": "saved-original",
       "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/saved-original --mission s195-m07",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-195/m07/saved-original.log",
@@ -47,7 +47,7 @@
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/saved-original/report.json",
-          "sha256": "9365a5f0faacb395635c1fb0a861739aeeea9cd2a7fb37a4dadc0b26ff9a610c"
+          "sha256": "588ec94ca76017101e7fbbcf714a53be3526955ca7ad6e89b523199ae2fe11ea"
         }
       ]
     },
@@ -55,8 +55,8 @@
       "id": "saved-successor",
       "command": "node scripts/product-reality/s185-reachability.mjs artifacts/product-reality/sprint-195/m07/saved-successor --store artifacts/product-reality/sprint-187/m05/delivery-final/recomposed-store --mission s195-m07",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-195/m07/saved-successor.log",
@@ -64,7 +64,7 @@
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/saved-successor/report.json",
-          "sha256": "13218b85154702d73993e27eb4a618e16ce552a5b3328341b5fc2468e4b95905"
+          "sha256": "124d480949a33caf7bd06ba8195edce2d5c0f0492d058ddfe632aa733203240b"
         }
       ]
     },
@@ -72,8 +72,8 @@
       "id": "census-verification",
       "command": "python3 artifacts/product-reality/sprint-195/m07/verify-census.py",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-195/m07/census-verification.log",
@@ -81,11 +81,24 @@
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/schema-movement.json",
-          "sha256": "c2c02b182090a9e08132abd323b35cc84a44d9bd6c1eb3da7374c2b94a0123e6"
+          "sha256": "2955d88107581a3476fb5280e5a47d9ce2880ffd25ac5f31270de09be8d002e4"
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/saved-compatibility.json",
-          "sha256": "becebf6abadc8e01bdf63d3ce71dde94e185b8fe455d158cea6f294d724d5d6c"
+          "sha256": "e2e26bf6b72cc1d646c50fe24f27e956d35f5f188716a8c44786516c14fcd4bb"
+        }
+      ]
+    },
+    {
+      "id": "mcp-build",
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "exitCode": 0,
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-195/m07/mcp-build.log",
+          "sha256": "8ce8e498fee226a15a89c153e3b8258052de65fcfe4aa7959592510880a8219d"
         }
       ]
     },
@@ -93,8 +106,8 @@
       "id": "component-verification",
       "command": "node artifacts/product-reality/sprint-195/m07/verify-components.mjs",
       "exitCode": 0,
-      "headBefore": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
-      "headAfter": "e375f4c2db9fe9644caba87690b91b8ddd71e207",
+      "headBefore": "39deb793a3161621b5a0893618f9d40201c22256",
+      "headAfter": "39deb793a3161621b5a0893618f9d40201c22256",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-195/m07/component-verification.log",
@@ -102,17 +115,36 @@
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/component-proof.json",
-          "sha256": "1059463646d9d2f4ae86f865d966f2269baa835874decff00f24e0637041a9bd"
+          "sha256": "04cce8768c2f1d676407b82e9aacf56aef5700a51fa6de36430e827c8026b7eb"
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/health-dist.json",
-          "sha256": "632b9980821d98422205cedb2e307b07dd2b988d699b9c26c188bb561149fba0"
+          "sha256": "d3bf76dd07997b8f162d1e4d52f0accf8f818060b9b48099e75fc904f7143b93"
         },
         {
           "path": "artifacts/product-reality/sprint-195/m07/tool-proof.json",
-          "sha256": "e11d4cdb553c186ac9ffd8b63bf3ae353d1c4e2a7037ec3986b477cd2e6cb4d8"
+          "sha256": "c4fa3b4e91b49bc93867494173eb1124d89ac9262c43777f96510ae905f25d2e"
         }
       ]
     }
-  ]
+  ],
+  "preparationIssue": {
+    "path": "artifacts/product-reality/sprint-195/m07/correction/population-preparation/execution.json",
+    "sha256": "3dd623d5045c770364dd7e8fcdeda825e5cd9eac67838fda5a1b75ad060915fa"
+  },
+  "verificationChangesAfterRuntime": {
+    "scope": "test-only corrections after the completed B2 runtime",
+    "status": "verified-targeted",
+    "paths": [
+      "packages/mcp-server/test/contracts/viz-pattern-registry.s195.spec.ts",
+      "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts",
+      "testing/a11y/brand-description-truth.spec.ts"
+    ],
+    "note": "Four test files correct contrast-pair coverage and declare/restore the recorded golden timezone. Production implementations, actual chart operands, golden bytes, thresholds, test projects and exclusions are unchanged. Native MCP whole-file47/47 and guard5/5 passed; root V8 whole-file47/47 passed but the deliberately narrow coverage command failed unchanged global floors. Full corrected CI coverage remains required.",
+    "evidence": {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-verification-summary.json",
+      "sha256": "8843645766f0d321646ad7ef5c24f6e1b70b4bc15f8978b81abcb89cbd3b48a1"
+    }
+  }
 }

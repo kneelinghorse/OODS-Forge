@@ -1,0 +1,426 @@
+{
+  "status": "passed-focused-repair",
+  "headAtChecks": "39deb793a3161621b5a0893618f9d40201c22256",
+  "sourceState": "B2 HEAD plus the three uncommitted test-only timezone hooks; not relabeled as an execution of a future commit",
+  "scope": "Complete three existing files in both harnesses under external TZ=UTC, with no assertion filters or skipped cases",
+  "files": [
+    {
+      "path": "packages/mcp-server/test/contracts/viz-pattern-registry.s195.spec.ts",
+      "beforeSha256": "d5c238876aea98ee131b508f325d38984901ea93c8e62fbd256cded803eba4c4",
+      "afterSha256": "2654a3832096b30b3a2f43ee0218661160ca598eb4ba02f10dd60e96c388365b",
+      "nonVitestImportLinesUnchanged": true,
+      "importLines": [
+        {
+          "line": 1,
+          "text": "import { createHash } from 'node:crypto';"
+        },
+        {
+          "line": 2,
+          "text": "import { execFileSync } from 'node:child_process';"
+        },
+        {
+          "line": 3,
+          "text": "import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';"
+        },
+        {
+          "line": 4,
+          "text": "import { tmpdir } from 'node:os';"
+        },
+        {
+          "line": 5,
+          "text": "import { dirname, join } from 'node:path';"
+        },
+        {
+          "line": 7,
+          "text": "import { VIZ_PATTERN_SOURCES, VIZ_RECIPES } from '@oods/viz-core';"
+        },
+        {
+          "line": 8,
+          "text": "import { canonicalPatternValue, validateVizPatternRegistry, type VizPatternCapability } from '../../../viz-core/src/registry/viz-patterns.js';"
+        },
+        {
+          "line": 12,
+          "text": "} from '../../../../scripts/product-reality/s195-pattern-census.js';"
+        }
+      ],
+      "change": "Explicit beforeAll recorded America/Chicago fixture environment and afterAll restoration; effective timezone/date/restoration assertions. Existing exact SVG/registry comparisons unchanged."
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "beforeSha256": "215fd9b40cfe4cd07718366e7c239c75db77907b5b2d9cf65e71b775c048692e",
+      "afterSha256": "7f9c8e9eac78a0a6966be637ec9ba485b878426a8ddce44c0aa71fa891d4a343",
+      "nonVitestImportLinesUnchanged": true,
+      "importLines": [
+        {
+          "line": 1,
+          "text": "import { readFileSync } from 'node:fs';"
+        },
+        {
+          "line": 3,
+          "text": "import { VIZ_RECIPES } from '@oods/viz-core';"
+        },
+        {
+          "line": 4,
+          "text": "import { canonical, collectChartPlacements, measureVizCensus } from '../../../../scripts/product-reality/s190-viz-census.js';"
+        }
+      ],
+      "change": "Explicit beforeAll recorded America/Chicago fixture environment and afterAll restoration; effective timezone/date/restoration assertions. Existing exact SVG/registry comparisons unchanged."
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts",
+      "beforeSha256": "293122b87ce724072e1a4a33d18b217a18bd31217c6a7d38a9a38d5fbf5a3b4e",
+      "afterSha256": "b82d4be843f5dd5b7a4e5eb91ad66f8401fe3395a0b0919c83bc0a9b9b013202",
+      "nonVitestImportLinesUnchanged": true,
+      "importLines": [
+        {
+          "line": 1,
+          "text": "import fs from 'node:fs';"
+        },
+        {
+          "line": 2,
+          "text": "import path from 'node:path';"
+        },
+        {
+          "line": 4,
+          "text": "import { sha256 } from '@oods/artifacts';"
+        },
+        {
+          "line": 5,
+          "text": "import { handle as compose } from '../../src/tools/design.compose.js';"
+        },
+        {
+          "line": 6,
+          "text": "import { handle as generate } from '../../src/tools/code.generate.js';"
+        },
+        {
+          "line": 7,
+          "text": "import * as viz from '../../src/tools/viz.render.js';"
+        },
+        {
+          "line": 8,
+          "text": "import { chartNodes } from '../../src/codegen/chart-declaration.js';"
+        },
+        {
+          "line": 9,
+          "text": "import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';"
+        },
+        {
+          "line": 10,
+          "text": "import { typecheckWorkflow } from './workflow-typecheck.js';"
+        },
+        {
+          "line": 11,
+          "text": "import { wire, repositoryRoot } from '../helpers/wire-boundary.js';"
+        },
+        {
+          "line": 12,
+          "text": "import { getAjv } from '../../src/lib/ajv.js';"
+        },
+        {
+          "line": 13,
+          "text": "import { CASES, SALES } from '../../src/tools/__fixtures__/cartesian-render.js';"
+        },
+        {
+          "line": 14,
+          "text": "import type { UiElement, UiSchema } from '../../src/schemas/generated.js';"
+        },
+        {
+          "line": 15,
+          "text": "import type { CodeGenerateInput } from '../../src/tools/types.js';"
+        }
+      ],
+      "change": "Explicit beforeAll recorded America/Chicago fixture environment and afterAll restoration; effective timezone/date/restoration assertions. Existing exact SVG/registry comparisons unchanged."
+    }
+  ],
+  "unchangedConfigsAndCanonicalRegistries": [
+    {
+      "path": "vitest.config.ts",
+      "sha256": "38436a850c9e6392d12b4ba490ab315e7fc1b1c50e672d7a139cbb5ab9ebf371"
+    },
+    {
+      "path": "packages/mcp-server/vitest.config.ts",
+      "sha256": "2e07478334a69658d28812dd1d159dcbad9c59e8fe1a7e43ba9292ffd2315375"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-recipes.v1.json",
+      "sha256": "95a4a287326aa4d200c9b023e7ba19ab3bb16c53f77a5c88be4cc4e33d25122e"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-patterns.v1.json",
+      "sha256": "d85e6a5d4942324c5eba66a6184d006fa60f989e8519ba12169e915e5cebefe9"
+    },
+    {
+      "path": "packages/viz-core/src/registry/viz-taxonomy.v1.json",
+      "sha256": "3635ee43621f1479ad416b214ea24e780a904829b89d8fe8a4fda0a4aaf81ea6"
+    }
+  ],
+  "coverageThresholdsChanged": false,
+  "productionOrGoldenChanges": false,
+  "externalTimezone": "UTC",
+  "effectiveFixtureTimezone": "America/Chicago",
+  "restoration": "Each afterAll verifies previous process.env.TZ and Intl effective timezone restored; beforeAll verifies local noon-UTC resolves07:00",
+  "rootInstrumented": {
+    "tests": 47,
+    "passed": 47,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exitCode": 1,
+    "result": "All cases and hooks passed; deliberately narrow root-source coverage did not meet unchanged global thresholds. This is an instrumented diagnostic, not a full coverage pass.",
+    "execution": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-coverage-execution.json",
+    "rawReport": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-coverage-tests.json"
+  },
+  "nativeMcp": {
+    "tests": 47,
+    "passed": 47,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "execution": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-native-execution.json",
+    "rawReport": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-native-tests.json"
+  },
+  "independentProbe": {
+    "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/summary.json",
+    "sameRequestBytes": true,
+    "UTC": "e53138ddc4a051f5af64eaec2a68f0da6081450d94c18f9e13796eeec7f992fb",
+    "America/Chicago": "d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7",
+    "changedSvgNodes": 27,
+    "changedAttributes": {
+      "d": 2,
+      "x2": 6,
+      "aria-label": 1,
+      "transform": 18
+    },
+    "changedXmlTextNodes": 0,
+    "paintChanges": false
+  },
+  "initialCi": {
+    "jobId": 103472755567,
+    "head": "39deb793a3161621b5a0893618f9d40201c22256",
+    "rawLog": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/coverage-job-103472755567.log",
+    "rawLogSha256": "11b83a0bd0210cde651be211e7baa7425654ef33c691647e50001780b3dcd818",
+    "fullJobResult": "5failed/6844passed/16skipped; four failures in this slice plus separately owned numeric-ratio guard failure",
+    "failureReferences": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/coverage-failure-summary.json",
+    "registryProbe": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/registry-tz-comparison.json"
+  },
+  "limits": [
+    "Historical fixture byte equality is scoped to America/Chicago, not cross-timezone determinism.",
+    "No production normalization, UTC policy, renderer/spec mutation or golden replacement.",
+    "No build, full local coverage campaign, full five-suite capture or CI rerun was executed in this slice.",
+    "Actual complete corrective CI coverage and final five-suite capture remain required."
+  ],
+  "references": [
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/before/packages/mcp-server/test/contracts/viz-pattern-registry.s195.spec.ts",
+      "sha256": "d5c238876aea98ee131b508f325d38984901ea93c8e62fbd256cded803eba4c4",
+      "bytes": 7700
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/before/packages/mcp-server/test/contracts/viz-recipes.s190.spec.ts",
+      "sha256": "215fd9b40cfe4cd07718366e7c239c75db77907b5b2d9cf65e71b775c048692e",
+      "bytes": 7076
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/before/packages/mcp-server/test/product-reality/chart-placement-codegen.s195.spec.ts",
+      "sha256": "293122b87ce724072e1a4a33d18b217a18bd31217c6a7d38a9a38d5fbf5a3b4e",
+      "bytes": 13750
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/before.json",
+      "sha256": "284eea939a21a20831f705176f92d88b7c4e34b90d473e1db8fda871a891c7b3",
+      "bytes": 684
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/focused-coverage-summary.json",
+      "sha256": "1c09883e6ca1521f1c0aefa432dd797a1a91fb410745702ff4efe62826128743",
+      "bytes": 144464
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago/generated.svg",
+      "sha256": "d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7",
+      "bytes": 9713
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago/receipt.json",
+      "sha256": "7add0880a84c29f08e59b476e5689ebaa31ea0270a2d28b27396f002ac78cfa5",
+      "bytes": 998
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago/request.json",
+      "sha256": "22482513a48e4164ed8785efbbd97d3c9c2488aa854d67bb0bcd6715bae1ce80",
+      "bytes": 19012
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago/result.json",
+      "sha256": "fb2d37343cede43b6e3627017e0fd0c5f00bfcfe64deac05be3cb7401091044d",
+      "bytes": 67658
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago/retained-m05.svg",
+      "sha256": "d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7",
+      "bytes": 9713
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/America-Chicago.log",
+      "sha256": "083e05157155807407c0ba3cc056133dbb56485f24c796f836d126e779959f96",
+      "bytes": 926
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC/generated.svg",
+      "sha256": "e53138ddc4a051f5af64eaec2a68f0da6081450d94c18f9e13796eeec7f992fb",
+      "bytes": 9730
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC/receipt.json",
+      "sha256": "c5737d372ae4f23b242b79b66012154c4e1fb2efd44288e612c2755010c6a064",
+      "bytes": 975
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC/request.json",
+      "sha256": "22482513a48e4164ed8785efbbd97d3c9c2488aa854d67bb0bcd6715bae1ce80",
+      "bytes": 19012
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC/result.json",
+      "sha256": "f627402654559a35196e83e7f07d4d07a75832f59895d493895304fb0683103b",
+      "bytes": 67709
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC/retained-m05.svg",
+      "sha256": "d77a69219501a87cef9c6b318cbdd97802f19caf1776c953b268771ac4379db7",
+      "bytes": 9713
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/UTC.log",
+      "sha256": "d71778f4fa99e4758b0c50efcb88d60d417d71ca17764d47bac71d33af46c450",
+      "bytes": 903
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/comparison.json",
+      "sha256": "d027afbb1a0c9b3f7f91819fd4ca4b8e87d81661b917c2719072c314500fa89d",
+      "bytes": 18648
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/executions.json",
+      "sha256": "c3c94ef27a1f836a8c61af990aa5c8d4355e8feeedb5a5e9aa0b00c831b24ab8",
+      "bytes": 647
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/probe.mjs",
+      "sha256": "6700b884dc90ae1ea7f16e09665a79d7ad2cc1abca779ab57cc95c0adcbd43a2",
+      "bytes": 2548
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/summary.json",
+      "sha256": "ead7eb866971d31bf3d0007e560c9be5b683c0ac3309532a532f3e21abff9f25",
+      "bytes": 6957
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/independent-probe/svg.diff",
+      "sha256": "25e4387297079e4e62f76dbfa08e0497f55ea26de2bafa6c763ecc9e25c75648",
+      "bytes": 10907
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/America-Chicago/result.json",
+      "sha256": "20aaf7a6e29a76b0432ba188f54171c615a732a24ec274726ddec79fbba05db3",
+      "bytes": 24208
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/UTC/result.json",
+      "sha256": "27a1e238a1d1a1755d5bc4e11141feb03347ca9eb9bd11ae7ffaff1b7a93e79e",
+      "bytes": 24184
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/coverage-failure-summary.json",
+      "sha256": "b4e021a19be9a05669369efa1737029ff069887b261b0705102f05cdaf44d292",
+      "bytes": 2994
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/coverage-failures.log",
+      "sha256": "aaddc46d2fca2b5fb43662eef6f8ee4210c98f87813efa667982f72704ccece5",
+      "bytes": 231035
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/coverage-job-103472755567.log",
+      "sha256": "11b83a0bd0210cde651be211e7baa7425654ef33c691647e50001780b3dcd818",
+      "bytes": 556786
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/patterns-registry-diff.json",
+      "sha256": "f946eef0a6bc805f1be970f36fe15815730d9b319e1c0129eaaff396efd4ac67",
+      "bytes": 3852
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/registry-tz-comparison.json",
+      "sha256": "41c8a3852c2fb1597e688b9baf36854c1bcad6dc145d8a7512e538fcd699444a",
+      "bytes": 10129
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/subscription-svg-diff.json",
+      "sha256": "1232aceae6d288618d203855e0b144c946f33cf702e4caac005fe1fa4da1cc86",
+      "bytes": 5242
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/types-registry-diff.json",
+      "sha256": "e1a6e544168b00c32132a160ec0cc141f8ce0b9ad8618d0af1f56eec4f1e78c9",
+      "bytes": 5412
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-coverage-execution.json",
+      "sha256": "a5e3e6b867cc98bae48de3d69c01ef5a55f011c8f8980b2c62b1a3aea9953b5c",
+      "bytes": 941
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-coverage-tests.json",
+      "sha256": "2e7eb8925f9f073ab06fe372189c20f7264c37089d3c2c7a247f329425014751",
+      "bytes": 3994913
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-coverage-tests.log",
+      "sha256": "40671b83d16d4cea35ed4581940508c7fcbd383780046eb728f76ef1df041bb1",
+      "bytes": 49781
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-native-execution.json",
+      "sha256": "4b06b2d0175beca8538da6534c6dc0321b39021716b419b0bd256ee776fd64b1",
+      "bytes": 789
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-native-tests.json",
+      "sha256": "acb15a769421050174a41f85008097d364bf7a10fa1cc7cf829170cf224dd6a1",
+      "bytes": 20956
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/utc-native-tests.log",
+      "sha256": "834d5fed20fd7c341272987457357774da973d6d67c4984bf37e231ba327edfe",
+      "bytes": 3198
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/mcp-job-103472755602.log",
+      "sha256": "eb0e623e974df1a0b7add5f62630ce4ab61a41204ec07b5949cef2f51905a58b",
+      "bytes": 446708
+    },
+    {
+      "path": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/mcp-failures.log",
+      "sha256": "01509358dbc920b23d10177edeb913b988dca18c68c45ba1207ff8f24b704e7b",
+      "bytes": 232399
+    }
+  ],
+  "builderSelfCertified": false,
+  "secondNaturalCi": {
+    "jobId": 103472755602,
+    "conclusion": "failure",
+    "tests": {
+      "passed": 6576,
+      "failed": 4,
+      "skipped": 16
+    },
+    "cause": "Same four timezone-sensitive exact byte assertions; no new failure class",
+    "rawLog": "artifacts/product-reality/sprint-195/m07/correction/ci-timezone/initial-ci/mcp-job-103472755602.log",
+    "rawLines": [
+      1742,
+      1852
+    ]
+  }
+}

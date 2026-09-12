@@ -3,13 +3,28 @@ import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { VIZ_PATTERN_SOURCES, VIZ_RECIPES } from '@oods/viz-core';
 import { canonicalPatternValue, validateVizPatternRegistry, type VizPatternCapability } from '../../../viz-core/src/registry/viz-patterns.js';
 import {
   ROOT, PATTERN_DOC_PATH, PATTERN_OBSERVATIONS_PATH, PATTERN_REGISTRY_PATH,
   derivePatternRegistry, measurePatternCensus, renderPatternLibrary, writePatternOutputs, type PatternCensusObservations,
 } from '../../../../scripts/product-reality/s195-pattern-census.js';
+
+// Exact temporal-axis pixels were qualified in America/Chicago. Preserve that
+// fixture environment; local-time SVGs do not claim cross-timezone byte identity.
+const previousTimezone = process.env.TZ;
+const previousEffectiveTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+beforeAll(() => {
+  vi.stubEnv('TZ', 'America/Chicago');
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe('America/Chicago');
+  expect(new Date('2026-06-01T12:00:00Z').getHours()).toBe(7);
+});
+afterAll(() => {
+  vi.unstubAllEnvs();
+  expect(process.env.TZ).toBe(previousTimezone);
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(previousEffectiveTimezone);
+});
 
 const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const rows = (): VizPatternCapability[] => JSON.parse(read(PATTERN_REGISTRY_PATH));

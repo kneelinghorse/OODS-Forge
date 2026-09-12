@@ -1,4 +1,4 @@
-52b0da991705c4c565987bc9faf7738ba00d885e 1 1 64
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 5
 author System Systems
 author-mail <systems@example.com>
 author-time 1789163103
@@ -18,9 +18,20 @@ filename scripts/product-reality/s195-viz-matrix.ts
 	import { resolve, dirname } from 'node:path';
 52b0da991705c4c565987bc9faf7738ba00d885e 5 5
 	import { fileURLToPath, pathToFileURL } from 'node:url';
-52b0da991705c4c565987bc9faf7738ba00d885e 6 6
-	import { sha256 } from '../../packages/artifacts/dist/index.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 7 7
+a0c10f8b075ba07c28816cb2c453061a53400a4a 6 6 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789174857
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789174857
+committer-tz -0500
+summary fix(proof): repair clean-build typing and qualified closeout expectations
+previous 54def3aa88683d81f1f942558a24715c064021e9 scripts/product-reality/s195-viz-matrix.ts
+filename scripts/product-reality/s195-viz-matrix.ts
+	const { sha256 } = await import(new URL('../../packages/artifacts/dist/index.js', import.meta.url).href) as typeof import('../../packages/artifacts/src/index.js');
+52b0da991705c4c565987bc9faf7738ba00d885e 7 7 58
 	import { resolveTokenToColor } from '@oods/viz-core';
 52b0da991705c4c565987bc9faf7738ba00d885e 8 8
 	import { toHex } from '../../packages/viz-core/src/tokens/categorical-palette.js';

@@ -1,4 +1,4 @@
-86b44639489552329a627219fe527918a6c08420 1 1 24
+86b44639489552329a627219fe527918a6c08420 1 1 3
 author System Systems
 author-mail <systems@example.com>
 author-time 1789161640
@@ -14,11 +14,22 @@ filename scripts/product-reality/s195-certify-profile-receipt.ts
 	import path from 'node:path';
 86b44639489552329a627219fe527918a6c08420 3 3
 	import { fileURLToPath } from 'node:url';
-86b44639489552329a627219fe527918a6c08420 4 4
-	import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
-86b44639489552329a627219fe527918a6c08420 5 5
-	import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
-86b44639489552329a627219fe527918a6c08420 6 6
+a0c10f8b075ba07c28816cb2c453061a53400a4a 4 4 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789174857
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789174857
+committer-tz -0500
+summary fix(proof): repair clean-build typing and qualified closeout expectations
+previous 54def3aa88683d81f1f942558a24715c064021e9 scripts/product-reality/s195-certify-profile-receipt.ts
+filename scripts/product-reality/s195-certify-profile-receipt.ts
+	const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
+a0c10f8b075ba07c28816cb2c453061a53400a4a 5 5
+	const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
+86b44639489552329a627219fe527918a6c08420 6 6 19
 	import { ECHARTS_OPERAND_CASES, renderInputFor } from '../../packages/mcp-server/test/tools/s172-echarts-operands.js';
 86b44639489552329a627219fe527918a6c08420 7 7
 	

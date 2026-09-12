@@ -1,7 +1,22 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { VIZ_RECIPES } from '@oods/viz-core';
 import { canonical, collectChartPlacements, measureVizCensus } from '../../../../scripts/product-reality/s190-viz-census.js';
+
+// Exact temporal-axis pixels were qualified in America/Chicago. Preserve that
+// fixture environment; local-time SVGs do not claim cross-timezone byte identity.
+const previousTimezone = process.env.TZ;
+const previousEffectiveTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+beforeAll(() => {
+  vi.stubEnv('TZ', 'America/Chicago');
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe('America/Chicago');
+  expect(new Date('2026-06-01T12:00:00Z').getHours()).toBe(7);
+});
+afterAll(() => {
+  vi.unstubAllEnvs();
+  expect(process.env.TZ).toBe(previousTimezone);
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(previousEffectiveTimezone);
+});
 
 const root = new URL('../../../../', import.meta.url);
 const read = (file: string) => readFileSync(new URL(file, root), 'utf8');

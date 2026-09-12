@@ -1,0 +1,53 @@
+diff --git a/testing/a11y/brand-description-truth.spec.ts b/testing/a11y/brand-description-truth.spec.ts
+index 720f285e..803b4242 100644
+--- a/testing/a11y/brand-description-truth.spec.ts
++++ b/testing/a11y/brand-description-truth.spec.ts
+@@ -81,6 +81,8 @@ const PAIR_FOR_CLAIM: Record<string, { foreground: string; background: string }>
+   'status.success.text': { foreground: 'status.success.text', background: 'status.success.surface' },
+   'status.success.icon': { foreground: 'status.success.icon', background: 'surface.subtle' },
+   'status.warning.icon': { foreground: 'status.warning.icon', background: 'surface.subtle' },
++  'viz.scale.categorical.04': { foreground: 'viz.scale.categorical.04', background: 'surface.canvas' },
++  'viz.scale.categorical.05': { foreground: 'viz.scale.categorical.05', background: 'surface.canvas' },
+ };
+ 
+ /** Any `N:1` in the prose, with the comparator that governs how it must be read. */
+@@ -106,9 +108,14 @@ function claimsIn(cell: string, tokens: Map<string, Leaf>): Claim[] {
+   return claims;
+ }
+ 
+-function measure(tokens: Map<string, Leaf>, foreground: string, background: string): number | null {
++function measure(
++  tokens: Map<string, Leaf>,
++  foreground: string,
++  background: string,
++  backgroundTokens: Map<string, Leaf> = tokens,
++): number | null {
+   const fg = tokens.get(foreground);
+-  const bg = tokens.get(background);
++  const bg = backgroundTokens.get(background);
+   if (!fg || !bg) return null;
+   try {
+     return contrastRatio(normaliseColor(fg.value, foreground), normaliseColor(bg.value, background));
+@@ -178,6 +185,22 @@ describe('brand $description ratio claims are true (s168 m03)', () => {
+     }
+   });
+ 
++  it('also verifies the other-brand canvas named in categorical ratio claims', () => {
++    // Each m05 categorical description promises both canvases, not just its own.
++    // Grade each authored foreground independently so later brand divergence cannot
++    // pass this promise merely because the same-brand pair still meets 3:1.
++    for (const brand of BRANDS) {
++      const otherBrand = brand === 'A' ? 'B' : 'A';
++      for (const [theme, slot] of [['base', '05'], ['dark', '04']] as const) {
++        const token = `viz.scale.categorical.${slot}`;
++        expect(
++          measure(loadCell(brand, theme), token, 'surface.canvas', loadCell(otherBrand, theme)),
++          `${brand}/${theme} ${token} on ${otherBrand}/${theme} canvas`,
++        ).toBeGreaterThanOrEqual(3);
++      }
++    }
++  });
++
+   it('hc cells carry no numeric ratio claims, because they cannot be graded', () => {
+     // Both hc cells resolve entirely to CSS system colours, so no ratio is computable and
+     // any numeric assertion there would be unfalsifiable rather than merely wrong.

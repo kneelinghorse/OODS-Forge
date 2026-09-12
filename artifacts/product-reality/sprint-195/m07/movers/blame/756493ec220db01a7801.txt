@@ -1,4 +1,4 @@
-52b0da991705c4c565987bc9faf7738ba00d885e 1 1 57
+52b0da991705c4c565987bc9faf7738ba00d885e 1 1 4
 author System Systems
 author-mail <systems@example.com>
 author-time 1789163103
@@ -16,17 +16,28 @@ filename scripts/product-reality/s195-hc-built-receipt.ts
 	import path from 'node:path';
 52b0da991705c4c565987bc9faf7738ba00d885e 4 4
 	import { fileURLToPath } from 'node:url';
-52b0da991705c4c565987bc9faf7738ba00d885e 5 5
-	import { getAjv } from '../../packages/mcp-server/dist/lib/ajv.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 6 6
-	import { handle as render } from '../../packages/mcp-server/dist/tools/viz.render.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 7 7
-	import { handle as certify } from '../../packages/mcp-server/dist/tools/artifact.certify.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 8 8
-	import { handle as dashboard } from '../../packages/mcp-server/dist/tools/dashboard.render.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 9 9
-	import { handle as generate } from '../../packages/mcp-server/dist/tools/code.generate.js';
-52b0da991705c4c565987bc9faf7738ba00d885e 10 10
+a0c10f8b075ba07c28816cb2c453061a53400a4a 5 5 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789174857
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789174857
+committer-tz -0500
+summary fix(proof): repair clean-build typing and qualified closeout expectations
+previous 54def3aa88683d81f1f942558a24715c064021e9 scripts/product-reality/s195-hc-built-receipt.ts
+filename scripts/product-reality/s195-hc-built-receipt.ts
+	const { getAjv } = await import(new URL('../../packages/mcp-server/dist/lib/ajv.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/lib/ajv.js');
+a0c10f8b075ba07c28816cb2c453061a53400a4a 6 6
+	const { handle: render } = await import(new URL('../../packages/mcp-server/dist/tools/viz.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/viz.render.js');
+a0c10f8b075ba07c28816cb2c453061a53400a4a 7 7
+	const { handle: certify } = await import(new URL('../../packages/mcp-server/dist/tools/artifact.certify.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/artifact.certify.js');
+a0c10f8b075ba07c28816cb2c453061a53400a4a 8 8
+	const { handle: dashboard } = await import(new URL('../../packages/mcp-server/dist/tools/dashboard.render.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/dashboard.render.js');
+a0c10f8b075ba07c28816cb2c453061a53400a4a 9 9
+	const { handle: generate } = await import(new URL('../../packages/mcp-server/dist/tools/code.generate.js', import.meta.url).href) as typeof import('../../packages/mcp-server/src/tools/code.generate.js');
+52b0da991705c4c565987bc9faf7738ba00d885e 10 10 48
 	
 52b0da991705c4c565987bc9faf7738ba00d885e 11 11
 	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');

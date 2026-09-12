@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { sha256 } from '@oods/artifacts';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
@@ -13,6 +13,21 @@ import { getAjv } from '../../src/lib/ajv.js';
 import { CASES, SALES } from '../../src/tools/__fixtures__/cartesian-render.js';
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 import type { CodeGenerateInput } from '../../src/tools/types.js';
+
+// Exact temporal-axis pixels were qualified in America/Chicago. Preserve that
+// fixture environment; local-time SVGs do not claim cross-timezone byte identity.
+const previousTimezone = process.env.TZ;
+const previousEffectiveTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+beforeAll(() => {
+  vi.stubEnv('TZ', 'America/Chicago');
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe('America/Chicago');
+  expect(new Date('2026-06-01T12:00:00Z').getHours()).toBe(7);
+});
+afterAll(() => {
+  vi.unstubAllEnvs();
+  expect(process.env.TZ).toBe(previousTimezone);
+  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(previousEffectiveTimezone);
+});
 
 vi.setConfig({ testTimeout: 60_000 });
 afterEach(() => vi.restoreAllMocks());
