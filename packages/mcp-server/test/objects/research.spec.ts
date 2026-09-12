@@ -10,6 +10,8 @@ import { handle as object } from '../../src/tools/object.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { loadObject } from '../../src/objects/object-loader.js';
 import { wire } from '../helpers/wire-boundary.js';
+import { schemaNodes } from '../../../../scripts/product-reality/s185-m04-consumer-contract.js';
+import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';
 
 const names = ['Project', 'Document', 'Chunk', 'Collection', 'Mission', 'Report', 'Evidence'];
 describe('TraceLab research objects', () => {
@@ -54,6 +56,18 @@ describe('TraceLab research objects', () => {
     expect(result.schema.workflow?.data.idField).toBe('id');
     expect(result.schema.workflow?.data.lifecycleStates).toEqual(['draft', 'queued', 'in_progress', 'completed', 'blocked', 'cancelled', 'validation_failed']);
     expect(result.schema.workflow?.transitions.some(row => row.effect === 'pending_cancellation')).toBe(false);
+  });
+  it.each(names.filter(name => name !== 'Chunk'))('%s list navigation identifies the same record as the workflow store', async name => {
+    const result = await compose({ object: name, context: 'workflow' });
+    const identity = result.schema.workflow!.data.idField;
+    expect(identity).toBe('id');
+    const collection = schemaNodes(result.schema).find(node => node.collection?.source === 'rows')!.collection!;
+    // Owner IDs and human-readable IDs also exist; selecting either makes a
+    // rendered row unreachable in the store even though both frameworks build.
+    expect(collection.keyField).toBe(identity);
+    const samples = workflowSampleRecords(result.schema);
+    expect(samples.every(row => row[collection.keyField] === row[identity])).toBe(true);
+    expect(samples[2]![identity]).not.toBe(samples[2]!.owner_id);
   });
 });
 
