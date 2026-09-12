@@ -404,9 +404,9 @@ export async function screenshots(page: Page, url: string, output: string, frame
   return rows;
 }
 
-export async function runAppConsumers(output: string, mission = 's188-m03', object = 'Subscription', packedPackages?: PackedPackageRecord[]) {
+export async function runAppConsumers(output: string, mission = 's188-m03', object = 'Subscription', packedPackages?: PackedPackageRecord[], tools = { compose, generate }, sourceHead?: string) {
   await fs.mkdir(output, { recursive: true });
-  const composition = await compose({ object, context: 'workflow' });
+  const composition = await tools.compose({ object, context: 'workflow' });
   assert.equal(composition.status, 'ok');
   await json(path.join(output, 'composition.json'), composition);
   const fields = composition.schema.objectSchema!;
@@ -418,7 +418,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
   const artifacts = new Map<Framework, GeneratedArtifact>();
   const generationErrors: unknown[] = [];
   for (const framework of ['react', 'vue'] as const) {
-    const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
+    const generated = await tools.generate({ schema: composition.schema, framework, profile: 'build' });
     await json(path.join(output, `${framework}-generation.json`), generated);
     if (generated.status !== 'ok') { generationErrors.push({ framework, errors: generated.errors }); continue; }
     assert.deepEqual(validateGeneratedArtifact(generated.artifact!), []);
@@ -566,7 +566,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
       await page.close();
     }
     const cellReports = await Promise.all(cells.map(async (cell) => ({ framework: cell.framework, report: `${cell.framework}/receipt.json`, sha256: digest(await fs.readFile(path.join(output, `${cell.framework}/receipt.json`))) })));
-    const report = { mission, object, cellReports, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
+    const report = { mission, object, cellReports, sourceHead: sourceHead ?? commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
     await json(path.join(output, 'report.json'), report);
     return report;
   } finally {

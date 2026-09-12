@@ -482,18 +482,67 @@ jobs:
       - run: pnpm run build:tokens
       - run: pnpm run build:packages
       - name: Measure canonical and chart dashboard cells from one tarball sweep
-        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-195/m07-ci --workflows --dashboard-objects=Invoice,Usage
+        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-196/runtime-ci --workflows --dashboard-objects=Invoice,Usage
       - name: Reject missing, failed, or historical cells
         env:
-          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-195/m07-ci/runtime-cells.v1.json
+          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-196/runtime-ci/runtime-cells.v1.json
         run: |
           pnpm --filter @oods/mcp-server exec vitest run test/product-reality/runtime-cells.s193.spec.ts test/product-reality/workflow-runtime.s193.spec.ts
-          pnpm exec tsx artifacts/product-reality/sprint-195/m06/verify-runtime.ts artifacts/product-reality/sprint-195/m07-ci > artifacts/product-reality/sprint-195/m07-ci/placement-verification.json
+          pnpm exec tsx artifacts/product-reality/sprint-195/m06/verify-runtime.ts artifacts/product-reality/sprint-196/runtime-ci > artifacts/product-reality/sprint-196/runtime-ci/placement-verification.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: runtime-cells
-          path: artifacts/product-reality/sprint-195/m07-ci
+          path: artifacts/product-reality/sprint-196/runtime-ci
+
+  release-runtime:
+    name: release-runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+      options: --ipc=host
+    env:
+      TZ: America/Chicago
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.2
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build:tokens
+      - run: pnpm run build:packages
+      - run: pnpm --filter @oods/mcp-server run build
+      - run: pnpm --filter @oods/mcp-bridge run build
+      - name: Assemble the source head before the sweep writes measured ledgers
+        run: |
+          node scripts/runtime/assemble.mjs --out-dir "$RUNNER_TEMP/release-runtime-out" --work-dir "$RUNNER_TEMP/release-runtime-work" --final
+          mkdir -p "$RUNNER_TEMP/release-runtime-extracted"
+          tar -xzf "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz" -C "$RUNNER_TEMP/release-runtime-extracted"
+      - name: Generate, build and run the 42 reference-app cells from bundled packages
+        run: |
+          pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-196/release-ci \
+            --bundle-dir "$RUNNER_TEMP/release-runtime-extracted" \
+            --bundle-archive "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz"
+      - name: Reject missing release cells, failed gates and host artifact differences
+        env:
+          OODS_RELEASE_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-196/release-ci/release-cells.v1.json
+        run: pnpm --filter @oods/mcp-server exec vitest run test/product-reality/release-runtime.s196.spec.ts --reporter=verbose
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-runtime
+          path: |
+            artifacts/product-reality/sprint-196/release-ci
+            ${{ runner.temp }}/release-runtime-out/forge-runtime.manifest.json
+            ${{ runner.temp }}/release-runtime-out/forge-runtime.tar.gz.sha256
+          if-no-files-found: warn
 
   a11y-contract:
     name: a11y-contract

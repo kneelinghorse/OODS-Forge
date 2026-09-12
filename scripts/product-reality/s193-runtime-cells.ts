@@ -6,11 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from 'playwright';
-import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
-import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { handle as listObjects } from '../../packages/mcp-server/src/tools/object.list.js';
-import { handle as renderChart } from '../../packages/mcp-server/src/tools/viz.render.js';
-import { handle as certifyChart } from '../../packages/mcp-server/src/tools/artifact.certify.js';
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
@@ -25,6 +21,11 @@ import {
 
 import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 import { VIZ_CONTROL_IDS, vizControlFields, type VizControlId } from '../../packages/component-contracts/src/viz-controls.js';
+import { RELEASE_OBJECTS, validateReleaseLedger, type ReleaseCell, type ReleaseLedger } from '../../packages/mcp-server/src/lib/release-ledger.js';
+import {
+  assertBundleSourceMatches, bundleRuntimeFromEnvironment, createRuntimeToolset, prepareBundleRuntime, releaseCellProvenance,
+  type BundleRuntimeInput, type BundleRuntimeConfiguration, type RuntimeToolset,
+} from './s196-bundle-runtime.js';
 export { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 
 const hash = (value: string | Buffer) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
@@ -123,15 +124,18 @@ async function contextProof(page: Page, url: string, context: Context, schema: U
   return { declaredStates: nodes.flatMap(node => node.state ? [node.state] : []), seeded: true };
 }
 
-async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser, layout?: 'dashboard'): Promise<RuntimeCell> {
+async function runCell(output: string, object: string, context: Context, framework: Framework, head: string, runId: string, tarballs: PackedPackageRecord[], browser: Browser, layout?: 'dashboard', bundle?: BundleRuntimeConfiguration): Promise<RuntimeCell> {
   const relative = `cells/${object}/${context}/${framework}`;
   const cellRoot = path.join(output, relative);
   const row: RuntimeCell = { object, context, framework, head, runId, status: 'fail', gates: [], artifactHash: null, components: [], report: `${relative}/receipt.json` };
   let consumer: string | undefined;
+  let tools: RuntimeToolset | undefined;
   let active = 'generation';
   const gate = async (name: string, action: () => Promise<unknown>) => { active = name; const detail = await action(); row.gates.push({ name, status: 'pass', detail }); return detail; };
   try {
     await fs.mkdir(cellRoot, { recursive: true });
+    tools = await createRuntimeToolset(path.join(cellRoot, 'parity'), bundle);
+    const { compose, generate, renderChart, certifyChart } = tools;
     const request = layout ? { object, layout } : { object, context };
     await write(path.join(cellRoot, 'composition-request.json'), request);
     const composition = await compose(request);
@@ -263,6 +267,12 @@ async function runCell(output: string, object: string, context: Context, framewo
   } catch (error) {
     row.gates.push({ name: active, status: 'fail', reason: error instanceof Error ? error.message : String(error) });
   } finally {
+    if (bundle) releaseCellProvenance(row, { configuration: bundle, comparisons: tools?.comparisons ?? [] });
+    try { await tools?.close(); }
+    catch (error) {
+      row.status = 'fail';
+      row.gates.push({ name: 'adapter-lifecycle', status: 'fail', reason: error instanceof Error ? error.message : String(error) });
+    }
     await write(path.join(cellRoot, 'receipt.json'), row);
     if (consumer) await fs.rm(consumer, { recursive: true, force: true });
   }
@@ -279,13 +289,16 @@ async function submittedPackages(output: string): Promise<PackedPackageRecord[]>
   });
 }
 
-export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string, layout?: 'dashboard'): Promise<RuntimeCell> {
+export async function cellProcess(output: string, packages: string, object: string, context: Context | 'workflow', framework: Framework, head: string, runId: string, layout?: 'dashboard', bundle?: BundleRuntimeConfiguration): Promise<RuntimeCell> {
   const args = ['--import', 'tsx', fileURLToPath(import.meta.url), context === 'workflow' ? '--workflow' : '--cell', output, packages, object, context, framework, head, runId];
   if (layout) args.push(layout);
   const relative = `cells/${object}/${context}/${framework}`;
   const log: string[] = [];
   const exitCode = await new Promise<number>((resolve, reject) => {
-    const child = spawn(process.execPath, args, { cwd: REPOSITORY_ROOT, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
+    const environment = { ...process.env };
+    delete environment.OODS_RUNTIME_BUNDLE_CONFIG;
+    if (bundle) environment.OODS_RUNTIME_BUNDLE_CONFIG = JSON.stringify(bundle);
+    const child = spawn(process.execPath, args, { cwd: REPOSITORY_ROOT, env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
     child.stdout.on('data', chunk => log.push(String(chunk)));
     child.stderr.on('data', chunk => log.push(String(chunk)));
     child.on('error', reject); child.on('close', code => resolve(code ?? 127));
@@ -328,12 +341,19 @@ async function emitterBite(output: string, ledger: RuntimeLedger) {
   await write(path.join(output, 'emitter-bite.json'), { source: 'packages/mcp-server/src/codegen/react-emitter.ts', operation: 'Omit the emitted JSX screen while retaining the original schema', beforeHash: hash(original), mutatedHash: hash(mutated), restoredHash: hash(await fs.readFile(emitter)), red, ledgerIssues: issues, redSpecExitCode: redSpec.exitCode, restored, sourceRestoredByteIdentical: true, reusedSweepTarballs: true });
 }
 
-export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false, dashboardObjects: readonly string[] = []) {
+export async function runRuntimeCells(output: string, objects: readonly string[] = OBJECTS, contexts: readonly Context[] = CONTEXTS, workflows = false, dashboardObjects: readonly string[] = [], bundleInput?: BundleRuntimeInput) {
   await fs.mkdir(output, { recursive: true });
+  const bundle = bundleInput ? await prepareBundleRuntime(REPOSITORY_ROOT, bundleInput, output) : undefined;
+  if (bundle) {
+    objects = RELEASE_OBJECTS;
+    contexts = CONTEXTS;
+    workflows = true;
+    assert.equal(dashboardObjects.length, 0, 'Release scope is the declared 42 cells, without dashboard variants.');
+  }
   assert.deepEqual((await listObjects({})).objects.map(object => object.name).sort(), [...OBJECTS]);
-  const head = commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim();
-  const ledger: RuntimeLedger = { schemaVersion: '1.0.0', head, runId: randomUUID(), historicalReceiptsUnioned: false, packCount: 1, browserImage: BROWSER_IMAGE, rows: [], summary: summarize([]) };
-  await packFoundationPackages(output);
+  const head = bundle?.bundleHead ?? commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim();
+  const ledger: RuntimeLedger = { schemaVersion: '1.0.0', head, runId: randomUUID(), historicalReceiptsUnioned: false, packCount: 1, browserImage: BROWSER_IMAGE, receiptRoot: path.relative(REPOSITORY_ROOT, output).split(path.sep).join('/'), rows: [], summary: summarize([]) };
+  await packFoundationPackages(output, bundle ? { packageSourceRoot: bundle.bundleDirectory, ignoreScripts: true } : undefined);
   const browser = await launchProofBrowser();
   try {
     const page = await browser.newPage();
@@ -353,7 +373,7 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
   await Promise.all(Array.from({ length: 4 }, async () => {
     while (cursor < inputs.length) {
       const input = inputs[cursor++]!;
-      const cell = await cellProcess(output, output, input.object, input.context, input.framework, head, ledger.runId);
+      const cell = await cellProcess(output, output, input.object, input.context, input.framework, head, ledger.runId, undefined, bundle);
       ledger.rows.push(cell);
       if (input.context === 'workflow') ledger.rows.push(JSON.parse(await fs.readFile(path.join(output, `cells/${input.object}/workflow/vue/receipt.json`), 'utf8')));
       console.log(`${identity(cell)} ${cell.status}${cell.gates.find(gate => gate.status === 'fail') ? ': ' + cell.gates.find(gate => gate.status === 'fail')!.reason : ''}`);
@@ -361,6 +381,18 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
   }));
   ledger.rows.sort((a, b) => identity(a).localeCompare(identity(b)));
   ledger.summary = summarize(ledger.rows);
+  if (bundle) {
+    const { head: _head, ...base } = ledger;
+    const release: ReleaseLedger = { ...base, bundleHead: bundle.bundleHead, archiveSha256: bundle.archiveSha256, rows: ledger.rows as ReleaseCell[] };
+    await write(path.join(output, 'release-cells.v1.json'), release);
+    const issues = validateReleaseLedger(release);
+    await write(path.join(output, 'validation.json'), { issues });
+    // Retain every failed comparison before refusing the release claim.
+    const source = assertBundleSourceMatches(REPOSITORY_ROOT, bundle.bundleHead);
+    await write(path.join(output, 'source-after.json'), source);
+    if (!issues.length) await write(path.join(REPOSITORY_ROOT, 'packages/mcp-server/registry/release-cells.v1.json'), release);
+    return release;
+  }
   await write(path.join(output, 'runtime-cells.v1.json'), ledger);
   // Layout variants share this sweep's immutable packages, revision and run id.
   // Keep them separate so they cannot inflate the canonical 154-cell health ratio.
@@ -377,7 +409,10 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
     await write(path.join(layoutOutput, 'validation.json'), { issues, reusedSweepTarballs: true });
     assert.deepEqual(issues, [], 'Dashboard layout cells must pass in the same package sweep');
   }
-  if (validateRuntimeLedger(ledger, workflows).length === 0) await emitterBite(output, ledger);
+  if (validateRuntimeLedger(ledger, workflows).length === 0) {
+    await emitterBite(output, ledger);
+    if (workflows) await write(path.join(REPOSITORY_ROOT, 'packages/mcp-server/registry/runtime-cells.v1.json'), ledger);
+  }
   await write(path.join(output, 'validation.json'), { issues: validateRuntimeLedger(ledger, workflows) });
   return ledger;
 }
@@ -386,11 +421,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (process.argv[2] === '--workflow') {
     const [, , , output, packages, object, , , head, runId] = process.argv;
     const { runWorkflowCells } = await import('./s193-workflow-cells.js');
-    await runWorkflowCells(output!, object!, head!, runId!, await submittedPackages(packages!));
+    await runWorkflowCells(output!, object!, head!, runId!, await submittedPackages(packages!), bundleRuntimeFromEnvironment());
   } else if (process.argv[2] === '--cell') {
     const [, , , output, packages, object, context, framework, head, runId, layout] = process.argv;
     const browser = await launchProofBrowser();
-    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser, layout as 'dashboard' | undefined); }
+    try { await runCell(output!, object!, context as Context, framework as Framework, head!, runId!, await submittedPackages(packages!), browser, layout as 'dashboard' | undefined, bundleRuntimeFromEnvironment()); }
     finally { await browser.close(); }
   } else {
   const output = path.resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-193/m02');
@@ -398,6 +433,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const contexts = (process.env.OODS_RUNTIME_CONTEXTS?.split(',') ?? CONTEXTS) as Context[];
   const workflows = process.argv.includes('--workflows');
   const dashboardObjects = process.argv.find(value => value.startsWith('--dashboard-objects='))?.split('=')[1]?.split(',') ?? [];
-  runRuntimeCells(output, objects, contexts, workflows, dashboardObjects).then(ledger => { if (validateRuntimeLedger(ledger, workflows).length) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
+  const option = (name: string) => process.argv.find(value => value.startsWith(`${name}=`))?.slice(name.length + 1)
+    ?? (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
+  const bundleDirectory = option('--bundle-dir') ?? process.env.OODS_RUNTIME_BUNDLE_DIR;
+  const archivePath = option('--bundle-archive') ?? process.env.OODS_RUNTIME_BUNDLE_ARCHIVE;
+  assert.equal(Boolean(bundleDirectory), Boolean(archivePath), '--bundle-dir and --bundle-archive must be supplied together.');
+  const bundle = bundleDirectory && archivePath ? { bundleDirectory, archivePath } : undefined;
+  runRuntimeCells(output, objects, contexts, workflows, dashboardObjects, bundle).then(ledger => {
+    const issues = 'bundleHead' in ledger ? validateReleaseLedger(ledger) : validateRuntimeLedger(ledger, workflows);
+    if (issues.length) process.exitCode = 1;
+  }).catch(error => { console.error(error); process.exitCode = 1; });
   }
 }

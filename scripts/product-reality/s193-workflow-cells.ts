@@ -6,15 +6,24 @@ import { schemaNodes } from './s185-m04-consumer-contract.js';
 import { FRAMEWORKS, type RuntimeCell } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 import type { PackedPackageRecord } from './s184-m06-live-consumers.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
+import { createRuntimeToolset, releaseCellProvenance, type BundleRuntimeConfiguration, type RuntimeToolset } from './s196-bundle-runtime.js';
 
 /** Keep the established workflow/SSR/navigation proof, and expose its cells in the runtime ledger. */
-export async function runWorkflowCells(output: string, object: string, head: string, runId: string, tarballs: PackedPackageRecord[]): Promise<RuntimeCell[]> {
+export async function runWorkflowCells(output: string, object: string, head: string, runId: string, tarballs: PackedPackageRecord[], bundle?: BundleRuntimeConfiguration): Promise<RuntimeCell[]> {
   const relative = `workflows/${object}`;
   const workflowRoot = path.join(output, relative);
   let report: Awaited<ReturnType<typeof runAppConsumers>> | undefined;
   let failure: string | undefined;
-  try { report = await runAppConsumers(workflowRoot, 's193-m03', object, tarballs); }
+  let tools: RuntimeToolset | undefined;
+  try {
+    tools = await createRuntimeToolset(path.join(workflowRoot, 'parity'), bundle);
+    report = await runAppConsumers(workflowRoot, bundle ? 's196-m03' : 's193-m03', object, tarballs, tools, bundle?.bundleHead);
+  }
   catch (error) { failure = error instanceof Error ? error.stack : String(error); }
+  finally {
+    try { await tools?.close(); }
+    catch (error) { failure = error instanceof Error ? error.stack : String(error); }
+  }
   const composition = JSON.parse(await fs.readFile(path.join(workflowRoot, 'composition.json'), 'utf8').catch(() => '{"schema":{"screens":[]}}')) as { schema: UiSchema };
   const components = [...new Set(schemaNodes(composition.schema).map(node => node.component))].sort();
   const cells: RuntimeCell[] = [];
@@ -48,6 +57,7 @@ export async function runWorkflowCells(output: string, object: string, head: str
         cell.status = 'pass';
       } catch (error) { cell.gates.push({ name: 'workflow-proof', status: 'fail', reason: String(error) }); }
     } else cell.gates.push({ name: 'workflow-proof', status: 'fail', reason: failure ?? 'Workflow returned no receipt' });
+    if (bundle) releaseCellProvenance(cell, { configuration: bundle, comparisons: tools?.comparisons ?? [] });
     const file = path.join(output, cell.report);
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, JSON.stringify(cell, null, 2) + '\n');

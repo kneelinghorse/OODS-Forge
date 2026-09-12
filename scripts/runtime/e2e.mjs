@@ -7,6 +7,7 @@ import net from "node:net";
 import path from "node:path";
 import process from "node:process";
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import {
   canonicalJson,
   RUNTIME_MANIFEST_FILE,
@@ -287,7 +288,7 @@ async function assertLoopbackPortClosed(port) {
   });
 }
 
-class McpClient {
+export class McpClient {
   constructor({ adapterPath, cwd, env }) {
     this.nextId = 0;
     this.pending = new Map();
@@ -783,6 +784,20 @@ async function main() {
       cells: 154, pass: 154, typedGap: 0, fail: 0,
       head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
     });
+    const releaseLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/release-cells.v1.json"));
+    assert.equal(releaseLedger.rows.length, 42, 'The shipped release proof must contain the full reference-app population.');
+    assert(releaseLedger.rows.every(row => row.status === 'pass' && row.hashEqualToHost === true
+      && row.artifactHash === row.hostArtifactHash), 'Every shipped release cell must have passed with host artifact equality.');
+    assert.deepEqual(health.productReality.release, {
+      bundleHead: releaseLedger.bundleHead,
+      archiveSha256: releaseLedger.archiveSha256,
+      apps: [...new Set(releaseLedger.rows.map(row => row.object))].sort(),
+      frameworks: [...new Set(releaseLedger.rows.map(row => row.framework))].sort(),
+      cells: releaseLedger.rows.length,
+      pass: releaseLedger.rows.filter(row => row.status === 'pass').length,
+      typedGap: releaseLedger.rows.filter(row => row.status === 'typed-gap').length,
+      fail: releaseLedger.rows.filter(row => row.status === 'fail').length,
+    });
     // s194-m04: retired entries leave the live roster; health must match the shipped ledger.
     const toolLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/tool-capability-ledger.v1.json"));
     assert.deepEqual(health.productReality.tools.byTier, toolLedger.summary.byTier);
@@ -932,7 +947,7 @@ async function main() {
       schema: { outcome: 'pass', savedLoadedDeleted: true },
       object: { outcome: 'pass', name: object.name },
       repl: { outcome: 'pass', htmlHash: sha256(rendered.html) },
-      health: { outcome: 'pass', tokens: health.tokens, viz: health.productReality.viz },
+      health: { outcome: 'pass', tokens: health.tokens, viz: health.productReality.viz, release: health.productReality.release },
       'dashboard.render': { outcome: 'pass', repeated: true },
       'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
       'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
@@ -950,6 +965,7 @@ async function main() {
       health: {
         status: health.status,
         registry: health.registry,
+        release: health.productReality.release,
         viz: health.productReality.viz,
         warnings: health.warnings ?? [],
       },
@@ -1076,9 +1092,11 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  process.stderr.write(
-    `runtime-e2e: ${error.stack ?? error.message ?? String(error)}\n`,
-  );
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    process.stderr.write(
+      `runtime-e2e: ${error.stack ?? error.message ?? String(error)}\n`,
+    );
+    process.exitCode = 1;
+  });
+}

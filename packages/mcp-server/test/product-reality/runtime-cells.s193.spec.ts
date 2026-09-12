@@ -54,11 +54,15 @@ describe('s193 runtime population accountability', () => {
     const ledger = population(); ledger.packCount = 2; ledger.browserImage = 'host-chromium';
     expect(validateRuntimeLedger(ledger)).toEqual(expect.arrayContaining(['exactly one package pack sweep is required', 'the pinned Linux browser image is required']));
   });
-  it('the retained current sweep has all passing or explicitly unavailable cells with real artifacts', () => {
-    const output = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'artifacts/product-reality/sprint-195/m07/runtime/runtime-cells.v1.json');
+  it('the canonical current sweep has all passing or explicitly unavailable cells with retained receipt provenance', () => {
+    // s196 separates the current canonical ledger from its sweep's artifact directory.
+    // A CI-scoped report still resolves local evidence beside its supplied report file.
+    const output = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
     const ledger = JSON.parse(fs.readFileSync(output, 'utf8')) as RuntimeLedger;
     expect(validateRuntimeLedger(ledger, ledger.rows.some(row => row.context === 'workflow'))).toEqual([]);
-    const bite = JSON.parse(fs.readFileSync(path.join(path.dirname(output), 'emitter-bite.json'), 'utf8'));
+    if (!process.env.OODS_RUNTIME_REPORT) expect(ledger.receiptRoot).toBeTruthy();
+    const receiptRoot = process.env.OODS_RUNTIME_REPORT ? path.dirname(output) : path.resolve(root, ledger.receiptRoot!);
+    const bite = JSON.parse(fs.readFileSync(path.join(receiptRoot, 'emitter-bite.json'), 'utf8'));
     expect(bite.red.status).toBe('fail');
     expect(bite.redSpecExitCode).not.toBe(0);
     expect(bite.red.gates.filter((gate: { status: string }) => gate.status === 'fail').map((gate: { name: string }) => gate.name)).toEqual(['mount']);
@@ -70,9 +74,9 @@ describe('s193 runtime population accountability', () => {
     for (const row of ledger.rows.filter(row => row.status === 'pass')) {
       const screenshot = row.gates.find(gate => gate.name === 'screenshots')!.detail as Array<{ width: number; path: string }>;
       expect(screenshot.map(image => image.width)).toEqual([390, 1440]);
-      for (const image of screenshot) expect(fs.statSync(path.join(path.dirname(output), image.path)).size).toBeGreaterThan(0);
+      for (const image of screenshot) expect(fs.statSync(path.join(receiptRoot, image.path)).size).toBeGreaterThan(0);
       const tree = row.gates.find(gate => gate.name === 'accessibility-tree')!.detail as { path: string };
-      expect(fs.readFileSync(path.join(path.dirname(output), tree.path), 'utf8').trim().length).toBeGreaterThan(0);
+      expect(fs.readFileSync(path.join(receiptRoot, tree.path), 'utf8').trim().length).toBeGreaterThan(0);
     }
   });
 });

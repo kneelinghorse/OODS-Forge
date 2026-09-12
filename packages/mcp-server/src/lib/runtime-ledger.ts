@@ -18,6 +18,8 @@ export type RuntimeCell = {
 export type RuntimeLedger = {
   schemaVersion: '1.0.0'; head: string; runId: string; historicalReceiptsUnioned: false;
   packCount: number; browserImage: string; rows: RuntimeCell[];
+  /** Repository-relative receipt directory; historical ledgers predate canonical storage. */
+  receiptRoot?: string;
   summary: { cells: number; pass: number; typedGap: number; fail: number };
 };
 const identity = (row: Pick<RuntimeCell, 'object' | 'context' | 'framework'>) => `${row.object}/${row.context}/${row.framework}`;
@@ -61,7 +63,7 @@ export function summarize(rows: RuntimeCell[]): RuntimeLedger['summary'] {
 export type RuntimeSummary = RuntimeLedger['summary'] & { head: string };
 export function readRuntimeSummary(): RuntimeSummary {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
-  const source = path.join(root, 'artifacts/product-reality/sprint-195/m07/runtime/runtime-cells.v1.json');
+  const source = path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
   const shipped = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../registry/runtime-cells.v1.json');
   const file = process.env.MCP_RUNTIME_CELLS_PATH ?? (fs.existsSync(source) ? source : shipped);
   const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;

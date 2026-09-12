@@ -6,6 +6,7 @@ import { ToolError } from '../errors/tool-error.js';
 import { CURRENT_VERSION, getChangelogSince, type ChangelogEntry } from '../versioning/versions.js';
 import { listObjects } from '../objects/object-loader.js';
 import { readRuntimeSummary, type RuntimeSummary } from '../lib/runtime-ledger.js';
+import { readReleaseSummary, type ReleaseSummary } from '../lib/release-ledger.js';
 import { readToolSummary, type ToolSummary } from '../lib/tool-ledger.js';
 import { readVizSummary, type VizSummary } from '../lib/viz-taxonomy.js';
 import { readTokenScopes } from '../lib/token-build.js';
@@ -33,7 +34,7 @@ type HealthOutput = {
   tokens: TokenInfo;
   schemas: { savedCount: number; storeDir: string };
   latency: number;
-  productReality: { runtime: RuntimeSummary | null; tools: ToolSummary | null; viz: VizSummary | null };
+  productReality: { runtime: RuntimeSummary | null; release: ReleaseSummary | null; tools: ToolSummary | null; viz: VizSummary | null };
   dslVersion?: string;
   warnings?: string[];
   changelog?: ChangelogEntry[];
@@ -206,6 +207,10 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
   try { runtime = readRuntimeSummary(); }
   catch (error) { warnings.push(`runtime proof unavailable: ${(error as Error).message}`); }
 
+  let release: ReleaseSummary | null = null;
+  try { release = readReleaseSummary(); }
+  catch (error) { warnings.push(`release proof unavailable: ${(error as Error).message}`); }
+
   let tools: ToolSummary | null = null;
   try { tools = readToolSummary(); }
   catch (error) { warnings.push(`tool proof unavailable: ${(error as Error).message}`); }
@@ -227,7 +232,7 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
     tokens: tokenInfo,
     schemas: schemaInfo,
     latency,
-    productReality: { runtime, tools, viz },
+    productReality: { runtime, release, tools, viz },
     dslVersion: CURRENT_VERSION,
     ...(warnings.length > 0 ? { warnings } : {}),
   };

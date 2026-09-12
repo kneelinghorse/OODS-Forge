@@ -168,7 +168,7 @@ function expectedTarballName(manifest) {
   return `${manifest.name.replace(/^@/, '').replaceAll('/', '-')}-${manifest.version}.tgz`;
 }
 
-export async function packFoundationPackages(artifactRoot) {
+export async function packFoundationPackages(artifactRoot, { packageSourceRoot = REPOSITORY_ROOT, ignoreScripts = false } = {}) {
   const outputRoot = path.resolve(artifactRoot, 'submitted-packages');
   const tarballRoot = path.join(outputRoot, 'tarballs');
   const logRoot = path.join(outputRoot, 'logs');
@@ -178,11 +178,11 @@ export async function packFoundationPackages(artifactRoot) {
 
   const records = [];
   for (const foundation of FOUNDATION_PACKAGE_RECORDS) {
-    const packageRoot = path.join(REPOSITORY_ROOT, foundation.directory);
+    const packageRoot = path.join(packageSourceRoot, foundation.directory);
     const sourceManifest = JSON.parse(await fsp.readFile(path.join(packageRoot, 'package.json'), 'utf8'));
     const result = commandResult(
       'npm',
-      ['pack', packageRoot, '--json', '--pack-destination', tarballRoot],
+      ['pack', packageRoot, '--json', '--pack-destination', tarballRoot, ...(ignoreScripts ? ['--ignore-scripts'] : [])],
       REPOSITORY_ROOT,
       {
         environment: {
@@ -193,7 +193,7 @@ export async function packFoundationPackages(artifactRoot) {
       },
     );
     const slug = foundation.name.replace(/^@/, '').replaceAll('/', '-');
-    await writeCommandLog(path.join(logRoot, `${slug}.log`), result, [[REPOSITORY_ROOT, '<repository-root>']]);
+    await writeCommandLog(path.join(logRoot, `${slug}.log`), result, [[packageSourceRoot, '<package-source-root>'], [REPOSITORY_ROOT, '<repository-root>']]);
     requireGreen(result, `pack ${foundation.name}`);
 
     const tarballPath = path.join(tarballRoot, expectedTarballName(sourceManifest));
