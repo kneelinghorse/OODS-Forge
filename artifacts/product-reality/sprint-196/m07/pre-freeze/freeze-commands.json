@@ -1,0 +1,54 @@
+[
+  {
+    "name": "freeze-docs",
+    "argv": [
+      "pnpm",
+      "docs:check"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-docs.log"
+  },
+  {
+    "name": "freeze-tool-ledger",
+    "argv": [
+      "node",
+      "scripts/product-reality/s193-tool-truth.mjs",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-tool-ledger.log"
+  },
+  {
+    "name": "freeze-gate2",
+    "argv": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s196-release-readiness.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-gate2.log"
+  },
+  {
+    "name": "freeze-golden",
+    "argv": [
+      "python3",
+      "scripts/product-reality/s196-attribute-temporal-goldens.py",
+      "--check",
+      "--head",
+      "2a7d0a7ce4060fc78c12df1648bd318e0658317b"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-golden.log"
+  },
+  {
+    "name": "freeze-types",
+    "argv": [
+      "pnpm",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-196/m07/pre-freeze/freeze-types.log"
+  }
+]

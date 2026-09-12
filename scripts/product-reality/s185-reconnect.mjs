@@ -20,6 +20,26 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's196-m07') {
+    assert(/^[a-f0-9]{40}$/.test(options.measurementHead ?? ''), 'Sprint196 requires a full measurement head.');
+    const head = movers.s196.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const tools = JSON.parse(source(head, 'packages/mcp-server/registry/tool-capability-ledger.v1.json', root));
+    assert(tools.summary.auto === 19 && tools.summary.onDemand === 5 && tools.summary.autoByTier['product-reality'] === 19, 'Sprint196 reconnect requires the actual tool inventory.');
+    const body = [
+      `Sprint 196 candidate ${head}; reconnect only after independent review and delivery. Refresh discovery: ${tools.summary.auto} advertised tools and ${tools.summary.onDemand} on-demand tools.`,
+      'The portable archive now includes the bridge and policy. Its /health revision names the containing bundle commit; /tools and /run use the same registered server boundary as the adapter. Readiness attestation binds source evidence to shipped package bytes, so React/Vue code.generate and pipeline emit real artifacts without shipping source or tests. tokens.build apply:true exports shipped outputs.',
+      'brand.apply remains a typed OODS-N020 canonical-brand-source dependency refusal. design.preview remains OODS-N019 because it needs the design-loop service. Structured native errors retain code, retryable and data across the adapter. These two portable limits are explicit; brand.intake inline validation remains available.',
+      'health.productReality.release reports the measured 42-cell bundle ledger and its original bundleHead/archiveSha256. The containing archive may carry an earlier measured ledger; its own manifest commit is a different identity. Canonical host runtime154 and portable reference-app42 are separate populations, with the latter comparing generated artifacts against identical host operands.',
+      'Temporal Vega-Lite and ECharts rendering is UTC. Documentation counts and rosters are generated from live source inventories with drift checks. Gate 2 is prepared for Derek, not approved: no license grant, public publication, registry entry, MCPB or OCI release is implied.',
+      'Component classification and application craft approval remain pending. This candidate is BUILT, REVIEW PENDING; builderSelfCertified:false. The reconnect notices are prepared-unsent and execute no messages.',
+      `Advertised/public movers from ${movers.s196.base}..${head}:\n${movers.s196.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's196-m07', implementationHead: head, measurementHead: options.measurementHead, status: 'prepared-unsent', sent: false, sendsExecuted: 0,
+      deliveryState: 'pending-independent-review', targets, notices: targets.map(target => {
+        const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`, summary: `Forge Sprint196 ${head}; reconnect after reviewed delivery`, body };
+        return { request, requestSha256: requestHash(request) };
+      }) };
+  }
   if (movers.missionId === 's195-m07') {
     const head = movers.s195.head, targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
     const read = file => JSON.parse(source(head, file, root));
@@ -268,14 +288,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const moversPath = path.resolve(ROOT, argument('--movers') ?? `${sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/movers` : MOVERS_OUTPUT}/sprint-wide-movers.json`);
   const movers = JSON.parse(fs.readFileSync(moversPath, 'utf8'));
   const declaration = JSON.parse(fs.readFileSync(path.resolve(ROOT, argument('--declaration') ?? path.join(path.dirname(moversPath), 'declared-movers.json')), 'utf8'));
-  const rederived = sprintId === 'sprint-195'
+  const rederived = sprintId === 'sprint-196'
+    ? deriveMovers(movers.s196.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's196-m07', base: movers.s196.base }) : sprintId === 'sprint-195'
     ? deriveMovers(movers.s195.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's195-m07', base: movers.s195.base }) : sprintId === 'sprint-187'
     ? deriveMovers(movers.s187.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's187-m06', base: movers.s187.base }) : sprintId === 'sprint-186'
     ? deriveMovers(movers.s186.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's186-m06', base: movers.s186.base })
     : deriveMovers(movers.s185.head, declaration);
   assert(canonical(movers) === canonical(rederived), 'Mover input is stale.');
   const directory = path.resolve(ROOT, argument('--output') ?? (sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/reconnect` : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
-  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census'), runtimePath: argument('--runtime') });
+  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census'), runtimePath: argument('--runtime'), measurementHead: argument('--measurement-head') });
   const output = path.join(directory, 'notice-plan.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(output, 'utf8') === canonical(plan), 'Notice plan is stale.');
   else fs.writeFileSync(output, canonical(plan));

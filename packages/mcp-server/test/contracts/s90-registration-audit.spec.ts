@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { bridgeConfig } from '../../../mcp-bridge/src/config.js';
+import { resolveBridgeToolSurface } from '../../../mcp-bridge/src/tool-surface.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../../../../');
@@ -20,7 +22,6 @@ describe('s90 registration audit', () => {
     { label: 'policy.json', file: 'packages/mcp-server/src/security/policy.json', patterns: ['"tool": "map"', '"tool": "registry.snapshot"'] },
     { label: 'generated.ts', file: 'packages/mcp-server/src/schemas/generated.ts', patterns: ['// Source: map.input.json', '// Source: registry.snapshot.input.json'] },
     { label: 'tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', patterns: ['"map"', '"registry.snapshot"'] },
-    { label: 'mcp-bridge config', file: 'packages/mcp-bridge/src/config.ts', patterns: ["name: 'map'", "name: 'registry.snapshot'"] },
     { label: 'server index', file: 'packages/mcp-server/src/index.ts', patterns: ["'map': {", "'registry.snapshot': {"] },
     { label: 'error registry', file: 'packages/mcp-server/src/errors/registry.ts', patterns: ['OODS-V201', 'OODS-N014'] },
   ];
@@ -46,7 +47,6 @@ describe('viz.render registration audit (sprint-109 m05)', () => {
     { label: 'registry.ts FALLBACK', file: 'packages/mcp-server/src/tools/registry.ts', pattern: "'viz.render'" },
     { label: 'server-layer policy.json', file: 'packages/mcp-server/src/security/policy.json', pattern: '"tool": "viz.render"' },
     { label: 'agent-layer configs/agent/policy.json', file: 'configs/agent/policy.json', pattern: '"name": "viz.render"' },
-    { label: 'mcp-bridge FALLBACK config', file: 'packages/mcp-bridge/src/config.ts', pattern: "name: 'viz.render'" },
     { label: 'mcp-adapter tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', pattern: '"viz.render"' },
     { label: 'generated.ts (typed contract)', file: 'packages/mcp-server/src/schemas/generated.ts', pattern: '// Source: viz.render.input.json' },
   ];
@@ -63,9 +63,9 @@ describe('viz.render registration audit (sprint-109 m05)', () => {
   });
 });
 
-// sprint-113 m05: dashboard.render must be wired into the SAME 8 surfaces as
+// sprint-113 m05: dashboard.render must be wired into the same surfaces as
 // viz.render (Option C composes it on top), or the aquex adapter and the :4466
-// bridge would expose/authorize it inconsistently. generated.ts is the 8th site
+// bridge would expose/authorize it inconsistently. generated.ts is the typed site
 // (regenerated via @oods/schemas-tools, never hand-edited).
 describe('dashboard.render registration audit (sprint-113 m05)', () => {
   const dashboardRenderMentions: Array<{ label: string; file: string; pattern: string }> = [
@@ -74,7 +74,6 @@ describe('dashboard.render registration audit (sprint-113 m05)', () => {
     { label: 'registry.ts FALLBACK', file: 'packages/mcp-server/src/tools/registry.ts', pattern: "'dashboard.render'" },
     { label: 'server-layer policy.json', file: 'packages/mcp-server/src/security/policy.json', pattern: '"tool": "dashboard.render"' },
     { label: 'agent-layer configs/agent/policy.json', file: 'configs/agent/policy.json', pattern: '"name": "dashboard.render"' },
-    { label: 'mcp-bridge FALLBACK config', file: 'packages/mcp-bridge/src/config.ts', pattern: "name: 'dashboard.render'" },
     { label: 'mcp-adapter tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', pattern: '"dashboard.render"' },
     { label: 'generated.ts (typed contract)', file: 'packages/mcp-server/src/schemas/generated.ts', pattern: '// Source: dashboard.render.input.json' },
   ];
@@ -91,8 +90,8 @@ describe('dashboard.render registration audit (sprint-113 m05)', () => {
   });
 });
 
-// sprint-181 m02: brand.intake must be wired into the SAME 8 surfaces as the
-// s113 dashboard.render registration guard. Keeping all eight in one audit
+// sprint-181 m02: brand.intake must be wired into the same surfaces as the
+// s113 dashboard.render registration guard. Keeping them in one audit
 // prevents a new advertised tool from landing on only one policy/adapter layer.
 describe('brand.intake registration audit (s181 m02)', () => {
   const brandIntakeMentions: Array<{ label: string; file: string; pattern: string }> = [
@@ -101,7 +100,6 @@ describe('brand.intake registration audit (s181 m02)', () => {
     { label: 'registry.ts FALLBACK', file: 'packages/mcp-server/src/tools/registry.ts', pattern: "'brand.intake'" },
     { label: 'server-layer policy.json', file: 'packages/mcp-server/src/security/policy.json', pattern: '"tool": "brand.intake"' },
     { label: 'agent-layer configs/agent/policy.json', file: 'configs/agent/policy.json', pattern: '"name": "brand.intake"' },
-    { label: 'mcp-bridge FALLBACK config', file: 'packages/mcp-bridge/src/config.ts', pattern: "name: 'brand.intake'" },
     { label: 'mcp-adapter tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', pattern: '"brand.intake"' },
     { label: 'generated.ts (typed contract)', file: 'packages/mcp-server/src/schemas/generated.ts', pattern: '// Source: brand.intake.input.json' },
   ];
@@ -116,4 +114,12 @@ describe('brand.intake registration audit (s181 m02)', () => {
     expect(read('packages/mcp-server/src/security/policy.json')).toContain('"tool": "brand.intake"');
     expect(read('configs/agent/policy.json')).toContain('"name": "brand.intake"');
   });
+});
+
+// s196: bridge names now derive only from the required agent policy and server
+// registry. Exercise that intersection instead of retaining a second literal roster.
+it('exposes the audited tools through the required bridge policy and live registry', () => {
+  const surface = resolveBridgeToolSurface(path.join(ROOT, 'packages/mcp-server'), bridgeConfig.tools.allowed, { MCP_TOOLSET: 'default', MCP_EXTRA_TOOLS: '' });
+  expect(surface.enabled).toEqual(expect.arrayContaining(['map', 'registry.snapshot', 'viz.render', 'dashboard.render', 'brand.intake']));
+  expect(read('packages/mcp-bridge/src/config.ts')).not.toContain('FALLBACK_POLICY');
 });

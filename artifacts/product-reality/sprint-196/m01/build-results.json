@@ -1,0 +1,65 @@
+[
+  {
+    "step": "checkout",
+    "command": [
+      "git",
+      "switch",
+      "--detach",
+      "91c1f5f2bbf2027cbc6768ef04c880f191671c73"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 6.43
+  },
+  {
+    "step": "install",
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 2.24
+  },
+  {
+    "step": "build-tokens",
+    "command": [
+      "pnpm",
+      "run",
+      "build:tokens"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 3.19
+  },
+  {
+    "step": "build-packages",
+    "command": [
+      "pnpm",
+      "run",
+      "build:packages"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 24.3
+  },
+  {
+    "step": "build-bridge",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/mcp-bridge",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 1.32
+  },
+  {
+    "step": "pkg-build",
+    "command": [
+      "pnpm",
+      "run",
+      "pkg:build"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 12.55
+  }
+]

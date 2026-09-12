@@ -3,7 +3,7 @@ import path from 'node:path';
 import net from 'node:net';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { handle as health } from '../../src/tools/health.js';
 import { handle as dashboard } from '../../src/tools/dashboard.render.js';
 import { handle as render } from '../../src/tools/viz.render.js';
@@ -38,6 +38,16 @@ function migratedGraphHash(beforeHash: string, brand: string, theme: string): st
   expect(sha(qualifiedPaletteBytes(`svg/force_graph-${brand}-${theme}.svg`))).toBe(matches[0].afterHash);
   return matches[0].afterHash;
 }
+const temporalMigrationRoot = 'artifacts/product-reality/sprint-196/m05/golden-migration';
+function migratedTemporalHash(source: string, identity: string, beforeHash: string): string {
+  const migration = read(`${temporalMigrationRoot}/golden-attribution.json`);
+  const matches = migration.matrixRows.filter((row: any) => row.source === source && row.identity === identity);
+  expect(matches).toHaveLength(1);
+  expect(matches[0]).toMatchObject({ beforeHash, temporal: true, status: 'superseded' });
+  const matrix = migration.sourceHashes.find((row: any) => row.path === `${temporalMigrationRoot}/matrix/matrix.json`);
+  expect(sha(fs.readFileSync(path.join(repositoryRoot, matrix.path), 'utf8'))).toBe(matrix.sha256);
+  return matches[0].afterHash;
+}
 function retain(name: string, value: unknown) {
   if (!process.env.S194_OPTION_RECEIPTS) return;
   fs.mkdirSync(process.env.S194_OPTION_RECEIPTS, { recursive: true });
@@ -45,11 +55,6 @@ function retain(name: string, value: unknown) {
 }
 
 describe('remaining options do what their public wire says (s194-m05)', () => {
-  // The retained s193/m05 Vega temporal-axis receipts were captured in Chicago.
-  // Local-time axes differ in UTC; compare unchanged bytes under that same
-  // recorded condition, rather than implying cross-timezone determinism.
-  beforeAll(() => vi.stubEnv('TZ', 'America/Chicago'));
-  afterAll(() => vi.unstubAllEnvs());
   it('health reports actual built scopes and identifies configured defaults without implying a consumer', async () => {
     const saved = { brand: process.env.MCP_BRAND, theme: process.env.MCP_THEME };
     try {
@@ -115,7 +120,7 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     retain('viz-output-identities', rows);
   }, 60_000);
 
-  it('preserves thirteen historical operands and eleven panels through the qualified s195 palette migration', async () => {
+  it('preserves thirteen historical operands and eleven panels through the recorded palette and UTC migrations', async () => {
     const prior = read('artifacts/product-reality/sprint-194/m05/delivered-baseline-render.json');
     expect(prior.sourceHead).toBe('1f69c957f4435a0a2f18b168b684de050f7a5f22');
     const inputs = [...CASES.map(({ chartType, encodings }) => ({ chartType, rows: [...SALES], encodings })), ...ECHARTS_OPERAND_CASES.map(renderInputFor)] as any[];
@@ -123,7 +128,12 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     for (const input of inputs) {
       const output = wire('viz.render', 'output', await render(wire('viz.render', 'input', { ...input, output: { ...input.output, svg: true, includeNormalizedSpec: true } })));
       const beforeHash = prior.table.find((row: any) => row.chartType === input.chartType).svgHash;
-      expect(output.svgHash).toBe(input.chartType === 'force_graph' ? migratedGraphHash(beforeHash, 'A', 'light') : beforeHash);
+      // The delivered baseline retains the s191 temporal operand bytes; the
+      // migration helper verifies that equality before accepting its new hash.
+      const expected = ['line', 'area'].includes(input.chartType)
+        ? migratedTemporalHash('artifacts/product-reality/sprint-191/m05/matrix/matrix.json', `${input.chartType}/light/A`, beforeHash)
+        : input.chartType === 'force_graph' ? migratedGraphHash(beforeHash, 'A', 'light') : beforeHash;
+      expect(output.svgHash).toBe(expected);
       rows.push({ chartType: input.chartType, svgHash: output.svgHash });
     }
     const input = wire('dashboard.render', 'input', {
@@ -135,21 +145,25 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     expect(output.status).toBe('ok');
     const beforeHtml = fs.readFileSync(path.join(repositoryRoot, 'artifacts/product-reality/sprint-194/m05/delivered-baseline-dashboard.html'), 'utf8');
     expect(sha(beforeHtml)).toBe(prior.dashboard.outputHtmlHash);
-    const afterHtml = qualifiedPaletteBytes('dashboard-A-light.html');
+    const paletteHtml = qualifiedPaletteBytes('dashboard-A-light.html');
     const migration = read(`${paletteMigrationRoot}/golden-attribution.json`);
-    expect(migration.matrixRows).toContainEqual(expect.objectContaining({ source: 'artifacts/product-reality/sprint-191/m05/matrix/matrix.json', identity: 'dashboard/light/A', beforeHash: prior.dashboard.outputHtmlHash, afterHash: sha(afterHtml), status: 'superseded' }));
+    expect(migration.matrixRows).toContainEqual(expect.objectContaining({ source: 'artifacts/product-reality/sprint-191/m05/matrix/matrix.json', identity: 'dashboard/light/A', beforeHash: prior.dashboard.outputHtmlHash, afterHash: sha(paletteHtml), status: 'superseded' }));
+    const afterHtml = fs.readFileSync(path.join(repositoryRoot, `${temporalMigrationRoot}/matrix/dashboard-A-light.html`), 'utf8');
+    expect(sha(afterHtml)).toBe(migratedTemporalHash('artifacts/product-reality/sprint-195/m05/golden-migration/matrix/matrix.json', 'dashboard/light/A', sha(paletteHtml)));
     expect(output.outputHtmlHash).toBe(sha(afterHtml));
     expect(output.html).toBe(afterHtml);
     retain('delivered-render-identities', { rows, dashboard: { outputHtmlHash: output.outputHtmlHash } });
   }, 60_000);
 
-  it('retains 48 Sprint 193 SVG identities and the four qualified s195 force_graph migrations', async () => {
+  it('retains non-temporal Sprint 193 SVG identities and accounts for palette and UTC changes', async () => {
     const prior = read('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json').observations;
     const inputs = read('scripts/product-reality/s190-viz-operands.json');
     const rows = [];
     for (const input of inputs) for (const scope of prior.find((row: any) => row.chartType === input.chartType).scopes) {
       const output = wire('viz.render', 'output', await render(wire('viz.render', 'input', { ...input, brand: scope.brand, theme: scope.theme, output: { ...input.output, svg: true } })));
-      const expected = input.chartType === 'force_graph' ? migratedGraphHash(scope.svgHash, scope.brand, scope.theme) : scope.svgHash;
+      const expected = ['line', 'area'].includes(input.chartType)
+        ? migratedTemporalHash('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json', `${input.chartType}/${scope.theme}/${scope.brand}`, scope.svgHash)
+        : input.chartType === 'force_graph' ? migratedGraphHash(scope.svgHash, scope.brand, scope.theme) : scope.svgHash;
       expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(expected);
       rows.push({ chartType: input.chartType, brand: scope.brand, theme: scope.theme, svgHash: output.svgHash });
     }

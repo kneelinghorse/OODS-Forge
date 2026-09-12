@@ -1,0 +1,601 @@
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 64 64 12
+author System Systems
+author-mail <systems@example.com>
+author-time 1789202064
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789202064
+committer-tz -0500
+summary test(release): freeze Sprint 196 proof verifiers and source checks
+previous 2bae454ad3094042c9f0113e1ef852c9d440a088 scripts/product-reality/s185-audit-closeout.mjs
+filename scripts/product-reality/s185-audit-closeout.mjs
+	// Independent Sprint196 additions; mover coverage includes generated documentation.
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 65 65
+	const S196_BUILD_BASE = '1d100e20bcc0911031192406625357638adecbe5';
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 66 66
+	const publicScope196 = [...publicScope195,
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 67 67
+	  'docs/components', 'docs/history/components', 'docs/README.md', 'docs/adoption',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 68 68
+	  'packages/mcp-server/README.md', 'packages/mcp-bridge/README.md', 'scripts/docs',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 69 69
+	  'cmos/planning/forge-gate2-decision-packet.md',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 70 70
+	  'scripts/product-reality/s182-m04-consumer-harness.mjs', 'scripts/product-reality/s182-m04-consumer-harness.d.mts',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 71 71
+	  'scripts/product-reality/s196-bundle-runtime.ts', 'scripts/product-reality/s196-attribute-temporal-goldens.py',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 72 72
+	  'scripts/product-reality/s196-bundle-bites.mjs', 'scripts/product-reality/s196-m05-doc-bites.mjs',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 73 73
+	  'scripts/product-reality/s196-release-readiness.ts', 'scripts/product-reality/s196-temporal-bite.mjs',
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 74 74
+	  'scripts/product-reality/s196-temporal-placement-receipt.mjs', 'scripts/product-reality/s196-temporal-probe.ts'];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 75 75
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 78 78 1
+	  const scope = sprintId === 'sprint-196' ? publicScope196 : sprintId === 'sprint-195' ? publicScope195 : sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 88 88 1
+	  const paths = scope => execFileSync('git', ['diff', '--name-only', '-z', ...(sprintId === 'sprint-196' ? ['--no-renames'] : []), `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 77 89 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789188647
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789188647
+committer-tz -0500
+summary fix: preserve exact closeout paths and expose portable fixture proof
+previous 9a7fa9b100653f753b6a65381365729cf16c72f3 scripts/product-reality/s185-audit-closeout.mjs
+filename scripts/product-reality/s185-audit-closeout.mjs
+	    .split('\0').filter(file => file && !testPath(file)).sort();
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 93 93 1
+	  const result = { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-196' ? publicScope196 : sprintId === 'sprint-195' ? publicScope195 : sprintId === 'sprint-194' ? publicScope194 : sprintId === 'sprint-193' ? publicScope193 : sprintId === 'sprint-192' ? publicScope192 : sprintId === 'sprint-191' ? publicScope191 : sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 83 95 4
+	    // Freeze only the human-readable patch representation to the retained format;
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 84 96
+	    // every path inventory uses -z and never relies on quotePath configuration.
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 85 97
+	    result.patch = execFileSync('git', ['-c', 'core.quotepath=false', 'diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...publicScope195], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 });
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 86 98
+	    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean).sort();
+833aaea235cd64abbbaf2cc2c70e6cf6e4423ca4 85 99 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789170111
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789170111
+committer-tz -0500
+summary feat(proof): freeze Sprint 195 closeout contracts and current runtime pointer
+previous 38eb20c4d7e08f32cad77bb4e6eaf71441d07c19 scripts/product-reality/s185-audit-closeout.mjs
+filename scripts/product-reality/s185-audit-closeout.mjs
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 100 100 5
+	  if (sprintId === 'sprint-196') {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 101 101
+	    result.patch = result.publicPaths.length ? execFileSync('git', ['--literal-pathspecs', 'diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', ...result.publicPaths], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 }) : '';
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 102 102
+	    // Per-file diffs keep path parsing separate from Git's quoted patch headers.
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 103 103
+	    result.patches = result.publicPaths.map(file => ({ path: file, patch: execFileSync('git', ['--literal-pathspecs', 'diff', '--no-ext-diff', '--no-renames', '--unified=0', base, head, '--', file], { cwd: root, encoding: 'utf8', maxBuffer: 128 * 1024 * 1024 }) }));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 104 104
+	    result.componentInputs = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', head, '--', 'packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'scripts/product-reality/component-theme-proof.mjs', 'scripts/product-reality/s192-token-resolution.mjs'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean).sort();
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 90 108 18
+	// --no-renames makes every name-status record a status/path pair; tabs and
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 91 109
+	// newlines inside paths must never be interpreted as record separators.
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 92 110
+	export function auditEvidenceChanges({ root, executionHead, reviewHead }) {
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 93 111
+	  const fields = execFileSync('git', ['diff', '--name-status', '--no-renames', '-z', `${executionHead}..${reviewHead}`],
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 94 112
+	    { cwd: root, encoding: 'utf8' }).split('\0');
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 95 113
+	  assert.equal(fields.pop(), '', 'Git evidence changes must be NUL-terminated');
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 96 114
+	  assert.equal(fields.length % 2, 0, 'Git evidence changes must contain status/path pairs');
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 97 115
+	  return fields.reduce((changes, field, index) => {
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 98 116
+	    if (index % 2 === 0) changes.push({ status: field, path: fields[index + 1] });
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 99 117
+	    return changes;
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 100 118
+	  }, []);
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 101 119
+	}
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 102 120
+	
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 103 121
+	export function auditCiChangedPaths({ root, head, implementation, scope }) {
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 104 122
+	  return execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', head, implementation, '--', ...scope],
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 105 123
+	    { cwd: root, encoding: 'utf8' }).split('\0').filter(file => file && !testPath(file)).sort();
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 106 124
+	}
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 107 125
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 229 229 1
+	  if (manifestPath.startsWith('artifacts/product-reality/sprint-196/')) return auditSprint196Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath, ciChangedPaths });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1589 1589 36
+	export function auditSprint196Ci({ ci, implementationHead, readFrozen, changedPaths }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1590 1590
+	  assert.equal(ci.baseRefName, 'OODS-pro'); assert.equal(ci.headRefName, 'codex/sprint-196-release-proof');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1591 1591
+	  const required = ['coverage', 'product-reality-consumers', 'component-packages', 'a11y-contract', 'portable-runtime (20.11.1)', 'portable-runtime (24)', 'release-runtime', 'runtime-cells', 'viz-determinism'];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1592 1592
+	  assert.deepEqual(sorted195(ci.jobs.map(row => row.name)), sorted195(required));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1593 1593
+	  const heads = sorted195([...new Set(ci.jobs.map(row => row.headSha))]);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1594 1594
+	  assert.deepEqual(sorted195(ci.sourceEquivalence.map(row => row.headSha)), heads);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1595 1595
+	  for (const row of ci.jobs) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1596 1596
+	    assert(fullHead(row.headSha)); assert.equal(row.status, 'completed'); assert.equal(row.conclusion, 'success');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1597 1597
+	    hash195(readFrozen, row.run.path, row.run.sha256); hash195(readFrozen, row.jobInventory.path, row.jobInventory.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1598 1598
+	    const run = read195(readFrozen, row.run.path), jobs = read195(readFrozen, row.jobInventory.path).jobs;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1599 1599
+	    assert.equal(run.id, row.runId); assert.equal(run.head_sha, row.headSha); assert.equal(run.status, 'completed');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1600 1600
+	    const matching = jobs.filter(job => job.id === row.jobId); assert.equal(matching.length, 1);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1601 1601
+	    const actual = matching[0]; assert.equal(actual.run_id, row.runId); assert.equal(actual.name, row.name); assert.equal(actual.status, row.status); assert.equal(actual.conclusion, row.conclusion);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1602 1602
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1603 1603
+	  for (const row of ci.sourceEquivalence) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1604 1604
+	    assert.equal(row.implementationHead, implementationHead); assert.deepEqual(row.scope, publicScope196); assert.deepEqual(row.changedPaths, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1605 1605
+	    assert.deepEqual(changedPaths(row.headSha, implementationHead, publicScope196), [], 'CI executed different public source bytes');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1606 1606
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1607 1607
+	  return { jobs: required.length, actualHeads: heads.length };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1608 1608
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1609 1609
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1610 1610
+	export function auditSprint196Claims({ missions, claims, executions, verify, readHistorical }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1611 1611
+	  assert.deepEqual(missions.map(row => row.id), Array.from({ length: 7 }, (_, index) => `s196-m0${index + 1}`));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1612 1612
+	  const expected = missions.flatMap(mission => mission.successCriteria.map((criterion, index) => ({ missionId: mission.id, criterionIndex: index + 1, criterion })));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1613 1613
+	  assert.equal(expected.length, 26); assert.equal(claims.length, expected.length);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1614 1614
+	  const byId = new Map(executions.map(row => [row.id, row])); assert.equal(byId.size, executions.length);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1615 1615
+	  for (let i = 0; i < expected.length; i++) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1616 1616
+	    const claim = claims[i]; for (const key of ['missionId', 'criterionIndex', 'criterion']) assert.equal(claim[key], expected[i][key]);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1617 1617
+	    assert(['proven', 'proven-with-documented-limit'].includes(claim.status)); if (claim.status === 'proven-with-documented-limit') { assert(claim.decisionIds?.length); assert(claim.qualification?.trim()); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1618 1618
+	    assert(claim.executionIds.length && claim.evidence.length); assert(claim.executionIds.every(id => byId.has(id)));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1619 1619
+	    for (const ref of claim.evidence) { verify(ref); assert(claim.executionIds.some(id => byId.get(id).evidence.some(row => row.path === ref.path && row.sha256 === ref.sha256))); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1620 1620
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1621 1621
+	  for (const execution of executions) { assert(fullHead(execution.head)); for (const ref of execution.evidence) { const bytes = verify(ref); if (execution.historical) assert(bytes.equals(readHistorical(execution.head, ref.path))); } }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1622 1622
+	  return { criteria: expected.length, executions: byId.size };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1623 1623
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1624 1624
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1884 1884 198
+	export function auditSprint196HeadRelations({ relation, actual, implementationHead, executionHead, readFrozen, readHistorical, runtimePath, releasePath }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1885 1885
+	  const allowed = ['packages/mcp-server/registry/release-cells.v1.json', 'packages/mcp-server/registry/runtime-cells.v1.json'];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1886 1886
+	  assert.equal(relation.implementationHead, implementationHead); assert.equal(relation.executionHead, executionHead); assert.equal(relation.carryHead, executionHead);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1887 1887
+	  assert.equal(actual.ancestor, true); assert.equal(actual.implementationHead, implementationHead); assert.equal(actual.executionHead, executionHead); assert.deepEqual(actual.scope, publicScope196);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1888 1888
+	  assert.deepEqual(relation.allowedLedgerPaths.slice().sort(), allowed); assert.deepEqual(relation.excludedDocumentationPaths, ['cmos/foundational-docs/roadmap/near.md']);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1889 1889
+	  assert.deepEqual(relation.changedPaths, actual.changedPaths); assert(actual.changedPaths.every(file => allowed.includes(file) || file === 'cmos/foundational-docs/roadmap/near.md'));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1890 1890
+	  assert.deepEqual(relation.references.map(row => row.path).sort(), allowed);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1891 1891
+	  for (const ref of relation.references) { const bytes = readFrozen(ref.path); assert.equal(digest(bytes), bare(ref.sha256)); assert.equal(digest(readHistorical(executionHead, ref.path)), bare(ref.sha256)); const value = JSON.parse(bytes); assert.equal(value.bundleHead ?? value.head, implementationHead); const snapshot = ref.path.includes('/release-') ? releasePath : runtimePath; assert(Buffer.from(bytes).equals(readFrozen(snapshot)), `Canonical ledger differs from measured snapshot: ${ref.path}`); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1892 1892
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1893 1893
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1894 1894
+	export function auditSprint196Release({ release, releasePath, measurementManifest, head, readFrozen }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1895 1895
+	  const folder = path.posix.dirname(releasePath), read = file => read195(readFrozen, `${folder}/${file}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1896 1896
+	  assert.equal(release.bundleHead, head); assert.equal(measurementManifest.commit, head); assert.equal(measurementManifest.dirty, false); assert.equal(release.archiveSha256, measurementManifest.archive.sha256); assert(measurementManifest.archive.byteSize > 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1897 1897
+	  assert.equal(release.packCount, 1); assert.equal(release.historicalReceiptsUnioned, false);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1898 1898
+	  const ids = new Set(); assert.equal(release.rows.length, 42);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1899 1899
+	  const identity = read('bundle-identity.json'); assert.equal(identity.manifestVerified, true); assert.equal(identity.bundleHead, head); assert.equal(identity.archiveSha256, release.archiveSha256); assert.equal(identity.source.productSourcesMatch, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1900 1900
+	  const inventory = read('submitted-packages/inventory.json'); assert.equal(inventory.length, 5); assert.equal(new Set(inventory.map(row => row.name)).size, 5);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1901 1901
+	  for (const item of inventory) hash195(readFrozen, `${folder}/${item.artifactPath}`, item.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1902 1902
+	  const browser = read('browser.json'); assert.equal(browser.image, release.browserImage); assert.equal(browser.version, '141.0.7390.37'); assert.match(browser.userAgent, /Linux/);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1903 1903
+	  const verifyFiles = value => { if (!value || typeof value !== 'object') return; if (value.path && value.hash) hash195(readFrozen, `${folder}/${value.path}`, value.hash); for (const child of Object.values(value)) if (typeof child === 'object') verifyFiles(child); };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1904 1904
+	  for (const cell of release.rows) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1905 1905
+	    assert(['Organization', 'Subscription', 'User'].includes(cell.object)); assert(['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow'].includes(cell.context)); assert(['react', 'vue'].includes(cell.framework)); ids.add(`${cell.object}/${cell.context}/${cell.framework}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1906 1906
+	    assert.equal(cell.status, 'pass'); assert.equal(cell.head, head); assert.equal(cell.bundleHead, head); assert.equal(cell.archiveSha256, release.archiveSha256); assert.equal(cell.runId, release.runId); assert.match(cell.artifactHash, /^sha256:[0-9a-f]{64}$/); assert.equal(cell.hostArtifactHash, cell.artifactHash); assert.equal(cell.hashEqualToHost, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1907 1907
+	    assert.deepEqual(read(cell.report), cell); assert(cell.gates.every(gate => gate.status === 'pass')); cell.gates.forEach(gate => verifyFiles(gate.detail));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1908 1908
+	    const expected = ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states', ...(cell.context === 'workflow' ? ['server-render', 'hydration', 'shared-css-resolution', 'interaction-evidence'] : [])];
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1909 1909
+	    for (const name of expected) assert.equal(cell.gates.filter(gate => gate.name === name).length, 1);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1910 1910
+	    assert.equal(cell.gates.find(gate => gate.name === 'generation').detail.artifactHash, cell.artifactHash);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1911 1911
+	    const installation = cell.gates.find(gate => gate.name === 'fresh-exact-tarball-install').detail;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1912 1912
+	    if (cell.context === 'workflow') { const original = read(installation.report); assert.equal(original.artifactHash, cell.artifactHash); assert.deepEqual(original.gates.find(gate => gate.name === 'fresh-exact-tarball-install').detail, installation.observation); assert.equal(installation.observation.isolation.localPackagesFromBuiltTarballsOnly, true); assert.equal(installation.observation.isolation.installScripts, false); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1913 1913
+	    else for (const item of installation.tarballs) assert.equal(bare(item.sha256), bare(inventory.find(row => row.name === item.name)?.sha256));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1914 1914
+	    const sub = cell.context === 'workflow' ? `workflows/${cell.object}/parity` : `${path.posix.dirname(cell.report)}/parity`;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1915 1915
+	    const comparisons = read(`${sub}/generation-comparisons.json`).filter(row => row.framework === cell.framework); assert(comparisons.some(row => row.bundleArtifactHash === cell.artifactHash));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1916 1916
+	    for (const proof of comparisons) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1917 1917
+	      assert.equal(proof.bundleHead, head); assert.equal(proof.hashEqualToHost, true); assert.equal(proof.hostArtifactHash, proof.bundleArtifactHash);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1918 1918
+	      const host = read(`${sub}/${proof.hostResponse}`), bundle = read(`${sub}/${proof.bundleResponse}`); assert.equal(host.status, 'ok'); assert.equal(bundle.status, 'ok'); assert.equal(host.artifact.contentHash, proof.hostArtifactHash); assert.equal(bundle.artifact.contentHash, proof.bundleArtifactHash); assert.deepEqual(host.artifact, bundle.artifact);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1919 1919
+	      hash195(readFrozen, `${folder}/${sub}/${proof.bundleResponse.replace('-bundle.json', '-request.json')}`, proof.requestHash);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1920 1920
+	    }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1921 1921
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1922 1922
+	  assert.equal(ids.size, 42); const summary = { cells: release.rows.length, pass: release.rows.filter(row => row.status === 'pass').length, typedGap: 0, fail: 0 }; assert.deepEqual(release.summary, summary);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1923 1923
+	  return { ...summary, bundleHead: head, archiveSha256: release.archiveSha256, apps: ['Organization', 'Subscription', 'User'], frameworks: ['react', 'vue'] };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1924 1924
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1925 1925
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1926 1926
+	export function auditSprint196Attestation({ attestation, head, readHistorical }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1927 1927
+	  assert.equal(attestation.sourceHead, head); assert.equal(attestation.schemaVersion, 'forge-readiness-attestation/v1');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1928 1928
+	  const order = value => Array.isArray(value) ? value.map(order) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, order(value[key])])) : value;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1929 1929
+	  const payload = { ...attestation }; delete payload.sha256; assert.equal(digest(JSON.stringify(order(payload), null, 2) + '\n'), attestation.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1930 1930
+	  const shipped = new Map(attestation.shippedPackageHashes.map(row => [row.path, row.sha256])); assert.equal(shipped.size, attestation.shippedPackageHashes.length); assert(shipped.size > 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1931 1931
+	  const hashes = new Map();
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1932 1932
+	  for (const target of ['react', 'vue']) { const rows = attestation.targets[target].rows; assert.equal(rows.length, 109); assert.equal(new Set(rows.map(row => row.componentId)).size, 109);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1933 1933
+	    for (const row of rows) { assert.equal(row.emissionEligible, true); assert.deepEqual([...new Set(row.references.map(ref => ref.class))].sort(), ['dependencyClosure', 'frameworkScenario', 'packageExport', 'publicDeclaration', 'targetImplementation', 'versionedContract']);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1934 1934
+	      for (const ref of row.references) { assert.match(ref.sha256, /^[0-9a-f]{64}$/); if (ref.referenceClass === 'A') { if (!hashes.has(ref.path)) hashes.set(ref.path, digest(readHistorical(head, ref.path))); assert.equal(hashes.get(ref.path), ref.sha256); } else { assert.equal(ref.referenceClass, 'B'); assert.equal(shipped.get(ref.path), ref.sha256); } }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1935 1935
+	    }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1936 1936
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1937 1937
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1938 1938
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1939 1939
+	export function auditSprint196Roadmap(text) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1940 1940
+	  const heading = '## Increment 15 — Sprint 196: Release proof — BUILT, REVIEW PENDING';
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1941 1941
+	  assert.equal(text.split('\n').filter(line => line === heading).length, 1);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1942 1942
+	  assert(/\[[^\]]+\]\([^)]*forge-gate2-decision-packet\.md[^)]*\)/.test(text));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1943 1943
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1944 1944
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1945 1945
+	export function auditSprint196Portable({ report, archive, releaseSummary, nodeMajor }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1946 1946
+	  assert.equal(report.status, 'pass'); assert.match(report.nodeVersion, nodeMajor === 20 ? /^v20\.11\.1$/ : /^v24\./);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1947 1947
+	  assert.equal(report.manifest.commit, archive.commit); assert.equal(report.manifest.dirty, false); assert.equal(report.manifest.payloadTreeSha256, archive.payloadTreeSha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1948 1948
+	  assert.equal(report.tools.names.length, 19); assert.equal(new Set(report.tools.names).size, 19);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1949 1949
+	  const outcomes = report.calls.outcomes; assert.equal(Object.keys(outcomes).length, 19); assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 17);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1950 1950
+	  assert.deepEqual(Object.keys(outcomes).filter(key => outcomes[key].outcome === 'typed').sort(), ['brand.apply', 'design.preview']); assert.equal(outcomes['brand.apply'].code, 'OODS-N020'); assert.equal(outcomes['design.preview'].code, 'OODS-N019');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1951 1951
+	  assert.equal(report.calls.bridge.parity, true); assert.equal(report.calls.bridge.revision.commit, archive.commit); assert.equal(report.calls.bridge.tools.length, 19); assert.equal(report.calls.bridge.termination.code, 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1952 1952
+	  assert.deepEqual(report.calls.health.release, releaseSummary); assert.deepEqual(outcomes.health.release, releaseSummary);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1953 1953
+	  assert.equal(report.extractionTree.before, report.extractionTree.after); assert.equal(report.extractionTree.restoredAfterScopedWrites, true); assert.equal(report.lifecycle.stdinClose.exited, true); assert.equal(report.lifecycle.stdinClose.code, 0); assert.equal(report.lifecycle.restart.sigterm.code, 0); assert.equal(report.lifecycle.restart.sigterm.forcedKill, false);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1954 1954
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1955 1955
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1956 1956
+	export function auditSprint196Attribution({ attribution, movers, migration, readFrozen, readHistorical, rangeGitEvidence }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1957 1957
+	  assert.equal(attribution.base, S196_BUILD_BASE); assert.equal(attribution.head, movers.s196.head); assert.deepEqual(attribution.unattributedPaths, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1958 1958
+	  assert.equal(rangeGitEvidence.base, S196_BUILD_BASE); assert.equal(rangeGitEvidence.head, attribution.head);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1959 1959
+	  assert.deepEqual(sorted195(attribution.rows.map(row => row.path)), sorted195(movers.s196.publicPaths)); assert.equal(new Set(attribution.rows.map(row => row.path)).size, attribution.rows.length);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1960 1960
+	  hash195(readFrozen, attribution.patch.path, attribution.patch.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1961 1961
+	  assert.equal(readFrozen(attribution.patch.path).toString(), rangeGitEvidence.patch, 'The retained advertised patch omits or alters a Git hunk');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1962 1962
+	  for (const row of attribution.rows) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1963 1963
+	    assert(row.missions.length && row.commits.length && row.reason?.trim()); assert(row.missions.every(mission => /^s196-m0[1-7]$/.test(mission))); assert(row.commits.every(fullHead));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1964 1964
+	    assert(row.evidence.length); for (const ref of row.evidence) hash195(readFrozen, ref.path, ref.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1965 1965
+	    const filePatch = rangeGitEvidence.patches.filter(item => item.path === row.path).map(item => item.patch);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1966 1966
+	    assert.equal(filePatch.length, 1, `Missing advertised file patch: ${row.path}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1967 1967
+	    const headers = filePatch[0].split('\n').filter(line => line.startsWith('@@ '));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1968 1968
+	    assert.deepEqual(row.hunks.map(hunk => hunk.header), headers.length ? headers : ['file-metadata'], `Missing or invented attributed hunk in ${row.path}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1969 1969
+	    assert(row.hunks.length); for (const hunk of row.hunks) { assert(hunk.reason.trim() && hunk.missions.length && hunk.commits.length); assert(hunk.missions.every(id => row.missions.includes(id))); assert(hunk.commits.every(id => row.commits.includes(id))); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1970 1970
+	    for (const [head, expected] of [[S196_BUILD_BASE, row.beforeSha256], [attribution.head, row.afterSha256]]) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1971 1971
+	      assert(expected === null || /^[a-f0-9]{64}$/.test(expected));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1972 1972
+	      let observed = null; try { observed = digest(readHistorical(head, row.path)); } catch (error) { if (expected !== null) throw error; } assert.equal(observed, expected, `Attribution bytes differ at ${head}:${row.path}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1973 1973
+	    }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1974 1974
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1975 1975
+	  return { paths: attribution.rows.length };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1976 1976
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1977 1977
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1978 1978
+	export function auditSprint196Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath, ciChangedPaths }) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1979 1979
+	  const base = 'artifacts/product-reality/sprint-196/m07';
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1980 1980
+	  const manifest = JSON.parse(readFrozen(manifestPath));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1981 1981
+	  const ledger = JSON.parse(readOutput(`${base}/closeout/claim-ledger.json`));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1982 1982
+	  const handoff = JSON.parse(readOutput(`${base}/closeout/review-handoff.json`));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1983 1983
+	  const accounting = JSON.parse(readOutput(`${base}/closeout/suite-accounting.json`));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1984 1984
+	  const checked = new Set();
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1985 1985
+	  const verify = ref => { assert(ref.path && !path.isAbsolute(ref.path) && !ref.path.split('/').includes('..')); const bytes = readFrozen(ref.path); assert.equal(digest(bytes), bare(ref.sha256), ref.path); checked.add(ref.path); return bytes; };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1986 1986
+	  const source = key => JSON.parse(readFrozen(manifest.sources[key]));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1987 1987
+	  for (const result of [ledger, handoff]) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1988 1988
+	    assert.equal(result.builderSelfCertified, false); assert.equal(result.separateReviewRequired, true); assert.equal(result.sprintStatus, 'Active');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1989 1989
+	    assert.equal(result.executionHead, executionHead); assert.equal(result.reviewHead, reviewHead); assert.equal(result.implementationHead, manifest.implementationHead);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1990 1990
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1991 1991
+	  assert.equal(handoff.evidenceCommit, reviewHead); assert.equal(handoff.exportVersion, '2026-09-12-s196-m07');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1992 1992
+	  assert.equal(gitEvidence.ancestor, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1993 1993
+	  assert.equal(accounting.executionHead, executionHead); assert.equal(accounting.reviewHead, reviewHead);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1994 1994
+	  assert.equal(accounting.headRelation.ancestor, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1995 1995
+	  assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1996 1996
+	  assert.equal(accounting.headRelation.executableInputsUnchanged, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1997 1997
+	  for (const change of gitEvidence.changes) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1998 1998
+	    assert.equal(change.status, 'A');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 1999 1999
+	    assert(/^(?:artifacts\/product-reality\/sprint-196\/m07\/(?:five-suite-closeout[^/]*|closeout|ci|movers|final-archive)\/.*\.(?:json|log|md|patch|txt|sha256)|artifacts\/product-reality\/sprint-196\/m07\/e2e-node(?:20|24)\.json)$/.test(change.path), change.path);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2000 2000
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2001 2001
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2002 2002
+	  for (const ref of [...ledger.references, ...accounting.references]) verify(ref);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2003 2003
+	  assert.equal(source('missions').sprint.id, 'sprint-196'); assert.equal(source('missions').sprint.status, 'Active');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2004 2004
+	  const claimCounts = auditSprint196Claims({ missions: source('missions').missions, claims: ledger.claims, executions: ledger.executions, verify, readHistorical });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2005 2005
+	  auditSprint196HeadRelations({ relation: source('headRelations'), actual: publicGitEvidence, implementationHead: manifest.implementationHead, executionHead, readFrozen, readHistorical, runtimePath: manifest.sources.runtime, releasePath: manifest.sources.release });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2006 2006
+	  const movers = source('movers'); assert.equal(rangeGitEvidence.base, S196_BUILD_BASE); assert.equal(rangeGitEvidence.head, executionHead);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2007 2007
+	  const declared = read195(readFrozen, `${base}/movers/declared-movers.json`); for (const key of ['canonicalPaths', 'publicPaths']) assert.deepEqual(declared.s196[key], rangeGitEvidence[key]);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2008 2008
+	  for (const key of ['canonicalPaths', 'publicPaths']) assert.deepEqual(movers.s196[key], rangeGitEvidence[key]);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2009 2009
+	  const capability = source('componentLedger'), exported = source('componentExport'); assert.equal(capability.rows.length, 109); assert.equal(capability.approvedRuntimeCensus, null);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2010 2010
+	  const count = (surface, state) => capability.rows.filter(row => row.surfaces[surface].state === state).length;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2011 2011
+	  assert.equal(count('react', 'implemented-evidence-complete'), 109); assert.equal(count('vue', 'implemented-evidence-complete'), 109); assert.equal(count('html', 'mapped'), 109);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2012 2012
+	  assert.equal(count('accessibility', 'verified'), 109); assert.equal(count('theme', 'verified'), 109); assert.equal(count('interaction', 'verified'), 40); assert.equal(count('interaction', 'not-applicable'), 69);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2013 2013
+	  for (const row of capability.rows) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2014 2014
+	    assert.deepEqual(row.surfaces, exported.components.find(entry => entry.id === row.id).productReality.surfaces);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2015 2015
+	    for (const surface of ['accessibility', 'theme', 'interaction']) { assert.notEqual(row.surfaces[surface].state, 'unverified'); if (['not-applicable', 'unavailable'].includes(row.surfaces[surface].state)) assert(row.surfaces[surface].reason); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2016 2016
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2017 2017
+	  const proof = source('componentProof'); assert.match(proof.head, /^[a-f0-9]{40}$/); proof.references.forEach(verify);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2018 2018
+	  assert.equal(proof.retained, true); assert.equal(proof.retentionBase, S196_BUILD_BASE); assert.equal(proof.implementationHead, manifest.implementationHead); assert.equal(proof.status, 'passed'); assert(proof.sourceInputs.length > 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2019 2019
+	  assert.deepEqual(sorted195(proof.sourceInputs.map(row => row.path)), rangeGitEvidence.componentInputs); for (const input of proof.sourceInputs) { verify(input); assert.equal(digest(readHistorical(manifest.implementationHead, input.path)), bare(input.sha256)); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2020 2020
+	  for (const ref of proof.sourceInputs) assert.equal(digest(readHistorical(S196_BUILD_BASE, ref.path)), bare(ref.sha256));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2021 2021
+	  for (const key of ['reactTheme', 'vueTheme', 'reactMeasured', 'vueMeasured']) { assert(manifest.sources[key].startsWith('artifacts/product-reality/sprint-195/m07/')); assert(proof.references.some(ref => ref.path === manifest.sources[key])); assert(Buffer.from(readFrozen(manifest.sources[key])).equals(readHistorical(S196_BUILD_BASE, manifest.sources[key]))); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2022 2022
+	  for (const target of ['react', 'vue']) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2023 2023
+	    const report = source(`${target}Measured`); assert.equal(report.success, true); assert.equal(report.numPendingTests, 0); assert.equal(report.numFailedTests, 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2024 2024
+	    const axe = report.testResults.filter(row => /accessibility\.spec\./.test(row.name)).flatMap(row => row.assertionResults).filter(row => /shared scenario/.test(row.fullName)); assert.equal(axe.length, 109); assert(axe.every(row => row.status === 'passed'));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2025 2025
+	    auditSprint195Theme({ report: source(`${target}Theme`), reportPath: manifest.sources[`${target}Theme`], target, ids: capability.rows.map(row => row.id), readFrozen });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2026 2026
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2027 2027
+	  const composition = source('componentCensus'); assert.equal(composition.head, manifest.implementationHead); assert.equal(composition.allRows.length, 77); assert.equal(composition.greenTotalCells, 154); assert(composition.allRows.every(row => row.green && row.cells.every(cell => cell.errors.length === 0)));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2028 2028
+	  const movement = source('schemaMovement'); assert.equal(movement.changedSchemas, 0); assert.equal(movement.unchangedSchemas, 77); assert.deepEqual(movement.unattributedChanges, []); assert.equal(movement.rows.length, movement.changedSchemas); assert.equal(Object.values(movement.classes).reduce((a, b) => a + b, 0), movement.changedSchemas);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2029 2029
+	  assert.equal(source('originalStore').reachable, 15); assert.equal(source('successorStore').reachable, 16); assert.equal(source('compatibility').changedLiveFiles, 0); assert.equal(source('compatibility').liveStoreFiles, 17);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2030 2030
+	  const taxonomy = source('taxonomy');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2031 2031
+	  auditSprint195Viz({ registry: source('registry'), observations: source('vizObservations'), patterns: source('patternRegistry'), patternCensus: source('patternCensus'), taxonomy,
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2032 2032
+	    classification: read195(readFrozen, 'packages/viz-core/src/registry/viz-classification.v1.json'), patternSources: read195(readFrozen, 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json'), readFrozen });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2033 2033
+	  assert.deepEqual(source('vizCensus'), source('registry'));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2034 2034
+	  const taxonomyCensus = source('taxonomyCensus'); assert.equal(taxonomyCensus.status, 'passed'); assert.equal(taxonomyCensus.head, manifest.implementationHead); assert.deepEqual(taxonomyCensus.summary, taxonomy.summary); assert.equal(taxonomyCensus.sha256, digest(readFrozen(manifest.sources.taxonomy)));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2035 2035
+	  for (const key of ['runtime', 'dashboardRuntime', 'runtimePlacement', 'vizObservations', 'patternCensus']) assert(manifest.sources[key].startsWith(base + '/'), `Fresh195 proof expected: ${key}`);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2036 2036
+	  const runtime = source('runtime');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2037 2037
+	  auditSprint195Runtime({ runtime, dashboard: source('dashboardRuntime'), placement: source('runtimePlacement'), runtimePath: manifest.sources.runtime, dashboardPath: manifest.sources.dashboardRuntime, head: manifest.implementationHead, readFrozen });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2038 2038
+	  assert.deepEqual(source('runtimeValidation').issues, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2039 2039
+	  const missionEvidence = source('missionEvidence'); assert.equal(missionEvidence.missionId, 's196-m07'); assert.deepEqual(missionEvidence.records.map(row => row.missionId).sort(), Array.from({ length: 6 }, (_, i) => `s196-m0${i + 1}`)); for (const row of missionEvidence.records) { assert(row.references.length); row.references.forEach(verify); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2040 2040
+	  const delivered = read195(readFrozen, 'artifacts/product-reality/sprint-196/m01/verification.json'); assert.equal(delivered.status, 'passed'); assert(delivered.successCriteria.every(row => row.status === 'passed')); assert.equal(delivered.successCriteria.find(row => row.sendsExecuted !== undefined).sendsExecuted, 3);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2041 2041
+	  const docBites = read195(readFrozen, 'artifacts/product-reality/sprint-196/m05/doc-bites/bites.json'); assert.equal(docBites.records.length, 11); assert.equal(docBites.summary.failed, 0); assert.equal(docBites.allRestoredByteIdentically, true); for (const row of docBites.records) { assert.equal(row.beforeSha256, row.restoredSha256); assert.equal(row.restoredByteIdentically, true); assert(row.commands.some(command => command.exitCode !== 0)); assert.equal(row.commands.at(-1).exitCode, 0); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2042 2042
+	  const bundleBites = read195(readFrozen, 'artifacts/product-reality/sprint-196/m05/bundle-bites/verification.json'); assert.equal(bundleBites.status, 'passed'); assert.deepEqual(bundleBites.summary, { bites: 4, passed: 4, failed: 0, restored: 4 }); assert.equal(bundleBites.originalArchiveSha256After, bundleBites.archive.sha256);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2043 2043
+	  const utc = read195(readFrozen, 'artifacts/product-reality/sprint-196/m05/timezone-bite/verification.json'); assert.equal(utc.primarySvg.baselineEqual, 16); assert.equal(utc.primarySvg.mutatedDifferent, 16); assert.equal(utc.primarySvg.mutatedAssertionExitCode, 1); assert.equal(utc.primarySvg.restoredEqual, 16); assert.equal(utc.restoration.sourceBytesAndModesRestored, true); assert.equal(utc.restoration.matchesBaselineWholeDist, true);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2044 2044
+	  const gate2 = read195(readFrozen, 'artifacts/product-reality/sprint-196/m06/verification.json'); assert.equal(gate2.status, 'passed'); assert.equal(gate2.approvalDecisionId, 1952); assert.deepEqual(gate2.constraints, { active: 7, archived: 5, modified: false }); gate2.sourceHashes.forEach(verify);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2045 2045
+	  auditSprint196Attribution({ attribution: source('moverAttribution'), movers, readFrozen, readHistorical, rangeGitEvidence });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2046 2046
+	  const tools = source('toolLedger'); assert.equal(tools.rows.length, 24); assert.equal(tools.rows.filter(row => row.registration === 'auto').length, 19);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2047 2047
+	  const counts = Object.fromEntries(['product-reality', 'contract', 'unit', 'none'].map(tier => [tier, tools.rows.filter(row => row.proofTier === tier).length]));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2048 2048
+	  assert.deepEqual(counts, { 'product-reality': 19, contract: 5, unit: 0, none: 0 }); assert.deepEqual(counts, tools.summary.byTier);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2049 2049
+	  auditSprint195ToolProof({ tools, proof: source('toolProof'), implementationHead: manifest.implementationHead, ledgerPath: manifest.sources.toolLedger, readFrozen });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2050 2050
+	  const retention = source('componentRetention'); assert.equal(retention.base, S196_BUILD_BASE); assert.equal(retention.head, manifest.implementationHead); assert.deepEqual(retention.sourceInputs, proof.sourceInputs); assert.deepEqual(retention.changedPaths, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2051 2051
+	  assert(!source('movers').s196.publicPaths.some(file => /^packages\/(?:component-contracts|component-styles|components-react|components-vue)\//.test(file)), 'Retained component proof requires unchanged component implementation bytes');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2052 2052
+	  const preFreeze = source('preFreeze'); assert.equal(preFreeze.status, 'passed'); assert.equal(preFreeze.skipped, 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2053 2053
+	  const release = source('release'), measuredArchive = source('measurementManifest'), finalArchive = source('finalManifest');
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2054 2054
+	  const releaseSummary = auditSprint196Release({ release, releasePath: manifest.sources.release, measurementManifest: measuredArchive, head: manifest.implementationHead, readFrozen });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2055 2055
+	  assert.deepEqual(source('releaseValidation').issues, []); assert.equal(finalArchive.commit, executionHead); assert.equal(finalArchive.dirty, false);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2056 2056
+	  auditSprint196Attestation({ attestation: source('readinessAttestation'), head: executionHead, readHistorical });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2057 2057
+	  auditSprint196Portable({ report: source('e2eNode20'), archive: finalArchive, releaseSummary, nodeMajor: 20 }); auditSprint196Portable({ report: source('e2eNode24'), archive: finalArchive, releaseSummary, nodeMajor: 24 });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2058 2058
+	  const health = source('health'); assert.deepEqual(health.productReality.release, releaseSummary); assert.equal(health.status, 'ok'); assert.deepEqual(health.productReality.runtime, { ...runtime.summary, head: runtime.head }); assert.deepEqual(health.productReality.tools, { entries: 24, byTier: counts, head: tools.head });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2059 2059
+	  assert.equal(accounting.status, 'passed'); assert.deepEqual(accounting.validationIssues, []); assert.deepEqual(accounting.unattributedDeltas, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2060 2060
+	  assert.equal(accounting.closeout.runs.length, 1); assert(accounting.closeoutAttempts.length <= 1); assert.equal(accounting.captureExtensionAcceptance, undefined);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2061 2061
+	  const runs = accounting.executions.filter(row => row.cohort === 'closeout'); assert.equal(runs.length, 5); assert.deepEqual(runs.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2062 2062
+	  for (const run of runs) {
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2063 2063
+	    const raw = JSON.parse(verify(run.rawReport)); assert.equal(run.measuredHead, executionHead); const failed = 0;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2064 2064
+	    assert.equal(raw.numFailedTests, failed); assert.equal(raw.success, !failed); assert.equal(run.exitCode, failed); assert.equal(raw.numPassedTests, run.counts.passed); assert.equal(raw.numPendingTests, run.counts.skipped);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2065 2065
+	  }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2066 2066
+	  assert.equal(accounting.timeoutAcceptance, undefined); assert.deepEqual(accounting.closeoutFailures, []);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2067 2067
+	  assert.equal(accounting.comparisons.length, 5); assert.deepEqual(accounting.comparisons.map(row => row.suite).sort(), ['component-packages', 'mcp-server', 'root-core', 'viz-core', 'viz-render']);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2068 2068
+	  assert.deepEqual(health.productReality.viz, taxonomy.summary);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2069 2069
+	  const inputs = (cohort, capture) => { const aggregate = JSON.parse(verify(capture.aggregate)); return accounting.executions.filter(row => row.cohort === cohort && row.suite !== 'component-packages').map(row => ({ suite: row.suite, workspace: aggregate.workspace, platform: aggregate.host.platform, report: JSON.parse(verify(row.rawReport)) })); };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2070 2070
+	  const skipped = auditSprint190SkippedIdentities(inputs('closeout', accounting.closeout), inputs('sprint195Closeout', accounting.baselines.sprint195Closeout));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2071 2071
+	  assert.equal(runs.find(row => row.suite === 'component-packages').counts.skipped, 0);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2072 2072
+	  for (const row of accounting.goldenAttribution.files) { verify({ path: row.file, sha256: row.afterSha256 }); assert.equal(digest(readHistorical(accounting.goldenAttribution.beforeHead, row.file)), row.beforeSha256); assert(row.reason.trim()); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2073 2073
+	  const notice = source('noticePlan'); assert.equal(notice.sent, false); assert.equal(notice.sendsExecuted, 0); assert.deepEqual(notice.targets, ['cmos-dashboard', 'forge-demos', 'aquex-mcp']); assert(notice.notices.every(row => row.request.body.includes('Sprint 196 candidate') && row.request.body.includes('19 advertised')));
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2074 2074
+	  auditSprint196Ci({ ci: source('ci'), implementationHead: executionHead, readFrozen, changedPaths: ciChangedPaths });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2075 2075
+	  assert.equal(notice.deliveryState, 'pending-independent-review'); assert.equal(notice.implementationHead, executionHead); assert.equal(notice.measurementHead, manifest.implementationHead);
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2076 2076
+	  for (const item of notice.notices) { assert.equal(digest(JSON.stringify(item.request)), item.requestSha256); for (const term of ['bridge', 'Readiness attestation', 'OODS-N020', 'Structured native errors', 'health.productReality.release', 'builderSelfCertified:false']) assert(item.request.body.includes(term)); }
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2077 2077
+	  assert.equal(source('prose').exitCode, 0); auditSprint196Roadmap(readFrozen(manifest.sources.near).toString());
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2078 2078
+	  return { status: 'passed', skipped, gitEvidence, checkedCriteria: claimCounts.criteria, checkedExecutions: claimCounts.executions, checkedFrozenPaths: checked.size, executionHead, reviewHead, builderSelfCertified: false, separateReviewRequired: true };
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2079 2079
+	}
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2080 2080
+	
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2081 2081
+	
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 1839 2092 1
+	    const changes = auditEvidenceChanges({ root, executionHead, reviewHead });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2097 2097 1
+	    const implementationHead = manifest.missionId === 's196-m07' ? manifest.implementationHead : JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2099 2099 2
+	      sprintId: manifest.missionId === 's196-m07' ? 'sprint-196' : manifest.missionId === 's195-m07' ? 'sprint-195' : manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+794084bf34dabab4d8218ccb2a32e2ec81f10d51 2100 2100
+	    const rangeGitEvidence = manifest.missionId === 's196-m07' ? auditSprintRange({ root, base: S196_BUILD_BASE, head: executionHead, sprintId: 'sprint-196' }) : manifest.missionId === 's195-m07' ? auditSprintRange({ root, base: '5b25c3c9ec795315bf52a698d135c96bffd66393', head: implementationHead, sprintId: 'sprint-195' }) : manifest.missionId === 's194-m07' ? auditSprintRange({ root, base: '1f69c957f4435a0a2f18b168b684de050f7a5f22', head: implementationHead, sprintId: 'sprint-194' }) : manifest.missionId === 's193-m07' ? auditSprintRange({ root, base: 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d', head: implementationHead, sprintId: 'sprint-193' }) : manifest.missionId === 's192-m07' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','5fdf8a18'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-192' }) : manifest.missionId === 's191-m05' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','d3a99d39'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-191' }) : manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 1855 2108 1
+	      ciChangedPaths: (head, implementation, scope) => auditCiChangedPaths({ root, head, implementation, scope }),

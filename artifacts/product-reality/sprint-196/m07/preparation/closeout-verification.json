@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s196-m07",
+  "status": "passed",
+  "builderSelfCertified": false,
+  "scope": "Bounded closeout tooling preparation; no current runtime or full five-suite capture",
+  "observedWorkingTreeBase": "2bae454ad3094042c9f0113e1ef852c9d440a088",
+  "sourceDirtyDuringExecution": true,
+  "tests": {
+    "files": 3,
+    "passed": 95,
+    "failed": 0,
+    "skipped": 0,
+    "s196": 35,
+    "historicalS195": 60
+  },
+  "commands": [
+    {
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/product-reality/closeout.s196.spec.ts",
+        "test/product-reality/closeout-producer.s195.spec.ts",
+        "test/product-reality/closeout-audit.s195.spec.ts"
+      ],
+      "exitCode": 0,
+      "report": {
+        "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-final.json",
+        "bytes": 38752,
+        "sha256": "9a88d211eeb6ebe81500ec2aca129136c1d5a6395a93222766110e06aa9776c0"
+      },
+      "log": {
+        "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-final.log",
+        "bytes": 2012,
+        "sha256": "0529f1a722e74337c339bfbeb95da9e4066a69fcc65afdf604479a31c28d7a25"
+      }
+    },
+    {
+      "argv": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-typecheck-final.log",
+        "bytes": 122,
+        "sha256": "45ce5131f52c8db02bbdf5c13d49960214bb477e0ea4a9c0e134bd7e788a1dc0"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "scripts/product-reality/s185-closeout.mjs",
+      "bytes": 186001,
+      "sha256": "01be59536257016a33124aaffb86c7eb910fd59ea7d251a763b707fed0ec59d8"
+    },
+    {
+      "path": "scripts/product-reality/s185-audit-closeout.mjs",
+      "bytes": 234409,
+      "sha256": "2ff11ace8fd4d0e2d7eb10ba36268ea2fe950e425070b679b5f5d8cad7406c24"
+    },
+    {
+      "path": "scripts/product-reality/s185-reconnect.mjs",
+      "bytes": 39913,
+      "sha256": "3827c6220fc57b673f22719b25123c6a4818204b4ebadee77e8b07ec06b4f7a1"
+    },
+    {
+      "path": "scripts/product-reality/s185-sprint-wide-movers.mjs",
+      "bytes": 23980,
+      "sha256": "372bfef8219117bf47f342c80dbbdb51f1be0150c4fc8d550edb7243e1dd01a5"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout.s196.spec.ts",
+      "bytes": 16344,
+      "sha256": "8b58aa0098a39685bd12e4c95ed8bad70cd404a7f525e6c696fff94d62f49ebb"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout-producer.s195.spec.ts",
+      "bytes": 21882,
+      "sha256": "785179b272e0e0acdb200bfdac98465b50fc521d602e711bee5634e663d7a7f1"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/closeout-audit.s195.spec.ts",
+      "bytes": 18459,
+      "sha256": "3513c3812bcb023bc3162101cbcd7153fd63d42641652791b71af55f7441e52b"
+    }
+  ],
+  "integration": {
+    "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-integration.md",
+    "bytes": 6532,
+    "sha256": "c57cf18f4f5ab6b8246450f3f6a28644443ce1bb5d09022501de3cc1113ffce4"
+  },
+  "beforeFinalPatchFilter": {
+    "path": "artifacts/product-reality/sprint-196/m07/preparation/closeout-before-patch-filter.json",
+    "bytes": 1315,
+    "sha256": "a667bb4583b67b4148409b406e2feebbd1dae32667d8db03fd22846bed0bc680"
+  },
+  "priorBatchSourceHashesAvailable": false,
+  "limitations": [
+    "The preceding1005-test combined batch captured head/dirty metadata, not all uncommitted source bytes; do not retrospectively claim its source hashes. This final affected-file rerun binds the final source inventory.",
+    "Historical Sprint195 source fixture operands viz-recipes, viz-patterns and Vega adapter are read from1d100e20, preserving immutable pre-UTC evidence.",
+    "The full producer/auditor against actual Sprint196 A/B/C inputs remains required after runtime sweeps, five-suite capture, final archive and fresh CI evidence."
+  ],
+  "corrections": [
+    "Require canonical runtime/release ledger bytes equal measured m07 snapshot bytes.",
+    "Sprint196-only no-renames inventory includes both endpoints; historical185\u2013195 behavior unchanged.",
+    "Independent advertised patch uses exact public non-test paths with Git literal-pathspecs; per-file hunk inventory avoids quoted-header parsing.",
+    "Exact current roadmap heading plus Gate2 packet link, typed wire errors, raw host/bundle request and response parity, clean process lifecycle and readiness hashes have negative fixtures."
+  ]
+}

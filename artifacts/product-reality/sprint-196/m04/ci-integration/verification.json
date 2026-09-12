@@ -1,0 +1,40 @@
+{
+  "mission": "s196-m04",
+  "attribution": "Follow-up integration repair for m03 CI additions discovered by the broader hosted coverage job; actual release proof remained passing.",
+  "prior": {
+    "runId": 34677270788,
+    "jobId": 103509303178,
+    "sourceHead": "415c7cc02822e64d64e2c8a9696d852d7faa2db7",
+    "actualCheckout": "405315b16b109aab8ff4e87f9389888c59d43668",
+    "result": {
+      "passed": 6944,
+      "failed": 3,
+      "skipped": 16
+    },
+    "failures": [
+      "closeout checklist missing release-runtime job",
+      "runtime placement sweep expected sprint-195 receipt path",
+      "runtime placement validation expected sprint-195 receipt path"
+    ]
+  },
+  "repair": [
+    "Closeout carrier enumerates all 19 current job keys and the fresh release-runtime invocation.",
+    "Runtime placement contracts retain the 154-cell/48-placement intent with the current runtime-ci path.",
+    "Release contract checks strict assembly precedes generation, paired bundle inputs, the gate consumes fresh output, and original archive metadata is copied into the always-uploaded workspace tree.",
+    "One docs:check CI gate checks all six generated surfaces after token/package builds."
+  ],
+  "verification": {
+    "command": "pnpm exec vitest run tests/verification/closeout-checklist.contract.test.ts tests/verification/runtime-placement-ci.s195.test.ts tests/verification/generated-docs-ci.s196.test.ts --reporter=verbose --reporter=json --outputFile=artifacts/product-reality/sprint-196/m04/ci-integration/tests.json",
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+  },
+  "files": {
+    "prior-coverage-failure.log": "62f285d728d9f6975a6cf2f45dd96dfd8fefa35864771a7a925339194224c37c",
+    "prior-coverage-job.json": "8ab96c77daacff664985e4a10523317d6cda219c02ba9e72630930a1dd4f53b2",
+    "tests.json": "bd0a0ef07ef4aba6f2852b216fd165283430cb8bb0653d9941a0b455953e8da4",
+    "tests.log": "d74a6de16db68b7febce0bc83b6665c50f9043fb7336fca2da8dec8ebde9b212"
+  },
+  "hostedRetentionRepairConfirmed": false,
+  "builderSelfCertified": false
+}

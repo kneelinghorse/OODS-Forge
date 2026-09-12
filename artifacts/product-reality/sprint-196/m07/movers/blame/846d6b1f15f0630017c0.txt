@@ -1,0 +1,728 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 1 1 359
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+filename scripts/product-reality/s196-bundle-bites.mjs
+	#!/usr/bin/env node
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 2 2
+	/** Four physical mutations of independent m02 extractions; no source/build mutations. */
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 3 3
+	import assert from 'node:assert/strict';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 4 4
+	import { createHash, randomUUID } from 'node:crypto';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 5 5
+	import fs from 'node:fs';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 6 6
+	import fsp from 'node:fs/promises';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 7 7
+	import net from 'node:net';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 8 8
+	import os from 'node:os';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 9 9
+	import path from 'node:path';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 10 10
+	import { spawn, execFileSync } from 'node:child_process';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 11 11
+	import { fileURLToPath, pathToFileURL } from 'node:url';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 12 12
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 13 13
+	const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 14 14
+	const ARCHIVE_HEAD = '2d80ae017184b6a28d4b2d7a2bb02649a5c33718';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 15 15
+	const ARCHIVE_SHA256 = '4ff4aeb05e5ba937b61d2062fcce2eb4d0d41fc1b3001ae07b472cb2c2663bba';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 16 16
+	const ARCHIVE_BYTES = 32448215;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 17 17
+	const FIXTURES = 'packages/mcp-server/test/fixtures/portable-runtime';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 18 18
+	const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 19 19
+	const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 20 20
+	const cleanEnv = () => ({ PATH: process.env.PATH ?? '', LANG: 'C.UTF-8', LC_ALL: 'C.UTF-8', TZ: 'UTC', NODE_ENV: 'production', NO_COLOR: '1' });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 21 21
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 22 22
+	function options(args) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 23 23
+	  const result = { archive: '/tmp/forge-s196-m02-final-out-1/forge-runtime.tar.gz', out: path.join(ROOT, 'artifacts/product-reality/sprint-196/m05/bundle-bites') };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 24 24
+	  let execute = false;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 25 25
+	  for (let index = 0; index < args.length; index++) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 26 26
+	    if (args[index] === '--execute') execute = true;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 27 27
+	    else if (args[index] === '--archive' || args[index] === '--out') {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 28 28
+	      const key = args[index].slice(2), value = args[++index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 29 29
+	      assert(value && !value.startsWith('--'), `Missing value for --${key}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 30 30
+	      result[key] = path.resolve(value);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 31 31
+	    } else throw new Error(`Unknown argument: ${args[index]}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 32 32
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 33 33
+	  assert(execute, 'Use --execute to run the four owned-extraction mutations');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 34 34
+	  return result;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 35 35
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 36 36
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 37 37
+	async function main() {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 38 38
+	  const args = options(process.argv.slice(2));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 39 39
+	  assert(!fs.existsSync(args.out), 'Receipt output already exists; use a new --out to retain earlier failures');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 40 40
+	  const archive = await fsp.readFile(args.archive);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 41 41
+	  assert.equal(archive.length, ARCHIVE_BYTES, 'The exact m02 archive is required');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 42 42
+	  assert.equal(hash(archive), ARCHIVE_SHA256, 'The exact m02 archive is required');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 43 43
+	  await fsp.mkdir(args.out, { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 44 44
+	  const arena = await fsp.mkdtemp(path.join(os.tmpdir(), 'forge-s196-m05-bundle-bites-'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 45 45
+	  const helperHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 46 46
+	  const report = {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 47 47
+	    schemaVersion: 1, missionId: 's196-m05', runId: randomUUID(), status: 'running', builderSelfCertified: false,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 48 48
+	    startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)], cwd: ROOT,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 49 49
+	    archive: { path: args.archive, sha256: ARCHIVE_SHA256, bytes: ARCHIVE_BYTES, head: ARCHIVE_HEAD },
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 50 50
+	    helperHead, nodeVersion: process.version, arena, childEnvironment: cleanEnv(),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 51 51
+	    methodology: 'Each bite owns a separate extraction of the same exact m02 archive. Historical m02 E2E and fixtures are pinned to the archive head; targeted probes use the current committed McpClient helper. Taxonomy corruption is observed natively, while actual E2E rejects it earlier at manifest verification. No manifest is resealed, no production checks are weakened, and no later release ledger is injected.',
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 52 52
+	    helpers: [], commands: [], records: [],
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 53 53
+	  };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 54 54
+	  const write = async (relative, value) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 55 55
+	    const file = path.join(args.out, relative);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 56 56
+	    await fsp.mkdir(path.dirname(file), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 57 57
+	    await fsp.writeFile(file, typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value, null, 2) + '\n');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 58 58
+	    return relative;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 59 59
+	  };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 60 60
+	  const save = () => write('bites.json', report);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 61 61
+	  const evidence = async relative => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 62 62
+	    const bytes = await fsp.readFile(path.join(args.out, relative));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 63 63
+	    return { path: relative, sha256: hash(bytes), bytes: bytes.length };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 64 64
+	  };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 65 65
+	  const pin = async (head, source, destination) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 66 66
+	    const bytes = execFileSync('git', ['show', `${head}:${source}`], { cwd: ROOT, maxBuffer: 8 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 67 67
+	    await write(destination, bytes);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 68 68
+	    report.helpers.push({ head, source, gitCommand: ['git', 'show', `${head}:${source}`], ...await evidence(destination) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 69 69
+	  };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 70 70
+	  for (const [head, directory] of [[ARCHIVE_HEAD, 'm02'], [helperHead, 'current']]) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 71 71
+	    for (const file of ['e2e.mjs', 'manifest.mjs']) await pin(head, `scripts/runtime/${file}`, `helpers/${directory}/${file}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 72 72
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 73 73
+	  const fixtureRoot = path.join(args.out, 'helpers/fixtures');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 74 74
+	  const fixtureFiles = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', ARCHIVE_HEAD, '--', FIXTURES], { cwd: ROOT }).toString().split('\0').filter(Boolean);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 75 75
+	  assert(fixtureFiles.length > 19);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 76 76
+	  for (const file of fixtureFiles) await pin(ARCHIVE_HEAD, file, `helpers/fixtures/${file}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 77 77
+	  const { verifyEmbeddedManifest, treeDigest } = await import(pathToFileURL(path.join(args.out, 'helpers/current/manifest.mjs')).href);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 78 78
+	  const { McpClient } = await import(pathToFileURL(path.join(args.out, 'helpers/current/e2e.mjs')).href);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 79 79
+	  const historicalE2E = path.join(args.out, 'helpers/m02/e2e.mjs');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 80 80
+	  await save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 81 81
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 82 82
+	  async function run(id, name, command, commandArgs, cwd, timeoutMs = 300000) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 83 83
+	    const prefix = `${id}/${name}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 84 84
+	    await fsp.mkdir(path.join(args.out, id), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 85 85
+	    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 86 86
+	    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 87 87
+	    const entry = { name, command: [command, ...commandArgs], cwd, environment: cleanEnv(), startedAt: new Date().toISOString(), stdout: `${prefix}.stdout.log`, stderr: `${prefix}.stderr.log`, timedOut: false, forcedKill: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 88 88
+	    const child = spawn(command, commandArgs, { cwd, env: cleanEnv(), detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 89 89
+	    entry.pid = child.pid;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 90 90
+	    child.stdout.pipe(stdout); child.stderr.pipe(stderr);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 91 91
+	    let force;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 92 92
+	    const timer = setTimeout(() => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 93 93
+	      entry.timedOut = true;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 94 94
+	      try { process.kill(-child.pid, 'SIGTERM'); } catch { /* Already closed. */ }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 95 95
+	      force = setTimeout(() => { entry.forcedKill = true; try { process.kill(-child.pid, 'SIGKILL'); } catch { /* Already closed. */ } }, 3000);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 96 96
+	    }, timeoutMs);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 97 97
+	    const ended = await new Promise(resolve => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 98 98
+	      child.once('error', error => { entry.spawnError = String(error); });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 99 99
+	      child.once('close', (code, signal) => resolve({ code, signal }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 100 100
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 101 101
+	    clearTimeout(timer); clearTimeout(force);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 102 102
+	    await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 103 103
+	    Object.assign(entry, ended, { completedAt: new Date().toISOString() });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 104 104
+	    entry.stdoutEvidence = await evidence(entry.stdout); entry.stderrEvidence = await evidence(entry.stderr);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 105 105
+	    report.commands.push(entry); await save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 106 106
+	    return { ...entry, text: await fsp.readFile(path.join(args.out, entry.stdout), 'utf8'), errorText: await fsp.readFile(path.join(args.out, entry.stderr), 'utf8') };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 107 107
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 108 108
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 109 109
+	  async function verify(record, phase) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 110 110
+	    try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 111 111
+	      const result = await verifyEmbeddedManifest(record.extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 112 112
+	      const proof = { status: 'pass', manifest: result.manifest, payload: result.payload };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 113 113
+	      await write(`${record.id}/${phase}-manifest.json`, proof);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 114 114
+	      return proof;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 115 115
+	    } catch (error) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 116 116
+	      const proof = { status: 'rejected', name: error.name, code: error.code, message: error.message, stack: error.stack };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 117 117
+	      await write(`${record.id}/${phase}-manifest.json`, proof);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 118 118
+	      return proof;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 119 119
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 120 120
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 121 121
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 122 122
+	  async function e2e(record, phase, expected) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 123 123
+	    const result = await run(record.id, `${phase}-e2e`, process.execPath, [historicalE2E, '--extract-dir', record.extraction, '--repo-root', fixtureRoot], arena);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 124 124
+	    if (expected === 'pass') {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 125 125
+	      assert.equal(result.code, 0, result.errorText);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 126 126
+	      const proof = JSON.parse(result.text);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 127 127
+	      assert.equal(proof.status, 'pass');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 128 128
+	      assert.equal(proof.manifest.commit, ARCHIVE_HEAD);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 129 129
+	      assert.equal(proof.calls.totalAcrossProcesses, 30);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 130 130
+	      assert.equal(proof.extractionTree.unchanged, true);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 131 131
+	      assert.equal(proof.lifecycle.stdinClose.exited, true);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 132 132
+	      assert.equal(proof.lifecycle.stdinClose.code, 0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 133 133
+	      assert.equal(proof.lifecycle.restart.sigterm.forcedKill, false);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 134 134
+	      const outcomes = Object.values(proof.calls.outcomes);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 135 135
+	      assert.equal(outcomes.filter(row => row.outcome === 'pass').length, 17);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 136 136
+	      assert.equal(outcomes.filter(row => row.outcome === 'typed').length, 2);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 137 137
+	      await write(`${record.id}/${phase}-e2e.json`, proof);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 138 138
+	    } else {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 139 139
+	      assert.equal(result.code, 1);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 140 140
+	      assert.match(result.errorText, /embedded payload tree digest mismatch/);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 141 141
+	      record.e2eRejectionBoundary = 'Manifest verification before adapter/health startup; the separate native health probe records taxonomy degradation.';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 142 142
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 143 143
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 144 144
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 145 145
+	  async function native(record, phase, operation) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 146 146
+	    const prefix = `${record.id}/${phase}-native`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 147 147
+	    const adapterPath = path.join(record.extraction, 'packages/mcp-adapter/index.js');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 148 148
+	    const cwd = path.dirname(adapterPath);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 149 149
+	    const client = new McpClient({ adapterPath, cwd, env: cleanEnv() });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 150 150
+	    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 151 151
+	    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 152 152
+	    client.child.stdout.on('data', data => stdout.write(data));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 153 153
+	    client.child.stderr.on('data', data => stderr.write(data));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 154 154
+	    const requests = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 155 155
+	    const request = async (method, params) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 156 156
+	      requests.push({ method, params });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 157 157
+	      return client.request(method, params);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 158 158
+	    };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 159 159
+	    const entry = { command: [process.execPath, adapterPath], cwd, environment: cleanEnv(), pid: client.child.pid, startedAt: new Date().toISOString() };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 160 160
+	    let failed;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 161 161
+	    try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 162 162
+	      const initialized = await request('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 's196-bundle-bite', version: '1.0.0' } });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 163 163
+	      assert.equal(initialized.serverInfo.version, '0.3.0');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 164 164
+	      client.notify('notifications/initialized'); requests.push({ method: 'notifications/initialized' });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 165 165
+	      const call = async (name, arguments_) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 166 166
+	        const response = await request('tools/call', { name, arguments: arguments_ });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 167 167
+	        assert.equal(response.isError, undefined, JSON.stringify(response));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 168 168
+	        assert.equal(response.content[0].type, 'text');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 169 169
+	        return JSON.parse(response.content[0].text);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 170 170
+	      };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 171 171
+	      const result = await operation(call);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 172 172
+	      await write(`${prefix}.json`, result);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 173 173
+	      return result;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 174 174
+	    } catch (error) { failed = error; entry.failure = String(error); throw error; }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 175 175
+	    finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 176 176
+	      entry.stdinClose = await client.closeStdinAndObserve();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 177 177
+	      if (!entry.stdinClose.exited) entry.termination = await client.terminate('SIGTERM');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 178 178
+	      entry.completedAt = new Date().toISOString();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 179 179
+	      await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 180 180
+	      await write(`${prefix}.requests.json`, requests); await write(`${prefix}.lifecycle.json`, entry);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 181 181
+	      record.children.push({ ...entry, stdout: `${prefix}.stdout.log`, stderr: `${prefix}.stderr.log`, requests: `${prefix}.requests.json` });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 182 182
+	      if (!failed) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 183 183
+	        assert.equal(entry.stdinClose.exited, true, 'Adapter must close without a forced kill');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 184 184
+	        assert.equal(entry.stdinClose.code, 0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 185 185
+	        assert.equal(entry.stdinClose.signal, null);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 186 186
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 187 187
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 188 188
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 189 189
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 190 190
+	  async function portOpen(port) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 191 191
+	    return new Promise(resolve => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 192 192
+	      const socket = net.connect({ port, host: '127.0.0.1' });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 193 193
+	      const finish = result => { socket.destroy(); resolve(result); };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 194 194
+	      socket.once('connect', () => finish(true)); socket.once('error', () => finish(false));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 195 195
+	      socket.setTimeout(1000, () => finish(false));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 196 196
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 197 197
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 198 198
+	  async function bridge(record, phase, missing) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 199 199
+	    const reservation = net.createServer();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 200 200
+	    await new Promise(resolve => reservation.listen(0, '127.0.0.1', resolve));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 201 201
+	    const port = reservation.address().port;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 202 202
+	    await new Promise(resolve => reservation.close(resolve));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 203 203
+	    const prefix = `${record.id}/${phase}-bridge`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 204 204
+	    const cwd = path.join(record.extraction, 'packages/mcp-bridge');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 205 205
+	    const environment = { ...cleanEnv(), MCP_BRIDGE_PORT: String(port), BRIDGE_TOKEN: 's196-bite-owned-token' };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 206 206
+	    const child = spawn(process.execPath, ['dist/server.js'], { cwd, env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 207 207
+	    const stdout = fs.createWriteStream(path.join(args.out, `${prefix}.stdout.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 208 208
+	    const stderr = fs.createWriteStream(path.join(args.out, `${prefix}.stderr.log`));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 209 209
+	    child.stdout.pipe(stdout); child.stderr.pipe(stderr);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 210 210
+	    const exited = new Promise((resolve, reject) => { child.once('error', reject); child.once('close', (code, signal) => resolve({ code, signal })); });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 211 211
+	    const proof = { command: [process.execPath, 'dist/server.js'], cwd, environment, pid: child.pid, port, startedAt: new Date().toISOString(), forcedKill: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 212 212
+	    try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 213 213
+	      if (missing) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 214 214
+	        proof.exit = await Promise.race([exited, delay(15000).then(() => null)]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 215 215
+	        assert(proof.exit, 'Missing policy must refuse promptly');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 216 216
+	        assert.equal(proof.exit.code, 1);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 217 217
+	      } else {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 218 218
+	        for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 219 219
+	          try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 220 220
+	            const response = await fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(1000) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 221 221
+	            if (response.ok) { proof.health = await response.json(); break; }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 222 222
+	          } catch { /* Poll only this owned bridge. */ }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 223 223
+	          assert.equal(child.exitCode, null, 'Bridge exited before becoming healthy');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 224 224
+	          await delay(100);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 225 225
+	        }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 226 226
+	        assert(proof.health, 'Restored bridge must listen');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 227 227
+	        assert.equal(proof.health.revision.commit, ARCHIVE_HEAD);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 228 228
+	        child.kill('SIGTERM');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 229 229
+	        proof.exit = await Promise.race([exited, delay(3000).then(() => null)]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 230 230
+	        assert(proof.exit, 'Bridge must terminate cleanly');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 231 231
+	        assert(proof.exit.code === 0 || proof.exit.signal === 'SIGTERM');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 232 232
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 233 233
+	    } finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 234 234
+	      if (child.exitCode === null && child.signalCode === null) { proof.forcedKill = true; child.kill('SIGKILL'); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 235 235
+	      proof.exit ??= await exited;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 236 236
+	      await Promise.all([new Promise(resolve => stdout.end(resolve)), new Promise(resolve => stderr.end(resolve))]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 237 237
+	      proof.listenerAbsent = !await portOpen(port); proof.completedAt = new Date().toISOString();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 238 238
+	      proof.stdout = `${prefix}.stdout.log`; proof.stderr = `${prefix}.stderr.log`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 239 239
+	      await write(`${prefix}.json`, proof); record.children.push(proof);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 240 240
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 241 241
+	    assert.equal(proof.listenerAbsent, true);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 242 242
+	    assert.equal(proof.forcedKill, false);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 243 243
+	    if (missing) assert.match(await fsp.readFile(path.join(args.out, `${prefix}.stderr.log`), 'utf8'), /BRIDGE_POLICY_MISSING.*startup refused/);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 244 244
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 245 245
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 246 246
+	  async function bite(id, relative, mutate, baseline, disabled, restored) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 247 247
+	    const extraction = path.join(arena, id);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 248 248
+	    await fsp.mkdir(extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 249 249
+	    const record = { id, extraction, path: relative, status: 'running', children: [], restoredByteIdentically: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 250 250
+	    report.records.push(record); await save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 251 251
+	    const extracted = await run(id, 'extract', 'tar', ['-xzf', args.archive, '-C', extraction], arena, 60000);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 252 252
+	    assert.equal(extracted.code, 0, extracted.errorText);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 253 253
+	    const originalManifest = await verify(record, 'before'); assert.equal(originalManifest.status, 'pass');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 254 254
+	    assert.equal(originalManifest.manifest.commit, ARCHIVE_HEAD);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 255 255
+	    record.treeBefore = await treeDigest(extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 256 256
+	    const file = path.join(extraction, relative), before = await fsp.readFile(file), mode = (await fsp.stat(file)).mode & 0o777;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 257 257
+	    const afterMutation = mutate(before);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 258 258
+	    assert(afterMutation === null || !before.equals(afterMutation));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 259 259
+	    record.fileBefore = { sha256: hash(before), bytes: before.length, mode };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 260 260
+	    record.mutatedFile = afterMutation === null ? { absent: true } : { sha256: hash(afterMutation), bytes: afterMutation.length, mode };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 261 261
+	    await write(`${id}/file-before`, before);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 262 262
+	    if (afterMutation !== null) await write(`${id}/file-mutated`, afterMutation);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 263 263
+	    const ownedPaths = ['.oods/s194-e2e', 'artifacts/current-state'];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 264 264
+	    const oodsExisted = fs.existsSync(path.join(extraction, '.oods'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 265 265
+	    assert(ownedPaths.every(relative => !fs.existsSync(path.join(extraction, relative))));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 266 266
+	    let failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 267 267
+	    try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 268 268
+	      await baseline(record);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 269 269
+	      assert.deepEqual(await treeDigest(extraction), record.treeBefore, 'Baseline probe changed the shipped tree');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 270 270
+	      if (afterMutation === null) await fsp.unlink(file); else await fsp.writeFile(file, afterMutation);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 271 271
+	      record.treeMutated = await treeDigest(extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 272 272
+	      assert.notEqual(record.treeMutated.sha256, record.treeBefore.sha256);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 273 273
+	      await disabled(record);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 274 274
+	    } catch (error) { failure = error; record.failure = error.stack ?? String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 275 275
+	    finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 276 276
+	      if (!fs.existsSync(file)) assert.equal(afterMutation, null, 'Unexpected deletion during owned bite');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 277 277
+	      else {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 278 278
+	        const current = await fsp.readFile(file);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 279 279
+	        assert(current.equals(before) || (afterMutation !== null && current.equals(afterMutation)), 'Unexpected concurrent edit inside owned extraction');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 280 280
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 281 281
+	      await fsp.writeFile(file, before, { mode }); await fsp.chmod(file, mode);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 282 282
+	      // The historical E2E cleans on success, but may leave only these owned paths on failure.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 283 283
+	      for (const relative of ownedPaths) await fsp.rm(path.join(extraction, relative), { recursive: true, force: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 284 284
+	      if (!oodsExisted && fs.existsSync(path.join(extraction, '.oods'))) await fsp.rmdir(path.join(extraction, '.oods'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 285 285
+	      try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 286 286
+	        record.treeRestoredBeforeProbe = await treeDigest(extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 287 287
+	        assert.deepEqual(record.treeRestoredBeforeProbe, record.treeBefore);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 288 288
+	        await restored(record);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 289 289
+	        record.treeAfter = await treeDigest(extraction);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 290 290
+	        assert.deepEqual(record.treeAfter, record.treeBefore);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 291 291
+	        const validation = await verify(record, 'restored'); assert.equal(validation.status, 'pass');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 292 292
+	        record.restoredByteIdentically = before.equals(await fsp.readFile(file));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 293 293
+	        assert(record.restoredByteIdentically);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 294 294
+	      } catch (error) { failure ??= error; record.restoreFailure = error.stack ?? String(error); }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 295 295
+	      record.status = failure ? 'failed' : 'passed';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 296 296
+	      await write(`${id}/record.json`, record); await save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 297 297
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 298 298
+	    if (failure) throw failure;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 299 299
+	    console.log(`${id}: red observed; restored byte-identically and green`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 300 300
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 301 301
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 302 302
+	  const textSchema = { version: '2026.09', screens: [{ id: 'text', component: 'Text', props: { content: 'Pinned portable readiness bite' } }] };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 303 303
+	  async function generated(record, phase, refused) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 304 304
+	    const outputs = await native(record, phase, async call => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 305 305
+	      const responses = {};
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 306 306
+	      for (const framework of ['react', 'vue']) responses[framework] = await call('code_generate', { framework, profile: 'build', schema: textSchema });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 307 307
+	      return responses;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 308 308
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 309 309
+	    const { validateGeneratedArtifact } = await import(pathToFileURL(path.join(record.extraction, 'packages/mcp-server/dist/codegen/artifact-envelope.js')).href);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 310 310
+	    for (const [framework, response] of Object.entries(outputs)) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 311 311
+	      if (refused) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 312 312
+	        assert.equal(response.status, 'error'); assert.equal(response.artifact, undefined);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 313 313
+	        assert(response.errors.some(error => error.code === 'OODS-N015' && error.message.includes('attestation-invalid')));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 314 314
+	      } else {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 315 315
+	        assert.equal(response.status, 'ok'); assert.equal(response.artifact.framework, framework);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 316 316
+	        assert.deepEqual(validateGeneratedArtifact(response.artifact), []);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 317 317
+	        assert(response.artifact.files.some(file => framework === 'react' ? file.path.endsWith('.tsx') : file.path.endsWith('.vue')));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 318 318
+	        if (phase === 'baseline') (record.baselineArtifacts ??= {})[framework] = response.artifact.contentHash;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 319 319
+	        else assert.equal(response.artifact.contentHash, record.baselineArtifacts[framework]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 320 320
+	      }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 321 321
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 322 322
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 323 323
+	  try {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 324 324
+	    await bite('dist-integrity', 'packages/mcp-server/dist/tools/health.js', bytes => Buffer.concat([bytes, Buffer.from('\n// s196 owned integrity mutation\n')]),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 325 325
+	      async () => {}, async record => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 326 326
+	        const red = await verify(record, 'mutated'); assert.equal(red.status, 'rejected'); assert.match(red.message, /embedded payload tree digest mismatch/);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 327 327
+	      }, async () => {});
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 328 328
+	    await bite('taxonomy-health', 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json', bytes => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 329 329
+	      const value = JSON.parse(bytes); assert.equal(value.summary.classified, 34); value.summary.classified++;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 330 330
+	      return Buffer.from(JSON.stringify(value, null, 2) + '\n');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 331 331
+	    }, record => e2e(record, 'baseline', 'pass'), async record => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 332 332
+	      const health = await native(record, 'mutated', call => call('health', {}));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 333 333
+	      assert.equal(health.status, 'degraded'); assert.equal(health.productReality.viz, null);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 334 334
+	      assert(health.warnings.some(warning => warning.includes('Viz taxonomy rejected: summary differs')));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 335 335
+	      await e2e(record, 'mutated', 'rejected');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 336 336
+	    }, async record => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 337 337
+	      const health = await native(record, 'restored', call => call('health', {}));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 338 338
+	      assert.equal(health.status, 'ok'); assert.equal(health.productReality.viz.classified, 34);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 339 339
+	      await e2e(record, 'restored', 'pass');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 340 340
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 341 341
+	    await bite('bridge-policy', 'configs/agent/policy.json', () => null,
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 342 342
+	      record => bridge(record, 'baseline', false), record => bridge(record, 'mutated', true), record => bridge(record, 'restored', false));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 343 343
+	    await bite('readiness-attestation', 'packages/mcp-server/dist/registry/readiness-attestation.v1.json', bytes => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 344 344
+	      const value = JSON.parse(bytes); value.sha256 = (value.sha256[0] === '0' ? '1' : '0') + value.sha256.slice(1);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 345 345
+	      return Buffer.from(JSON.stringify(value, null, 2) + '\n');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 346 346
+	    }, record => generated(record, 'baseline', false), record => generated(record, 'mutated', true), record => generated(record, 'restored', false));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 347 347
+	    assert.equal(hash(await fsp.readFile(args.archive)), ARCHIVE_SHA256, 'Original archive changed');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 348 348
+	    report.status = 'passed';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 349 349
+	  } catch (error) { report.status = 'failed'; report.failure = error.stack ?? String(error); process.exitCode = 1; }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 350 350
+	  finally {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 351 351
+	    report.completedAt = new Date().toISOString();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 352 352
+	    report.summary = { bites: report.records.length, passed: report.records.filter(row => row.status === 'passed').length, failed: report.records.filter(row => row.status !== 'passed').length, restored: report.records.filter(row => row.restoredByteIdentically).length };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 353 353
+	    report.driver = { path: path.relative(ROOT, fileURLToPath(import.meta.url)), sha256: hash(await fsp.readFile(fileURLToPath(import.meta.url))), committed: false };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 354 354
+	    await save();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 355 355
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 356 356
+	  console.log(JSON.stringify({ status: report.status, ...report.summary, report: path.join(args.out, 'bites.json') }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 357 357
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 358 358
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 359 359
+	main().catch(error => { console.error(error.stack ?? error); process.exitCode = 1; });

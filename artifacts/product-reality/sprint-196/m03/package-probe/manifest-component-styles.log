@@ -1,0 +1,13 @@
+{
+  "command": [
+    "tar",
+    "-xOzf",
+    "/tmp/forge-s196-m03-package-probe/tarballs/oods-component-styles-0.1.0.tgz",
+    "package/package.json"
+  ],
+  "cwd": "/tmp/forge-s196-m03-package-probe",
+  "status": 0,
+  "signal": null,
+  "stdout": "{\n  \"name\": \"@oods/component-styles\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Token-driven shared CSS contract for OODS React and Vue components.\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"license\": \"MIT\",\n  \"engines\": {\n    \"node\": \">=20.11.1\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"scripts\": {\n    \"build\": \"rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs\",\n    \"clean\": \"rimraf dist\",\n    \"typecheck\": \"tsc --noEmit --pretty false -p tsconfig.json\",\n    \"test\": \"vitest run --config vitest.config.ts\",\n    \"prepack\": \"pnpm run build\"\n  },\n  \"exports\": {\n    \".\": {\n      \"types\": \"./dist/index.d.ts\",\n      \"import\": \"./dist/index.js\",\n      \"require\": \"./dist/index.cjs\"\n    },\n    \"./ported\": {\n      \"types\": \"./dist/ported.d.ts\",\n      \"import\": \"./dist/ported.js\",\n      \"require\": \"./dist/ported.cjs\"\n    },\n    \"./css\": {\n      \"default\": \"./dist/components.css\"\n    },\n    \"./css-ported\": {\n      \"default\": \"./dist/components.css\"\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"main\": \"./dist/index.cjs\",\n  \"module\": \"./dist/index.js\",\n  \"types\": \"./dist/index.d.ts\",\n  \"sideEffects\": [\n    \"**/*.css\"\n  ],\n  \"dependencies\": {\n    \"@oods/tokens\": \"0.1.0\"\n  },\n  \"devDependencies\": {\n    \"@oods/component-contracts\": \"0.1.0\",\n    \"playwright\": \"^1.56.1\"\n  },\n  \"packageManager\": \"pnpm@9.12.2\"\n}\n",
+  "stderr": ""
+}

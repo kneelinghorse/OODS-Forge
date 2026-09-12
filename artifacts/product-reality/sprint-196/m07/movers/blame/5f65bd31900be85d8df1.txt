@@ -1,0 +1,63 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 90 90 12
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-bridge/src/config.ts
+filename packages/mcp-bridge/src/config.ts
+	export class BridgeStartupError extends Error {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 91 91
+	  readonly retryable = false;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 92 92
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 93 93
+	  constructor(
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 94 94
+	    readonly code: 'BRIDGE_POLICY_MISSING' | 'BRIDGE_POLICY_INVALID',
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 95 95
+	    readonly policyPath: string,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 96 96
+	    cause?: unknown,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 97 97
+	  ) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 98 98
+	    super(`${code}: Agent policy ${policyPath} is ${code === 'BRIDGE_POLICY_MISSING' ? 'missing' : 'invalid'}; bridge startup refused.`, { cause });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 99 99
+	    this.name = 'BridgeStartupError';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 100 100
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 101 101
+	}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 103 103 11
+	export function loadAgentPolicyDoc(policyPath = POLICY_PATH): AgentPolicyDoc {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 104 104
+	  let raw: string;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 105 105
+	  try {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 106 106
+	    raw = fs.readFileSync(policyPath, 'utf8');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 107 107
+	  } catch (error) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 108 108
+	    throw new BridgeStartupError(
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 109 109
+	      (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'BRIDGE_POLICY_MISSING' : 'BRIDGE_POLICY_INVALID',
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 110 110
+	      policyPath,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 111 111
+	      error,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 112 112
+	    );
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 113 113
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 116 116 1
+	    if (!parsed || !Array.isArray(parsed.tools)) throw new Error('Agent policy must contain a tools array.');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 118 118 2
+	  } catch (error) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 119 119
+	    throw new BridgeStartupError('BRIDGE_POLICY_INVALID', policyPath, error);

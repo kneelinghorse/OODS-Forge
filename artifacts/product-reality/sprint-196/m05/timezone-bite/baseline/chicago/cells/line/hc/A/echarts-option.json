@@ -1,0 +1,119 @@
+{
+  "dataset": [
+    {
+      "id": "viz:line:dataset",
+      "source": [
+        {
+          "region": "North",
+          "quarter": "2024-01",
+          "revenue": 120000,
+          "units": 340
+        },
+        {
+          "region": "South",
+          "quarter": "2024-01",
+          "revenue": 135000,
+          "units": 410
+        },
+        {
+          "region": "North",
+          "quarter": "2024-02",
+          "revenue": 128000,
+          "units": 360
+        },
+        {
+          "region": "South",
+          "quarter": "2024-02",
+          "revenue": 142000,
+          "units": 430
+        },
+        {
+          "region": "North",
+          "quarter": "2024-03",
+          "revenue": 131000,
+          "units": 372
+        },
+        {
+          "region": "South",
+          "quarter": "2024-03",
+          "revenue": 150000,
+          "units": 455
+        }
+      ],
+      "dimensions": [
+        "region",
+        "quarter",
+        "revenue",
+        "units"
+      ]
+    }
+  ],
+  "series": [
+    {
+      "type": "line",
+      "datasetId": "viz:line:dataset",
+      "encode": {
+        "x": "quarter",
+        "y": "revenue",
+        "itemName": "region",
+        "tooltip": [
+          "quarter",
+          "revenue",
+          "region"
+        ]
+      },
+      "colorBy": "data",
+      "showSymbol": false
+    }
+  ],
+  "xAxis": {
+    "type": "time",
+    "name": "Quarter",
+    "nameLocation": "end",
+    "boundaryGap": true
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "Revenue",
+    "nameLocation": "end"
+  },
+  "useUTC": true,
+  "legend": {
+    "show": true
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "shadow"
+    }
+  },
+  "aria": {
+    "enabled": true,
+    "description": "Line chart of sum of revenue by quarter, split by region.",
+    "label": {
+      "enabled": true,
+      "description": "Line chart of Revenue by Quarter"
+    }
+  },
+  "title": {
+    "text": "Line chart"
+  },
+  "usermeta": {
+    "oods": {
+      "specId": "viz:line",
+      "name": "Line chart",
+      "a11y": {
+        "description": "Line chart of sum of revenue by quarter, split by region.",
+        "ariaLabel": "Line chart of Revenue by Quarter"
+      },
+      "portability": {
+        "tableColumnOrder": [
+          "quarter",
+          "revenue",
+          "region",
+          "units"
+        ]
+      }
+    }
+  }
+}

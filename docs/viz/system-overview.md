@@ -13,7 +13,7 @@ Sprint 21–23 produced a production-ready visualization stack that now powers t
 | Traits | 18 visualization traits across Mark/Encoding/Layout/Interaction + React hooks for declarative authoring | `traits/viz/**`, `src/viz/hooks/*`
 | Normalized Spec | Single schema and Ajv validator describing every chart, layout, transform, and interaction | [`docs/viz/normalized-viz-spec.md`](./normalized-viz-spec.md), `schemas/viz/normalized-viz-spec.schema.json`
 | Renderers | Dual adapters (Vega-Lite + ECharts) with selector heuristics and parity tests | `src/viz/adapters/*`, [`docs/viz/renderer-selection-guide.md`](./renderer-selection-guide.md)
-| Components | Bar, Line, Scatter/Bubble, Area, Heatmap, VizFacetGrid, VizLayeredView, SharedLegend, VizContainer | `src/components/viz/*`, `docs/components/*`
+| Components | Bar, Line, Scatter/Bubble, Area, Heatmap, VizFacetGrid, VizLayeredView, SharedLegend, VizContainer | `src/components/viz/*`, [historical component guides](../history/components/), [governed component contracts](../components/README.md)
 | Layout & Contexts | Dashboard + Chart contexts in view engine, transforms for stack/facet concat | `src/contexts/dashboard`, `docs/views/context-styling.md`
 | Tooling | CLI scaffolds, pattern library, performance + a11y guardrails | `scripts/viz/*`, [`docs/viz/cli-guide.md`](./cli-guide.md), [`docs/viz/pattern-library.md`](./pattern-library.md), `scripts/perf/run-viz-benchmarks.mjs`
 | Quality Gates | RDV.4 accessibility suite, OKLCH token guardrails, benchmark budgets, CI hooks | `tests/viz/**`, `tests/components/viz/**`, `tools/perf/viz-budget.json`, `pnpm a11y:diff`

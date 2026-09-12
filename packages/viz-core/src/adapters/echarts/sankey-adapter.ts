@@ -194,7 +194,7 @@ function formatValue(value: number): string {
   if (value >= 1_000) {
     return `${(value / 1_000).toFixed(1)}K`;
   }
-  return value.toLocaleString();
+  return value.toLocaleString('en-US');
 }
 
 function buildPalette(scope: TokenScope): readonly string[] {

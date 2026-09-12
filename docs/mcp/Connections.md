@@ -58,23 +58,29 @@ Copy the config from `configs/agents/cursor.stdio-mcp.json` into `.cursor/mcp.js
 
 ### Adapter Environment Variables
 
+<!-- forge-claim:adapter-environment -->
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `MCP_TOOLSET` | `default` | `default` = 20 auto tools; `all` = all 26 tools |
+| `MCP_TOOLSET` | `default` | `default` = 19 auto tools; `all` = all 24 tools |
 | `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools (e.g., `a11y.scan,diag.snapshot`) |
 | `MCP_ROLE` | `designer` | Role for policy enforcement (`designer` or `maintainer`) |
 | `OODS_NODE_PATH` | `process.execPath` | Override the Node binary for spawning the native server |
+<!-- /forge-claim:adapter-environment -->
 
 ### Adapter Features
 
-- 26 tools with human-readable descriptions and typed JSON Schema input parameters
+<!-- forge-claim:adapter-features -->
+- 24 tools with human-readable descriptions and typed JSON Schema input parameters
+<!-- /forge-claim:adapter-features -->
 - MCP annotations (readOnlyHint, destructiveHint) derived from server policy
 - Dynamic tool registration from server registry.json — zero adapter changes for new tools
 - Structured error messages with actionable fix guidance for server spawn failures
 
 ### Fresh-Install Smoke Check
 
-The fresh-install smoke check installs the adapter into a clean temp directory (outside the workspace) and confirms `tools/list` returns the full enabled tool surface. With `MCP_TOOLSET=all`, that is currently 26 tools. This catches phantom dependencies and hardcoded path regressions.
+<!-- forge-claim:fresh-install-count -->
+The fresh-install smoke check installs the adapter into a clean temp directory (outside the workspace) and confirms `tools/list` returns the full enabled tool surface. With `MCP_TOOLSET=all`, that is currently 24 tools. This catches phantom dependencies and hardcoded path regressions.
+<!-- /forge-claim:fresh-install-count -->
 
 Run it locally:
 
@@ -90,15 +96,19 @@ Set `KEEP_FRESH_INSTALL=1` to preserve the temp directory for debugging.
 
 For clients that only support HTTP transport (OpenAI Agents, custom integrations), use the HTTP bridge:
 
+<!-- forge-claim:bridge-default -->
 ```bash
-# Start the bridge with the default 20 auto tools
+# Start the bridge with the default 19 auto tools
 pnpm --filter @oods/mcp-bridge run dev
 
 # Example: add an on-demand diagnostic tool without enabling everything
 MCP_EXTRA_TOOLS=diag.snapshot pnpm --filter @oods/mcp-bridge run dev
 ```
+<!-- /forge-claim:bridge-default -->
 
+<!-- forge-claim:bridge-port -->
 The bridge defaults to port `4466`. Set `MCP_BRIDGE_PORT=<port>` to change it. Optional: export `BRIDGE_TOKEN` to enforce the `X-Bridge-Token` header.
+<!-- /forge-claim:bridge-port -->
 
 The bridge exposes `GET /health`, `GET /tools`, `POST /run`, and `/artifacts/*`.
 
@@ -106,6 +116,7 @@ The bridge exposes `GET /health`, `GET /tools`, `POST /run`, and `/artifacts/*`.
 
 `configs/agents/claude.remote-mcp.json` contains a ready-to-drop profile. Copy the `claudeDesktopConfig` block into `~/.claude/mcp.json` (or the per-OS Claude Desktop configuration path):
 
+<!-- forge-claim:bridge-profile-3 -->
 ```json
 {
   "mcpServers": {
@@ -116,6 +127,7 @@ The bridge exposes `GET /health`, `GET /tools`, `POST /run`, and `/artifacts/*`.
   }
 }
 ```
+<!-- /forge-claim:bridge-profile-3 -->
 
 Key points:
 
@@ -127,7 +139,9 @@ Key points:
 
 `configs/agents/openai.agents.json` captures a thin agent profile pointing to the bridge:
 
+<!-- forge-claim:bridge-api-url -->
 - Default base URL: `http://127.0.0.1:4466`
+<!-- /forge-claim:bridge-api-url -->
 - Function tool definition: `diag_snapshot` (maps to internal MCP tool `diag.snapshot`)
 - Request template: `POST /run` with `{"tool":"diag_snapshot","input":{"apply":false}}`
 
@@ -164,14 +178,20 @@ pnpm --filter @oods/agents-smoke run
 
 Behaviour:
 
+<!-- forge-claim:smoke-defaults -->
 - Reads `BRIDGE_URL`, `BRIDGE_TOKEN`, and `BRIDGE_APPROVAL` (defaults: `http://127.0.0.1:4466`, no token, no approval).
+<!-- /forge-claim:smoke-defaults -->
 - Checks `/health`, lists tools, then runs `diag.snapshot` with `apply:false`.
 - Prints artifact paths, bundle index, and diagnostics summary to verify the toolchain.
 
-If you keep the default 20-tool bridge surface, either start the bridge with `MCP_EXTRA_TOOLS=diag.snapshot` or run the harness against a default tool with `--tool structuredData_fetch`.
+<!-- forge-claim:smoke-tool-count -->
+If you keep the default 19-tool bridge surface, either start the bridge with `MCP_EXTRA_TOOLS=diag.snapshot` or run the harness against a default tool with `--tool structuredData_fetch`.
+<!-- /forge-claim:smoke-tool-count -->
 
 When the bridge picks an ephemeral port, start the harness with `BRIDGE_URL=http://127.0.0.1:<actualPort> pnpm --filter @oods/agents-smoke run`.
-`diag.snapshot` can take up to two minutes to collect diagnostics; extend the wait with `BRIDGE_TIMEOUT=120000` (default) or higher if your environment is slower.
+<!-- forge-claim:smoke-timeout -->
+The smoke harness defaults to `BRIDGE_TIMEOUT=120000` milliseconds; increase it if diagnostics collection needs a longer wait.
+<!-- /forge-claim:smoke-timeout -->
 
 Flags:
 

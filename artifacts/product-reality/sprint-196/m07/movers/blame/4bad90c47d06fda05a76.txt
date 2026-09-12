@@ -1,0 +1,280 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/authz-ui-guide.md
+filename docs/history/components/authz-ui-guide.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 127
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/authz-ui-guide.md
+	# Authorization UI Surface Guide
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	The Authorization UI surface ships four composable building blocks that mirror the RBAC runtime shipped in Sprint 28:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	- **RolePermissionMatrix** – Admin grid for mapping permissions to roles
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	- **MembershipManager** – Org-scoped membership CRUD with SoD hints
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- **SoDPolicyEditor** – Create/update static SoD conflicts
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- **PermissionChecker** – Diagnostic widget for entitlement checks
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	Each component is framework-agnostic (React 19) and enforces the OODS token guardrails (no raw colors, keyboard semantics baked in).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	## RolePermissionMatrix
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	import { RolePermissionMatrix } from '@/components/authz/RolePermissionMatrix';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	import { useRolePermissions } from '@/hooks/useRolePermissions';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	const { matrix, toggleAssignment, busyCells } = useRolePermissions({
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	  client: rolePermissionClient,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	  organizationId: 'org-prod',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	});
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	<RolePermissionMatrix
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	  matrix={matrix}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	  onToggle={toggleAssignment}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	  busyCells={busyCells}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	  conflictHighlights={conflicts}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	- Rows = roles, columns = permissions. Keyboard navigation uses arrow keys + Space.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	- `conflictHighlights` allows UI warnings sourced from SoD validators.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	- Provide an `emptyState` prop for orgs without seeded data.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	## MembershipManager
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	const memberships = useMemberships({
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	  organizationId: org.id,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	  client: membershipClient,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	  validator: sodValidator,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	});
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	<MembershipManager
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	  organization={org}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	  members={memberships.memberships}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	  roles={roleOptions}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	  users={userDirectory}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	  onAssignRole={memberships.assignRole}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	  onRevokeRole={(member) => memberships.revokeRole(member.userId, member.roleId)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	  onValidateAssignment={memberships.validateAssignment}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	  validationState={memberships.validationState}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	  pendingMembers={memberships.pendingMembers}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	- Shows live SoD warnings before submission when `validator` rejects an assignment.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	- Designed for keyboard-only flows – every control carries visible focus states.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	- Org-specific stats (member count, roles in use) help ops triage blast radius.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	## SoDPolicyEditor
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	<SoDPolicyEditor
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	  roles={roleOptions}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	  organizationOptions={orgOptions}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	  policies={policies}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	  onCreatePolicy={(draft) => builder.createRoleConflict(draft.roleAId, draft.roleBId, draft.reason, draft.organizationId ?? undefined)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	  onUpdatePolicy={(id, updates) => builder.updateRoleConflict(id, updates)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	  onDeletePolicy={(id) => builder.deleteRoleConflict(id)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	- Scope selector enforces explicit choice between global and org-specific policies.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	- Table footer exposes quick “Activate/Deactivate/Delete” actions with audit timestamps.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	## PermissionChecker
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	<PermissionChecker
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	  client={entitlementDiagnosticsClient}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	  defaultOrganizationId={org.id}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	  defaultUserId={user.id}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	- Form posts to any client implementing `check({ userId, organizationId, permission })`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	- Results show granting roles + textual reason from the entitlement runtime.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	## Hooks Overview
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	### useRolePermissions
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 93 95
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 94 96
+	- Fetches matrix snapshots via pluggable `RolePermissionClient`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 95 97
+	- Optimistic assignment toggles with automatic rollback on failure
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 96 98
+	- Built-in TTL cache (`createRolePermissionMatrixCache`) matches B28.5 semantics
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 97 99
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 98 100
+	### useMemberships
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 99 101
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 100 102
+	- Fetch/list user memberships scoped by org ID
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 101 103
+	- `assignRole` + `revokeRole` expose SoD validation hooks before mutation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 102 104
+	- Tracks pending operations per `(userId, roleId)` for UI disablement
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 103 105
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 104 106
+	## Accessibility & QA
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 105 107
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 106 108
+	| Component             | Expectation                                                               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 107 109
+	|-----------------------|----------------------------------------------------------------------------|
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 108 110
+	| RolePermissionMatrix  | Role=grid, arrow-key traversal, announce conflict notes via `role="note"` |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 109 111
+	| MembershipManager     | All form fields labeled, SoD warnings use `role="alert"`                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 110 112
+	| SoDPolicyEditor       | Radio-group for scope, selects accessible, action buttons focus visible   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 111 113
+	| PermissionChecker     | Uses `aria-live="polite"` for results                                     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 112 114
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 113 115
+	### Testing Checklist
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 114 116
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 115 117
+	1. Run unit + a11y tests:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 116 118
+	   ```bash
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 117 119
+	   pnpm vitest run tests/components/authz/RolePermissionMatrix.test.tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 118 120
+	   pnpm vitest run tests/components/authz/MembershipManager.a11y.test.tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 119 121
+	   ```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 120 122
+	2. Exercise stories under `Authz/` in Storybook (light/dark + keyboard)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 121 123
+	3. For CLI work, dry-run via `pnpm tsx src/cli/authz-admin.ts assign-role --user usr --org org --role role --dry-run`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 122 124
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 123 125
+	### Integration Tips
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 124 126
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 125 127
+	- Client adapters should bridge to the B28.3 entitlement service and B28.4 policy builder.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 126 128
+	- Prefer returning snapshots from API mutations to keep hooks in sync with server truth.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 127 129
+	- Use Chromatic to capture a baseline for Admin vs Read-only vs Conflict scenarios.

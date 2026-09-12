@@ -1,0 +1,573 @@
+{
+  "layout": "list",
+  "meta": {
+    "intelligence": {
+      "compositionConfidence": 0.89,
+      "fieldAffinityUsed": true,
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true
+    },
+    "intentParsed": "User inline view",
+    "intentSynthetic": true,
+    "layoutDetected": "context-inferred: list (from context=\"inline\")",
+    "nodeCount": 9,
+    "slotCount": 5,
+    "warnings": [
+      "No view_extensions found for context \"inline\" in object \"User\". Available contexts: list, detail, form, timeline, card"
+    ]
+  },
+  "objectUsed": {
+    "fieldsComposed": 37,
+    "name": "User",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "behavioral/Taggable",
+      "core/Addressable",
+      "core/Preferenceable",
+      "core/Authable",
+      "core/Communicable"
+    ],
+    "version": "1.4.0",
+    "viewExtensionsApplied": {
+      "card": 2,
+      "detail": 7,
+      "form": 6,
+      "list": 7,
+      "timeline": 6
+    }
+  },
+  "schema": {
+    "objectSchema": {
+      "address_roles": {
+        "description": "Ordered list of roles that currently have address entries.",
+        "required": true,
+        "semanticType": "location.address.roles",
+        "type": "string[]"
+      },
+      "addresses": {
+        "description": "Collection of { role, address, metadata } entries keyed by role.",
+        "required": false,
+        "semanticType": "location.address.collection",
+        "type": "AddressableEntry[]"
+      },
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "channel_catalog": {
+        "description": "Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).",
+        "required": true,
+        "semanticType": "communication.channels",
+        "type": "Channel[]"
+      },
+      "conversations": {
+        "description": "Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).",
+        "required": false,
+        "semanticType": "communication.conversations",
+        "type": "Conversation[]"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "default_address_role": {
+        "description": "Role surfaced in UI contexts when one address must be highlighted.",
+        "required": false,
+        "semanticType": "location.address.default_role",
+        "type": "string"
+      },
+      "delivery_policies": {
+        "description": "Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).",
+        "required": true,
+        "semanticType": "communication.delivery_policy",
+        "type": "DeliveryPolicy[]"
+      },
+      "description": {
+        "description": "Supporting summary rendered in detail and card contexts.",
+        "required": false,
+        "semanticType": "identity.user.description",
+        "type": "string"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "membership_records": {
+        "description": "SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).",
+        "required": true,
+        "semanticType": "authorization.memberships",
+        "type": "AuthzMembershipDocument[]"
+      },
+      "message_statuses": {
+        "description": "Delivery state machine transitions (queued → sent → delivered → failed → retried → read).",
+        "required": false,
+        "type": "MessageStatusEntry[]"
+      },
+      "messages": {
+        "description": "Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).",
+        "required": false,
+        "semanticType": "communication.messages",
+        "type": "Message[]"
+      },
+      "name": {
+        "description": "Human-friendly name rendered in headers and list contexts.",
+        "required": true,
+        "semanticType": "identity.user.name",
+        "type": "string"
+      },
+      "permission_catalog": {
+        "description": "Atomic permissions following resource:action notation (TABLE 2).",
+        "required": true,
+        "semanticType": "authorization.permissions",
+        "type": "AuthzPermissionDocument[]"
+      },
+      "preference_document": {
+        "description": "Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).",
+        "required": true,
+        "semanticType": "preferences.document",
+        "type": "PreferenceDocument"
+      },
+      "preference_metadata": {
+        "description": "Tracks schema version, lastUpdated timestamp, migration records, and source.",
+        "required": true,
+        "semanticType": "preferences.metadata",
+        "type": "PreferenceMetadata"
+      },
+      "preference_mutations": {
+        "description": "Monotonic counter incremented whenever preferences mutate (invalidates caches).",
+        "required": false,
+        "type": "number"
+      },
+      "preference_namespaces": {
+        "description": "Materialized namespace list resolved from parameters/registry for auditing.",
+        "required": true,
+        "semanticType": "preferences.namespaces",
+        "type": "string[]"
+      },
+      "preference_version": {
+        "description": "SemVer mirror of preference_document.version for indexing and analytics.",
+        "required": true,
+        "semanticType": "preferences.version",
+        "type": "string"
+      },
+      "preferred_name": {
+        "description": "Preferred display name surfaced in collaborative tooling.",
+        "required": false,
+        "semanticType": "identity.user.name_preferred",
+        "type": "string"
+      },
+      "primary_email": {
+        "description": "Canonical login email address for the user.",
+        "required": true,
+        "semanticType": "identity.user.email",
+        "type": "email"
+      },
+      "role": {
+        "description": "Highest privilege role currently granted to the user.",
+        "enum": [
+          "end_user",
+          "admin",
+          "owner",
+          "billing"
+        ],
+        "required": true,
+        "semanticType": "identity.user.role",
+        "type": "string"
+      },
+      "role_catalog": {
+        "description": "Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).",
+        "required": true,
+        "semanticType": "authorization.roles",
+        "type": "AuthzRoleDocument[]"
+      },
+      "role_hierarchy_edges": {
+        "description": "Parent→child adjacency list for hierarchical RBAC (Part 3.1).",
+        "required": false,
+        "type": "AuthzRoleHierarchyEdge[]"
+      },
+      "role_permissions": {
+        "description": "Junction map for role→permission edges (TABLE 3).",
+        "required": true,
+        "type": "Record<string, string[]>"
+      },
+      "session_roles": {
+        "description": "Materialized roles granted within the current session/token exchange.",
+        "required": false,
+        "type": "string[]"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "required": true,
+        "semanticType": "status.state",
+        "type": "string"
+      },
+      "tag_count": {
+        "description": "Computed number of tags assigned to the entity.",
+        "required": true,
+        "semanticType": "metric.collection.count",
+        "type": "number"
+      },
+      "tag_metadata": {
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "required": false,
+        "semanticType": "taxonomy.tag.governance",
+        "type": "object[]"
+      },
+      "tags": {
+        "description": "Ordered list of tags assigned to the entity.",
+        "required": false,
+        "semanticType": "taxonomy.tag.collection",
+        "type": "string[]"
+      },
+      "template_catalog": {
+        "description": "Localized template definitions with declared variables per R20.1 Part 2.3.",
+        "required": true,
+        "semanticType": "communication.templates",
+        "type": "Template[]"
+      },
+      "timezone": {
+        "description": "Preferred timezone applied when rendering timestamps.",
+        "required": false,
+        "semanticType": "identity.user.timezone",
+        "type": "string"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      },
+      "user_id": {
+        "description": "Primary identifier used to correlate identity across services.",
+        "required": true,
+        "semanticType": "identity.user.id",
+        "type": "uuid"
+      }
+    },
+    "screens": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "component": "SearchInput",
+                "id": "slot-search-1",
+                "meta": {
+                  "confidence": 1,
+                  "confidenceLevel": "low",
+                  "intent": "slot:search",
+                  "label": "search"
+                }
+              },
+              {
+                "component": "Select",
+                "id": "slot-filters-2",
+                "meta": {
+                  "confidence": 0.67,
+                  "confidenceLevel": "low",
+                  "intent": "slot:filters",
+                  "label": "filters"
+                },
+                "props": {
+                  "field": "last_event",
+                  "label": "Last event",
+                  "placeholder": "Enter last event"
+                }
+              },
+              {
+                "component": "Button",
+                "id": "slot-toolbar-actions-3",
+                "meta": {
+                  "confidence": 1,
+                  "confidenceLevel": "low",
+                  "intent": "slot:toolbar-actions",
+                  "label": "toolbar-actions"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "list-toolbar-4",
+            "layout": {
+              "align": "space-between",
+              "type": "inline"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          },
+          {
+            "children": [
+              {
+                "component": "Table",
+                "id": "slot-items-6",
+                "meta": {
+                  "confidence": 1,
+                  "confidenceLevel": "low",
+                  "intent": "slot:items",
+                  "label": "items"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "list-items-5",
+            "layout": {
+              "gapToken": "cluster-tight",
+              "type": "stack"
+            }
+          },
+          {
+            "children": [
+              {
+                "component": "PaginationBar",
+                "id": "slot-pagination-8",
+                "meta": {
+                  "confidence": 0.77,
+                  "confidenceLevel": "low",
+                  "intent": "slot:pagination",
+                  "label": "pagination"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "list-pagination-7",
+            "layout": {
+              "align": "center",
+              "type": "inline"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          }
+        ],
+        "component": "Stack",
+        "id": "screen-list-9",
+        "layout": {
+          "gapToken": "cluster-default",
+          "type": "stack"
+        }
+      }
+    ],
+    "version": "2026.02"
+  },
+  "schemaRef": "compose-7ffbbd44",
+  "schemaRefCreatedAt": "2026-09-12T06:21:03.254Z",
+  "schemaRefExpiresAt": "2026-09-12T06:51:03.254Z",
+  "selections": [
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Table",
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); tag match (data); 1 context match(es); context match (list); 2 region match(es); position affinity: Table fits well in main"
+        },
+        {
+          "confidence": 0.85,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Stack",
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (list); 2 region match(es); position affinity: Stack fits well in main"
+        },
+        {
+          "confidence": 0.45,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "RoleBadgeList",
+          "reason": "1 context match(es); context match (list); 1 region match(es); 1 trait(s); name contains \"list\""
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Table was selected for slot \"items\" because preferred for \"data-list\" (rank 2); 1 tag match(es); tag match (data); 1 context match(es); context match (list); 2 region match(es); position affinity: Table fits well in main. Confidence is high (1.00).",
+      "intent": "data-list",
+      "selectedComponent": "Table",
+      "slotName": "items"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "SearchInput",
+          "reason": "preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias"
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"search-input\" (rank 2); 1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"; position affinity: Input fits well in header"
+        },
+        {
+          "confidence": 0.47,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "1 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in header"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "SearchInput was selected for slot \"search\" because preferred for \"search-input\" (rank 1); 2 tag match(es); tag match (search); 1 context match(es); 1 category match(es); 1 trait(s); name contains \"search\"; position affinity: SearchInput fits well in header; search intent bias. Confidence is high (1.00).",
+      "intent": "search-input",
+      "selectedComponent": "SearchInput",
+      "slotName": "search"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar"
+        },
+        {
+          "confidence": 0.9,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"filter-control\" (rank 2); 1 tag match(es); 1 context match(es); position affinity: Input fits well in sidebar"
+        },
+        {
+          "confidence": 0.52,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "StatusBadge",
+          "reason": "2 context match(es); 1 region match(es); 2 trait(s); position affinity: StatusBadge fits well in sidebar"
+        }
+      ],
+      "confidence": 0.67,
+      "confidenceLevel": "medium",
+      "explanation": "Select was selected for slot \"filters\" because preferred for \"filter-control\" (rank 1); 1 tag match(es); 1 context match(es); position affinity: Select fits well in sidebar. Confidence is medium (0.67).",
+      "intent": "filter-control",
+      "selectedComponent": "Select",
+      "slotName": "filters"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Button",
+          "reason": "preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header"
+        },
+        {
+          "confidence": 0.29,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "InlineLabel",
+          "reason": "context match (inline); 1 trait(s); name contains \"inline\""
+        },
+        {
+          "confidence": 0.15,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "1 tag match(es); 1 category match(es); position affinity: DatePicker fits well in header"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Button was selected for slot \"toolbar-actions\" because preferred for \"action-button\" (rank 1); 2 tag match(es); tag match (action); 1 region match(es); 1 category match(es); name contains \"button\"; position affinity: Button fits well in header. Confidence is high (1.00).",
+      "intent": "action-button",
+      "selectedComponent": "Button",
+      "slotName": "toolbar-actions"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "PaginationBar",
+          "reason": "2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer"
+        },
+        {
+          "confidence": 0.75,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Button",
+          "reason": "preferred for \"pagination-control\" (rank 2); 1 context match(es); 1 region match(es); position affinity: Button fits well in footer"
+        },
+        {
+          "confidence": 0.65,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "Text",
+          "reason": "preferred for \"pagination-control\" (rank 1); 1 context match(es)"
+        }
+      ],
+      "confidence": 0.77,
+      "confidenceLevel": "medium",
+      "explanation": "PaginationBar was selected for slot \"pagination\" because 2 tag match(es); tag match (pagination, navigation); 1 context match(es); 1 trait(s); name contains \"pagination\"; position affinity: PaginationBar fits well in footer. Confidence is medium (0.77).",
+      "intent": "pagination-control",
+      "selectedComponent": "PaginationBar",
+      "slotName": "pagination"
+    }
+  ],
+  "status": "ok",
+  "validation": {
+    "errors": [],
+    "status": "ok",
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V119",
+      "message": "No view_extensions found for context \"inline\" in object \"User\". Available contexts: list, detail, form, timeline, card"
+    }
+  ]
+}

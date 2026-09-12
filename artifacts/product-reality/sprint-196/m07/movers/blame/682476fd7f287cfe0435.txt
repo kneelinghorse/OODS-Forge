@@ -1,0 +1,325 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/bubble-map.md
+filename docs/history/components/bubble-map.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 1 3 150
+author System Systems
+author-mail <systems@example.com>
+author-time 1764563961
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764563961
+committer-tz -0600
+summary Add comprehensive tests for spatial components and performance benchmarks
+filename docs/components/bubble-map.md
+	# BubbleMap Component
+729bb2787d9832b5c10979e49b403ab0c1050774 2 4
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 3 5
+	**Point/symbol map for discrete locations with size and color encoding.**
+729bb2787d9832b5c10979e49b403ab0c1050774 4 6
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 5 7
+	## Overview
+729bb2787d9832b5c10979e49b403ab0c1050774 6 8
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 7 9
+	The BubbleMap renders geographic points where radius and color convey data values. Typical use cases: city populations, store performance, incident hotspots, and capacity planning.
+729bb2787d9832b5c10979e49b403ab0c1050774 8 10
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 9 11
+	## Features
+729bb2787d9832b5c10979e49b403ab0c1050774 10 12
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 11 13
+	- ✅ Size encoding with linear, sqrt (default), or log scales
+729bb2787d9832b5c10979e49b403ab0c1050774 12 14
+	- ✅ Color encoding for categorical or continuous values
+729bb2787d9832b5c10979e49b403ab0c1050774 13 15
+	- ✅ Optional clustering for dense areas
+729bb2787d9832b5c10979e49b403ab0c1050774 14 16
+	- ✅ Keyboard and screen-reader friendly (ARIA labels, focusable points)
+729bb2787d9832b5c10979e49b403ab0c1050774 15 17
+	- ✅ Works with SpatialContainer projection context
+729bb2787d9832b5c10979e49b403ab0c1050774 16 18
+	- ✅ Supports SVG, Vega-Lite, and ECharts renderers
+729bb2787d9832b5c10979e49b403ab0c1050774 17 19
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 18 20
+	## Basic Usage
+729bb2787d9832b5c10979e49b403ab0c1050774 19 21
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 20 22
+	```tsx
+729bb2787d9832b5c10979e49b403ab0c1050774 21 23
+	import { BubbleMap } from '@/components/viz/spatial/BubbleMap';
+729bb2787d9832b5c10979e49b403ab0c1050774 22 24
+	import { SpatialContainer } from '@/components/viz/spatial/SpatialContainer';
+729bb2787d9832b5c10979e49b403ab0c1050774 23 25
+	import type { SpatialSpec } from '@/types/viz/spatial';
+729bb2787d9832b5c10979e49b403ab0c1050774 24 26
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 25 27
+	const data = [
+729bb2787d9832b5c10979e49b403ab0c1050774 26 28
+	  { city: 'San Francisco', lon: -122.4194, lat: 37.7749, population: 873965 },
+729bb2787d9832b5c10979e49b403ab0c1050774 27 29
+	  { city: 'New York', lon: -74.006, lat: 40.7128, population: 8804190 },
+729bb2787d9832b5c10979e49b403ab0c1050774 28 30
+	];
+729bb2787d9832b5c10979e49b403ab0c1050774 29 31
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 30 32
+	const spec: SpatialSpec = {
+729bb2787d9832b5c10979e49b403ab0c1050774 31 33
+	  type: 'spatial',
+729bb2787d9832b5c10979e49b403ab0c1050774 32 34
+	  data: { values: data },
+729bb2787d9832b5c10979e49b403ab0c1050774 33 35
+	  projection: { type: 'albersUsa', fitToData: true },
+729bb2787d9832b5c10979e49b403ab0c1050774 34 36
+	  layers: [],
+729bb2787d9832b5c10979e49b403ab0c1050774 35 37
+	  a11y: { description: 'City populations by size' },
+729bb2787d9832b5c10979e49b403ab0c1050774 36 38
+	};
+729bb2787d9832b5c10979e49b403ab0c1050774 37 39
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 38 40
+	function CityPopulationMap() {
+729bb2787d9832b5c10979e49b403ab0c1050774 39 41
+	  return (
+729bb2787d9832b5c10979e49b403ab0c1050774 40 42
+	    <SpatialContainer
+729bb2787d9832b5c10979e49b403ab0c1050774 41 43
+	      spec={spec}
+729bb2787d9832b5c10979e49b403ab0c1050774 42 44
+	      geoData={usStatesGeoJSON}
+729bb2787d9832b5c10979e49b403ab0c1050774 43 45
+	      width={1000}
+729bb2787d9832b5c10979e49b403ab0c1050774 44 46
+	      height={600}
+729bb2787d9832b5c10979e49b403ab0c1050774 45 47
+	      data={data}
+729bb2787d9832b5c10979e49b403ab0c1050774 46 48
+	      a11y={{ description: 'US city population bubble map' }}
+729bb2787d9832b5c10979e49b403ab0c1050774 47 49
+	    >
+729bb2787d9832b5c10979e49b403ab0c1050774 48 50
+	      <BubbleMap
+729bb2787d9832b5c10979e49b403ab0c1050774 49 51
+	        spec={spec as unknown as NormalizedVizSpec}
+729bb2787d9832b5c10979e49b403ab0c1050774 50 52
+	        data={data}
+729bb2787d9832b5c10979e49b403ab0c1050774 51 53
+	        longitudeField="lon"
+729bb2787d9832b5c10979e49b403ab0c1050774 52 54
+	        latitudeField="lat"
+729bb2787d9832b5c10979e49b403ab0c1050774 53 55
+	        sizeField="population"
+729bb2787d9832b5c10979e49b403ab0c1050774 54 56
+	        sizeRange={[6, 36]}
+729bb2787d9832b5c10979e49b403ab0c1050774 55 57
+	        a11y={{ description: 'US city population bubble map' }}
+729bb2787d9832b5c10979e49b403ab0c1050774 56 58
+	      />
+729bb2787d9832b5c10979e49b403ab0c1050774 57 59
+	    </SpatialContainer>
+729bb2787d9832b5c10979e49b403ab0c1050774 58 60
+	  );
+729bb2787d9832b5c10979e49b403ab0c1050774 59 61
+	}
+729bb2787d9832b5c10979e49b403ab0c1050774 60 62
+	```
+729bb2787d9832b5c10979e49b403ab0c1050774 61 63
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 62 64
+	## Props Reference
+729bb2787d9832b5c10979e49b403ab0c1050774 63 65
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 64 66
+	| Prop | Type | Description |
+729bb2787d9832b5c10979e49b403ab0c1050774 65 67
+	|------|------|-------------|
+729bb2787d9832b5c10979e49b403ab0c1050774 66 68
+	| `data` | `DataRecord[]` | Array of tabular records containing lon/lat and encoded fields |
+729bb2787d9832b5c10979e49b403ab0c1050774 67 69
+	| `longitudeField` | `string` | Field name for longitude |
+729bb2787d9832b5c10979e49b403ab0c1050774 68 70
+	| `latitudeField` | `string` | Field name for latitude |
+729bb2787d9832b5c10979e49b403ab0c1050774 69 71
+	| `a11y` | `SpatialA11yConfig` | Accessibility description, table fallback, narrative |
+729bb2787d9832b5c10979e49b403ab0c1050774 70 72
+	| `spec` | `NormalizedVizSpec` | Normalized spec used for runtime integrations |
+729bb2787d9832b5c10979e49b403ab0c1050774 71 73
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 72 74
+	### Optional Props
+729bb2787d9832b5c10979e49b403ab0c1050774 73 75
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 74 76
+	| Prop | Type | Default | Description |
+729bb2787d9832b5c10979e49b403ab0c1050774 75 77
+	|------|------|---------|-------------|
+729bb2787d9832b5c10979e49b403ab0c1050774 76 78
+	| `sizeField` | `string` | - | Field for radius encoding |
+729bb2787d9832b5c10979e49b403ab0c1050774 77 79
+	| `sizeRange` | `[number, number]` | `[4, 40]` | Min/max radius in pixels |
+729bb2787d9832b5c10979e49b403ab0c1050774 78 80
+	| `sizeScale` | `'linear' \| 'sqrt' \| 'log'` | `'sqrt'` | Size scaling function |
+729bb2787d9832b5c10979e49b403ab0c1050774 79 81
+	| `colorField` | `string` | - | Field for color encoding |
+729bb2787d9832b5c10979e49b403ab0c1050774 80 82
+	| `colorType` | `'categorical' \| 'continuous'` | `'continuous'` | Color encoding mode |
+729bb2787d9832b5c10979e49b403ab0c1050774 81 83
+	| `colorRange` | `string[]` | Sequential token scale | Token or hex colors |
+729bb2787d9832b5c10979e49b403ab0c1050774 82 84
+	| `projection` | `ProjectionType` | From context | Override container projection |
+729bb2787d9832b5c10979e49b403ab0c1050774 83 85
+	| `cluster` | `{ enabled: boolean; radius: number; minPoints: number }` | Disabled | Grid-based clustering configuration |
+729bb2787d9832b5c10979e49b403ab0c1050774 84 86
+	| `onPointClick` | `(datum) => void` | - | Click handler for individual points |
+729bb2787d9832b5c10979e49b403ab0c1050774 85 87
+	| `onPointHover` | `(datum) => void` | - | Hover handler for individual points |
+729bb2787d9832b5c10979e49b403ab0c1050774 86 88
+	| `onClusterClick` | `(points) => void` | - | Click handler for clusters |
+729bb2787d9832b5c10979e49b403ab0c1050774 87 89
+	| `preferredRenderer` | `'svg' \| 'vega-lite' \| 'echarts'` | `'svg'` | Rendering backend |
+729bb2787d9832b5c10979e49b403ab0c1050774 88 90
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 89 91
+	## Size Scales
+729bb2787d9832b5c10979e49b403ab0c1050774 90 92
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 91 93
+	- **sqrt (default)**: perceptually accurate for area encoding; use for population or revenue.
+729bb2787d9832b5c10979e49b403ab0c1050774 92 94
+	- **linear**: direct radius mapping; use for small numeric ranges.
+729bb2787d9832b5c10979e49b403ab0c1050774 93 95
+	- **log**: compresses wide ranges; use for heavy-tailed distributions.
+729bb2787d9832b5c10979e49b403ab0c1050774 94 96
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 95 97
+	```tsx
+729bb2787d9832b5c10979e49b403ab0c1050774 96 98
+	<BubbleMap
+729bb2787d9832b5c10979e49b403ab0c1050774 97 99
+	  sizeField="population"
+729bb2787d9832b5c10979e49b403ab0c1050774 98 100
+	  sizeScale="sqrt"
+729bb2787d9832b5c10979e49b403ab0c1050774 99 101
+	  sizeRange={[6, 32]}
+729bb2787d9832b5c10979e49b403ab0c1050774 100 102
+	  {...commonProps}
+729bb2787d9832b5c10979e49b403ab0c1050774 101 103
+	/>;
+729bb2787d9832b5c10979e49b403ab0c1050774 102 104
+	```
+729bb2787d9832b5c10979e49b403ab0c1050774 103 105
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 104 106
+	## Color Encoding
+729bb2787d9832b5c10979e49b403ab0c1050774 105 107
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 106 108
+	- **Categorical**: map discrete categories to palette entries.
+729bb2787d9832b5c10979e49b403ab0c1050774 107 109
+	- **Continuous**: interpolate across a sequential scale for numeric values.
+729bb2787d9832b5c10979e49b403ab0c1050774 108 110
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 109 111
+	```tsx
+729bb2787d9832b5c10979e49b403ab0c1050774 110 112
+	// Categorical
+729bb2787d9832b5c10979e49b403ab0c1050774 111 113
+	<BubbleMap
+729bb2787d9832b5c10979e49b403ab0c1050774 112 114
+	  colorField="severity"
+729bb2787d9832b5c10979e49b403ab0c1050774 113 115
+	  colorType="categorical"
+729bb2787d9832b5c10979e49b403ab0c1050774 114 116
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 115 117
+	    'var(--sys-status-success-fg)',
+729bb2787d9832b5c10979e49b403ab0c1050774 116 118
+	    'var(--sys-status-warning-fg)',
+729bb2787d9832b5c10979e49b403ab0c1050774 117 119
+	    'var(--sys-status-danger-fg)',
+729bb2787d9832b5c10979e49b403ab0c1050774 118 120
+	  ]}
+729bb2787d9832b5c10979e49b403ab0c1050774 119 121
+	  {...commonProps}
+729bb2787d9832b5c10979e49b403ab0c1050774 120 122
+	/>;
+729bb2787d9832b5c10979e49b403ab0c1050774 121 123
+	```
+729bb2787d9832b5c10979e49b403ab0c1050774 122 124
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 123 125
+	## Clustering
+729bb2787d9832b5c10979e49b403ab0c1050774 124 126
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 125 127
+	Enable clustering to group dense areas and declutter the map.
+729bb2787d9832b5c10979e49b403ab0c1050774 126 128
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 127 129
+	```tsx
+729bb2787d9832b5c10979e49b403ab0c1050774 128 130
+	<BubbleMap
+729bb2787d9832b5c10979e49b403ab0c1050774 129 131
+	  cluster={{ enabled: true, radius: 18, minPoints: 3 }}
+729bb2787d9832b5c10979e49b403ab0c1050774 130 132
+	  {...commonProps}
+729bb2787d9832b5c10979e49b403ab0c1050774 131 133
+	/>;
+729bb2787d9832b5c10979e49b403ab0c1050774 132 134
+	```
+729bb2787d9832b5c10979e49b403ab0c1050774 133 135
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 134 136
+	- Uses deterministic grid-based clustering.
+729bb2787d9832b5c10979e49b403ab0c1050774 135 137
+	- `radius` is in pixels (screen space).
+729bb2787d9832b5c10979e49b403ab0c1050774 136 138
+	- Cluster bubble shows total count and exposes `onClusterClick(points)` callback.
+729bb2787d9832b5c10979e49b403ab0c1050774 137 139
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 138 140
+	## Accessibility
+729bb2787d9832b5c10979e49b403ab0c1050774 139 141
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 140 142
+	- Points and clusters are keyboard focusable (`tabIndex=0`) and expose descriptive `aria-label`s.
+729bb2787d9832b5c10979e49b403ab0c1050774 141 143
+	- `<title>` and `<desc>` convey map intent and narrative.
+729bb2787d9832b5c10979e49b403ab0c1050774 142 144
+	- Integrates with `SpatialContainer` table fallback for screen-reader browsing.
+729bb2787d9832b5c10979e49b403ab0c1050774 143 145
+	- WCAG 2.1 AA guardrails: focus ring uses `--sys-focus-ring`; colors should be token-based.
+729bb2787d9832b5c10979e49b403ab0c1050774 144 146
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 145 147
+	## Performance Tips
+729bb2787d9832b5c10979e49b403ab0c1050774 146 148
+	
+729bb2787d9832b5c10979e49b403ab0c1050774 147 149
+	- Use clustering for datasets > 500 points.
+729bb2787d9832b5c10979e49b403ab0c1050774 148 150
+	- Prefer `sqrt` size scaling to avoid oversized bubbles at large ranges.
+729bb2787d9832b5c10979e49b403ab0c1050774 149 151
+	- Provide `sizeRange` that keeps maximum radius under 40px to reduce overlap.
+729bb2787d9832b5c10979e49b403ab0c1050774 150 152
+	- For external renderers, prefer `preferredRenderer="vega-lite"` when embedding in docs and `preferredRenderer="echarts"` for highly interactive dashboards.

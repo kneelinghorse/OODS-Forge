@@ -1,0 +1,43 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 21 21 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e scripts/runtime/manifest.mjs
+filename scripts/runtime/manifest.mjs
+	  "mcp-bridge",
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 268 268 4
+	  assert(Number.isInteger(sbom?.summary?.packageCount) && sbom.summary.packageCount > 0,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 269 269
+	    "SBOM-lite must measure a non-empty runtime closure");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 270 270
+	  assert.equal(sbom.summary.integrityCount, sbom.summary.packageCount,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 271 271
+	    "every runtime dependency must have integrity metadata");
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 333 333 1
+	    ciNodes: [24, "20.11.1"],
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 476 476 10
+	  // Archive facts live in the detached manifest: embedding an archive's own
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 477 477
+	  // digest/byte size would create a self-reference.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 478 478
+	  if (currentManifest?.archive) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 479 479
+	    const archivePath = path.join(path.dirname(outPath), RUNTIME_ARCHIVE_FILE);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 480 480
+	    manifest.archive = {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 481 481
+	      file: RUNTIME_ARCHIVE_FILE,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 482 482
+	      byteSize: (await fsp.stat(archivePath)).size,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 483 483
+	      sha256: await sha256File(archivePath),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 484 484
+	    };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 485 485
+	  }

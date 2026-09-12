@@ -21,6 +21,7 @@ import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } fr
 import { buildToolNameMaps, resolveInternalToolName } from './tool-names.js';
 import { resolveBridgeToolSurface } from './tool-surface.js';
 import { registerBridgeHealth } from './health.js';
+import { resolveBridgeArtifacts } from './runtime-paths.js';
 
 const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
 const APPLY_CAPABLE_TOOLS = applyCapableTools;
@@ -86,6 +87,17 @@ class McpClient {
       for (const [, p] of this.pending) p.reject({ code: 'PROCESS_EXIT' });
       this.pending.clear();
       this.child = null;
+    });
+  }
+
+  async close(): Promise<void> {
+    const child = this.child;
+    if (!child) return;
+    await new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => child.kill('SIGKILL'), 2_000);
+      timeout.unref();
+      child.once('exit', () => { clearTimeout(timeout); resolve(); });
+      child.kill('SIGTERM');
     });
   }
 
@@ -213,7 +225,8 @@ async function main() {
     allowedExternalTools: ALLOWED_EXTERNAL_TOOLS,
   } = buildToolNameMaps(toolSurface.enabled);
   const client = new McpClient(mcpServerCwd);
-  const artifactsRoot = path.join(mcpServerCwd, 'artifacts');
+  const { artifactsRoot, artifactsBase } = resolveBridgeArtifacts(mcpServerCwd);
+  fastify.addHook('onClose', () => client.close());
   const registrySource = path.relative(mcpServerCwd, toolSurface.registrySource).split(path.sep).join('/');
 
   if (toolSurface.unknownExtras.length > 0) {
@@ -234,7 +247,7 @@ async function main() {
     detail: bridgeConfig.rateLimit.artifacts,
     files: bridgeConfig.rateLimit.artifacts,
     open: bridgeConfig.rateLimit.artifacts,
-  });
+  }, artifactsBase);
 
   registerBridgeHealth(fastify, {
     mode: toolSurface.toolsetMode,
@@ -369,6 +382,14 @@ async function main() {
   }
 
   await listenWithFallback();
+  const stop = () => {
+    fastify.close().then(() => process.exit(0)).catch((error) => {
+      console.error('[mcp-bridge] shutdown failed', error);
+      process.exit(1);
+    });
+  };
+  process.once('SIGINT', stop);
+  process.once('SIGTERM', stop);
 }
 
 main().catch((err) => {

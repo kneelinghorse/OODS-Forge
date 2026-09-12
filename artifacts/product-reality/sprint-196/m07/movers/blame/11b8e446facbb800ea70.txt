@@ -1,0 +1,25 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 473 473 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+previous 944f4dda5f784e266310978b31f65b3d452e6387 packages/viz-core/src/adapters/vega-lite-adapter.ts
+filename packages/viz-core/src/adapters/vega-lite-adapter.ts
+	  // Temporal axes and time-unit buckets must not inherit the host timezone.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 474 474
+	  const scaleType = definition.type === 'temporal' ? 'utc' : mapScaleType(binding.scale);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 485 485 3
+	    // The normalized vocabulary is singular; Vega uses plural sub-day units.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 486 486
+	    const unit = ['hour', 'minute', 'second'].includes(binding.timeUnit) ? `${binding.timeUnit}s` : binding.timeUnit;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 487 487
+	    definition.timeUnit = `utc${unit}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 719 719 1
+	    return 'utc';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 819 819 1
+	      calculate: `utcParse(datum["${params.field}"], "${params.format}")`,

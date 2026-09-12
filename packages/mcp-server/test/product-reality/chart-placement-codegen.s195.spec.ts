@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { sha256 } from '@oods/artifacts';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
@@ -13,21 +13,6 @@ import { getAjv } from '../../src/lib/ajv.js';
 import { CASES, SALES } from '../../src/tools/__fixtures__/cartesian-render.js';
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 import type { CodeGenerateInput } from '../../src/tools/types.js';
-
-// Exact temporal-axis pixels were qualified in America/Chicago. Preserve that
-// fixture environment; local-time SVGs do not claim cross-timezone byte identity.
-const previousTimezone = process.env.TZ;
-const previousEffectiveTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-beforeAll(() => {
-  vi.stubEnv('TZ', 'America/Chicago');
-  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe('America/Chicago');
-  expect(new Date('2026-06-01T12:00:00Z').getHours()).toBe(7);
-});
-afterAll(() => {
-  vi.unstubAllEnvs();
-  expect(process.env.TZ).toBe(previousTimezone);
-  expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(previousEffectiveTimezone);
-});
 
 vi.setConfig({ testTimeout: 60_000 });
 afterEach(() => vi.restoreAllMocks());
@@ -178,14 +163,26 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
     expect(result.errors?.[0]?.message).toContain('OODS-V165');
   });
 
-  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes match the retained m05 public output', async framework => {
-    const previous = JSON.parse(fs.readFileSync(path.join(repositoryRoot, `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json`), 'utf8'));
+  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes follow the recorded UTC migration', async framework => {
+    const source = `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json`;
+    const previousBytes = fs.readFileSync(path.join(repositoryRoot, source), 'utf8');
+    const previous = JSON.parse(previousBytes);
+    const migrationRoot = 'artifacts/product-reality/sprint-196/m05/placement';
+    const migration = JSON.parse(fs.readFileSync(path.join(repositoryRoot, migrationRoot, 'migration.json'), 'utf8'));
     const { schema } = await compose({ object: 'Subscription', context: 'detail' });
     const result = await generate({ schema, framework, profile: 'build', options: { theme: 'hc', brand: 'A' } });
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
     const before = previous.result.artifact.files.filter((file: any) => file.path.endsWith('.svg'));
     const after = result.artifact!.files.filter(file => file.path.endsWith('.svg'));
-    expect(after).toEqual(before);
-    retain(`legacy-${framework}`, { before, after, unchanged: true });
+    expect(after.map(file => file.path)).toEqual(before.map((file: any) => file.path));
+    for (const asset of after) {
+      const prior = before.find((file: any) => file.path === asset.path);
+      const receipt = migration.rows.find((row: any) => row.source === source && row.path === asset.path);
+      expect(receipt).toMatchObject({ case: `Subscription-detail-${framework}`, beforeHash: prior.contentHash, sourceSha256: `sha256:${sha256(previousBytes)}`, sameOperand: true, crossTimezoneEqual: true, changed: true });
+      const current = fs.readFileSync(path.join(repositoryRoot, migrationRoot, receipt.utcRaw), 'utf8');
+      expect(`sha256:${sha256(current)}`).toBe(receipt.afterHash);
+      expect(asset).toEqual({ ...prior, contents: current, contentHash: receipt.afterHash });
+    }
+    retain(`legacy-${framework}`, { before, after, unchanged: false, migration: `${migrationRoot}/migration.json` });
   });
 });

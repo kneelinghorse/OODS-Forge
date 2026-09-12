@@ -1,0 +1,49 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 169 169 5
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-adapter/index.js
+filename packages/mcp-adapter/index.js
+	      if (error) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 170 170
+	        const failure = new Error(typeof error === 'string' ? error : error.message || 'Native error');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 171 171
+	        if (typeof error === 'object' && !Array.isArray(error)) failure.nativeError = error;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 172 172
+	        pending.reject(failure);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 173 173
+	      } else pending.resolve(result);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 254 254 14
+	      if (error?.nativeError) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 255 255
+	        const native = error.nativeError;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 256 256
+	        // Preserve every native field. Current ToolErrors nest retryable/context in
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 257 257
+	        // details; promote those for clients without dropping the original envelope.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 258 258
+	        const structured = {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 259 259
+	          ...native,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 260 260
+	          ...(typeof native.retryable === 'boolean' ? {} : typeof native.details?.retryable === 'boolean' ? { retryable: native.details.retryable } : {}),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 261 261
+	          ...('data' in native ? {} : native.details !== undefined ? { data: native.details?.context ?? native.details } : {}),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 262 262
+	        };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 263 263
+	        return {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 264 264
+	          isError: true,
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 265 265
+	          content: [{ type: 'text', text: JSON.stringify({ error: structured }, null, 2) }],
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 266 266
+	        };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 267 267
+	      }

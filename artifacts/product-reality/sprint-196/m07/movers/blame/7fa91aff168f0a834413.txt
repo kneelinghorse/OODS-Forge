@@ -1,0 +1,196 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/scatter-chart.md
+filename docs/history/components/scatter-chart.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 85
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/scatter-chart.md
+	# Scatter & Bubble Chart Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	## Overview
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	`<ScatterChart>` renders 2Q scatter plots with optional categorical color and size encodings, pairing the visualization surface with narrative + tabular fallbacks. `<BubbleChart>` is a thin wrapper that expects a size channel to visualize a third quantitative field. Both components:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- Accept a `NormalizedVizSpec`, inject highlight + tooltip interactions, and convert to Vega-Lite or ECharts based on the spec and data volume.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- Auto-select ECharts when datasets are large (500+ rows) or when `preferredRenderer`/`renderer="echarts"` is set, keeping hover latency smooth for 1000+ points.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	- Provide RDV.4 accessibility surfaces: narrative (`ChartDescription`), table fallback (`AccessibleTable`), and keyboard-focusable data rows for point-by-point inspection.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	import type { NormalizedVizSpec } from '@oods/viz';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	import { useHighlight, useTooltip } from '@oods/viz';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	import { ScatterChart, BubbleChart } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	const tooltip = useTooltip({ fields: ['leadTime', 'winRate', 'pipeline'] });
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	const highlight = useHighlight({ fields: ['segment'] });
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	const scatterSpec: NormalizedVizSpec = {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  $schema: 'https://oods.dev/viz-spec/v1',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	  id: 'example:viz:scatter',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	  name: 'Win Rate vs Lead Time',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	  data: { values: [{ leadTime: 10, winRate: 46, pipeline: 540000, segment: 'Enterprise' }, /* ... */] },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	  marks: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	    {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	      trait: 'MarkPoint',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	      encodings: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	        x: { field: 'leadTime', trait: 'EncodingPositionX', channel: 'x', scale: 'linear', title: 'Lead Time (weeks)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	        y: { field: 'winRate', trait: 'EncodingPositionY', channel: 'y', scale: 'linear', title: 'Win Rate (%)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	        color: { field: 'segment', trait: 'EncodingColor', channel: 'color', legend: { title: 'Segment' } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	      },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	  ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	  encoding: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	    x: { field: 'leadTime', trait: 'EncodingPositionX', channel: 'x', scale: 'linear', title: 'Lead Time (weeks)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	    y: { field: 'winRate', trait: 'EncodingPositionY', channel: 'y', scale: 'linear', title: 'Win Rate (%)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	    color: { field: 'segment', trait: 'EncodingColor', channel: 'color', legend: { title: 'Segment' } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	  interactions: [highlight, tooltip],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	  config: { theme: 'brand-a', layout: { width: 640, height: 380, padding: 20 } },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	  a11y: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	    description: 'Shorter cycles trend toward higher win rates; color groups by segment.',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	    ariaLabel: 'Win rate vs lead time scatterplot',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	    narrative: { summary: 'Enterprise wins stay above 45% under 12 weeks.', keyFindings: ['Growth dips below 30% past 16 weeks'] },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	    tableFallback: { enabled: true, caption: 'Opportunities by lead time, win rate, pipeline' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	  portability: { fallbackType: 'table', tableColumnOrder: ['segment', 'leadTime', 'winRate', 'pipeline'] },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	};
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	<ScatterChart spec={scatterSpec} />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	<BubbleChart spec={{ ...scatterSpec, encoding: { ...scatterSpec.encoding, size: { field: 'pipeline', trait: 'EncodingSize', channel: 'size' } } }} />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	## Props
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	| Prop | Type | Default | Description |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	|------|------|---------|-------------|
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	| `spec` | `NormalizedVizSpec` | — | Scatter/bubble spec with `MarkPoint` and optional `EncodingSize`/`EncodingColor`. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	| `renderer` | `'vega-lite' \| 'echarts' \| 'auto'` | `'auto'` | Selects renderer; `'auto'` delegates to `selectVizRenderer` (prefers ECharts for large datasets). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	| `vegaRenderer` | `'svg' \| 'canvas'` | `'svg'` | Forwarded to `vega-embed` when the Vega-Lite path is chosen. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	| `echartsRenderer` | `'canvas' \| 'svg'` | `'canvas'` | Passed to `echarts.init`; canvas is faster for dense point clouds. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	| `showTable` | `boolean` | `true` | Toggles the `AccessibleTable` fallback (keyboard focusable rows). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	| `showDescription` | `boolean` | `true` | Toggles the narrative panel. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	| `responsive` | `boolean` | `true` | Enables width measurement via `ResizeObserver` for Vega-Lite; ECharts resizes on observer events. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	| `minHeight` | `number` | `320` | Minimum chart surface height. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	| `enableKeyboardNavigation` | `boolean` | `true` | Adds `tabIndex` + aria labels to data rows so users can keyboard-navigate points. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	## Renderer Selection & Performance
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	- `selectVizRenderer` prefers ECharts when `spec.portability.preferredRenderer === 'echarts'` or when inline values exceed the default 500-row threshold, keeping hover/highlight responsive for 1000+ points.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	- Vega-Lite remains the default for smaller or temporal specs (keeps SVG text crisp).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	- ECharts instances use `useDirtyRect` and resize hooks; Vega-Lite specs are regenerated with measured widths to avoid blurry scales.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	## Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	- `ChartDescription` surfaces `spec.a11y.narrative`; the rendered chart remains `aria-hidden`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	- `AccessibleTable` orders columns via `spec.portability.tableColumnOrder` and exposes `aria-label`/`tabIndex` on rows for keyboard traversal (x/y/size columns included when provided).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	- Interaction traits (highlight + tooltip) come from B22.2 hooks; tooltips respect `spec.interactions` for both renderers.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	## Testing
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	- Unit tests: `tests/components/viz/ScatterChart.test.tsx` (renderer selection, interaction wiring, table fallback).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	- Accessibility: `tests/components/viz/ScatterChart.a11y.test.tsx` (axe coverage, keyboard focus on rows).

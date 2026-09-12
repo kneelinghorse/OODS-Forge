@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "missionId": "s196-m05",
+  "verifiedAt": "2026-09-12T07:19:40.131511+00:00",
+  "scope": "Four physical mutations of separate exact m02 archive extractions. No host implementation or build changed.",
+  "archive": {
+    "path": "/tmp/forge-s196-m02-final-out-1/forge-runtime.tar.gz",
+    "sha256": "4ff4aeb05e5ba937b61d2062fcce2eb4d0d41fc1b3001ae07b472cb2c2663bba",
+    "bytes": 32448215,
+    "head": "2d80ae017184b6a28d4b2d7a2bb02649a5c33718"
+  },
+  "originalArchiveSha256After": "4ff4aeb05e5ba937b61d2062fcce2eb4d0d41fc1b3001ae07b472cb2c2663bba",
+  "helperHead": "944f4dda5f784e266310978b31f65b3d452e6387",
+  "runId": "c53cfa50-60ce-418f-b86b-277f03269c3f",
+  "startedAt": "2026-09-12T07:12:41.701Z",
+  "completedAt": "2026-09-12T07:15:25.831Z",
+  "summary": {
+    "bites": 4,
+    "passed": 4,
+    "failed": 0,
+    "restored": 4
+  },
+  "command": [
+    "/opt/homebrew/Cellar/node/24.6.0/bin/node",
+    "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge/scripts/product-reality/s196-bundle-bites.mjs",
+    "--execute"
+  ],
+  "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge",
+  "driverExitCode": 0,
+  "driverLogs": [
+    "driver.stdout.log",
+    "driver.stderr.log"
+  ],
+  "receipt": "bites.json",
+  "files": 104,
+  "inventory": {
+    "path": "inventory.json",
+    "sha256": "4ab4ef8b955a33c95bc0be23d50e6842e87cd70bb4565750ea497dd1aafc9aea"
+  },
+  "focusedTests": {
+    "command": "pnpm exec vitest run test/product-reality/bundle-bites.s196.spec.ts --reporter=default --reporter=json --outputFile.json=../../artifacts/product-reality/sprint-196/m05/bundle-bites/contract-tests-final.json > ../../artifacts/product-reality/sprint-196/m05/bundle-bites/contract-tests-final.log 2>&1",
+    "cwd": "packages/mcp-server",
+    "exitCode": 0,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "report": "contract-tests-final.json",
+    "log": "contract-tests-final.log",
+    "initialAttempt": {
+      "report": "contract-tests.json",
+      "log": "contract-tests.log",
+      "passed": 5,
+      "failed": 1,
+      "reason": "New receipt test expected only the AssertionError title, while Node appended actual/expected hashes. Test now requires the stable digest-mismatch title plus original payload hash; physical bite outcomes and receipts were already green and were not rerun or changed."
+    }
+  },
+  "boundaries": {
+    "dist-integrity": "Actual modified health.js bytes fail unchanged embedded manifest verification; exact restoration restores verification.",
+    "taxonomy-health": "Native health degrades and exposes null viz. Unmodified historical m02 E2E fails earlier at manifest verification. Original and restored E2E each execute 30 calls, 17 pass plus 2 typed; no manifest was resealed.",
+    "bridge-policy": "Missing configs/agent/policy.json produces BRIDGE_POLICY_MISSING exit1 and no listener; original/restored bridge health reports the m02 revision and exits cleanly.",
+    "readiness-attestation": "Changed attestation.sha256 produces actual wire-native OODS-N015 with attestation-invalid and no artifact for React/Vue. Baseline/restored responses emit real target files with independently verified hashes and identical artifact identities."
+  },
+  "restoration": {
+    "wholeTreeDigestIncludesManifestModesPathsSizesContentsAndSymlinks": true,
+    "allFourWholeTreesEqualBeforeAfter": true,
+    "allChildrenClosedWithoutForcedKill": true,
+    "independentCopiesRetainedAt": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre"
+  },
+  "implementation": [
+    {
+      "path": "scripts/product-reality/s196-bundle-bites.mjs",
+      "sha256": "d73428c3789425f6943542b45d243995a38e124d41e228f7b7b2138dadfb4f27"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/bundle-bites.s196.spec.ts",
+      "sha256": "5326ac4e92b1968437eabbafcbe45d7f7667446ea1e7dd1d22274ec186d6e5a2"
+    }
+  ],
+  "limitations": [
+    "Evidence is pinned to the m02 artifact and m02 fixture/E2E sources, not the upcoming m05 UTC build.",
+    "Current committed McpClient helper is pinned to 944f4dda5f784e266310978b31f65b3d452e6387 and retained alongside historical helpers.",
+    "No broad suites or new bundle assembly were run. No CMOS, commit, production schema, adapter, bridge or build changes were made by this bounded task."
+  ]
+}

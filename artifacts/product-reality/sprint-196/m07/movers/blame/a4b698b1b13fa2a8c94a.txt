@@ -1,0 +1,1536 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/navigation.md
+filename docs/history/components/navigation.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 755
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/navigation.md
+	# Navigation Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	Navigation components help users move through information hierarchies and switch between related content.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## Tabs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	The Tabs component organizes related content into separate, switchable views within a single container.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	### Features
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	- **Responsive overflow handling** - Automatically collapses excess tabs into a "More" dropdown menu when they exceed the container width
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	- **Size variants** - Three density levels (sm, md, lg) to match different contexts
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	- **Keyboard navigation** - Full support for arrow keys, Home, End keys with roving tabindex pattern
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	- **Label truncation** - Long labels truncate with ellipsis and show full text via native tooltip on hover
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	- **High-contrast mode** - Active tab indicator uses borders that respect forced-colors system settings
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	- **Manual activation model** - Arrow keys move focus, Enter/Space activates (ARIA best practice)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	### Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	import { Tabs } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	  { id: 'overview', label: 'Overview', panel: <OverviewPanel /> },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	  { id: 'details', label: 'Details', panel: <DetailsPanel /> },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	  { id: 'settings', label: 'Settings', panel: <SettingsPanel /> },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	<Tabs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	  defaultSelectedId="overview"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	  size="md"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	  overflowLabel="More"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	  onChange={(id) => console.log('Selected:', id)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	  aria-label="Main navigation"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	### API
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	#### TabsProps
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	| Prop                  | Type                       | Default | Description                                     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	| --------------------- | -------------------------- | ------- | ----------------------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	| `items`               | `TabItem[]`                | -       | Array of tab items (required)                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	| `selectedId`          | `string`                   | -       | Controlled selected tab ID                      |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	| `defaultSelectedId`   | `string`                   | -       | Uncontrolled default selected tab ID            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	| `size`                | `'sm' \| 'md' \| 'lg'`     | `'md'`  | Size variant for density control                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	| `overflowLabel`       | `string`                   | `'More'`| Label for overflow menu button                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	| `onChange`            | `(id: string) => void`     | -       | Callback when selection changes                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	| `aria-label`          | `string`                   | -       | Accessible label for tablist                    |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	| `className`           | `string`                   | -       | Additional CSS class                            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	#### TabItem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	| Property     | Type        | Description                          |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	| ------------ | ----------- | ------------------------------------ |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	| `id`         | `string`    | Unique identifier (required)         |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	| `label`      | `ReactNode` | Tab label content (required)         |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	| `panel`      | `ReactNode` | Panel content (required)             |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	| `isDisabled` | `boolean`   | Whether tab is disabled (optional)   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	### Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	The Tabs component follows WAI-ARIA Authoring Practices for tab panels:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	- **Roles**: Uses `role="tablist"`, `role="tab"`, and `role="tabpanel"`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	- **Keyboard support**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	  - `ArrowRight` / `ArrowLeft` - Navigate between tabs (with wrapping)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	  - `Home` - Jump to first tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	  - `End` - Jump to last tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	  - `Enter` / `Space` - Activate focused tab (manual activation model)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	  - Disabled tabs are skipped during navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	- **Roving tabindex**: Selected tab has `tabindex="0"`, others have `tabindex="-1"`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	- **ARIA attributes**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	  - `aria-selected` indicates active tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	  - `aria-controls` links tab to its panel
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	  - `aria-labelledby` links panel back to its tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	  - `aria-label` or `aria-labelledby` on tablist
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	  - `hidden` attribute on inactive panels
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	- **High-contrast mode**: Active indicator uses borders that respect `forced-colors` media query
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	### Responsive Behavior
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	**Overflow Strategy**: When tabs exceed container width, excess tabs collapse into a dropdown overflow menu:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	- The selected tab always remains visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	- Overflow menu is keyboard and screen reader accessible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	- Uses Popover component for accessible menu implementation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	**Label Truncation**: Long labels (>200px) truncate with ellipsis and show full text via native HTML `title` tooltip.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 93 95
+	### Theming
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 94 96
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 95 97
+	Tabs use semantic design tokens for consistent theming:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 96 98
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 97 99
+	| Token                          | Usage                              |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 98 100
+	| ------------------------------ | ---------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 99 101
+	| `--color-text-primary`         | Default tab text                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 100 102
+	| `--color-text-interactive`     | Selected tab text                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 101 103
+	| `--color-text-disabled`        | Disabled tab text                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 102 104
+	| `--color-background-hover`     | Tab hover background               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 103 105
+	| `--color-border-interactive`   | Active tab indicator border        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 104 106
+	| `--color-border-subtle`        | Tablist bottom border              |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 105 107
+	| `--font-label-{sm,md,lg}`      | Tab label typography               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 106 108
+	| `--space-inset-squish-{sm,md,lg}` | Tab padding by size             |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 107 109
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 108 110
+	### Size Variants
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 109 111
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 110 112
+	- **Small** (`sm`) - Compact density for sidebars or tight spaces
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 111 113
+	- **Medium** (`md`) - Default, balanced for most use cases
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 112 114
+	- **Large** (`lg`) - Spacious for touch devices or prominent navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 113 115
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 114 116
+	### Examples
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 115 117
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 116 118
+	#### Controlled Tabs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 117 119
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 118 120
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 119 121
+	const [selectedTab, setSelectedTab] = useState('overview');
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 120 122
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 121 123
+	<Tabs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 122 124
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 123 125
+	  selectedId={selectedTab}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 124 126
+	  onChange={setSelectedTab}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 125 127
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 126 128
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 127 129
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 128 130
+	#### With Disabled Tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 129 131
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 130 132
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 131 133
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 132 134
+	  { id: '1', label: 'Active', panel: <Panel1 /> },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 133 135
+	  { id: '2', label: 'Disabled', panel: <Panel2 />, isDisabled: true },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 134 136
+	  { id: '3', label: 'Active', panel: <Panel3 /> },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 135 137
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 136 138
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 137 139
+	<Tabs items={items} defaultSelectedId="1" />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 138 140
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 139 141
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 140 142
+	#### Small Size for Sidebar
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 141 143
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 142 144
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 143 145
+	<Tabs items={items} size="sm" aria-label="Sidebar navigation" />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 144 146
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 145 147
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 146 148
+	### Best Practices
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 147 149
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 148 150
+	✅ **Do**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 149 151
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 150 152
+	- Use concise, scannable tab labels (1-2 words when possible)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 151 153
+	- Provide an `aria-label` for the tablist when the context isn't obvious
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 152 154
+	- Use the overflow menu pattern for 6+ tabs or dynamic tab counts
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 153 155
+	- Keep related content together in the same tab group
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 154 156
+	- Use medium size by default, reserve large for touch-primary interfaces
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 155 157
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 156 158
+	❌ **Don't**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 157 159
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 158 160
+	- Don't use tabs for sequential workflows (use Stepper instead)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 159 161
+	- Don't nest tab components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 160 162
+	- Don't use extremely long labels (consider restructuring your navigation)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 161 163
+	- Don't disable the only available tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 162 164
+	- Don't put critical actions only in hidden tabs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 163 165
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 164 166
+	### Related Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 165 167
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 166 168
+	- **Stepper** - For multi-step, wizard-like workflows
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 167 169
+	- **Pagination** - For navigating paginated datasets
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 168 170
+	- **Breadcrumbs** - For hierarchical site navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 169 171
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 170 172
+	### Shared Navigation Utilities
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 171 173
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 172 174
+	The Tabs component uses shared accessibility utilities from `components/navigation/a11y.ts`:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 173 175
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 174 176
+	- `handleHorizontalArrowKeys` - Arrow key navigation handler
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 175 177
+	- `getRovingTabIndex` - Roving tabindex helper
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 176 178
+	- `getNextEnabledIndex` - Skip disabled items during navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 177 179
+	- `getFirstEnabledIndex` / `getLastEnabledIndex` - Boundary navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 178 180
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 179 181
+	These utilities are reusable by Pagination and Breadcrumbs components.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 180 182
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 181 183
+	### Hooks
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 182 184
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 183 185
+	- `useTabs` &mdash; Manages manual activation state, roving focus, and ARIA wiring for any tablist surface.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 184 186
+	- `useOverflowMenu` &mdash; Calculates responsive visibility with overflow promotion so Pagination/Breadcrumbs can share the pattern.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 185 187
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 186 188
+	---
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 187 189
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 188 190
+	## Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 189 191
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 190 192
+	The Pagination component divides large datasets into discrete pages, providing controls for navigation.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 191 193
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 192 194
+	### Features
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 193 195
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 194 196
+	- **Headless hook** - `usePagination` hook separates logic from UI and returns structured previous/next/ellipsis items
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 195 197
+	- **Smart truncation** - Replaces middle page numbers with ellipsis (...) to prevent overflow
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 196 198
+	- **Configurable density** - `siblingCount` and `boundaryCount` props control how many pages are visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 197 199
+	- **Responsive design** - Mobile collapse pattern reduces button padding and gap on narrow viewports
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 198 200
+	- **Keyboard accessible** - All buttons in tab order with clear focus indicators
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 199 201
+	- **High-contrast mode** - Selected page uses system colors (Highlight, ButtonText) for visibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 200 202
+	- **Boundary management** - Previous/Next buttons automatically disable at page boundaries
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 201 203
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 202 204
+	### Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 203 205
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 204 206
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 205 207
+	import { Pagination } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 206 208
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 207 209
+	const [page, setPage] = useState(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 208 210
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 209 211
+	<Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 210 212
+	  page={page}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 211 213
+	  count={50}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 212 214
+	  onChange={setPage}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 213 215
+	  siblingCount={1}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 214 216
+	  boundaryCount={1}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 215 217
+	  aria-label="Pagination"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 216 218
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 217 219
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 218 220
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 219 221
+	### Headless Hook
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 220 222
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 221 223
+	For custom pagination UIs, use the `usePagination` hook directly:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 222 224
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 223 225
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 224 226
+	import { usePagination } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 225 227
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 226 228
+	const { items, goToPage, nextPage, previousPage } = usePagination({
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 227 229
+	  page: 5,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 228 230
+	  count: 50,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 229 231
+	  siblingCount: 1,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 230 232
+	  boundaryCount: 1,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 231 233
+	  onChange: (newPage) => console.log('Page changed:', newPage),
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 232 234
+	});
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 233 235
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 234 236
+	// items: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 235 237
+	//   { type: 'previous', page: 4, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 236 238
+	//   { type: 'page', page: 1, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 237 239
+	//   { type: 'ellipsis', selected: false, disabled: true, index: 0 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 238 240
+	//   { type: 'page', page: 4, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 239 241
+	//   { type: 'page', page: 5, selected: true, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 240 242
+	//   { type: 'page', page: 6, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 241 243
+	//   { type: 'ellipsis', selected: false, disabled: true, index: 1 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 242 244
+	//   { type: 'page', page: 50, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 243 245
+	//   { type: 'next', page: 6, selected: false, disabled: false },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 244 246
+	// ]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 245 247
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 246 248
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 247 249
+	### API
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 248 250
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 249 251
+	#### PaginationProps
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 250 252
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 251 253
+	| Prop             | Type                   | Default        | Description                                     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 252 254
+	| ---------------- | ---------------------- | -------------- | ----------------------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 253 255
+	| `page`           | `number`               | -              | Current page number (1-based, required)         |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 254 256
+	| `count`          | `number`               | -              | Total number of pages (required)                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 255 257
+	| `onChange`       | `(page: number) => void` | -            | Callback when page changes (required)           |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 256 258
+	| `siblingCount`   | `number`               | `1`            | Pages shown on each side of current page        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 257 259
+	| `boundaryCount`  | `number`               | `1`            | Pages shown at start and end                    |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 258 260
+	| `showFirstLast`  | `boolean`              | `false`        | Show first/last navigation buttons              |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 259 261
+	| `aria-label`     | `string`               | `'Pagination'` | Accessible label for navigation                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 260 262
+	| `className`      | `string`               | -              | Additional CSS class                            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 261 263
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 262 264
+	#### UsePaginationOptions
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 263 265
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 264 266
+	| Property         | Type                     | Description                                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 265 267
+	| ---------------- | ------------------------ | --------------------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 266 268
+	| `page`           | `number`                 | Current page number (1-based)                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 267 269
+	| `count`          | `number`                 | Total number of pages                         |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 268 270
+	| `siblingCount`   | `number` (optional)      | Pages shown on each side of current (default: 1) |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 269 271
+	| `boundaryCount`  | `number` (optional)      | Pages shown at start and end (default: 1)     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 270 272
+	| `onChange`       | `(page: number) => void` | Callback when page changes                    |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 271 273
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 272 274
+	#### usePagination Return Value
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 273 275
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 274 276
+	| Property       | Type                   | Description                                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 275 277
+	| -------------- | ---------------------- | ------------------------------------------ |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 276 278
+	| `items`        | `PaginationItem[]`     | Array of pagination items to render        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 277 279
+	| `goToPage`     | `(page: number) => void` | Navigate to specific page (clamped)      |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 278 280
+	| `nextPage`     | `() => void`           | Navigate to next page                      |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 279 281
+	| `previousPage` | `() => void`           | Navigate to previous page                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 280 282
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 281 283
+	### Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 282 284
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 283 285
+	The Pagination component follows WCAG 2.1 AA guidelines:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 284 286
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 285 287
+	- **Landmark**: Uses `<nav>` with `aria-label="Pagination"`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 286 288
+	- **Current page**: Marked with `aria-current="page"` for screen readers
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 287 289
+	- **Disabled states**: Previous/Next buttons disabled at boundaries with `disabled` attribute
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 288 290
+	- **Keyboard support**: All buttons keyboard navigable with Tab, activated with Enter/Space
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 289 291
+	- **Focus indicators**: Clear 2px outline on focus-visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 290 292
+	- **High-contrast mode**: Selected page uses system Highlight color, buttons use ButtonText borders
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 291 293
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 292 294
+	### Truncation Patterns
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 293 295
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 294 296
+	The truncation algorithm adapts to different scenarios:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 295 297
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 296 298
+	#### No Truncation (≤7 pages)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 297 299
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 298 300
+	[1] [2] [3] [4] [5]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 299 301
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 300 302
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 301 303
+	#### Single Ellipsis (near start or end)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 302 304
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 303 305
+	[1] [2] [3] [...] [10]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 304 306
+	[1] [...] [8] [9] [10]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 305 307
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 306 308
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 307 309
+	#### Double Ellipsis (in middle)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 308 310
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 309 311
+	[1] [...] [24] [25] [26] [...] [50]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 310 312
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 311 313
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 312 314
+	The `siblingCount` and `boundaryCount` props control this behavior:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 313 315
+	- **siblingCount**: Number of pages around current page (default: 1)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 314 316
+	- **boundaryCount**: Number of pages at first/last positions (default: 1)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 315 317
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 316 318
+	### Responsive Behavior
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 317 319
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 318 320
+	On mobile viewports (≤480px):
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 319 321
+	- Button padding reduces from 0.75rem to 0.5rem inline
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 320 322
+	- Gap between items reduces from 0.25rem to 0.125rem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 321 323
+	- Minimum button width reduces from 2.5rem to 2rem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 322 324
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 323 325
+	### Theming
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 324 326
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 325 327
+	Pagination uses semantic design tokens for consistent theming:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 326 328
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 327 329
+	| Token                             | Usage                              |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 328 330
+	| --------------------------------- | ---------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 329 331
+	| `--cmp-text-body`                 | Default button text                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 330 332
+	| `--cmp-text-disabled`             | Disabled button text               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 331 333
+	| `--cmp-text-on_action`            | Selected page text                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 332 334
+	| `--cmp-surface-action_hover`      | Button hover background            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 333 335
+	| `--cmp-surface-action`            | Selected page background           |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 334 336
+	| `--cmp-border-default`            | Button borders                     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 335 337
+	| `--cmp-border-strong`             | Button hover border                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 336 338
+	| `--font-size-body-md`             | Button font size                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 337 339
+	| `--font-weight-medium`            | Button font weight                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 338 340
+	| `--spacing-inline-xs`             | Gap between items                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 339 341
+	| `--spacing-squish-block-sm`       | Button padding (vertical)          |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 340 342
+	| `--spacing-squish-inline-sm`      | Button padding (horizontal)        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 341 343
+	| `--border-radius-md`              | Button border radius               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 342 344
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 343 345
+	### Examples
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 344 346
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 345 347
+	#### Basic Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 346 348
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 347 349
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 348 350
+	const [page, setPage] = useState(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 349 351
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 350 352
+	<Pagination page={page} count={10} onChange={setPage} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 351 353
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 352 354
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 353 355
+	#### With Data Table
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 354 356
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 355 357
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 356 358
+	const [page, setPage] = useState(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 357 359
+	const itemsPerPage = 20;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 358 360
+	const totalItems = 247;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 359 361
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 360 362
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 361 363
+	const startIndex = (page - 1) * itemsPerPage + 1;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 362 364
+	const endIndex = Math.min(page * itemsPerPage, totalItems);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 363 365
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 364 366
+	<div>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 365 367
+	  <p>Showing {startIndex}–{endIndex} of {totalItems} items</p>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 366 368
+	  <DataTable data={currentPageData} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 367 369
+	  <Pagination page={page} count={totalPages} onChange={setPage} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 368 370
+	</div>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 369 371
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 370 372
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 371 373
+	#### Custom Density
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 372 374
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 373 375
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 374 376
+	// Show more pages (less truncation)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 375 377
+	<Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 376 378
+	  page={page}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 377 379
+	  count={100}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 378 380
+	  onChange={setPage}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 379 381
+	  siblingCount={2}      // Show 2 pages on each side of current
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 380 382
+	  boundaryCount={2}     // Show 2 pages at start and end
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 381 383
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 382 384
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 383 385
+	// Result: [1] [2] [...] [8] [9] [10] [11] [12] [...] [99] [100]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 384 386
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 385 387
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 386 388
+	#### With First/Last Buttons
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 387 389
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 388 390
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 389 391
+	<Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 390 392
+	  page={page}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 391 393
+	  count={50}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 392 394
+	  onChange={setPage}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 393 395
+	  showFirstLast
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 394 396
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 395 397
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 396 398
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 397 399
+	### Best Practices
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 398 400
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 399 401
+	✅ **Do**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 400 402
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 401 403
+	- Display total item count context (e.g., "Showing 1–20 of 100 items")
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 402 404
+	- Use default siblingCount/boundaryCount for most cases (balanced truncation)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 403 405
+	- Place pagination at the bottom of data tables or content lists
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 404 406
+	- Maintain pagination state in URL query parameters for bookmarkable pages
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 405 407
+	- Use the headless `usePagination` hook for custom pagination UIs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 406 408
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 407 409
+	❌ **Don't**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 408 410
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 409 411
+	- Don't hide the current page behind an ellipsis
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 410 412
+	- Don't use pagination for infinite scroll experiences (different pattern)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 411 413
+	- Don't show pagination for ≤1 page (no navigation needed)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 412 414
+	- Don't use extremely high siblingCount values (defeats truncation purpose)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 413 415
+	- Don't forget to handle loading states when fetching paginated data
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 414 416
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 415 417
+	### Related Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 416 418
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 417 419
+	- **Tabs** - For switching between related content sections
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 418 420
+	- **Breadcrumbs** - For hierarchical site navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 419 421
+	- **Table** - Often paired with pagination for large datasets
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 420 422
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 421 423
+	### Integration Patterns
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 422 424
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 423 425
+	#### Server-Side Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 424 426
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 425 427
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 426 428
+	const [page, setPage] = useState(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 427 429
+	const { data, isLoading } = useFetch(`/api/items?page=${page}&limit=20`);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 428 430
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 429 431
+	<Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 430 432
+	  page={page}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 431 433
+	  count={data?.totalPages ?? 0}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 432 434
+	  onChange={setPage}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 433 435
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 434 436
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 435 437
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 436 438
+	#### Client-Side Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 437 439
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 438 440
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 439 441
+	const [page, setPage] = useState(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 440 442
+	const itemsPerPage = 20;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 441 443
+	const paginatedData = useMemo(() => {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 442 444
+	  const start = (page - 1) * itemsPerPage;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 443 445
+	  return allData.slice(start, start + itemsPerPage);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 444 446
+	}, [page, allData, itemsPerPage]);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 445 447
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 446 448
+	<Pagination
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 447 449
+	  page={page}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 448 450
+	  count={Math.ceil(allData.length / itemsPerPage)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 449 451
+	  onChange={setPage}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 450 452
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 451 453
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 452 454
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 453 455
+	## Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 454 456
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 455 457
+	The Breadcrumbs component provides hierarchical location context and navigation through nested site structures.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 456 458
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 457 459
+	### Features
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 458 460
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 459 461
+	- **Smart overflow** - Collapses middle items into an overflow menu when layout width cannot accommodate the full path or when it exceeds `maxVisibleItems`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 460 462
+	- **First/last preservation** - Always keeps first and last items visible for context and current page clarity
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 461 463
+	- **Semantic landmarks** - Uses `<nav>` with `aria-label="breadcrumb"` and `aria-current="page"` for screen readers
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 462 464
+	- **Flexible item types** - Supports both links (`href`) and buttons for navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 463 465
+	- **High-contrast mode** - Link colors and separators respect `forced-colors` system settings
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 464 466
+	- **Keyboard accessible** - All links/buttons in tab order, overflow menu keyboard navigable
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 465 467
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 466 468
+	### Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 467 469
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 468 470
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 469 471
+	import { Breadcrumbs } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 470 472
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 471 473
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 472 474
+	  { id: '1', label: 'Home', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 473 475
+	  { id: '2', label: 'Products', href: '/products' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 474 476
+	  { id: '3', label: 'Electronics', href: '/products/electronics' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 475 477
+	  { id: '4', label: 'Laptops' }, // Current page (no href)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 476 478
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 477 479
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 478 480
+	<Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 479 481
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 480 482
+	  maxVisibleItems={5}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 481 483
+	  onItemClick={(item) => console.log('Navigating to:', item.label)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 482 484
+	  aria-label="breadcrumb"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 483 485
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 484 486
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 485 487
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 486 488
+	### API
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 487 489
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 488 490
+	#### BreadcrumbsProps
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 489 491
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 490 492
+	| Prop              | Type                                  | Default        | Description                                     |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 491 493
+	| ----------------- | ------------------------------------- | -------------- | ----------------------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 492 494
+	| `items`           | `BreadcrumbItem[]`                    | -              | Array of breadcrumb items (required)            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 493 495
+	| `maxVisibleItems` | `number`                              | `5`            | Max visible items before overflow               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 494 496
+	| `overflowLabel`   | `string`                              | `'...'`        | Label for overflow menu trigger                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 495 497
+	| `onItemClick`     | `(item: BreadcrumbItem) => void`      | -              | Callback when item is clicked                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 496 498
+	| `aria-label`      | `string`                              | `'breadcrumb'` | Accessible label for navigation landmark        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 497 499
+	| `className`       | `string`                              | -              | Additional CSS class                            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 498 500
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 499 501
+	#### BreadcrumbItem
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 500 502
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 501 503
+	| Property   | Type      | Description                                    |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 502 504
+	| ---------- | --------- | ---------------------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 503 505
+	| `id`       | `string`  | Unique identifier (required)                   |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 504 506
+	| `label`    | `string`  | Display text (required)                        |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 505 507
+	| `href`     | `string`  | Optional URL for navigation (anchor link)      |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 506 508
+	| `disabled` | `boolean` | Whether this item is disabled (optional)       |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 507 509
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 508 510
+	### Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 509 511
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 510 512
+	The Breadcrumbs component follows WCAG 2.1 AA and WAI-ARIA Breadcrumb pattern:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 511 513
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 512 514
+	- **Landmark**: Uses `<nav>` with `aria-label="breadcrumb"` to identify the breadcrumb trail
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 513 515
+	- **Current page**: Last item marked with `aria-current="page"` for screen readers
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 514 516
+	- **Ordered list**: Uses `<ol>` for semantic structure representing navigation hierarchy
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 515 517
+	- **Link vs. Button**: Items with `href` render as `<a>` tags, items without render as `<button>` (unless disabled or current)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 516 518
+	- **Disabled state**: Disabled items render as `<span>` with appropriate styling
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 517 519
+	- **Keyboard support**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 518 520
+	  - Links and buttons are keyboard navigable with Tab
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 519 521
+	  - Overflow menu accessible via Enter/Space on trigger
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 520 522
+	  - Overflow items navigable with arrow keys
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 521 523
+	- **Focus indicators**: Clear 2px outline on focus-visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 522 524
+	- **High-contrast mode**: Separators and link colors respect system forced-colors
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 523 525
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 524 526
+	### Overflow Behavior
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 525 527
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 526 528
+	When the breadcrumb path exceeds `maxVisibleItems`, middle items collapse into an overflow menu:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 527 529
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 528 530
+	#### No Overflow (≤ maxVisibleItems)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 529 531
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 530 532
+	Home > Products > Electronics > Computers > Laptops
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 531 533
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 532 534
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 533 535
+	#### With Overflow (> maxVisibleItems)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 534 536
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 535 537
+	Home > ... > Laptops
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 536 538
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 537 539
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 538 540
+	The overflow menu (`...` button) contains all hidden middle items:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 539 541
+	- First item always visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 540 542
+	- Last item (current page) always visible
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 541 543
+	- Middle items hidden in overflow menu
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 542 544
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 543 545
+	**Example**: 7 items with `maxVisibleItems={3}`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 544 546
+	- Visible: [Home] [...] [Current Page]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 545 547
+	- Overflow menu: [Products, Electronics, Computers, Laptops, Gaming]
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 546 548
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 547 549
+	### Responsive Behavior
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 548 550
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 549 551
+	Breadcrumbs wrap naturally on narrow viewports. Consider reducing `maxVisibleItems` on mobile to minimize overflow menu depth:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 550 552
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 551 553
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 552 554
+	const isMobile = useMediaQuery('(max-width: 640px)');
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 553 555
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 554 556
+	<Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 555 557
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 556 558
+	  maxVisibleItems={isMobile ? 2 : 5}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 557 559
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 558 560
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 559 561
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 560 562
+	### Theming
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 561 563
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 562 564
+	Breadcrumbs use semantic design tokens for consistent theming:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 563 565
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 564 566
+	| Token                           | Usage                              |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 565 567
+	| ------------------------------- | ---------------------------------- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 566 568
+	| `--cmp-text-body`               | Default text and current page      |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 567 569
+	| `--cmp-text-action`             | Link text                          |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 568 570
+	| `--cmp-text-action_hover`       | Link hover text                    |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 569 571
+	| `--cmp-text-disabled`           | Disabled item text                 |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 570 572
+	| `--cmp-text-subtle`             | Separator icon color               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 571 573
+	| `--font-size-body-sm`           | Breadcrumb font size               |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 572 574
+	| `--font-weight-regular`         | Default font weight                |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 573 575
+	| `--font-weight-medium`          | Current page font weight           |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 574 576
+	| `--spacing-inline-xs`           | Gap between items                  |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 575 577
+	| `--spacing-squish-block-xs`     | Item padding (vertical)            |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 576 578
+	| `--spacing-squish-inline-xs`    | Item padding (horizontal)          |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 577 579
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 578 580
+	### Examples
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 579 581
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 580 582
+	#### Basic Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 581 583
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 582 584
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 583 585
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 584 586
+	  { id: '1', label: 'Home', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 585 587
+	  { id: '2', label: 'Products', href: '/products' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 586 588
+	  { id: '3', label: 'Laptops' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 587 589
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 588 590
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 589 591
+	<Breadcrumbs items={items} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 590 592
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 591 593
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 592 594
+	#### With Router Integration
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 593 595
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 594 596
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 595 597
+	import { useRouter } from 'next/router';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 596 598
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 597 599
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 598 600
+	  { id: '1', label: 'Home', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 599 601
+	  { id: '2', label: 'Docs', href: '/docs' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 600 602
+	  { id: '3', label: 'Components', href: '/docs/components' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 601 603
+	  { id: '4', label: 'Breadcrumbs' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 602 604
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 603 605
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 604 606
+	<Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 605 607
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 606 608
+	  onItemClick={(item) => {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 607 609
+	    if (item.href) {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 608 610
+	      router.push(item.href);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 609 611
+	    }
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 610 612
+	  }}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 611 613
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 612 614
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 613 615
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 614 616
+	#### With Overflow Menu
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 615 617
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 616 618
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 617 619
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 618 620
+	  { id: '1', label: 'Root', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 619 621
+	  { id: '2', label: 'Products', href: '/products' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 620 622
+	  { id: '3', label: 'Electronics', href: '/products/electronics' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 621 623
+	  { id: '4', label: 'Computers', href: '/products/electronics/computers' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 622 624
+	  { id: '5', label: 'Laptops', href: '/products/electronics/computers/laptops' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 623 625
+	  { id: '6', label: 'Gaming', href: '/products/electronics/computers/laptops/gaming' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 624 626
+	  { id: '7', label: 'High Performance' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 625 627
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 626 628
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 627 629
+	<Breadcrumbs
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 628 630
+	  items={items}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 629 631
+	  maxVisibleItems={3}  // Shows: Root > ... > High Performance
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 630 632
+	/>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 631 633
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 632 634
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 633 635
+	#### With Disabled Items
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 634 636
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 635 637
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 636 638
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 637 639
+	  { id: '1', label: 'Home', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 638 640
+	  { id: '2', label: 'Archive (disabled)', href: '/archive', disabled: true },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 639 641
+	  { id: '3', label: 'Legacy Content' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 640 642
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 641 643
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 642 644
+	<Breadcrumbs items={items} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 643 645
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 644 646
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 645 647
+	#### Internationalized Labels
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 646 648
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 647 649
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 648 650
+	const items = [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 649 651
+	  { id: '1', label: 'Accueil', href: '/' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 650 652
+	  { id: '2', label: 'Produits', href: '/produits' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 651 653
+	  { id: '3', label: 'Électronique', href: '/produits/electronique' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 652 654
+	  { id: '4', label: 'Ordinateurs portables' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 653 655
+	];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 654 656
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 655 657
+	<Breadcrumbs items={items} aria-label="Fil d'Ariane" />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 656 658
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 657 659
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 658 660
+	### Best Practices
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 659 661
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 660 662
+	✅ **Do**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 661 663
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 662 664
+	- Use concise, descriptive labels (avoid truncation when possible)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 663 665
+	- Keep the last item as current page without href (represents current location)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 664 666
+	- Provide an accessible `aria-label` for screen readers
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 665 667
+	- Use consistent label casing (sentence case recommended)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 666 668
+	- Place breadcrumbs near the top of the page, below main navigation
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 667 669
+	- Use overflow menu for paths deeper than 5-7 levels
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 668 670
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 669 671
+	❌ **Don't**:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 670 672
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 671 673
+	- Don't make the current page clickable (no href on last item)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 672 674
+	- Don't use breadcrumbs for single-level navigation (not hierarchical)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 673 675
+	- Don't duplicate primary navigation (breadcrumbs show location, not all options)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 674 676
+	- Don't use breadcrumbs on mobile if space is constrained (consider alternatives)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 675 677
+	- Don't mix breadcrumbs with other navigation patterns in the same space
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 676 678
+	- Don't use extremely long labels (restructure hierarchy if labels are too verbose)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 677 679
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 678 680
+	### Related Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 679 681
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 680 682
+	- **Tabs** - For switching between peer content sections
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 681 683
+	- **Pagination** - For navigating through paginated datasets
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 682 684
+	- **Stepper** - For multi-step workflows with sequential progress
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 683 685
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 684 686
+	### Integration Patterns
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 685 687
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 686 688
+	#### Dynamic Breadcrumbs from Route
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 687 689
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 688 690
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 689 691
+	import { usePathname } from 'next/navigation';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 690 692
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 691 693
+	function useBreadcrumbs() {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 692 694
+	  const pathname = usePathname();
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 693 695
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 694 696
+	  const items = useMemo(() => {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 695 697
+	    const segments = pathname.split('/').filter(Boolean);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 696 698
+	    return segments.map((segment, index) => {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 697 699
+	      const href = '/' + segments.slice(0, index + 1).join('/');
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 698 700
+	      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 699 701
+	      const isLast = index === segments.length - 1;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 700 702
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 701 703
+	      return {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 702 704
+	        id: String(index),
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 703 705
+	        label,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 704 706
+	        href: isLast ? undefined : href,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 705 707
+	      };
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 706 708
+	    });
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 707 709
+	  }, [pathname]);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 708 710
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 709 711
+	  return [{ id: 'home', label: 'Home', href: '/' }, ...items];
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 710 712
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 711 713
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 712 714
+	// Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 713 715
+	const breadcrumbItems = useBreadcrumbs();
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 714 716
+	<Breadcrumbs items={breadcrumbItems} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 715 717
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 716 718
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 717 719
+	#### Schema.org Structured Data
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 718 720
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 719 721
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 720 722
+	import { useJsonLd } from 'next-seo';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 721 723
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 722 724
+	function BreadcrumbsWithSchema({ items }) {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 723 725
+	  useJsonLd({
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 724 726
+	    '@context': 'https://schema.org',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 725 727
+	    '@type': 'BreadcrumbList',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 726 728
+	    itemListElement: items.map((item, index) => ({
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 727 729
+	      '@type': 'ListItem',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 728 730
+	      position: index + 1,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 729 731
+	      name: item.label,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 730 732
+	      item: item.href ? `https://example.com${item.href}` : undefined,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 731 733
+	    })),
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 732 734
+	  });
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 733 735
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 734 736
+	  return <Breadcrumbs items={items} />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 735 737
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 736 738
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 737 739
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 738 740
+	#### With Page Context
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 739 741
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 740 742
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 741 743
+	<header>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 742 744
+	  <nav aria-label="Main">
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 743 745
+	    <Logo />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 744 746
+	    <MainNav />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 745 747
+	  </nav>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 746 748
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 747 749
+	  <nav aria-label="breadcrumb">
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 748 750
+	    <Breadcrumbs items={breadcrumbItems} />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 749 751
+	  </nav>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 750 752
+	</header>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 751 753
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 752 754
+	<main>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 753 755
+	  {/* Page content */}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 754 756
+	</main>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 755 757
+	```

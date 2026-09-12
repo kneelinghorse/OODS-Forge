@@ -1,0 +1,219 @@
+944f4dda5f784e266310978b31f65b3d452e6387 64 64 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	      - name: Check generated documentation (docs:check)
+944f4dda5f784e266310978b31f65b3d452e6387 65 65
+	        run: pnpm -w run docs:check
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 485 485 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789192404
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789192404
+committer-tz -0500
+summary feat(runtime): measure reference apps from the portable bundle
+previous decba77cd1680409f6caf091230e9262bc653e70 .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	        run: pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-196/runtime-ci --workflows --dashboard-objects=Invoice,Usage
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 488 488 1
+	          OODS_RUNTIME_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-196/runtime-ci/runtime-cells.v1.json
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 491 491 1
+	          pnpm exec tsx artifacts/product-reality/sprint-195/m06/verify-runtime.ts artifacts/product-reality/sprint-196/runtime-ci > artifacts/product-reality/sprint-196/runtime-ci/placement-verification.json
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 496 496 32
+	          path: artifacts/product-reality/sprint-196/runtime-ci
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 497 497
+	
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 498 498
+	  release-runtime:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 499 499
+	    name: release-runtime
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 500 500
+	    runs-on: ubuntu-latest
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 501 501
+	    timeout-minutes: 20
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 502 502
+	    container:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 503 503
+	      image: mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 504 504
+	      options: --ipc=host
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 505 505
+	    env:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 506 506
+	      TZ: America/Chicago
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 507 507
+	    steps:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 508 508
+	      - uses: actions/checkout@v4
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 509 509
+	      - uses: pnpm/action-setup@v4
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 510 510
+	        with:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 511 511
+	          version: 9.12.2
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 512 512
+	          run_install: false
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 513 513
+	      - uses: actions/setup-node@v4
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 514 514
+	        with:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 515 515
+	          node-version: '24'
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 516 516
+	          cache: pnpm
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 517 517
+	      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 518 518
+	      - run: pnpm install --frozen-lockfile
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 519 519
+	      - run: pnpm run build:tokens
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 520 520
+	      - run: pnpm run build:packages
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 521 521
+	      - run: pnpm --filter @oods/mcp-server run build
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 522 522
+	      - run: pnpm --filter @oods/mcp-bridge run build
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 523 523
+	      - name: Assemble the source head before the sweep writes measured ledgers
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 524 524
+	        run: |
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 525 525
+	          node scripts/runtime/assemble.mjs --out-dir "$RUNNER_TEMP/release-runtime-out" --work-dir "$RUNNER_TEMP/release-runtime-work" --final
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 526 526
+	          mkdir -p "$RUNNER_TEMP/release-runtime-extracted"
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 527 527
+	          tar -xzf "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz" -C "$RUNNER_TEMP/release-runtime-extracted"
+d1661992de15572e50ca55d12372f0473c4743c7 528 528 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789194723
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789194723
+committer-tz -0500
+summary test(runtime): retain hosted release application proof
+previous 415c7cc02822e64d64e2c8a9696d852d7faa2db7 .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	          mkdir -p artifacts/product-reality/sprint-196/release-ci/archive
+d1661992de15572e50ca55d12372f0473c4743c7 529 529
+	          cp "$RUNNER_TEMP/release-runtime-out/forge-runtime.manifest.json" "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz.sha256" "$RUNNER_TEMP/release-runtime-out/runtime-sbom-lite.json" artifacts/product-reality/sprint-196/release-ci/archive/
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 528 530 13
+	      - name: Generate, build and run the 42 reference-app cells from bundled packages
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 529 531
+	        run: |
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 530 532
+	          pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts artifacts/product-reality/sprint-196/release-ci \
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 531 533
+	            --bundle-dir "$RUNNER_TEMP/release-runtime-extracted" \
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 532 534
+	            --bundle-archive "$RUNNER_TEMP/release-runtime-out/forge-runtime.tar.gz"
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 533 535
+	      - name: Reject missing release cells, failed gates and host artifact differences
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 534 536
+	        env:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 535 537
+	          OODS_RELEASE_REPORT: ${{ github.workspace }}/artifacts/product-reality/sprint-196/release-ci/release-cells.v1.json
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 536 538
+	        run: pnpm --filter @oods/mcp-server exec vitest run test/product-reality/release-runtime.s196.spec.ts --reporter=verbose
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 537 539
+	      - uses: actions/upload-artifact@v4
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 538 540
+	        if: always()
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 539 541
+	        with:
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 540 542
+	          name: release-runtime
+d1661992de15572e50ca55d12372f0473c4743c7 543 543 1
+	          path: artifacts/product-reality/sprint-196/release-ci
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 545 544 1
+	          if-no-files-found: warn
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 974 1022 4
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	    strategy:
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 975 1023
+	      fail-fast: false
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 976 1024
+	      matrix:
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 977 1025
+	        runtime-node: ['24', '20.11.1']
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1009 1057 8
+	      - name: Build portable bridge
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1010 1058
+	        run: pnpm --filter @oods/mcp-bridge run build
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1011 1059
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1012 1060
+	      - name: Verify portable assembly and error contracts
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1013 1061
+	        run: |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1014 1062
+	          node --test scripts/runtime/*.test.mjs packages/mcp-adapter/test-s196-native-errors.js
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1015 1063
+	          pnpm --filter @oods/mcp-server exec vitest run test/contracts/readiness-attestation.s196.spec.ts test/contracts/portable-token-dependencies.s196.spec.ts test/contracts/portable-claims.s196.spec.ts --reporter=verbose
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1016 1064
+	
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 1008 1068 3
+author System Systems
+author-mail <systems@example.com>
+author-time 1789188647
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789188647
+committer-tz -0500
+summary fix: preserve exact closeout paths and expose portable fixture proof
+previous 9a7fa9b100653f753b6a65381365729cf16c72f3 .github/workflows/ci.yml
+filename .github/workflows/ci.yml
+	      - name: Verify portable fixture contracts
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 1009 1069
+	        run: pnpm --filter @oods/mcp-server exec vitest run test/contracts/portable-fixtures.s194.spec.ts --reporter=verbose
+6e66d3f79faf0a3eafe0d1ded91b849ec5e08278 1010 1070
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1040 1088 6
+	      - name: Select runtime Node.js ${{ matrix.runtime-node }}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1041 1089
+	        uses: actions/setup-node@v4
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1042 1090
+	        with:
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1043 1091
+	          node-version: ${{ matrix.runtime-node }}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1044 1092
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1045 1093
+	      - name: Extract outside the checkout and run adapter and bridge E2E
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1059 1107 7
+	          name: portable-runtime-e2e-node-${{ matrix.runtime-node }}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1060 1108
+	          path: |
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1061 1109
+	            ${{ runner.temp }}/portable-runtime-e2e.json
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1062 1110
+	            ${{ runner.temp }}/forge-runtime-out-1/forge-runtime.manifest.json
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1063 1111
+	            ${{ runner.temp }}/forge-runtime-out-1/runtime-sbom-lite.json
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1064 1112
+	            ${{ runner.temp }}/forge-runtime-out-1/forge-runtime.tar.gz.sha256
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1065 1113
+	            ${{ runner.temp }}/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json

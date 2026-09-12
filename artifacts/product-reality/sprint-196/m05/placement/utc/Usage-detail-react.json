@@ -1,0 +1,502 @@
+{
+  "id": "Usage-detail-react",
+  "object": "Usage",
+  "framework": "react",
+  "context": "detail",
+  "brand": "B",
+  "theme": "dark",
+  "source": "artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-react.json",
+  "sourceSha256": "sha256:9de0f2dfc818413448525d1de2e6768ca463f3ce72cf9957f608713912186869",
+  "requestSha256": "sha256:b70c79ded3e58f9e724ff142aa474b57d874e7bb4a7e35b114c3950eb168de55",
+  "request": {
+    "schema": {
+      "version": "2026.02",
+      "screens": [
+        {
+          "id": "screen-detail-13",
+          "component": "Stack",
+          "layout": {
+            "type": "stack",
+            "gapToken": "cluster-default"
+          },
+          "children": [
+            {
+              "id": "detail-header-1",
+              "component": "Stack",
+              "layout": {
+                "type": "inline",
+                "align": "space-between"
+              },
+              "style": {
+                "spacingToken": "inset-default"
+              },
+              "children": [
+                {
+                  "id": "slot-header-2",
+                  "component": "Stack",
+                  "meta": {
+                    "intent": "slot:header",
+                    "label": "header"
+                  },
+                  "children": [
+                    {
+                      "id": "primary-header-21",
+                      "component": "DetailHeader",
+                      "props": {
+                        "field": "meter_name",
+                        "label": "Meter name"
+                      }
+                    },
+                    {
+                      "id": "ve-header-20",
+                      "component": "VizLinePreview",
+                      "props": {
+                        "title": "Example API-call usage",
+                        "description": "Synthetic API-call counts for generated example records."
+                      },
+                      "chart": {
+                        "chartType": "line",
+                        "source": "record-array",
+                        "dataField": "samples",
+                        "encodings": {
+                          "x": {
+                            "field": "timestamp",
+                            "scale": "temporal",
+                            "title": "Recorded at"
+                          },
+                          "y": {
+                            "field": "value",
+                            "title": "API calls"
+                          }
+                        },
+                        "sampleRows": [
+                          {
+                            "timestamp": "2025-06-15T00:00:00Z",
+                            "value": 1200
+                          },
+                          {
+                            "timestamp": "2025-06-20T00:00:00Z",
+                            "value": 1800
+                          },
+                          {
+                            "timestamp": "2025-06-25T00:00:00Z",
+                            "value": 1500
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "type": "stack",
+                    "gapToken": "cluster-default"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "detail-body-10",
+              "component": "Card",
+              "layout": {
+                "type": "sidebar",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-tabs-9",
+                  "component": "Tabs",
+                  "children": [
+                    {
+                      "id": "detail-tab-panel-3",
+                      "component": "Stack",
+                      "layout": {
+                        "type": "stack",
+                        "gapToken": "cluster-default"
+                      },
+                      "props": {
+                        "label": "Details"
+                      },
+                      "children": [
+                        {
+                          "id": "slot-tab-0-4",
+                          "component": "Stack",
+                          "meta": {
+                            "intent": "slot:tab-0",
+                            "label": "tab-0",
+                            "notes": "pattern-group:status-timeline"
+                          },
+                          "props": {
+                            "patternComponent": "StatusTimeline",
+                            "fields": [
+                              "status",
+                              "updated_at"
+                            ]
+                          },
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-tight"
+                          },
+                          "children": [
+                            {
+                              "id": "pg-status-timeline-23",
+                              "component": "Text",
+                              "props": {
+                                "field": "status",
+                                "label": "Status"
+                              }
+                            },
+                            {
+                              "id": "pg-status-timeline-24",
+                              "component": "Text",
+                              "props": {
+                                "field": "updated_at",
+                                "label": "Updated at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-1-6",
+                          "component": "Text",
+                          "meta": {
+                            "intent": "slot:tab-1",
+                            "label": "tab-1",
+                            "confidence": 0.76,
+                            "confidenceLevel": "low"
+                          },
+                          "props": {
+                            "field": "consumed_quantity",
+                            "label": "Consumed quantity"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "props": {
+                    "ariaLabel": "Record details"
+                  }
+                },
+                {
+                  "id": "detail-meta-11",
+                  "component": "Stack",
+                  "layout": {
+                    "type": "stack",
+                    "gapToken": "cluster-tight"
+                  },
+                  "style": {
+                    "spacingToken": "inset-default"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ],
+          "bindings": {
+            "onEdit": "handleEdit",
+            "onDelete": "handleDelete",
+            "onViewTimeline": "handleViewTimeline"
+          }
+        }
+      ],
+      "objectSchema": {
+        "meter_name": {
+          "type": "string",
+          "required": true,
+          "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+          "semanticType": "billing.usage.meter_name"
+        },
+        "included_quantity": {
+          "type": "integer",
+          "required": true,
+          "description": "Quantity included in base plan before overages.",
+          "semanticType": "billing.usage.included_quantity"
+        },
+        "consumed_quantity": {
+          "type": "integer",
+          "required": true,
+          "description": "Actual quantity consumed in the active period.",
+          "semanticType": "billing.usage.consumed_quantity"
+        },
+        "unit_label": {
+          "type": "string",
+          "required": true,
+          "description": "Label for display, defaults to the unit parameter.",
+          "semanticType": "billing.usage.unit_label"
+        },
+        "period_start": {
+          "type": "date",
+          "required": true,
+          "description": "Date the usage accumulation window began.",
+          "semanticType": "billing.usage.period_start"
+        },
+        "period_end": {
+          "type": "date",
+          "required": true,
+          "description": "Date the usage accumulation window ends.",
+          "semanticType": "billing.usage.period_end"
+        },
+        "rollover_strategy": {
+          "type": "string",
+          "required": false,
+          "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+          "semanticType": "billing.usage.rollover_strategy"
+        },
+        "overage_rate_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Cost per additional unit expressed in minor currency units.",
+          "semanticType": "billing.usage.overage_rate_minor"
+        },
+        "projected_overage_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Forecasted overage spend derived from consumption trends.",
+          "semanticType": "billing.usage.projected_overage_minor"
+        },
+        "samples": {
+          "type": "UsageSample[]",
+          "required": false,
+          "description": "Rolling usage measurements for charts or anomaly detection.",
+          "semanticType": "billing.usage.samples"
+        },
+        "created_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp recording when the entity was first created.",
+          "semanticType": "audit.created_at"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the most recent modification, when available.",
+          "semanticType": "audit.updated_at"
+        },
+        "last_event": {
+          "type": "string",
+          "required": true,
+          "description": "Lifecycle event associated with the most recent timestamp mutation.",
+          "semanticType": "audit.event.type"
+        },
+        "last_event_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the lifecycle event captured in last_event.",
+          "semanticType": "audit.event.timestamp"
+        },
+        "usage_id": {
+          "type": "string",
+          "required": true,
+          "description": "Identifier for this usage record.",
+          "semanticType": "billing.usage.id"
+        },
+        "subscription_id": {
+          "type": "string",
+          "required": true,
+          "description": "Subscription the usage belongs to.",
+          "semanticType": "billing.usage.subscription_id"
+        },
+        "meter_id": {
+          "type": "string",
+          "required": true,
+          "description": "Provider specific meter identifier.",
+          "semanticType": "billing.usage.meter_id"
+        },
+        "provider": {
+          "type": "string",
+          "required": true,
+          "description": "Source provider for usage data.",
+          "semanticType": "billing.usage.provider"
+        },
+        "status": {
+          "type": "string",
+          "required": false,
+          "description": "Health of the usage feed (ok, delayed, investigating).",
+          "enum": [
+            "ok",
+            "delayed",
+            "investigating"
+          ],
+          "semanticType": "billing.usage.status"
+        },
+        "trend_percent": {
+          "type": "number",
+          "required": false,
+          "description": "Percent delta compared to previous window.",
+          "semanticType": "billing.usage.trend_percent"
+        },
+        "variance_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Currency impact of usage variance calculated with overage rate.",
+          "semanticType": "billing.usage.variance_minor"
+        },
+        "last_reported_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp of the most recent provider usage payload.",
+          "semanticType": "billing.usage.last_reported_at"
+        },
+        "anomalies": {
+          "type": "UsageAnomaly[]",
+          "required": false,
+          "description": "Detected anomalies with context for investigation.",
+          "semanticType": "billing.usage.anomalies"
+        }
+      }
+    },
+    "framework": "react",
+    "profile": "build",
+    "options": {
+      "theme": "dark",
+      "brand": "B",
+      "typescript": true,
+      "styling": "tokens"
+    }
+  },
+  "result": {
+    "status": "ok",
+    "framework": "react",
+    "artifact": {
+      "schemaVersion": "1.0.0",
+      "framework": "react",
+      "files": [
+        {
+          "path": "src/GeneratedUI.tsx",
+          "contents": "import React from 'react';\nimport { Card, DetailHeader, Stack, StatusTimeline, Tabs, Text, VizLinePreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusTimelineProps = React.ComponentPropsWithoutRef<typeof StatusTimeline>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizLinePreviewProps = React.ComponentPropsWithoutRef<typeof VizLinePreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, svg }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"primary-header-21\" data-oods-component=\"DetailHeader\" label=\"Meter name\">{meterName}</DetailHeader>\n                                <VizLinePreview id=\"ve-header-20\" data-oods-component=\"VizLinePreview\" svg={svg ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"370\\\" height=\\\"210\\\" viewBox=\\\"0 0 370 210\\\"><rect width=\\\"370\\\" height=\\\"210\\\" fill=\\\"#041620\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,35)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h296v138h-296Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,100)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,61)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,23)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,138.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(30,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(59,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(89,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(118,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(148,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(178,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(207,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(237,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(266,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(296,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(29.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(59.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(88.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(118.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(177.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(207.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(236.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(266.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"end\\\" transform=\\\"translate(296,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,100)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,61)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,23)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,141)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,102.66666666666667)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">500</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,64.33333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,25.999999999999996)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">1,500</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"0\\\" y2=\\\"-138\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,69) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,46L148,0L296,23\\\" stroke=\\\"#517FED\\\" stroke-width=\\\"2\\\"/></g><g class=\\\"mark-group role-title\\\"><g transform=\\\"translate(-62.00000000000001,-30)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-text role-title-text\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"title\\\" aria-label=\\\"Title text 'Example API-call usage'\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,19)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"24px\\\" font-weight=\\\"600\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">Example API-call usage</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} description=\"Synthetic API-call counts for generated example records.\" height={200} title=\"Example API-call usage\" width={360} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-cluster-default)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>\n                      <div data-sidebar-main>\n                        <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                          { ...{\"id\":\"detail-tab-panel-3\",\"label\":\"Details\"}, panel: (\n                            <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                              <StatusTimeline id=\"slot-tab-0-4\" data-oods-component=\"StatusTimeline\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                  <Text id=\"pg-status-timeline-23\" data-oods-component=\"Text\" label=\"Status\">{status}</Text>\n                                  <Text id=\"pg-status-timeline-24\" data-oods-component=\"Text\" label=\"Updated at\">{updatedAt}</Text>\n                                </StatusTimeline>\n                              <Text id=\"slot-tab-1-6\" data-oods-component=\"Text\" label=\"Consumed quantity\">{consumedQuantity}</Text>\n                            </Stack>\n                          ) }\n                        ]} />\n                      </div>\n                      <aside data-sidebar-aside>\n                        <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }} />\n                      </aside>\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+          "contentHash": "sha256:e8d71c4ecf881a180034b3a4b9317168678dab5068f7f1a51ef3029570bb7cf5"
+        },
+        {
+          "path": "src/charts/line-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\"><rect width=\"370\" height=\"210\" fill=\"#041620\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(67,35)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h296v138h-296Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"296\" y2=\"0\" stroke=\"#465862\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\"><g transform=\"translate(0.5,138.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(30,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(59,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(89,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(118,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(148,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(178,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(207,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(237,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(266,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(296,0)\" x2=\"0\" y2=\"5\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Jun 15</text><text text-anchor=\"middle\" transform=\"translate(29.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Mon 16</text><text text-anchor=\"middle\" transform=\"translate(59.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Tue 17</text><text text-anchor=\"middle\" transform=\"translate(88.8,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Wed 18</text><text text-anchor=\"middle\" transform=\"translate(118.4,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Thu 19</text><text text-anchor=\"middle\" transform=\"translate(148,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Fri 20</text><text text-anchor=\"middle\" transform=\"translate(177.6,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Sat 21</text><text text-anchor=\"middle\" transform=\"translate(207.2,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Jun 22</text><text text-anchor=\"middle\" transform=\"translate(236.8,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">Mon 23</text><text text-anchor=\"middle\" transform=\"translate(266.40000000000003,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Tue 24</text><text text-anchor=\"end\" transform=\"translate(296,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"0\">Wed 25</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"296\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(148,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">Recorded at</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,100)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,23)\" x2=\"-5\" y2=\"0\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,141)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,102.66666666666667)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">500</text><text text-anchor=\"end\" transform=\"translate(-7,64.33333333333333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,25.999999999999996)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#C8D2DE\" opacity=\"1\">1,500</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,138)\" x2=\"0\" y2=\"-138\" stroke=\"#414C58\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,69) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#DBE6F2\" opacity=\"1\">API calls</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Recorded at: Jun 15, 2025; API calls: 1200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,46L148,0L296,23\" stroke=\"#517FED\" stroke-width=\"2\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-62.00000000000001,-30)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Example API-call usage'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#DBE6F2\" opacity=\"1\">Example API-call usage</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:1f085c96448cf2731dce230ae431d0be0d8ae2d3e0120b6e453f48d91f20b958"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "@oods/component-styles",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/components-react",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "react",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        },
+        {
+          "name": "react-dom",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        }
+      ],
+      "actions": [
+        {
+          "name": "handleDelete",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onDelete"
+            }
+          ]
+        },
+        {
+          "name": "handleEdit",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onEdit"
+            }
+          ]
+        },
+        {
+          "name": "handleViewTimeline",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onViewTimeline"
+            }
+          ]
+        }
+      ],
+      "contentHash": "sha256:e50d0b30c914aaa16e84480928e374665804cd8bf6fe8a5814686993f3731abb"
+    },
+    "code": "import React from 'react';\nimport { Card, DetailHeader, Stack, StatusTimeline, Tabs, Text, VizLinePreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusTimelineProps = React.ComponentPropsWithoutRef<typeof StatusTimeline>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizLinePreviewProps = React.ComponentPropsWithoutRef<typeof VizLinePreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor, svg }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"primary-header-21\" data-oods-component=\"DetailHeader\" label=\"Meter name\">{meterName}</DetailHeader>\n                                <VizLinePreview id=\"ve-header-20\" data-oods-component=\"VizLinePreview\" svg={svg ?? \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"370\\\" height=\\\"210\\\" viewBox=\\\"0 0 370 210\\\"><rect width=\\\"370\\\" height=\\\"210\\\" fill=\\\"#041620\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(67,35)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h296v138h-296Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,100)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,61)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,23)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#465862\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Recorded at' for a utc scale with values from Sunday, 15 June 2025, 12:00:00 AM UTC to Wednesday, 25 June 2025, 12:00:00 AM UTC\\\"><g transform=\\\"translate(0.5,138.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(30,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(59,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(89,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(118,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(148,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(178,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(207,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(237,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(266,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(296,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Jun 15</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(29.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Mon 16</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(59.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Tue 17</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(88.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Wed 18</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(118.4,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Thu 19</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Fri 20</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(177.6,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Sat 21</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(207.2,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Jun 22</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(236.8,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">Mon 23</text><text text-anchor=\\\"middle\\\" transform=\\\"translate(266.40000000000003,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Tue 24</text><text text-anchor=\\\"end\\\" transform=\\\"translate(296,15)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"0\\\">Wed 25</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"296\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(148,30)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">Recorded at</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'API calls' for a linear scale with values from 0 to 1,800\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,100)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,61)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,23)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,141)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,102.66666666666667)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">500</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,64.33333333333333)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">1,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,25.999999999999996)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"#C8D2DE\\\" opacity=\\\"1\\\">1,500</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,138)\\\" x2=\\\"0\\\" y2=\\\"-138\\\" stroke=\\\"#414C58\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-51,69) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">API calls</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-line role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"line mark container\\\"><path aria-label=\\\"Recorded at: Jun 15, 2025; API calls: 1200\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"line mark\\\" d=\\\"M0,46L148,0L296,23\\\" stroke=\\\"#517FED\\\" stroke-width=\\\"2\\\"/></g><g class=\\\"mark-group role-title\\\"><g transform=\\\"translate(-62.00000000000001,-30)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-text role-title-text\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"title\\\" aria-label=\\\"Title text 'Example API-call usage'\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,19)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"24px\\\" font-weight=\\\"600\\\" fill=\\\"#DBE6F2\\\" opacity=\\\"1\\\">Example API-call usage</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\"} description=\"Synthetic API-call counts for generated example records.\" height={200} title=\"Example API-call usage\" width={360} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-cluster-default)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>\n                      <div data-sidebar-main>\n                        <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                          { ...{\"id\":\"detail-tab-panel-3\",\"label\":\"Details\"}, panel: (\n                            <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                              <StatusTimeline id=\"slot-tab-0-4\" data-oods-component=\"StatusTimeline\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                  <Text id=\"pg-status-timeline-23\" data-oods-component=\"Text\" label=\"Status\">{status}</Text>\n                                  <Text id=\"pg-status-timeline-24\" data-oods-component=\"Text\" label=\"Updated at\">{updatedAt}</Text>\n                                </StatusTimeline>\n                              <Text id=\"slot-tab-1-6\" data-oods-component=\"Text\" label=\"Consumed quantity\">{consumedQuantity}</Text>\n                            </Stack>\n                          ) }\n                        ]} />\n                      </div>\n                      <aside data-sidebar-aside>\n                        <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }} />\n                      </aside>\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+    "fileExtension": ".tsx",
+    "imports": [
+      "react",
+      "@oods/components-react",
+      "@oods/component-styles/css"
+    ],
+    "warnings": [],
+    "validationReceipt": {
+      "profile": "build",
+      "defaulted": false,
+      "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+      "axes": {
+        "scope": "generated-artifact",
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "target": {
+          "requested": "react",
+          "resolved": "react",
+          "source": "explicit"
+        }
+      },
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "notChecked": [
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+        "performance-evidence",
+        "certification-evidence"
+      ],
+      "evidence": {
+        "required": [],
+        "provided": [],
+        "missing": [],
+        "mismatched": [],
+        "accepted": [],
+        "notApplicable": [],
+        "artifactContentHash": "sha256:e50d0b30c914aaa16e84480928e374665804cd8bf6fe8a5814686993f3731abb"
+      }
+    },
+    "meta": {
+      "nodeCount": 13,
+      "componentCount": 6
+    }
+  },
+  "beforeArtifactHash": "sha256:cc0ba15b1217736fd009b1a0a7310edae4e2fe98afb88738dc07e5c9d3983beb",
+  "afterArtifactHash": "sha256:e50d0b30c914aaa16e84480928e374665804cd8bf6fe8a5814686993f3731abb",
+  "svgs": [
+    {
+      "path": "src/charts/line-001.svg",
+      "raw": "Usage-detail-react/src/charts/line-001.svg",
+      "beforeHash": "sha256:dc05841ce9bc5133cab0aa3dfb6497c6c22ef306f191e2ebbd162b6222cd5eb5",
+      "afterHash": "sha256:1f085c96448cf2731dce230ae431d0be0d8ae2d3e0120b6e453f48d91f20b958",
+      "changed": true
+    }
+  ]
+}

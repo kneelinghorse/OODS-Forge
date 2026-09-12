@@ -19,6 +19,7 @@ export const canonicalJson: (value: unknown) => string;
 
 export function packFoundationPackages(
   artifactRoot: string,
+  options?: { packageSourceRoot?: string; ignoreScripts?: boolean },
 ): Promise<unknown[]>;
 
 export function runPackedExportProof(options: {

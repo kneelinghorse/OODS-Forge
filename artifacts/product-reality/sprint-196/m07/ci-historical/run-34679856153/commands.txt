@@ -1,0 +1,7 @@
+gh run watch 34679856153 --interval 120 --exit-status
+gh run download 34679856153 --name runtime-cells --dir /tmp/forge-s196-ci-34679856153-runtime
+gh run view 34679856153 --json databaseId,headSha,headBranch,event,status,conclusion,url,jobs
+gh api repos/kneelinghorse/OODS-Forge/actions/runs/34679856153/artifacts
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340989
+gh api repos/kneelinghorse/OODS-Forge/actions/jobs/103516340989/logs
+python3 /tmp/forge-s196-ci-34679856153-final-proof/verify-runtime.py

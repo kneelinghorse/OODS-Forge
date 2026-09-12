@@ -7,7 +7,15 @@ import { deriveRange, deriveMovers, S195_BASE, S195_PUBLIC_RUNTIME_SCOPE } from 
 import { buildNotices, requestHash } from '../../../../scripts/product-reality/s185-reconnect.mjs';
 
 const root = new URL('../../../../', import.meta.url).pathname;
-const read = (file: string) => readFileSync(`${root}/${file}`);
+// These source operands belong to the retained Sprint195 proofs; UTC intentionally
+// changed the live registry and renderer in Sprint196. Do not rewrite old receipts.
+const historicalVizPaths = new Set(['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts']);
+const historicalViz = new Map<string, Buffer>();
+const read = (file: string): Buffer => {
+  if (!historicalVizPaths.has(file)) return readFileSync(`${root}/${file}`);
+  if (!historicalViz.has(file)) historicalViz.set(file, execFileSync('git', ['show', `1d100e20bcc0911031192406625357638adecbe5:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
+  return historicalViz.get(file)!;
+};
 const json = (file: string) => JSON.parse(read(file).toString());
 // These are historical operands used to exercise the verifier, never current-head claims.
 const head = 'c6453c97883feb38dda203628684a7bb9643765d';

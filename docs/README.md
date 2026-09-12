@@ -34,7 +34,10 @@ Learn about the composition system, validation rules, and release workflow.
 
 ## Core Concepts
 
-### 1. Four-Layer Token Architecture
+<!-- forge-claim:token-architecture -->
+### 1. Four-Layer Token Architecture (conceptual)
+
+This diagram illustrates four design roles. It is not a count of implemented token namespaces; the modifier layer is a conceptual role.
 
 ```
 ┌─────────────────────────────────────┐
@@ -48,49 +51,57 @@ Learn about the composition system, validation rules, and release workflow.
 └─────────────────────────────────────┘
 ```
 
-Components consume **only** `--cmp-*` tokens. The other layers resolve in CSS, enabling theming without component changes.
+The illustration recommends component-level aliases. The current build also includes system tokens; component implementations may reference those shared roles directly.
 
 **→ [4-Layer Architecture Details](tokens/4-layer-overview.md)**
 
+<!-- /forge-claim:token-architecture -->
+
 ### 2. Object & Trait Composition
 
-**Traits** are reusable building blocks (like "statusable", "timestamped", "commentable").  
+**Traits** are reusable building blocks (like `Stateful`, `Timestampable` and `Labelled`).
 **Objects** compose multiple traits into complete UI entities (like "Subscription", "Invoice", "User").
 
+<!-- forge-claim:subscription-example -->
 ```yaml
-# Example: Subscription object composes 5 traits
-object: Subscription
+# Canonical objects/core/Subscription.object.yaml composes 6 traits
+object: { name: Subscription }
 traits:
-  - statusable        # Adds status field and status badge UI
-  - timestamped       # Adds created_at, updated_at timestamps
-  - monetary          # Adds amount fields and currency formatting
-  - lifecycle         # Adds state machine transitions
-  - documentable      # Adds attachment support
+  - name: lifecycle/Stateful
+  - name: lifecycle/Cancellable
+  - name: lifecycle/Timestampable
+  - name: financial/Billable
+  - name: lifecycle/Archivable
+  - name: viz/MarkArea
 ```
+
+The core Subscription is the canonical tool identity; the separate domain-pack definition does not replace it.
+<!-- /forge-claim:subscription-example -->
 
 **→ [Authoring Objects Guide](authoring-objects.md)**  
 **→ [Authoring Traits Guide](authoring-traits.md)**
 
 ### 3. Canonical Regions
 
-Every object renders using a consistent set of **regions** that define layout structure:
+<!-- forge-claim:canonical-regions -->
+The view engine uses six canonical regions in this order:
 
-- **header**: Title, primary identifiers
-- **badges**: Status indicators, tags
-- **meta**: Timestamps, secondary info
-- **body**: Primary content
-- **actions**: Buttons, dropdowns
-- **sidebar**: Related info, context
-- **footer**: Secondary actions
-- **timeline**: Activity history
-- **attachments**: Files, media
-- **comments**: Discussions
+- `globalNavigation`
+- `pageHeader`
+- `breadcrumbs`
+- `viewToolbar`
+- `main`
+- `contextPanel`
+
+<!-- /forge-claim:canonical-regions -->
 
 **→ [Region Specification](specs/regions.md)**
 
 ### 4. Context System
 
-The same object component renders differently in different **contexts**:
+<!-- forge-claim:context-inventory -->
+The view engine registers 8 contexts: `list`, `detail`, `form`, `timeline`, `card`, `inline`, `chart`, `dashboard`. Examples of their presentation differences follow:
+<!-- /forge-claim:context-inventory -->
 
 - **List Context**: Compact spacing, dense typography for scannable lists
 - **Detail Context**: Generous spacing, larger type for focused viewing
@@ -205,8 +216,9 @@ OODS Foundry enforces quality through automated checks:
 
 ## Architecture Highlights
 
+<!-- forge-claim:quintet-example -->
 ### Universal Quintet Pattern
-Based on research into canonical data schemas, OODS implements the five universal entities found in 100% of applications:
+The original modeling guide groups these examples into a “Universal Quintet.” This is a design vocabulary, not a measured prevalence claim:
 
 1. **User/Person**: Authentication, authorization, identity
 2. **Product/Item**: The "things" your system manages
@@ -215,6 +227,8 @@ Based on research into canonical data schemas, OODS implements the five universa
 5. **Relationship/Association**: Many-to-many connections
 
 **→ [Universal Quintet Reference](universal-quintet.md)**
+
+<!-- /forge-claim:quintet-example -->
 
 ### MCP Integration (AI Agents)
 OODS includes Model Context Protocol servers that enable AI agents to:

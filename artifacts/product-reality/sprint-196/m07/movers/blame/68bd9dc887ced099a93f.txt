@@ -1,0 +1,55 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 1 1 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-server/src/codegen/target-readiness.ts
+filename packages/mcp-server/src/codegen/target-readiness.ts
+	import { existsSync, readFileSync } from 'node:fs';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 8 8 1
+	import { READINESS_ATTESTATION_PATH, verifyReadinessAttestation } from './readiness-attestation.js';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 260 260 2
+	  const repositoryRoot = options.repositoryRoot ?? DEFAULT_READINESS_REPOSITORY_ROOT;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 261 261
+	  const hasAttestation = existsSync(path.join(repositoryRoot, READINESS_ATTESTATION_PATH));
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 269 269 1
+	      { row, failures: hasAttestation ? [] : resolveReadinessRowReferences(row, options, sourceCache) },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 273 273 1
+	      { row, failures: hasAttestation ? [] : resolveReadinessRowReferences(row, options, sourceCache) },
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 278 278 6
+	    // Recheck the seal and package bytes per generation: an already-running
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 279 279
+	    // portable process must also refuse a subsequently damaged installation.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 280 280
+	    const attestation = hasAttestation
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 281 281
+	      ? verifyReadinessAttestation(repositoryRoot, readinessDocuments, READINESS_EVIDENCE_CLASSES)
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 282 282
+	      : undefined;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 283 283
+	    const invalidAttestation = attestation !== undefined && attestation.status !== 'verified';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 295 295 1
+	      if (baseline && readiness?.emissionEligible === true && referenceFailures.length === 0 && !invalidAttestation) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 302 302 9
+	      const state = invalidAttestation
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 303 303
+	        ? 'attestation-invalid'
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 304 304
+	        : missingDeclarationFile
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 305 305
+	          ? 'declaration-unbuilt'
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 306 306
+	          : referenceFailures.length > 0
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 307 307
+	            ? 'reference-unresolved'
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 308 308
+	            : readiness?.state
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 309 309
+	              ?? baseline?.surfaces?.[framework]?.state
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 310 310
+	              ?? 'unavailable';

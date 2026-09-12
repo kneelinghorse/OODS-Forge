@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s196-m06",
+  "status": "passed",
+  "builderSelfCertified": false,
+  "verifiedAt": "2026-09-12T07:56:08.465076+00:00",
+  "baselineHead": "8fd3d04ddf9af7d17863308ab579e3023ef4f491",
+  "packageRows": 22,
+  "workspaceSummary": {
+    "workspaces": 21,
+    "workspacePrivate": 16,
+    "workspaceWithoutLicenseField": 12,
+    "workspacePublishConfig": 5,
+    "workspaceLicenseFiles": 5,
+    "rootLicenseFiles": 1
+  },
+  "factsPath": "artifacts/product-reality/sprint-196/m06/release-readiness-facts.json",
+  "factsInputs": 60,
+  "factsInputsSha256": "a6c69039f1321c573544bda5c9c6fc85e192de99ff430fcf0762d4a2a82d28b2",
+  "packetGeneratedBlockSha256": "b8f33629315130259b8f76ee13f95c7975b857b4db8d35363046b502dce4e217",
+  "commands": [
+    {
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--freeze-baseline",
+        "8fd3d04ddf9af7d17863308ab579e3023ef4f491"
+      ],
+      "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge",
+      "exitCode": 0,
+      "stdout": "Recorded 22 package shapes at 8fd3d04ddf9af7d17863308ab579e3023ef4f491",
+      "subsequentIndependentCheck": "baseline-check.log"
+    },
+    {
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge",
+      "exitCode": 0,
+      "log": "generator-check.log"
+    },
+    {
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "--strict",
+        "--noEmit",
+        "--skipLibCheck",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "--target",
+        "ES2022",
+        "--esModuleInterop",
+        "scripts/product-reality/s196-release-readiness.ts"
+      ],
+      "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge",
+      "exitCode": 0,
+      "log": "generator-typecheck-strict.log"
+    },
+    {
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "test/product-reality/release-readiness.s196.spec.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=../../artifacts/product-reality/sprint-196/m06/generator-tests.json"
+      ],
+      "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge/packages/mcp-server",
+      "exitCode": 0,
+      "log": "generator-tests.log",
+      "json": "generator-tests.json"
+    }
+  ],
+  "tests": {
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+  },
+  "proofScope": "Historical retained CI evidence, predating the s196-m05 UTC implementation. These archives are not the current UTC runtime; current package metadata and recorded bundle identities are separate observations.",
+  "portableCells": [
+    {
+      "runId": 34677270788,
+      "jobId": 103509303160,
+      "nodeVersion": "v20.11.1",
+      "sourceCommit": "415c7cc02822e64d64e2c8a9696d852d7faa2db7",
+      "executedMergeCommit": "405315b16b109aab8ff4e87f9389888c59d43668",
+      "archiveSha256": "1d656011682bcfd3584ea7aee1cc9346e575c19e67f6a478c22870220a3c6264",
+      "pass": 17,
+      "typed": 2
+    },
+    {
+      "runId": 34677270788,
+      "jobId": 103509303157,
+      "nodeVersion": "v24.20.0",
+      "sourceCommit": "415c7cc02822e64d64e2c8a9696d852d7faa2db7",
+      "executedMergeCommit": "405315b16b109aab8ff4e87f9389888c59d43668",
+      "archiveSha256": "1d656011682bcfd3584ea7aee1cc9346e575c19e67f6a478c22870220a3c6264",
+      "pass": 17,
+      "typed": 2
+    }
+  ],
+  "release": {
+    "runId": 34679856153,
+    "jobId": 103516340942,
+    "sourceCommit": "944f4dda5f784e266310978b31f65b3d452e6387",
+    "executedMergeCommit": "d8b6b052d2a1ac896279005ba62b9384b9f22c01",
+    "archive": {
+      "byteSize": 29804565,
+      "file": "forge-runtime.tar.gz",
+      "sha256": "c7a5d97c12fc24d5f57ee8b27be24a023a92deaaa0f9a193d16b740d4216f922"
+    },
+    "cells": {
+      "runId": "23e4b83a-e05f-46ea-8678-f4d1e53ba18a",
+      "cells": 42,
+      "pass": 42,
+      "typedGap": 0,
+      "fail": 0
+    }
+  },
+  "limitations": [
+    "No current UTC bundle is claimed from these historical CI records.",
+    "Original CI archive binaries were not uploaded; raw manifest, SBOM, sidecar, hosted identity and execution receipts are retained.",
+    "This generator checks package facts and retained proof metadata; it does not assert publication absence from package scripts, decide licensing or execute a fresh runtime sweep.",
+    "Only focused generator tests and strict typecheck ran; full suites remain m07 work."
+  ],
+  "developmentDiagnostics": "generator-development.json"
+}

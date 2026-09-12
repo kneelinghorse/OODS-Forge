@@ -10,6 +10,9 @@ import { buildNotices, requestHash } from '../../../../scripts/product-reality/s
 const root = new URL('../../../../', import.meta.url).pathname;
 const read = (file: string) => JSON.parse(readFileSync(`${root}/${file}`, 'utf8'));
 const measured = execFileSync('git', ['rev-parse', '3444ae4d'], { cwd: root, encoding: 'utf8' }).trim();
+// s196 supersedes the five historical portable limits with two typed dependencies.
+// Keep the Sprint194 verifier bound to its recorded ledger and frozen receipts.
+const historicalTools = () => JSON.parse(execFileSync('git', ['show', `${measured}:packages/mcp-server/registry/tool-capability-ledger.v1.json`], { cwd: root, encoding: 'utf8' }));
 const options = { sprintId: 'sprint-194', missionId: 's194-m07', base: S194_BASE };
 const range = deriveRange(S194_BASE, measured, root, S194_PUBLIC_RUNTIME_SCOPE);
 
@@ -29,7 +32,7 @@ describe('Sprint 194 tool-truth closeout', () => {
   });
   for (const verify of [verifySprint194ToolOutcomes, auditSprint194ToolOutcomes]) {
     it(`${verify.name} refuses to promote source coverage or documented limits into successful portable execution`, () => {
-      const tools = read('packages/mcp-server/registry/tool-capability-ledger.v1.json');
+      const tools = historicalTools();
       const portable = read('artifacts/product-reality/sprint-194/m06/portable-e2e.json');
       expect(verify({ tools, portable })).toEqual({ advertised: 19, calls: 28, pass: 14, documentedLimits: 5 });
       const promoted = structuredClone(portable); promoted.calls.outcomes['brand.apply'].outcome = 'pass';
@@ -46,7 +49,7 @@ describe('Sprint 194 tool-truth closeout', () => {
   it('prepares Sprint195 notices with every retirement and portable carry without sending', () => {
     const plan = buildNotices(deriveMovers(measured, { s194: range }, root, options), root);
     expect(plan).toMatchObject({ deliverySprint: 'sprint-195', sent: false, sendsExecuted: 0, targets: ['cmos-dashboard', 'forge-demos', 'aquex-mcp'] });
-    const tools = read('packages/mcp-server/registry/tool-capability-ledger.v1.json');
+    const tools = historicalTools();
     for (const notice of plan.notices) {
       expect(notice.requestSha256).toBe(requestHash(notice.request));
       for (const row of tools.retired) expect(notice.request.body).toContain(row.name);

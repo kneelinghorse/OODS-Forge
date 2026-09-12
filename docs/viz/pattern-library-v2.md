@@ -77,10 +77,10 @@ Pass the full identity to `viz.render`, for example `{ "pattern": "pattern:viz:s
 | `pattern:viz:diverging-bar` | light / B | `4ab13276ec38430a04fd176bb2e4c205630b954b2dfd7c3633dccb958fc32b06` | certified | true | pass / unchecked / pass |
 | `pattern:viz:diverging-bar` | dark / A | `c9b4b12b102f4a60c21bf1a5d2d24b96cfeae0e042852888f705047d3fbbfb42` | certified | true | pass / unchecked / pass |
 | `pattern:viz:diverging-bar` | dark / B | `1d7d9be17758462d5f47dd4e2892139a6a108203e39d830cb40b649107bffd69` | certified | true | pass / unchecked / pass |
-| `pattern:viz:running-total-area` | light / A | `e87db7e6a6f09dd69f380efb1db4c527ff28b075029027c5b28a59d34618116c` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | light / B | `8a6f07e2b50fee3893d83cee6f5dfa779b78053b0fa69b44eaceb586ac013775` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | dark / A | `986b9378b1933cfd9e8b58f3cdfaf8a57f5a6609c36bacdca32960db9b39421b` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | dark / B | `c75c01916e91145f52cbed012095b3e549f95cc3f6c7148c51b6ade720b8d4f0` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | light / A | `c4a98e646b50a81bb548494a0b83a26271b115854091c12083c7472fd966b84f` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | light / B | `0a7ad7cfc42808b8553da72848da82b0aa568178f48932a33574ace2cb43e638` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | dark / A | `de14fbd664785af212257c982c6aa9b9e92a9dda10cb83ac72c37e15d3503200` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | dark / B | `256ef73327cd7dd2d299f6fcaa302aee00ca0438a5b0b670c6a91f8220f4f6b9` | certified | true | pass / pass / pass |
 | `pattern:viz:simple-bar` | light / A | `a5e4ce82840e2963e00b8c014e81becddaa579f8dce0b5cf795433a1157bec7d` | certified | true | pass / pass / pass |
 | `pattern:viz:simple-bar` | light / B | `63823713921492439ea444ff041667db66e140de43e4880200db18fd771a78e2` | certified | true | pass / pass / pass |
 | `pattern:viz:simple-bar` | dark / A | `b24c864165c30a5347d6d1c9c17d80f3430678252f406e6c62348ac3808ff4a5` | certified | true | pass / pass / pass |

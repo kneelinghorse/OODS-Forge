@@ -1,0 +1,31 @@
+{
+  "mission": "s196-m05",
+  "scope": "Independent temporal golden-migration receipt verification",
+  "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/viz-golden-migration.s196.spec.ts --reporter=verbose",
+  "result": "6 passed in one file; no skips",
+  "qualificationMode": "precommit working tree; test reads tracked afterbytes from recorded qualificationHead once present",
+  "source": {
+    "path": "packages/mcp-server/test/product-reality/viz-golden-migration.s196.spec.ts",
+    "sha256": "0294ff7286d4a07008ada2e787ed0b44d1b5e427ad589d4c3361d5402f8efab3"
+  },
+  "log": {
+    "path": "golden-migration-tests.log",
+    "sha256": "def888e19c4ff32e62a531d782aff184b9d8131351419792c79feedd4208b36d"
+  },
+  "verified": {
+    "baselineTrackedFiles": 1140,
+    "historicalMatrices": 32,
+    "changedGoldenFiles": 4,
+    "movedSnapshotEntries": 5,
+    "matrixRows": 1050,
+    "currentEpochMovedRows": 28,
+    "currentChartRows": 52,
+    "currentDashboards": 4,
+    "visualizationScopes": 78,
+    "patternCells": 84
+  },
+  "reviewFindings": [
+    "Producer emitted a nonexistent /dashboards/0 pointer for singular historical dashboard objects; root corrected it to /dashboard, and exhaustive pointer resolution passes.",
+    "s195/m05 placement metadata predates the s195/m06 expansion; current metadata is compared to the immediate pre-UTC944f4dda baseline, while historical scope pixels and dispositions remain compared to s195/m05."
+  ]
+}

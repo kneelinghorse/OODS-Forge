@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s196-m05",
+  "status": "passed",
+  "verifiedAt": "2026-09-12T07:36:20.758171+00:00",
+  "runId": "347c1d6a-0b65-4c1f-9575-a783cdfc244a",
+  "sourceHead": "944f4dda5f784e266310978b31f65b3d452e6387",
+  "dirty": true,
+  "sourceProvenance": "Development proof at the recorded head with uncommitted UTC implementation. Retained source, probe, and registry input bytes identify the implementation actually exercised; this is not a clean-commit or hosted-run proof.",
+  "execution": {
+    "command": [
+      "/opt/homebrew/Cellar/node/24.6.0/bin/node",
+      "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge/scripts/product-reality/s196-temporal-bite.mjs",
+      "--execute"
+    ],
+    "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge",
+    "startedAt": "2026-09-12T07:30:19.677Z",
+    "completedAt": "2026-09-12T07:30:36.976Z",
+    "exitCode": 0,
+    "stdout": "driver.stdout.log",
+    "stderr": "driver.stderr.log",
+    "childCommands": "bite.json#/commands"
+  },
+  "population": {
+    "line": 6,
+    "area": 6,
+    "pattern:viz:running-total-area": 4,
+    "total": 16,
+    "identities": [
+      "line/light/A",
+      "line/dark/A",
+      "line/hc/A",
+      "line/light/B",
+      "line/dark/B",
+      "line/hc/B",
+      "area/light/A",
+      "area/dark/A",
+      "area/hc/A",
+      "area/light/B",
+      "area/dark/B",
+      "area/hc/B",
+      "running-total-area/light/A",
+      "running-total-area/light/B",
+      "running-total-area/dark/A",
+      "running-total-area/dark/B"
+    ]
+  },
+  "primarySvg": {
+    "baselineEqual": 16,
+    "mutatedEqual": 0,
+    "mutatedDifferent": 16,
+    "mutatedAssertionExitCode": 1,
+    "restoredEqual": 16,
+    "restoredMatchCurrentRegistry": 16,
+    "comparisonUsesActualRetainedBytes": true
+  },
+  "echarts": {
+    "baselineOptionsEqual": 16,
+    "restoredOptionsEqual": 16,
+    "optionsUseUTC": {
+      "baseline": true,
+      "mutated": false,
+      "restored": true
+    },
+    "rendered": 0,
+    "typedLimitation": {
+      "name": "EChartsRenderError",
+      "code": "ECHARTS_UNSUPPORTED_OPTION",
+      "message": "Unsupported ECharts SSR series type: \"line\"."
+    },
+    "scope": "All 16 actual options were compared. The shipped SSR renderer rejects these line-series options before worker creation; no ECharts SVG parity is claimed. Exact typed error receipts are retained for all 96 attempted secondary renders."
+  },
+  "restoration": {
+    "sourceBytesAndModesRestored": true,
+    "wholeDist": {
+      "algorithm": "sha256:path-type-mode-size-content-v1",
+      "sha256": "cb1595d82977ede2b5500420ae94629b477b17d3ad2d381dffc3ab932f3b67e7",
+      "entryCount": 6
+    },
+    "matchesBaselineWholeDist": true,
+    "registryAndOperandInputsUnchanged": true
+  },
+  "tests": {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "test/product-reality/temporal-bite.s196.spec.ts",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile.json=../../artifacts/product-reality/sprint-196/m05/timezone-bite/contract-tests.json"
+    ],
+    "cwd": "/Users/systemsystems/.codex/worktrees/s196/OODS-Forge/packages/mcp-server",
+    "exitCode": 0,
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "json": "contract-tests.json",
+    "log": "contract-tests.log",
+    "scope": "Focused receipt contracts only; full suites remain reserved for m07."
+  },
+  "earlierDiagnostic": {
+    "path": "../timezone-preliminary",
+    "failure": "Initial comparison exposed a probe bookkeeping bug: AJV default injection changed the request object after the original caller request was written. The original captures and failed compare logs remain retained. The probe now preserves caller and admitted requests separately. Separate admitted captures passed 16/16 before the physical bite; the physical bite and its six receipt contracts passed on their first runs.",
+    "failedLog": "../timezone-preliminary/compare.stderr.log",
+    "correctedComparison": "../timezone-preliminary/comparison-admitted.json"
+  }
+}

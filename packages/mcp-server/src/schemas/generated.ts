@@ -3841,6 +3841,9 @@ export type HealthInput = HealthInputSchema.HealthInput;
 // Source: health.output.json
 export namespace HealthOutputSchema {
   export interface HealthOutput {
+    /**
+     * Runtime, portable release, tool and visualization evidence summaries. Release identifies the measured bundle archive and 42 reference-application cells with artifact parity to the host; unavailable ledgers are null.
+     */
     productReality: {
       /**
        * Source-test tier census over the registered tools. Imports are not runtime certification; null when the ledger is missing or invalid.
@@ -3876,6 +3879,31 @@ export namespace HealthOutputSchema {
         coreCells: number;
         coreSurfaceComplete: number;
         typedGaps: number;
+      } | null;
+      /**
+       * Measured extracted-bundle reference applications, with exact generated-artifact equality to the host and the pinned runtime gates. The bundle head and archive hash identify the executed artifact; null when the ledger is missing or invalid.
+       */
+      release: {
+        bundleHead: string;
+        archiveSha256: string;
+        /**
+         * @minItems 3
+         * @maxItems 3
+         */
+        apps: [
+          'Organization' | 'Subscription' | 'User',
+          'Organization' | 'Subscription' | 'User',
+          'Organization' | 'Subscription' | 'User'
+        ];
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        frameworks: ['react' | 'vue', 'react' | 'vue'];
+        cells: 42;
+        pass: number;
+        typedGap: number;
+        fail: 0;
       } | null;
     };
     status: 'ok' | 'degraded';

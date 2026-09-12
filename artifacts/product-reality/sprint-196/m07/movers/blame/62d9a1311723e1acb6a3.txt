@@ -1,0 +1,542 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/spatial-container.md
+filename docs/history/components/spatial-container.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 1 3 17
+author System Systems
+author-mail <systems@example.com>
+author-time 1764396798
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764396798
+committer-tz -0600
+summary feat: introduce SpatialContainer component for geographic visualizations
+filename docs/components/spatial-container.md
+	# SpatialContainer
+ff2b02e500c90095b87281b9c116fd1c5413ed91 2 4
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 3 5
+	Root container component for spatial/geographic visualizations that manages projection state, layer ordering, and accessibility context.
+ff2b02e500c90095b87281b9c116fd1c5413ed91 4 6
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 5 7
+	## Overview
+ff2b02e500c90095b87281b9c116fd1c5413ed91 6 8
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 7 9
+	`SpatialContainer` is the foundational component for all spatial visualizations in OODS Foundry. It provides:
+ff2b02e500c90095b87281b9c116fd1c5413ed91 8 10
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 9 11
+	- **Projection Management**: Handles geographic coordinate transformations using d3-geo
+ff2b02e500c90095b87281b9c116fd1c5413ed91 10 12
+	- **Layer Ordering**: Manages z-index ordering for multiple visualization layers
+ff2b02e500c90095b87281b9c116fd1c5413ed91 11 13
+	- **Accessibility Context**: Provides ARIA attributes, keyboard navigation, and table fallbacks
+ff2b02e500c90095b87281b9c116fd1c5413ed91 12 14
+	- **State Management**: Supplies `SpatialContext` to child components
+ff2b02e500c90095b87281b9c116fd1c5413ed91 13 15
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 14 16
+	## Props
+ff2b02e500c90095b87281b9c116fd1c5413ed91 15 17
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 16 18
+	| Prop | Type | Required | Description |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 17 19
+	|------|------|----------|-------------|
+30801594d1bfd1d810bda23107bb23fd6d52243f 18 20 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1764398642
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764398642
+committer-tz -0600
+summary feat: update SpatialContainer component for enhanced spatial visualizations
+previous ff2b02e500c90095b87281b9c116fd1c5413ed91 docs/components/spatial-container.md
+filename docs/components/spatial-container.md
+	| `spec` | `SpatialSpec` | Yes | Spatial visualization specification |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 19 21 9
+	| `geoData` | `FeatureCollection` | Yes | GeoJSON feature collection |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 20 22
+	| `data` | `DataRecord[]` | No | Tabular data to join with geo features |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 21 23
+	| `width` | `number` | Yes | Container width in pixels |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 22 24
+	| `height` | `number` | Yes | Container height in pixels |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 23 25
+	| `projection` | `ProjectionType` | No | Projection type override |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 24 26
+	| `projectionConfig` | `ProjectionConfig` | No | Projection configuration override |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 25 27
+	| `layers` | `SpatialLayer[]` | No | Layer configurations override |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 26 28
+	| `a11y` | `A11yConfig` | Yes | Accessibility configuration |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 27 29
+	| `onFeatureClick` | `(feature, datum) => void` | No | Feature click handler |
+30801594d1bfd1d810bda23107bb23fd6d52243f 28 30 1
+	| `onFeatureHover` | `(feature, datum) => void` | No | Feature hover handler (passes `null` when focus clears) |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 29 31 7
+	| `children` | `ReactNode` | No | Child components to render |
+ff2b02e500c90095b87281b9c116fd1c5413ed91 30 32
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 31 33
+	### A11y Config
+ff2b02e500c90095b87281b9c116fd1c5413ed91 32 34
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 33 35
+	```typescript
+ff2b02e500c90095b87281b9c116fd1c5413ed91 34 36
+	interface A11yConfig {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 35 37
+	  description: string;
+30801594d1bfd1d810bda23107bb23fd6d52243f 36 38 1
+	  ariaLabel?: string;
+ff2b02e500c90095b87281b9c116fd1c5413ed91 36 39 3
+	  tableFallback?: {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 37 40
+	    enabled: boolean;
+ff2b02e500c90095b87281b9c116fd1c5413ed91 38 41
+	    caption: string;
+30801594d1bfd1d810bda23107bb23fd6d52243f 40 42 1
+	    columns?: string[];
+ff2b02e500c90095b87281b9c116fd1c5413ed91 39 43 14
+	  };
+ff2b02e500c90095b87281b9c116fd1c5413ed91 40 44
+	  narrative?: {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 41 45
+	    summary: string;
+ff2b02e500c90095b87281b9c116fd1c5413ed91 42 46
+	    keyFindings: string[];
+ff2b02e500c90095b87281b9c116fd1c5413ed91 43 47
+	  };
+ff2b02e500c90095b87281b9c116fd1c5413ed91 44 48
+	}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 45 49
+	```
+ff2b02e500c90095b87281b9c116fd1c5413ed91 46 50
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 47 51
+	## Usage
+ff2b02e500c90095b87281b9c116fd1c5413ed91 48 52
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 49 53
+	### Basic Example
+ff2b02e500c90095b87281b9c116fd1c5413ed91 50 54
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 51 55
+	```tsx
+ff2b02e500c90095b87281b9c116fd1c5413ed91 52 56
+	import { SpatialContainer } from '@/components/viz/spatial';
+30801594d1bfd1d810bda23107bb23fd6d52243f 55 57 1
+	import type { SpatialSpec } from '@/types/viz/spatial';
+ff2b02e500c90095b87281b9c116fd1c5413ed91 54 58 2
+	import type { FeatureCollection } from 'geojson';
+ff2b02e500c90095b87281b9c116fd1c5413ed91 55 59
+	
+30801594d1bfd1d810bda23107bb23fd6d52243f 58 60 2
+	const spec: SpatialSpec = {
+30801594d1bfd1d810bda23107bb23fd6d52243f 59 61
+	  type: 'spatial',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 59 62 2
+	  name: 'My Map',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 60 63
+	  data: { values: [] },
+30801594d1bfd1d810bda23107bb23fd6d52243f 62 64 7
+	  projection: { type: 'mercator' },
+30801594d1bfd1d810bda23107bb23fd6d52243f 63 65
+	  layers: [
+30801594d1bfd1d810bda23107bb23fd6d52243f 64 66
+	    {
+30801594d1bfd1d810bda23107bb23fd6d52243f 65 67
+	      type: 'regionFill',
+30801594d1bfd1d810bda23107bb23fd6d52243f 66 68
+	      encoding: { color: { field: 'value' } },
+30801594d1bfd1d810bda23107bb23fd6d52243f 67 69
+	    },
+30801594d1bfd1d810bda23107bb23fd6d52243f 68 70
+	  ],
+ff2b02e500c90095b87281b9c116fd1c5413ed91 63 71 56
+	  a11y: {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 64 72
+	    description: 'A map showing geographic data',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 65 73
+	    ariaLabel: 'My Map',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 66 74
+	  },
+ff2b02e500c90095b87281b9c116fd1c5413ed91 67 75
+	};
+ff2b02e500c90095b87281b9c116fd1c5413ed91 68 76
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 69 77
+	const geoData: FeatureCollection = {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 70 78
+	  type: 'FeatureCollection',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 71 79
+	  features: [/* ... */],
+ff2b02e500c90095b87281b9c116fd1c5413ed91 72 80
+	};
+ff2b02e500c90095b87281b9c116fd1c5413ed91 73 81
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 74 82
+	<SpatialContainer
+ff2b02e500c90095b87281b9c116fd1c5413ed91 75 83
+	  spec={spec}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 76 84
+	  geoData={geoData}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 77 85
+	  width={800}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 78 86
+	  height={600}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 79 87
+	  a11y={{ description: 'A map showing geographic data' }}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 80 88
+	>
+ff2b02e500c90095b87281b9c116fd1c5413ed91 81 89
+	  {/* Child components that use SpatialContext */}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 82 90
+	</SpatialContainer>
+ff2b02e500c90095b87281b9c116fd1c5413ed91 83 91
+	```
+ff2b02e500c90095b87281b9c116fd1c5413ed91 84 92
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 85 93
+	### With Projection Override
+ff2b02e500c90095b87281b9c116fd1c5413ed91 86 94
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 87 95
+	```tsx
+ff2b02e500c90095b87281b9c116fd1c5413ed91 88 96
+	<SpatialContainer
+ff2b02e500c90095b87281b9c116fd1c5413ed91 89 97
+	  spec={spec}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 90 98
+	  geoData={geoData}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 91 99
+	  width={800}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 92 100
+	  height={600}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 93 101
+	  projection="albersUsa"
+ff2b02e500c90095b87281b9c116fd1c5413ed91 94 102
+	  projectionConfig={{
+ff2b02e500c90095b87281b9c116fd1c5413ed91 95 103
+	    type: 'albersUsa',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 96 104
+	    scale: 1000,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 97 105
+	  }}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 98 106
+	  a11y={{ description: 'US map with Albers USA projection' }}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 99 107
+	/>
+ff2b02e500c90095b87281b9c116fd1c5413ed91 100 108
+	```
+ff2b02e500c90095b87281b9c116fd1c5413ed91 101 109
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 102 110
+	### With Table Fallback
+ff2b02e500c90095b87281b9c116fd1c5413ed91 103 111
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 104 112
+	```tsx
+ff2b02e500c90095b87281b9c116fd1c5413ed91 105 113
+	<SpatialContainer
+ff2b02e500c90095b87281b9c116fd1c5413ed91 106 114
+	  spec={spec}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 107 115
+	  geoData={geoData}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 108 116
+	  width={800}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 109 117
+	  height={600}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 110 118
+	  data={[
+ff2b02e500c90095b87281b9c116fd1c5413ed91 111 119
+	    { state: 'CA', value: 100 },
+ff2b02e500c90095b87281b9c116fd1c5413ed91 112 120
+	    { state: 'TX', value: 200 },
+ff2b02e500c90095b87281b9c116fd1c5413ed91 113 121
+	  ]}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 114 122
+	  a11y={{
+ff2b02e500c90095b87281b9c116fd1c5413ed91 115 123
+	    description: 'Map with accessible table fallback',
+ff2b02e500c90095b87281b9c116fd1c5413ed91 116 124
+	    tableFallback: {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 117 125
+	      enabled: true,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 118 126
+	      caption: 'State Data',
+30801594d1bfd1d810bda23107bb23fd6d52243f 125 127 1
+	      columns: ['state', 'value'],
+ff2b02e500c90095b87281b9c116fd1c5413ed91 119 128 38
+	    },
+ff2b02e500c90095b87281b9c116fd1c5413ed91 120 129
+	  }}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 121 130
+	/>
+ff2b02e500c90095b87281b9c116fd1c5413ed91 122 131
+	```
+ff2b02e500c90095b87281b9c116fd1c5413ed91 123 132
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 124 133
+	## Context Value
+ff2b02e500c90095b87281b9c116fd1c5413ed91 125 134
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 126 135
+	Child components can access spatial context using the `useSpatialContext` hook:
+ff2b02e500c90095b87281b9c116fd1c5413ed91 127 136
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 128 137
+	```tsx
+ff2b02e500c90095b87281b9c116fd1c5413ed91 129 138
+	import { useSpatialContext } from '@/components/viz/spatial';
+ff2b02e500c90095b87281b9c116fd1c5413ed91 130 139
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 131 140
+	function MyMapLayer() {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 132 141
+	  const {
+ff2b02e500c90095b87281b9c116fd1c5413ed91 133 142
+	    projection,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 134 143
+	    dimensions,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 135 144
+	    layers,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 136 145
+	    a11y,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 137 146
+	    features,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 138 147
+	    joinedData,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 139 148
+	    handleFeatureClick,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 140 149
+	    handleFeatureHover,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 141 150
+	    hoveredFeature,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 142 151
+	    selectedFeature,
+ff2b02e500c90095b87281b9c116fd1c5413ed91 143 152
+	  } = useSpatialContext();
+ff2b02e500c90095b87281b9c116fd1c5413ed91 144 153
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 145 154
+	  // Use context values...
+ff2b02e500c90095b87281b9c116fd1c5413ed91 146 155
+	}
+ff2b02e500c90095b87281b9c116fd1c5413ed91 147 156
+	```
+ff2b02e500c90095b87281b9c116fd1c5413ed91 148 157
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 149 158
+	### Context Properties
+ff2b02e500c90095b87281b9c116fd1c5413ed91 150 159
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 151 160
+	- `projection`: Current projection configuration
+ff2b02e500c90095b87281b9c116fd1c5413ed91 152 161
+	- `dimensions`: Container dimensions { width, height }
+ff2b02e500c90095b87281b9c116fd1c5413ed91 153 162
+	- `layers`: Ordered layer configurations
+ff2b02e500c90095b87281b9c116fd1c5413ed91 154 163
+	- `a11y`: Accessibility configuration
+ff2b02e500c90095b87281b9c116fd1c5413ed91 155 164
+	- `features`: GeoJSON features
+ff2b02e500c90095b87281b9c116fd1c5413ed91 156 165
+	- `joinedData`: Map of feature ID to joined data record
+30801594d1bfd1d810bda23107bb23fd6d52243f 164 166 2
+	- `project`: Projection function mapping `[lon, lat]` to screen coordinates
+30801594d1bfd1d810bda23107bb23fd6d52243f 165 167
+	- `bounds`: Geographic bounds [[minLon, minLat], [maxLon, maxLat]]
+ff2b02e500c90095b87281b9c116fd1c5413ed91 157 168 16
+	- `handleFeatureClick`: Function to trigger feature click
+ff2b02e500c90095b87281b9c116fd1c5413ed91 158 169
+	- `handleFeatureHover`: Function to trigger feature hover
+ff2b02e500c90095b87281b9c116fd1c5413ed91 159 170
+	- `hoveredFeature`: ID of currently hovered feature
+ff2b02e500c90095b87281b9c116fd1c5413ed91 160 171
+	- `selectedFeature`: ID of currently selected feature
+ff2b02e500c90095b87281b9c116fd1c5413ed91 161 172
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 162 173
+	## Accessibility Features
+ff2b02e500c90095b87281b9c116fd1c5413ed91 163 174
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 164 175
+	### ARIA Attributes
+ff2b02e500c90095b87281b9c116fd1c5413ed91 165 176
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 166 177
+	- `role="application"`: Indicates interactive map component
+ff2b02e500c90095b87281b9c116fd1c5413ed91 167 178
+	- `aria-label`: Descriptive label for the map
+ff2b02e500c90095b87281b9c116fd1c5413ed91 168 179
+	- `aria-describedby`: References description element
+ff2b02e500c90095b87281b9c116fd1c5413ed91 169 180
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 170 181
+	### Keyboard Navigation
+ff2b02e500c90095b87281b9c116fd1c5413ed91 171 182
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 172 183
+	- **Tab**: Focus the map container
+30801594d1bfd1d810bda23107bb23fd6d52243f 182 184 4
+	- **Arrow Keys**: Navigate between features (looped order)
+30801594d1bfd1d810bda23107bb23fd6d52243f 183 185
+	- **Enter/Space**: Activate focused feature
+30801594d1bfd1d810bda23107bb23fd6d52243f 184 186
+	- **Escape**: Clear selection and focus
+30801594d1bfd1d810bda23107bb23fd6d52243f 185 187
+	- **+ / -**: Announces zoom intent for assistive tech
+ff2b02e500c90095b87281b9c116fd1c5413ed91 175 188 4
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 176 189
+	### Screen Reader Support
+ff2b02e500c90095b87281b9c116fd1c5413ed91 177 190
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 178 191
+	- Hidden description element with full narrative
+30801594d1bfd1d810bda23107bb23fd6d52243f 190 192 1
+	- Live region announcements for keyboard navigation and selections
+ff2b02e500c90095b87281b9c116fd1c5413ed91 179 193 60
+	- Table fallback option for non-visual access
+ff2b02e500c90095b87281b9c116fd1c5413ed91 180 194
+	- Dynamic ARIA labels for feature interactions
+ff2b02e500c90095b87281b9c116fd1c5413ed91 181 195
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 182 196
+	### Table Fallback
+ff2b02e500c90095b87281b9c116fd1c5413ed91 183 197
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 184 198
+	When `a11y.tableFallback.enabled` is `true`, a data table is rendered below the map showing:
+ff2b02e500c90095b87281b9c116fd1c5413ed91 185 199
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 186 200
+	- Feature names/IDs
+ff2b02e500c90095b87281b9c116fd1c5413ed91 187 201
+	- Joined data values (if provided)
+ff2b02e500c90095b87281b9c116fd1c5413ed91 188 202
+	- Proper table semantics with `<caption>`, `<thead>`, `<tbody>`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 189 203
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 190 204
+	## Projection Types
+ff2b02e500c90095b87281b9c116fd1c5413ed91 191 205
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 192 206
+	Supported projection types (from d3-geo):
+ff2b02e500c90095b87281b9c116fd1c5413ed91 193 207
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 194 208
+	- `mercator` (default)
+ff2b02e500c90095b87281b9c116fd1c5413ed91 195 209
+	- `albersUsa`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 196 210
+	- `equalEarth`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 197 211
+	- `orthographic`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 198 212
+	- `conicEqualArea`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 199 213
+	- `conicConformal`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 200 214
+	- `azimuthalEqualArea`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 201 215
+	- `azimuthalEquidistant`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 202 216
+	- `gnomonic`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 203 217
+	- `stereographic`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 204 218
+	- `naturalEarth1`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 205 219
+	- `equirectangular`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 206 220
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 207 221
+	## Layer Management
+ff2b02e500c90095b87281b9c116fd1c5413ed91 208 222
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 209 223
+	Layers are automatically ordered by `zIndex` with stable sorting for deterministic output. Lower z-index values render first (behind higher values).
+ff2b02e500c90095b87281b9c116fd1c5413ed91 210 224
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 211 225
+	## Loading and Error States
+ff2b02e500c90095b87281b9c116fd1c5413ed91 212 226
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 213 227
+	The container automatically handles:
+ff2b02e500c90095b87281b9c116fd1c5413ed91 214 228
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 215 229
+	- **Loading**: Displays "Loading map data..." message
+ff2b02e500c90095b87281b9c116fd1c5413ed91 216 230
+	- **Error**: Displays error message with `role="alert"`
+ff2b02e500c90095b87281b9c116fd1c5413ed91 217 231
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 218 232
+	These states are managed by the `useSpatialSpec` hook based on geo data resolution.
+ff2b02e500c90095b87281b9c116fd1c5413ed91 219 233
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 220 234
+	## Examples
+ff2b02e500c90095b87281b9c116fd1c5413ed91 221 235
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 222 236
+	See Storybook stories in `src/components/viz/spatial/SpatialContainer.stories.tsx` for:
+ff2b02e500c90095b87281b9c116fd1c5413ed91 223 237
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 224 238
+	- Default usage
+ff2b02e500c90095b87281b9c116fd1c5413ed91 225 239
+	- Different projection types
+ff2b02e500c90095b87281b9c116fd1c5413ed91 226 240
+	- Multiple layers
+ff2b02e500c90095b87281b9c116fd1c5413ed91 227 241
+	- Full accessibility features
+ff2b02e500c90095b87281b9c116fd1c5413ed91 228 242
+	- Loading and error states
+ff2b02e500c90095b87281b9c116fd1c5413ed91 229 243
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 230 244
+	## Related Components
+ff2b02e500c90095b87281b9c116fd1c5413ed91 231 245
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 232 246
+	- `SpatialContext`: Context provider for spatial state
+ff2b02e500c90095b87281b9c116fd1c5413ed91 233 247
+	- `useSpatialContext`: Hook to access spatial context
+ff2b02e500c90095b87281b9c116fd1c5413ed91 234 248
+	- `useSpatialSpec`: Hook for processing spatial specs
+ff2b02e500c90095b87281b9c116fd1c5413ed91 235 249
+	- `useSpatialProjection`: Hook for projection calculations
+ff2b02e500c90095b87281b9c116fd1c5413ed91 236 250
+	
+ff2b02e500c90095b87281b9c116fd1c5413ed91 237 251
+	## See Also
+ff2b02e500c90095b87281b9c116fd1c5413ed91 238 252
+	
+944f4dda5f784e266310978b31f65b3d452e6387 253 253 1
+	- [Spatial Visualization Architecture](../../../cmos/foundational-docs/_archive/data-viz-part2/spatial-module/ARCHITECTURE.md)
+ff2b02e500c90095b87281b9c116fd1c5413ed91 240 254 2
+	- [Accessibility Guidelines](../../viz/accessibility-checklist.md)
+ff2b02e500c90095b87281b9c116fd1c5413ed91 241 255
+	- [Normalized Viz Spec](../../viz/normalized-viz-spec.md)

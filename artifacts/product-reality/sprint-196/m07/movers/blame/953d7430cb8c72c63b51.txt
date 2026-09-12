@@ -1,0 +1,274 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/bar-chart.md
+filename docs/history/components/bar-chart.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 124
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/bar-chart.md
+	# Bar Chart Component
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	## Overview
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	`<BarChart>` is the first production visualization component in OODS Foundry. It consumes a `NormalizedVizSpec`, converts it to a Vega-Lite specification, renders the interactive chart, and surfaces the required two-part accessibility baseline (narrative + table) from RDV.4.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	The chart is composed of four building blocks:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	1. **`BarChart`** – orchestrates Vega-Lite rendering and wires accessibility fallbacks
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	2. **`VizContainer`** – shared wrapper that handles layout, ARIA wiring, and metadata
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	3. **`ChartDescription`** – renders the narrative summary + key findings
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	4. **`AccessibleTable`** – generates a semantic `<table>` from spec data or shows a fallback note
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	import type { NormalizedVizSpec } from '@oods/viz';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	import { BarChart } from '@oods/components';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	const spec: NormalizedVizSpec = {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	  $schema: 'https://oods.dev/viz-spec/v1',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  id: 'example:viz:bar',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	  name: 'MRR by Region',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	  data: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	    values: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	      { region: 'North', mrr: 120000 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	      { region: 'East', mrr: 98000 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	    ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	  marks: [
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	    {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	      trait: 'MarkBar',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	      encodings: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	        x: { field: 'region', trait: 'EncodingPositionX', channel: 'x', title: 'Region' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	        y: { field: 'mrr', trait: 'EncodingPositionY', channel: 'y', aggregate: 'sum', title: 'MRR (USD)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	        color: { field: 'region', trait: 'EncodingColor', channel: 'color' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	      },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	  ],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	  encoding: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	    x: { field: 'region', trait: 'EncodingPositionX', channel: 'x', title: 'Region' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	    y: { field: 'mrr', trait: 'EncodingPositionY', channel: 'y', aggregate: 'sum', title: 'MRR (USD)' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	    color: { field: 'region', trait: 'EncodingColor', channel: 'color' },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	  config: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	    layout: { width: 560, height: 340, padding: 16 },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	    theme: 'brand-a',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	  a11y: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	    description: 'Bar chart comparing monthly revenue by region.',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	    ariaLabel: 'MRR by region bar chart',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	    narrative: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	      summary: 'West leads, East trails.',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	      keyFindings: ['West: $120k', 'East: $98k'],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	    tableFallback: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	      enabled: true,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	      caption: 'Revenue by region table',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	    },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	  portability: {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	    fallbackType: 'table',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	    tableColumnOrder: ['region', 'mrr'],
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 64 66
+	    preferredRenderer: 'vega-lite',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 65 67
+	  },
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 66 68
+	};
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 67 69
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 68 70
+	<BarChart spec={spec} />;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 69 71
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 70 72
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 71 73
+	## Props
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 72 74
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 73 75
+	| Prop | Type | Default | Description |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 74 76
+	|------|------|---------|-------------|
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 75 77
+	| `spec` | `NormalizedVizSpec` | — | Normalized visualization spec produced by the trait engine (must contain at least one `MarkBar`). |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 76 78
+	| `renderer` | `'svg' \| 'canvas'` | `'svg'` | Rendering mode passed to `vega-embed`. SVG is preferred for crisp typography + accessibility tooling. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 77 79
+	| `showTable` | `boolean` | `true` | Toggles the `AccessibleTable` fallback. Set to `false` only when a higher-level layout already renders its own table. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 78 80
+	| `showDescription` | `boolean` | `true` | Toggles the `ChartDescription` panel. When disabled, ensure an equivalent narrative still exists elsewhere in the view. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 79 81
+	| `className` | `string` | — | Additional classes applied to the `VizContainer` root. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 80 82
+	| `...rest` | `HTMLAttributes<HTMLElement>` | — | Spread onto the `VizContainer` so consumers can add data attributes or refs. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 81 83
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 82 84
+	## Supporting Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 83 85
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 84 86
+	### VizContainer
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 85 87
+	- Wraps every viz component in a consistent surface.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 86 88
+	- Sets `role="group"`, `aria-labelledby`, and `aria-describedby` based on the spec + child slots.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 87 89
+	- Renders chart + supporting content in a responsive grid and exposes `data-viz-spec` for telemetry hooks.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 88 90
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 89 91
+	### ChartDescription
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 90 92
+	- Reads `spec.a11y.narrative` and `spec.a11y.description`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 91 93
+	- Surfaces a summary paragraph, bullet list of key findings, and the long-form description.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 92 94
+	- Lives in the metadata column so it is always visible alongside the chart.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 93 95
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 94 96
+	### AccessibleTable
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 95 97
+	- Generates `<table>` markup from `spec.data.values`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 96 98
+	- Uses `spec.portability.tableColumnOrder` when provided, otherwise infers fields from the dataset.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 97 99
+	- Derives column labels from encoding titles/legends; falls back to humanized field names.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 98 100
+	- Produces a caption from `spec.a11y.tableFallback.caption`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 99 101
+	- When inline values are missing or `enabled === false`, surfaces a note instead of rendering an empty `<table>`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 100 102
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 101 103
+	## Accessibility
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 102 104
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 103 105
+	- Charts are wrapped in `VizContainer` which exposes either `aria-label` (from `spec.a11y.ariaLabel`) or `aria-labelledby` referencing the visible title.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 104 106
+	- The interactive Vega-Lite canvas is marked `aria-hidden="true"`; assistive tech uses the description + data table instead.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 105 107
+	- `ChartDescription` fulfills RDV.4’s narrative/analysis requirement and keeps findings navigable via standard semantics.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 106 108
+	- `AccessibleTable` guarantees semantic table markup with captions, headers (`<th scope="col">`), and predictable column ordering.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 107 109
+	- Axe coverage lives in `tests/components/viz/BarChart.a11y.test.tsx` and blocks regressions in CI.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 108 110
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 109 111
+	## Testing
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 110 112
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 111 113
+	- Unit tests (`tests/components/viz/BarChart.test.tsx`) mock `vega-embed` and assert:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 112 114
+	  - The adapter is invoked
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 113 115
+	  - Column headers + captions render from the spec
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 114 116
+	  - Missing inline values produce a helpful fallback message
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 115 117
+	- Accessibility tests (`tests/components/viz/BarChart.a11y.test.tsx`) run `vitest-axe` to ensure the composed surface stays WCAG 2.2 AA compliant.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 116 118
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 117 119
+	## Storybook Coverage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 118 120
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 119 121
+	`stories/viz/BarChart.stories.tsx` includes five curated specs (simple, grouped, stacked, temporal, sorted) to exercise sizing, layering, and encoding combinations. Each story automatically renders the accessible description + table.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 120 122
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 121 123
+	## Notes & Follow-ups
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 122 124
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 123 125
+	- The component depends on `vega` + `vega-embed` 7.x to render Vega-Lite 6 specs.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 124 126
+	- Future chart types (line, area, scatter) should reuse `VizContainer`, `ChartDescription`, and `AccessibleTable` without duplicating layout or accessibility logic.

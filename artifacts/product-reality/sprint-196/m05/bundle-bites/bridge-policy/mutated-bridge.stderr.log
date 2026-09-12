@@ -1,0 +1,27 @@
+file:///private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/packages/mcp-bridge/dist/config.js:28
+        throw new BridgeStartupError(error.code === 'ENOENT' ? 'BRIDGE_POLICY_MISSING' : 'BRIDGE_POLICY_INVALID', policyPath, error);
+              ^
+
+BridgeStartupError: BRIDGE_POLICY_MISSING: Agent policy /private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/configs/agent/policy.json is missing; bridge startup refused.
+    at loadAgentPolicyDoc (file:///private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/packages/mcp-bridge/dist/config.js:28:15)
+    at file:///private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/packages/mcp-bridge/dist/config.js:62:24
+    ... 2 lines matching cause stack trace ...
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  code: 'BRIDGE_POLICY_MISSING',
+  policyPath: '/private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/configs/agent/policy.json',
+  retryable: false,
+  [cause]: Error: ENOENT: no such file or directory, open '/private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/configs/agent/policy.json'
+      at Object.readFileSync (node:fs:440:20)
+      at loadAgentPolicyDoc (file:///private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/packages/mcp-bridge/dist/config.js:25:18)
+      at file:///private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/packages/mcp-bridge/dist/config.js:62:24
+      at ModuleJob.run (node:internal/modules/esm/module_job:371:25)
+      at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:669:26)
+      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/forge-s196-m05-bundle-bites-fWGRre/bridge-policy/configs/agent/policy.json'
+  }
+}
+
+Node.js v24.6.0

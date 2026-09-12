@@ -15,7 +15,7 @@
 
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
-| `productReality` | object | Yes |  |
+| `productReality` | object | Yes | Runtime, portable release, tool and visualization evidence summaries. Release identifies the measured bundle archive and 42 reference-application cells with artifact parity to the host; unavailable ledgers are null. |
 | `status` | `ok` \| `degraded` | Yes |  |
 | `server` | object | Yes |  |
 | `registry` | object | Yes |  |

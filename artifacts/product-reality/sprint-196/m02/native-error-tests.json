@@ -1,0 +1,39 @@
+{
+  "missionId": "s196-m02",
+  "builderSelfCertified": false,
+  "sourceState": "Sprint 196 worktree before the m02 commit; uncommitted implementation under test",
+  "runs": [
+    {
+      "cwd": "packages/mcp-server",
+      "command": "pnpm exec vitest run test/contracts/portable-token-dependencies.s196.spec.ts test/contracts/tokens.build.apply.spec.ts src/errors/registry.test.ts test/contracts/brand.apply.patch.spec.ts test/contracts/brand.apply.cross-brand-delta.spec.ts",
+      "exitCode": 0,
+      "testFiles": 5,
+      "tests": 47,
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "stdoutExcerpt": "RUN v3.2.4\n✓ test/contracts/portable-token-dependencies.s196.spec.ts (11 tests) 3544ms\n✓ test/contracts/tokens.build.apply.spec.ts (1 test) 23ms\n✓ test/contracts/brand.apply.cross-brand-delta.spec.ts (7 tests) 16ms\n✓ src/errors/registry.test.ts (27 tests) 15ms\n✓ test/contracts/brand.apply.patch.spec.ts (1 test) 5ms\nTest Files 5 passed (5)\nTests 47 passed (47)\nStart at 00:19:56\nDuration 5.00s (transform 157ms, setup 42ms, collect 420ms, tests 3.60s, environment 0ms, prepare 178ms)"
+    },
+    {
+      "cwd": ".",
+      "command": "node --test packages/mcp-adapter/test-s196-native-errors.js",
+      "exitCode": 0,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "stdoutExcerpt": "s196 adapter 0.3 preserves native error fields through the actual tools/call transport\n✔ current native ToolError retains code, nested details, incident id and promotes retryable/data\n✔ top-level retryable and data are preserved without replacing them with nested fields\n✔ explicit null data survives without silently falling back to details\n✔ legacy error strings retain actionable text without inventing a code\n✔ native dependency errors containing ENOENT do not acquire misleading host build guidance\n✔ successful tool values and unregistered tool failures preserve their existing contracts\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 303.3275"
+    },
+    {
+      "cwd": ".",
+      "command": "node packages/mcp-adapter/test-s55-m04.js",
+      "exitCode": 0,
+      "tests": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "stdoutExcerpt": "s55-m04 contract tests\nPASS deriveAnnotations function exists in adapter\nPASS Every tool gets annotations with all three hint fields\nPASS Annotations object included in list_tools response\nPASS Read-only tools have readOnlyHint: true\nPASS Write-capable tools have destructiveHint: true\nPASS All tools have openWorldHint: false (local operations only)\nPASS Classification covers all registry tools\nPASS Adapter detects spawn/build errors and adds fix guidance\nPASS Error guidance only appended for server-related failures\nPASS No structuredContent field in tool responses\nPASS Startup log includes adapter version\nPASS ADAPTER_VERSION is derived from the adjacent package.json\nPASS Startup log includes server path (NATIVE_DIST)\nPASS Startup log includes tool count\nPASS Adapter loads policy.json from server dist\nPASS No per-tool annotation hardcoding in adapter\nPASS deriveAnnotations reads from policy rules\n17 tests: 17 passed, 0 failed"
+    }
+  ],
+  "priorFailure": "The first new server test run had one failing test because the test passed the fixture wrapper instead of fixture.arguments to brand.intake. The test was corrected; no brand.intake production code changed. The final 47-test focused run passed."
+}

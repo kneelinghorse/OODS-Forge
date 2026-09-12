@@ -21,6 +21,12 @@ const PLANNING_COMPONENT_SCHEMA = path.join(REPO_ROOT, 'cmos', 'planning', 'comp
 
 const tempRoots: string[] = [];
 
+function shippedReleaseSummary() {
+  const ledger = JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/release-cells.v1.json'), 'utf8'));
+  return { bundleHead: ledger.bundleHead, archiveSha256: ledger.archiveSha256,
+    apps: ['Organization', 'Subscription', 'User'], frameworks: ['react', 'vue'], ...ledger.summary };
+}
+
 type StdioResponse = {
   id?: number;
   result?: {
@@ -71,6 +77,8 @@ function spawnStagedServer(stagedServer: string): ChildProcessWithoutNullStreams
       MCP_HEALTH_PORT: '0',
       MCP_ROLE: 'designer',
       MCP_STRUCTURED_DATA_DIR: path.join(path.dirname(path.dirname(stagedServer)), 'absent-structured-data'),
+      MCP_RUNTIME_CELLS_PATH: undefined,
+      MCP_RELEASE_CELLS_PATH: undefined,
       OODS_OTLP_ENDPOINT: '',
     },
   });
@@ -139,7 +147,7 @@ async function requestAdapterInitialize(adapterDir = path.join(REPO_ROOT, 'packa
   const child = spawn(process.execPath, ['index.js'], {
     cwd: adapterDir,
     stdio: ['pipe', 'pipe', 'pipe'],
-    env: { ...process.env, MCP_HEALTH_PORT: '0', OODS_OTLP_ENDPOINT: '' },
+    env: { ...process.env, MCP_HEALTH_PORT: '0', OODS_OTLP_ENDPOINT: '', MCP_RUNTIME_CELLS_PATH: undefined, MCP_RELEASE_CELLS_PATH: undefined },
   });
   child.stdout.setEncoding('utf8');
   child.stderr.setEncoding('utf8');
@@ -229,6 +237,7 @@ describe('s181 portable-runtime publish boundary', () => {
       )).toBe(true);
     }
     const { response, aliveAtResponse, stderr } = await requestHealth(stagedServer);
+    const runtimeLedger = JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/runtime-cells.v1.json'), 'utf8'));
 
     expect(stderr).toBe('');
     expect(aliveAtResponse).toBe(true);
@@ -237,12 +246,24 @@ describe('s181 portable-runtime publish boundary', () => {
       status: 'degraded',
       registry: { components: 0, traits: 0, objects: 0 },
       tokens: { built: false, brands: [], themes: [], scopes: {}, defaultScope: null },
-      productReality: { viz: JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary },
+      productReality: { runtime: { ...runtimeLedger.summary, head: runtimeLedger.head },
+        viz: JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary, release: shippedReleaseSummary() },
       warnings: expect.arrayContaining([
         expect.stringContaining('registry subsystem unavailable'),
         expect.stringContaining('tokens subsystem unavailable'),
       ]),
     });
+  }, 30_000);
+
+  it.each(['runtime', 'release'])('s196 serves null %s proof when its shipped canonical ledger is absent', async kind => {
+    const stagedServer = stageDistOnlyServer();
+    fs.rmSync(path.join(stagedServer, `dist/registry/${kind}-cells.v1.json`));
+    const { response, aliveAtResponse, stderr } = await requestHealth(stagedServer);
+    expect(stderr).toBe('');
+    expect(aliveAtResponse).toBe(true);
+    expect(response.error).toBeUndefined();
+    expect(response.result).toMatchObject({ status: 'degraded', productReality: { [kind]: null },
+      warnings: expect.arrayContaining([expect.stringContaining(`${kind} proof unavailable`)]) });
   }, 30_000);
 
   it.each(['viz-taxonomy.v1.json', 'viz-classification.v1.json', 'viz-patterns.v1.json'])('s195 serves null viz with a warning when shipped %s is absent', async name => {
@@ -271,6 +292,10 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(response.result?.isError).not.toBe(true);
     const health = JSON.parse(response.result!.content!.find(block => block.type === 'text')!.text);
     expect(health.productReality.viz).toEqual(JSON.parse(fs.readFileSync(path.join(SERVER_DIST, 'registry/viz-taxonomy.v1.json'), 'utf8')).summary);
+    // s196 ships the measured release ledger with dist; portable health must
+    // expose its executed archive identity even with no host receipt directory.
+    expect(health.productReality.release).toEqual(shippedReleaseSummary());
+    expect(health.warnings ?? []).not.toEqual(expect.arrayContaining([expect.stringContaining('release proof unavailable')]));
     expect(health.warnings ?? []).not.toEqual(expect.arrayContaining([expect.stringContaining('viz taxonomy unavailable')]));
   }, 30_000);
 

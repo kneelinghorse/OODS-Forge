@@ -1,0 +1,136 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/category-picker.md
+filename docs/history/components/category-picker.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 55
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/category-picker.md
+	# CategoryPicker
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	CategoryPicker composes `useCategoryTree` with form affordances: search, multi-select chips, recently-used shortcuts, and hidden inputs for submit-friendly payloads. It satisfies the Sprint 26 Classifiable requirements for Form context.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## Highlights
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- **Typeahead search** – Debounced-less search writes into the shared tree state so results stay in sync with the tree rendering and breadcrumbs.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- **Multi-select chips** – Primary selections surface as dismissible chips; clicking a chip toggles the node through the shared tree state, keeping summaries and the tree in lockstep.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	- **Recently used** – Pass `recentlyUsedIds` to render quick chips above the tree. Chip clicks toggle membership and emit `onRecentlyUsedSelect` for custom analytics.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	- **Form integration** – Provide a `name` to emit hidden `<input>` elements for each selected category, ensuring the picker works inside native `<form>` submissions.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	- **Validation ready** – Leverages existing `form-field` tokens so density, validation states, and required indicators match other base inputs.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	import { CategoryPicker } from '@/components/classification/CategoryPicker.js';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	const taxonomy: CategoryNode[] = loadTaxonomy();
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	export function ClassificationEditor() {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  return (
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	    <CategoryPicker
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	      id="product-categories"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	      name="categories[]"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	      nodes={taxonomy}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	      label="Categories"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	      description="Pick every taxonomy node that applies to the SKU."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	      recentlyUsedIds={['electronics', 'mobile-phones']}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	      onSelectionChange={({ ids }) => console.log('Selected:', ids)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	      onReorder={({ sourceId, targetId }) => console.log('Reorder', sourceId, targetId)}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	    />
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	  );
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	### Props cheatsheet
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	| Prop | Purpose |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	| --- | --- |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	| `recentlyUsedIds` | Highlights a chip row for fast re-selection. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	| `enableReorder` | Wires drag-and-drop back to taxonomy editing flows. Defaults to `false` to avoid accidental hierarchy edits in forms. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	| `summaryLabel` | Customizes the chip container heading. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	| `maxHeight` | Constrains the tree viewport for layout needs. |
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	## Tests & Guardrails
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	- Logic/interaction coverage: `tests/components/classification/CategoryPicker.test.tsx`
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	- A11y inherits from CategoryTree axe coverage, plus jest-dom assertions in the picker spec for label associations and hidden input wiring.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	## Implementation Notes
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	- All styling uses component/system tokens. There are no literal colors.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	- Drag intent shortcuts mirror CategoryTree (`Shift` before, `Alt/⌘` after, default inside) when `enableReorder` is `true`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	- Search input + tree share ARIA wiring through `resolveFieldMetadata`, so validation status and descriptions are consistent with other base form controls.

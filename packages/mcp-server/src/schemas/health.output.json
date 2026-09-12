@@ -17,6 +17,7 @@
       "additionalProperties": false,
       "required": [
         "runtime",
+        "release",
         "tools",
         "viz"
       ],
@@ -155,8 +156,82 @@
               "minimum": 0
             }
           }
+        },
+        "release": {
+          "description": "Measured extracted-bundle reference applications, with exact generated-artifact equality to the host and the pinned runtime gates. The bundle head and archive hash identify the executed artifact; null when the ledger is missing or invalid.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "bundleHead",
+            "archiveSha256",
+            "apps",
+            "frameworks",
+            "cells",
+            "pass",
+            "typedGap",
+            "fail"
+          ],
+          "properties": {
+            "bundleHead": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "archiveSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "apps": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Organization",
+                  "Subscription",
+                  "User"
+                ]
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "uniqueItems": true
+            },
+            "frameworks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true
+            },
+            "cells": {
+              "type": "integer",
+              "const": 42
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 42
+            },
+            "typedGap": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 42
+            },
+            "fail": {
+              "type": "integer",
+              "const": 0
+            }
+          }
         }
-      }
+      },
+      "description": "Runtime, portable release, tool and visualization evidence summaries. Release identifies the measured bundle archive and 42 reference-application cells with artifact parity to the host; unavailable ledgers are null."
     },
     "status": {
       "type": "string",

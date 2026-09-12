@@ -76,14 +76,17 @@ describe('current workflow runtime accountability', () => {
     }
   });
   it('the retained complete population proves every workflow state and retains design-loop inspection images', async () => {
-    const file = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'artifacts/product-reality/sprint-193/m03/runtime-cells.v1.json');
+    // s196 canonical storage follows the current sweep; screenshots and row
+    // receipts remain in its recorded directory, rather than a fixed old sprint.
+    const file = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
     const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
     expect(validateRuntimeLedger(ledger, true)).toEqual([]);
     expect(ledger.rows).toHaveLength(154);
     expect(ledger.rows.filter(row => row.context === 'workflow')).toHaveLength(22);
     vi.stubEnv('MCP_RUNTIME_CELLS_PATH', file);
     expect((await health({})).productReality.runtime).toEqual({ ...ledger.summary, head: ledger.head });
-    const output = path.dirname(file);
+    if (!process.env.OODS_RUNTIME_REPORT) expect(ledger.receiptRoot).toBeTruthy();
+    const output = process.env.OODS_RUNTIME_REPORT ? path.dirname(file) : path.resolve(root, ledger.receiptRoot!);
     for (const row of ledger.rows) expect(JSON.parse(fs.readFileSync(path.join(output, row.report), 'utf8'))).toEqual(row);
     for (const object of OBJECTS) {
       const report = JSON.parse(fs.readFileSync(path.join(output, `workflows/${object}/report.json`), 'utf8'));

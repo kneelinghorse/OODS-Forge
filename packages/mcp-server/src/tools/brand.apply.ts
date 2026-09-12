@@ -51,8 +51,14 @@ export const BRAND_ROOT = path.join(TOKENS_DIR, 'brands');
  * allowlist is a worse failure than one readdir.
  */
 function listAllowedBrands(): string[] {
+  const sourcePath = path.join(tokenPackageRoot(), 'src/tokens/brands');
+  if (!fs.existsSync(sourcePath) || !fs.statSync(sourcePath).isDirectory()) {
+    throw new ToolError('OODS-N020', 'brand.apply: canonical brand source is not shipped in this runtime.', {
+      tool: 'brand.apply', dependency: 'canonical-brand-source', path: sourcePath,
+    });
+  }
   return fs
-    .readdirSync(path.join(tokenPackageRoot(), 'src/tokens/brands'), { withFileTypes: true })
+    .readdirSync(sourcePath, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name);
 }

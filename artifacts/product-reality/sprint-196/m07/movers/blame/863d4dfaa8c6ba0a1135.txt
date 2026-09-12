@@ -1,0 +1,57 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 24 24 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e packages/mcp-bridge/src/server.ts
+filename packages/mcp-bridge/src/server.ts
+	import { resolveBridgeArtifacts } from './runtime-paths.js';
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 93 93 11
+	  async close(): Promise<void> {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 94 94
+	    const child = this.child;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 95 95
+	    if (!child) return;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 96 96
+	    await new Promise<void>((resolve) => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 97 97
+	      const timeout = setTimeout(() => child.kill('SIGKILL'), 2_000);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 98 98
+	      timeout.unref();
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 99 99
+	      child.once('exit', () => { clearTimeout(timeout); resolve(); });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 100 100
+	      child.kill('SIGTERM');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 101 101
+	    });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 102 102
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 103 103
+	
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 228 228 2
+	  const { artifactsRoot, artifactsBase } = resolveBridgeArtifacts(mcpServerCwd);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 229 229
+	  fastify.addHook('onClose', () => client.close());
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 250 250 1
+	  }, artifactsBase);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 385 385 8
+	  const stop = () => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 386 386
+	    fastify.close().then(() => process.exit(0)).catch((error) => {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 387 387
+	      console.error('[mcp-bridge] shutdown failed', error);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 388 388
+	      process.exit(1);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 389 389
+	    });
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 390 390
+	  };
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 391 391
+	  process.once('SIGINT', stop);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 392 392
+	  process.once('SIGTERM', stop);

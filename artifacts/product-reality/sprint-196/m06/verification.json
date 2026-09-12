@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s196-m06",
+  "status": "passed",
+  "builderSelfCertified": false,
+  "measuredWorkingTreeBase": "8fd3d04ddf9af7d17863308ab579e3023ef4f491",
+  "sourceDirtyDuringExecution": true,
+  "tests": {
+    "files": 3,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "fullFiveSuiteCapture": false
+  },
+  "commands": [
+    {
+      "name": "integration-root",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--project",
+        "core",
+        "tests/verification/release-publish-shape.s196.test.ts",
+        "tests/verification/gate2-decision-packet.s196.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=artifacts/product-reality/sprint-196/m06/integration-root.json"
+      ],
+      "exitCode": 0,
+      "seconds": 1.92,
+      "log": "artifacts/product-reality/sprint-196/m06/integration-root.log"
+    },
+    {
+      "name": "integration-generator",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/product-reality/release-readiness.s196.spec.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=../../artifacts/product-reality/sprint-196/m06/integration-generator.json"
+      ],
+      "exitCode": 0,
+      "seconds": 3.39,
+      "log": "artifacts/product-reality/sprint-196/m06/integration-generator.log"
+    },
+    {
+      "name": "integration-facts",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.5,
+      "log": "artifacts/product-reality/sprint-196/m06/integration-facts.log"
+    },
+    {
+      "name": "integration-docs",
+      "argv": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 0,
+      "seconds": 3.92,
+      "log": "artifacts/product-reality/sprint-196/m06/integration-docs.log"
+    },
+    {
+      "name": "integration-typecheck",
+      "argv": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 11.07,
+      "log": "artifacts/product-reality/sprint-196/m06/integration-typecheck.log"
+    }
+  ],
+  "publishShapeChanges": [
+    {
+      "path": "package.json",
+      "before": {
+        "license": "MIT"
+      },
+      "after": {
+        "private": true,
+        "license": "MIT"
+      }
+    }
+  ],
+  "approvalDecisionId": 1952,
+  "constraints": {
+    "active": 7,
+    "archived": 5,
+    "modified": false
+  },
+  "limitations": [
+    "Historical CI proofs predate the m05 UTC changes; no current release claim is derived from them.",
+    "Gate 2 decisions remain proposed; no publication or installer action was performed."
+  ],
+  "sourceHashes": [
+    {
+      "path": "package.json",
+      "bytes": 14380,
+      "sha256": "5c643eb31da2b30470101aacad6f313b029c55f04d364a77891073c3181eb428"
+    },
+    {
+      "path": "scripts/product-reality/s196-release-readiness.ts",
+      "bytes": 25808,
+      "sha256": "a11560a8e2c31c399c6081f7aa343929025372a39f3491b12e016888fda83786"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts",
+      "bytes": 11543,
+      "sha256": "9cc8db7dc765b26c1885eab95b5e6f9d63fd7bd2c7533c4cb58169890c140fc8"
+    },
+    {
+      "path": "tests/verification/release-publish-shape.s196.test.ts",
+      "bytes": 6850,
+      "sha256": "3d56d999a2319f103dfeb1245ee173c47b251e63dce7cbabd6ed1a26d8833314"
+    },
+    {
+      "path": "tests/verification/gate2-decision-packet.s196.test.ts",
+      "bytes": 6651,
+      "sha256": "d187e59931fd998a0fc4cacdf51fa896f49e8e2209d0f698ada16743e2d8a3db"
+    },
+    {
+      "path": "cmos/planning/forge-gate2-decision-packet.md",
+      "bytes": 35731,
+      "sha256": "e7279d225d7e9fee64d14c6695f7b32e83f04107a19ce7e656e457c8802957c3"
+    }
+  ],
+  "receiptHashes": [
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/README.md",
+      "bytes": 1270,
+      "sha256": "5fddf3887a68b5ecbf261f95f36f6d03facb852ad000a9fe974c58a39042f734"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/baseline-check.log",
+      "bytes": 116,
+      "sha256": "b56761d6f7c1918633f7ad7a91304ff127caa57fba5db864822a3fbb3d8a4411"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/constraints-before.json",
+      "bytes": 3165,
+      "sha256": "b76afe566dbe287e31d2af340049a207718b70886df2123cdf5e463b7d85b772"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-check.log",
+      "bytes": 86,
+      "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-development.json",
+      "bytes": 1523,
+      "sha256": "99101bd5c2d4a19480ba8280fdbd54424ac5d5daeaedc1793c146e57827f9993"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-tests.json",
+      "bytes": 10252,
+      "sha256": "bae589c998339c3f617a1c67236293ae6fd84e3acb7f825692c21ae5ae6f378c"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-tests.log",
+      "bytes": 655,
+      "sha256": "e72e2ef8fa6e74e344dc8e929d3a04fc73737d4ed98ce6038330a01b7908d203"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-typecheck-strict.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/generator-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-commands.json",
+      "bytes": 1764,
+      "sha256": "2bb9e087d613497059498823285582ed201b60462fce8967719d9716603bea9d"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-docs.log",
+      "bytes": 1453,
+      "sha256": "1246f16c2d153c61fbc59ffafb62fd61ab58d58c63634ec2bf5eec2cbcc54604"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-facts.log",
+      "bytes": 86,
+      "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-generator.json",
+      "bytes": 10250,
+      "sha256": "dd614bd07e901e475a07a08e7aa140904f54a6b7db65e528da1a357099857753"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-generator.log",
+      "bytes": 661,
+      "sha256": "ca69d7f59c0eb2d458f3addcd878eca72f8076350f1db940fd53364429ffe7eb"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-root.json",
+      "bytes": 7756,
+      "sha256": "09885f7d442b8a10a8474e6fc7cf995d40f532d338938deab7ad93d50e9f4ac7"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-root.log",
+      "bytes": 758,
+      "sha256": "05871c760098a777c8e9abed11297db8895d61c8ddb2959bf5b3641cca0e330a"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/integration-typecheck.log",
+      "bytes": 122,
+      "sha256": "45ce5131f52c8db02bbdf5c13d49960214bb477e0ea4a9c0e134bd7e788a1dc0"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json",
+      "bytes": 6036,
+      "sha256": "7ae915577a430c8bf9c87f93c97e4e58ead7511243b4ff488b3aca83c9565a36"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/packet-contracts.json",
+      "bytes": 3047,
+      "sha256": "03e142b37d8ae8f90b58a36baad08bb5fc232c2a8e6fe8067fb233fd012f4ef9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/packet-contracts.log",
+      "bytes": 470,
+      "sha256": "fb25e65e0ea8f36a30a1e2d3695d184a8075189bb0247801bab9c56b46c17a4f"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/packet-facts-check.log",
+      "bytes": 86,
+      "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/publish-shape-tests.json",
+      "bytes": 5201,
+      "sha256": "c7c7c3130cb299a5751325895cf06acbe51e40746c2248397d8c21874df519c3"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/publish-shape-tests.log",
+      "bytes": 2773,
+      "sha256": "8e27527244d9d6f39f4fc1539f5ce4970a6998d153671f69f6f4872bec89e60b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/raw-whitespace-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/release-readiness-facts.json",
+      "bytes": 36807,
+      "sha256": "8fbfcb74551f8370ed52d4b10ddc55526cceba48a8ab0074f3e67192c6819f67"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/release-readiness-inventory.json",
+      "bytes": 2107,
+      "sha256": "d14927e2a603013340e5ae278e031e731df15fc71c4b07c1c137310588260aad"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/release-readiness-source/packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts",
+      "bytes": 11543,
+      "sha256": "9cc8db7dc765b26c1885eab95b5e6f9d63fd7bd2c7533c4cb58169890c140fc8"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/release-readiness-source/scripts/product-reality/s196-release-readiness.ts",
+      "bytes": 25808,
+      "sha256": "a11560a8e2c31c399c6081f7aa343929025372a39f3491b12e016888fda83786"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/release-readiness-verification.json",
+      "bytes": 4706,
+      "sha256": "355e004e4cc2aa0eb286ac9cf464c8b87d2a92daa4c0185ef1ac0f36059b68ec"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/source-whitespace-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 1 1 21
+author System Systems
+author-mail <systems@example.com>
+author-time 1789192404
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789192404
+committer-tz -0500
+summary feat(runtime): measure reference apps from the portable bundle
+filename scripts/runtime/migrate-runtime-ledger.ts
+	#!/usr/bin/env node
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 2 2
+	import assert from 'node:assert/strict';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 3 3
+	import fs from 'node:fs';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 4 4
+	import path from 'node:path';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 5 5
+	import { createHash } from 'node:crypto';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 6 6
+	import { fileURLToPath } from 'node:url';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 7 7
+	import { validateRuntimeLedger, type RuntimeLedger } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 8 8
+	
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 9 9
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 10 10
+	const source = 'artifacts/product-reality/sprint-195/m07/runtime/runtime-cells.v1.json';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 11 11
+	const destination = 'packages/mcp-server/registry/runtime-cells.v1.json';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 12 12
+	const bytes = fs.readFileSync(path.join(root, source));
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 13 13
+	const ledger = JSON.parse(bytes.toString('utf8')) as RuntimeLedger;
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 14 14
+	assert.equal(ledger.head, '39deb793a3161621b5a0893618f9d40201c22256', 'Migration must use the certified Sprint195 runtime receipt');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 15 15
+	assert.deepEqual(validateRuntimeLedger(ledger, true), []);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 16 16
+	assert.deepEqual(ledger.summary, { cells: 154, pass: 154, typedGap: 0, fail: 0 });
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 17 17
+	const canonical = { ...ledger, receiptRoot: path.posix.dirname(source) };
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 18 18
+	const generated = JSON.stringify(canonical, null, 2) + '\n';
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 19 19
+	if (process.argv.includes('--check')) assert.equal(fs.readFileSync(path.join(root, destination), 'utf8'), generated, 'Canonical runtime ledger differs from the one-time migration output');
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 20 20
+	else fs.writeFileSync(path.join(root, destination), generated);
+2148c93e6ee28ea0220560ce9a327e1d05ce3d67 21 21
+	console.log(JSON.stringify({ operation: 'canonical-runtime-ledger-migration', source, destination, head: ledger.head, sourceRetained: true, rowsUnchanged: true, addedMetadata: { receiptRoot: canonical.receiptRoot }, sourceSha256: createHash('sha256').update(bytes).digest('hex'), canonicalSha256: createHash('sha256').update(generated).digest('hex'), ...ledger.summary }, null, 2));

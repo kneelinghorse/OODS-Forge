@@ -4,7 +4,7 @@ const ScaleTemporalTrait = {
   trait: {
     name: 'ScaleTemporal',
     version: '0.1.0',
-    description: 'Temporal scale definition with timezone awareness.',
+    description: 'Temporal scale metadata with UTC rendering and display-layer timezone declarations.',
     category: 'viz.scale',
     tags: ['viz', 'scale', 'temporal'],
   },
@@ -44,7 +44,7 @@ const ScaleTemporalTrait = {
       name: 'timezone',
       type: 'string',
       required: false,
-      description: 'Olson/IANA timezone identifier used when formatting ticks.',
+      description: 'Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.',
       default: 'UTC',
     },
     {
@@ -94,7 +94,7 @@ const ScaleTemporalTrait = {
     viz_scale_temporal_timezone: {
       type: 'string',
       required: false,
-      description: 'Olson/IANA timezone identifier for ticks + tooltips.',
+      description: 'Display-layer timezone metadata only; it does not override UTC rendering.',
       default: 'UTC',
     },
     viz_scale_temporal_nice: {
@@ -116,7 +116,7 @@ const ScaleTemporalTrait = {
       type: 'string',
       required: false,
       description: 'Narrative summary for fallback contexts.',
-      default: 'Temporal scale honoring timezone + "nice" intervals.',
+      default: 'Temporal scale rendered in UTC; timezone is display-layer metadata.',
     },
   },
 

@@ -1,10 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 import type { UiElement } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenFramework } from './types.js';
+import { READINESS_ATTESTATION_PATH, verifyReadinessAttestation } from './readiness-attestation.js';
 
 type TargetFramework = Extract<CodegenFramework, 'react' | 'vue'>;
 
@@ -256,6 +257,8 @@ export function createTargetCapabilityPreflight(
   const baselineByComponent = new Map(
     capabilityBaseline.rows.map((row) => [row.id, row] as const),
   );
+  const repositoryRoot = options.repositoryRoot ?? DEFAULT_READINESS_REPOSITORY_ROOT;
+  const hasAttestation = existsSync(path.join(repositoryRoot, READINESS_ATTESTATION_PATH));
   const sourceCache = new Map<string, string | null>();
   const resolvedRowsByTarget: Readonly<Record<
     TargetFramework,
@@ -263,15 +266,21 @@ export function createTargetCapabilityPreflight(
   >> = {
     react: new Map(readinessDocuments.react.rows.map((row) => [
       row.componentId,
-      { row, failures: resolveReadinessRowReferences(row, options, sourceCache) },
+      { row, failures: hasAttestation ? [] : resolveReadinessRowReferences(row, options, sourceCache) },
     ] as const)),
     vue: new Map(readinessDocuments.vue.rows.map((row) => [
       row.componentId,
-      { row, failures: resolveReadinessRowReferences(row, options, sourceCache) },
+      { row, failures: hasAttestation ? [] : resolveReadinessRowReferences(row, options, sourceCache) },
     ] as const)),
   };
 
   return (screens, framework) => {
+    // Recheck the seal and package bytes per generation: an already-running
+    // portable process must also refuse a subsequently damaged installation.
+    const attestation = hasAttestation
+      ? verifyReadinessAttestation(repositoryRoot, readinessDocuments, READINESS_EVIDENCE_CLASSES)
+      : undefined;
+    const invalidAttestation = attestation !== undefined && attestation.status !== 'verified';
     const readinessByComponent = resolvedRowsByTarget[framework];
     const issues: CodegenIssue[] = [];
 
@@ -283,20 +292,22 @@ export function createTargetCapabilityPreflight(
 
       // A target assertion is actionable only when the controlling baseline,
       // eligibility derivation, and every physical evidence ref all agree.
-      if (baseline && readiness?.emissionEligible === true && referenceFailures.length === 0) {
+      if (baseline && readiness?.emissionEligible === true && referenceFailures.length === 0 && !invalidAttestation) {
         continue;
       }
 
       const missingDeclarationFile = referenceFailures.some((failure) => (
         failure.evidenceClass === 'publicDeclaration' && failure.reason === 'file-unavailable'
       ));
-      const state = missingDeclarationFile
-        ? 'declaration-unbuilt'
-        : referenceFailures.length > 0
-          ? 'reference-unresolved'
-          : readiness?.state
-            ?? baseline?.surfaces?.[framework]?.state
-            ?? 'unavailable';
+      const state = invalidAttestation
+        ? 'attestation-invalid'
+        : missingDeclarationFile
+          ? 'declaration-unbuilt'
+          : referenceFailures.length > 0
+            ? 'reference-unresolved'
+            : readiness?.state
+              ?? baseline?.surfaces?.[framework]?.state
+              ?? 'unavailable';
       issues.push({
         code: 'OODS-N015',
         message:

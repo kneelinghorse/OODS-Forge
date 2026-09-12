@@ -1,0 +1,43 @@
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 11 11 14
+author System Systems
+author-mail <systems@example.com>
+author-time 1789191073
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789191073
+committer-tz -0500
+summary feat(runtime): ship the bridge and attest portable generation
+previous d0ae4bdf684cdc290b2e8a8f9a81d16136812a7e scripts/build-revision.mjs
+filename scripts/build-revision.mjs
+	const args = process.argv.slice(3);
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 12 12
+	const explicit = {};
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 13 13
+	for (let i = 0; i < args.length; i += 2) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 14 14
+	  const key = args[i];
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 15 15
+	  const value = args[i + 1];
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 16 16
+	  if (!['--commit', '--structured-data-manifest-hash'].includes(key) || !value || key in explicit) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 17 17
+	    throw new Error('Expected --commit <40hex> and --structured-data-manifest-hash <sha256:64hex>.');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 18 18
+	  }
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 19 19
+	  explicit[key] = value;
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 20 20
+	}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 21 21
+	if (args.length && (!/^[a-f0-9]{40}$/.test(explicit['--commit'] ?? '') || !/^sha256:[a-f0-9]{64}$/.test(explicit['--structured-data-manifest-hash'] ?? ''))) {
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 22 22
+	  throw new Error('Explicit build revision requires both a 40hex commit and sha256:64hex structured-data manifest hash.');
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 23 23
+	}
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 24 24
+	// Assembly stamps the manifest's source identity without requiring git or host data.
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 26 26 2
+	  commit: explicit['--commit'] ?? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+2d80ae017184b6a28d4b2d7a2bb02649a5c33718 27 27
+	  structuredDataManifestHash: explicit['--structured-data-manifest-hash'] ?? `sha256:${createHash('sha256').update(readFileSync(path.join(root, 'artifacts/structured-data/manifest.json'))).digest('hex')}`,

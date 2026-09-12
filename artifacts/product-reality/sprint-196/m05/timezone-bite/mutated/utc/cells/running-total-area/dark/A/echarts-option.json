@@ -1,0 +1,130 @@
+{
+  "dataset": [
+    {
+      "id": "pattern:viz:running-total-area:dataset",
+      "source": [
+        {
+          "month": "2025-03",
+          "arr": 140
+        },
+        {
+          "month": "2025-04",
+          "arr": 180
+        },
+        {
+          "month": "2025-05",
+          "arr": 220
+        },
+        {
+          "month": "2025-06",
+          "arr": 270
+        },
+        {
+          "month": "2025-07",
+          "arr": 310
+        },
+        {
+          "month": "2025-08",
+          "arr": 345
+        },
+        {
+          "month": "2025-09",
+          "arr": 390
+        }
+      ],
+      "dimensions": [
+        "month",
+        "arr"
+      ]
+    }
+  ],
+  "series": [
+    {
+      "type": "line",
+      "datasetId": "pattern:viz:running-total-area:dataset",
+      "encode": {
+        "x": "month",
+        "y": "arr",
+        "tooltip": [
+          "month",
+          "arr"
+        ]
+      },
+      "areaStyle": {
+        "opacity": 0.3
+      }
+    }
+  ],
+  "xAxis": {
+    "type": "time",
+    "name": "Month",
+    "nameLocation": "end",
+    "boundaryGap": true
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "Net ARR Added ($k)",
+    "nameLocation": "end"
+  },
+  "useUTC": false,
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "shadow"
+    }
+  },
+  "grid": {
+    "containLabel": true,
+    "left": 24,
+    "right": 24,
+    "top": 24,
+    "bottom": 24
+  },
+  "aria": {
+    "enabled": true,
+    "description": "ARR steadily increases with a sharper slope entering Q3.",
+    "label": {
+      "enabled": true,
+      "description": "ARR burn-up area chart"
+    }
+  },
+  "title": {
+    "text": "ARR Burn-up",
+    "subtext": "The run rate accelerates after May, adding 120k ARR in three months."
+  },
+  "usermeta": {
+    "oods": {
+      "specId": "pattern:viz:running-total-area",
+      "name": "ARR Burn-up",
+      "theme": "brand-a",
+      "layout": {
+        "width": 720,
+        "height": 360,
+        "padding": 24
+      },
+      "a11y": {
+        "description": "ARR steadily increases with a sharper slope entering Q3.",
+        "ariaLabel": "ARR burn-up area chart",
+        "narrative": {
+          "summary": "The run rate accelerates after May, adding 120k ARR in three months.",
+          "keyFindings": [
+            "Burn-up crosses 300k in July",
+            "March–April plateau resolves in May"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Monthly ARR burn-up"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "month",
+          "arr"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    }
+  }
+}

@@ -1,0 +1,514 @@
+944f4dda5f784e266310978b31f65b3d452e6387 85 85 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/how-forge-works.html
+filename docs/how-forge-works.html
+	<!-- forge-claim:reference-label -->  <p class="eyebrow">Reference · generated source claims</p><!-- /forge-claim:reference-label -->
+944f4dda5f784e266310978b31f65b3d452e6387 93 93 1
+	<!-- forge-claim:trait-nav -->      <li><a href="#trait-inventory">The trait inventory (45)</a></li><!-- /forge-claim:trait-nav -->
+944f4dda5f784e266310978b31f65b3d452e6387 95 95 1
+	<!-- forge-claim:object-nav -->      <li><a href="#object-inventory">The object inventory (12 definitions; 11 names)</a></li><!-- /forge-claim:object-nav -->
+944f4dda5f784e266310978b31f65b3d452e6387 113 113 1
+	<!-- forge-claim:tool-flow -->    <div role="listitem"><i>export + check</i><b>Tools</b>24 registered tools (19 auto + 5 on demand), as defined by <span class="k">packages/mcp-server/src/tools/registry.json</span>: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div><!-- /forge-claim:tool-flow -->
+944f4dda5f784e266310978b31f65b3d452e6387 120 120 1
+	<!-- forge-claim:trait-format -->  <p>A trait file has a named header (<span class="k">trait:</span>). Across the authored inventory, its 11 section names are <span class="k">dependencies</span>, <span class="k">detection</span>, <span class="k">events</span>, <span class="k">metadata</span>, <span class="k">outputs</span>, <span class="k">parameters</span>, <span class="k">schema</span>, <span class="k">semantics</span>, <span class="k">state_machine</span>, <span class="k">tokens</span>, <span class="k">view_extensions</span>; each trait uses the sections it needs. The table below explains the core sections using <span class="k">Stateful</span> as the example:</p><!-- /forge-claim:trait-format -->
+944f4dda5f784e266310978b31f65b3d452e6387 127 127 1
+	<!-- forge-claim:stateful-extension-example -->      <tr><td>view_extensions</td><td>Which UI piece to show in each context, where, and with what props.</td><td>list: StatusBadge · detail: StatusTimeline (top, priority 40) · form: StatusSelector · timeline: StateTransitionEvent · card: StatusBadge</td></tr><!-- /forge-claim:stateful-extension-example -->
+944f4dda5f784e266310978b31f65b3d452e6387 134 134 1
+	<!-- forge-claim:source-example-1 --><pre><code>trait:
+944f4dda5f784e266310978b31f65b3d452e6387 139 139 1
+	  - name: states
+944f4dda5f784e266310978b31f65b3d452e6387 142 142 5
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 143 143
+	    validation:
+944f4dda5f784e266310978b31f65b3d452e6387 144 144
+	      enumFromParameter: states
+944f4dda5f784e266310978b31f65b3d452e6387 145 145
+	  - name: transitionRules
+944f4dda5f784e266310978b31f65b3d452e6387 146 146
+	    type: Record&lt;string, string[]&gt;
+944f4dda5f784e266310978b31f65b3d452e6387 148 148 8
+	  status:
+944f4dda5f784e266310978b31f65b3d452e6387 149 149
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 150 150
+	    validation:
+944f4dda5f784e266310978b31f65b3d452e6387 151 151
+	      enumFromParameter: states
+944f4dda5f784e266310978b31f65b3d452e6387 152 152
+	  state_history:
+944f4dda5f784e266310978b31f65b3d452e6387 153 153
+	    type: StateTransition[]
+944f4dda5f784e266310978b31f65b3d452e6387 154 154
+	  allowed_transitions:
+944f4dda5f784e266310978b31f65b3d452e6387 155 155
+	    type: string[]
+944f4dda5f784e266310978b31f65b3d452e6387 157 157 37
+	  list:
+944f4dda5f784e266310978b31f65b3d452e6387 158 158
+	    - component: StatusBadge
+944f4dda5f784e266310978b31f65b3d452e6387 159 159
+	      props:
+944f4dda5f784e266310978b31f65b3d452e6387 160 160
+	        field: status
+944f4dda5f784e266310978b31f65b3d452e6387 161 161
+	        tone: lifecycle
+944f4dda5f784e266310978b31f65b3d452e6387 162 162
+	  detail:
+944f4dda5f784e266310978b31f65b3d452e6387 163 163
+	    - component: StatusTimeline
+944f4dda5f784e266310978b31f65b3d452e6387 164 164
+	      position: top
+944f4dda5f784e266310978b31f65b3d452e6387 165 165
+	      priority: 40
+944f4dda5f784e266310978b31f65b3d452e6387 166 166
+	      props:
+944f4dda5f784e266310978b31f65b3d452e6387 167 167
+	        field: status
+944f4dda5f784e266310978b31f65b3d452e6387 168 168
+	        historyField: state_history
+944f4dda5f784e266310978b31f65b3d452e6387 169 169
+	        statesParameter: states
+944f4dda5f784e266310978b31f65b3d452e6387 170 170
+	        showActorId: true
+944f4dda5f784e266310978b31f65b3d452e6387 171 171
+	        showReason: true
+944f4dda5f784e266310978b31f65b3d452e6387 172 172
+	  form:
+944f4dda5f784e266310978b31f65b3d452e6387 173 173
+	    - component: StatusSelector
+944f4dda5f784e266310978b31f65b3d452e6387 174 174
+	      position: top
+944f4dda5f784e266310978b31f65b3d452e6387 175 175
+	      props:
+944f4dda5f784e266310978b31f65b3d452e6387 176 176
+	        field: status
+944f4dda5f784e266310978b31f65b3d452e6387 177 177
+	        optionsParameter: states
+944f4dda5f784e266310978b31f65b3d452e6387 178 178
+	        initialParameter: initialState
+944f4dda5f784e266310978b31f65b3d452e6387 179 179
+	        allowedTransitionsField: allowed_transitions
+944f4dda5f784e266310978b31f65b3d452e6387 180 180
+	        requireReasonParameter: requireTransitionReason
+944f4dda5f784e266310978b31f65b3d452e6387 181 181
+	  timeline:
+944f4dda5f784e266310978b31f65b3d452e6387 182 182
+	    - component: StateTransitionEvent
+944f4dda5f784e266310978b31f65b3d452e6387 183 183
+	      props:
+944f4dda5f784e266310978b31f65b3d452e6387 184 184
+	        historyField: state_history
+944f4dda5f784e266310978b31f65b3d452e6387 185 185
+	        labelField: status
+944f4dda5f784e266310978b31f65b3d452e6387 186 186
+	        showActor: true
+944f4dda5f784e266310978b31f65b3d452e6387 187 187
+	        showReason: true
+944f4dda5f784e266310978b31f65b3d452e6387 188 188
+	  card:
+944f4dda5f784e266310978b31f65b3d452e6387 189 189
+	    - component: StatusBadge
+944f4dda5f784e266310978b31f65b3d452e6387 190 190
+	      position: before
+944f4dda5f784e266310978b31f65b3d452e6387 191 191
+	      props:
+944f4dda5f784e266310978b31f65b3d452e6387 192 192
+	        field: status
+944f4dda5f784e266310978b31f65b3d452e6387 193 193
+	        variant: subtle
+944f4dda5f784e266310978b31f65b3d452e6387 195 195 8
+	  status.state.default.bg: var(--status-neutral-bg)
+944f4dda5f784e266310978b31f65b3d452e6387 196 196
+	  status.state.default.text: var(--status-neutral-text)
+944f4dda5f784e266310978b31f65b3d452e6387 197 197
+	  status.timeline.connector: var(--border-subtle)
+944f4dda5f784e266310978b31f65b3d452e6387 198 198
+	  status.timeline.node.bg: var(--sys-surface-raised)
+944f4dda5f784e266310978b31f65b3d452e6387 199 199
+	  status.timeline.node.border: var(--sys-border-default)
+944f4dda5f784e266310978b31f65b3d452e6387 200 200
+	  status.timeline.actor.text: var(--sys-text-secondary)
+944f4dda5f784e266310978b31f65b3d452e6387 201 201
+	  status.timeline.reason.text: var(--sys-text-tertiary)
+944f4dda5f784e266310978b31f65b3d452e6387 202 202
+	  status.timeline.reason.bg: var(--sys-surface-neutral)</code></pre><!-- /forge-claim:source-example-1 -->
+944f4dda5f784e266310978b31f65b3d452e6387 205 205 9
+	<!-- forge-claim:source-example-2 --><pre><code>- name: lifecycle/Stateful
+944f4dda5f784e266310978b31f65b3d452e6387 206 206
+	  parameters:
+944f4dda5f784e266310978b31f65b3d452e6387 207 207
+	    states:
+944f4dda5f784e266310978b31f65b3d452e6387 208 208
+	      - draft
+944f4dda5f784e266310978b31f65b3d452e6387 209 209
+	      - in_review
+944f4dda5f784e266310978b31f65b3d452e6387 210 210
+	      - active
+944f4dda5f784e266310978b31f65b3d452e6387 211 211
+	      - retired
+944f4dda5f784e266310978b31f65b3d452e6387 212 212
+	    initialState: draft</code></pre><!-- /forge-claim:source-example-2 -->
+944f4dda5f784e266310978b31f65b3d452e6387 213 213
+	<!-- forge-claim:trait-states -->  <p>From that, Product gains a <span class="k">status</span> field restricted to those four values, a transition history, and a computed list of next states; every Product list shows a status badge, every detail page a status timeline, every form a status selector whose options come from the object's own states. Parameters flow into component props (<span class="k">optionsParameter: states</span>), so the same StatusSelector is correct for Product's four states and Subscription's eight. Parameter values are checked against each trait's JSON Schema (<span class="k">schemas/traits/&lt;name&gt;.parameters.schema.json</span>) when the full engine resolves an object — <span class="k">pnpm object:validate</span>, <span class="k">object:compose</span>, <span class="k">object:generate</span>; the tools' lighter composer merges without validating, so run <span class="k">object:validate</span> after editing an object.</p><!-- /forge-claim:trait-states -->
+944f4dda5f784e266310978b31f65b3d452e6387 216 216 1
+	<!-- forge-claim:trait-title -->  <h2 id="trait-inventory"><span class="n">03</span>The trait inventory (45)</h2><!-- /forge-claim:trait-title -->
+944f4dda5f784e266310978b31f65b3d452e6387 220 220 47
+	    <tbody><!-- forge-claim:trait-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 221 221
+	      <tr class="famrow"><td colspan="4">behavioral (5)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 222 222
+	      <tr><td>Filterable <small>(stable)</small></td><td>Adds multi-facet filtering to list and collection views. Filterable injects a filter panel into the sidebar or header region, wires filter state to the data layer, and provides semantic token mappings for consistent filter UI styling across brands. Filters are defined as an array of filter descriptors, each specifying a field, operator, and available values. Active filters are tracked separately for apply/clear lifecycle. The trait supports both immediate-apply and batch-apply modes for UX flexibility.</td><td>filters, activeFilters, filterCount</td><td>FilterPanel</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 223 223
+	      <tr><td>Pageable <small>(stable)</small></td><td>Adds pagination controls to list and collection views. Pageable injects a pagination bar into the footer region, wires page state to the data layer, and provides semantic token mappings for consistent pagination UI styling across brands. The trait supports configurable page sizes, total item counts for page calculation, and both simple (prev/next) and full (goto page) navigation modes. Page state is managed via the page and pageSize props, which the consuming layout binds to data offset/limit parameters or API pagination cursors.</td><td>page, pageSize, totalItems, totalPages</td><td>PaginationBar</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 224 224
+	      <tr><td>Searchable <small>(stable)</small></td><td>Adds full-text search capability to list and collection views. Searchable injects a search input into the header region, wires query state to the data layer, and provides semantic token mappings for consistent search UI styling across brands. The trait supports placeholder text customization, debounce control for performance, and clear-on-escape behavior. Search state is managed via the searchQuery prop, which the consuming layout binds to a data filter or API parameter.</td><td>searchQuery, searchActive</td><td>SearchInput</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 225 225
+	      <tr><td>Sortable <small>(stable)</small></td><td>Adds column sorting controls to list and table views. Sortable injects sort indicators into the header region near column headers, wires sort state to the data layer, and provides semantic token mappings for consistent sort UI styling across brands. The trait supports single-column sorting with ascending/descending/none cycle. Sort state is managed via sortField and sortDirection props, which the consuming layout binds to data ordering parameters or API sort queries.</td><td>sortField, sortDirection, sortActive</td><td>SortIndicator</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 226 226
+	      <tr><td>Taggable <small>(stable)</small></td><td>Adds configurable tag management with guardrails for custom authoring, taxonomy alignment, and tag governance. Taggable supports both open tagging (user-defined) and controlled vocabularies (allow-list), with optional moderation workflows for tag quality control. Tags are first-class metadata in OODS — they drive discovery, filtering, and cross-object relationships. The trait provides per-tag governance metadata (creator, creation date, usage count) for taxonomy health monitoring, and optional synonym resolution to prevent tag fragmentation (e.g., &quot;javascript&quot; and &quot;js&quot; resolve to the same canonical tag).</td><td>tags, tag_count, tag_metadata</td><td>TagPills, TagSummary, TagInput</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 227 227
+	      <tr class="famrow"><td colspan="4">content (1)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 228 228
+	      <tr><td>Labelled <small>(stable)</small></td><td>Canonical label, description, and placeholder copy for authored objects. Labelled is a foundational content trait used by Organization, Product, Relationship, and other core objects to provide consistent text display across all view contexts. Supports configurable length constraints, required/optional description, and copy variants (e.g., primary, short, formal) for context-sensitive text rendering.</td><td>label, description, placeholder</td><td>LabelCell, DetailHeader, FormLabelGroup, CardHeader, TimelineEntryLabel, InlineLabel</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 229 229
+	      <tr class="famrow"><td colspan="4">core (5)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 230 230
+	      <tr><td>Addressable <small>(experimental)</small></td><td>Canonical multi-role address trait with validation metadata, geocoding, and international formatting hooks. Provides a single, reusable capability for billing, shipping, warehouse, and office addresses.</td><td>address_roles, default_address_role, addresses</td><td>AddressSummaryBadge, AddressCollectionPanel, AddressEditor, AddressValidationTimeline</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 231 231
+	      <tr><td>Authable <small>(experimental)</small></td><td>Role-based access control extension pack grounded in the R21.2 membership pattern. Encodes roles, permissions, memberships, and adjacency edges for tenant-aware RBAC.</td><td>role_catalog, permission_catalog, role_permissions, membership_records, role_hierarchy_edges, session_roles</td><td>RoleBadgeList, MembershipPanel, RoleAssignmentForm, MembershipAuditTimeline</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 232 232
+	      <tr><td>Classifiable <small>(draft)</small></td><td>Canonical taxonomy + folksonomy trait supporting taxonomy, tag, and hybrid modes with governance metadata.</td><td>classification_metadata, categories, primary_category_id, primary_category_path, tags, tag_count, tag_preview</td><td>ClassificationBadge, ClassificationPanel, ClassificationEditor</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 233 233
+	      <tr><td>Communicable <small>(experimental)</small></td><td>Canonical communication trait that unifies multi-channel delivery, template governance, delivery policies, and threaded conversations derived from R20.1/R20.6 research. Provides orchestration-ready schemas for channels, messages, policies, and conversations with Preferenceable/Authable/Classifiable integration points.</td><td>channel_catalog, template_catalog, delivery_policies, messages, conversations, message_statuses</td><td>MessageStatusBadge, CommunicationDetailPanel, TemplatePicker, MessageEventTimeline</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 234 234
+	      <tr><td>Preferenceable <small>(experimental)</small></td><td>User preference trait backed by JSONB storage, schema versioning, and registry governance. Encodes namespaces such as theme, notifications, and display with deterministic overrides.</td><td>preference_document, preference_metadata, preference_version, preference_namespaces, preference_mutations</td><td>PreferenceSummaryBadge, PreferencePanel, PreferenceEditor, PreferenceTimeline</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 235 235
+	      <tr class="famrow"><td colspan="4">financial (2)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 236 236
+	      <tr><td>Billable <small>(experimental)</small></td><td>Recurring billing mechanics trait that normalizes cycle tracking, payment timing, and period management for subscription-based entities. Billable owns the billing CYCLE — when payments occur, how periods progress, and what the payment state is. DISTINCT from Priceable — Priceable handles PRICING (amount, currency, models). Billable handles RECURRENCE (cycles, periods, payment timing, proration). A Subscription composes both: Priceable for &quot;how much&quot; and Billable for &quot;when/how&quot;. Core concepts: - Billing Cycle: current_period_start → current_period_end with progress tracking - Payment Timing: prepaid (charge at period start) vs postpaid (charge at period end) - Proration: fractional billing when mid-cycle changes occur, with preview/commit timing (proration_date), a charge-timing policy (prorationBehavior), and billing-anchor-reset disclosure - Payment Status: tracks the outcome of the most recent collection attempt - Cycle Anchoring: fixed day-of-month for consistent renewal dates PRORATION SCOPE (trait-split gap): proration semantics live ONLY on this CORE financial/Billable trait. The saas-billing domain trait SaaSBillingBillable (domains/saas-billing/traits/billable.trait.yaml) does NOT expose proration, so a Subscription composing only SaaSBillingBillable silently CANNOT prorate. To enable proration for a SaaS subscription, compose financial/Billable (as the core Subscription object does, alias SubscriptionBilling).</td><td>amount, currency, billing_interval, payment_status, payment_method_type, proration_amount, proration_date, last_payment_at, next_payment_due_at, current_period_start, current_period_end, current_period_progress</td><td>BillingSummaryBadge, CycleProgressCard, PaymentTimeline, BillingIntervalSelector, BillingAmountInput, PaymentEventTimeline, BillingCardMeta</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 237 237
+	      <tr><td>Priceable <small>(stable)</small></td><td>Introduces monetization metadata with currency handling, pricing models, and billing cadence semantics.</td><td>unit_amount_cents, currency, pricing_model, billing_interval, tax_behavior</td><td>PriceSummary, PriceBadge, PriceCardMeta</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 238 238
+	      <tr class="famrow"><td colspan="4">lifecycle (5)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 239 239
+	      <tr><td>Archivable <small>(stable)</small></td><td>Provides archival lifecycle management with configurable retention, restoration, audit tracking, and compliance metadata. Archivable manages the full archive-restore-purge lifecycle, including soft-delete with configurable duration before hard deletion, partial restoration support, and per-archive compliance tagging. Objects composing Archivable can be soft-deleted (moved to an &quot;archived&quot; state with full data retention), restored within a configurable window, or permanently purged after the retention period expires. The trait tracks who archived the entity, why, and through what method (manual, automated, policy) for audit trail completeness.</td><td>is_archived, archived_at, restored_at, archive_reason, archived_by, archive_metadata, restoration_metadata</td><td>ArchivedRowOverlay, ArchiveSummary, ArchiveEvent, ArchivePill</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 240 240
+	      <tr><td>Auditable <small>(experimental)</small></td><td>Compliance-grade audit trail trait that captures state transitions with actor, reason, and timestamp metadata. Auditable observes Stateful transitions and records them as an append-only audit log suitable for compliance review, debugging, and timeline rendering. Auditable defines the INTERFACE for audit data — the schema shape, parameters, and view extensions that match the existing implementation. Advanced compliance features (crypto-shredding, KMS integration, tamper-proof hashing) are documented in R21.3 research and targeted for future enrichment. Core concepts: - Audit Log: append-only array of AuditEntry records - Transition Capture: from_state → to_state with timestamp, actor, and reason - Retention Policy: configurable retention period for log entries - Actor Tracking: optional actor_id capture for accountability - Reason Enforcement: optional requirement for transition justification</td><td>audit_log</td><td>AuditTimeline, AuditSummaryCard</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 241 241
+	      <tr><td>Cancellable <small>(stable)</small></td><td>Adds lifecycle-aware cancellation workflows with policy guardrails and semantic token mappings.</td><td>cancel_at_period_end, cancellation_reason, cancellation_reason_code, cancellation_requested_at</td><td>CancellationSummary, CancellationEvent, CancellationForm, CancellationBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 242 242
+	      <tr><td>Stateful <small>(stable)</small></td><td>Normalizes lifecycle state transitions, exposes canonical status semantics, and provides optional transition governance for production workflows. Stateful is the most-composed trait in the system (used by 18 objects including User, Subscription, Product, Order) and serves as the data source for the Colorized visual trait. At its simplest, Stateful defines an ordered list of valid states and tracks the current status. When governance is enabled via transitionRules, it additionally enforces which transitions are allowed, records the actor and reason for each transition, and materializes the set of valid next states — making it suitable for auditable workflows where arbitrary state jumps are not permitted.</td><td>status, state_history, allowed_transitions</td><td>StatusBadge, StatusTimeline, StatusSelector, StateTransitionEvent</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 243 243
+	      <tr><td>Timestampable <small>(stable)</small></td><td>Captures creation and update timestamps with configurable audit metadata for lifecycle tracking.</td><td>created_at, updated_at, last_event, last_event_at</td><td>AuditTimeline, AuditEvent, RelativeTimestamp</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 244 244
+	      <tr class="famrow"><td colspan="4">structural (1)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 245 245
+	      <tr><td>Ownerable <small>(stable)</small></td><td>Adds ownership metadata linking entities to their governing account or principal with transfer auditing.</td><td>owner_id, owner_type, ownership_role, ownership_transferred_at</td><td>OwnershipSummary, OwnerBadge, OwnershipMeta</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 246 246
+	      <tr class="famrow"><td colspan="4">visual (2)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 247 247
+	      <tr><td>Colorized <small>(stable)</small></td><td>Maps lifecycle states to semantic color tokens for consistent status theming across the design system. Colorized is the visual bridge between the Stateful trait's data model and the OODS token system's three-tier architecture (ref → theme → system → component). Every object that composes Stateful should also compose Colorized so that status values resolve to a deterministic set of surface, border, text, and icon tokens. The trait encodes WCAG contrast enforcement, color-blind safety via redundant icon+text cues, and theme-aware OKLCH token resolution — ensuring status communication never relies on color alone.</td><td>color_state, resolved_token_set, accessibility_label</td><td>ColorSwatch, StatusColorLegend, ColorStatePicker, ColorizedBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 248 248
+	      <tr><td>Statusable <small>(experimental)</small></td><td>Semantic status presentation layer that maps business statuses to visual tones, design tokens, and badge/banner rendering. Statusable owns the status registry pattern: a domain-scoped lookup table that translates raw status strings into consistent visual output (tone, label, icon, token sets). DISTINCT from Stateful — Stateful governs state machine transitions and guards; Statusable governs how status LOOKS. Statusable is the bridge between data-layer state and the component layer (Badge, Banner, StatusBadge). Core concepts: - Status Registry: Map&lt;domain, Map&lt;status, StatusPresentation&gt;&gt; - Tone System: Six semantic tones (neutral, info, accent, success, warning, critical) - Token Resolution: --cmp-status-{tone}-{surface|border|text} CSS variables - Domain Scoping: Each domain (subscription, invoice, ticket, etc.) has its own status map - Emphasis Variants: badge.subtle / badge.solid, banner.subtle / banner.solid</td><td>status, domain, tone, badge_tokens, banner_tokens</td><td>Badge, StatusBadge, Banner</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 249 249
+	      <tr class="famrow"><td colspan="4">viz (20)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 250 250
+	      <tr><td>EncodingColor <small>(alpha)</small></td><td>Maps a data field to chromatic encodings using governed palettes and redundant channels to fulfill RDV.4 accessibility equivalence rules.</td><td>viz_encoding_color_field, viz_encoding_color_scheme, viz_encoding_color_channel, viz_encoding_color_redundancy, viz_encoding_color_min_contrast, viz_encoding_color_description</td><td>VizEncodingBadge, VizColorControls, VizColorLegendConfig</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 251 251
+	      <tr><td>EncodingOpacity <small>(unspecified)</small></td><td>Constant Cartesian mark opacity</td><td>—</td><td>VizOpacityControls, VizOpacitySummary</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 252 252
+	      <tr><td>EncodingPositionX <small>(alpha)</small></td><td>Binds a data field to the horizontal axis. Declares allowed data types, scale defaults, and accessibility metadata to satisfy Normalized Viz Spec requirements.</td><td>viz_encoding_x_field, viz_encoding_x_field_kind, viz_encoding_x_scale, viz_encoding_x_include_zero, viz_encoding_x_axis_title, viz_encoding_x_sort</td><td>VizAxisSummary, VizAxisControls, VizEncodingBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 253 253
+	      <tr><td>EncodingPositionY <small>(alpha)</small></td><td>Binds a data field to the vertical axis. Provides normalization, default scale hints, and a11y metadata for describing quantitative measures.</td><td>viz_encoding_y_field, viz_encoding_y_field_kind, viz_encoding_y_scale, viz_encoding_y_include_zero, viz_encoding_y_axis_title, viz_encoding_y_aggregate</td><td>VizAxisSummary, VizAxisControls, VizEncodingBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 254 254
+	      <tr><td>EncodingShape <small>(unspecified)</small></td><td>Categorical shape encoding</td><td>—</td><td>VizShapeControls, VizShapeLegend</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 255 255
+	      <tr><td>EncodingSize <small>(alpha)</small></td><td>Maps a quantitative field to glyph size (radius or area) with governed ranges that can be validated for perceptual correctness and accessibility.</td><td>viz_encoding_size_field, viz_encoding_size_strategy, viz_encoding_size_range_min, viz_encoding_size_range_max, viz_encoding_size_min_area, viz_encoding_size_max_area, viz_encoding_size_description</td><td>VizSizeSummary, VizSizeControls, VizEncodingBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 256 256
+	      <tr><td>InteractionHighlight <small>(alpha)</small></td><td>Emphasizes hovered or selected points by adjusting a configurable visual property.</td><td>viz_interaction_highlight_fields, viz_interaction_highlight_trigger, viz_interaction_highlight_property, viz_interaction_highlight_active_value, viz_interaction_highlight_inactive_value</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 257 257
+	      <tr><td>InteractionTooltip <small>(alpha)</small></td><td>Shows contextual details-on-demand when focusing or hovering a specific datum.</td><td>viz_interaction_tooltip_fields, viz_interaction_tooltip_trigger, viz_interaction_tooltip_alignment</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 258 258
+	      <tr><td>LayoutConcat <small>(beta)</small></td><td>Defines dashboard-style concatenation for coordinated multi-view experiences.</td><td>viz_layout_type, viz_layout_direction, viz_layout_gap, viz_layout_shared_channels, viz_layout_max_sections, viz_layout_projection</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 259 259
+	      <tr><td>LayoutFacet <small>(beta)</small></td><td>Repeats a normalized visualization spec across a governed facet grid so row and column groupings stay synchronized with shared color/scale semantics.</td><td>viz_layout_type, viz_layout_rows_field, viz_layout_columns_field, viz_layout_wrap_direction, viz_layout_max_panels, viz_layout_shared_channels, viz_layout_projection, viz_layout_gap</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 260 260
+	      <tr><td>LayoutLayer <small>(beta)</small></td><td>Governs sequencing, blending, and shared channel behavior for layered mark compositions.</td><td>viz_layout_type, viz_layout_blend_mode, viz_layout_sync_interactions, viz_layout_shared_channels, viz_layout_order_hint, viz_layout_projection</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 261 261
+	      <tr><td>MarkArea <small>(alpha)</small></td><td>Canonical area mark for cumulative totals and ranges. Fills the region between the series baseline and value curve with configurable opacity and interpolation.</td><td>viz_mark_type, viz_area_curve, viz_area_opacity, viz_area_baseline, viz_area_tension, viz_mark_role, viz_mark_a11y_label</td><td>VizAreaPreview, VizAreaControls, VizRoleBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 262 262
+	      <tr><td>MarkBar <small>(alpha)</small></td><td>Canonical rectangular mark for magnitude comparisons. Supports stacked or grouped categories and enforces RDS.7 accessiblity requirements for redundant encodings.</td><td>viz_mark_type, viz_mark_orientation, viz_mark_band_padding, viz_mark_corner_radius, viz_mark_stacking, viz_mark_role, viz_mark_a11y_label</td><td>VizMarkPreview, VizMarkControls, VizRoleBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 263 263
+	      <tr><td>MarkLine <small>(alpha)</small></td><td>Canonical line mark for trends, rates, and progressions. Encodes values as connected segments with configurable curve smoothing and join policies.</td><td>viz_mark_type, viz_line_curve, viz_line_stroke_width, viz_line_join, viz_line_markers, viz_mark_role, viz_mark_a11y_label</td><td>VizLinePreview, VizLineControls, VizRoleBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 264 264
+	      <tr><td>MarkPoint <small>(alpha)</small></td><td>Canonical point mark for scatterplots and overlays. Encodes each datum as a discrete glyph with configurable shape, size, and fill semantics.</td><td>viz_mark_type, viz_point_shape, viz_point_size, viz_point_fill, viz_point_stroke_width, viz_point_opacity, viz_mark_role, viz_mark_a11y_label</td><td>VizPointPreview, VizPointControls, VizRoleBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 265 265
+	      <tr><td>MarkRect <small>(unspecified)</small></td><td>Heatmap authoring over the existing MarkRect renderer</td><td>—</td><td>VizHeatmapControls, VizHeatmapPreview</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 266 266
+	      <tr><td>ScaleLinear <small>(alpha)</small></td><td>Shared linear/continuous scale definition used by positional, color, and size encodings. Provides normalized domain/range metadata plus zero baseline enforcement per RDV.3 findings.</td><td>viz_scale_linear_domain_min, viz_scale_linear_domain_max, viz_scale_linear_range_min, viz_scale_linear_range_max, viz_scale_linear_clamp, viz_scale_linear_zero_baseline, viz_scale_linear_mode, viz_scale_linear_description</td><td>VizScaleSummary, VizScaleControls</td></tr>
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 267 267 1
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+previous 944f4dda5f784e266310978b31f65b3d452e6387 docs/how-forge-works.html
+filename docs/how-forge-works.html
+	      <tr><td>ScaleTemporal <small>(alpha)</small></td><td>Temporal scale metadata with UTC rendering and display-layer timezone declarations. The timezone value does not override renderer ticks or tooltips.</td><td>viz_scale_temporal_domain_start, viz_scale_temporal_domain_end, viz_scale_temporal_range_min, viz_scale_temporal_range_max, viz_scale_temporal_timezone, viz_scale_temporal_nice, viz_scale_temporal_output_format, viz_scale_temporal_description</td><td>VizScaleSummary, VizScaleControls</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 268 268 8
+	      <tr><td>ScatterPlot <small>(unspecified)</small></td><td>Scatter authoring over the existing MarkPoint renderer</td><td>—</td><td>VizScatterControls, VizScatterPreview</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 269 269
+	      <tr><td>Geocodable <small>(alpha)</small></td><td>Indicates that data contains location-resolvable information that can be mapped to coordinates or geographic boundaries. Supports auto-detection of geo fields based on naming patterns and field types.</td><td>geo_resolution, geo_requires_lookup, geo_detected_fields, geo_latitude_field, geo_longitude_field, geo_identifier_field, geo_identifier_type, geo_auto_detect_enabled</td><td>GeocodablePreview, GeoFieldMappingForm, GeoResolutionBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 270 270
+	      <tr class="famrow"><td colspan="4">SaaS-billing pack (4)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 271 271
+	      <tr><td>SaaSBillingBillable <small>(beta)</small></td><td>Normalizes recurring price configuration for SaaS plans including cadence, currency, and trial policy. NOTE (trait-split gap, s126-m04): this domain trait does NOT model proration — no supportProration/proration_amount/proration_date/prorationBehavior. A Subscription composing only SaaSBillingBillable silently cannot prorate. To enable proration, compose the CORE financial/Billable trait (which owns the proration semantics). See traits/financial/Billable.trait.yaml.</td><td>plan_code, plan_name, billing_interval, interval_count, amount_minor, currency, trial_period_days, collection_method, billing_anchor_day, pricing_model</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 272 272
+	      <tr><td>SaaSBillingMetered <small>(beta)</small></td><td>Provides usage metering fields for consumption based billing with normalized units and rollover policy.</td><td>meter_name, included_quantity, consumed_quantity, unit_label, period_start, period_end, rollover_strategy, overage_rate_minor, projected_overage_minor, samples</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 273 273
+	      <tr><td>SaaSBillingPayable <small>(beta)</small></td><td>Captures invoice level billing terms, status, and outstanding balance metadata for SaaS finance teams.</td><td>invoice_number, status, provider_status, issued_at, due_at, paid_at, total_minor, balance_minor, currency, payment_terms, collection_state, last_reminder_at, aging_bucket_days, attempt_count, next_payment_attempt, memo</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 274 274
+	      <tr><td>SaaSBillingRefundable <small>(experimental)</small></td><td>Describes refund eligibility, policy windows, and credit memo tracking for SaaS billing flows.</td><td>refundable_until, refund_policy_url, total_refunded_minor, credit_memo_balance_minor, credit_memo_type, last_refund_at, requires_manager_approval, notes</td><td>—</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 275 275
+	    <!-- /forge-claim:trait-roster --></tbody>
+944f4dda5f784e266310978b31f65b3d452e6387 277 277 1
+	<!-- forge-claim:domain-traits -->  <p class="note">The four SaaS-billing traits live in a <em>domain pack</em> (<span class="k">domains/saas-billing/</span>) — a folder of traits and objects for one vertical that the engine loads alongside the core set. That is the mechanism for adding a new domain without touching core traits.</p><!-- /forge-claim:domain-traits -->
+944f4dda5f784e266310978b31f65b3d452e6387 283 283 3
+	<!-- forge-claim:source-example-3 --><pre><code>object:
+944f4dda5f784e266310978b31f65b3d452e6387 284 284
+	  name: Product
+944f4dda5f784e266310978b31f65b3d452e6387 285 285
+	  domain: core.catalog
+944f4dda5f784e266310978b31f65b3d452e6387 290 290 7
+	    parameters:
+944f4dda5f784e266310978b31f65b3d452e6387 291 291
+	      states:
+944f4dda5f784e266310978b31f65b3d452e6387 292 292
+	        - draft
+944f4dda5f784e266310978b31f65b3d452e6387 293 293
+	        - in_review
+944f4dda5f784e266310978b31f65b3d452e6387 294 294
+	        - active
+944f4dda5f784e266310978b31f65b3d452e6387 295 295
+	        - retired
+944f4dda5f784e266310978b31f65b3d452e6387 296 296
+	      initialState: draft
+944f4dda5f784e266310978b31f65b3d452e6387 298 298 32
+	    parameters:
+944f4dda5f784e266310978b31f65b3d452e6387 299 299
+	      supportedCurrencies:
+944f4dda5f784e266310978b31f65b3d452e6387 300 300
+	        - USD
+944f4dda5f784e266310978b31f65b3d452e6387 301 301
+	        - EUR
+944f4dda5f784e266310978b31f65b3d452e6387 302 302
+	        - GBP
+944f4dda5f784e266310978b31f65b3d452e6387 303 303
+	        - AUD
+944f4dda5f784e266310978b31f65b3d452e6387 304 304
+	      defaultCurrency: USD
+944f4dda5f784e266310978b31f65b3d452e6387 305 305
+	      pricingModels:
+944f4dda5f784e266310978b31f65b3d452e6387 306 306
+	        - one_time
+944f4dda5f784e266310978b31f65b3d452e6387 307 307
+	        - subscription
+944f4dda5f784e266310978b31f65b3d452e6387 308 308
+	        - usage_based
+944f4dda5f784e266310978b31f65b3d452e6387 309 309
+	      billingIntervals:
+944f4dda5f784e266310978b31f65b3d452e6387 310 310
+	        - one_time
+944f4dda5f784e266310978b31f65b3d452e6387 311 311
+	        - month
+944f4dda5f784e266310978b31f65b3d452e6387 312 312
+	        - year
+944f4dda5f784e266310978b31f65b3d452e6387 313 313
+	      taxBehavior: exclusive
+944f4dda5f784e266310978b31f65b3d452e6387 314 314
+	schema:
+944f4dda5f784e266310978b31f65b3d452e6387 315 315
+	  product_id:
+944f4dda5f784e266310978b31f65b3d452e6387 316 316
+	    type: uuid
+944f4dda5f784e266310978b31f65b3d452e6387 317 317
+	  sku:
+944f4dda5f784e266310978b31f65b3d452e6387 318 318
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 319 319
+	  inventory_status:
+944f4dda5f784e266310978b31f65b3d452e6387 320 320
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 321 321
+	  release_channel:
+944f4dda5f784e266310978b31f65b3d452e6387 322 322
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 323 323
+	  requires_subscription:
+944f4dda5f784e266310978b31f65b3d452e6387 324 324
+	    type: boolean
+944f4dda5f784e266310978b31f65b3d452e6387 325 325
+	  support_level:
+944f4dda5f784e266310978b31f65b3d452e6387 326 326
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 327 327
+	  summary_blurb:
+944f4dda5f784e266310978b31f65b3d452e6387 328 328
+	    type: string
+944f4dda5f784e266310978b31f65b3d452e6387 329 329
+	# Other traits: lifecycle/Timestampable, core/Classifiable, behavioral/Searchable, behavioral/Filterable, behavioral/Pageable</code></pre><!-- /forge-claim:source-example-3 -->
+944f4dda5f784e266310978b31f65b3d452e6387 334 334 2
+	<!-- forge-claim:product-fields -->    <li><b>Fields are merged</b> — every trait's schema fields plus the object's own: 38 fields for Product. If two traits declare the same field, the full engine applies collision rules (same type → merge, keep the stricter; two enums → union; required beats optional; different types → error unless the object resolves it) and records which trait each field came from.</li><!-- /forge-claim:product-fields -->
+944f4dda5f784e266310978b31f65b3d452e6387 335 335
+	<!-- forge-claim:product-parameter-type -->    <li><b>Parameters are applied</b> — validated against each trait's schema, and parameter-driven enums become real constraints (Product's generated TypeScript type has <span class="k">status: 'draft' | 'in_review' | 'active' | 'retired'</span>).</li><!-- /forge-claim:product-parameter-type -->
+944f4dda5f784e266310978b31f65b3d452e6387 337 337 1
+	<!-- forge-claim:state-machine-cardinality -->    <li><b>Tokens, semantics, actions and a state machine (multiple owners are refused by default) are merged.</b></li><!-- /forge-claim:state-machine-cardinality -->
+944f4dda5f784e266310978b31f65b3d452e6387 339 339 1
+	<!-- forge-claim:composer-semantics -->  <p class="note">The full engine (<span class="k">src/core</span>, <span class="k">src/registry</span>; the <span class="k">object:*</span> commands) performs the composition steps above. The tools' runtime composer (<span class="k">packages/mcp-server</span>; what <span class="k">object show</span> and <span class="k">design.compose</span> use) merges schema, semantics, view extensions and tokens only — last-wins on collisions with a warning, no parameter validation — and orders extensions higher-priority-first (default 0), where the React view engine orders lower-first (default 50).</p><!-- /forge-claim:composer-semantics -->
+944f4dda5f784e266310978b31f65b3d452e6387 343 343 3
+	    <tbody><!-- forge-claim:product-contributions -->
+944f4dda5f784e266310978b31f65b3d452e6387 344 344
+	      <tr><td>list</td><td>LabelCell, SearchInput, PaginationBar, FilterPanel, StatusBadge, RelativeTimestamp, PriceBadge, ClassificationBadge</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 345 345
+	      <tr><td>detail</td><td>DetailHeader, StatusTimeline, ClassificationPanel, SearchInput, FilterPanel, AuditTimeline, PriceSummary</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 350 350 1
+	    <!-- /forge-claim:product-contributions --></tbody>
+944f4dda5f784e266310978b31f65b3d452e6387 355 355 1
+	<!-- forge-claim:object-title -->  <h2 id="object-inventory"><span class="n">05</span>The object inventory (12 definitions; 11 unique names)</h2><!-- /forge-claim:object-title -->
+944f4dda5f784e266310978b31f65b3d452e6387 358 358 14
+	    <tbody><!-- forge-claim:object-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 359 359
+	      <tr><td>Article<br><small>objects/content/Article.object.yaml</small></td><td>Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.</td><td>content/Labelled, lifecycle/Stateful, lifecycle/Timestampable, core/Classifiable</td><td>article_id, slug, author_id, content_type, excerpt, body_markdown, hero_media_id, reading_time_minutes, locale, published_at</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 360 360
+	      <tr><td>Media<br><small>objects/content/Media.object.yaml</small></td><td>Canonical digital asset metadata powering media library, DAM, and CMS integrations.</td><td>content/Labelled, lifecycle/Stateful, lifecycle/Timestampable, core/Classifiable</td><td>media_id, asset_type, mime_type, storage_bucket, object_key, source_url, checksum, file_size_bytes, width_px, height_px, duration_seconds, transcoding_profiles</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 361 361
+	      <tr><td>Organization<br><small>objects/core/Organization.object.yaml</small></td><td>Canonical account record for tenant and workspace governance across the platform.</td><td>content/Labelled, lifecycle/Stateful, structural/Ownerable, lifecycle/Timestampable, behavioral/Taggable, core/Addressable, core/Preferenceable, core/Authable, core/Communicable</td><td>organization_id, domain, plan_tier, billing_status, industry, employee_count, billing_contact_email, data_residency</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 362 362
+	      <tr><td>Product<br><small>objects/core/Product.object.yaml</small></td><td>Canonical catalog entry combining pricing, lifecycle, and merchandising metadata.</td><td>content/Labelled, lifecycle/Stateful, lifecycle/Timestampable, financial/Priceable, core/Classifiable, behavioral/Searchable, behavioral/Filterable, behavioral/Pageable</td><td>product_id, sku, inventory_status, release_channel, requires_subscription, support_level, summary_blurb</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 363 363
+	      <tr><td>Relationship<br><small>objects/core/Relationship.object.yaml</small></td><td>Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.</td><td>content/Labelled, lifecycle/Stateful, lifecycle/Timestampable, structural/Ownerable, behavioral/Taggable</td><td>relationship_id, source_id, target_id, relationship_type, direction, strength, origin_source, is_bidirectional</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 364 364
+	      <tr><td>Subscription<br><small>objects/core/Subscription.object.yaml</small></td><td>Canonical subscription record composing lifecycle, billing, and cancellation semantics.</td><td>lifecycle/Stateful, lifecycle/Cancellable, lifecycle/Timestampable, financial/Billable, lifecycle/Archivable, viz/MarkArea</td><td>subscription_id, plan_name, plan_code, plan_interval, customer_name, customer_email, status, cancel_at_period_end, cancellation_reason, cancellation_requested_at, amount, currency, billing_interval, current_period_start, current_period_end, current_period_progress, last_payment_at, next_payment_due_at</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 365 365
+	      <tr><td>Transaction<br><small>objects/core/Transaction.object.yaml</small></td><td>Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.</td><td>lifecycle/Stateful, lifecycle/Timestampable, financial/Priceable, lifecycle/Cancellable, lifecycle/Archivable</td><td>transaction_id, user_id, organization_id, occurred_at, payment_method, channel, payment_reference, risk_score</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 366 366
+	      <tr><td>User<br><small>objects/core/User.object.yaml</small></td><td>Canonical identity record representing a platform user across lifecycle contexts.</td><td>lifecycle/Stateful, lifecycle/Timestampable, behavioral/Taggable, core/Addressable, core/Preferenceable, core/Authable, core/Communicable</td><td>user_id, name, preferred_name, description, primary_email, role, timezone</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 367 367
+	      <tr><td>Invoice<br><small>domains/saas-billing/objects/Invoice.object.yaml</small></td><td>Canonical SaaS invoice object normalizing payment terms, status, and refund posture.</td><td>SaaSBillingPayable, SaaSBillingRefundable, lifecycle/Timestampable, viz/MarkBar</td><td>invoice_id, subscription_id, provider, provider_invoice_id, billing_contact_name, billing_contact_email, tax_minor, discount_minor, subtotal_minor, line_items, attachments, portal_url, dunning_step, payment_source</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 368 368
+	      <tr><td>Plan<br><small>domains/saas-billing/objects/Plan.object.yaml</small></td><td>Normalized plan definition capturing pricing, packaging, and entitlement metadata.</td><td>SaaSBillingBillable, SaaSBillingMetered, structural/Ownerable</td><td>plan_id, product_family, status, feature_matrix, add_on_ids, upgrade_targets, downgrade_targets, notes</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 369 369
+	      <tr><td>Subscription<br><small>domains/saas-billing/objects/Subscription.object.yaml</small></td><td>Canonical SaaS subscription object composed from lifecycle, pricing, and usage traits with provider mapping.</td><td>lifecycle/Stateful, SaaSBillingBillable, SaaSBillingMetered, SaaSBillingRefundable</td><td>subscription_id, provider, provider_subscription_id, account_name, account_key, account_owner, account_owner_email, status, status_note, current_period_start, current_period_end, trial_end_at, cancellation_effective_at, renewal_rate_minor, health_score, risk_segment, notes</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 370 370
+	      <tr><td>Usage<br><small>domains/saas-billing/objects/Usage.object.yaml</small></td><td>Metered usage snapshot for consumption based billing supporting trend analysis and overage forecasting.</td><td>SaaSBillingMetered, lifecycle/Timestampable, viz/MarkLine</td><td>usage_id, subscription_id, meter_id, provider, status, trend_percent, variance_minor, last_reported_at, anomalies</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 371 371
+	    <!-- /forge-claim:object-roster --></tbody>
+944f4dda5f784e266310978b31f65b3d452e6387 373 373 1
+	<!-- forge-claim:object-homes -->  <p class="note">The 12 definitions include Subscription in two homes. The saas-billing pack also defines its own Subscription (Stripe/Chargebee-shaped, with metering); because <span class="k">objects/</span> is scanned before <span class="k">domains/</span>, the tools expose the core Subscription under that name. Adding an object is a new <span class="k">*.object.yaml</span> file (the suffix is required) in <span class="k">objects/</span> or a domain pack; the loaders index once per process, so it appears on the next server start.</p><!-- /forge-claim:object-homes -->
+944f4dda5f784e266310978b31f65b3d452e6387 377 377 4
+	<!-- forge-claim:context-roster -->  <div class="def"><b>Context</b><p>The kind of screen an object is being shown in. A trait's view extension names the context it targets, so the same object produces a different — but consistent — screen for each. Traits contribute to <b>list</b>, <b>detail</b>, <b>form</b>, <b>timeline</b>, <b>card</b> and <b>inline</b>. Bound bar and line traits also author <b>dashboard</b> contributions, selected through the public dashboard layout. The <b>chart</b> view remains a shell.</p></div><!-- /forge-claim:context-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 378 378
+	<!-- forge-claim:region-roster -->  <p>Every context in Forge's component library is laid out on the same six named regions, in this order: <span class="k">globalNavigation</span>, <span class="k">pageHeader</span>, <span class="k">breadcrumbs</span>, <span class="k">viewToolbar</span>, <span class="k">main</span>, <span class="k">contextPanel</span>. Main is always required; page header is required in every context except card and inline; list and timeline also require the toolbar. Regions render as real HTML landmarks (nav, header, main, aside with labels), so structure is visible to screen readers and testable.</p><!-- /forge-claim:region-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 379 379
+	<!-- forge-claim:view-assembly -->  <p><b>How a screen is assembled.</b> For the requested context, Forge collects every trait's extensions, sorts them by priority (lower first, default 50; ties by declaration order), evaluates any conditions (data, permissions, theme), groups them by region and composes them in a fixed order. Each rendered piece is wrapped in a boundary carrying its id, region and source trait, and a debug mode prints a per-region report. Below tablet width (768px container) the two-column contexts collapse to one column; an opt-in drawer component turns the side panel into a focus-trapped sheet.</p><!-- /forge-claim:view-assembly -->
+944f4dda5f784e266310978b31f65b3d452e6387 380 380
+	<!-- forge-claim:renderer-layouts -->  <p class="note">There are two renderers. The React <b>view engine</b> (the component library, Storybook, the region contract above) and the tools' <b>HTML renderer</b>, which places the same trait contributions into layout templates — dashboard, form, detail, list, card, timeline, landing — with named slots (header, tab-N, metadata, items, filters, hero, cta …). Generated HTML documents carry the tokens and components, not yet the six-region responsive shell.</p><!-- /forge-claim:renderer-layouts -->
+944f4dda5f784e266310978b31f65b3d452e6387 382 382 1
+	<!-- forge-claim:component-counts -->  <p>The canonical intake contains 109 unique component claims. The historical reconciliation proposal classified 98 as runtime component rows (15 native and 83 recipes) and 11 as non-runtime authoring-only rows. Derek accepted retaining all 109 obligations in decision #1788; the old 98-runtime split remains unapproved and approvedRuntimeCensus stays null. Missing implementations remain obligations. Sprint-182 evidence marks exactly 14 React and 14 Vue surface cells as <span class="k">foundation-v1-candidate</span>; a separate independent review accepted those candidates and a distinct authorization promoted all 28 to <span class="k">foundation-v1</span>. That promotion does not approve the 98-row runtime census. That historical foundation nucleus is Badge, Banner, Button, Card, Checkbox, DatePicker, Grid, Input, Select, Stack, Table, Tabs, Text and Textarea. Sprint 193 now measures 109 React and 109 Vue implementations, 109 HTML mappings, and 109 versioned contracts. Accessibility is verified for 109 rows and theme for 109 rows; interaction is verified for 40 and explicitly not applicable for 69 static rows. No framework row is unavailable. These are measured component scenarios and bounded runtime receipts; Sprint 193 is certified and closed. The authored shared scenario roster contains 109 scenarios. The generated capability ledger and date-tagged catalog export agree. The current proposal is 24 native, 84 recipe and 1 alias; all 109 classifications await Derek’s approval; the independent Sprint 192 review certified the sprint (decision #1891) without approving the proposal. <span class="k">catalog.list</span> filters the catalog by category, trait or context; <span class="k">object show</span> returns an object's composed traits and extensions.</p><!-- /forge-claim:component-counts -->
+944f4dda5f784e266310978b31f65b3d452e6387 387 387 10
+	<!-- forge-claim:token-outputs -->  <p>One build (<span class="k">pnpm build:tokens</span>, Style Dictionary) compiles the JSON sources into five outputs: CSS custom properties (916 variables), a TypeScript map, a Tailwind token map, a Swift file and a Kotlin file. Tokens are layered so that a change at the right level propagates:</p><!-- /forge-claim:token-outputs -->
+944f4dda5f784e266310978b31f65b3d452e6387 388 388
+	<!-- forge-claim:source-example-4 --><pre><code>--ref-color-neutral-50: oklch(0.9913 0.0013 286.38);
+944f4dda5f784e266310978b31f65b3d452e6387 389 389
+	--theme-surface-canvas: var(--ref-color-neutral-50);
+944f4dda5f784e266310978b31f65b3d452e6387 390 390
+	--sys-surface-canvas: var(--theme-surface-canvas);
+944f4dda5f784e266310978b31f65b3d452e6387 391 391
+	--cmp-text-placeholder-color: var(--sys-text-muted);
+944f4dda5f784e266310978b31f65b3d452e6387 392 392
+	--sys-breakpoint-md: 768;</code></pre><!-- /forge-claim:source-example-4 -->
+944f4dda5f784e266310978b31f65b3d452e6387 393 393
+	<!-- forge-claim:token-themes -->  <p><b>Themes</b> are light, dark and high-contrast (the last maps to the operating system's forced colours). <b>Brands</b> are sets of values for the brand colour roles — surfaces, text, interactive, borders, status and focus — one JSON file per brand per theme (the base files contain 45 leaves each, under <span class="k">brands/&lt;X&gt;/{base,dark,hc}.json</span>). The build emits a block per brand × theme that re-assigns 41 shared theme slots to that brand's values:</p><!-- /forge-claim:token-themes -->
+944f4dda5f784e266310978b31f65b3d452e6387 394 394
+	<!-- forge-claim:source-example-5 --><pre><code>[data-brand='B'][data-theme='dark'] { --theme-surface-canvas: …; --theme-text-primary: …; … }</code></pre><!-- /forge-claim:source-example-5 -->
+944f4dda5f784e266310978b31f65b3d452e6387 395 395
+	<!-- forge-claim:token-brands -->  <p>So switching brand or theme is two attributes on the document; no component changes. Two brands ship today (A and B); three brand-relative presets (corporate-blue, dark-minimal, startup-warm) can be applied to any brand. <span class="k">brand.intake</span> validates inline brand-relative DTCG documents and returns an envelope hash plus a consumable delta for accepted A/B themes. <span class="k">brand.apply</span> previews that delta or writes canonical brand source and runs both token-build stages, retaining source hashes, byte counts and captured build results in a dated review folder. A failed build reports the output tail and leaves source writes in place. <span class="k">tokens.build</span> returns requested-scope JSON and CSS alongside full CSS and legacy A/light TypeScript and Tailwind artifacts.</p><!-- /forge-claim:token-brands -->
+944f4dda5f784e266310978b31f65b3d452e6387 396 396
+	<!-- forge-claim:token-guards -->  <p><b>Guards around the build.</b> A collision guard refuses to build if two source files declare the same token with different values; 228 brand-contrast rules (57 text/icon pairs per brand per theme) run in CI, and any theme slot a brand newly overrides must be graded; a real-browser check asserts the computed values in all six brand × theme cells; a CI check blocks high-risk token changes (by namespace and segment) unless the PR carries the <span class="k">token-change:breaking</span> label.</p><!-- /forge-claim:token-guards -->
+944f4dda5f784e266310978b31f65b3d452e6387 400 400 3
+	<!-- forge-claim:generation-path -->  <p>The generate path is four stages that chain — compose, validate, render and generate — with pipeline running them together. They pass a <b>UiSchema</b> between them:</p><!-- /forge-claim:generation-path -->
+944f4dda5f784e266310978b31f65b3d452e6387 401 401
+	<!-- forge-claim:ui-schema-shape -->  <div class="def"><b>UiSchema</b><p>A JSON tree of components. The schema declares node properties <span class="k">id, component, state, route, layout, style, props, chart, bindings, collection, collectionControl, children, meta</span> and root properties <span class="k">workflow, $schema, version, dsVersion, theme, screens, tokenOverrides, objectSchema</span>. Traits' token maps are carried into <span class="k">tokenOverrides</span>.</p></div><!-- /forge-claim:ui-schema-shape -->
+944f4dda5f784e266310978b31f65b3d452e6387 402 402
+	<!-- forge-claim:source-example-6 --><p class="note">Illustrative UiSchema shape; the measured Product composition is reported below.</p>
+944f4dda5f784e266310978b31f65b3d452e6387 409 409 1
+	      ] } ] }</code></pre><!-- /forge-claim:source-example-6 -->
+944f4dda5f784e266310978b31f65b3d452e6387 413 413 2
+	<!-- forge-claim:compose-tool -->      <tr><td>design.compose</td><td>A short intent ("order history list with filters") and/or an object + context (detail, list, form, timeline, card, inline, workflow), optional layout (dashboard, form, detail, list, card, timeline, landing, auto) and component overrides.</td><td>A UiSchema plus a reference id (30-minute lifetime), per-slot confidence, and a review hint where a slot was uncertain. Object-aware: it fills slots from the object's fields and view extensions and reports which traits it used.</td></tr><!-- /forge-claim:compose-tool -->
+944f4dda5f784e266310978b31f65b3d452e6387 414 414
+	<!-- forge-claim:validate-tool -->      <tr><td>repl · validate</td><td>A UiSchema, or a patch to one (JSON Patch or per-node replace).</td><td>Structural validation against the schema grammar and the component catalog; optionally the 18 token-contrast rules.</td></tr><!-- /forge-claim:validate-tool -->
+944f4dda5f784e266310978b31f65b3d452e6387 416 416 1
+	<!-- forge-claim:codegen-tool -->      <tr><td>code.generate</td><td>A validated UiSchema; framework react | vue | html; styling inline | tokens | tailwind; TypeScript on/off.</td><td>A single-screen schema returns source code plus its import list; a workflow returns application files. React imports the real <span class="k">@oods/components-react</span> package, Vue imports <span class="k">@oods/components-vue</span>, and both import <span class="k">@oods/component-styles/css</span>. A known component/target pair that is not emission-eligible fails before emission with typed error <span class="k">OODS-N015</span> and no source payload; HTML remains standalone.</td></tr><!-- /forge-claim:codegen-tool -->
+944f4dda5f784e266310978b31f65b3d452e6387 418 418 1
+	<!-- forge-claim:schema-lifetime -->      <tr><td>schema · save/load/list/delete</td><td>A schema reference.</td><td>Persists work past the 30-minute reference lifetime and across sessions.</td></tr><!-- /forge-claim:schema-lifetime -->
+944f4dda5f784e266310978b31f65b3d452e6387 421 421 2
+	<!-- forge-claim:product-screen -->  <p>Intent matching is rule-based (keywords and synonyms choose the layout; a deterministic selector picks components), so the same input always produces the same tree — there is no language model inside Forge. A real run: intent "product detail page" auto-detects the Product object, picks the detail layout, and returns a 18-node tree with 10 filled slots and 8 tabs expanded from Product's 38 fields. The actual selected slot roster is header: DetailHeader; metadata: ClassificationPanel; tab-0: Card; tab-1: Card; tab-2: Text; tab-3: Card; tab-4: Stack; tab-5: Stack; tab-6: Card; tab-7: Card.</p><!-- /forge-claim:product-screen -->
+944f4dda5f784e266310978b31f65b3d452e6387 422 422
+	<!-- forge-claim:fidelity-and-datasets -->  <p>Alongside: <span class="k">fidelity.preview</span> renders an object manifest at four fidelities (boxes-and-arrows, wireframe, review, branded mockup, using built A/B light tokens); deprecated brand-a/brand-b aliases remain for one release and unknown brands fail explicitly. <span class="k">map</span> records and resolves mappings for external consumers; no composer or generator consumes them. Draft preferred terms and disambiguation decisions are surfaced, not consumed by resolution; <span class="k">structuredData.fetch</span> serves the components and tokens datasets and <span class="k">registry.snapshot</span> serves traits, objects and mappings, all versioned with ETags.</p><!-- /forge-claim:fidelity-and-datasets -->
+944f4dda5f784e266310978b31f65b3d452e6387 426 426 1
+	<!-- forge-claim:portable-outcomes -->  <p>The portable adapter calls all 19 advertised tools in the retained E2E. 17 return the exercised result and 2 retain typed dependency limits: brand.apply (OODS-N020) and design.preview (OODS-N019). The native code is preserved at tools/call. tokens.build executes from the shipped built artifacts; readiness attestations bind React/Vue generation to shipped package bytes. The separate extracted-bundle reference-app ledger records 42 cells across Organization, Subscription and User, 7 contexts in react and vue: 42 pass, 0 typed gaps, and 42 generated artifacts equal the corresponding host hashes.</p><!-- /forge-claim:portable-outcomes -->
+944f4dda5f784e266310978b31f65b3d452e6387 430 430 1
+	<!-- forge-claim:viz-taxonomy -->  <p>The <a href="viz/taxonomy.md">versioned taxonomy</a> classifies 34 chart identities (13 types and 21 patterns) across eight families and records each Core Analytics Profile cell as surface-complete or a typed gap.</p><!-- /forge-claim:viz-taxonomy -->
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 431 431 1
+	<!-- forge-claim:viz-vocabulary -->  <p><span class="k">viz.render</span> takes data and returns a chart specification. Thirteen chart types: <b>bar, line, area, scatter, heatmap</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map</b> (from node/link/geometry inputs; ECharts). Four input modes: a catalog pattern identity, explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Pattern mode uses bundled authored data and presentation; unsupported interaction or layout is a typed authoring-only result (OODS-V167), and conflicting explicit operands return OODS-V166. The five Cartesian families return spec; the eight ECharts-primary families omit spec and return echartsSpec with output.echarts forced true and reason echarts-primary-family. Every successful result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The 20 viz-category traits (marks, encodings, scales, layouts, interactions, scatter composition and geocoding) are the vocabulary the spec is normalised into. Temporal axes and adapter-generated formatted date parsing use UTC, independent of the host timezone. Caller-authored expressions retain their own semantics. The scale-temporal timezone parameter is display metadata, not a rendering override; numeric tooltips use en-US.</p><!-- /forge-claim:viz-vocabulary -->
+944f4dda5f784e266310978b31f65b3d452e6387 433 433 1
+	<!-- forge-claim:dashboard-vocabulary -->  <p><span class="k">dashboard.render</span> composes a metric overview — KPI tiles, a trend panel, a breakdown panel, optional geo — from shared datasets and panel definitions, with deterministic auto-layout and cross-filter linking, and can export one self-contained HTML file with server-rendered SVG for its 11 admitted chart types in light and dark: Vega-Lite for the five Cartesian families and ECharts for six primary families. Chord and flow_map remain excluded from the public dashboard panel schema (#881). Governed measureRef resolution defaults to true; unknown refs return OODS-V130 and missing fields return OODS-V137. Explicit resolveMeasures:false disables that resolution. Failed panels retain explicit error placeholders; a successful chart panel must have a renderable specification.</p><!-- /forge-claim:dashboard-vocabulary -->
+944f4dda5f784e266310978b31f65b3d452e6387 437 437 1
+	<!-- forge-claim:certify-pillars -->  <div class="def"><b>Certify</b><p><span class="k">artifact.certify</span> takes a chart specification back (and, for the advanced types, its data) and returns a per-check scorecard plus a combined conformance result on the declared certification path. Its four core certification pillars are accessibility equivalence, determinism, contrast and accuracy.</p></div><!-- /forge-claim:certify-pillars -->
+944f4dda5f784e266310978b31f65b3d452e6387 441 441 4
+	<!-- forge-claim:a11y-rule-count -->      <tr><td>Accessibility equivalence</td><td>16 structural rules over the chart and its text alternative: colour encodings carry a second cue and size differences are perceptible; an accessible table exists, captioned to the chart title, with declared column order; axis titles, an accessible name and a description at least 25 characters are present; bar/stacked charts narrate extrema, trend charts narrate the trend, area charts describe their baseline/range; datasets with 3+ rows surface at least two findings and dense ones aggregate; every encoded field is present in every row; the narrative generator reports ready; interactions describe their announcements. Each rule names its precondition; absent preconditions remain visible as not applicable. On the data-backed ECharts path, error-severity failures fail the accessibility pillar and conformance; warning-severity findings remain visible without failing the pillar.</td></tr><!-- /forge-claim:a11y-rule-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 442 442
+	<!-- forge-claim:determinism-scope -->      <tr><td>Determinism</td><td>Two independent compiled or projected specifications are canonicalised and byte-compared, then independently rendered SVGs are compared. Content and render hashes identify the corresponding <span class="k">viz.render</span> output for the same operand and scope; notes retain any rendering limitation and the certified runtime boundary.</td></tr><!-- /forge-claim:determinism-scope -->
+944f4dda5f784e266310978b31f65b3d452e6387 443 443
+	<!-- forge-claim:contrast-thresholds -->      <tr><td>Contrast</td><td>The colour values actually baked into the spec are graded: every mark at least 3:1 against the requested light or dark theme canvas (WCAG 1.4.11); categorical palettes checked for distinguishability under normal vision and three colour-vision-deficiency simulations; gradient scales reported as exempt, not passed. The requested A/B brand and light/dark/hc theme are retained. High-contrast returns an exempt contrast result with reason forced-colors and no numeric grade; the browser resolves the declared system colours.</td></tr><!-- /forge-claim:contrast-thresholds -->
+944f4dda5f784e266310978b31f65b3d452e6387 444 444
+	<!-- forge-claim:accuracy-rule-count -->      <tr><td>Accuracy</td><td>16 reader-only structural-distortion rules: bar baseline not at zero (or on log/sqrt); dual y-axes in one frame; area on a non-linear scale; a row-merging aggregation not disclosed in title, description or axis; negative treemap/sunburst values; a parent not equal to the sum of its children; negative sankey/chord links; sankey node height inconsistent with its flows; duplicate sankey links; conflicting values joined to one map region; invalid bubble sizes and flow strengths, radius-based bubble scaling, duplicate geographic operands, and overlapping duplicate directed force-graph links. Reciprocal links remain distinct. "Pass" means no offered rule detected its distortion, and the count of rules that actually ran is reported. ECharts accuracy requires at least one evaluated rule; missing preconditions never count as a pass.</td></tr><!-- /forge-claim:accuracy-rule-count -->
+944f4dda5f784e266310978b31f65b3d452e6387 447 447 1
+	<!-- forge-claim:certify-scope -->  <p><b>Coverage, stated plainly.</b> The five Cartesian types certify from their IR. Advanced types use the declared operand profile with the same data supplied to rendering: conformance requires accessibility to pass, contrast to be neither failed nor ungradeable, stable determinism, and evaluated-and-clean accuracy. Certified coverage can carry a measured false conformance result. Spec-only ECharts calls remain uncertified with null conformance and a missing-operand explanation; this path adds no Vega-Lite compile. Certification covers chart specs, not pages or components. It accepts brand A or B and theme light, dark or hc (defaults A/light), matching rendering and contrast grading. High-contrast SVG proof covers bar, line, area and scatter. Heatmap and the eight ECharts types retain typed undeclared-paint failures; their render failure fails determinism and conformance. HC contrast alone is exempt with reason forced-colors. Forced-colours browser evidence covers chart SVGs, dashboard HTML and the React/Vue Subscription detail preview.</p><!-- /forge-claim:certify-scope -->
+944f4dda5f784e266310978b31f65b3d452e6387 450 450 2
+	<!-- forge-claim:token-contrast -->    <li><b>Token contrast</b> — <span class="k">a11y.scan</span> (and <span class="k">repl validate</span> on request) grades 18 token pairs: primary text on canvas / raised / subtle surfaces, secondary, muted, accent and inverse text, the four status text and four status icon pairs, and three dark-theme primary-text variants — 4.5:1 for text, 3:1 for icons.</li><!-- /forge-claim:token-contrast -->
+944f4dda5f784e266310978b31f65b3d452e6387 451 451
+	<!-- forge-claim:browser-viewports -->    <li><b>Component library in CI</b> — axe-core (WCAG 2.0 A + 2.1 AA, serious/critical) over a fixed set of Storybook stories in light and dark; Playwright behavioural checks at phone (375), tablet (768) and desktop widths (layout collapse, drawer focus trap, Escape to close, no violations with the drawer open); the brand-contrast and browser checks from section 07; optional Chromatic visual regression.</li><!-- /forge-claim:browser-viewports -->
+944f4dda5f784e266310978b31f65b3d452e6387 457 457 1
+	<!-- forge-claim:operating-roster -->  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. The authoritative roster is <span class="k">packages/mcp-server/src/tools/registry.json</span>: 19 tools register by default and 5 more switch on with <span class="k">MCP_TOOLSET=all</span>.</p><!-- /forge-claim:operating-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 460 460 1
+	    <tbody><!-- forge-claim:tool-roster -->
+944f4dda5f784e266310978b31f65b3d452e6387 462 462 1
+	      <tr><td>Generate &amp; review</td><td>design.compose · design.preview · repl (render, validate) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply)</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 465 465 2
+	      <tr><td>On demand</td><td>diag.snapshot · billing.reviewKit · billing.switchFixtures · a11y.scan · release.tag</td></tr>
+944f4dda5f784e266310978b31f65b3d452e6387 466 466
+	    <!-- /forge-claim:tool-roster --></tbody>
+944f4dda5f784e266310978b31f65b3d452e6387 468 468 1
+	<!-- forge-claim:safety-model -->  <p><b>Safety model.</b> Tools that write into the repo or artifacts (tokens.build, brand.apply, a11y.scan, billing.*, map.*, diag.snapshot, release.tag) preview by default and write only with <span class="k">apply: true</span>; schema save persists on call and pipeline writes via its save option. Two roles (designer, maintainer — release tools are maintainer-only); per-tool rate limits, concurrency and timeouts from a policy file; outputs land under <span class="k">artifacts/current-state/&lt;date&gt;/</span> with redacted transcripts and a hashed bundle index. Optional OpenTelemetry tracing per tool call.</p><!-- /forge-claim:safety-model -->
+944f4dda5f784e266310978b31f65b3d452e6387 485 485 1
+	    <li>No hosted service — the server runs from a checkout or the extracted portable bundle and the bridge binds to localhost.</li>
+944f4dda5f784e266310978b31f65b3d452e6387 487 487 2
+	<!-- forge-claim:generation-targets -->    <li>Generated HTML documents use the tokens and components but not the six-region responsive shell; code generation targets React, Vue and HTML only.</li><!-- /forge-claim:generation-targets -->
+944f4dda5f784e266310978b31f65b3d452e6387 488 488
+	<!-- forge-claim:native-token-scope -->    <li>Typography shares global sans and display font stacks. The categorical chart palette resolves by brand and theme and accepts explicit token overrides. The Swift/Kotlin files carry one default brand × theme and omit font stacks and easing curves.</li><!-- /forge-claim:native-token-scope -->
+944f4dda5f784e266310978b31f65b3d452e6387 491 491 1
+	<!-- forge-claim:footer -->  <footer class="foot">Figures are generated from the Forge repository (45 traits · 12 object definitions / 11 unique names · 109 governed component claims · 8 contexts · 13 chart types). The 24-tool roster comes from <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer><!-- /forge-claim:footer -->

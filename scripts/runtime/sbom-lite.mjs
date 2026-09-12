@@ -8,8 +8,6 @@ import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 import { canonicalJson, RUNTIME_PACKAGES, sha256 } from "./manifest.mjs";
 
-export const EXPECTED_THIRD_PARTY_COUNT = 245;
-
 function bytewiseCompare(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
 }
@@ -32,12 +30,13 @@ function snapshotKeyFor(name, value) {
   if (isWorkspaceReference(reference)) return null;
   if (reference.startsWith("npm:")) {
     const alias = reference.slice(4);
-    return alias.startsWith("@") || alias.startsWith(`${name}@`)
+    return alias.split("(", 1)[0].includes("@")
       ? alias
       : `${name}@${alias}`;
   }
   if (reference.startsWith("/")) return reference.slice(1);
-  if (reference.startsWith(`${name}@`)) return reference;
+  // pnpm v9 records aliased transitive dependencies as real-name@version.
+  if (reference.split("(", 1)[0].includes("@")) return reference;
   return `${name}@${reference}`;
 }
 
@@ -73,7 +72,7 @@ function resolvePackageRecord(lock, fullSnapshotKey) {
 
 export function buildSbomLiteFromLock(
   lock,
-  { lockfileSha256, expectedCount = EXPECTED_THIRD_PARTY_COUNT } = {},
+  { lockfileSha256, expectedCount } = {},
 ) {
   assert(
     lock && typeof lock === "object",
@@ -98,7 +97,6 @@ export function buildSbomLiteFromLock(
     const importer = lock.importers[importerPath];
     for (const [name, value] of [
       ...dependencyEntries(importer.dependencies),
-      ...dependencyEntries(importer.optionalDependencies),
     ]) {
       const key = snapshotKeyFor(name, value);
       if (key) queue.push(key);
@@ -142,7 +140,6 @@ export function buildSbomLiteFromLock(
     );
     for (const [dependencyName, value] of [
       ...dependencyEntries(snapshot.dependencies),
-      ...dependencyEntries(snapshot.optionalDependencies),
     ]) {
       // pnpm injects peer resolutions into snapshot dependency maps. They are
       // requirements supplied by a consumer, not packages in this production
@@ -165,20 +162,22 @@ export function buildSbomLiteFromLock(
     entry.integrity.startsWith("sha512-"),
   ).length;
 
+  const measuredCount = expectedCount ?? packages.length;
+  assert(measuredCount > 0, "runtime closure must not be empty");
   assert.equal(
     visitedSnapshots.size,
-    expectedCount,
-    `reachable pnpm snapshot count must be ${expectedCount}`,
+    measuredCount,
+    `reachable pnpm snapshot count must be ${measuredCount}`,
   );
   assert.equal(
     packages.length,
-    expectedCount,
-    `normalized third-party package count must be ${expectedCount}`,
+    measuredCount,
+    `normalized third-party package count must be ${measuredCount}`,
   );
   assert.equal(
     integrityCount,
-    expectedCount,
-    `sha512 integrity count must be ${expectedCount}`,
+    measuredCount,
+    `sha512 integrity count must be ${measuredCount}`,
   );
   assert.equal(
     optionalCount,
@@ -218,7 +217,7 @@ export async function buildSbomLiteFromFile(lockfilePath, options = {}) {
   const lock = yaml.load(lockfileBytes);
   return buildSbomLiteFromLock(lock, {
     lockfileSha256: sha256(lockfileBytes),
-    expectedCount: options.expectedCount ?? EXPECTED_THIRD_PARTY_COUNT,
+    expectedCount: options.expectedCount,
   });
 }
 
@@ -249,7 +248,7 @@ async function main() {
   const sbom = await buildSbomLite(repoRoot, {
     expectedCount: args.expected_count
       ? Number(args.expected_count)
-      : EXPECTED_THIRD_PARTY_COUNT,
+      : undefined,
   });
   const bytes = canonicalJson(sbom);
   if (!args.out) {

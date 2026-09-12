@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { tokenPackageRoot, runTokenBuild, readTokenScopes } from '../lib/token-build.js';
+import { tokenPackageRoot, runTokenBuild, readTokenScopes, canRunTokenBuild } from '../lib/token-build.js';
 import { todayDir, loadPolicy, withinAllowed } from '../lib/security.js';
 import { writeTranscript, writeBundleIndex, sha256File } from '../lib/transcript.js';
 import type { TokensBuildInput, GenericOutput, ToolPreview, ArtifactDetail } from './types.js';
@@ -29,8 +29,14 @@ async function ensureTokensBuildOutputs(): Promise<TokensBuildOutputs> {
     tailwind: path.join(TOKENS_DIST_DIR, 'tailwind', 'tokens.json'),
   };
 
-  const missing = [...Object.values(outputs), path.join(TOKENS_DIST_DIR, 'css-variables-by-scope.json')].some((filePath) => !isNonEmptyFile(filePath));
-  if (missing) {
+  const required = [...Object.values(outputs), path.join(TOKENS_DIST_DIR, 'css-variables-by-scope.json')];
+  const missing = required.filter((filePath) => !isNonEmptyFile(filePath));
+  if (missing.length) {
+    if (!canRunTokenBuild()) {
+      throw new ToolError('OODS-N011', 'tokens.build: required token dist outputs are missing; this runtime cannot rebuild canonical tokens.', {
+        tool: 'tokens.build', dependency: 'token-dist-outputs', missing, buildAttempted: false,
+      });
+    }
     const build = await runTokenBuild();
     if (build.exitCode !== 0) {
       const tail = build.commands.map(command => command.stdout + command.stderr).join('\n').split('\n').slice(-40).join('\n');
@@ -38,7 +44,7 @@ async function ensureTokensBuildOutputs(): Promise<TokensBuildOutputs> {
     }
   }
 
-  const stillMissing = Object.values(outputs).some((filePath) => !isNonEmptyFile(filePath));
+  const stillMissing = required.some((filePath) => !isNonEmptyFile(filePath));
   if (stillMissing) {
     throw new ToolError('OODS-N007', 'tokens build outputs are missing after running the pipeline');
   }

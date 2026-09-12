@@ -1,0 +1,13 @@
+{
+  "command": [
+    "tar",
+    "-xOzf",
+    "/tmp/forge-s196-m03-package-probe/tarballs/oods-components-vue-0.1.0.tgz",
+    "package/package.json"
+  ],
+  "cwd": "/tmp/forge-s196-m03-package-probe",
+  "status": 0,
+  "signal": null,
+  "stdout": "{\n  \"name\": \"@oods/components-vue\",\n  \"version\": \"0.1.0\",\n  \"description\": \"OODS Vue 3 component package.\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"license\": \"MIT\",\n  \"engines\": { \"node\": \">=20.11.1\" },\n  \"files\": [\"dist\", \"evidence\"],\n  \"scripts\": {\n    \"build\": \"rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts\",\n    \"clean\": \"rimraf dist\",\n    \"typecheck\": \"vue-tsc --noEmit --pretty false -p tsconfig.json\",\n    \"test\": \"vitest run --config vitest.config.ts\",\n    \"test:pack\": \"node test/packed-import.mjs\",\n    \"test:visual\": \"node test/visual-evidence.mjs\",\n    \"prepack\": \"pnpm run build\"\n  },\n  \"exports\": {\n    \".\": {\n      \"types\": \"./dist/index.d.ts\",\n      \"import\": \"./dist/index.js\",\n      \"require\": \"./dist/index.cjs\"\n    },\n    \"./ported\": {\n      \"types\": \"./dist/index.d.ts\",\n      \"import\": \"./dist/index.js\",\n      \"require\": \"./dist/index.cjs\"\n    },\n    \"./readiness\": {\n      \"default\": \"./evidence/vue-readiness.v1.json\"\n    },\n    \"./readiness-ported\": {\n      \"default\": \"./evidence/vue-readiness.v1.json\"\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"main\": \"./dist/index.cjs\",\n  \"module\": \"./dist/index.js\",\n  \"types\": \"./dist/index.d.ts\",\n  \"sideEffects\": [\"**/*.css\"],\n  \"dependencies\": {\n    \"@oods/component-contracts\": \"0.1.0\",\n    \"@oods/component-styles\": \"0.1.0\"\n  },\n  \"peerDependencies\": { \"vue\": \"^3.5.0\" },\n  \"devDependencies\": {\n    \"@vitejs/plugin-vue\": \"^5.2.4\",\n    \"@vue/compiler-sfc\": \"^3.5.42\",\n    \"@vue/server-renderer\": \"^3.5.42\",\n    \"@vue/test-utils\": \"^2.5.0\",\n    \"jsdom\": \"^24.0.0\",\n    \"playwright\": \"^1.56.1\",\n    \"typescript\": \"^5.9.3\",\n    \"vite\": \"^6.4.1\",\n    \"vitest\": \"^3.2.4\",\n    \"vitest-axe\": \"^0.1.0\",\n    \"vue\": \"^3.5.42\",\n    \"vue-tsc\": \"^3.3.11\"\n  },\n  \"packageManager\": \"pnpm@9.12.2\"\n}\n",
+  "stderr": ""
+}

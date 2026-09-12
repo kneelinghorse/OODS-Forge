@@ -1,0 +1,284 @@
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 1 1 137
+author System Systems
+author-mail <systems@example.com>
+author-time 1789198843
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789198843
+committer-tz -0500
+summary fix(viz): pin temporal rendering to UTC and prove failure boundaries
+filename scripts/product-reality/s196-temporal-placement-receipt.mjs
+	#!/usr/bin/env node
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 2 2
+	/** Replay retained placement operands through the built handlers; never rewrite history. */
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 3 3
+	import assert from 'node:assert/strict';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 4 4
+	import fs from 'node:fs';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 5 5
+	import path from 'node:path';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 6 6
+	import { createHash } from 'node:crypto';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 7 7
+	import { execFileSync, spawnSync } from 'node:child_process';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 8 8
+	import { fileURLToPath } from 'node:url';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 9 9
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 10 10
+	const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 11 11
+	let output = path.join(root, 'artifacts/product-reality/sprint-196/m05/placement');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 12 12
+	let measure = false;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 13 13
+	let auditOnly = false;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 14 14
+	for (let index = 2; index < process.argv.length; index++) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 15 15
+	  const arg = process.argv[index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 16 16
+	  if (arg === '--measure') measure = true;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 17 17
+	  else if (arg === '--audit-only') auditOnly = true;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 18 18
+	  else if (arg === '--output' && process.argv[index + 1]) output = path.resolve(process.argv[++index]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 19 19
+	  else throw new Error(`Unknown or incomplete argument: ${arg}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 20 20
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 21 21
+	const hash = bytes => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 22 22
+	const read = relative => fs.readFileSync(path.join(root, relative));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 23 23
+	const json = relative => JSON.parse(read(relative));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 24 24
+	const save = (relative, value) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 25 25
+	  const file = path.join(output, relative); fs.mkdirSync(path.dirname(file), { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 26 26
+	  fs.writeFileSync(file, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 27 27
+	};
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 28 28
+	const cases = [
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 29 29
+	  ...['html', 'react', 'vue'].map(framework => ({ id: `Usage-detail-${framework}`, object: 'Usage', framework, context: 'detail', brand: 'B', theme: 'dark', source: `artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-${framework}.json` })),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 30 30
+	  ...['react', 'vue'].map(framework => ({ id: `Usage-workflow-${framework}`, object: 'Usage', framework, context: 'workflow', brand: 'A', theme: 'light', source: `artifacts/product-reality/sprint-195/m06/codegen/boundary/Usage-workflow-${framework}.json` })),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 31 31
+	  ...['react', 'vue'].map(framework => ({ id: `Subscription-detail-${framework}`, object: 'Subscription', framework, context: 'detail', brand: 'A', theme: 'hc', source: `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json` })),
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 32 32
+	];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 33 33
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 34 34
+	// This audit does not import handlers, so it can run while another bounded bite
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 35 35
+	// temporarily mutates a shared build. Qualify the old bytes against Git itself.
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 36 36
+	if (!measure) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 37 37
+	  const beforeHead = '944f4dda5f784e266310978b31f65b3d452e6387';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 38 38
+	  const sourceJson = execFileSync('rg', ['--files', 'packages', '--glob', '*.json', '--glob', '!**/dist/**', '--glob', '!**/node_modules/**', '--glob', '!**/artifacts/**'], { cwd: root, encoding: 'utf8' }).trim().split('\n').sort();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 39 39
+	  const literalSvgFiles = sourceJson.filter(file => read(file).includes('<svg'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 40 40
+	  assert.deepEqual(literalSvgFiles, ['packages/component-contracts/fixtures/viz-preview-samples.v1.json']);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 41 41
+	  const sourceGoldenCandidates = sourceJson.filter(file => /"(?:svg|svgHash|renderHash)"/.test(read(file).toString()));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 42 42
+	  const unchangedPaths = [...cases.map(item => item.source), literalSvgFiles[0], 'packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json', 'packages/mcp-server/test/tools/s172-spec-only-cases.ts'];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 43 43
+	  const unchangedSources = unchangedPaths.map(file => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 44 44
+	    const original = execFileSync('git', ['show', `${beforeHead}:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 45 45
+	    const current = read(file);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 46 46
+	    assert.deepEqual(current, original, `${file}: historical source differs from pre-UTC Git bytes`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 47 47
+	    return { path: file, beforeSha256: hash(original), currentSha256: hash(current), unchanged: true };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 48 48
+	  });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 49 49
+	  save('source-fixture-audit.json', { schemaVersion: 1, missionId: 's196-m05', beforeHead, sourceJsonFilesScanned: sourceJson.length, literalSvgFiles, sourceGoldenCandidates, unchangedSources, dispositions: [
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 50 50
+	    { paths: literalSvgFiles, disposition: 'All six inputs are explicitly non-temporal; line and area use nominal period. Rerendered unchanged in both timezones; see migration.controls.' },
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 51 51
+	    { paths: ['packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json'], disposition: 'Hash-only historical fixture. Shared s172-spec-only-cases.ts operands use region North/South/East and numeric revenue; line and area are non-temporal. No UTC rewrite.' },
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 52 52
+	    { paths: ['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-render/certified-matrix.json'], disposition: 'Registry/matrix coverage is owned by the parent golden-migration receipt.' },
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 53 53
+	    { paths: sourceGoldenCandidates.filter(file => /schemas\/|trait-recipes\.json$|package\.json$/.test(file)), disposition: 'Schema, component recipe, or package metadata; no stored SVG golden.' },
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 54 54
+	  ] });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 55 55
+	  if (auditOnly) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 56 56
+	    console.log(JSON.stringify({ sourceJsonFilesScanned: sourceJson.length, literalSvgFiles: literalSvgFiles.length, unchangedSources: unchangedSources.length }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 57 57
+	    process.exit(0);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 58 58
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 59 59
+	}
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 60 60
+	assert(!(measure && auditOnly), '--measure and --audit-only are mutually exclusive');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 61 61
+	
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 62 62
+	if (measure) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 63 63
+	  assert(['America/Chicago', 'UTC'].includes(process.env.TZ), 'Use an explicit measured timezone.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 64 64
+	  const { getAjv } = await import('../../packages/mcp-server/dist/lib/ajv.js');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 65 65
+	  const { handle: generate } = await import('../../packages/mcp-server/dist/tools/code.generate.js');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 66 66
+	  const { handle: render } = await import('../../packages/mcp-server/dist/tools/viz.render.js');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 67 67
+	  const validators = new Map();
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 68 68
+	  function wire(tool, side, value) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 69 69
+	    const key = `${tool}.${side}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 70 70
+	    if (!validators.has(key)) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 71 71
+	      const schema = json(`packages/mcp-server/dist/schemas/${key}.json`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 72 72
+	      validators.set(key, (schema.$id ? getAjv().getSchema(schema.$id) : undefined) ?? getAjv().compile(schema));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 73 73
+	    }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 74 74
+	    const copy = structuredClone(value), validate = validators.get(key);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 75 75
+	    assert.equal(validate(copy), true, `${key}: ${JSON.stringify(validate.errors)}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 76 76
+	    return JSON.parse(JSON.stringify(copy));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 77 77
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 78 78
+	  const rows = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 79 79
+	  for (const item of cases) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 80 80
+	    const sourceBytes = read(item.source), previous = JSON.parse(sourceBytes);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 81 81
+	    const request = wire('code.generate', 'input', previous.request);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 82 82
+	    assert.deepEqual(request, previous.request, `${item.id}: do not alter the historical operand`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 83 83
+	    const result = wire('code.generate', 'output', await generate(structuredClone(request)));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 84 84
+	    assert.equal(result.status, 'ok', JSON.stringify(result.errors));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 85 85
+	    const previousAssets = previous.result.artifact.files.filter(file => file.path.endsWith('.svg'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 86 86
+	    const assets = result.artifact.files.filter(file => file.path.endsWith('.svg'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 87 87
+	    assert.deepEqual(assets.map(file => file.path), previousAssets.map(file => file.path));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 88 88
+	    const svgs = assets.map((asset, index) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 89 89
+	      const before = previousAssets[index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 90 90
+	      assert.equal(asset.contentHash, hash(asset.contents)); assert.equal(before.contentHash, hash(before.contents));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 91 91
+	      const raw = `${item.id}/${asset.path}`;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 92 92
+	      save(raw, asset.contents);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 93 93
+	      return { path: asset.path, raw, beforeHash: before.contentHash, afterHash: asset.contentHash, changed: asset.contents !== before.contents };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 94 94
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 95 95
+	    const row = { ...item, sourceSha256: hash(sourceBytes), requestSha256: hash(JSON.stringify(request)), request, result, beforeArtifactHash: previous.result.artifact.contentHash, afterArtifactHash: result.artifact.contentHash, svgs };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 96 96
+	    save(`${item.id}.json`, row); rows.push(row);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 97 97
+	    assert.equal(hash(read(item.source)), row.sourceSha256, 'Historical evidence changed during the producer.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 98 98
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 99 99
+	  const samplePath = 'packages/component-contracts/fixtures/viz-preview-samples.v1.json';
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 100 100
+	  const samples = json(samplePath).samples;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 101 101
+	  const controls = [];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 102 102
+	  for (const [id, sample] of Object.entries(samples)) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 103 103
+	    const input = sample.input;
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 104 104
+	    const bindings = Object.values(input.encodings);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 105 105
+	    assert(bindings.every(binding => typeof binding !== 'object' || (binding.type !== 'temporal' && binding.scale !== 'temporal')), `${id} is temporal and must be explicitly migrated`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 106 106
+	    const result = wire('viz.render', 'output', await render(wire('viz.render', 'input', input)));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 107 107
+	    assert.equal(result.status, 'ok', JSON.stringify(result.errors));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 108 108
+	    assert.equal(result.svg, sample.svg, `${id}: non-temporal source golden must not move`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 109 109
+	    assert.equal(result.svgHash, sample.svgHash);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 110 110
+	    controls.push({ id, source: samplePath, inputSha256: hash(JSON.stringify(input)), encodings: input.encodings, beforeHash: hash(sample.svg), afterHash: hash(result.svg), unchanged: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 111 111
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 112 112
+	  save('measurements.json', { timezone: process.env.TZ, builtRevision: json('packages/mcp-server/dist/build-revision.json'), rows, controls, controlsSourceSha256: hash(read(samplePath)) });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 113 113
+	  console.log(JSON.stringify({ timezone: process.env.TZ, requests: rows.length, svgs: rows.flatMap(row => row.svgs).length, nonTemporalControls: controls.length }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 114 114
+	} else {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 115 115
+	  fs.mkdirSync(output, { recursive: true });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 116 116
+	  for (const [directory, timezone] of [['chicago', 'America/Chicago'], ['utc', 'UTC']]) {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 117 117
+	    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), '--measure', '--output', path.join(output, directory)], { cwd: root, env: { ...process.env, TZ: timezone }, encoding: 'utf8', timeout: 120000, maxBuffer: 8 * 1024 * 1024 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 118 118
+	    save(`${directory}.log`, `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ?? ''}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 119 119
+	    assert.equal(result.status, 0, `${timezone}: ${result.stderr}`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 120 120
+	  }
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 121 121
+	  const chicago = JSON.parse(fs.readFileSync(path.join(output, 'chicago/measurements.json'), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 122 122
+	  const utc = JSON.parse(fs.readFileSync(path.join(output, 'utc/measurements.json'), 'utf8'));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 123 123
+	  assert.deepEqual(chicago.controls, utc.controls);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 124 124
+	  const rows = chicago.rows.flatMap((row, index) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 125 125
+	    const other = utc.rows[index];
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 126 126
+	    assert.equal(row.id, other.id); assert.deepEqual(row.request, other.request);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 127 127
+	    assert.deepEqual(row.result.artifact, other.result.artifact, `${row.id}: UTC output must be byte-identical across host zones`);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 128 128
+	    return row.svgs.map((asset, assetIndex) => {
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 129 129
+	      assert.deepEqual(asset, other.svgs[assetIndex]);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 130 130
+	      return { case: row.id, object: row.object, framework: row.framework, context: row.context, brand: row.brand, theme: row.theme, source: row.source, sourceSha256: row.sourceSha256, requestSha256: row.requestSha256, sameOperand: true, crossTimezoneEqual: true, ...asset, chicagoRaw: `chicago/${asset.raw}`, utcRaw: `utc/${asset.raw}` };
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 131 131
+	    });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 132 132
+	  });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 133 133
+	  assert.equal(rows.length, 25);
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 134 134
+	  assert(rows.every(row => row.changed), 'Every declared temporal placement SVG must be independently attributed.');
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 135 135
+	  save('migration.json', { schemaVersion: 1, missionId: 's196-m05', builderSelfCertified: false, reason: 'Temporal axes render in UTC; retained s195 requests and historical bytes are unchanged.', timezones: ['America/Chicago', 'UTC'], counts: { requests: cases.length, temporalAssets: rows.length, changed: rows.filter(row => row.changed).length, crossTimezoneEqual: rows.length, unchangedNominalControls: chicago.controls.length }, rows, controls: chicago.controls, controlsSourceSha256: chicago.controlsSourceSha256 });
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 136 136
+	  console.log(JSON.stringify({ requests: cases.length, changedTemporalAssets: rows.length, crossTimezoneEqual: true, unchangedNominalControls: chicago.controls.length }));
+2a7d0a7ce4060fc78c12df1648bd318e0658317b 137 137
+	}

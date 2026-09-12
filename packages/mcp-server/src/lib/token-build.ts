@@ -11,6 +11,12 @@ export function tokenPackageRoot(): string {
   return path.resolve(REPO_ROOT, process.env.MCP_BRAND_SOURCE_ROOT || 'packages/tokens');
 }
 
+/** Portable runtimes consume shipped outputs; even an incomplete bundle must never build. */
+export function canRunTokenBuild(): boolean {
+  return !fs.existsSync(path.join(REPO_ROOT, 'forge-runtime.manifest.json')) &&
+    ['build.mjs', 'build-entry.mjs'].every(script => fs.existsSync(path.join(tokenPackageRoot(), 'scripts', script)));
+}
+
 export interface TokenBuildReceipt {
   exitCode: number | null;
   commands: Array<{ command: string[]; exitCode: number | null; stdout: string; stderr: string }>;

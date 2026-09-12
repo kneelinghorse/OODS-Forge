@@ -1,0 +1,128 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/address-display.md
+filename docs/history/components/address-display.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 51
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/address-display.md
+	# AddressDisplay · ValidationStatusBadge
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	`AddressDisplay` surfaces persisted Addressable entries in list/detail contexts. It pairs the formatter (`formatAddress`) with validation metadata so downstream views can expose role badges, default markers, and geocode hints without rebuilding the pipeline.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## API
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	```ts
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	interface AddressDisplayProps {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	  entry: AddressableEntry | AddressFormEntry;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	  variant?: 'card' | 'inline';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	  locale?: string;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	  formatOptions?: FormatAddressOptions;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	  onEdit?: () => void;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	  onDelete?: () => void;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	  onSetDefault?: () => void;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	  actions?: React.ReactNode;      // Additional buttons/links
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	  showRole?: boolean;             // Hide when nested in tables
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	  showValidation?: boolean;       // Toggle ValidationStatusBadge
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	  showMapPreview?: boolean;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	  mapPreview?: React.ReactNode;   // Custom geocode visual (defaults to lat/lng string)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	At runtime the component:
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	1. Detects whether `entry` is a fully-normalized `AddressableEntry` or a draft (`AddressFormEntry`). Drafts go through `tryNormalizeDraft`; if a postal address cannot be normalized yet, the component falls back to the raw `addressLines`, locality, and postal code for legibility.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	2. Invokes `formatAddress` when a normalized payload exists, ensuring the display stays in sync with UPU S42 templates and locale tweaks.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	3. Shows validation posture via `ValidationStatusBadge` (status + provider/timestamp copy) and optional geocode summary (lat/lng + precision) pulled from metadata.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	4. Emits action buttons (`Edit`, `Remove`, `Set default`) that downstream view regions can wire into modals or context menus.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	`ValidationStatusBadge` is exported separately for list cells and timeline rows. It maps each `AddressValidationStatus` to tone tokens, keeps live text readable under forced colours, and condenses metadata copy when space is limited.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	import { AddressDisplay } from '@/components/addresses';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	import { AddressableTrait } from '@/traits/addressable/addressable-trait';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	const trait = new AddressableTrait(snapshot, parameters);
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	const billing = trait.getAddress('billing');
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	<AddressDisplay
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	  entry={billing!}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	  variant="card"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	  onEdit={() => startEditor('billing')}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	  onDelete={() => trait.removeAddress('billing')}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	  onSetDefault={() => trait.setDefaultRole('billing')}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	`AddressDisplay` ships with Chromatic variants (default vs. validation-enriched vs. geocoded) under `stories/components/AddressDisplay.stories.tsx` plus Jest/Vitest coverage inside `tests/components/addresses/address-display.test.tsx`.

@@ -1,6 +1,7 @@
 {
   "name": "@oods/foundry-mcp",
   "version": "0.1.0",
+  "private": true,
   "description": "Agent-first MCP interface and toolchain for the OODS Foundry design system",
   "type": "module",
   "bin": {
@@ -26,10 +27,16 @@
     "./provenance.json": "./dist/pkg/provenance.json"
   },
   "scripts": {
+    "portable:assemble": "node scripts/runtime/assemble.mjs",
+    "portable:e2e": "node scripts/runtime/e2e.mjs",
     "build": "pnpm run clean && tsc",
     "clean": "rimraf dist/.storybook dist/apps dist/configs dist/data dist/examples dist/generated dist/packages dist/schemas dist/scripts dist/src dist/tokens dist/tools dist/traits",
     "design:loop": "tsx scripts/design-loop/cli.ts",
     "docs:api": "tsx scripts/docs/generate-api-reference.ts",
+    "docs:components": "tsx scripts/docs/generate-component-docs.ts",
+    "docs:tools": "tsx scripts/docs/generate-tool-specs.ts",
+    "docs:claims": "tsx scripts/docs/generate-forge-claims.ts",
+    "docs:check": "pnpm run docs:api -- --check && tsx scripts/product-reality/s195-viz-taxonomy.ts --check && tsx scripts/product-reality/s195-pattern-census.ts --check && pnpm run docs:components -- --check && pnpm run docs:tools -- --check && pnpm run docs:claims -- --check",
     "refresh:data": "node scripts/refresh-data.mjs",
     "pkg:build": "tsx scripts/pkg/build.ts",
     "pkg:version": "tsx scripts/pkg/version.ts",

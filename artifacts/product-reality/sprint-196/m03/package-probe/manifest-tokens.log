@@ -1,0 +1,13 @@
+{
+  "command": [
+    "tar",
+    "-xOzf",
+    "/tmp/forge-s196-m03-package-probe/tarballs/oods-tokens-0.1.0.tgz",
+    "package/package.json"
+  ],
+  "cwd": "/tmp/forge-s196-m03-package-probe",
+  "status": 0,
+  "signal": null,
+  "stdout": "{\n  \"name\": \"@oods/tokens\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Design token source of truth for the OODS design system.\",\n  \"type\": \"module\",\n  \"license\": \"MIT\",\n  \"author\": \"Design System Team\",\n  \"engines\": {\n    \"node\": \">=20.11.1\"\n  },\n  \"files\": [\n    \"dist\",\n    \"CHANGELOG.md\",\n    \"README.md\",\n    \"LICENSE\"\n  ],\n  \"keywords\": [\n    \"design-tokens\",\n    \"dtcg\",\n    \"oods\"\n  ],\n  \"scripts\": {\n    \"build\": \"rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs\",\n    \"clean\": \"rimraf dist\",\n    \"lint\": \"node ../../tools/token-lint/index.mjs ./src\",\n    \"prepack\": \"pnpm run build\"\n  },\n  \"exports\": {\n    \".\": {\n      \"types\": \"./dist/index.d.ts\",\n      \"node\": {\n        \"import\": \"./dist/index.cjs\",\n        \"require\": \"./dist/index.cjs\"\n      },\n      \"import\": \"./dist/index.js\",\n      \"require\": \"./dist/index.cjs\"\n    },\n    \"./css\": {\n      \"import\": \"./dist/css/tokens.css\",\n      \"require\": \"./dist/css/tokens.css\",\n      \"default\": \"./dist/css/tokens.css\"\n    },\n    \"./tailwind\": {\n      \"import\": \"./dist/tailwind/tokens.json\",\n      \"require\": \"./dist/tailwind/tokens.json\",\n      \"default\": \"./dist/tailwind/tokens.json\"\n    },\n    \"./package.json\": \"./package.json\"\n  },\n  \"main\": \"./dist/index.cjs\",\n  \"module\": \"./dist/index.js\",\n  \"types\": \"./dist/index.d.ts\",\n  \"sideEffects\": false,\n  \"publishConfig\": {\n    \"access\": \"public\",\n    \"provenance\": true\n  },\n  \"packageManager\": \"pnpm@9.12.2\",\n  \"devDependencies\": {\n    \"rimraf\": \"^5.0.7\"\n  }\n}\n",
+  "stderr": ""
+}

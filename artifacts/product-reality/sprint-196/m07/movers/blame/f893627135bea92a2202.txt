@@ -1,0 +1,984 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/choropleth-map.md
+filename docs/history/components/choropleth-map.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 1 3 120
+author System Systems
+author-mail <systems@example.com>
+author-time 1764563067
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764563067
+committer-tz -0600
+summary feat: add ChoroplethMap component and color scale utilities
+filename docs/components/choropleth-map.md
+	# ChoroplethMap Component
+6095f1d88149fbfcc2769350afb812ce24a09761 2 4
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 3 5
+	**Primary spatial visualization component for regional comparisons with color encoding.**
+6095f1d88149fbfcc2769350afb812ce24a09761 4 6
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 5 7
+	## Overview
+6095f1d88149fbfcc2769350afb812ce24a09761 6 8
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 7 9
+	The ChoroplethMap component renders filled geographic regions (countries, states, counties) with colors representing data values. It's the most common spatial visualization pattern in B2B SaaS dashboards for showing regional metrics like sales, population, or performance.
+6095f1d88149fbfcc2769350afb812ce24a09761 8 10
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 9 11
+	## Features
+6095f1d88149fbfcc2769350afb812ce24a09761 10 12
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 11 13
+	- ✅ Multiple color scale types (quantize, quantile, threshold, linear)
+6095f1d88149fbfcc2769350afb812ce24a09761 12 14
+	- ✅ Keyboard accessible (Tab navigation, Enter/Space to select)
+6095f1d88149fbfcc2769350afb812ce24a09761 13 15
+	- ✅ Fully responsive with projection auto-fitting
+6095f1d88149fbfcc2769350afb812ce24a09761 14 16
+	- ✅ Hover and click interactions
+6095f1d88149fbfcc2769350afb812ce24a09761 15 17
+	- ✅ Design token integration for colors
+6095f1d88149fbfcc2769350afb812ce24a09761 16 18
+	- ✅ WCAG 2.1 AA compliant
+6095f1d88149fbfcc2769350afb812ce24a09761 17 19
+	- ✅ SVG rendering with future ECharts/Vega-Lite support
+6095f1d88149fbfcc2769350afb812ce24a09761 18 20
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 19 21
+	## Installation
+6095f1d88149fbfcc2769350afb812ce24a09761 20 22
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 21 23
+	```typescript
+6095f1d88149fbfcc2769350afb812ce24a09761 22 24
+	import { ChoroplethMap } from '@/components/viz/spatial/ChoroplethMap';
+6095f1d88149fbfcc2769350afb812ce24a09761 23 25
+	import { SpatialContainer } from '@/components/viz/spatial/SpatialContainer';
+6095f1d88149fbfcc2769350afb812ce24a09761 24 26
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 25 27
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 26 28
+	## Basic Usage
+6095f1d88149fbfcc2769350afb812ce24a09761 27 29
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 28 30
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 29 31
+	import { ChoroplethMap } from '@/components/viz/spatial/ChoroplethMap';
+6095f1d88149fbfcc2769350afb812ce24a09761 30 32
+	import { SpatialContainer } from '@/components/viz/spatial/SpatialContainer';
+6095f1d88149fbfcc2769350afb812ce24a09761 31 33
+	import type { SpatialSpec } from '@/types/viz/spatial';
+6095f1d88149fbfcc2769350afb812ce24a09761 32 34
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 33 35
+	const data = [
+6095f1d88149fbfcc2769350afb812ce24a09761 34 36
+	  { state: 'CA', population: 39538223 },
+6095f1d88149fbfcc2769350afb812ce24a09761 35 37
+	  { state: 'TX', population: 29145505 },
+6095f1d88149fbfcc2769350afb812ce24a09761 36 38
+	  { state: 'NY', population: 20201249 },
+6095f1d88149fbfcc2769350afb812ce24a09761 37 39
+	];
+6095f1d88149fbfcc2769350afb812ce24a09761 38 40
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 39 41
+	const spec: SpatialSpec = {
+6095f1d88149fbfcc2769350afb812ce24a09761 40 42
+	  type: 'spatial',
+6095f1d88149fbfcc2769350afb812ce24a09761 41 43
+	  data: { values: data },
+6095f1d88149fbfcc2769350afb812ce24a09761 42 44
+	  projection: { type: 'albersUsa', fitToData: true },
+6095f1d88149fbfcc2769350afb812ce24a09761 43 45
+	  layers: [
+6095f1d88149fbfcc2769350afb812ce24a09761 44 46
+	    {
+6095f1d88149fbfcc2769350afb812ce24a09761 45 47
+	      type: 'regionFill',
+6095f1d88149fbfcc2769350afb812ce24a09761 46 48
+	      encoding: { color: { field: 'population' } },
+6095f1d88149fbfcc2769350afb812ce24a09761 47 49
+	    },
+6095f1d88149fbfcc2769350afb812ce24a09761 48 50
+	  ],
+6095f1d88149fbfcc2769350afb812ce24a09761 49 51
+	  a11y: {
+6095f1d88149fbfcc2769350afb812ce24a09761 50 52
+	    description: 'US Population by State',
+6095f1d88149fbfcc2769350afb812ce24a09761 51 53
+	  },
+6095f1d88149fbfcc2769350afb812ce24a09761 52 54
+	};
+6095f1d88149fbfcc2769350afb812ce24a09761 53 55
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 54 56
+	function PopulationMap() {
+6095f1d88149fbfcc2769350afb812ce24a09761 55 57
+	  return (
+6095f1d88149fbfcc2769350afb812ce24a09761 56 58
+	    <SpatialContainer
+6095f1d88149fbfcc2769350afb812ce24a09761 57 59
+	      spec={spec}
+6095f1d88149fbfcc2769350afb812ce24a09761 58 60
+	      geoData={usStatesGeoJSON}
+6095f1d88149fbfcc2769350afb812ce24a09761 59 61
+	      width={800}
+6095f1d88149fbfcc2769350afb812ce24a09761 60 62
+	      height={600}
+6095f1d88149fbfcc2769350afb812ce24a09761 61 63
+	      a11y={{ description: 'US Population Map' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 62 64
+	      data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 63 65
+	    >
+6095f1d88149fbfcc2769350afb812ce24a09761 64 66
+	      <ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 65 67
+	        data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 66 68
+	        valueField="population"
+6095f1d88149fbfcc2769350afb812ce24a09761 67 69
+	        geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 68 70
+	        a11y={{ description: 'US Population by State' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 69 71
+	      />
+6095f1d88149fbfcc2769350afb812ce24a09761 70 72
+	    </SpatialContainer>
+6095f1d88149fbfcc2769350afb812ce24a09761 71 73
+	  );
+6095f1d88149fbfcc2769350afb812ce24a09761 72 74
+	}
+6095f1d88149fbfcc2769350afb812ce24a09761 73 75
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 74 76
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 75 77
+	## Props Reference
+6095f1d88149fbfcc2769350afb812ce24a09761 76 78
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 77 79
+	### Required Props
+6095f1d88149fbfcc2769350afb812ce24a09761 78 80
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 79 81
+	| Prop | Type | Description |
+6095f1d88149fbfcc2769350afb812ce24a09761 80 82
+	|------|------|-------------|
+6095f1d88149fbfcc2769350afb812ce24a09761 81 83
+	| `data` | `DataRecord[]` | Array of data records with values to visualize |
+6095f1d88149fbfcc2769350afb812ce24a09761 82 84
+	| `valueField` | `string` | Field name in data containing numeric values |
+6095f1d88149fbfcc2769350afb812ce24a09761 83 85
+	| `geoJoinKey` | `string` | Field name in GeoJSON properties to join on |
+6095f1d88149fbfcc2769350afb812ce24a09761 84 86
+	| `a11y` | `ChoroplethA11yConfig` | Accessibility configuration |
+6095f1d88149fbfcc2769350afb812ce24a09761 85 87
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 86 88
+	### Optional Props
+6095f1d88149fbfcc2769350afb812ce24a09761 87 89
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 88 90
+	| Prop | Type | Default | Description |
+6095f1d88149fbfcc2769350afb812ce24a09761 89 91
+	|------|------|---------|-------------|
+6095f1d88149fbfcc2769350afb812ce24a09761 90 92
+	| `dataJoinKey` | `string` | Same as `geoJoinKey` | Field name in data to join on |
+6095f1d88149fbfcc2769350afb812ce24a09761 91 93
+	| `colorScale` | `'quantize' \| 'quantile' \| 'threshold' \| 'linear'` | `'quantize'` | Color scale type |
+6095f1d88149fbfcc2769350afb812ce24a09761 92 94
+	| `colorRange` | `string[]` | Sequential blue scale | Array of colors (tokens or hex) |
+6095f1d88149fbfcc2769350afb812ce24a09761 93 95
+	| `thresholds` | `number[]` | - | Custom thresholds (required for threshold scale) |
+6095f1d88149fbfcc2769350afb812ce24a09761 94 96
+	| `projection` | `ProjectionType` | From container | Override container projection |
+6095f1d88149fbfcc2769350afb812ce24a09761 95 97
+	| `fitToData` | `boolean` | `false` | Fit projection to data bounds |
+6095f1d88149fbfcc2769350afb812ce24a09761 96 98
+	| `onRegionClick` | `(feature, datum) => void` | - | Click handler |
+6095f1d88149fbfcc2769350afb812ce24a09761 97 99
+	| `onRegionHover` | `(feature, datum) => void` | - | Hover handler |
+6095f1d88149fbfcc2769350afb812ce24a09761 98 100
+	| `preferredRenderer` | `'svg' \| 'echarts' \| 'vega-lite'` | `'svg'` | Rendering backend |
+6095f1d88149fbfcc2769350afb812ce24a09761 99 101
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 100 102
+	## Color Scale Options
+6095f1d88149fbfcc2769350afb812ce24a09761 101 103
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 102 104
+	### When to Use Each Scale
+6095f1d88149fbfcc2769350afb812ce24a09761 103 105
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 104 106
+	| Scale | Use Case | Example |
+6095f1d88149fbfcc2769350afb812ce24a09761 105 107
+	|-------|----------|---------|
+6095f1d88149fbfcc2769350afb812ce24a09761 106 108
+	| **Quantize** | Uniformly distributed data | Temperature, evenly distributed metrics |
+6095f1d88149fbfcc2769350afb812ce24a09761 107 109
+	| **Quantile** | Skewed data distributions | Income, real estate prices |
+6095f1d88149fbfcc2769350afb812ce24a09761 108 110
+	| **Threshold** | Meaningful categories | Poverty rates (<5%, 5-10%, 10-20%, >20%) |
+6095f1d88149fbfcc2769350afb812ce24a09761 109 111
+	| **Linear** | Continuous gradients | Smooth color transitions |
+6095f1d88149fbfcc2769350afb812ce24a09761 110 112
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 111 113
+	### Quantize Scale (Equal Intervals)
+6095f1d88149fbfcc2769350afb812ce24a09761 112 114
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 113 115
+	Divides data domain into equal-sized intervals.
+6095f1d88149fbfcc2769350afb812ce24a09761 114 116
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 115 117
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 116 118
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 117 119
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 118 120
+	  valueField="temperature"
+6095f1d88149fbfcc2769350afb812ce24a09761 119 121
+	  geoJoinKey="county"
+6095f1d88149fbfcc2769350afb812ce24a09761 120 122
+	  colorScale="quantize"
+729bb2787d9832b5c10979e49b403ab0c1050774 121 123 6
+author System Systems
+author-mail <systems@example.com>
+author-time 1764563961
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1764563961
+committer-tz -0600
+summary Add comprehensive tests for spatial components and performance benchmarks
+previous 03f9ca9ae08069fcecdb9b9e1538fd866216ee4e docs/components/choropleth-map.md
+filename docs/components/choropleth-map.md
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 122 124
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 123 125
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 124 126
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 125 127
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 126 128
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 122 129 14
+	  a11y={{ description: 'Average temperature by county' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 123 130
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 124 131
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 125 132
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 126 133
+	### Quantile Scale (Equal Count)
+6095f1d88149fbfcc2769350afb812ce24a09761 127 134
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 128 135
+	Ensures equal number of data points in each color class. Good for skewed distributions.
+6095f1d88149fbfcc2769350afb812ce24a09761 129 136
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 130 137
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 131 138
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 132 139
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 133 140
+	  valueField="income"
+6095f1d88149fbfcc2769350afb812ce24a09761 134 141
+	  geoJoinKey="zipcode"
+6095f1d88149fbfcc2769350afb812ce24a09761 135 142
+	  colorScale="quantile"
+729bb2787d9832b5c10979e49b403ab0c1050774 141 143 6
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 142 144
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 143 145
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 144 146
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 145 147
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 146 148
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 137 149 15
+	  a11y={{ description: 'Median household income by ZIP code' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 138 150
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 139 151
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 140 152
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 141 153
+	### Threshold Scale (Custom Breakpoints)
+6095f1d88149fbfcc2769350afb812ce24a09761 142 154
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 143 155
+	Uses custom thresholds for meaningful categories.
+6095f1d88149fbfcc2769350afb812ce24a09761 144 156
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 145 157
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 146 158
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 147 159
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 148 160
+	  valueField="unemployment_rate"
+6095f1d88149fbfcc2769350afb812ce24a09761 149 161
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 150 162
+	  colorScale="threshold"
+6095f1d88149fbfcc2769350afb812ce24a09761 151 163
+	  thresholds={[5, 7, 10]}
+729bb2787d9832b5c10979e49b403ab0c1050774 162 164 6
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 163 165
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 164 166
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 165 167
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 166 168
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 167 169
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 153 170 165
+	  a11y={{ description: 'Unemployment rate by state' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 154 171
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 155 172
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 156 173
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 157 174
+	**Note:** For threshold scale, `colorRange.length` must equal `thresholds.length + 1`.
+6095f1d88149fbfcc2769350afb812ce24a09761 158 175
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 159 176
+	## Data Requirements
+6095f1d88149fbfcc2769350afb812ce24a09761 160 177
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 161 178
+	### GeoJSON Structure
+6095f1d88149fbfcc2769350afb812ce24a09761 162 179
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 163 180
+	GeoJSON features must have properties with join keys:
+6095f1d88149fbfcc2769350afb812ce24a09761 164 181
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 165 182
+	```json
+6095f1d88149fbfcc2769350afb812ce24a09761 166 183
+	{
+6095f1d88149fbfcc2769350afb812ce24a09761 167 184
+	  "type": "FeatureCollection",
+6095f1d88149fbfcc2769350afb812ce24a09761 168 185
+	  "features": [
+6095f1d88149fbfcc2769350afb812ce24a09761 169 186
+	    {
+6095f1d88149fbfcc2769350afb812ce24a09761 170 187
+	      "type": "Feature",
+6095f1d88149fbfcc2769350afb812ce24a09761 171 188
+	      "id": "CA",
+6095f1d88149fbfcc2769350afb812ce24a09761 172 189
+	      "properties": {
+6095f1d88149fbfcc2769350afb812ce24a09761 173 190
+	        "name": "California",
+6095f1d88149fbfcc2769350afb812ce24a09761 174 191
+	        "state": "CA",
+6095f1d88149fbfcc2769350afb812ce24a09761 175 192
+	        "fips": "06"
+6095f1d88149fbfcc2769350afb812ce24a09761 176 193
+	      },
+6095f1d88149fbfcc2769350afb812ce24a09761 177 194
+	      "geometry": { ... }
+6095f1d88149fbfcc2769350afb812ce24a09761 178 195
+	    }
+6095f1d88149fbfcc2769350afb812ce24a09761 179 196
+	  ]
+6095f1d88149fbfcc2769350afb812ce24a09761 180 197
+	}
+6095f1d88149fbfcc2769350afb812ce24a09761 181 198
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 182 199
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 183 200
+	### Data Structure
+6095f1d88149fbfcc2769350afb812ce24a09761 184 201
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 185 202
+	Data records must have:
+6095f1d88149fbfcc2769350afb812ce24a09761 186 203
+	- Join key matching GeoJSON properties
+6095f1d88149fbfcc2769350afb812ce24a09761 187 204
+	- Numeric value field for color encoding
+6095f1d88149fbfcc2769350afb812ce24a09761 188 205
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 189 206
+	```typescript
+6095f1d88149fbfcc2769350afb812ce24a09761 190 207
+	const data = [
+6095f1d88149fbfcc2769350afb812ce24a09761 191 208
+	  { state: 'CA', population: 39538223, name: 'California' },
+6095f1d88149fbfcc2769350afb812ce24a09761 192 209
+	  { state: 'TX', population: 29145505, name: 'Texas' },
+6095f1d88149fbfcc2769350afb812ce24a09761 193 210
+	];
+6095f1d88149fbfcc2769350afb812ce24a09761 194 211
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 195 212
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 196 213
+	### Handling Missing Data
+6095f1d88149fbfcc2769350afb812ce24a09761 197 214
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 198 215
+	Regions without matching data receive the first color in `colorRange`:
+6095f1d88149fbfcc2769350afb812ce24a09761 199 216
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 200 217
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 201 218
+	// Only CA has data, TX/NY will get default color
+6095f1d88149fbfcc2769350afb812ce24a09761 202 219
+	const partialData = [
+6095f1d88149fbfcc2769350afb812ce24a09761 203 220
+	  { state: 'CA', value: 100 }
+6095f1d88149fbfcc2769350afb812ce24a09761 204 221
+	];
+6095f1d88149fbfcc2769350afb812ce24a09761 205 222
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 206 223
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 207 224
+	  data={partialData}
+6095f1d88149fbfcc2769350afb812ce24a09761 208 225
+	  valueField="value"
+6095f1d88149fbfcc2769350afb812ce24a09761 209 226
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 210 227
+	  a11y={{ description: 'Partial data example' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 211 228
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 212 229
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 213 230
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 214 231
+	## Interaction Handling
+6095f1d88149fbfcc2769350afb812ce24a09761 215 232
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 216 233
+	### Click Events
+6095f1d88149fbfcc2769350afb812ce24a09761 217 234
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 218 235
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 219 236
+	function handleRegionClick(feature, datum) {
+6095f1d88149fbfcc2769350afb812ce24a09761 220 237
+	  console.log('Clicked:', feature.properties.name);
+6095f1d88149fbfcc2769350afb812ce24a09761 221 238
+	  console.log('Value:', datum?.value);
+6095f1d88149fbfcc2769350afb812ce24a09761 222 239
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 223 240
+	  // Show detail panel, navigate, etc.
+6095f1d88149fbfcc2769350afb812ce24a09761 224 241
+	}
+6095f1d88149fbfcc2769350afb812ce24a09761 225 242
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 226 243
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 227 244
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 228 245
+	  valueField="sales"
+6095f1d88149fbfcc2769350afb812ce24a09761 229 246
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 230 247
+	  onRegionClick={handleRegionClick}
+6095f1d88149fbfcc2769350afb812ce24a09761 231 248
+	  a11y={{ description: 'Sales by state (click for details)' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 232 249
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 233 250
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 234 251
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 235 252
+	### Hover Events
+6095f1d88149fbfcc2769350afb812ce24a09761 236 253
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 237 254
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 238 255
+	function handleRegionHover(feature, datum) {
+6095f1d88149fbfcc2769350afb812ce24a09761 239 256
+	  // Show tooltip
+6095f1d88149fbfcc2769350afb812ce24a09761 240 257
+	  setTooltip({
+6095f1d88149fbfcc2769350afb812ce24a09761 241 258
+	    title: feature.properties.name,
+6095f1d88149fbfcc2769350afb812ce24a09761 242 259
+	    value: datum?.sales,
+6095f1d88149fbfcc2769350afb812ce24a09761 243 260
+	  });
+6095f1d88149fbfcc2769350afb812ce24a09761 244 261
+	}
+6095f1d88149fbfcc2769350afb812ce24a09761 245 262
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 246 263
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 247 264
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 248 265
+	  valueField="sales"
+6095f1d88149fbfcc2769350afb812ce24a09761 249 266
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 250 267
+	  onRegionHover={handleRegionHover}
+6095f1d88149fbfcc2769350afb812ce24a09761 251 268
+	  a11y={{ description: 'Sales by state (hover for details)' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 252 269
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 253 270
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 254 271
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 255 272
+	## Accessibility Features
+6095f1d88149fbfcc2769350afb812ce24a09761 256 273
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 257 274
+	### Keyboard Navigation
+6095f1d88149fbfcc2769350afb812ce24a09761 258 275
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 259 276
+	- **Tab**: Move focus between regions
+6095f1d88149fbfcc2769350afb812ce24a09761 260 277
+	- **Enter/Space**: Select focused region
+6095f1d88149fbfcc2769350afb812ce24a09761 261 278
+	- **Escape**: Clear selection
+6095f1d88149fbfcc2769350afb812ce24a09761 262 279
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 263 280
+	All regions are keyboard-focusable with visible focus rings.
+6095f1d88149fbfcc2769350afb812ce24a09761 264 281
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 265 282
+	### ARIA Attributes
+6095f1d88149fbfcc2769350afb812ce24a09761 266 283
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 267 284
+	Each region has:
+6095f1d88149fbfcc2769350afb812ce24a09761 268 285
+	- `role="button"` - Interactive element
+6095f1d88149fbfcc2769350afb812ce24a09761 269 286
+	- `aria-label` - Region name and value
+6095f1d88149fbfcc2769350afb812ce24a09761 270 287
+	- `aria-pressed` - Selection state
+6095f1d88149fbfcc2769350afb812ce24a09761 271 288
+	- `tabindex="0"` - Keyboard focusable
+6095f1d88149fbfcc2769350afb812ce24a09761 272 289
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 273 290
+	### Screen Reader Support
+6095f1d88149fbfcc2769350afb812ce24a09761 274 291
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 275 292
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 276 293
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 277 294
+	  data={data}
+6095f1d88149fbfcc2769350afb812ce24a09761 278 295
+	  valueField="population"
+6095f1d88149fbfcc2769350afb812ce24a09761 279 296
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 280 297
+	  a11y={{
+6095f1d88149fbfcc2769350afb812ce24a09761 281 298
+	    description: 'US Population by State',
+6095f1d88149fbfcc2769350afb812ce24a09761 282 299
+	    narrative: {
+6095f1d88149fbfcc2769350afb812ce24a09761 283 300
+	      summary: 'Population distribution across US states',
+6095f1d88149fbfcc2769350afb812ce24a09761 284 301
+	      keyFindings: [
+6095f1d88149fbfcc2769350afb812ce24a09761 285 302
+	        'California has the highest population at 39.5 million',
+6095f1d88149fbfcc2769350afb812ce24a09761 286 303
+	        'Texas is second with 29.1 million',
+6095f1d88149fbfcc2769350afb812ce24a09761 287 304
+	      ],
+6095f1d88149fbfcc2769350afb812ce24a09761 288 305
+	    },
+6095f1d88149fbfcc2769350afb812ce24a09761 289 306
+	    tableFallback: {
+6095f1d88149fbfcc2769350afb812ce24a09761 290 307
+	      enabled: true,
+6095f1d88149fbfcc2769350afb812ce24a09761 291 308
+	      caption: 'US Population Data Table',
+6095f1d88149fbfcc2769350afb812ce24a09761 292 309
+	    },
+6095f1d88149fbfcc2769350afb812ce24a09761 293 310
+	  }}
+6095f1d88149fbfcc2769350afb812ce24a09761 294 311
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 295 312
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 296 313
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 297 314
+	### Table Fallback
+6095f1d88149fbfcc2769350afb812ce24a09761 298 315
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 299 316
+	Enable table fallback for screen reader users:
+6095f1d88149fbfcc2769350afb812ce24a09761 300 317
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 301 318
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 302 319
+	a11y={{
+6095f1d88149fbfcc2769350afb812ce24a09761 303 320
+	  description: 'Sales by Region',
+6095f1d88149fbfcc2769350afb812ce24a09761 304 321
+	  tableFallback: {
+6095f1d88149fbfcc2769350afb812ce24a09761 305 322
+	    enabled: true,
+6095f1d88149fbfcc2769350afb812ce24a09761 306 323
+	    caption: 'Regional Sales Data',
+6095f1d88149fbfcc2769350afb812ce24a09761 307 324
+	  },
+6095f1d88149fbfcc2769350afb812ce24a09761 308 325
+	}}
+6095f1d88149fbfcc2769350afb812ce24a09761 309 326
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 310 327
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 311 328
+	## Design Tokens
+6095f1d88149fbfcc2769350afb812ce24a09761 312 329
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 313 330
+	Use design tokens for color ranges:
+6095f1d88149fbfcc2769350afb812ce24a09761 314 331
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 315 332
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 316 333
+	// Sequential (single hue)
+6095f1d88149fbfcc2769350afb812ce24a09761 317 334
+	colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 333 335 4
+	  'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 334 336
+	  'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 335 337
+	  'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 336 338
+	  'var(--oods-viz-scale-sequential-07)',
+6095f1d88149fbfcc2769350afb812ce24a09761 322 339 4
+	]}
+6095f1d88149fbfcc2769350afb812ce24a09761 323 340
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 324 341
+	// Diverging (two hues)
+6095f1d88149fbfcc2769350afb812ce24a09761 325 342
+	colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 341 343 5
+	  'var(--oods-viz-scale-diverging-red-4)',
+729bb2787d9832b5c10979e49b403ab0c1050774 342 344
+	  'var(--oods-viz-scale-diverging-red-2)',
+729bb2787d9832b5c10979e49b403ab0c1050774 343 345
+	  'var(--oods-viz-scale-diverging-neutral)',
+729bb2787d9832b5c10979e49b403ab0c1050774 344 346
+	  'var(--oods-viz-scale-diverging-blue-2)',
+729bb2787d9832b5c10979e49b403ab0c1050774 345 347
+	  'var(--oods-viz-scale-diverging-blue-4)',
+6095f1d88149fbfcc2769350afb812ce24a09761 331 348 13
+	]}
+6095f1d88149fbfcc2769350afb812ce24a09761 332 349
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 333 350
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 334 351
+	## Common Patterns
+6095f1d88149fbfcc2769350afb812ce24a09761 335 352
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 336 353
+	### US States Map
+6095f1d88149fbfcc2769350afb812ce24a09761 337 354
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 338 355
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 339 356
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 340 357
+	  data={stateData}
+6095f1d88149fbfcc2769350afb812ce24a09761 341 358
+	  valueField="metric"
+6095f1d88149fbfcc2769350afb812ce24a09761 342 359
+	  geoJoinKey="state"
+6095f1d88149fbfcc2769350afb812ce24a09761 343 360
+	  projection="albersUsa"
+729bb2787d9832b5c10979e49b403ab0c1050774 359 361 6
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 360 362
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 361 363
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 362 364
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 363 365
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 364 366
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 345 367 12
+	  a11y={{ description: 'US states metric visualization' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 346 368
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 347 369
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 348 370
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 349 371
+	### World Map
+6095f1d88149fbfcc2769350afb812ce24a09761 350 372
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 351 373
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 352 374
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 353 375
+	  data={countryData}
+6095f1d88149fbfcc2769350afb812ce24a09761 354 376
+	  valueField="gdp"
+6095f1d88149fbfcc2769350afb812ce24a09761 355 377
+	  geoJoinKey="iso3"
+6095f1d88149fbfcc2769350afb812ce24a09761 356 378
+	  projection="equalEarth"
+729bb2787d9832b5c10979e49b403ab0c1050774 377 379 6
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 378 380
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 379 381
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 380 382
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 381 383
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 382 384
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 358 385 14
+	  a11y={{ description: 'World GDP by country' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 359 386
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 360 387
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 361 388
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 362 389
+	### County/Regional Map
+6095f1d88149fbfcc2769350afb812ce24a09761 363 390
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 364 391
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 365 392
+	<ChoroplethMap
+6095f1d88149fbfcc2769350afb812ce24a09761 366 393
+	  data={countyData}
+6095f1d88149fbfcc2769350afb812ce24a09761 367 394
+	  valueField="density"
+6095f1d88149fbfcc2769350afb812ce24a09761 368 395
+	  geoJoinKey="fips"
+6095f1d88149fbfcc2769350afb812ce24a09761 369 396
+	  projection="mercator"
+6095f1d88149fbfcc2769350afb812ce24a09761 370 397
+	  fitToData={true}
+6095f1d88149fbfcc2769350afb812ce24a09761 371 398
+	  colorScale="quantile"
+729bb2787d9832b5c10979e49b403ab0c1050774 397 399 6
+	  colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 398 400
+	    'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 399 401
+	    'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 400 402
+	    'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 401 403
+	    'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 402 404
+	  ]}
+6095f1d88149fbfcc2769350afb812ce24a09761 373 405 38
+	  a11y={{ description: 'Population density by county' }}
+6095f1d88149fbfcc2769350afb812ce24a09761 374 406
+	/>
+6095f1d88149fbfcc2769350afb812ce24a09761 375 407
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 376 408
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 377 409
+	## Performance Tips
+6095f1d88149fbfcc2769350afb812ce24a09761 378 410
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 379 411
+	1. **Use appropriate color class count**: 4-7 classes for most use cases
+6095f1d88149fbfcc2769350afb812ce24a09761 380 412
+	2. **Simplify GeoJSON**: Use TopoJSON or simplified geometries for large datasets
+6095f1d88149fbfcc2769350afb812ce24a09761 381 413
+	3. **Memoize data**: Prevent unnecessary recalculations
+6095f1d88149fbfcc2769350afb812ce24a09761 382 414
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 383 415
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 384 416
+	const memoizedData = useMemo(() => processData(rawData), [rawData]);
+6095f1d88149fbfcc2769350afb812ce24a09761 385 417
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 386 418
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 387 419
+	## Troubleshooting
+6095f1d88149fbfcc2769350afb812ce24a09761 388 420
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 389 421
+	### Regions not coloring correctly
+6095f1d88149fbfcc2769350afb812ce24a09761 390 422
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 391 423
+	**Issue**: Some regions remain default color despite having data.
+6095f1d88149fbfcc2769350afb812ce24a09761 392 424
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 393 425
+	**Solution**: Verify join keys match exactly (case-sensitive):
+6095f1d88149fbfcc2769350afb812ce24a09761 394 426
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 395 427
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 396 428
+	// GeoJSON property: "CA"
+6095f1d88149fbfcc2769350afb812ce24a09761 397 429
+	// Data key: "ca"  ❌ Won't match
+6095f1d88149fbfcc2769350afb812ce24a09761 398 430
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 399 431
+	// Both should be: "CA" or both "ca" ✓
+6095f1d88149fbfcc2769350afb812ce24a09761 400 432
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 401 433
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 402 434
+	### Threshold scale error
+6095f1d88149fbfcc2769350afb812ce24a09761 403 435
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 404 436
+	**Issue**: "Range length must be thresholds length + 1"
+6095f1d88149fbfcc2769350afb812ce24a09761 405 437
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 406 438
+	**Solution**: Ensure color range has one more color than thresholds:
+6095f1d88149fbfcc2769350afb812ce24a09761 407 439
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 408 440
+	```tsx
+6095f1d88149fbfcc2769350afb812ce24a09761 409 441
+	// ❌ Wrong
+6095f1d88149fbfcc2769350afb812ce24a09761 410 442
+	thresholds={[10, 20, 30]}
+729bb2787d9832b5c10979e49b403ab0c1050774 441 443 1
+	colorRange={['var(--oods-viz-scale-sequential-01)', 'var(--oods-viz-scale-sequential-03)', 'var(--oods-viz-scale-sequential-05)']}  // 3 colors, need 4
+6095f1d88149fbfcc2769350afb812ce24a09761 412 444 3
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 413 445
+	// ✓ Correct
+6095f1d88149fbfcc2769350afb812ce24a09761 414 446
+	thresholds={[10, 20, 30]}
+729bb2787d9832b5c10979e49b403ab0c1050774 445 447 6
+	colorRange={[
+729bb2787d9832b5c10979e49b403ab0c1050774 446 448
+	  'var(--oods-viz-scale-sequential-01)',
+729bb2787d9832b5c10979e49b403ab0c1050774 447 449
+	  'var(--oods-viz-scale-sequential-03)',
+729bb2787d9832b5c10979e49b403ab0c1050774 448 450
+	  'var(--oods-viz-scale-sequential-05)',
+729bb2787d9832b5c10979e49b403ab0c1050774 449 451
+	  'var(--oods-viz-scale-sequential-07)',
+729bb2787d9832b5c10979e49b403ab0c1050774 450 452
+	]}  // 4 colors
+6095f1d88149fbfcc2769350afb812ce24a09761 416 453 24
+	```
+6095f1d88149fbfcc2769350afb812ce24a09761 417 454
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 418 455
+	## Related Components
+6095f1d88149fbfcc2769350afb812ce24a09761 419 456
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 420 457
+	- **SpatialContainer** - Required wrapper providing projection context
+6095f1d88149fbfcc2769350afb812ce24a09761 421 458
+	- **BubbleMap** - Symbol/bubble layer for point data (coming in B32.2)
+6095f1d88149fbfcc2769350afb812ce24a09761 422 459
+	- **MapLegend** - Color legend component (coming in B32.3)
+6095f1d88149fbfcc2769350afb812ce24a09761 423 460
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 424 461
+	## Examples
+6095f1d88149fbfcc2769350afb812ce24a09761 425 462
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 426 463
+	See `ChoroplethMap.stories.tsx` for complete interactive examples:
+6095f1d88149fbfcc2769350afb812ce24a09761 427 464
+	- US Population by State
+6095f1d88149fbfcc2769350afb812ce24a09761 428 465
+	- World GDP by Country
+6095f1d88149fbfcc2769350afb812ce24a09761 429 466
+	- Different color scales
+6095f1d88149fbfcc2769350afb812ce24a09761 430 467
+	- Interactive maps with tooltips
+6095f1d88149fbfcc2769350afb812ce24a09761 431 468
+	- Accessible maps with table fallback
+6095f1d88149fbfcc2769350afb812ce24a09761 432 469
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 433 470
+	## Browser Support
+6095f1d88149fbfcc2769350afb812ce24a09761 434 471
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 435 472
+	- Chrome/Edge: 90+
+6095f1d88149fbfcc2769350afb812ce24a09761 436 473
+	- Firefox: 88+
+6095f1d88149fbfcc2769350afb812ce24a09761 437 474
+	- Safari: 14+
+6095f1d88149fbfcc2769350afb812ce24a09761 438 475
+	
+6095f1d88149fbfcc2769350afb812ce24a09761 439 476
+	Requires SVG and CSS custom properties support.

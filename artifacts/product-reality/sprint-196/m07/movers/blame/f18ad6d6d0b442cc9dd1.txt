@@ -1,0 +1,152 @@
+944f4dda5f784e266310978b31f65b3d452e6387 1 1 2
+author System Systems
+author-mail <systems@example.com>
+author-time 1789196744
+author-tz -0500
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1789196744
+committer-tz -0500
+summary docs(s196-m04): generate published claims and bind their proof gates
+previous d1661992de15572e50ca55d12372f0473c4743c7 docs/components/forms.md
+filename docs/history/components/forms.md
+	> Archived on 2026-09-12 (s196-m04). This guide describes the historical Foundry component tree and is excluded from current governed component claims. See the [generated component index](../../components/README.md) for current contracts and evidence.
+944f4dda5f784e266310978b31f65b3d452e6387 2 2
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 1 3 63
+author System Systems
+author-mail <systems@example.com>
+author-time 1763932113
+author-tz -0600
+committer System Systems
+committer-mail <systems@example.com>
+committer-time 1763932113
+committer-tz -0600
+summary Initial commit: OODS Foundry MCP
+boundary
+filename docs/components/forms.md
+	# Forms (TextField · Select · Checkbox)
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 2 4
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 3 5
+	Form primitives share a common validation contract (`FieldValidation`) and surface semantic tokens for focus, validation states, and high-contrast fallbacks. Inputs automatically thread `aria-describedby`, `aria-invalid`, and `data-validation-state` so assistive tech receives the same cues as the visual system.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 4 6
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 5 7
+	## Components
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 6 8
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 7 9
+	- **TextField** – Standard text-like input that accepts any native `type`. Optional `description` and `validation` objects flow into assistive descriptions; status-aware CSS variables (`--form-field-*`) style borders, rings, and message copy without literal colour usage.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 8 10
+	- **Select** – Native `<select>` wrapper with focus/HC styling and the same validation plumbing. Background arrow is expressed with CSS gradients and is disabled automatically under forced-colors.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 9 11
+	- **Checkbox** – Inline control with shared validation handling. Uses `accent-color` tokens for brand parity and guards focus rings for HC users.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 10 12
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 11 13
+	## Contract
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 12 14
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 13 15
+	- `FieldValidation` accepts `{ state: 'info' | 'success' | 'error', message?: ReactNode, id?: string }`. When present, components derive tone tokens via `getToneTokenSet`, expose `data-validation-state`, and emit live-region semantics (`role="status"` or `role="alert"`).
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 14 16
+	- `density` toggles between `comfortable` and `compact`, adjusting padding and vertical rhythm via CSS custom properties.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 15 17
+	- Required indicators render automatically when `required` is true; custom markers can be passed with `requiredIndicator`.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 16 18
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 17 19
+	## Usage
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 18 20
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 19 21
+	```tsx
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 20 22
+	import {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 21 23
+	  TextField,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 22 24
+	  Select,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 23 25
+	  Checkbox,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 24 26
+	  type FieldValidation,
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 25 27
+	} from '@/components/base';
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 26 28
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 27 29
+	const validation: FieldValidation = {
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 28 30
+	  state: 'info',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 29 31
+	  message: 'Use a monitored inbox for incident alerts.',
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 30 32
+	};
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 31 33
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 32 34
+	<TextField
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 33 35
+	  id="email"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 34 36
+	  label="Email address"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 35 37
+	  description="Receives receipts and incident updates."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 36 38
+	  validation={validation}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 37 39
+	  required
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 38 40
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 39 41
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 40 42
+	<Select
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 41 43
+	  id="plan"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 42 44
+	  label="Plan"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 43 45
+	  validation={{ state: 'success', message: 'Provisioning synced.' }}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 44 46
+	  required
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 45 47
+	>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 46 48
+	  <option value="starter">Starter</option>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 47 49
+	  <option value="growth">Growth</option>
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 48 50
+	</Select>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 49 51
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 50 52
+	<Checkbox
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 51 53
+	  id="policies"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 52 54
+	  label="Agree to billing policies"
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 53 55
+	  description="Acknowledges dunning cadence."
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 54 56
+	  validation={{ state: 'error', message: 'Accept the policies to continue.' }}
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 55 57
+	  required
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 56 58
+	/>;
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 57 59
+	```
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 58 60
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 59 61
+	## Accessibility & Diagnostics
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 60 62
+	
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 61 63
+	- Components merge `description` and `validation` IDs into `aria-describedby`, ensuring screen readers announce both body copy and state messaging. Errors propagate `aria-invalid="true"` and assertive live regions.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 62 64
+	- CSS variables (`--form-field-border`, `--form-field-validation-color`, `--form-field-focus-*`) enable Chromatic audits and brand swaps. Forced-colors overrides in `src/styles/forms.css` keep outlines and text legible without custom media queries per component.
+ac82e7869c2567ffaf77f7efe7db3c1e998fcf86 63 65
+	- Storybook under **Forms/** contains density grids, validation states, and the combined **FormExample** used by Playwright to tab through fields and confirm assistive text.

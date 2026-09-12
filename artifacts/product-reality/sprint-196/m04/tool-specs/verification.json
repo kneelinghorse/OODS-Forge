@@ -1,0 +1,955 @@
+{
+  "status": "pass",
+  "verifiedAt": "2026-09-12T06:42:50.582680+00:00",
+  "sourceHead": "d1661992de15572e50ca55d12372f0473c4743c7",
+  "worktreeDirty": true,
+  "scope": "Focused s196-m04 Tool-Specs generation, exact dispatcher schema selection, public portable claims and freshness. Full suites remain scheduled for s196-m07.",
+  "before": {
+    "gitObject": "d1661992de15572e50ca55d12372f0473c4743c7:docs/mcp/Tool-Specs.md",
+    "sha256": "sha256:1fb42cad29d6c407d8216b1b514621f47af19310d06945ef19c56ca4aea398f4",
+    "lines": 1454,
+    "toolSections": 24,
+    "verbatimAdapterDescriptions": 0,
+    "staleCatalogSentencePresent": true
+  },
+  "after": {
+    "path": "docs/mcp/Tool-Specs.md",
+    "sha256": "sha256:04bb4869330351cf2d2cbfc9d5baed96660304cc36bbadebc203be291ef1092d",
+    "bytes": 156456,
+    "lines": 2084,
+    "toolSections": 24,
+    "verbatimAdapterDescriptions": 24,
+    "rootInputProperties": 119,
+    "inputActionBranches": 14,
+    "apiLinks": 25,
+    "allApiLinksResolve": true,
+    "staleCatalogSentencePresent": false
+  },
+  "dispatchContracts": [
+    {
+      "tool": "tokens.build",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/tokens.build.input.json",
+        "sha256": "sha256:d3824aa7ba54660a2c953bee5b830ef3c938b7ded14f71cdada8deaafeef7539",
+        "bytes": 567
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/generic.output.json",
+        "sha256": "sha256:6efc4b6eb91e2d50229eca2f7e3c5686ceaa33d6e04ccd373cad75d25d034925",
+        "bytes": 3683
+      },
+      "rootInputProperties": [
+        "brand",
+        "theme",
+        "apply"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "notes",
+        "logs",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "structuredData",
+        "artifactsDetail",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "structuredData.fetch",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
+        "sha256": "sha256:833c1bb6f2247d0177e2f4cd4459ecb0e63893570328a872e546eac4e0aedf3a",
+        "bytes": 1981
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/structuredData.fetch.output.json",
+        "sha256": "sha256:a4714784efd0786b9a1fb5294bfc5d4d4896ef85c212b091f8e18715e7a6f009",
+        "bytes": 4499
+      },
+      "rootInputProperties": [
+        "dataset",
+        "kind",
+        "runPath",
+        "ifNoneMatch",
+        "includePayload",
+        "version",
+        "listVersions"
+      ],
+      "rootOutputProperties": [
+        "dataset",
+        "kind",
+        "schemaVersion",
+        "runId",
+        "version",
+        "generatedAt",
+        "etag",
+        "matched",
+        "payloadIncluded",
+        "path",
+        "manifestPath",
+        "sizeBytes",
+        "schemaValidated",
+        "validationErrors",
+        "warnings",
+        "meta",
+        "payload",
+        "availableVersions",
+        "requestedVersion",
+        "resolvedVersion"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "brand.apply",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/brand.apply.input.json",
+        "sha256": "sha256:02124d32e9d408030323ccfa8058abef60c463f7b23e5954b2d5983822b5d99a",
+        "bytes": 2090
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/brand.apply.output.json",
+        "sha256": "sha256:e7cefe382634b716fdefdb50390fb72223783ed2c3575e183d82720abed22300",
+        "bytes": 5873
+      },
+      "rootInputProperties": [
+        "brand",
+        "delta",
+        "strategy",
+        "preview",
+        "apply"
+      ],
+      "rootOutputProperties": [
+        "receipt",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "preview",
+        "artifactsDetail"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "brand.intake",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/brand.intake.input.json",
+        "sha256": "sha256:987e16449041abb797e17295517887cd01ca5babc8024bc4fcc7ebba9c26e472",
+        "bytes": 5247
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/brand.intake.output.json",
+        "sha256": "sha256:43a5aa980c83675c9fc4e37b53aeea0d6c9b3e362a9c649c8a1a1ce96b5aad7e",
+        "bytes": 6567
+      },
+      "rootInputProperties": [
+        "apply",
+        "brand_id",
+        "profile",
+        "theme_documents"
+      ],
+      "rootOutputProperties": [
+        "envelopeHash",
+        "delta",
+        "deltaUnavailableReason",
+        "mode",
+        "preview_only",
+        "grammar_profile",
+        "requested",
+        "validated",
+        "applied",
+        "brand_created",
+        "request_issues",
+        "theme_documents",
+        "submitted_token_instance_denominator",
+        "accepted_token_instance_denominator",
+        "not_accepted_token_instance_denominator",
+        "submitted_minus_accepted_denominator",
+        "accepted_minus_submitted_denominator",
+        "not_accepted_token_reason_denominator",
+        "build_artifact_denominator",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "catalog.list",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/catalog.list.input.json",
+        "sha256": "sha256:22c1bf42f7847db8d8d19053cff6146964b83915316fca27d5ebcb2d8f72a1a1",
+        "bytes": 1274
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/catalog.list.output.json",
+        "sha256": "sha256:382ce88d3a2bd979db28b9aca0ff5eedb0e94b8cc9d4ddd28891723de3fbe544",
+        "bytes": 10744
+      },
+      "rootInputProperties": [
+        "category",
+        "trait",
+        "context",
+        "status",
+        "detail",
+        "page",
+        "pageSize"
+      ],
+      "rootOutputProperties": [
+        "obligationScope",
+        "components",
+        "totalCount",
+        "returnedCount",
+        "page",
+        "pageSize",
+        "hasMore",
+        "detail",
+        "generatedAt",
+        "stats",
+        "availableCategories",
+        "suggestions"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "code.generate",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/code.generate.input.json",
+        "sha256": "sha256:102726ac977147a6cbdbcd39bae7974eb66a79b6b1aaade6a5391da26da687a5",
+        "bytes": 4668
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/code.generate.output.json",
+        "sha256": "sha256:724cf6c72dbe709aed521bce5352b34d2e822a82267ac14c5a6f6ea4809a6d47",
+        "bytes": 22258
+      },
+      "rootInputProperties": [
+        "schema",
+        "schemaRef",
+        "framework",
+        "profile",
+        "releaseEvidence",
+        "options"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "framework",
+        "artifact",
+        "code",
+        "fileExtension",
+        "imports",
+        "warnings",
+        "validationReceipt",
+        "errors",
+        "meta"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "design.compose",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/design.compose.input.json",
+        "sha256": "sha256:e25e8b5e43d5271105f0486112410c651140c1c01d30317c0b36fdc757fb39c0",
+        "bytes": 3729
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/design.compose.output.json",
+        "sha256": "sha256:95cdd283ee4b6c585583d49352f7416a86d740edc779a8feb49a5e3167249469",
+        "bytes": 8826
+      },
+      "rootInputProperties": [
+        "intent",
+        "object",
+        "context",
+        "layout",
+        "preferences",
+        "options"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "layout",
+        "schema",
+        "schemaRef",
+        "schemaRefCreatedAt",
+        "schemaRefExpiresAt",
+        "selections",
+        "validation",
+        "warnings",
+        "errors",
+        "objectUsed",
+        "meta"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "design.preview",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/design.preview.input.json",
+        "sha256": "sha256:bbad1535c7d66c9b8a17f5d450849deb9a25f4f3a07742da2a8a212f5c33720e",
+        "bytes": 3014
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/design.preview.output.json",
+        "sha256": "sha256:f4395fc3e5dce7cde70d9a56552efc5dd12086cdb1825fc48f15c3efc52af7d7",
+        "bytes": 1169
+      },
+      "rootInputProperties": [
+        "object",
+        "context",
+        "framework",
+        "widths",
+        "preferences"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "schemaHash",
+        "receipts",
+        "receiptPaths",
+        "durationMs"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "pipeline",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/pipeline.input.json",
+        "sha256": "sha256:e0eeb8d65a6decf167f743cae1651be1d6873c7db11a0781cb60b658e80cd6d3",
+        "bytes": 7164
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/pipeline.output.json",
+        "sha256": "sha256:b2dc2ae6b11924c1bbfd42d9403fb6483d3fe1d13153a07c3e777c2754834496",
+        "bytes": 25326
+      },
+      "rootInputProperties": [
+        "object",
+        "intent",
+        "context",
+        "layout",
+        "preferences",
+        "actionMappings",
+        "framework",
+        "styling",
+        "profile",
+        "releaseEvidence",
+        "save",
+        "options"
+      ],
+      "rootOutputProperties": [
+        "validationReceipt",
+        "schemaRef",
+        "schemaRefCreatedAt",
+        "schemaRefExpiresAt",
+        "schemaRefTtlWarning",
+        "compose",
+        "validation",
+        "render",
+        "code",
+        "saved",
+        "summary",
+        "metrics",
+        "pipeline",
+        "error"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "health",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/health.input.json",
+        "sha256": "sha256:5f9681a9aea550f2e7a162c36b75f262c82c9e39a85257f101af3256bae6fe07",
+        "bytes": 460
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/health.output.json",
+        "sha256": "sha256:6a477f2a77dff00ba8940c82279a1208f338f22c93b4241b56c1de0d298bde4c",
+        "bytes": 10420
+      },
+      "rootInputProperties": [
+        "includeChangelog",
+        "sinceVersion"
+      ],
+      "rootOutputProperties": [
+        "productReality",
+        "status",
+        "server",
+        "registry",
+        "tokens",
+        "schemas",
+        "latency",
+        "warnings",
+        "dslVersion",
+        "changelog"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "registry.snapshot",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/registry.snapshot.input.json",
+        "sha256": "sha256:f25a2c6a58099b56a010e50ba0f5ec9af323593e683171e397b5ff39dfa4fc9e",
+        "bytes": 494
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/registry.snapshot.output.json",
+        "sha256": "sha256:722bc4e03371e8e6b81905b8446e3f2cc8dc52f8f0e269422b2f55c08bdc0d15",
+        "bytes": 3957
+      },
+      "rootInputProperties": [],
+      "rootOutputProperties": [
+        "maps",
+        "traits",
+        "objects",
+        "etag",
+        "generatedAt",
+        "disambiguation_decisions",
+        "preferred_terms",
+        "capabilities"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "viz.render",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/viz.render.input.json",
+        "sha256": "sha256:85f4307d61873898c2c99510069135734ee6b72193357b618807d097655d4e19",
+        "bytes": 40103
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/viz.render.output.json",
+        "sha256": "sha256:e831078fd0472526975ea97c8841a2f2a8e93d7eb75256b3c062be711956a607",
+        "bytes": 16308
+      },
+      "rootInputProperties": [
+        "theme",
+        "brand",
+        "opacity",
+        "rows",
+        "datasetRef",
+        "hierarchy",
+        "sankey",
+        "chord",
+        "network",
+        "geo",
+        "chartType",
+        "encodings",
+        "id",
+        "name",
+        "description",
+        "strictFields",
+        "a11yEquivalence",
+        "output",
+        "intent",
+        "pattern"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "chartType",
+        "mode",
+        "spec",
+        "echartsSpec",
+        "normalizedSpec",
+        "a11yDescription",
+        "a11y",
+        "suggestion",
+        "lowConfidence",
+        "svg",
+        "svgHash",
+        "svgBytes",
+        "svgRef",
+        "render",
+        "specRef",
+        "specRefCreatedAt",
+        "specRefExpiresAt",
+        "contentHash",
+        "tokenCssRef",
+        "output",
+        "errors",
+        "warnings",
+        "meta"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "dashboard.render",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/dashboard.render.input.json",
+        "sha256": "sha256:e44904e858e2299f172eba19970f6d72d3c4154089ef02947df47fd84cd316bd",
+        "bytes": 45702
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/dashboard.render.output.json",
+        "sha256": "sha256:62a776787c0d7e5178a191f47876b041ecb7771639ea24edf7413d1cb7704e34",
+        "bytes": 17234
+      },
+      "rootInputProperties": [
+        "theme",
+        "schemaVersion",
+        "id",
+        "title",
+        "datasets",
+        "panels",
+        "layout",
+        "links",
+        "crossFilter",
+        "onPanelError",
+        "resolveMeasures",
+        "strictFields",
+        "strictDatasets",
+        "a11yEquivalence",
+        "a11y",
+        "tokenCssRef",
+        "brand",
+        "selection",
+        "output"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "schemaVersion",
+        "panels",
+        "layout",
+        "links",
+        "a11y",
+        "tokenCssRef",
+        "html",
+        "specRef",
+        "specRefCreatedAt",
+        "specRefExpiresAt",
+        "contentHash",
+        "outputHtmlHash",
+        "output",
+        "meta",
+        "errors",
+        "warnings",
+        "a11yContrast"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "artifact.certify",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/artifact.certify.input.json",
+        "sha256": "sha256:f416447425973e483ce398296718df83a9d4bbd36ffe5acb3fe9cd1e3c9429b8",
+        "bytes": 18709
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/artifact.certify.output.json",
+        "sha256": "sha256:51bdbfbfc0f58b602bc476543b75636a084d8487553a2608a1557a47c2ba6082",
+        "bytes": 17932
+      },
+      "rootInputProperties": [
+        "spec",
+        "data",
+        "theme",
+        "brand"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "coverage",
+        "conformant",
+        "findings",
+        "a11yNotApplicable",
+        "accuracySummary",
+        "determinism",
+        "pillars",
+        "contrastNote",
+        "notes",
+        "errors",
+        "contrastResults",
+        "accuracyRules"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "fidelity.preview",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/fidelity.preview.input.json",
+        "sha256": "sha256:0854e6d23973fc2ff14ccf73d683399c62189a97ccc557372a2976e00de293ae",
+        "bytes": 2841
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/fidelity.preview.output.json",
+        "sha256": "sha256:1cc743d64cabba6fb4cefcffe169fa6fc85e98ef814985d131d8b89ea88be1eb",
+        "bytes": 2204
+      },
+      "rootInputProperties": [
+        "fidelityKind",
+        "fixture",
+        "manifest",
+        "options"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "fidelityKind",
+        "fixture",
+        "html",
+        "warnings",
+        "errors",
+        "meta"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "map",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/map.input.json",
+        "sha256": "sha256:caf2dd1c09c8c6c13bc0ea4fc5db34ffd03bfbd4316785be6d57bf554d8c414e",
+        "bytes": 45943
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/map.output.json",
+        "sha256": "sha256:c1c866bec4ebfe03528265e3ce4b2e9fdefd51fb9d14e910316f7dbca4382498",
+        "bytes": 12876
+      },
+      "rootInputProperties": [
+        "action"
+      ],
+      "rootOutputProperties": [],
+      "inputActions": [
+        "apply",
+        "create",
+        "list",
+        "resolve",
+        "update",
+        "delete"
+      ],
+      "outputVariants": 6
+    },
+    {
+      "tool": "schema",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/schema.input.json",
+        "sha256": "sha256:2138884d58e43d1b37a1649b1d26d1643072fc0bf04d578e98dacbb3c9c43778",
+        "bytes": 4572
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/schema.output.json",
+        "sha256": "sha256:9ff200d670f7b5cbefe7581975348a7224f5f392d76befb61c41bc82673e59b8",
+        "bytes": 3514
+      },
+      "rootInputProperties": [
+        "action"
+      ],
+      "rootOutputProperties": [],
+      "inputActions": [
+        "save",
+        "load",
+        "list",
+        "delete"
+      ],
+      "outputVariants": 4
+    },
+    {
+      "tool": "object",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/object.input.json",
+        "sha256": "sha256:f57410cd145f0e7aee63c31472c0f66e20867e55b12ab34c42646999cda14c94",
+        "bytes": 2307
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/object.output.json",
+        "sha256": "sha256:9e5aabd2197dd7cefc16a9765dc8c21c7fda6b8966e6bf760c13a876aaaa2492",
+        "bytes": 4748
+      },
+      "rootInputProperties": [
+        "action"
+      ],
+      "rootOutputProperties": [],
+      "inputActions": [
+        "list",
+        "show"
+      ],
+      "outputVariants": 2
+    },
+    {
+      "tool": "repl",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/repl.input.json",
+        "sha256": "sha256:5f7898d84de425889f54f77dfd77a603e7dbef8f76266247ec4c31f4f3e7e279",
+        "bytes": 10677
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/repl.output.json",
+        "sha256": "sha256:4a9b15f70fb96605516193910b9f97ae4853cb57dfe189da22df30bea4602c2a",
+        "bytes": 7384
+      },
+      "rootInputProperties": [
+        "action"
+      ],
+      "rootOutputProperties": [],
+      "inputActions": [
+        "render",
+        "validate"
+      ],
+      "outputVariants": 2
+    },
+    {
+      "tool": "diag.snapshot",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/generic.input.json",
+        "sha256": "sha256:c39167851540568dfcbc0981f53277ac12c5084d5a88ec39d74d428ed9170a71",
+        "bytes": 194
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/generic.output.json",
+        "sha256": "sha256:6efc4b6eb91e2d50229eca2f7e3c5686ceaa33d6e04ccd373cad75d25d034925",
+        "bytes": 3683
+      },
+      "rootInputProperties": [
+        "apply"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "notes",
+        "logs",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "structuredData",
+        "artifactsDetail",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "billing.reviewKit",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/billing.reviewKit.input.json",
+        "sha256": "sha256:44e59451d89ddd75a795aef321597e27d6dfdf90e0b7d465b593b532e2a0218e",
+        "bytes": 931
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/generic.output.json",
+        "sha256": "sha256:6efc4b6eb91e2d50229eca2f7e3c5686ceaa33d6e04ccd373cad75d25d034925",
+        "bytes": 3683
+      },
+      "rootInputProperties": [
+        "apply",
+        "object",
+        "fixtures"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "notes",
+        "logs",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "structuredData",
+        "artifactsDetail",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "billing.switchFixtures",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/billing.switchFixtures.input.json",
+        "sha256": "sha256:c829f274ec2b3c601a77a604f77c2541d51859c9022d78f473aed3eb28fd3e3c",
+        "bytes": 580
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/generic.output.json",
+        "sha256": "sha256:6efc4b6eb91e2d50229eca2f7e3c5686ceaa33d6e04ccd373cad75d25d034925",
+        "bytes": 3683
+      },
+      "rootInputProperties": [
+        "apply",
+        "provider"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "notes",
+        "logs",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "structuredData",
+        "artifactsDetail",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "a11y.scan",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/a11y.scan.input.json",
+        "sha256": "sha256:091cfb2613612a40a94fee0190e8da5c632de8ab36b10d4d0ed88e3143e161f2",
+        "bytes": 642
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/generic.output.json",
+        "sha256": "sha256:6efc4b6eb91e2d50229eca2f7e3c5686ceaa33d6e04ccd373cad75d25d034925",
+        "bytes": 3683
+      },
+      "rootInputProperties": [
+        "apply",
+        "schema"
+      ],
+      "rootOutputProperties": [
+        "status",
+        "notes",
+        "logs",
+        "artifacts",
+        "diagnosticsPath",
+        "transcriptPath",
+        "bundleIndexPath",
+        "structuredData",
+        "artifactsDetail",
+        "preview"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    },
+    {
+      "tool": "release.tag",
+      "input": {
+        "path": "packages/mcp-server/src/schemas/release.tag.input.json",
+        "sha256": "sha256:f47607da0f879b272d102d900cbf80734af019cf506124944c1e62c64f8012b2",
+        "bytes": 278
+      },
+      "output": {
+        "path": "packages/mcp-server/src/schemas/release.tag.output.json",
+        "sha256": "sha256:6e6cf1dc8827e799a09d6607ba4b8a2dcee949e6ec67a78bdcf8b5e650d6c7a3",
+        "bytes": 536
+      },
+      "rootInputProperties": [
+        "apply",
+        "tag",
+        "message"
+      ],
+      "rootOutputProperties": [
+        "artifacts",
+        "transcriptPath",
+        "bundleIndexPath",
+        "tag",
+        "created",
+        "warnings"
+      ],
+      "inputActions": [],
+      "outputVariants": 0
+    }
+  ],
+  "tests": {
+    "command": "pnpm exec vitest run test/contracts/tool-specs-generator.s196.spec.ts test/contracts/portable-claims.s196.spec.ts --reporter=default --reporter=json --outputFile.json=../../artifacts/product-reality/sprint-196/m04/tool-specs/contracts.json > ../../artifacts/product-reality/sprint-196/m04/tool-specs/contracts.log 2>&1",
+    "cwd": "packages/mcp-server",
+    "exitCode": 0,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "evidence": [
+      {
+        "path": "artifacts/product-reality/sprint-196/m04/tool-specs/contracts.json",
+        "sha256": "sha256:686b28ececc01bb168422a8ac63894b349b07398dbedb68e121c5390333afaf5",
+        "bytes": 12632
+      },
+      {
+        "path": "artifacts/product-reality/sprint-196/m04/tool-specs/contracts.log",
+        "sha256": "sha256:63449cd7cda88af178c39c0a79088c1b59c8cbba512fdab38f3c74b808c8bfbd",
+        "bytes": 1231
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "pnpm exec tsx scripts/docs/generate-tool-specs.ts --check",
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-196/m04/tool-specs/check.log",
+        "sha256": "sha256:05c9229e2d25df5d05a29ab420d264409891951f92748330b3c9bb8af42e03ad",
+        "bytes": 75
+      }
+    },
+    {
+      "command": "pnpm run docs:tools -- --check",
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-196/m04/tool-specs/pnpm-check.log",
+        "sha256": "sha256:d820a8e5357782ad373036ff12d765cfbbc9e083e9c8fa136e34ee41889bd0c3",
+        "bytes": 225
+      }
+    },
+    {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck --strict --types node scripts/docs/generate-tool-specs.ts",
+      "exitCode": 0,
+      "log": {
+        "path": "artifacts/product-reality/sprint-196/m04/tool-specs/typecheck.log",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "implementation": [
+    {
+      "path": "scripts/docs/generate-tool-specs.ts",
+      "sha256": "sha256:e02fd1c4be6421d5ca3b1dc7a70d10f59b861d742fab46d4b291a8bcaa3506a8",
+      "bytes": 19353
+    },
+    {
+      "path": "packages/mcp-server/test/contracts/tool-specs-generator.s196.spec.ts",
+      "sha256": "sha256:2d7719dccf4c073c0facd92a6c7fb789307c12852cf535e6b68232a2a534ad50",
+      "bytes": 13483
+    }
+  ],
+  "sources": [
+    {
+      "path": "packages/mcp-server/src/index.ts",
+      "sha256": "sha256:3c4c5b2c9f5b2c36cc9ddde7e0bb6b66592880662eafe7f639725045d7669a78",
+      "bytes": 13485
+    },
+    {
+      "path": "packages/mcp-server/src/tools/registry.json",
+      "sha256": "sha256:32fa9184ee79cebbc3d094f8e6669406da838549cbb9b14a606b80efa969409f",
+      "bytes": 519
+    },
+    {
+      "path": "packages/mcp-adapter/tool-descriptions.json",
+      "sha256": "sha256:d4c0848e2d3c13ce8785be456a5da2d00bb272a1d524fab22a06d0d4bb3817de",
+      "bytes": 23455
+    },
+    {
+      "path": "packages/mcp-server/src/security/policy.json",
+      "sha256": "sha256:40db1df9f547ec0de56daebc34f1082db86bee28532aafea33c75d975c6044a7",
+      "bytes": 6015
+    },
+    {
+      "path": "packages/mcp-server/registry/tool-capability-ledger.v1.json",
+      "sha256": "sha256:a0e6946f6908224cc3e9f80b2f4de3725abbcb6b6d236e811260f78909cf1d61",
+      "bytes": 141240
+    },
+    {
+      "path": "packages/component-contracts/registry/component-capability-ledger.v1.json",
+      "sha256": "sha256:ac5ba7eb8c45c19f515af286a3f69457d260bd6255209193647e67dafa470072",
+      "bytes": 483655
+    }
+  ],
+  "decisions": [
+    "Use the actual dispatcher schema mapping, including generic input/output contracts, rather than filename inference used by the legacy API generator.",
+    "The measured input denominator is 119 root properties, not the stale handoff count of 118; all 14 conditional action bodies are additional.",
+    "Proof tiers retain the recorded source-import methodology and portable execution remains explicitly the hash-bound dirty development receipt.",
+    "The requested historical retired table is confined to tool-retirements markers; the parent owns the narrow retirement-gate adjustment.",
+    "No hand-edited generated documentation, source schemas, adapter descriptions, package scripts, CI, component documentation, or CMOS records were changed by this bounded task."
+  ]
+}

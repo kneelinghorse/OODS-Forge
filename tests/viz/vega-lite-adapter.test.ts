@@ -90,7 +90,7 @@ describe('Vega-Lite adapter', () => {
     const result = toVegaLiteSpec(spec);
 
     expect(result.transform?.[0]).toMatchObject({
-      calculate: 'timeParse(datum["month"], "%Y-%m")',
+      calculate: 'utcParse(datum["month"], "%Y-%m")',
       as: 'month',
     });
     expect(result.encoding?.x).toMatchObject({ type: 'temporal' });

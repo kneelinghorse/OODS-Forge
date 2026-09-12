@@ -75,13 +75,49 @@ function walkMarkdown(dir: string): string[] {
   return out;
 }
 
+// s196-m04 requires a generated historical retirement list in Tool-Specs.
+// Exempt exactly that ledger-derived table, never arbitrary surrounding prose
+// or callable instructions. The live registration assertions below stay strict.
+function withoutDocumentedRetirements(file: string, content: string): string {
+  if (file !== 'docs/mcp/Tool-Specs.md') return content;
+  const start = '<!-- tool-retirements:start -->';
+  const end = '<!-- tool-retirements:end -->';
+  expect(content.split(start)).toHaveLength(2);
+  expect(content.split(end)).toHaveLength(2);
+  const first = content.indexOf(start);
+  const last = content.indexOf(end);
+  expect(last).toBeGreaterThan(first);
+  const block = content.slice(first + start.length, last).trim();
+  const ledger = JSON.parse(fs.readFileSync(path.join(ROOT, 'packages/mcp-server/registry/tool-capability-ledger.v1.json'), 'utf8'));
+  const cell = (value: string) => value.replaceAll('|', '\\|').replace(/\r?\n/g, '<br>');
+  expect(block.split('\n')).toEqual([
+    '| Tool | Reason | Decision IDs |',
+    '|---|---|---|',
+    ...ledger.retired.map((row: { name: string; reason: string; decisionIds: number[] }) =>
+      `| \`${JSON.stringify(row.name)}\` | ${cell(row.reason)} | ${row.decisionIds.join(', ')} |`),
+  ]);
+  return content.slice(0, first) + content.slice(last + end.length);
+}
+
 describe('doc-retirement gate (feedback-73)', () => {
+  it('allows only the exact ledger retirement table and still rejects callable guidance', () => {
+    const file = 'docs/mcp/Tool-Specs.md';
+    const content = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    const retired = RETIRED_PUBLIC_NAMES.at(-1)!;
+    const instruction = `Call \`${retired}\`({}).`;
+    expect(retiredReferences(withoutDocumentedRetirements(file, `${content}\n${instruction}`))).toContain(retired);
+    expect(() => withoutDocumentedRetirements(file, content.replace('<!-- tool-retirements:end -->', `${instruction}\n<!-- tool-retirements:end -->`))).toThrow();
+    expect(() => withoutDocumentedRetirements(file, `${content}\n<!-- tool-retirements:start -->`)).toThrow();
+    // The same table pasted into any other live document gets no exemption.
+    expect(retiredReferences(withoutDocumentedRetirements('docs/other.md', content))).toContain(retired);
+  });
+
   it('no doc references a retired MCP tool by its dotted name (outside history/changelog)', () => {
     const offenders: string[] = [];
     for (const file of walkMarkdown(DOCS_DIR)) {
       const rel = path.relative(ROOT, file);
       if (HISTORY_ALLOWLIST.some((re) => re.test(rel))) continue;
-      const content = fs.readFileSync(file, 'utf-8');
+      const content = withoutDocumentedRetirements(rel, fs.readFileSync(file, 'utf-8'));
       for (const name of RETIRED_TOOL_NAMES) {
         const dotted = new RegExp(name.replace(/\./g, '\\.'), 'g');
         if (dotted.test(content)) offenders.push(`${rel} → ${name}`);
@@ -140,7 +176,7 @@ describe('Sprint 194 retired public surfaces (CMOS #1922)', () => {
       if (!fs.existsSync(full) || !fs.statSync(full).isFile()) continue;
       const bytes = fs.readFileSync(full);
       if (bytes.includes(0)) continue;
-      let content = bytes.toString('utf8');
+      let content = withoutDocumentedRetirements(file, bytes.toString('utf8'));
       // The required ledger retirement record is historical data, never a live row.
       if (file === 'packages/mcp-server/registry/tool-capability-ledger.v1.json') {
         const ledger = JSON.parse(content);
