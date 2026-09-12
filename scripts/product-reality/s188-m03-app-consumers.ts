@@ -69,8 +69,10 @@ export function workflowEditProbe(schema: UiSchema) {
   assert(field, 'Workflow must declare a writable text field for persistence proof');
   const nodes = schemaNodes(schema);
   const timelineEmpty = !nodes.some(node => node.collection?.historyField || node.component === 'PaymentEventTimeline');
+  const states = schema.workflow!.data.lifecycleStates ?? [];
+  const immediateCancellation = states.includes('cancelled') && !states.includes('pending_cancellation');
   const samples = workflowSampleRecords(schema);
-  return { field, titleField, seeded: String(samples[2]![field] ?? ''), saved: field === 'currency' ? 'EUR' : 'Team annual', timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
+  return { field, titleField, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved: field === 'currency' ? 'EUR' : 'Team annual', timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
 }
 
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
@@ -94,6 +96,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
   const rows: Row[] = [];
   const selectedId = `${object.toLowerCase()}-003`;
   const edit = editProbe ?? { field: titleField, titleField, seeded: `${object} 03`, saved: 'Team annual' };
+  const cancellationStatus = editProbe?.immediateCancellation ? /cancelled/i : /pending[ _]cancellation/i;
   const titleInput = () => page.getByRole('textbox', { name: fieldLabel(edit.field), exact: true });
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
@@ -224,16 +227,20 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         const code = page.locator('[data-oods-component="CancellationForm"] [name="reasonCode"]');
         if (await code.evaluate(element => element.tagName) === 'SELECT') await code.selectOption('customer_request');
         else await code.fill('customer_request');
-        await page.locator('input[name="cancel_at_period_end"]').check();
+        const periodEnd = page.locator('input[name="cancel_at_period_end"]');
+        if (editProbe?.immediateCancellation) assert.equal(await periodEnd.count(), 0, 'Immediate cancellation must not expose a billing-period control');
+        else await periodEnd.check();
         await page.getByRole('button', { name: 'Confirm cancellation', exact: true }).click();
       } else {
         await page.locator('input[name="cancellation_reason"]').fill('Budget changed for next year');
         await page.locator('input[name="cancellation_reason_code"]').fill('customer_request');
-        await page.locator('input[name="cancel_at_period_end"]').check();
+        const periodEnd = page.locator('input[name="cancel_at_period_end"]');
+        if (editProbe?.immediateCancellation) assert.equal(await periodEnd.count(), 0, 'Immediate cancellation must not expose a billing-period control');
+        else await periodEnd.check();
         await page.locator('[data-oods-action="handleCancel"]').click();
       }
       await ready(page, 'detail');
-      const text = await screen(page).innerText(); assert.match(text, /pending[ _]cancellation/i);
+      const text = await screen(page).innerText(); assert.match(text, cancellationStatus);
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');
       if (onDemand) assert.equal(await page.locator('[data-oods-component="CancellationForm"]').count(), 0);
       return { text, id: await screen(page).getAttribute('data-selected-id'), onDemand, readOnlyBeforeActivation: onDemand };
@@ -241,7 +248,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
     if (cancellable) await observe(rows, 'cancel-list-badge', async () => {
       await go(page, 'list'); await ready(page, 'list');
       const text = await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"] [data-oods-component="StatusBadge"]`).innerText();
-      assert.match(text, /pending[ _]cancellation/i);
+      assert.match(text, cancellationStatus);
       return { text };
     });
     await observe(rows, 'timeline-navigation-and-history', async () => {
@@ -259,7 +266,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         return { text, id: await screen(page).getAttribute('data-selected-id'), disposition: 'The declared timeline collection has no lifecycle-history or payment-event source; its empty state is visible.' };
       }
       const text = await page.getByRole('list', { name: 'Lifecycle history' }).innerText();
-      if (cancellable) { assert.match(text, /pending[ _]cancellation/i); assert.match(text, /Budget changed for next year/); }
+      if (cancellable) { assert.match(text, cancellationStatus); assert.match(text, /Budget changed for next year/); }
       else assert.ok(text.trim().length > 0, 'Declared lifecycle history must contain the seeded event');
       const events = page.locator('[data-oods-component="PaymentEventTimeline"]');
       let paymentEvents: string | undefined;

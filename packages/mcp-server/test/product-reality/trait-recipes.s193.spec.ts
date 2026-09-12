@@ -27,13 +27,13 @@ const placements = [
 ] as const;
 
 describe('nine declared non-visualization recipes', () => {
-  it('a scoped remeasurement must match its declared cells and cannot replace the 154-cell health ledger', () => {
+  it('a scoped remeasurement must match its declared cells and cannot replace the 240-cell health ledger', () => {
     const root = path.resolve(import.meta.dirname, '../../../..');
     const ledger = JSON.parse(fs.readFileSync(path.join(root, 'artifacts/product-reality/sprint-193/m03/runtime-cells.v1.json'), 'utf8')) as RuntimeLedger;
     ledger.rows = ledger.rows.slice(0, 2); ledger.summary = summarize(ledger.rows);
     const expected = ledger.rows.map(row => `${row.object}/${row.context}/${row.framework}`);
     expect(validateRuntimeLedger(ledger, true, expected)).toEqual([]);
-    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 154 distinct current cells');
+    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 240 distinct current cells');
     expect(validateRuntimeLedger(ledger, true, [...expected, expected[0]!])).toContain('a scoped population must declare nonempty distinct identities');
     ledger.rows.pop(); ledger.summary = summarize(ledger.rows);
     expect(validateRuntimeLedger(ledger, true, expected)).toContain('population must contain exactly 2 distinct current cells');

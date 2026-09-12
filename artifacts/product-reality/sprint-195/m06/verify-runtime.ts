@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BROWSER_IMAGE, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../../../packages/mcp-server/src/lib/runtime-ledger.js';
+import { BROWSER_IMAGE, OBJECTS, FRAMEWORKS, contextsForObject, supportsWorkflow, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger } from '../../../../packages/mcp-server/src/lib/runtime-ledger.js';
 const read = <T = any>(file: string): T => JSON.parse(readFileSync(file, 'utf8'));
 const sha256 = (bytes: string | Buffer) => createHash('sha256').update(bytes).digest('hex');
 const identity = (row: RuntimeCell) => `${row.object}/${row.context}/${row.framework}`;
@@ -18,7 +18,8 @@ export function verifyRuntime(directory: string) {
   const output = path.resolve(directory);
   const main = read<RuntimeLedger>(path.join(output, 'runtime-cells.v1.json'));
   assert.deepEqual(validateRuntimeLedger(main, true), [], 'Canonical runtime ledger must validate');
-  assert.deepEqual(main.summary, { cells: 154, pass: 154, typedGap: 0, fail: 0 });
+  const currentCells = OBJECTS.reduce((sum, object) => sum + (contextsForObject(object).length + Number(supportsWorkflow(object))) * FRAMEWORKS.length, 0);
+  assert.deepEqual(main.summary, { cells: currentCells, pass: currentCells, typedGap: 0, fail: 0 });
   const browser = read(path.join(output, 'browser.json'));
   assert.equal(browser.image, BROWSER_IMAGE);
   assert.equal(browser.version, '141.0.7390.37');

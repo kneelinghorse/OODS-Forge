@@ -19,7 +19,7 @@ import {
   launchProofBrowser, type PackedPackageRecord,
 } from './s184-m06-live-consumers.js';
 
-import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
+import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, contextsForObject, supportsWorkflow, summarize, validateRuntimeLedger, type RuntimeCell, type RuntimeLedger, type Context, type Framework } from '../../packages/mcp-server/src/lib/runtime-ledger.js';
 import { VIZ_CONTROL_IDS, vizControlFields, type VizControlId } from '../../packages/component-contracts/src/viz-controls.js';
 import { RELEASE_OBJECTS, validateReleaseLedger, type ReleaseCell, type ReleaseLedger } from '../../packages/mcp-server/src/lib/release-ledger.js';
 import {
@@ -364,8 +364,8 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
     await page.close();
   } finally { await browser.close(); }
   const inputs: Array<{ object: string; context: Context | 'workflow'; framework: Framework }> = [
-    ...(workflows ? objects.map(object => ({ object, context: 'workflow' as const, framework: 'react' as const })) : []),
-    ...objects.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => ({ object, context, framework })))),
+    ...(workflows ? objects.filter(supportsWorkflow).map(object => ({ object, context: 'workflow' as const, framework: 'react' as const })) : []),
+    ...objects.flatMap(object => contexts.filter(context => contextsForObject(object).includes(context)).flatMap(context => FRAMEWORKS.map(framework => ({ object, context, framework })))),
   ];
   let cursor = 0;
   // Each worker gets an independent generator process and an independent temporary consumer.
@@ -395,7 +395,7 @@ export async function runRuntimeCells(output: string, objects: readonly string[]
   }
   await write(path.join(output, 'runtime-cells.v1.json'), ledger);
   // Layout variants share this sweep's immutable packages, revision and run id.
-  // Keep them separate so they cannot inflate the canonical 154-cell health ratio.
+  // Keep them separate so they cannot inflate the complete catalog health ratio.
   if (dashboardObjects.length) {
     const layoutOutput = path.join(output, 'layouts/dashboard');
     const rows: RuntimeCell[] = [];

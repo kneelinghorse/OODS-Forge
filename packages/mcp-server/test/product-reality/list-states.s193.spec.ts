@@ -1,3 +1,4 @@
+import { contextsForObject } from '../../src/lib/runtime-ledger.js';
 import { describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
@@ -13,7 +14,7 @@ describe('public single-screen list state contract', () => {
     const form = await compose({ object, context: 'form' });
     expect(schemaNodes(form.schema).some(node => node.component === 'TagInput')).toBe(true);
   });
-  it.each(OBJECTS)('%s declares all four states and emits the public state prop in both frameworks', async object => {
+  it.each(OBJECTS.filter(object => contextsForObject(object).includes('list')))('%s declares all four states and emits the public state prop in both frameworks', async object => {
     const composed = await compose({ object, context: 'list' });
     expect(composed.status).toBe('ok');
     const nodes = schemaNodes(composed.schema);

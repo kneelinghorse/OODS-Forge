@@ -35,13 +35,17 @@ describe('TraceLab research objects', () => {
     expect(evidence.schema.owner_id.required).toBe(false);
     expect(evidence.schema.source_sighting_count.validation?.minimum).toBe(1);
   });
-  it.each(names.filter(name => name !== 'Chunk'))('%s supports validated list, detail, timeline views', async name => {
-    for (const context of ['list', 'detail', 'timeline'] as const) {
+  it.each(names.filter(name => name !== 'Chunk'))('%s supports every declared single-screen context', async name => {
+    for (const context of ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const) {
       const result = await compose(wire('design.compose', 'input', { object: name, context, options: { validate: true } }));
       wire('design.compose', 'output', result);
       expect(result.status).toBe('ok');
       expect(result.validation?.errors ?? [], name + '/' + context).toEqual([]);
       expect(result.validation?.status).toBe('ok');
+      for (const framework of ['react', 'vue'] as const) {
+        const generated = await generate({ schema: result.schema, framework, profile: 'build' });
+        expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+      }
     }
   });
   it('Mission workflow preserves the API state set and never introduces billing cancellation', async () => {
@@ -82,5 +86,16 @@ it('generated Mission cancellation stays terminal and both frameworks typecheck'
       expect(() => store.cancel('mission-002', '', '', false)).toThrow(/current state/);
       expect(() => store.cancel('mission-004', '', '', false)).toThrow(/current state/);
     } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+  }
+}, 90_000);
+
+it.each(['Project', 'Document', 'Collection', 'Report', 'Evidence'])('%s workflows produce strict React and Vue applications', async name => {
+  const result = await compose({ object: name, context: 'workflow' });
+  expect(result.validation?.errors ?? []).toEqual([]);
+  for (const framework of ['react', 'vue'] as const) {
+    const generated = await generate({ schema: result.schema, framework, profile: 'build' });
+    expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+    const compilation = typecheckWorkflow(generated.artifact!);
+    expect(compilation.status, compilation.stdout + compilation.stderr).toBe(0);
   }
 }, 90_000);

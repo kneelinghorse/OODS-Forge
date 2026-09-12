@@ -1,13 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadObject } from '../objects/object-loader.js';
 
-export const OBJECTS = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
+export const OBJECTS = ['Article', 'Chunk', 'Collection', 'Document', 'Evidence', 'Invoice', 'Media', 'Mission', 'Organization', 'Plan', 'Product', 'Project', 'Relationship', 'Report', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
 export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
 export const FRAMEWORKS = ['react', 'vue'] as const;
 export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';
 export type Context = typeof CONTEXTS[number];
 export type Framework = typeof FRAMEWORKS[number];
+/** The runtime census covers every declared context, including embedded-only objects. */
+export function contextsForObject(object: string): Context[] {
+  const supported = loadObject(object).metadata?.supportedContexts;
+  return CONTEXTS.filter(context => !supported || supported.includes(context));
+}
+export function supportsWorkflow(object: string): boolean {
+  const contexts = contextsForObject(object);
+  return (['list', 'detail', 'form', 'timeline'] as const).every(context => contexts.includes(context));
+}
 export type Gate = { name: string; status: 'pass' | 'fail'; detail?: unknown; reason?: string };
 export type RuntimeCell = {
   object: string; context: Context | 'workflow'; framework: Framework; head: string; runId: string;
@@ -27,8 +37,9 @@ const identity = (row: Pick<RuntimeCell, 'object' | 'context' | 'framework'>) =>
 /** A missing, duplicate, failed, or older cell cannot inflate the runtime ratio. */
 export function validateRuntimeLedger(ledger: RuntimeLedger, workflows = false, scopedIdentities?: readonly string[]): string[] {
   const issues: string[] = [];
-  const contexts = workflows ? [...CONTEXTS, 'workflow'] : CONTEXTS;
-  const expected = [...(scopedIdentities ?? OBJECTS.flatMap(object => contexts.flatMap(context => FRAMEWORKS.map(framework => `${object}/${context}/${framework}`))))].sort();
+  const expected = [...(scopedIdentities ?? OBJECTS.flatMap(object => [
+    ...contextsForObject(object), ...(workflows && supportsWorkflow(object) ? ['workflow'] : []),
+  ].flatMap(context => FRAMEWORKS.map(framework => `${object}/${context}/${framework}`))))].sort();
   if (!expected.length || new Set(expected).size !== expected.length) issues.push('a scoped population must declare nonempty distinct identities');
   if (JSON.stringify(ledger.rows.map(identity).sort()) !== JSON.stringify(expected)) issues.push(`population must contain exactly ${expected.length} distinct current cells`);
   if (!ledger.head || !ledger.runId || ledger.historicalReceiptsUnioned !== false || ledger.rows.some(row => row.head !== ledger.head || row.runId !== ledger.runId)) issues.push('historical or mixed-run receipts are forbidden');

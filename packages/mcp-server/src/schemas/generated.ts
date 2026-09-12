@@ -3862,7 +3862,7 @@ export namespace HealthOutputSchema {
        * Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.
        */
       runtime: {
-        cells: 154;
+        cells: 240;
         pass: number;
         typedGap: number;
         fail: number;

@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { handle as health } from '../../src/tools/health.js';
 import { handle as catalog } from '../../src/tools/catalog.list.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
-import { OBJECTS, CONTEXTS, FRAMEWORKS, BROWSER_IMAGE, readRuntimeSummary, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../src/lib/runtime-ledger.js';
+import { OBJECTS, contextsForObject, supportsWorkflow, FRAMEWORKS, BROWSER_IMAGE, readRuntimeSummary, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../src/lib/runtime-ledger.js';
 import { workflowEditProbe, expectedWorkflowFlow } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
 import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';
 
@@ -14,7 +14,7 @@ const root = path.resolve(import.meta.dirname, '../../../..');
 const temporary: string[] = [];
 afterEach(() => { vi.unstubAllEnvs(); temporary.splice(0).forEach(dir => fs.rmSync(dir, { recursive: true, force: true })); });
 function fixture(): RuntimeLedger {
-  const rows = OBJECTS.flatMap(object => [...CONTEXTS, 'workflow' as const].flatMap(context => FRAMEWORKS.map(framework => ({
+  const rows = OBJECTS.flatMap(object => [...contextsForObject(object), ...(supportsWorkflow(object) ? ['workflow' as const] : [])].flatMap(context => FRAMEWORKS.map(framework => ({
     object, context, framework, head: 'measured-head', runId: 'current-run', status: 'pass' as const,
     components: ['Stack'], artifactHash: 'sha256:artifact', report: `${object}/${context}/${framework}.json`,
     gates: ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states', ...(context === 'workflow' ? ['server-render', 'hydration', 'shared-css-resolution', 'interaction-evidence'] : [])].map(name => ({ name, status: 'pass' as const,
@@ -30,15 +30,15 @@ function installFixture(ledger: RuntimeLedger) {
 }
 
 describe('current workflow runtime accountability', () => {
-  it('health and catalog serve the same measured 154-cell ratio without approving classifications', async () => {
+  it('health and catalog serve the same measured 240-cell ratio without approving classifications', async () => {
     installFixture(fixture());
-    expect(readRuntimeSummary()).toEqual({ cells: 154, pass: 154, typedGap: 0, fail: 0, head: 'measured-head' });
+    expect(readRuntimeSummary()).toEqual({ cells: 240, pass: 240, typedGap: 0, fail: 0, head: 'measured-head' });
     const result = await health({});
     expect(result.productReality.runtime).toEqual(readRuntimeSummary());
     const validate = new Ajv({ strict: false }).compile(JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-server/src/schemas/health.output.json'), 'utf8')));
     expect(validate(result), JSON.stringify(validate.errors)).toBe(true);
     const listed = await catalog({});
-    expect(listed.obligationScope?.runtimeEvidence).toContain('154/154 generated cells pass packed runtime gates at measured-head');
+    expect(listed.obligationScope?.runtimeEvidence).toContain('240/240 generated cells pass packed runtime gates at measured-head');
     expect(listed.obligationScope?.approvedRuntimeCensus).toBeNull();
   });
   it('missing, failed, duplicated, or historical cells cannot be served as a healthy ratio', async () => {
@@ -59,7 +59,7 @@ describe('current workflow runtime accountability', () => {
       expect(result.warnings?.some(warning => warning.includes('runtime proof unavailable'))).toBe(true);
     }
   });
-  it.each(OBJECTS)('%s persistence probe targets a declared editable field, never a read-only ID', async object => {
+  it.each(OBJECTS.filter(supportsWorkflow))('%s persistence probe targets a declared editable field, never a read-only ID', async object => {
     const result = await compose({ object, context: 'workflow' });
     expect(result.status).toBe('ok');
     const probe = workflowEditProbe(result.schema);
@@ -81,14 +81,14 @@ describe('current workflow runtime accountability', () => {
     const file = process.env.OODS_RUNTIME_REPORT ?? path.join(root, 'packages/mcp-server/registry/runtime-cells.v1.json');
     const ledger = JSON.parse(fs.readFileSync(file, 'utf8')) as RuntimeLedger;
     expect(validateRuntimeLedger(ledger, true)).toEqual([]);
-    expect(ledger.rows).toHaveLength(154);
-    expect(ledger.rows.filter(row => row.context === 'workflow')).toHaveLength(22);
+    expect(ledger.rows).toHaveLength(240);
+    expect(ledger.rows.filter(row => row.context === 'workflow')).toHaveLength(34);
     vi.stubEnv('MCP_RUNTIME_CELLS_PATH', file);
     expect((await health({})).productReality.runtime).toEqual({ ...ledger.summary, head: ledger.head });
     if (!process.env.OODS_RUNTIME_REPORT) expect(ledger.receiptRoot).toBeTruthy();
     const output = process.env.OODS_RUNTIME_REPORT ? path.dirname(file) : path.resolve(root, ledger.receiptRoot!);
     for (const row of ledger.rows) expect(JSON.parse(fs.readFileSync(path.join(output, row.report), 'utf8'))).toEqual(row);
-    for (const object of OBJECTS) {
+    for (const object of OBJECTS.filter(supportsWorkflow)) {
       const report = JSON.parse(fs.readFileSync(path.join(output, `workflows/${object}/report.json`), 'utf8'));
       expect(report.builderSelfCertified).toBe(false);
       expect(report.sourceHead).toBe(ledger.head);

@@ -857,6 +857,8 @@
 }
 
 @media (max-width: 40rem) {
+  /* Generated single-screen layouts also need the workflow's phone reflow. */
+  [data-layout='sidebar'] { grid-template-columns: minmax(0, 1fr) !important; }
   :where(.oods-banner, [data-oods-component='Banner']) { grid-template-columns: 1fr; }
   :where(.oods-table, [data-oods-component='Table']):not([data-density]) { font-size: 0.875rem; }
 }
