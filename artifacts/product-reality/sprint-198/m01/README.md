@@ -16,7 +16,11 @@ non-finite numeric limits fail. The canonical color loader uses the token
 builder's ordered default scope; it does not merge dark/HC brand overrides
 into the base scope. The old transform command was another legacy gate input:
 `tokens:validate` now delegates to the canonical builder's `--check`, and
-`tokens:transform` delegates to its build. The old root token tree is historical.
+`tokens:transform` delegates to its build. The old root palette tree is historical. A final gate audit also found the billing
+status-map reader under `tokens/maps/`: the enum gate and its convergence test now
+read a byte-identical map under `packages/tokens/src/maps/`. Existing application
+imports retain their compatible copy; a boundary test checks equality. The unused
+legacy map constant in governance is removed.
 
 The generator owns the independent interaction-state ladder and Theme0
 surface/status bindings. Dark starts at L=0.40 so its +0.10/+0.14 states retain
@@ -60,3 +64,9 @@ native-ESM typing and receipt array annotations. Final logs record corrections.
 `--check` first, then token, ledger, docs and contract verifiers. The root manifest
 is unchanged, so the readiness facts did not need regeneration. This mission's
 local scoped checks are not the sprint's one five-suite closeout capture.
+
+The first remote run (34780820944, implementation 747a48813) exposed a fresh-runner
+setup gap in tokens-validate: all five dist outputs were absent before `--check`.
+The raw failed job log is retained in `ci/tokens-validate-initial.log`. The workflow
+now builds the canonical tokens before checking their emitted output. A boundary
+spec pins that ordering. This failed run is not relabeled as a passing run.

@@ -1,0 +1,77 @@
+{
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "palette",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/tokens/generate-palette.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "tokens",
+      "command": [
+        "pnpm",
+        "check:tokens"
+      ],
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "tool-truth",
+      "command": [
+        "node",
+        "scripts/product-reality/s193-tool-truth.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "docs",
+      "command": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--project=core",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "tests/governance-gates/a11y-guardrail-dataset.s198.test.ts",
+        "tests/tokens/canonical-guardrails.s198.test.ts",
+        "packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts",
+        "packages/mcp-server/test/product-reality/closeout.s197.spec.ts"
+      ],
+      "exitCode": 0,
+      "signal": null
+    }
+  ],
+  "builderSelfCertified": false
+}

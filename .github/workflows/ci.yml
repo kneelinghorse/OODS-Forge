@@ -214,6 +214,11 @@ jobs:
         # a collision rather than as a build error.
         run: pnpm run tokens:collision-guard
 
+      - name: Build canonical tokens for validation
+        # The canonical --check compares every emitted platform with its sources.
+        # dist is untracked, so a fresh runner must build it before that comparison.
+        run: pnpm run build:tokens
+
       - name: Validate design tokens
         # s149 #842: the COMPOSITE `tokens-validate` (hyphen), not `tokens:validate`
         # (colon = transform --check ONLY). The composite also runs lint-semantic,

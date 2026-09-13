@@ -30,11 +30,21 @@ describe('canonical guardrails protect the colors consumers receive', () => {
     const color = readFileSync(path.join(root, 'scripts/tokens/color-guardrails.ts'), 'utf8');
     const transform = readFileSync(path.join(root, 'scripts/tokens/transform.ts'), 'utf8');
     const canonical = readFileSync(path.join(root, 'scripts/tokens/canonical-colors.ts'), 'utf8');
+    const enumGate = readFileSync(path.join(root, 'scripts/lint/enum-to-token.ts'), 'utf8');
+    expect(enumGate).toContain('packages/tokens/src/maps/saas-billing.status-map.json');
+    expect(enumGate).not.toContain("path.join(ROOT, 'tokens/");
     expect(color).toContain('loadCanonicalColorTokens(projectRoot)');
     expect(transform).toContain('packages/tokens/scripts/build.mjs');
     expect(transform).toContain("options.mode === 'check' ? ['--check']");
+    const workflow = readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8').split('  tokens-validate:')[1].split('\n  tokens-governance:')[0];
+    expect(workflow.indexOf('run: pnpm run build:tokens')).toBeGreaterThan(-1);
+    expect(workflow.indexOf('run: pnpm run build:tokens')).toBeLessThan(workflow.indexOf('run: pnpm run tokens-validate'));
+
     expect(canonical).toContain('resolveScopeFiles');
     for (const source of [color, transform, canonical]) expect(source).not.toMatch(/(?:resolve|join)\(projectRoot, ['"]tokens['"]\)/);
+  });
+  it('keeps existing billing app imports compatible with the canonical gate manifest', () => {
+    expect(readFileSync(path.join(root, 'tokens/maps/saas-billing.status-map.json'), 'utf8')).toBe(readFileSync(path.join(root, 'packages/tokens/src/maps/saas-billing.status-map.json'), 'utf8'));
   });
   it('checks readiness before the freeze and the full capture', () => {
     expect(commands[0]).toEqual(['readiness', ['pnpm', 'exec', 'tsx', 'scripts/product-reality/s196-release-readiness.ts', '--check']]);

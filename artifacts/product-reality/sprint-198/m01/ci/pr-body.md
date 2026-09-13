@@ -1,0 +1,5 @@
+Sprint 197 left accessibility CI unable to parse typed palette guardrails, while a second token source hid the interaction-state failures. Both CLIs now share a typed reader and use canonical token sources. The generator repairs the three system contrast pairs and all six interaction-state rows without weakening their rules. The git-qualified migration audit has a 60-second budget, and the Sprint 198 pre-freeze verifier starts with the readiness check.
+
+Local validation: 454 color checks, 228 source contrast pairs, 1,308 component browser cells, zero new a11y violations, 118 scoped golden tests with no changed snapshots or chart registries, seven migration-audit tests, typecheck, token validation, docs and readiness checks. No skips in these scoped tests. Receipts and per-token attribution are in `artifacts/product-reality/sprint-198/m01/`.
+
+This is the first implementation boundary of Sprint 198. CI acceptance is pending, and craft missions m02–m07 have not started. The PR remains draft. Builder self-certified: false; independent review is required.

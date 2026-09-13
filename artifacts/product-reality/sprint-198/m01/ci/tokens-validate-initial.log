@@ -1,0 +1,520 @@
+﻿2026-09-13T20:27:35.0845123Z Current runner version: '2.337.0'
+2026-09-13T20:27:35.0882566Z ##[group]Runner Image Provisioner
+2026-09-13T20:27:35.0883983Z Hosted Compute Agent
+2026-09-13T20:27:35.0884975Z Version: 20260828.587
+2026-09-13T20:27:35.0886277Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-13T20:27:35.0887920Z Build Date: 2026-08-28T16:44:25Z
+2026-09-13T20:27:35.0889246Z Worker ID: {39faca40-f1b9-40d6-95f5-e07b74c1e3a6}
+2026-09-13T20:27:35.0890588Z Azure Region: eastus
+2026-09-13T20:27:35.0891541Z ##[endgroup]
+2026-09-13T20:27:35.0894500Z ##[group]Operating System
+2026-09-13T20:27:35.0895642Z Ubuntu
+2026-09-13T20:27:35.0896695Z 24.04.5
+2026-09-13T20:27:35.0897985Z LTS
+2026-09-13T20:27:35.0898836Z ##[endgroup]
+2026-09-13T20:27:35.0900067Z ##[group]Runner Image
+2026-09-13T20:27:35.0901372Z Image: ubuntu-24.04
+2026-09-13T20:27:35.0902424Z Version: 20260907.300.1
+2026-09-13T20:27:35.0904627Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-13T20:27:35.0907812Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-13T20:27:35.0909665Z ##[endgroup]
+2026-09-13T20:27:35.0911993Z ##[group]GITHUB_TOKEN Permissions
+2026-09-13T20:27:35.0915139Z Contents: read
+2026-09-13T20:27:35.0916295Z Metadata: read
+2026-09-13T20:27:35.0917804Z PullRequests: write
+2026-09-13T20:27:35.0918932Z ##[endgroup]
+2026-09-13T20:27:35.0922190Z Secret source: Actions
+2026-09-13T20:27:35.0923839Z Cache mode: write
+2026-09-13T20:27:35.0925400Z Prepare workflow directory
+2026-09-13T20:27:35.1505982Z Prepare all required actions
+2026-09-13T20:27:35.1576190Z Getting action download info
+2026-09-13T20:27:35.3655463Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-13T20:27:35.4679036Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-13T20:27:35.6741118Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-13T20:27:35.8637510Z Complete job name: tokens-validate
+2026-09-13T20:27:35.9608382Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T20:27:35.9617078Z ##[group]Run actions/checkout@v4
+2026-09-13T20:27:35.9618667Z with:
+2026-09-13T20:27:35.9619673Z   repository: kneelinghorse/OODS-Forge
+2026-09-13T20:27:35.9627726Z   token: ***
+2026-09-13T20:27:35.9628539Z   ssh-strict: true
+2026-09-13T20:27:35.9629318Z   ssh-user: git
+2026-09-13T20:27:35.9630090Z   persist-credentials: true
+2026-09-13T20:27:35.9631035Z   clean: true
+2026-09-13T20:27:35.9631837Z   sparse-checkout-cone-mode: true
+2026-09-13T20:27:35.9632726Z   fetch-depth: 1
+2026-09-13T20:27:35.9633535Z   fetch-tags: false
+2026-09-13T20:27:35.9634344Z   show-progress: true
+2026-09-13T20:27:35.9635162Z   lfs: false
+2026-09-13T20:27:35.9635928Z   submodules: false
+2026-09-13T20:27:35.9636729Z   set-safe-directory: true
+2026-09-13T20:27:35.9637842Z   allow-unsafe-pr-checkout: false
+2026-09-13T20:27:35.9639241Z env:
+2026-09-13T20:27:35.9639976Z   NODE_VERSION: 24
+2026-09-13T20:27:35.9640742Z ##[endgroup]
+2026-09-13T20:27:36.2076017Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-13T20:27:36.2094370Z ##[group]Getting Git version info
+2026-09-13T20:27:36.2101141Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-13T20:27:36.2108237Z [command]/usr/bin/git version
+2026-09-13T20:27:36.2128244Z git version 2.55.0
+2026-09-13T20:27:36.2131789Z ##[endgroup]
+2026-09-13T20:27:36.2138608Z Temporarily overriding HOME='/home/runner/work/_temp/68d15096-e2f0-499a-b37b-e2e50574cd88' before making global git config changes
+2026-09-13T20:27:36.2140629Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-13T20:27:36.2142650Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:27:36.2145201Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-13T20:27:36.2146675Z ##[group]Initializing the repository
+2026-09-13T20:27:36.2160964Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:27:36.2162622Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-13T20:27:36.2164401Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-13T20:27:36.2166050Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-13T20:27:36.2167628Z hint: call:
+2026-09-13T20:27:36.2168616Z hint:
+2026-09-13T20:27:36.2169652Z hint: 	git config --global init.defaultBranch <name>
+2026-09-13T20:27:36.2170940Z hint:
+2026-09-13T20:27:36.2172112Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-13T20:27:36.2174105Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-13T20:27:36.2175795Z hint:
+2026-09-13T20:27:36.2176625Z hint: 	git branch -m <name>
+2026-09-13T20:27:36.2180185Z hint:
+2026-09-13T20:27:36.2182153Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-13T20:27:36.2184915Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-13T20:27:36.2190000Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-13T20:27:36.2194747Z ##[endgroup]
+2026-09-13T20:27:36.2196827Z ##[group]Disabling automatic garbage collection
+2026-09-13T20:27:36.2198405Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-13T20:27:36.2201367Z ##[endgroup]
+2026-09-13T20:27:36.2202912Z ##[group]Setting up auth
+2026-09-13T20:27:36.2204326Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-13T20:27:36.2208885Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-13T20:27:36.2930719Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-13T20:27:36.2965311Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-13T20:27:36.2972526Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-13T20:27:36.2978341Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-13T20:27:36.3361470Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-13T20:27:36.3366058Z ##[endgroup]
+2026-09-13T20:27:36.3368231Z ##[group]Fetching the repository
+2026-09-13T20:27:36.3372190Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +35b194a4e0814eb0707a5b8ce07f6f817c3c4866:refs/remotes/pull/108/merge
+2026-09-13T20:27:54.4727781Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-13T20:27:54.4738843Z  * [new ref]           35b194a4e0814eb0707a5b8ce07f6f817c3c4866 -> pull/108/merge
+2026-09-13T20:27:54.4742253Z ##[endgroup]
+2026-09-13T20:27:54.4743431Z ##[group]Determining the checkout info
+2026-09-13T20:27:54.4744433Z ##[endgroup]
+2026-09-13T20:27:54.4746856Z [command]/usr/bin/git sparse-checkout disable
+2026-09-13T20:27:54.4803970Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-13T20:27:54.4859015Z ##[group]Checking out the ref
+2026-09-13T20:27:54.4860041Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/108/merge
+2026-09-13T20:27:55.6364938Z Updating files:  12% (10290/84225)
+2026-09-13T20:27:55.7146428Z Updating files:  13% (10950/84225)
+2026-09-13T20:27:55.8387579Z Updating files:  14% (11792/84225)
+2026-09-13T20:27:55.9747577Z Updating files:  15% (12634/84225)
+2026-09-13T20:27:56.0771884Z Updating files:  16% (13476/84225)
+2026-09-13T20:27:56.1860603Z Updating files:  17% (14319/84225)
+2026-09-13T20:27:56.3032448Z Updating files:  18% (15161/84225)
+2026-09-13T20:27:56.3952143Z Updating files:  19% (16003/84225)
+2026-09-13T20:27:56.4803717Z Updating files:  20% (16845/84225)
+2026-09-13T20:27:56.5612177Z Updating files:  21% (17688/84225)
+2026-09-13T20:27:56.5917708Z Updating files:  21% (18345/84225)
+2026-09-13T20:27:56.7189915Z Updating files:  22% (18530/84225)
+2026-09-13T20:27:56.8226179Z Updating files:  23% (19372/84225)
+2026-09-13T20:27:56.9539063Z Updating files:  24% (20214/84225)
+2026-09-13T20:27:57.0625648Z Updating files:  25% (21057/84225)
+2026-09-13T20:27:57.3753070Z Updating files:  26% (21899/84225)
+2026-09-13T20:27:57.4356960Z Updating files:  27% (22741/84225)
+2026-09-13T20:27:57.5537655Z Updating files:  28% (23583/84225)
+2026-09-13T20:27:57.5615954Z Updating files:  29% (24426/84225)
+2026-09-13T20:27:57.7203584Z Updating files:  29% (24444/84225)
+2026-09-13T20:27:57.8602875Z Updating files:  30% (25268/84225)
+2026-09-13T20:27:57.9422680Z Updating files:  31% (26110/84225)
+2026-09-13T20:27:58.0090195Z Updating files:  32% (26952/84225)
+2026-09-13T20:27:58.1539439Z Updating files:  33% (27795/84225)
+2026-09-13T20:27:58.2396541Z Updating files:  34% (28637/84225)
+2026-09-13T20:27:58.3144190Z Updating files:  35% (29479/84225)
+2026-09-13T20:27:58.4023063Z Updating files:  36% (30321/84225)
+2026-09-13T20:27:58.5139670Z Updating files:  37% (31164/84225)
+2026-09-13T20:27:58.5612201Z Updating files:  38% (32006/84225)
+2026-09-13T20:27:58.6064548Z Updating files:  38% (32510/84225)
+2026-09-13T20:27:58.7225491Z Updating files:  39% (32848/84225)
+2026-09-13T20:27:58.8527983Z Updating files:  40% (33690/84225)
+2026-09-13T20:27:58.9905788Z Updating files:  41% (34533/84225)
+2026-09-13T20:27:59.1407652Z Updating files:  42% (35375/84225)
+2026-09-13T20:27:59.2374083Z Updating files:  43% (36217/84225)
+2026-09-13T20:27:59.3348037Z Updating files:  44% (37059/84225)
+2026-09-13T20:27:59.4882386Z Updating files:  45% (37902/84225)
+2026-09-13T20:27:59.5522849Z Updating files:  46% (38744/84225)
+2026-09-13T20:27:59.5611072Z Updating files:  47% (39586/84225)
+2026-09-13T20:27:59.6311262Z Updating files:  47% (39696/84225)
+2026-09-13T20:27:59.7510712Z Updating files:  48% (40428/84225)
+2026-09-13T20:27:59.8414667Z Updating files:  49% (41271/84225)
+2026-09-13T20:27:59.9091525Z Updating files:  50% (42113/84225)
+2026-09-13T20:28:00.0280115Z Updating files:  51% (42955/84225)
+2026-09-13T20:28:00.1423908Z Updating files:  52% (43797/84225)
+2026-09-13T20:28:00.2168957Z Updating files:  53% (44640/84225)
+2026-09-13T20:28:00.3986227Z Updating files:  54% (45482/84225)
+2026-09-13T20:28:00.5222662Z Updating files:  55% (46324/84225)
+2026-09-13T20:28:00.5613423Z Updating files:  56% (47166/84225)
+2026-09-13T20:28:00.6187464Z Updating files:  56% (47310/84225)
+2026-09-13T20:28:00.7005004Z Updating files:  57% (48009/84225)
+2026-09-13T20:28:00.8240787Z Updating files:  58% (48851/84225)
+2026-09-13T20:28:00.9306216Z Updating files:  59% (49693/84225)
+2026-09-13T20:28:01.0756036Z Updating files:  60% (50535/84225)
+2026-09-13T20:28:01.1408949Z Updating files:  61% (51378/84225)
+2026-09-13T20:28:01.2088283Z Updating files:  62% (52220/84225)
+2026-09-13T20:28:01.3410729Z Updating files:  63% (53062/84225)
+2026-09-13T20:28:01.4641083Z Updating files:  64% (53904/84225)
+2026-09-13T20:28:01.5705139Z Updating files:  65% (54747/84225)
+2026-09-13T20:28:01.6056156Z Updating files:  65% (55359/84225)
+2026-09-13T20:28:02.0668100Z Updating files:  66% (55589/84225)
+2026-09-13T20:28:02.1503004Z Updating files:  67% (56431/84225)
+2026-09-13T20:28:02.2437847Z Updating files:  68% (57273/84225)
+2026-09-13T20:28:02.4548048Z Updating files:  69% (58116/84225)
+2026-09-13T20:28:02.5660019Z Updating files:  70% (58958/84225)
+2026-09-13T20:28:02.6432747Z Updating files:  70% (59379/84225)
+2026-09-13T20:28:02.8109534Z Updating files:  71% (59800/84225)
+2026-09-13T20:28:02.9588188Z Updating files:  72% (60642/84225)
+2026-09-13T20:28:03.1133079Z Updating files:  73% (61485/84225)
+2026-09-13T20:28:03.1833146Z Updating files:  74% (62327/84225)
+2026-09-13T20:28:03.8828416Z Updating files:  75% (63169/84225)
+2026-09-13T20:28:03.9972380Z Updating files:  75% (63547/84225)
+2026-09-13T20:28:04.1207633Z Updating files:  76% (64011/84225)
+2026-09-13T20:28:04.2081989Z Updating files:  77% (64854/84225)
+2026-09-13T20:28:04.2782946Z Updating files:  78% (65696/84225)
+2026-09-13T20:28:04.3970613Z Updating files:  79% (66538/84225)
+2026-09-13T20:28:04.5640782Z Updating files:  80% (67380/84225)
+2026-09-13T20:28:04.6261654Z Updating files:  80% (68089/84225)
+2026-09-13T20:28:04.9197088Z Updating files:  81% (68223/84225)
+2026-09-13T20:28:05.0331373Z Updating files:  82% (69065/84225)
+2026-09-13T20:28:05.1022924Z Updating files:  83% (69907/84225)
+2026-09-13T20:28:05.1731579Z Updating files:  84% (70749/84225)
+2026-09-13T20:28:05.3460152Z Updating files:  85% (71592/84225)
+2026-09-13T20:28:05.4645588Z Updating files:  86% (72434/84225)
+2026-09-13T20:28:05.5657852Z Updating files:  87% (73276/84225)
+2026-09-13T20:28:05.6818050Z Updating files:  87% (73318/84225)
+2026-09-13T20:28:05.7949776Z Updating files:  88% (74118/84225)
+2026-09-13T20:28:05.9161858Z Updating files:  89% (74961/84225)
+2026-09-13T20:28:05.9847955Z Updating files:  90% (75803/84225)
+2026-09-13T20:28:06.0508128Z Updating files:  91% (76645/84225)
+2026-09-13T20:28:06.1426280Z Updating files:  92% (77487/84225)
+2026-09-13T20:28:06.2989529Z Updating files:  93% (78330/84225)
+2026-09-13T20:28:06.5846002Z Updating files:  94% (79172/84225)
+2026-09-13T20:28:06.7454270Z Updating files:  94% (79880/84225)
+2026-09-13T20:28:06.8869940Z Updating files:  95% (80014/84225)
+2026-09-13T20:28:06.9443338Z Updating files:  96% (80856/84225)
+2026-09-13T20:28:07.0034567Z Updating files:  97% (81699/84225)
+2026-09-13T20:28:07.0736473Z Updating files:  98% (82541/84225)
+2026-09-13T20:28:07.1388311Z Updating files:  99% (83383/84225)
+2026-09-13T20:28:07.1389514Z Updating files: 100% (84225/84225)
+2026-09-13T20:28:07.1390036Z Updating files: 100% (84225/84225), done.
+2026-09-13T20:28:07.3785584Z Note: switching to 'refs/remotes/pull/108/merge'.
+2026-09-13T20:28:07.3786411Z 
+2026-09-13T20:28:07.3787099Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-13T20:28:07.3788727Z changes and commit them, and you can discard any commits you make in this
+2026-09-13T20:28:07.3790058Z state without impacting any branches by switching back to a branch.
+2026-09-13T20:28:07.3790930Z 
+2026-09-13T20:28:07.3791550Z If you want to create a new branch to retain commits you create, you may
+2026-09-13T20:28:07.3793008Z do so (now or later) by using -c with the switch command. Example:
+2026-09-13T20:28:07.3803478Z 
+2026-09-13T20:28:07.3803921Z   git switch -c <new-branch-name>
+2026-09-13T20:28:07.3804429Z 
+2026-09-13T20:28:07.3804792Z Or undo this operation with:
+2026-09-13T20:28:07.3805283Z 
+2026-09-13T20:28:07.3805599Z   git switch -
+2026-09-13T20:28:07.3805979Z 
+2026-09-13T20:28:07.3806526Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-13T20:28:07.3807482Z 
+2026-09-13T20:28:07.3808291Z HEAD is now at 35b194a4 Merge 747a48813f560d4367245aea00d8234fb5a25045 into 2ea59fe9cf7f3d0fbfa05ee50ef920815defe1bb
+2026-09-13T20:28:07.3938502Z ##[endgroup]
+2026-09-13T20:28:07.3988721Z [command]/usr/bin/git log -1 --format=%H
+2026-09-13T20:28:07.4024121Z 35b194a4e0814eb0707a5b8ce07f6f817c3c4866
+2026-09-13T20:28:07.4280870Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T20:28:07.4283721Z ##[group]Run pnpm/action-setup@v4
+2026-09-13T20:28:07.4284180Z with:
+2026-09-13T20:28:07.4284505Z   run_install: false
+2026-09-13T20:28:07.4285109Z   dest: ~/setup-pnpm
+2026-09-13T20:28:07.4285481Z   cache: false
+2026-09-13T20:28:07.4285877Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-13T20:28:07.4286299Z   package_json_file: package.json
+2026-09-13T20:28:07.4286585Z   standalone: false
+2026-09-13T20:28:07.4286805Z env:
+2026-09-13T20:28:07.4287006Z   NODE_VERSION: 24
+2026-09-13T20:28:07.4287485Z ##[endgroup]
+2026-09-13T20:28:07.5882887Z ##[group]Running self-installer...
+2026-09-13T20:28:08.2294244Z (node:2050) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-13T20:28:08.2301199Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-13T20:28:08.4128742Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-13T20:28:08.4305696Z Packages: +1
+2026-09-13T20:28:08.4319144Z +
+2026-09-13T20:28:08.8564926Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-13T20:28:09.2370592Z 
+2026-09-13T20:28:09.2371405Z dependencies:
+2026-09-13T20:28:09.2372179Z + pnpm 9.12.2 (12.4.1 is available)
+2026-09-13T20:28:09.2373028Z 
+2026-09-13T20:28:09.2406903Z Done in 1.3s
+2026-09-13T20:28:09.2588660Z ##[endgroup]
+2026-09-13T20:28:09.2589414Z Installation Completed!
+2026-09-13T20:28:09.2787729Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T20:28:09.2789292Z ##[group]Run actions/setup-node@v4
+2026-09-13T20:28:09.2789731Z with:
+2026-09-13T20:28:09.2790058Z   node-version: 24
+2026-09-13T20:28:09.2790414Z   cache: pnpm
+2026-09-13T20:28:09.2790757Z   always-auth: false
+2026-09-13T20:28:09.2791155Z   check-latest: false
+2026-09-13T20:28:09.2795963Z   token: ***
+2026-09-13T20:28:09.2796304Z env:
+2026-09-13T20:28:09.2796620Z   NODE_VERSION: 24
+2026-09-13T20:28:09.2797084Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T20:28:09.2797848Z ##[endgroup]
+2026-09-13T20:28:09.4485363Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-13T20:28:09.4493568Z (node:2063) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-13T20:28:09.4497341Z ##[group]Environment details
+2026-09-13T20:28:09.4498135Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-13T20:28:12.9995279Z node: v24.20.0
+2026-09-13T20:28:13.0007871Z npm: 11.19.0
+2026-09-13T20:28:13.0009799Z yarn: 1.22.22
+2026-09-13T20:28:13.0019628Z ##[endgroup]
+2026-09-13T20:28:13.0038307Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-13T20:28:13.4407951Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-13T20:28:13.5200048Z Cache hit for: node-cache-Linux-x64-pnpm-e86e0b840775c2371d6b245e9f0feece464ed344cc81e0b002bb553d30d2d730
+2026-09-13T20:28:13.5366825Z (node:2063) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-13T20:28:14.3273558Z Received 125386059 of 125386059 (100.0%), 158.0 MBs/sec
+2026-09-13T20:28:14.3274829Z Cache Size: ~120 MB (125386059 B)
+2026-09-13T20:28:14.3316343Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5d9eccde-eca8-4aca-ae1b-2b4c1401077b/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-13T20:28:16.9506975Z Cache restored successfully
+2026-09-13T20:28:16.9588515Z Cache restored from key: node-cache-Linux-x64-pnpm-e86e0b840775c2371d6b245e9f0feece464ed344cc81e0b002bb553d30d2d730
+2026-09-13T20:28:16.9781031Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-13T20:28:16.9781491Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-13T20:28:16.9863518Z shell: /usr/bin/bash -e {0}
+2026-09-13T20:28:16.9863807Z env:
+2026-09-13T20:28:16.9864034Z   NODE_VERSION: 24
+2026-09-13T20:28:16.9864332Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T20:28:16.9864679Z ##[endgroup]
+2026-09-13T20:28:17.5322614Z Scope: all 22 workspace projects
+2026-09-13T20:28:17.6078461Z Lockfile is up to date, resolution step is skipped
+2026-09-13T20:28:17.6998053Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-13T20:28:17.8435784Z Packages: +946
+2026-09-13T20:28:17.8446090Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-13T20:28:18.6998742Z Progress: resolved 946, reused 805, downloaded 0, added 0
+2026-09-13T20:28:19.6995869Z Progress: resolved 946, reused 945, downloaded 0, added 483
+2026-09-13T20:28:20.4559653Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-13T20:28:21.7985528Z 
+2026-09-13T20:28:21.7986134Z dependencies:
+2026-09-13T20:28:21.7986717Z + @radix-ui/react-slot 1.2.3
+2026-09-13T20:28:21.7990688Z + @rjsf/core 5.24.13
+2026-09-13T20:28:21.7991210Z + @rjsf/utils 5.24.13
+2026-09-13T20:28:21.7991742Z + @rjsf/validator-ajv8 5.24.13
+2026-09-13T20:28:21.7992315Z + @types/geojson 7946.0.16
+2026-09-13T20:28:21.7992886Z + @types/topojson-client 3.1.5
+2026-09-13T20:28:21.7993526Z + @types/topojson-specification 1.0.5
+2026-09-13T20:28:21.7994077Z + ajv 8.17.1
+2026-09-13T20:28:21.7994507Z + ajv-formats 3.0.1
+2026-09-13T20:28:21.7994917Z + d3-geo 3.1.1
+2026-09-13T20:28:21.7995286Z + d3-scale 4.0.2
+2026-09-13T20:28:21.7995664Z + echarts 6.0.0
+2026-09-13T20:28:21.7996085Z + js-yaml 4.1.0
+2026-09-13T20:28:21.7996484Z + luxon 3.7.2
+2026-09-13T20:28:21.7996870Z + pg 8.16.3
+2026-09-13T20:28:21.7997578Z + react 19.2.0
+2026-09-13T20:28:21.7998040Z + react-dom 19.2.0
+2026-09-13T20:28:21.7998561Z + react-window 1.8.11
+2026-09-13T20:28:21.7999099Z + topojson-client 3.1.0
+2026-09-13T20:28:21.7999535Z + vega 6.2.0
+2026-09-13T20:28:21.7999969Z + vega-embed 7.1.0
+2026-09-13T20:28:21.8000364Z + zod 4.1.12
+2026-09-13T20:28:21.8000584Z 
+2026-09-13T20:28:21.8000771Z devDependencies:
+2026-09-13T20:28:21.8001398Z + @chromatic-com/storybook 4.1.1
+2026-09-13T20:28:21.8002118Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-13T20:28:21.8002975Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-13T20:28:21.8003840Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-13T20:28:21.8004523Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-13T20:28:21.8005142Z + @playwright/test 1.56.1
+2026-09-13T20:28:21.8005963Z + @storybook/addon-a11y 9.1.10
+2026-09-13T20:28:21.8006616Z + @storybook/addon-docs 9.1.10
+2026-09-13T20:28:21.8036481Z + @storybook/addon-onboarding 9.1.10
+2026-09-13T20:28:21.8059245Z + @storybook/mdx2-csf 1.1.0
+2026-09-13T20:28:21.8078700Z + @storybook/react 9.1.10
+2026-09-13T20:28:21.8080115Z + @storybook/react-vite 9.1.10
+2026-09-13T20:28:21.8081062Z + @testing-library/dom 10.4.1
+2026-09-13T20:28:21.8081888Z + @testing-library/jest-dom 6.9.1
+2026-09-13T20:28:21.8082718Z + @testing-library/react 16.3.0
+2026-09-13T20:28:21.8083550Z + @testing-library/user-event 14.6.1
+2026-09-13T20:28:21.8084412Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-13T20:28:21.8085177Z + @types/d3-geo 3.1.0
+2026-09-13T20:28:21.8085855Z + @types/d3-scale 4.0.9
+2026-09-13T20:28:21.8086529Z + @types/js-yaml 4.0.9
+2026-09-13T20:28:21.8087438Z + @types/luxon 3.7.1
+2026-09-13T20:28:21.8088169Z + @types/node 20.19.21
+2026-09-13T20:28:21.8088870Z + @types/pg 8.15.6
+2026-09-13T20:28:21.8089517Z + @types/react 19.2.2
+2026-09-13T20:28:21.8090211Z + @types/react-dom 19.2.2
+2026-09-13T20:28:21.8090974Z + @types/react-window 1.8.8
+2026-09-13T20:28:21.8091673Z + @types/semver 7.7.1
+2026-09-13T20:28:21.8092516Z + @types/sql.js 1.4.9
+2026-09-13T20:28:21.8093366Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-13T20:28:21.8100622Z + @typescript-eslint/parser 6.21.0
+2026-09-13T20:28:21.8101512Z + @vitejs/plugin-react 5.0.4
+2026-09-13T20:28:21.8102260Z + @vitest/browser 3.2.4
+2026-09-13T20:28:21.8103208Z + @vitest/coverage-v8 3.2.4
+2026-09-13T20:28:21.8103891Z + axe-core 4.11.0
+2026-09-13T20:28:21.8104525Z + colorjs.io 0.5.2
+2026-09-13T20:28:21.8105113Z + dotenv 17.4.2
+2026-09-13T20:28:21.8105701Z + esbuild 0.25.10
+2026-09-13T20:28:21.8106373Z + eslint 8.57.1
+2026-09-13T20:28:21.8107454Z + eslint-plugin-storybook 9.1.10
+2026-09-13T20:28:21.8127945Z + globals 17.6.0
+2026-09-13T20:28:21.8147781Z + jsdom 24.1.3
+2026-09-13T20:28:21.8186942Z + json-schema-to-typescript 13.1.2
+2026-09-13T20:28:21.8187933Z + markdown-to-jsx 7.7.15
+2026-09-13T20:28:21.8188831Z + pg-mem 3.0.5
+2026-09-13T20:28:21.8189523Z + playwright 1.56.1
+2026-09-13T20:28:21.8190174Z + postcss 8.5.28
+2026-09-13T20:28:21.8190834Z + prettier 3.6.2
+2026-09-13T20:28:21.8191446Z + rimraf 5.0.10
+2026-09-13T20:28:21.8192043Z + semver 7.7.3
+2026-09-13T20:28:21.8192692Z + sql.js 1.13.0
+2026-09-13T20:28:21.8193361Z + storybook 9.1.10
+2026-09-13T20:28:21.8194076Z + style-dictionary 4.4.0
+2026-09-13T20:28:21.8194798Z + tailwindcss 3.4.18
+2026-09-13T20:28:21.8195436Z + tsup 8.5.0
+2026-09-13T20:28:21.8196021Z + tsx 4.20.6
+2026-09-13T20:28:21.8196662Z + typescript 5.3.3
+2026-09-13T20:28:21.8197699Z + vega-lite 6.4.1
+2026-09-13T20:28:21.8200588Z + vite-tsconfig-paths 5.1.4
+2026-09-13T20:28:21.8201353Z + vitest 3.2.4
+2026-09-13T20:28:21.8203097Z + vitest-axe 0.1.0
+2026-09-13T20:28:21.8204095Z 
+2026-09-13T20:28:21.9609446Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-13T20:28:22.0210125Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-13T20:28:22.0268017Z . prepare: Done
+2026-09-13T20:28:22.0446318Z Done in 5s
+2026-09-13T20:28:22.1006964Z ##[group]Run pnpm run tokens:collision-guard
+2026-09-13T20:28:22.1007809Z [36;1mpnpm run tokens:collision-guard[0m
+2026-09-13T20:28:22.1044645Z shell: /usr/bin/bash -e {0}
+2026-09-13T20:28:22.1044941Z env:
+2026-09-13T20:28:22.1045163Z   NODE_VERSION: 24
+2026-09-13T20:28:22.1045481Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T20:28:22.1045853Z ##[endgroup]
+2026-09-13T20:28:22.6736252Z 
+2026-09-13T20:28:22.6742183Z > @oods/foundry-mcp@0.1.0 tokens:collision-guard /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:28:22.6743611Z > node packages/tokens/scripts/collision-guard.mjs
+2026-09-13T20:28:22.6766787Z 
+2026-09-13T20:28:22.7889493Z    scope A/base  46 source files
+2026-09-13T20:28:22.7892029Z    scope A/dark  47 source files
+2026-09-13T20:28:22.7892876Z    scope A/hc    47 source files
+2026-09-13T20:28:22.7893803Z    scope B/base  46 source files
+2026-09-13T20:28:22.7894605Z    scope B/dark  47 source files
+2026-09-13T20:28:22.7895509Z    scope B/hc    47 source files
+2026-09-13T20:28:22.7896819Z ✔︎ token collision guard: no non-exempt collisions across 6 scopes
+2026-09-13T20:28:22.8153668Z ##[group]Run pnpm run tokens-validate
+2026-09-13T20:28:22.8154254Z [36;1mpnpm run tokens-validate[0m
+2026-09-13T20:28:22.8193332Z shell: /usr/bin/bash -e {0}
+2026-09-13T20:28:22.8193607Z env:
+2026-09-13T20:28:22.8193808Z   NODE_VERSION: 24
+2026-09-13T20:28:22.8194111Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T20:28:22.8194434Z ##[endgroup]
+2026-09-13T20:28:23.4429201Z 
+2026-09-13T20:28:23.4430390Z > @oods/foundry-mcp@0.1.0 tokens-validate /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:28:23.4432636Z > pnpm run tokens:validate && pnpm run tokens:lint-semantic && pnpm run tokens:guardrails -- --quiet --no-diagnostics && pnpm run tokens:validate-viz
+2026-09-13T20:28:23.4434487Z 
+2026-09-13T20:28:23.9249239Z 
+2026-09-13T20:28:23.9250577Z > @oods/foundry-mcp@0.1.0 tokens:validate /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:28:23.9251921Z > tsx scripts/tokens/transform.ts --check
+2026-09-13T20:28:23.9252547Z 
+2026-09-13T20:28:24.7857671Z 
+2026-09-13T20:28:24.7873673Z Token collisions detected (9):
+2026-09-13T20:28:24.7895778Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:24.7902420Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:25.5522378Z 
+2026-09-13T20:28:25.5549901Z ts
+2026-09-13T20:28:25.5558548Z ✔︎ dist/ts/tokens.ts
+2026-09-13T20:28:25.5577808Z 
+2026-09-13T20:28:25.5598072Z tailwind
+2026-09-13T20:28:25.5635104Z ✔︎ dist/tailwind/tokens.json
+2026-09-13T20:28:25.5636149Z 
+2026-09-13T20:28:25.5637943Z ios-swift
+2026-09-13T20:28:25.5638646Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-13T20:28:25.5639221Z 
+2026-09-13T20:28:25.5639572Z compose
+2026-09-13T20:28:25.5662785Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-13T20:28:25.6247736Z 
+2026-09-13T20:28:25.6254694Z Token collisions detected (9):
+2026-09-13T20:28:25.6255917Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:25.6257630Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:25.8872169Z 
+2026-09-13T20:28:25.8872883Z css
+2026-09-13T20:28:25.8873954Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:25.9379201Z 
+2026-09-13T20:28:25.9379840Z Token collisions detected (9):
+2026-09-13T20:28:25.9381149Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:25.9382481Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:26.1337991Z 
+2026-09-13T20:28:26.1338774Z css
+2026-09-13T20:28:26.1339882Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:26.3199072Z 
+2026-09-13T20:28:26.3199800Z Token collisions detected (426):
+2026-09-13T20:28:26.3200954Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:26.3202158Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:26.4792961Z 
+2026-09-13T20:28:26.4793719Z css
+2026-09-13T20:28:26.4794905Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:26.6283747Z 
+2026-09-13T20:28:26.6284568Z Token collisions detected (376):
+2026-09-13T20:28:26.6285827Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:26.6287370Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:26.7798286Z 
+2026-09-13T20:28:26.7799141Z css
+2026-09-13T20:28:26.7800196Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:26.9247858Z 
+2026-09-13T20:28:26.9248721Z Token collisions detected (9):
+2026-09-13T20:28:26.9249974Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:26.9251262Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:27.0792169Z 
+2026-09-13T20:28:27.0794255Z css
+2026-09-13T20:28:27.0795400Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:27.2266743Z 
+2026-09-13T20:28:27.2267790Z Token collisions detected (426):
+2026-09-13T20:28:27.2269029Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:27.2270290Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:27.3913942Z 
+2026-09-13T20:28:27.3914653Z css
+2026-09-13T20:28:27.3916334Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:27.5606838Z 
+2026-09-13T20:28:27.5607843Z Token collisions detected (376):
+2026-09-13T20:28:27.5609235Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:27.5610542Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:27.7072526Z 
+2026-09-13T20:28:27.7073209Z css
+2026-09-13T20:28:27.7074189Z ✔︎ dist/css/tokens.css
+2026-09-13T20:28:27.8735992Z 
+2026-09-13T20:28:27.8737610Z Token collisions detected (9):
+2026-09-13T20:28:27.8738901Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T20:28:27.8740131Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T20:28:28.0256286Z ⚠︎ Generated output would differ from disk:
+2026-09-13T20:28:28.0258070Z    • dist/ts/tokens.ts (missing – run yarn build:tokens)
+2026-09-13T20:28:28.0263874Z    • dist/tailwind/tokens.json (missing – run yarn build:tokens)
+2026-09-13T20:28:28.0265085Z    • dist/ios-swift/OodsTokens.swift (missing – run yarn build:tokens)
+2026-09-13T20:28:28.0266093Z    • dist/compose/OodsTokens.kt (missing – run yarn build:tokens)
+2026-09-13T20:28:28.0267376Z    • dist/css/tokens.css (missing – run yarn build:tokens)
+2026-09-13T20:28:28.0524912Z Command failed: /opt/hostedtoolcache/node/24.20.0/x64/bin/node /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens/scripts/build.mjs --check
+2026-09-13T20:28:28.0714837Z  ELIFECYCLE  Command failed with exit code 1.
+2026-09-13T20:28:28.0991957Z  ELIFECYCLE  Command failed with exit code 1.
+2026-09-13T20:28:28.1234101Z ##[error]Process completed with exit code 1.
+2026-09-13T20:28:28.1345824Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T20:28:28.1347109Z Post job cleanup.
+2026-09-13T20:28:28.2915816Z Pruning is unnecessary.
+2026-09-13T20:28:28.3189566Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T20:28:28.3191774Z Post job cleanup.
+2026-09-13T20:28:28.4842818Z [command]/usr/bin/git version
+2026-09-13T20:28:28.4907937Z git version 2.55.0
+2026-09-13T20:28:28.4963552Z Temporarily overriding HOME='/home/runner/work/_temp/f8653938-ac50-4c69-9b43-27b476e86148' before making global git config changes
+2026-09-13T20:28:28.4965205Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-13T20:28:28.4966631Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T20:28:28.5049808Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-13T20:28:28.5155634Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-13T20:28:28.5608642Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-13T20:28:28.5677952Z http.https://github.com/.extraheader
+2026-09-13T20:28:28.5714633Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-13T20:28:28.5720807Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-13T20:28:28.6278490Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-13T20:28:28.6303856Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-13T20:28:28.6905897Z Cleaning up orphan processes
+2026-09-13T20:28:28.7217687Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
