@@ -24,8 +24,9 @@ export function populateListStates(schema: UiSchema): void {
 export function populateCollections(schema: UiSchema, context: string, objectName: string, minorUnits = 100): void {
   if (!schema.objectSchema || !['list', 'timeline'].includes(context)) return;
   const fields = schema.objectSchema;
-  const keyField = Object.keys(fields).find(name => name === `${objectName.toLowerCase()}_id`)
-    ?? Object.keys(fields).find(name => name === 'id' || name.endsWith('_id'))
+  const keyField = Object.keys(fields).find(name => name === 'id')
+    ?? Object.keys(fields).find(name => name === `${objectName.toLowerCase()}_id`)
+    ?? Object.keys(fields).find(name => name.endsWith('_id'))
     ?? Object.keys(fields)[0]!;
   const labelField = ['plan_name', 'name', 'title', 'display_name'].find(name => fields[name]) ?? keyField;
   for (const screen of schema.screens) {
@@ -60,7 +61,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
-        filter.props = { label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
+        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
       }
       if (sortIndicator) {
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };

@@ -46,7 +46,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 195 includes the authored API-call Usage example beside its object.
   "configs/agent/policy.json": 1,
   domains: 15,
-  objects: 8,
+  // UX-1 adds seven research definitions and their authoring README.
+  objects: 16,
   schemas: 56,
   traits: 76,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.

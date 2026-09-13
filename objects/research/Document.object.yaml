@@ -1,0 +1,277 @@
+object:
+  name: Document
+  version: 0.1.0
+  domain: research.data
+  description: 'TraceLab document: data in the research notebook. API provenance and unavailable trait
+    fields are specified in the TraceLab OODS mapping contract.'
+  tags:
+  - research
+  - tracelab
+  - data
+traits:
+- name: content/Labelled
+  parameters:
+    maxLabelLength: 255
+    maxDescriptionLength: 1000
+- name: lifecycle/Stateful
+  parameters:
+    states: &id001
+    - pending
+    - processed
+    - chunked
+    - embedded
+    - failed
+    initialState: pending
+- name: lifecycle/Timestampable
+  parameters:
+    recordedEvents:
+    - created
+    - updated
+    timezone: UTC
+- name: structural/Ownerable
+  parameters:
+    ownerTypes:
+    - user
+    primaryOwnerType: user
+    allowTransfer: false
+- name: core/Classifiable
+  parameters:
+    classification_mode: hybrid
+    tag_policy: open
+    max_tags: 50
+    require_primary_category: false
+- name: behavioral/Searchable
+  parameters:
+    placeholder: Search documents
+- name: behavioral/Filterable
+- name: behavioral/Pageable
+  parameters:
+    defaultPageSize: 20
+    pageSizeOptions:
+    - 10
+    - 20
+    - 50
+    - 100
+schema:
+  project_id:
+    type: uuid
+    required: true
+    description: Project id.
+    validation:
+      format: uuid
+  name:
+    type: string
+    required: true
+    description: Name.
+  file_path:
+    type: string
+    required: false
+    description: File path.
+  file_type:
+    type: string
+    required: false
+    description: File type.
+  content:
+    type: string
+    required: false
+    description: Content.
+  raw_content:
+    type: string
+    required: false
+    description: Raw content.
+  uploaded_at:
+    type: datetime
+    required: false
+    description: Uploaded at.
+  file_size:
+    type: number
+    required: false
+    description: File size.
+  mime_type:
+    type: string
+    required: false
+    description: Mime type.
+  source_type:
+    type: string
+    required: false
+    description: Source type.
+  participant_count:
+    type: number
+    required: false
+    description: Participant count.
+  collection_date:
+    type: string
+    required: false
+    description: Collection date.
+  processed:
+    type: boolean
+    required: false
+    description: Processed.
+    default: false
+  chunked:
+    type: boolean
+    required: false
+    description: Chunked.
+    default: false
+  embedded:
+    type: boolean
+    required: false
+    description: Embedded.
+    default: false
+  transcription_accuracy:
+    type: number
+    required: false
+    description: Transcription accuracy.
+  validation_status:
+    type: string
+    required: false
+    description: Validation status.
+  id:
+    type: uuid
+    required: true
+    description: Id.
+    validation:
+      format: uuid
+  chunks:
+    type: DocumentChunkRead[]
+    required: false
+    description: Chunks.
+  tags:
+    type: DocumentTagRead[]
+    required: false
+    description: Tags.
+  processing_events:
+    type: DocumentProcessingStatusRead[]
+    required: false
+    description: Processing events.
+  chunk_count:
+    type: number
+    required: false
+    description: Chunk count.
+  total_tokens:
+    type: number
+    required: false
+    description: Total tokens.
+  word_count:
+    type: number
+    required: false
+    description: Word count.
+  preview:
+    type: string
+    required: false
+    description: Preview.
+  label:
+    type: string
+    required: true
+    description: Display projection of name; retain the complete source field.
+  status:
+    type: string
+    required: true
+    description: 'Canonical research lifecycle. Display projection only: explicit latest failure, then
+      embedded, chunked, processed, pending; missing input remains unknown.'
+    validation:
+      enum: *id001
+  owner_id:
+    type: uuid
+    required: false
+    description: Authoritative nullable server owner_id. Not exposed by the current response; unavailable
+      until the API exposes it. Never derive from created_by, user_id, or project owner.
+  owner_type:
+    type: string
+    required: false
+    description: user only when an authoritative owner_id is present.
+    validation:
+      enum:
+      - user
+  last_event:
+    type: string
+    required: false
+    description: Only from an explicit event or timestamp projection; absence is unknown, not a fabricated
+      audit event.
+  created_at:
+    type: datetime
+    required: false
+    description: uploaded_at when present; unavailable otherwise.
+semantics:
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  project_id:
+    semantic_type: research.document.project_id
+    token_mapping: tokenMap(text.body.*)
+  file_path:
+    semantic_type: research.document.file_path
+    token_mapping: tokenMap(text.body.*)
+  file_type:
+    semantic_type: research.document.file_type
+    token_mapping: tokenMap(text.body.*)
+  content:
+    semantic_type: research.document.content
+    token_mapping: tokenMap(text.body.*)
+  raw_content:
+    semantic_type: research.document.raw_content
+    token_mapping: tokenMap(text.body.*)
+  uploaded_at:
+    semantic_type: research.document.uploaded_at
+    token_mapping: tokenMap(text.body.*)
+  file_size:
+    semantic_type: research.document.file_size
+    token_mapping: tokenMap(text.body.*)
+  mime_type:
+    semantic_type: research.document.mime_type
+    token_mapping: tokenMap(text.body.*)
+  source_type:
+    semantic_type: research.document.source_type
+    token_mapping: tokenMap(text.body.*)
+  participant_count:
+    semantic_type: research.document.participant_count
+    token_mapping: tokenMap(text.body.*)
+  collection_date:
+    semantic_type: research.document.collection_date
+    token_mapping: tokenMap(text.body.*)
+  processed:
+    semantic_type: research.document.processed
+    token_mapping: tokenMap(text.body.*)
+  chunked:
+    semantic_type: research.document.chunked
+    token_mapping: tokenMap(text.body.*)
+  embedded:
+    semantic_type: research.document.embedded
+    token_mapping: tokenMap(text.body.*)
+  transcription_accuracy:
+    semantic_type: research.document.transcription_accuracy
+    token_mapping: tokenMap(text.body.*)
+  validation_status:
+    semantic_type: research.document.validation_status
+    token_mapping: tokenMap(text.body.*)
+  id:
+    semantic_type: research.document.id
+    token_mapping: tokenMap(text.body.*)
+  chunks:
+    semantic_type: research.document.chunks
+    token_mapping: tokenMap(text.body.*)
+  processing_events:
+    semantic_type: research.document.processing_events
+    token_mapping: tokenMap(text.body.*)
+  chunk_count:
+    semantic_type: research.document.chunk_count
+    token_mapping: tokenMap(text.body.*)
+  total_tokens:
+    semantic_type: research.document.total_tokens
+    token_mapping: tokenMap(text.body.*)
+  word_count:
+    semantic_type: research.document.word_count
+    token_mapping: tokenMap(text.body.*)
+  preview:
+    semantic_type: research.document.preview
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+  - TraceLab
+  references:
+  - https://github.com/kneelinghorse/TraceLab/blob/main/cmos/contracts/oods-object-model.md
+  changelog:
+  - version: 0.1.0
+    date: '2026-09-12'
+    description: UX-1 research model from TraceLab Pydantic responses.

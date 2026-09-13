@@ -105,6 +105,8 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
   const records = workflowSampleRecords(schema);
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
+  const declaredFilter = nodes(schema.screens).find(node => node.collectionControl === 'filter')?.props?.field;
+  const filterField = typeof declaredFilter === 'string' && Object.hasOwn(fields, declaredFilter) ? declaredFilter : 'status';
   const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
   const timelineNodes = nodes(timeline ? [timeline] : []);
   const eventCollection = timelineNodes.find(node => node.collection?.source === 'events')?.collection;
@@ -199,7 +201,7 @@ export function createStore(options: StoreOptions = {}) {
       const filtered = records.filter((record) => {
         const values = record as Record<string, unknown>;
         return Boolean(values.is_archived) === (query.archived ?? false)
-          && (!query.status || values.status === query.status)
+          && (!query.status || values${filterField === 'status' ? '.status' : `[${JSON.stringify(filterField)}]`} === query.status)
           && (!search || Object.values(record).some((value) => String(value).toLowerCase().includes(search)));
       });
       const sort = query.sort ?? titleField;
@@ -216,12 +218,16 @@ export function createStore(options: StoreOptions = {}) {
       requireTrait('Cancellable');
       const record = get(id);
       const values = record as Record<string, unknown>;
-      if (values.is_archived || values.status === 'terminated' || values.status === 'pending_cancellation') throw new Error('This record cannot be cancelled in its current state');
+      const states: readonly string[] = ${JSON.stringify(workflow.data.lifecycleStates)};
+      const immediate = states.includes('cancelled') && !states.includes('pending_cancellation');
+      const target = immediate ? 'cancelled' : 'pending_cancellation';
+      if (values.is_archived || values.status === 'terminated' || values.status === 'pending_cancellation' || (immediate && ['completed', 'cancelled', 'final'].includes(String(values.status)))) throw new Error('This record cannot be cancelled in its current state');
       ${workflow.data.cancellationRequiresReason ? `if (!reason.trim()) throw new Error('Enter a cancellation reason');
       if (!code || (${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])}.length > 0 && !(${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])} as readonly string[]).includes(code))) throw new Error('Choose an allowed cancellation reason code');` : ''}
       const at = now();
-      const entry: HistoryEntry = { title: 'Pending Cancellation', from: String(values.status), to: 'pending_cancellation', at, reason: reason.trim(), code, atPeriodEnd };
-      Object.assign(record, { status: 'pending_cancellation', cancellation_reason: reason.trim(), cancellation_reason_code: code, cancel_at_period_end: atPeriodEnd, cancellation_requested_at: at, state_history: [...history(record), entry], updated_at: at });
+      const deferred = target === 'pending_cancellation' && atPeriodEnd;
+      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values.status), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred };
+      Object.assign(record, { status: target, cancellation_reason: reason.trim(), cancellation_reason_code: code, cancel_at_period_end: deferred, cancellation_requested_at: at, state_history: [...history(record), entry], updated_at: at });
       return save(record);
     },
     archive(id: string) { return setArchived(id, true); },

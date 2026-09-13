@@ -1399,6 +1399,15 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   if (effectiveObject) {
     try {
       const objectDef = loadObject(effectiveObject);
+      const supportedContexts = objectDef.metadata?.supportedContexts;
+      if (supportedContexts && !supportedContexts.includes(effectiveContext ?? 'detail')) {
+        return {
+          status: 'error', layout: '',
+          schema: { version: '2026.02', screens: [{ id: 'err-0', component: 'Box' }] },
+          selections: [], warnings,
+          errors: [{ code: 'OODS-V003', message: `Object '${effectiveObject}' supports only ${supportedContexts.join(', ')} context.`, hint: 'Compose the embedded object in its supported context within its parent.' }],
+        };
+      }
       composed = composeObject(objectDef);
       objectUsed = buildObjectUsedInfo(composed);
 

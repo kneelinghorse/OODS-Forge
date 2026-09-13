@@ -1,0 +1,1106 @@
+{
+  "layout": "form",
+  "meta": {
+    "intelligence": {
+      "compositionConfidence": 0.99,
+      "expansionReason": "Expanded from 3 to 10 field groups for 30 fields",
+      "fieldAffinityUsed": true,
+      "fieldsExpanded": true,
+      "patternsApplied": 35,
+      "positionAffinityUsed": true,
+      "slotsExpanded": 7
+    },
+    "intentParsed": "Subscription form view",
+    "intentSynthetic": true,
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "nodeCount": 26,
+    "slotCount": 11,
+    "warnings": [
+      "Object 'Subscription' has maturity 'beta' — composed output may change.",
+      "Field collision: \"status\" in object schema overrides trait definition",
+      "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_reason\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition",
+      "Field collision: \"amount\" in object schema overrides trait definition",
+      "Field collision: \"currency\" in object schema overrides trait definition",
+      "Field collision: \"billing_interval\" in object schema overrides trait definition",
+      "Field collision: \"current_period_start\" in object schema overrides trait definition",
+      "Field collision: \"current_period_end\" in object schema overrides trait definition",
+      "Field collision: \"current_period_progress\" in object schema overrides trait definition",
+      "Field collision: \"last_payment_at\" in object schema overrides trait definition",
+      "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+    ]
+  },
+  "objectUsed": {
+    "fieldsComposed": 36,
+    "name": "Subscription",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Cancellable",
+      "lifecycle/Timestampable",
+      "financial/Billable",
+      "lifecycle/Archivable",
+      "viz/MarkArea"
+    ],
+    "version": "2.0.0",
+    "viewExtensionsApplied": {
+      "card": 4,
+      "detail": 7,
+      "form": 4,
+      "list": 4,
+      "timeline": 5
+    }
+  },
+  "schema": {
+    "objectSchema": {
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "amount": {
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "required": true,
+        "semanticType": "billing.plan.amount",
+        "type": "integer"
+      },
+      "archive_metadata": {
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "required": false,
+        "semanticType": "status.archive.compliance",
+        "type": "object"
+      },
+      "archive_reason": {
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "required": false,
+        "semanticType": "status.archive.reason",
+        "type": "string"
+      },
+      "archived_at": {
+        "description": "Timestamp for when the entity entered the archived state.",
+        "required": false,
+        "semanticType": "status.archive.timestamp",
+        "type": "datetime?"
+      },
+      "archived_by": {
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "required": false,
+        "semanticType": "status.archive.actor",
+        "type": "string"
+      },
+      "billing_interval": {
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "required": false,
+        "semanticType": "billing.subscription.interval",
+        "type": "string"
+      },
+      "cancel_at_period_end": {
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "required": true,
+        "semanticType": "billing.subscription.cancel_at_period_end",
+        "type": "boolean"
+      },
+      "cancellation_reason": {
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_reason",
+        "type": "string"
+      },
+      "cancellation_reason_code": {
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "required": false,
+        "semanticType": "status.cancel.reason_code",
+        "type": "string"
+      },
+      "cancellation_requested_at": {
+        "description": "Timestamp when cancellation was initiated.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_requested_at",
+        "type": "datetime"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "currency": {
+        "description": "ISO 4217 currency code used for billing.",
+        "required": true,
+        "semanticType": "billing.plan.currency",
+        "type": "string"
+      },
+      "current_period_end": {
+        "description": "End timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_end",
+        "type": "datetime"
+      },
+      "current_period_progress": {
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "required": false,
+        "semanticType": "billing.subscription.current_period_progress",
+        "type": "number"
+      },
+      "current_period_start": {
+        "description": "Start timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_start",
+        "type": "datetime"
+      },
+      "customer_email": {
+        "description": "Billing contact email address.",
+        "required": false,
+        "semanticType": "customer.account.email",
+        "type": "email"
+      },
+      "customer_name": {
+        "description": "Customer or account name associated with the subscription.",
+        "required": false,
+        "semanticType": "customer.account.name",
+        "type": "string"
+      },
+      "is_archived": {
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "required": true,
+        "semanticType": "status.archive.state",
+        "type": "boolean"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "last_payment_at": {
+        "description": "Timestamp of the most recent successful payment.",
+        "required": false,
+        "semanticType": "billing.subscription.last_payment_at",
+        "type": "datetime"
+      },
+      "next_payment_due_at": {
+        "description": "Timestamp when the next payment attempt should occur.",
+        "required": false,
+        "semanticType": "billing.subscription.next_payment_due_at",
+        "type": "datetime"
+      },
+      "payment_method_type": {
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_method",
+        "type": "string"
+      },
+      "payment_status": {
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_status",
+        "type": "string"
+      },
+      "plan_code": {
+        "description": "Internal plan code or price identifier.",
+        "required": false,
+        "semanticType": "billing.plan.code",
+        "type": "string"
+      },
+      "plan_interval": {
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "required": false,
+        "semanticType": "billing.plan.interval",
+        "type": "string"
+      },
+      "plan_name": {
+        "description": "Human-readable plan label shown in headers.",
+        "required": true,
+        "semanticType": "billing.plan.name",
+        "type": "string"
+      },
+      "proration_amount": {
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration",
+        "type": "integer"
+      },
+      "proration_date": {
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration_timestamp",
+        "type": "integer"
+      },
+      "restoration_metadata": {
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "required": false,
+        "semanticType": "status.archive.restoration",
+        "type": "object"
+      },
+      "restored_at": {
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "required": false,
+        "semanticType": "status.archive.restore_timestamp",
+        "type": "datetime?"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "required": true,
+        "semanticType": "billing.subscription.status",
+        "type": "string"
+      },
+      "subscription_id": {
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "required": true,
+        "semanticType": "billing.subscription.id",
+        "type": "string"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      }
+    },
+    "screens": [
+      {
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "children": [
+          {
+            "children": [
+              {
+                "bindings": {
+                  "onChange": "handleChange_status"
+                },
+                "component": "StatusSelector",
+                "id": "ve-title-28",
+                "props": {
+                  "allowedTransitionsField": "allowed_transitions",
+                  "field": "status",
+                  "help": "Current lifecycle status of the subscription.",
+                  "initialParameter": "initialState",
+                  "label": "Status",
+                  "optionsParameter": "states",
+                  "requireReasonParameter": "requireTransitionReason"
+                }
+              },
+              {
+                "component": "CancellationForm",
+                "id": "ve-title-29",
+                "props": {
+                  "allowedReasons": [],
+                  "allowedReasonsParameter": "allowedReasons",
+                  "codeField": "cancellation_reason_code",
+                  "codeHelp": "Structured reason code chosen from the allowedReasons parameter.",
+                  "embedded": true,
+                  "reasonField": "cancellation_reason",
+                  "reasonHelp": "Free-form explanation captured during cancellation workflows.",
+                  "requireReasonParameter": "requireReason",
+                  "windowParameter": "cancellationWindowHours"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "form-title-1",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title"
+            },
+            "props": {
+              "as": "h1"
+            }
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "component": "BillingIntervalSelector",
+                        "id": "ve-field-0-26",
+                        "props": {
+                          "help": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+                          "intervalField": "billing_interval",
+                          "intervals": [
+                            "monthly",
+                            "yearly"
+                          ],
+                          "intervalsParameter": "billingIntervals"
+                        }
+                      },
+                      {
+                        "component": "BillingAmountInput",
+                        "id": "ve-field-0-27",
+                        "props": {
+                          "amountField": "amount",
+                          "currencyField": "currency",
+                          "help": "Amount in USD",
+                          "minorUnits": 100,
+                          "minorUnitsParameter": "minorUnits"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "slot-field-0-3",
+                    "layout": {
+                      "gapToken": "cluster-default",
+                      "type": "stack"
+                    },
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-2",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_cancel_at_period_end"
+                    },
+                    "component": "Checkbox",
+                    "id": "slot-field-1-5",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-1",
+                      "label": "field-1"
+                    },
+                    "props": {
+                      "field": "cancel_at_period_end",
+                      "help": "Whether the subscription will cancel at the natural billing period end.",
+                      "label": "Cancel at period end"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-4",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [],
+                "component": "Stack",
+                "id": "form-field-group-6",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_cancellation_requested_at"
+                    },
+                    "component": "Input",
+                    "id": "slot-field-3-13",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-3",
+                      "label": "field-3"
+                    },
+                    "props": {
+                      "field": "cancellation_requested_at",
+                      "help": "Timestamp when cancellation was initiated.",
+                      "label": "Cancellation requested at",
+                      "type": "datetime-local"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-12",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_currency"
+                    },
+                    "component": "Input",
+                    "id": "slot-field-4-15",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-4",
+                      "label": "field-4"
+                    },
+                    "props": {
+                      "field": "currency",
+                      "help": "ISO 4217 currency code used for billing.",
+                      "label": "Currency",
+                      "placeholder": "Enter currency"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-14",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_payment_method_type"
+                    },
+                    "component": "Select",
+                    "id": "slot-field-5-17",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-5",
+                      "label": "field-5"
+                    },
+                    "props": {
+                      "field": "payment_method_type",
+                      "help": "Payment instrument category used for collection.",
+                      "label": "Payment method type",
+                      "options": [
+                        {
+                          "label": "card",
+                          "value": "card"
+                        },
+                        {
+                          "label": "ach",
+                          "value": "ach"
+                        },
+                        {
+                          "label": "wire",
+                          "value": "wire"
+                        },
+                        {
+                          "label": "invoice",
+                          "value": "invoice"
+                        },
+                        {
+                          "label": "other",
+                          "value": "other"
+                        }
+                      ],
+                      "placeholder": "Enter payment method type"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-16",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_customer_email"
+                    },
+                    "component": "Input",
+                    "id": "slot-field-6-19",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-6",
+                      "label": "field-6"
+                    },
+                    "props": {
+                      "field": "customer_email",
+                      "help": "Billing contact email address.",
+                      "label": "Customer email",
+                      "placeholder": "Enter customer email",
+                      "type": "email"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-18",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_last_event"
+                    },
+                    "component": "Input",
+                    "id": "slot-field-7-21",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:field-7",
+                      "label": "field-7"
+                    },
+                    "props": {
+                      "field": "last_event",
+                      "help": "Lifecycle event associated with the most recent timestamp mutation.",
+                      "label": "Last event",
+                      "placeholder": "Enter last event"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-field-group-20",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [],
+                "component": "Stack",
+                "id": "form-field-group-22",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [],
+                "component": "Stack",
+                "id": "form-field-group-24",
+                "layout": {
+                  "gapToken": "cluster-tight",
+                  "type": "stack"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "form-fields-8",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            }
+          },
+          {
+            "children": [
+              {
+                "component": "Button",
+                "id": "form-submit-10",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "form-actions-9",
+            "layout": {
+              "align": "end",
+              "type": "inline"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          }
+        ],
+        "component": "Stack",
+        "id": "screen-form-11",
+        "layout": {
+          "gapToken": "cluster-default",
+          "type": "stack"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        }
+      }
+    ],
+    "version": "2026.02"
+  },
+  "schemaRef": "compose-8e26e7f2",
+  "schemaRefCreatedAt": "2026-09-12T23:48:12.950Z",
+  "schemaRefExpiresAt": "2026-09-13T00:18:12.950Z",
+  "selections": [
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "BillingIntervalSelector",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "BillingAmountInput",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "BillingIntervalSelector was selected for slot \"field-0\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "long-text-input",
+      "selectedComponent": "BillingIntervalSelector",
+      "slotName": "field-0"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 0.95,
+          "name": "StatusSelector",
+          "reason": "view_extension placement"
+        },
+        {
+          "confidence": 0.95,
+          "name": "CancellationForm",
+          "reason": "view_extension placement"
+        }
+      ],
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusSelector was selected for slot \"title\" because view_extension placement. Confidence is high (0.95).",
+      "intent": "page-header",
+      "selectedComponent": "StatusSelector",
+      "slotName": "title"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        },
+        {
+          "confidence": 0.64,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Checkbox was selected for slot \"field-1\" because preferred for \"boolean-input\" (rank 2); 2 tag match(es); tag match (boolean, input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main. Confidence is high (1.00).",
+      "intent": "boolean-input",
+      "selectedComponent": "Checkbox",
+      "slotName": "field-1"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Textarea",
+          "reason": "preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"long-text-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Textarea was selected for slot \"field-2\" because preferred for \"long-text-input\" (rank 1); 3 tag match(es); tag match (text, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"text\"; position affinity: Textarea fits well in main. Confidence is high (1.00).",
+      "intent": "long-text-input",
+      "selectedComponent": "Textarea",
+      "slotName": "field-2"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main"
+        },
+        {
+          "confidence": 0.98,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-3\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "slotName": "field-3"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-4\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-4"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.92,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.72,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "name": "TagInput",
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\""
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-5\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "slotName": "field-5"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"email-input\" (rank 1); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\""
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main"
+        },
+        {
+          "confidence": 0.56,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "name": "DatePicker",
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: DatePicker fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"email-input\" (rank 1); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "email-input",
+      "selectedComponent": "Input",
+      "slotName": "field-6"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-7"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-8"
+    },
+    {
+      "candidates": [
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Input",
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\""
+        },
+        {
+          "confidence": 1,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Select",
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main"
+        },
+        {
+          "confidence": 0.78,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0,
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "name": "Checkbox",
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main"
+        }
+      ],
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "slotName": "field-9"
+    }
+  ],
+  "status": "ok",
+  "validation": {
+    "errors": [],
+    "status": "ok",
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "hint": "Consider using stable objects for production compositions.",
+      "message": "Object 'Subscription' has maturity 'beta' — composed output may change."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"status\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_reason\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"amount\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"currency\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"billing_interval\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_start\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_progress\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_payment_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+    }
+  ]
+}

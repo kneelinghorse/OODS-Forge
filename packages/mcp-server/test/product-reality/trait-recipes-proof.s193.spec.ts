@@ -20,7 +20,7 @@ describe('retained nine-recipe proof', () => {
     expect(ledger.head).toBe(movement.comparedHead);
     expect(ledger.summary).toEqual({ cells: 46, pass: 46, typedGap: 0, fail: 0 });
     expect(validateRuntimeLedger(ledger, true, expected)).toEqual([]);
-    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 154 distinct current cells');
+    expect(validateRuntimeLedger(ledger, true)).toContain('population must contain exactly 240 distinct current cells');
     for (const row of ledger.rows) expect(read(`packed/${row.report}`)).toEqual(row);
   });
   it('keeps the failed typed-callback attempt separate and proves the corrected writer changes selection in both frameworks', () => {

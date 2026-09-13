@@ -94,7 +94,10 @@ describe('Sprint 193 bounded closeout', () => {
   });
   it('keeps the final 154-cell proof tied to its recorded implementation on later evidence commits', () => {
     const ledger = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json`, 'utf8'));
-    expect(validateRuntimeLedger(ledger, true)).toEqual([]);
+    // This frozen Sprint 193 receipt proves its historical eleven-object cohort.
+    const historicalObjects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
+    const historicalIdentities = historicalObjects.flatMap(object => ['card', 'detail', 'form', 'inline', 'list', 'timeline', 'workflow'].flatMap(context => ['react', 'vue'].map(framework => `${object}/${context}/${framework}`)));
+    expect(validateRuntimeLedger(ledger, true, historicalIdentities)).toEqual([]);
     expect(ledger.summary).toEqual({ cells: 154, pass: 154, typedGap: 0, fail: 0 });
     // s194-m01: the historical proof binds its recorded execution, not future sprints' HEAD.
     const manifest = JSON.parse(readFileSync(`${root}/artifacts/product-reality/sprint-193/m07/closeout/manifest.json`, 'utf8'));

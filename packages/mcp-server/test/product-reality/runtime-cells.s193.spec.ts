@@ -2,11 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { BROWSER_IMAGE, CONTEXTS, FRAMEWORKS, OBJECTS, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../../../scripts/product-reality/s193-runtime-cells.js';
+import { BROWSER_IMAGE, FRAMEWORKS, OBJECTS, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../../../scripts/product-reality/s193-runtime-cells.js';
+
+import { CONTEXTS, contextsForObject } from '../../src/lib/runtime-ledger.js';
+import { loadObject } from '../../src/objects/object-loader.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 function population(): RuntimeLedger {
-  const rows = OBJECTS.flatMap(object => CONTEXTS.flatMap(context => FRAMEWORKS.map(framework => ({
+  const rows = OBJECTS.flatMap(object => contextsForObject(object).flatMap(context => FRAMEWORKS.map(framework => ({
     object, context, framework, head: 'one-measured-head', runId: 'one-sweep',
     status: 'pass' as const, artifactHash: 'sha256:artifact', components: ['Stack'], report: `${object}/${context}/${framework}.json`,
     gates: ['generation', 'fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'mount', 'accessibility-tree', 'screenshots', 'context-states'].map(name => ({ name, status: 'pass' as const })),
@@ -15,12 +18,22 @@ function population(): RuntimeLedger {
 }
 
 describe('s193 runtime population accountability', () => {
-  it('requires all 132 distinct object/context/framework identities', () => {
+  it('keeps the portable census aligned with authored context restrictions', () => {
+    // Health must verify shipped evidence without YAML files, while new object
+    // restrictions must not silently leave its compiled population out of date.
+    for (const object of OBJECTS) {
+      const supported = loadObject(object).metadata?.supportedContexts;
+      expect(contextsForObject(object), object).toEqual(
+        CONTEXTS.filter(context => !supported || supported.includes(context)),
+      );
+    }
+  });
+  it('requires all 206 distinct object/context/framework identities', () => {
     const ledger = population();
-    expect(ledger.rows).toHaveLength(132);
+    expect(ledger.rows).toHaveLength(206);
     expect(validateRuntimeLedger(ledger)).toEqual([]);
     ledger.rows[1] = structuredClone(ledger.rows[0]!);
-    expect(validateRuntimeLedger(ledger)).toContain('population must contain exactly 132 distinct current cells');
+    expect(validateRuntimeLedger(ledger)).toContain('population must contain exactly 206 distinct current cells');
   });
   it('never substitutes historical or same-head earlier-run receipts for current execution', () => {
     const ledger = population(); ledger.rows[0]!.runId = 'old-sweep';

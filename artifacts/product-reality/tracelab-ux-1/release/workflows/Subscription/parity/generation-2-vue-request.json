@@ -1,0 +1,1450 @@
+{
+  "framework": "vue",
+  "profile": "build",
+  "schema": {
+    "objectSchema": {
+      "allowed_transitions": {
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "required": false,
+        "semanticType": "status.navigation",
+        "type": "string[]"
+      },
+      "amount": {
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "required": true,
+        "semanticType": "billing.plan.amount",
+        "type": "integer"
+      },
+      "archive_metadata": {
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "required": false,
+        "semanticType": "status.archive.compliance",
+        "type": "object"
+      },
+      "archive_reason": {
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "required": false,
+        "semanticType": "status.archive.reason",
+        "type": "string"
+      },
+      "archived_at": {
+        "description": "Timestamp for when the entity entered the archived state.",
+        "required": false,
+        "semanticType": "status.archive.timestamp",
+        "type": "datetime?"
+      },
+      "archived_by": {
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "required": false,
+        "semanticType": "status.archive.actor",
+        "type": "string"
+      },
+      "billing_interval": {
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "required": false,
+        "semanticType": "billing.subscription.interval",
+        "type": "string"
+      },
+      "cancel_at_period_end": {
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "required": true,
+        "semanticType": "billing.subscription.cancel_at_period_end",
+        "type": "boolean"
+      },
+      "cancellation_reason": {
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_reason",
+        "type": "string"
+      },
+      "cancellation_reason_code": {
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "required": false,
+        "semanticType": "status.cancel.reason_code",
+        "type": "string"
+      },
+      "cancellation_requested_at": {
+        "description": "Timestamp when cancellation was initiated.",
+        "required": false,
+        "semanticType": "billing.subscription.cancellation_requested_at",
+        "type": "datetime"
+      },
+      "created_at": {
+        "description": "Timestamp recording when the entity was first created.",
+        "required": true,
+        "semanticType": "audit.created_at",
+        "type": "datetime"
+      },
+      "currency": {
+        "description": "ISO 4217 currency code used for billing.",
+        "required": true,
+        "semanticType": "billing.plan.currency",
+        "type": "string"
+      },
+      "current_period_end": {
+        "description": "End timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_end",
+        "type": "datetime"
+      },
+      "current_period_progress": {
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "required": false,
+        "semanticType": "billing.subscription.current_period_progress",
+        "type": "number"
+      },
+      "current_period_start": {
+        "description": "Start timestamp of the current billing cycle.",
+        "required": true,
+        "semanticType": "billing.subscription.current_period_start",
+        "type": "datetime"
+      },
+      "customer_email": {
+        "description": "Billing contact email address.",
+        "required": false,
+        "semanticType": "customer.account.email",
+        "type": "email"
+      },
+      "customer_name": {
+        "description": "Customer or account name associated with the subscription.",
+        "required": false,
+        "semanticType": "customer.account.name",
+        "type": "string"
+      },
+      "is_archived": {
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "required": true,
+        "semanticType": "status.archive.state",
+        "type": "boolean"
+      },
+      "last_event": {
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "required": true,
+        "semanticType": "audit.event.type",
+        "type": "string"
+      },
+      "last_event_at": {
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "required": false,
+        "semanticType": "audit.event.timestamp",
+        "type": "datetime"
+      },
+      "last_payment_at": {
+        "description": "Timestamp of the most recent successful payment.",
+        "required": false,
+        "semanticType": "billing.subscription.last_payment_at",
+        "type": "datetime"
+      },
+      "next_payment_due_at": {
+        "description": "Timestamp when the next payment attempt should occur.",
+        "required": false,
+        "semanticType": "billing.subscription.next_payment_due_at",
+        "type": "datetime"
+      },
+      "payment_method_type": {
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_method",
+        "type": "string"
+      },
+      "payment_status": {
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "required": false,
+        "semanticType": "billing.cycle.payment_status",
+        "type": "string"
+      },
+      "plan_code": {
+        "description": "Internal plan code or price identifier.",
+        "required": false,
+        "semanticType": "billing.plan.code",
+        "type": "string"
+      },
+      "plan_interval": {
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "required": false,
+        "semanticType": "billing.plan.interval",
+        "type": "string"
+      },
+      "plan_name": {
+        "description": "Human-readable plan label shown in headers.",
+        "required": true,
+        "semanticType": "billing.plan.name",
+        "type": "string"
+      },
+      "proration_amount": {
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration",
+        "type": "integer"
+      },
+      "proration_date": {
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "required": false,
+        "semanticType": "billing.cycle.proration_timestamp",
+        "type": "integer"
+      },
+      "restoration_metadata": {
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "required": false,
+        "semanticType": "status.archive.restoration",
+        "type": "object"
+      },
+      "restored_at": {
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "required": false,
+        "semanticType": "status.archive.restore_timestamp",
+        "type": "datetime?"
+      },
+      "state_history": {
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "required": false,
+        "semanticType": "timeline.state_transition",
+        "type": "StateTransition[]"
+      },
+      "status": {
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "required": true,
+        "semanticType": "billing.subscription.status",
+        "type": "string"
+      },
+      "subscription_id": {
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "required": true,
+        "semanticType": "billing.subscription.id",
+        "type": "string"
+      },
+      "updated_at": {
+        "description": "Timestamp for the most recent modification, when available.",
+        "required": false,
+        "semanticType": "audit.updated_at",
+        "type": "datetime"
+      }
+    },
+    "screens": [
+      {
+        "bindings": {
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange",
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "list-screen-list-9-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "collectionControl": "search",
+                    "component": "SearchInput",
+                    "id": "list-slot-search-1",
+                    "meta": {
+                      "confidence": 1,
+                      "confidenceLevel": "low",
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "clearable": true,
+                      "label": "Search",
+                      "placeholder": "Search records"
+                    }
+                  },
+                  {
+                    "collectionControl": "filter",
+                    "component": "Select",
+                    "id": "list-slot-filters-2",
+                    "meta": {
+                      "confidence": 0.67,
+                      "confidenceLevel": "low",
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "label": "All states",
+                          "value": ""
+                        },
+                        {
+                          "label": "future",
+                          "value": "future"
+                        },
+                        {
+                          "label": "trialing",
+                          "value": "trialing"
+                        },
+                        {
+                          "label": "active",
+                          "value": "active"
+                        },
+                        {
+                          "label": "paused",
+                          "value": "paused"
+                        },
+                        {
+                          "label": "pending cancellation",
+                          "value": "pending_cancellation"
+                        },
+                        {
+                          "label": "past due",
+                          "value": "past_due"
+                        },
+                        {
+                          "label": "unpaid",
+                          "value": "unpaid"
+                        },
+                        {
+                          "label": "terminated",
+                          "value": "terminated"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "collectionControl": "sort",
+                    "component": "Select",
+                    "id": "list-list-toolbar-4-sort",
+                    "props": {
+                      "field": "plan_name",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "label": "Name A–Z",
+                          "value": "asc"
+                        },
+                        {
+                          "label": "Name Z–A",
+                          "value": "desc"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-list-toolbar-4",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "component": "Text",
+                                "id": "list-list-items-5-title",
+                                "props": {
+                                  "field": "plan_name"
+                                }
+                              },
+                              {
+                                "component": "StatusBadge",
+                                "id": "list-ve-items-10",
+                                "props": {
+                                  "statusField": "status",
+                                  "tone": "lifecycle"
+                                }
+                              },
+                              {
+                                "component": "RelativeTimestamp",
+                                "id": "list-ve-items-11",
+                                "props": {
+                                  "fallbackField": "created_at",
+                                  "field": "updated_at",
+                                  "timezoneParameter": "timezone"
+                                }
+                              },
+                              {
+                                "component": "BillingSummaryBadge",
+                                "id": "list-slot-toolbar-actions-3",
+                                "meta": {
+                                  "intent": "slot:toolbar-actions",
+                                  "label": "toolbar-actions"
+                                },
+                                "props": {
+                                  "amountField": "amount",
+                                  "currencyField": "currency",
+                                  "intervalField": "billing_interval",
+                                  "minorUnits": 100,
+                                  "minorUnitsParameter": "minorUnits"
+                                }
+                              }
+                            ],
+                            "collectionControl": "open",
+                            "component": "Button",
+                            "id": "list-list-items-5-row",
+                            "layout": {
+                              "gapToken": "cluster-default",
+                              "type": "inline"
+                            },
+                            "props": {
+                              "field": "subscription_id"
+                            }
+                          }
+                        ],
+                        "component": "ArchivedRowOverlay",
+                        "id": "list-ve-items-13",
+                        "props": {
+                          "archivedField": "is_archived",
+                          "labelField": "plan_name",
+                          "separateTab": true,
+                          "showBadge": true,
+                          "style": "grayed",
+                          "tabLabel": "Archived"
+                        }
+                      },
+                      {
+                        "collectionControl": "empty",
+                        "component": "Banner",
+                        "id": "list-list-items-5-empty",
+                        "props": {
+                          "message": "No records found."
+                        }
+                      }
+                    ],
+                    "collection": {
+                      "keyField": "subscription_id",
+                      "labelField": "plan_name",
+                      "source": "rows"
+                    },
+                    "component": "Stack",
+                    "id": "list-list-items-5",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  }
+                ],
+                "collectionControl": "archive",
+                "component": "Tabs",
+                "id": "list-list-items-5-archive-tabs",
+                "props": {
+                  "ariaLabel": "Archive views",
+                  "items": [
+                    {
+                      "id": "active",
+                      "label": "Active",
+                      "panel": ""
+                    },
+                    {
+                      "id": "archived",
+                      "label": "Archived",
+                      "panel": ""
+                    }
+                  ]
+                }
+              },
+              {
+                "children": [
+                  {
+                    "collectionControl": "page",
+                    "component": "PaginationBar",
+                    "id": "list-slot-pagination-8",
+                    "meta": {
+                      "confidence": 0.77,
+                      "confidenceLevel": "low",
+                      "intent": "slot:pagination",
+                      "label": "pagination"
+                    },
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "list-list-pagination-7",
+                "layout": {
+                  "align": "center",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "list-screen-list-9-success",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "list-screen",
+        "route": "/"
+      },
+      {
+        "bindings": {
+          "onCancel": "handleCancel",
+          "onDelete": "handleDelete",
+          "onEdit": "handleEdit",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "detail-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "detail-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "detail-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "chart": {
+                          "amountField": "amount",
+                          "chartType": "area",
+                          "currencyField": "currency",
+                          "dateFields": [
+                            "last_payment_at",
+                            "next_payment_due_at"
+                          ],
+                          "minorUnits": 100,
+                          "source": "payment-events"
+                        },
+                        "component": "VizAreaPreview",
+                        "id": "detail-ve-header-26",
+                        "props": {
+                          "description": "Recorded sample payments in major currency units.",
+                          "title": "Payment amounts"
+                        }
+                      },
+                      {
+                        "component": "StatusTimeline",
+                        "id": "detail-ve-header-27",
+                        "props": {
+                          "field": "status",
+                          "historyField": "state_history",
+                          "showActorId": true,
+                          "showReason": true,
+                          "statesParameter": "states"
+                        }
+                      },
+                      {
+                        "component": "CancellationSummary",
+                        "id": "detail-ve-header-28",
+                        "props": {
+                          "cancelAtPeriodEndField": "cancel_at_period_end",
+                          "codeField": "cancellation_reason_code",
+                          "reasonField": "cancellation_reason",
+                          "requestedAtField": "cancellation_requested_at"
+                        }
+                      },
+                      {
+                        "component": "ArchiveSummary",
+                        "id": "detail-ve-header-29",
+                        "props": {
+                          "allowPartialRestoreParameter": "allowPartialRestore",
+                          "archivedAtField": "archived_at",
+                          "archivedByField": "archived_by",
+                          "archivedField": "is_archived",
+                          "metadataField": "archive_metadata",
+                          "reasonField": "archive_reason",
+                          "restoreWindowParameter": "restoreWindowDays",
+                          "restoredAtField": "restored_at",
+                          "retainHistoryParameter": "retainHistory"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "detail-slot-header-2",
+                    "layout": {
+                      "gapToken": "cluster-default",
+                      "type": "stack"
+                    },
+                    "meta": {
+                      "intent": "slot:header",
+                      "label": "header"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "detail-detail-header-1",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "component": "CycleProgressCard",
+                            "id": "detail-slot-tab-0-4",
+                            "meta": {
+                              "intent": "slot:tab-0",
+                              "label": "tab-0"
+                            },
+                            "props": {
+                              "intervalField": "billing_interval",
+                              "periodEndField": "current_period_end",
+                              "periodStartField": "current_period_start",
+                              "progressField": "current_period_progress"
+                            }
+                          },
+                          {
+                            "component": "PaymentTimeline",
+                            "id": "detail-slot-tab-1-6",
+                            "meta": {
+                              "intent": "slot:tab-1",
+                              "label": "tab-1"
+                            },
+                            "props": {
+                              "amountField": "amount",
+                              "currencyField": "currency",
+                              "lastPaymentField": "last_payment_at",
+                              "nextPaymentField": "next_payment_due_at",
+                              "paymentMethodField": "payment_method_type",
+                              "paymentStatusField": "payment_status"
+                            }
+                          }
+                        ],
+                        "component": "Stack",
+                        "id": "detail-detail-tab-panel-3",
+                        "layout": {
+                          "gapToken": "cluster-default",
+                          "type": "stack"
+                        },
+                        "props": {
+                          "label": "Billing"
+                        }
+                      },
+                      {
+                        "children": [
+                          {
+                            "component": "StatusBadge",
+                            "id": "detail-slot-tab-3-15",
+                            "meta": {
+                              "confidence": 1,
+                              "confidenceLevel": "low",
+                              "intent": "slot:tab-3",
+                              "label": "tab-3"
+                            },
+                            "props": {
+                              "field": "payment_status",
+                              "label": "Payment status"
+                            }
+                          },
+                          {
+                            "component": "Text",
+                            "id": "detail-slot-tab-4-17",
+                            "meta": {
+                              "confidence": 0.76,
+                              "confidenceLevel": "low",
+                              "intent": "slot:tab-4",
+                              "label": "tab-4"
+                            },
+                            "props": {
+                              "field": "amount",
+                              "label": "Amount"
+                            }
+                          }
+                        ],
+                        "component": "Stack",
+                        "id": "detail-detail-tab-panel-14",
+                        "layout": {
+                          "gapToken": "cluster-default",
+                          "type": "stack"
+                        },
+                        "props": {
+                          "label": "Details"
+                        }
+                      }
+                    ],
+                    "component": "Tabs",
+                    "id": "detail-detail-tabs-9",
+                    "props": {
+                      "ariaLabel": "Record details"
+                    }
+                  },
+                  {
+                    "children": [],
+                    "component": "Stack",
+                    "id": "detail-detail-meta-11",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    }
+                  }
+                ],
+                "component": "Card",
+                "id": "detail-detail-body-10",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "sidebar"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "detail-screen-detail-13",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "detail-screen",
+        "route": "/:id"
+      },
+      {
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "children": [
+          {
+            "component": "Banner",
+            "id": "form-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "form-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "form-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    },
+                    "component": "StatusSelector",
+                    "id": "form-ve-title-28",
+                    "props": {
+                      "allowedTransitionsField": "allowed_transitions",
+                      "field": "status",
+                      "help": "Current lifecycle status of the subscription.",
+                      "initialParameter": "initialState",
+                      "label": "Status",
+                      "optionsParameter": "states",
+                      "requireReasonParameter": "requireTransitionReason"
+                    }
+                  },
+                  {
+                    "component": "CancellationForm",
+                    "id": "form-ve-title-29",
+                    "props": {
+                      "allowedReasons": [],
+                      "allowedReasonsParameter": "allowedReasons",
+                      "codeField": "cancellation_reason_code",
+                      "codeHelp": "Structured reason code chosen from the allowedReasons parameter.",
+                      "embedded": true,
+                      "reasonField": "cancellation_reason",
+                      "reasonHelp": "Free-form explanation captured during cancellation workflows.",
+                      "requireReasonParameter": "requireReason",
+                      "windowParameter": "cancellationWindowHours"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-title-1",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                },
+                "meta": {
+                  "intent": "slot:title",
+                  "label": "title"
+                },
+                "props": {
+                  "as": "h1"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "component": "BillingIntervalSelector",
+                            "id": "form-ve-field-0-26",
+                            "props": {
+                              "help": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+                              "intervalField": "billing_interval",
+                              "intervals": [
+                                "monthly",
+                                "yearly"
+                              ],
+                              "intervalsParameter": "billingIntervals"
+                            }
+                          },
+                          {
+                            "component": "BillingAmountInput",
+                            "id": "form-ve-field-0-27",
+                            "props": {
+                              "amountField": "amount",
+                              "currencyField": "currency",
+                              "help": "Amount in USD",
+                              "minorUnits": 100,
+                              "minorUnitsParameter": "minorUnits"
+                            }
+                          }
+                        ],
+                        "component": "Stack",
+                        "id": "form-slot-field-0-3",
+                        "layout": {
+                          "gapToken": "cluster-default",
+                          "type": "stack"
+                        },
+                        "meta": {
+                          "intent": "slot:field-0",
+                          "label": "field-0"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-2",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_cancel_at_period_end"
+                        },
+                        "component": "Checkbox",
+                        "id": "form-slot-field-1-5",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-1",
+                          "label": "field-1"
+                        },
+                        "props": {
+                          "field": "cancel_at_period_end",
+                          "help": "Whether the subscription will cancel at the natural billing period end.",
+                          "label": "Cancel at period end"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-4",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [],
+                    "component": "Stack",
+                    "id": "form-form-field-group-6",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_cancellation_requested_at"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-3-13",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-3",
+                          "label": "field-3"
+                        },
+                        "props": {
+                          "field": "cancellation_requested_at",
+                          "help": "Timestamp when cancellation was initiated.",
+                          "label": "Cancellation requested at",
+                          "type": "datetime-local"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-12",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_currency"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-4-15",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-4",
+                          "label": "field-4"
+                        },
+                        "props": {
+                          "field": "currency",
+                          "help": "ISO 4217 currency code used for billing.",
+                          "label": "Currency",
+                          "placeholder": "Enter currency"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-14",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_payment_method_type"
+                        },
+                        "component": "Select",
+                        "id": "form-slot-field-5-17",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-5",
+                          "label": "field-5"
+                        },
+                        "props": {
+                          "field": "payment_method_type",
+                          "help": "Payment instrument category used for collection.",
+                          "label": "Payment method type",
+                          "options": [
+                            {
+                              "label": "card",
+                              "value": "card"
+                            },
+                            {
+                              "label": "ach",
+                              "value": "ach"
+                            },
+                            {
+                              "label": "wire",
+                              "value": "wire"
+                            },
+                            {
+                              "label": "invoice",
+                              "value": "invoice"
+                            },
+                            {
+                              "label": "other",
+                              "value": "other"
+                            }
+                          ],
+                          "placeholder": "Enter payment method type"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-16",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_customer_email"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-6-19",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-6",
+                          "label": "field-6"
+                        },
+                        "props": {
+                          "field": "customer_email",
+                          "help": "Billing contact email address.",
+                          "label": "Customer email",
+                          "placeholder": "Enter customer email",
+                          "type": "email"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-18",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "bindings": {
+                          "onChange": "handleChange_last_event"
+                        },
+                        "component": "Input",
+                        "id": "form-slot-field-7-21",
+                        "meta": {
+                          "confidence": 1,
+                          "confidenceLevel": "low",
+                          "intent": "slot:field-7",
+                          "label": "field-7"
+                        },
+                        "props": {
+                          "field": "last_event",
+                          "help": "Lifecycle event associated with the most recent timestamp mutation.",
+                          "label": "Last event",
+                          "placeholder": "Enter last event"
+                        }
+                      }
+                    ],
+                    "component": "Stack",
+                    "id": "form-form-field-group-20",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [],
+                    "component": "Stack",
+                    "id": "form-form-field-group-22",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  },
+                  {
+                    "children": [],
+                    "component": "Stack",
+                    "id": "form-form-field-group-24",
+                    "layout": {
+                      "gapToken": "cluster-tight",
+                      "type": "stack"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-fields-8",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "component": "Button",
+                    "id": "form-form-submit-10",
+                    "props": {
+                      "label": "Save",
+                      "type": "submit"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "form-form-actions-9",
+                "layout": {
+                  "align": "end",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              }
+            ],
+            "component": "Stack",
+            "id": "form-screen-form-11",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success",
+            "style": {
+              "spacingToken": "inset-default"
+            }
+          }
+        ],
+        "component": "Stack",
+        "id": "form-screen",
+        "route": "/:id/edit"
+      },
+      {
+        "children": [
+          {
+            "component": "Banner",
+            "id": "timeline-loading",
+            "props": {
+              "message": "Loading your records.",
+              "title": "Loading"
+            },
+            "state": "loading"
+          },
+          {
+            "component": "Banner",
+            "id": "timeline-empty",
+            "props": {
+              "message": "Change the filters or add a record.",
+              "title": "No records found"
+            },
+            "state": "empty"
+          },
+          {
+            "component": "Banner",
+            "id": "timeline-error",
+            "props": {
+              "message": "Try again or choose another record.",
+              "title": "Unable to load records"
+            },
+            "state": "error"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "component": "Text",
+                    "id": "timeline-timeline-header-1-title",
+                    "props": {
+                      "field": "plan_name"
+                    }
+                  },
+                  {
+                    "component": "BillingSummaryBadge",
+                    "id": "timeline-timeline-header-1-billing",
+                    "props": {
+                      "amountField": "amount",
+                      "currencyField": "currency",
+                      "intervalField": "billing_interval",
+                      "minorUnits": 100
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "timeline-timeline-header-1",
+                "layout": {
+                  "align": "space-between",
+                  "type": "inline"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "collectionControl": "payment-event",
+                        "component": "PaymentEventTimeline",
+                        "id": "timeline-ve-entry-0-17",
+                        "props": {
+                          "amountField": "amount",
+                          "currencyField": "currency",
+                          "lastPaymentField": "last_payment_at",
+                          "nextPaymentField": "next_payment_due_at",
+                          "paymentStatusField": "payment_status"
+                        }
+                      }
+                    ],
+                    "collectionControl": "event",
+                    "component": "Card",
+                    "id": "timeline-timeline-entries-13-entry"
+                  },
+                  {
+                    "collectionControl": "empty",
+                    "component": "Banner",
+                    "id": "timeline-timeline-entries-13-empty",
+                    "props": {
+                      "message": "No events yet."
+                    }
+                  }
+                ],
+                "collection": {
+                  "historyField": "state_history",
+                  "keyField": "id",
+                  "labelField": "title",
+                  "source": "events"
+                },
+                "component": "Stack",
+                "id": "timeline-timeline-entries-13",
+                "layout": {
+                  "gapToken": "cluster-default",
+                  "type": "stack"
+                }
+              },
+              {
+                "children": [
+                  {
+                    "component": "StateTransitionEvent",
+                    "id": "timeline-ve-entry-0-15",
+                    "props": {
+                      "historyField": "state_history",
+                      "labelField": "status",
+                      "showActor": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "component": "CancellationEvent",
+                    "id": "timeline-ve-entry-0-16",
+                    "props": {
+                      "codeField": "cancellation_reason_code",
+                      "labelField": "cancellation_reason",
+                      "timestampField": "cancellation_requested_at"
+                    }
+                  },
+                  {
+                    "component": "ArchiveEvent",
+                    "id": "timeline-ve-entry-0-18",
+                    "props": {
+                      "archivedAtField": "archived_at",
+                      "archivedByField": "archived_by",
+                      "metadataField": "archive_metadata",
+                      "reasonField": "archive_reason",
+                      "restorationMetadataField": "restoration_metadata",
+                      "restoredAtField": "restored_at"
+                    }
+                  }
+                ],
+                "component": "Stack",
+                "id": "timeline-timeline-entries-13-trait-events"
+              }
+            ],
+            "component": "Stack",
+            "id": "timeline-screen-timeline-14",
+            "layout": {
+              "gapToken": "cluster-default",
+              "type": "stack"
+            },
+            "state": "success"
+          }
+        ],
+        "component": "Stack",
+        "id": "timeline-screen",
+        "route": "/:id/timeline"
+      }
+    ],
+    "version": "2026.02",
+    "workflow": {
+      "data": {
+        "billingIntervals": [
+          "monthly",
+          "yearly"
+        ],
+        "cancellationReasonCodes": [],
+        "cancellationRequiresReason": false,
+        "currency": "usd",
+        "idField": "subscription_id",
+        "lifecycleStates": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "minorUnits": 100,
+        "recordedEvents": [
+          "billing_cycle_started",
+          "billing_cycle_completed",
+          "payment_received",
+          "cancellation_requested"
+        ],
+        "sampleCount": 10,
+        "traits": [
+          "lifecycle/Stateful",
+          "lifecycle/Cancellable",
+          "lifecycle/Timestampable",
+          "financial/Billable",
+          "lifecycle/Archivable",
+          "viz/MarkArea"
+        ]
+      },
+      "object": "Subscription",
+      "screens": [
+        {
+          "context": "list",
+          "id": "list-screen",
+          "route": "/"
+        },
+        {
+          "context": "detail",
+          "id": "detail-screen",
+          "route": "/:id"
+        },
+        {
+          "context": "form",
+          "id": "form-screen",
+          "route": "/:id/edit"
+        },
+        {
+          "context": "timeline",
+          "id": "timeline-screen",
+          "route": "/:id/timeline"
+        }
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "success"
+      ],
+      "transitions": [
+        {
+          "action": "handleRowClick",
+          "effect": "navigate",
+          "from": "list",
+          "to": "detail"
+        },
+        {
+          "action": "handleEdit",
+          "effect": "navigate",
+          "from": "detail",
+          "to": "form"
+        },
+        {
+          "action": "handleDelete",
+          "effect": "archive",
+          "from": "detail",
+          "to": "list"
+        },
+        {
+          "action": "handleCancel",
+          "effect": "pending_cancellation",
+          "from": "detail",
+          "to": "detail"
+        },
+        {
+          "action": "handleViewTimeline",
+          "effect": "navigate",
+          "from": "detail",
+          "to": "timeline"
+        },
+        {
+          "action": "handleSubmit",
+          "effect": "save",
+          "from": "form",
+          "to": "detail"
+        }
+      ]
+    }
+  }
+}

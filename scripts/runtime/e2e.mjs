@@ -774,14 +774,14 @@ async function main() {
         traits: health.registry.traits,
         objects: health.registry.objects,
       },
-      { components: 109, traits: 45, objects: 11 },
+      { components: 109, traits: 45, objects: 18 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));
     assert.deepEqual(health.tokens.scopes, Object.fromEntries(Object.entries(builtScopes).map(([brand, themes]) => [brand, Object.keys(themes).sort()])));
     assert.deepEqual(health.tokens.defaultScope, { brand: 'A', theme: 'light', source: 'default' });
     assert.deepEqual(health.productReality.runtime, {
-      cells: 154, pass: 154, typedGap: 0, fail: 0,
+      cells: 240, pass: 240, typedGap: 0, fail: 0,
       head: (await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"))).head,
     });
     const releaseLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/release-cells.v1.json"));

@@ -1,0 +1,445 @@
+object:
+  name: Mission
+  version: 0.1.0
+  domain: research.job
+  description: 'TraceLab mission: job in the research notebook. API provenance and unavailable trait fields
+    are specified in the TraceLab OODS mapping contract.'
+  tags:
+  - research
+  - tracelab
+  - job
+traits:
+- name: content/Labelled
+  parameters:
+    maxLabelLength: 255
+    maxDescriptionLength: 1000
+- name: lifecycle/Stateful
+  parameters:
+    states: &id001
+    - draft
+    - queued
+    - in_progress
+    - completed
+    - blocked
+    - cancelled
+    - validation_failed
+    initialState: draft
+- name: lifecycle/Timestampable
+  parameters:
+    recordedEvents:
+    - created
+    - queued
+    - started
+    - completed
+    - updated
+    timezone: UTC
+- name: structural/Ownerable
+  parameters:
+    ownerTypes:
+    - user
+    primaryOwnerType: user
+    allowTransfer: false
+- name: behavioral/Taggable
+  parameters:
+    maxTags: 50
+    allowCustomTags: true
+    caseSensitive: true
+- name: lifecycle/Cancellable
+  parameters:
+    allowCancellationAfterStart: true
+    requireReason: false
+- name: behavioral/Searchable
+  parameters:
+    placeholder: Search missions
+- name: behavioral/Filterable
+- name: behavioral/Pageable
+  parameters:
+    defaultPageSize: 20
+    pageSizeOptions:
+    - 10
+    - 20
+    - 50
+    - 100
+schema:
+  mission_id:
+    type: string
+    required: true
+    description: Human-readable mission identifier (e.g., B16.1)
+    validation:
+      maxLength: 50
+      minLength: 1
+  title:
+    type: string
+    required: true
+    description: Mission title
+    validation: &id002
+      maxLength: 255
+      minLength: 3
+  objective:
+    type: string
+    required: true
+    description: What this mission aims to achieve (minimum 10 characters)
+    validation: &id003
+      minLength: 10
+  success_criteria:
+    type: string[]
+    required: true
+    description: Array of measurable success conditions
+    validation:
+      minItems: 1
+  id:
+    type: uuid
+    required: true
+    description: Id.
+    validation:
+      format: uuid
+  project_id:
+    type: uuid
+    required: false
+    description: Project id.
+  project_name:
+    type: string
+    required: false
+    description: Name of the associated project
+  context:
+    type: object
+    required: false
+    description: Context.
+  deliverables:
+    type: string[]
+    required: false
+    description: Deliverables.
+  research_phases:
+    type: object
+    required: false
+    description: Research phases.
+  tags:
+    type: string[]
+    required: false
+    description: Tags.
+  metadata:
+    type: object
+    required: false
+    description: Metadata.
+  background:
+    type: string
+    required: false
+    description: Background.
+  focus:
+    type: string
+    required: false
+    description: Focus.
+  references:
+    type: object[]
+    required: false
+    description: References.
+  required_entities:
+    type: string[]
+    required: false
+    description: Required entities.
+  excluded_entities:
+    type: string[]
+    required: false
+    description: Excluded entities.
+  expected_output_schema:
+    type: object
+    required: false
+    description: Expected output schema.
+  coverage_thresholds:
+    type: object
+    required: false
+    description: Coverage thresholds.
+  validation_thresholds:
+    type: object
+    required: false
+    description: Validation thresholds.
+  deliverable_format:
+    type: string
+    required: false
+    description: Deliverable format.
+  max_loops:
+    type: number
+    required: false
+    description: Max loops.
+  min_loops:
+    type: number
+    required: false
+    description: Min loops.
+  constraints:
+    type: string[]
+    required: false
+    description: Constraints.
+  status:
+    type: string
+    required: true
+    description: Canonical research lifecycle. The API remains authoritative; do not coerce an unknown
+      server value.
+    validation:
+      enum: *id001
+  queued_at:
+    type: datetime
+    required: false
+    description: Queued at.
+  started_at:
+    type: datetime
+    required: false
+    description: Started at.
+  completed_at:
+    type: datetime
+    required: false
+    description: Completed at.
+  deepsearch_job_id:
+    type: string
+    required: false
+    description: Deepsearch job id.
+  execution_metadata:
+    type: object
+    required: false
+    description: Execution metadata.
+  result_document_ids:
+    type: uuid[]
+    required: false
+    description: Result document ids.
+  result_report_id:
+    type: uuid
+    required: false
+    description: Result report id.
+  result_markdown:
+    type: string
+    required: false
+    description: Result markdown.
+  result_protocol:
+    type: object
+    required: false
+    description: Result protocol.
+  error_message:
+    type: string
+    required: false
+    description: Error message.
+  created_at:
+    type: datetime
+    required: true
+    description: Created at.
+    validation:
+      format: date-time
+  updated_at:
+    type: datetime
+    required: true
+    description: Updated at.
+    validation:
+      format: date-time
+  created_by:
+    type: string
+    required: false
+    description: Created by.
+  progress_percent:
+    type: number
+    required: false
+    description: Progress percent.
+  current_phase:
+    type: string
+    required: false
+    description: Current phase.
+  deepsearch_attempt_count:
+    type: number
+    required: false
+    description: Deepsearch attempt count.
+    default: 0
+  lease_expires_at:
+    type: datetime
+    required: false
+    description: Lease expires at.
+  materialization_pending:
+    type: boolean
+    required: true
+    description: Materialization pending.
+  materialization_status:
+    type: string
+    required: false
+    description: Materialization status.
+  materialization_attempt_count:
+    type: number
+    required: false
+    description: Materialization attempt count.
+    default: 0
+  materialization_error:
+    type: string
+    required: false
+    description: Materialization error.
+  search_ready:
+    type: boolean
+    required: true
+    description: Search ready.
+  label:
+    type: string
+    required: true
+    description: Display projection of title; retain the complete source field.
+    validation: *id002
+  description:
+    type: string
+    required: true
+    description: Display projection of objective; never truncates persisted content.
+    validation: *id003
+  owner_id:
+    type: uuid
+    required: false
+    description: Authoritative nullable server owner_id. Not exposed by the current response; unavailable
+      until the API exposes it. Never derive from created_by, user_id, or project owner.
+  owner_type:
+    type: string
+    required: false
+    description: user only when an authoritative owner_id is present.
+    validation:
+      enum:
+      - user
+  last_event:
+    type: string
+    required: false
+    description: Only from an explicit event or timestamp projection; absence is unknown, not a fabricated
+      audit event.
+  cancel_at_period_end:
+    type: boolean
+    required: false
+    default: false
+    description: TraceLab cancellation is immediate; no billing period exists. Period-end controls must
+      not be used.
+semantics:
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  project_id:
+    semantic_type: research.mission.project_id
+    token_mapping: tokenMap(text.body.*)
+  mission_id:
+    semantic_type: research.mission.mission_id
+    token_mapping: tokenMap(text.body.*)
+  objective:
+    semantic_type: research.mission.objective
+    token_mapping: tokenMap(text.body.*)
+  success_criteria:
+    semantic_type: research.mission.success_criteria
+    token_mapping: tokenMap(text.body.*)
+  id:
+    semantic_type: research.mission.id
+    token_mapping: tokenMap(text.body.*)
+  project_name:
+    semantic_type: research.mission.project_name
+    token_mapping: tokenMap(text.body.*)
+  context:
+    semantic_type: research.mission.context
+    token_mapping: tokenMap(text.body.*)
+  deliverables:
+    semantic_type: research.mission.deliverables
+    token_mapping: tokenMap(text.body.*)
+  research_phases:
+    semantic_type: research.mission.research_phases
+    token_mapping: tokenMap(text.body.*)
+  metadata:
+    semantic_type: research.mission.metadata
+    token_mapping: tokenMap(text.body.*)
+  background:
+    semantic_type: research.mission.background
+    token_mapping: tokenMap(text.body.*)
+  focus:
+    semantic_type: research.mission.focus
+    token_mapping: tokenMap(text.body.*)
+  references:
+    semantic_type: research.mission.references
+    token_mapping: tokenMap(text.body.*)
+  required_entities:
+    semantic_type: research.mission.required_entities
+    token_mapping: tokenMap(text.body.*)
+  excluded_entities:
+    semantic_type: research.mission.excluded_entities
+    token_mapping: tokenMap(text.body.*)
+  expected_output_schema:
+    semantic_type: research.mission.expected_output_schema
+    token_mapping: tokenMap(text.body.*)
+  coverage_thresholds:
+    semantic_type: research.mission.coverage_thresholds
+    token_mapping: tokenMap(text.body.*)
+  validation_thresholds:
+    semantic_type: research.mission.validation_thresholds
+    token_mapping: tokenMap(text.body.*)
+  deliverable_format:
+    semantic_type: research.mission.deliverable_format
+    token_mapping: tokenMap(text.body.*)
+  max_loops:
+    semantic_type: research.mission.max_loops
+    token_mapping: tokenMap(text.body.*)
+  min_loops:
+    semantic_type: research.mission.min_loops
+    token_mapping: tokenMap(text.body.*)
+  constraints:
+    semantic_type: research.mission.constraints
+    token_mapping: tokenMap(text.body.*)
+  queued_at:
+    semantic_type: research.mission.queued_at
+    token_mapping: tokenMap(text.body.*)
+  started_at:
+    semantic_type: research.mission.started_at
+    token_mapping: tokenMap(text.body.*)
+  completed_at:
+    semantic_type: research.mission.completed_at
+    token_mapping: tokenMap(text.body.*)
+  deepsearch_job_id:
+    semantic_type: research.mission.deepsearch_job_id
+    token_mapping: tokenMap(text.body.*)
+  execution_metadata:
+    semantic_type: research.mission.execution_metadata
+    token_mapping: tokenMap(text.body.*)
+  result_document_ids:
+    semantic_type: research.mission.result_document_ids
+    token_mapping: tokenMap(text.body.*)
+  result_report_id:
+    semantic_type: research.mission.result_report_id
+    token_mapping: tokenMap(text.body.*)
+  result_markdown:
+    semantic_type: research.mission.result_markdown
+    token_mapping: tokenMap(text.body.*)
+  result_protocol:
+    semantic_type: research.mission.result_protocol
+    token_mapping: tokenMap(text.body.*)
+  error_message:
+    semantic_type: research.mission.error_message
+    token_mapping: tokenMap(text.body.*)
+  created_by:
+    semantic_type: research.mission.created_by
+    token_mapping: tokenMap(text.body.*)
+  progress_percent:
+    semantic_type: research.mission.progress_percent
+    token_mapping: tokenMap(text.body.*)
+  current_phase:
+    semantic_type: research.mission.current_phase
+    token_mapping: tokenMap(text.body.*)
+  deepsearch_attempt_count:
+    semantic_type: research.mission.deepsearch_attempt_count
+    token_mapping: tokenMap(text.body.*)
+  lease_expires_at:
+    semantic_type: research.mission.lease_expires_at
+    token_mapping: tokenMap(text.body.*)
+  materialization_pending:
+    semantic_type: research.mission.materialization_pending
+    token_mapping: tokenMap(text.body.*)
+  materialization_status:
+    semantic_type: research.mission.materialization_status
+    token_mapping: tokenMap(text.body.*)
+  materialization_attempt_count:
+    semantic_type: research.mission.materialization_attempt_count
+    token_mapping: tokenMap(text.body.*)
+  materialization_error:
+    semantic_type: research.mission.materialization_error
+    token_mapping: tokenMap(text.body.*)
+  search_ready:
+    semantic_type: research.mission.search_ready
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+  - TraceLab
+  references:
+  - https://github.com/kneelinghorse/TraceLab/blob/main/cmos/contracts/oods-object-model.md
+  changelog:
+  - version: 0.1.0
+    date: '2026-09-12'
+    description: UX-1 research model from TraceLab Pydantic responses.

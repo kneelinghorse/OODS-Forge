@@ -59,6 +59,8 @@ export interface ChangelogEntry {
 }
 
 export interface ObjectMetadata {
+  /** Limit an embedded object to its supported presentation contexts. */
+  supportedContexts?: string[];
   owners?: string[];
   steward?: string;
   maturity?: string;

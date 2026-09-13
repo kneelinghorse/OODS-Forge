@@ -341,6 +341,20 @@ actions:
 
 ### Metadata
 
+`metadata.supportedContexts` may restrict an embedded object's presentation
+contexts. For example, `supportedContexts: [inline]` keeps research Chunk views
+inside their parent Document: the public object tool only exposes inline view
+extensions and `design.compose` rejects standalone detail/list/workflow requests.
+Objects without this metadata retain their existing contexts.
+
+Generated workflows prefer the canonical `id` field when present, before a
+domain-specific identifier such as `mission_id`. Cancellation uses a state in
+the object's lifecycle: a `cancelled` state without `pending_cancellation`
+selects immediate cancellation with no period-end control and rejects completed
+or already cancelled records. Other objects retain the existing deferred
+prototype behavior. Generated stores remain local prototypes; product adapters must bind
+their authorized server operations before claiming a persisted business action.
+
 ```yaml
 metadata:
   owners:

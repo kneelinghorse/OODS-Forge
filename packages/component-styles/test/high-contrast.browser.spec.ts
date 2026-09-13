@@ -515,3 +515,33 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     }
   }
 });
+
+describe('Research detail sidebar readability', () => {
+  for (const theme of ['light', 'dark']) {
+    it(`keeps claim and provenance regions separate at phone and desktop widths (${theme})`, async () => {
+      const page = await browser.newPage();
+      try {
+        await page.setContent(`<html data-brand="A" data-theme="${theme}"><head><style>${tokenCss}\n${componentCss}</style></head><body>
+          <div data-layout="sidebar" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(16rem,24rem);gap:24px">
+            <div data-sidebar-main><p>A research claim must stay readable beside its classification and source provenance.</p></div>
+            <aside data-sidebar-aside><p>Supporting evidence — source and disposition</p></aside>
+          </div></body></html>`);
+        for (const width of [390, 820, 1440]) {
+          await page.setViewportSize({ width, height: 900 });
+          const bounds = await page.evaluate(() => {
+            const main = document.querySelector('[data-sidebar-main]')!.getBoundingClientRect();
+            const aside = document.querySelector('[data-sidebar-aside]')!.getBoundingClientRect();
+            return { main: main.toJSON(), aside: aside.toJSON(), documentWidth: document.documentElement.scrollWidth };
+          });
+          expect(bounds.documentWidth).toBe(width);
+          if (width === 390) {
+            expect(bounds.main.width).toBeGreaterThan(300);
+            expect(bounds.aside.top).toBeGreaterThanOrEqual(bounds.main.bottom);
+          } else {
+            expect(bounds.aside.left).toBeGreaterThanOrEqual(bounds.main.right);
+          }
+        }
+      } finally { await page.close(); }
+    });
+  }
+});
