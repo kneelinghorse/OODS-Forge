@@ -1,0 +1,110 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/palette-sheets.s197.spec.ts (5 tests | 1 failed) 866ms
+   ✓ s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > reproduces the index only after checking every image, identical operand and visible text 92ms
+   ✓ s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > covers every promised screen, scope and viewport rather than treating duplicate pictures as coverage 0ms
+   ✓ s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > pins the installed CSS and npm lock integrities to the actual reviewed tarball bytes 12ms
+   × s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > keeps every unrelated lock entry and the two original dirty reports intact 113ms
+     → expected { name: 'frontend', …(4) } to deeply equal { name: 'frontend', …(4) }
+   ✓ s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > applies the prepared sequence only to a test copy and invalidates exactly the two stale lock entries  647ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/palette-sheets.s197.spec.ts > s197 palette sheets expose comparable pixels and an exact, unapplied consumer re-pin > keeps every unrelated lock entry and the two original dirty reports intact
+AssertionError: expected { name: 'frontend', …(4) } to deeply equal { name: 'frontend', …(4) }
+
+- Expected
++ Received
+
+@@ -2537,10 +2537,70 @@
+        "license": "MIT",
+        "optional": true,
+        "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.1.17.tgz",
+        "version": "4.1.17",
+      },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/core": {
++       "dependencies": {
++         "@emnapi/wasi-threads": "1.1.0",
++         "tslib": "^2.4.0",
++       },
++       "dev": true,
++       "inBundle": true,
++       "license": "MIT",
++       "optional": true,
++       "version": "1.6.0",
++     },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/runtime": {
++       "dependencies": {
++         "tslib": "^2.4.0",
++       },
++       "dev": true,
++       "inBundle": true,
++       "license": "MIT",
++       "optional": true,
++       "version": "1.6.0",
++     },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@emnapi/wasi-threads": {
++       "dependencies": {
++         "tslib": "^2.4.0",
++       },
++       "dev": true,
++       "inBundle": true,
++       "license": "MIT",
++       "optional": true,
++       "version": "1.1.0",
++     },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@napi-rs/wasm-runtime": {
++       "dependencies": {
++         "@emnapi/core": "^1.5.0",
++         "@emnapi/runtime": "^1.5.0",
++         "@tybys/wasm-util": "^0.10.1",
++       },
++       "dev": true,
++       "inBundle": true,
++       "license": "MIT",
++       "optional": true,
++       "version": "1.0.7",
++     },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/@tybys/wasm-util": {
++       "dependencies": {
++         "tslib": "^2.4.0",
++       },
++       "dev": true,
++       "inBundle": true,
++       "license": "MIT",
++       "optional": true,
++       "version": "0.10.1",
++     },
++     "node_modules/@tailwindcss/oxide-wasm32-wasi/node_modules/tslib": {
++       "dev": true,
++       "inBundle": true,
++       "license": "0BSD",
++       "optional": true,
++       "version": "2.8.1",
++     },
+      "node_modules/@tailwindcss/oxide-win32-arm64-msvc": {
+        "cpu": [
+          "arm64",
+        ],
+        "dev": true,
+
+ ❯ test/product-reality/palette-sheets.s197.spec.ts:53:25
+     51|     const old = json('tracelab-repin/package-lock.before.json'), next …
+     52|     const strip = (value: any) => { const copy = structuredClone(value…
+     53|     expect(strip(next)).toEqual(strip(old));
+       |                         ^
+     54|     const before = json('tracelab-repin/source-before.json'), after = …
+     55|     expect(after).toEqual(before); expect(before.status).not.toBe('');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  00:30:33
+   Duration  1.12s (transform 28ms, setup 16ms, collect 12ms, tests 866ms, environment 0ms, prepare 109ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/palette-sheets.s197.spec.ts --coverage.enabled=false
