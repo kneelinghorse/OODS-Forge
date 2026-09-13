@@ -23,6 +23,7 @@ import {
   resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
   resolveFieldProps,
+  hasReadOnlyFields,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
 import {
@@ -378,6 +379,10 @@ function vueFieldExpression(
     : undefined;
   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
     return `String(${fieldName})`;
+  }
+  if (node.component === 'Text' && isChildren && entry && node.meta?.intent === 'read-only-field') {
+    const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
+    return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code})`;
   }
   if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
     return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
@@ -1124,6 +1129,7 @@ function buildScriptSetup(
     lines.push(`<script setup>`);
   }
 
+  if (hasReadOnlyFields(screens)) lines.push("import { formatReadOnlyValue } from '@oods/component-contracts';");
   if (collectionSources(screens).has('events')) lines.push(`import { chronologicalEvents, formatDateTime${options.typescript ? ', type CollectionEvent' : ''} } from '@oods/component-contracts';`);
 
   // Vue reactivity imports
@@ -1418,7 +1424,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const code = blocks.join('\n');
   const imports = [
-    ...(collectionSources(ctx.tree).has('events') ? ['@oods/component-contracts'] : []),
+    ...(collectionSources(ctx.tree).has('events') || hasReadOnlyFields(ctx.tree) ? ['@oods/component-contracts'] : []),
     ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree, ctx.bindingAnalysis) ? ['vue'] : []),
     ...(ctx.components.size > 0 ? ['@oods/components-vue', '@oods/component-styles/css'] : []),
     ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),

@@ -36,3 +36,13 @@ export function chronologicalEvents(events: readonly CollectionEvent[]): Collect
     .sort((a, b) => Date.parse(a.event.at) - Date.parse(b.event.at) || a.index - b.index)
     .map(({ event }) => event);
 }
+
+/** Format declared scalar display fields without changing the underlying record. */
+export function formatReadOnlyValue(value: unknown, type: string, code = false): string {
+  if (value == null || value === '') return 'Not recorded';
+  if (type === 'date' || type === 'datetime') return formatDateTime(value as string | number | Date) || 'Invalid date';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (Array.isArray(value)) return value.map(item => summaryValue(item) ?? '').join(', ') || 'None recorded';
+  const text = String(value);
+  return code ? text.replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase()) : text;
+}

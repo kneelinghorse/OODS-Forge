@@ -585,12 +585,21 @@ describe('Sprint 183 M03 validation profiles', () => {
       nodeId: 'mixed-tabs',
     },
     ])
-  )).filter(({ framework, shape }) => (
-    shape !== 'nested child content' || framework === 'html'
   )))(
-    '$profile blocks Tabs $shape before $framework normalization can lose content',
-    async ({ framework, profile, schema, message, nodeId }) => {
+    '$profile preserves panel trees or refuses ambiguous Tabs $shape for $framework',
+    async ({ framework, profile, schema, shape, message, nodeId }) => {
       const result = await generateCode({ framework, profile, schema });
+      if (shape === 'nested child content') {
+        if (profile === 'build') {
+          expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+          expect(result.code).toContain('Content that must not disappear');
+        } else {
+          expect(result.errors).toEqual([expect.objectContaining({ code: 'OODS-V162' })]);
+        }
+        expect(result.warnings).toEqual([]);
+        expect(result.validationReceipt.checks).toContain('slots-contract');
+        return;
+      }
 
       expect(result.status).toBe('error');
       expect(result.artifact).toBeUndefined();
@@ -619,7 +628,7 @@ describe('Sprint 183 M03 validation profiles', () => {
   );
 
   it(
-    'draft exposes lossy Tabs normalization as a visible HTML warning',
+    'draft HTML preserves nested tab content without a false loss warning',
     async () => {
       const framework = 'html' as const;
       const result = await generateCode({
@@ -647,13 +656,8 @@ describe('Sprint 183 M03 validation profiles', () => {
 
       expect(result.status, JSON.stringify(result.errors ?? [])).toBe('ok');
       expect(result.artifact).toBeDefined();
-      expect(result.warnings).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          code: 'OODS-V007',
-          nodeId: 'draft-panel',
-          message: expect.stringMatching(/Nested content.*cannot be preserved/i),
-        }),
-      ]));
+      expect(result.warnings).toEqual([]);
+      expect(result.code).toContain('Visible normalization gap');
       expect(result.validationReceipt.checks).toContain('normalization-fidelity');
       expectDisclosure(result.validationReceipt, 'draft', framework, { requested: framework });
     },
@@ -697,7 +701,7 @@ describe('Sprint 183 M03 validation profiles', () => {
     },
   );
 
-  it('blocks a binding-bearing Tabs child before HTML normalization can erase it', async () => {
+  it('blocks an HTML tab action that has no executable runtime', async () => {
     const result = await generateCode({
       framework: 'html',
       profile: 'build',
@@ -725,7 +729,7 @@ describe('Sprint 183 M03 validation profiles', () => {
         code: 'OODS-V007',
         nodeId: 'save-panel',
         component: 'Button',
-        message: expect.stringMatching(/cannot be preserved.*Tabs/i),
+        message: expect.stringMatching(/HTML target cannot preserve binding Button.onActivate to saveChanges/i),
       }),
     ]));
     expect(result.validationReceipt.checks).toEqual([
@@ -734,12 +738,12 @@ describe('Sprint 183 M03 validation profiles', () => {
       'state-contract',
       'target-readiness',
       'normalization-fidelity',
-    ]);
-    expect(result.validationReceipt.notChecked).toEqual([
       'binding-contract',
       'props-contract',
       'slots-contract',
       'events-contract',
+    ]);
+    expect(result.validationReceipt.notChecked).toEqual([
       'dependency-closure',
       'fallback-policy',
       ...RELEASE_CHECKS,

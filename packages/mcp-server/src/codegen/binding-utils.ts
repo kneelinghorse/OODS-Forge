@@ -1323,3 +1323,8 @@ export function resolveFrameworkRecipeProps(
     consumedProps: [...consumedProps].sort(compareCodePoint),
   };
 }
+
+/** Only producer-authored read fields opt into scalar display formatting. */
+export function hasReadOnlyFields(nodes: readonly UiElement[]): boolean {
+  return nodes.some(node => node.meta?.intent === 'read-only-field' || hasReadOnlyFields(node.children ?? []));
+}

@@ -1,5 +1,5 @@
 import { auditSummary, initialSort, ariaSort, assertStaticSvg } from '@oods/component-contracts';
-import { dateTimeInputValue, formatDateTime, summaryValue } from '@oods/component-contracts';
+import { dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
@@ -1085,7 +1085,7 @@ function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[]
       const code = firstSerialized(entry, ['event', 'status', 'state']);
       const label = firstSerialized(entry, ['label', 'title']) ?? (code ? humanize(code) : undefined) ?? firstSerialized(entry, ['text', 'name']) ?? (lifecycle && to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
-      const detail = firstSerialized(entry, lifecycle ? ['detail', 'description', 'message', 'from', 'to'] : ['detail', 'description', 'reason', 'message', 'from', 'to']);
+      const detail = lifecycle ? firstSerialized(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined) : firstSerialized(entry, ['detail', 'description', 'reason', 'message', 'from', 'to']);
       items.push({ label, timestamp, detail, ...(lifecycle ? { actor: firstSerialized(entry, ['actorId', 'actor_id', 'actor']), reason: firstSerialized(entry, ['reason']) } : {}) });
       continue;
     }
@@ -1366,7 +1366,7 @@ function renderCancellationSummary(node: UiElement, childrenHtml = ''): string {
       },
       { term: 'Requested at', keys: ['requestedAt', 'requestedAtField'], format: value => typeof value === 'string' ? formatDateTime(value) : undefined },
       { term: 'Reason', keys: ['reason', 'cancellationReason', 'reasonField'] },
-      { term: 'Code', keys: ['code', 'codeField'] },
+      { term: 'Code', keys: ['code', 'codeField'], format: value => formatReadOnlyValue(value, 'string', true) },
     ],
   });
 }

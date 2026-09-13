@@ -11,7 +11,7 @@ describe('declared trait recipe values', () => {
   it('invalid time remains disclosed while valid history order and visibility directives survive', () => {
     const values = { history: [{ from_state: 'draft', to_state: 'active', transitioned_at: 'invalid', actor_id: 'user-1', reason: 'Approved' }, { to_state: 'archived', transitioned_at: '2026-09-01T12:00:00Z' }], showActor: false, showReason: false };
     const rows = traitEventRows('transition', values);
-    expect(rows.map(row => row.title)).toEqual(['draft → active', 'archived']);
+    expect(rows.map(row => row.title)).toEqual(['Draft → Active', 'Archived']);
     expect(rows[0]).toMatchObject({ time: 'Time not recorded', at: undefined, actor: undefined, reason: undefined });
     expect(rows[1]?.time).toBe('Sep 1, 2026, 12:00 PM');
   });

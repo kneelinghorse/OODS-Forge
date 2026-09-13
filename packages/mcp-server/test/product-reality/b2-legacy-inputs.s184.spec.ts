@@ -135,7 +135,7 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       framework: "html" as const,
       code: "OODS-V007",
       message:
-        'Nested content under Tabs child "detail-tab-panel-3" cannot be preserved when the child is normalized into a scalar item record.',
+        'HTML target cannot preserve binding Stack.onDelete to handleDelete; static output would discard executable behavior.',
     },
     {
       framework: "react" as const,
@@ -225,7 +225,7 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
         step: "codegen",
         code: "OODS-V007",
         message:
-          'Nested content under Tabs child "detail-tab-panel-3" cannot be preserved when the child is normalized into a scalar item record.',
+          'HTML target cannot preserve binding SearchInput.onUpdate to handleUpdate_searchQuery; static output would discard executable behavior.',
       });
       expect(result.code).toBeUndefined();
       expect(result.saved).toBeUndefined();
@@ -435,7 +435,13 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
           // hash-only disclosure without changing the refusal code or operand.
           const expectedNow = expected.error?.code === "OODS-V162"
             ? { ...expected.error, message: expected.error.message + " References are format-checked and hash-bound, not re-executed." }
-            : expected.error;
+            : expected.error?.code === "OODS-V007"
+              // s198 preserves HTML tab trees. The same operands now reach the
+              // explicit static-action refusal; historical receipts remain intact.
+              ? { ...expected.error, message: outcome.id === "product-detail-html-build"
+                ? "HTML target cannot preserve binding Stack.onDelete to handleDelete; static output would discard executable behavior."
+                : "HTML target cannot preserve binding SearchInput.onUpdate to handleUpdate_searchQuery; static output would discard executable behavior." }
+              : expected.error;
           expect(result.error, outcome.id).toEqual(expectedNow);
           expect(result.code, outcome.id).toBeUndefined();
         }

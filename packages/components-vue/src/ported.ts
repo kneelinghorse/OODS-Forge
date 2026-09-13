@@ -1,4 +1,4 @@
-import { formatDateTime } from '@oods/component-contracts';
+import { formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
 import {
   computed,
   defineComponent,
@@ -444,7 +444,7 @@ export const CancellationSummary = defineComponent({
         ));
       }
       if (props.reason) rows.push(summaryEntry('Reason', props.reason, 'reason'));
-      if (props.code) rows.push(summaryEntry('Code', props.code, 'code'));
+      if (props.code) rows.push(summaryEntry('Code', formatReadOnlyValue(props.code, 'string', true), 'code'));
       return h('section', {
         ...attrs,
         class: mergedClass('oods-cancellation-summary', attrs.class),

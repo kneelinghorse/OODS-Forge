@@ -168,10 +168,10 @@
 
 :where(.oods-card, [data-oods-component='Card']) {
   padding: var(--cmp-spacing-inset-default, 1rem);
-  border: 1px solid var(--cmp-border-default, currentColor);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
   border-radius: var(--cmp-input-radius, 0.5rem);
-  background: var(--cmp-surface-panel, Canvas);
-  color: var(--cmp-text-body, CanvasText);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
 }
 
 :where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
@@ -1289,3 +1289,22 @@
 .oods-geo-resolution, :where([data-oods-component='GeoResolutionBadge'], [data-oods-component='VizEncodingBadge'], [data-oods-component='VizRoleBadge']) { color: var(--cmp-text-body); }
 
 .oods-viz-swatches { display: flex; flex-wrap: wrap; gap: var(--cmp-spacing-inline-sm) var(--cmp-spacing-inset-default); }
+
+/* Producer-owned read fields stay labelled and readable in every context. */
+[data-oods-component='Stack'][id$='-read-field'] { gap: 0.25rem; min-width: 0; }
+[data-oods-component='Stack'][id$='-read-fields'] { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1.25rem; }
+[data-oods-component='Stack'][id$='-read-fields'] > :not([id$='-read-field']) { grid-column: 1 / -1; }
+[data-oods-component='Stack'][id$='-read-field'] > :first-child { color: var(--sys-text-secondary); }
+[data-oods-component='Stack'][id$='-read-field'] > :last-child { overflow-wrap: anywhere; }
+[data-oods-component='StatusBadge'] { text-transform: none; letter-spacing: normal; width: fit-content; }
+
+/* Keep the frozen ported block intact; current recipe roles follow semantic fallbacks. */
+:where([data-oods-component='CancellationSummary']) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}

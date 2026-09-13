@@ -170,7 +170,7 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
         ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined)
         ?? 'Event',
       timestamp: firstText(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
-      detail: firstText(entry, ['detail', 'description', 'message', 'from', 'to']),
+      detail: firstText(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined),
       actorId: firstText(entry, ['actorId', 'actor_id', 'actor']),
       reason: firstText(entry, ['reason']),
     });

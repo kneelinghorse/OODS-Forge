@@ -1191,7 +1191,6 @@ export function preflightTargetContracts(
     }
 
     const childrenUseTabsPanelSlot = node.component === 'Tabs'
-      && (framework === 'react' || framework === 'vue')
       && contract.slots.includes('panel');
     if (node.children?.length && !contract.slots.includes('default') && !childrenUseTabsPanelSlot) {
       issues.push(issue(

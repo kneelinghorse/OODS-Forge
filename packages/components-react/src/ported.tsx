@@ -1,4 +1,4 @@
-import { formatDateTime } from '@oods/component-contracts';
+import { formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Input } from './fields.js';
@@ -215,7 +215,7 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
       actor: eventText(value, ['actorId', 'actor_id', 'actor']),
       actorId: eventText(value, ['actorId', 'actor_id']),
       reason: eventText(value, ['reason']),
-      detail: eventText(value, ['detail', 'description', 'message', 'from', 'to']),
+      detail: eventText(value, ['detail', 'description', 'message']) ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined),
     }];
   });
 }
@@ -452,7 +452,7 @@ export const CancellationSummary = React.forwardRef<HTMLElement, CancellationSum
             <div data-summary-item="true"><dt>Reason</dt><dd>{reason}</dd></div>
           ) : null}
           {code ? (
-            <div data-summary-item="true"><dt>Code</dt><dd>{code}</dd></div>
+            <div data-summary-item="true"><dt>Code</dt><dd>{formatReadOnlyValue(code, 'string', true)}</dd></div>
           ) : null}
           {childValue !== undefined && childValue !== null ? (
             <div data-summary-item="true"><dt>{label ?? 'Cancellation'}</dt><dd>{childValue}</dd></div>
