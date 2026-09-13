@@ -52,6 +52,11 @@ function tone(seed: ToneSeed, l: number, strength = 1): string {
   return paletteColor(l, seed.chromaPeak * Math.sin(Math.PI * l) ** 1.3 * strength, seed.hue);
 }
 
+function neutralTone(seed: ToneSeed, l: number): string {
+  const envelope = l === 0 || l === 1 ? 0 : .1 + .9 * Math.sin(Math.PI * l) ** 1.3;
+  return paletteColor(l, seed.chromaPeak * envelope, seed.hue);
+}
+
 function leaf(value: string, name: string) {
   return {
     $type: 'color', $value: value,
@@ -70,7 +75,10 @@ function setColor(tree: TokenTree, key: string, value: string): void {
 function referenceRamp(tree: TokenTree, family: string, seed: ToneSeed): void {
   const steps = [[50, .985], [100, .95], [200, .89], [300, .81], [400, .71],
     [500, .6], [600, .5], [700, .42], [800, .34], [900, .25], [950, .18]];
-  for (const [step, l] of steps) setColor(tree, `ref.color.${family}.${step}`, tone(seed, l));
+  for (const [step, defaultL] of steps) {
+    const l = family === 'primary' ? ({ 500: .55, 600: .45, 700: .41 } as Record<number, number>)[step] ?? defaultL : defaultL;
+    setColor(tree, `ref.color.${family}.${step}`, family === 'neutral' ? neutralTone(seed, l) : tone(seed, l));
+  }
   if (family === 'neutral') setColor(tree, 'ref.color.neutral.0', paletteColor(1, 0, seed.hue));
 }
 
@@ -78,7 +86,7 @@ function brandTree(brand: 'A' | 'B', seed: BrandSeed, dark: boolean, retainedViz
   const tree: TokenTree = { $schema: 'https://design-tokens.org/dtcg/schema.json' };
   const put = (role: string, value: string) => setColor(tree, `color.brand.${brand}.${role}`, value);
   const neutral = (l: number) => dark
-    ? paletteColor(l, seed.dark.canvasChroma, seed.neutral.hue) : tone(seed.neutral, l);
+    ? paletteColor(l, seed.dark.canvasChroma, seed.neutral.hue) : neutralTone(seed.neutral, l);
   const canvas = seed.dark.canvasLightness;
   const elevation = seed.dark.elevationDelta;
   const surfaces: Record<string, number> = dark
