@@ -70,3 +70,14 @@ setup gap in tokens-validate: all five dist outputs were absent before `--check`
 The raw failed job log is retained in `ci/tokens-validate-initial.log`. The workflow
 now builds the canonical tokens before checking their emitted output. A boundary
 spec pins that ordering. This failed run is not relabeled as a passing run.
+
+The second remote run (34781054944, head bfd9bfcc9) passed a11y-contract,
+tokens-validate, both governance jobs and guardrails-check. Coverage executed
+7,335 tests: 7,318 passed, one failed, 16 skipped. Its sole failure was the old
+bridge assertion that every branded value must differ from the default. The
+three A/light interaction values intentionally share the new generated ladder;
+the assertion now names exactly those three shared slots, while all 41 per-cell
+source comparisons and seeded cross-cell leak controls remain. A bridge that
+repeats the entire root block still fails. No color threshold or token changed.
+Raw output: `ci/coverage-bfd9bfcc9.log`. The 16 existing optional Stage1 fixture
+skips are reported, not counted as passes. A new CI run must establish coverage.

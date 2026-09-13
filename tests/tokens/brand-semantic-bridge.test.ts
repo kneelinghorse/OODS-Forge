@@ -310,16 +310,21 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
     for (const brand of BRANDS) {
       for (const theme of THEMES) {
         const declared = blocks.get(selectorFor(brand, theme))!;
-        const differing = bridge.filter(({ slot }) => {
+        const matching = bridge.filter(({ slot }) => {
           const rootValue = root.get(slot);
-          return rootValue !== undefined && declared.get(slot) !== rootValue;
-        });
-        // Every slot's :root value is a var(--ref-color-*) reference from theme0, while
-        // every bridged value is a brand literal or forced-colours keyword, so all 41 differ.
-        expect(
-          differing.length,
-          `${brand}/${theme} only overrides ${differing.length}/41 slots — a bridge that restates :root changes nothing`,
-        ).toBe(41);
+          return rootValue !== undefined && declared.get(slot) === rootValue;
+        }).map(({ slot }) => slot).sort();
+        // S198's unbranded and A/light interaction states use one generated ladder.
+        // Equal paint is intentional only for those three named slots. Repeating
+        // the entire root block would still fail this exact set comparison.
+        const shared = brand === 'A' && theme === 'base' ? [
+          '--theme-surface-interactive-primary-default',
+          '--theme-surface-interactive-primary-hover',
+          '--theme-surface-interactive-primary-pressed',
+        ] : [];
+        expect(matching, `${brand}/${theme} unexpected shared defaults`).toEqual(shared);
+        expect(bridge.length - matching.length).toBeGreaterThan(0);
+
       }
     }
 
