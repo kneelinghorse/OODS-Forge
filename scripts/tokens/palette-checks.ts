@@ -1,9 +1,8 @@
 import Color from 'colorjs.io';
 import type { DtcgToken } from '../../src/tooling/tokens/dtcg.js';
 
-export const PALETTE_CHECK_TYPES = [
-  'ramp-monotonicity', 'family-hue', 'neutral-hue', 'chroma-curve', 'gamut', 'dark-coverage',
-] as const;
+import { PALETTE_CHECK_TYPES } from '../../tools/a11y/guardrails/read.mjs';
+export { PALETTE_CHECK_TYPES };
 export type PaletteCheckType = (typeof PALETTE_CHECK_TYPES)[number];
 
 export interface PaletteCheck {

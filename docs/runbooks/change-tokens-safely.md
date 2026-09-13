@@ -8,8 +8,8 @@
 - packages/tokens/src/tokens/base/** - reference and system tokens
 - packages/tokens/src/tokens/brands/<A|B>/*.json - brand overlays
 - packages/tokens/src/tokens/themes/<theme>/*.json - theme ramps (dark, hc, etc.)
-- tokens/semantic/system.json - system semantic bindings
-- tokens/semantic/components.json - component slots
+- packages/tokens/src/tokens/base/system/ - system semantic bindings
+- packages/tokens/src/tokens/component/ - component slots
 - apps/explorer/src/styles/layers.css - component slot mappings
 
 ## Commands to Run
@@ -35,6 +35,11 @@ pnpm tokens:governance diff --brand A --base origin/OODS-pro --head HEAD \
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Duplicate token name/variable | Two tokens resolve to same name | Rename or move one token path |
-| tokens:lint-semantic fails | Component token maps to invalid system token | Update `tokens/semantic/*.json` references |
+| tokens:lint-semantic fails | Component token maps to invalid system token | Update canonical system/component references under `packages/tokens/src/tokens/` |
 | Brand token mismatch | Brand overlay missing a required key | Add the missing token to the brand file |
 | Visual regressions | Slot mapping not updated | Adjust `apps/explorer/src/styles/layers.css` |
+
+`tokens:validate` and `tokens:transform` delegate to the canonical package builder.
+The legacy root `tokens/` tree is historical; it is not a gate input. Both color
+guard CLIs use `tools/a11y/guardrails/read.mjs`; palette rows are evaluated by
+`tokens-validate`, and the a11y CLI grades the six relative-color rows.

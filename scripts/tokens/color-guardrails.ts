@@ -9,33 +9,19 @@ import { contrastRatio } from '@oods/a11y-tools';
 
 import { loadDtcgTokens, type DtcgToken } from '../../src/tooling/tokens/dtcg.js';
 
-import { checkPalette, PALETTE_CHECK_TYPES, selectRamp, summarizeChecks, type PaletteCheckType } from './palette-checks.js';
+import { loadGuardrails, type GuardrailSpec } from '../../tools/a11y/guardrails/read.mjs';
+import { loadCanonicalColorTokens } from './canonical-colors.js';
+
+import { checkPalette, selectRamp, summarizeChecks } from './palette-checks.js';
+
+export { loadGuardrails };
+export type { GuardrailSpec };
 
 interface CliOptions {
   mission: string;
   diagnostics: boolean;
   quiet: boolean;
   json?: string;
-}
-
-export interface GuardrailSpec {
-  checkType: PaletteCheckType | 'relative-color';
-  source: string | null;
-  target: string | null;
-  id: string;
-  usage: string;
-  theme: string;
-  state: string;
-  baseToken: string;
-  derivedToken: string;
-  deltaLMin: number | null;
-  deltaLMax: number | null;
-  deltaCMin: number | null;
-  deltaCMax: number | null;
-  deltaHMax: number | null;
-  contrastForeground: string | null;
-  contrastBackground: string | null;
-  contrastThreshold: number | null;
 }
 
 interface GuardrailCheck {
@@ -76,7 +62,6 @@ const DEFAULT_OPTIONS: CliOptions = {
 };
 
 const projectRoot = process.cwd();
-const tokensRoot = path.resolve(projectRoot, 'tokens');
 const guardrailCsvPath = path.resolve(projectRoot, 'tools/a11y/guardrails/relative-color.csv');
 const diagnosticsPath = path.resolve(projectRoot, 'diagnostics.json');
 
@@ -92,7 +77,7 @@ async function main(): Promise<void> {
     throw new Error(`No guardrails defined in ${path.relative(projectRoot, guardrailCsvPath)}.`);
   }
 
-  const tokens = await loadDtcgTokens(tokensRoot);
+  const tokens = await loadCanonicalColorTokens(projectRoot);
   const tokenMap = new Map<string, DtcgToken>(tokens.map((token) => [token.path.join('.'), token]));
 
   const results = guardrails.filter((spec) => spec.checkType === 'relative-color')
@@ -199,82 +184,7 @@ function parseArgs(argv: string[]): CliOptions {
   return options;
 }
 
-export async function loadGuardrails(filePath: string): Promise<GuardrailSpec[]> {
-  const content = await fs.readFile(filePath, 'utf8');
-  const lines = content
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('#'));
-
-  if (lines.length === 0) {
-    return [];
-  }
-
-  const [headerLine, ...rows] = lines;
-  const headers = headerLine.split(',').map((header) => header.trim());
-
-  return rows.map((row, index) => {
-    const columns = row.split(',').map((column) => column.trim());
-    if (columns.length !== headers.length) {
-      throw new Error(
-        `Guardrail csv row ${index + 2} expected ${headers.length} columns but received ${columns.length}.`,
-      );
-    }
-
-    const entry: Record<string, string> = {};
-    headers.forEach((header, columnIndex) => {
-      entry[header] = columns[columnIndex];
-    });
-
-    const numeric = (key: string): number | null => {
-      const raw = entry[key];
-      if (!raw) {
-        return null;
-      }
-      const value = Number(raw);
-      if (Number.isNaN(value)) {
-        throw new Error(
-          `Guardrail csv row ${index + 2} column "${key}" must be numeric. Received "${raw}".`,
-        );
-      }
-      return value;
-    };
-
-    const text = (key: string): string | null => {
-      const raw = entry[key];
-      return raw ? raw : null;
-    };
-
-    const checkType = entry.check_type || 'relative-color';
-    if (checkType !== 'relative-color' && !PALETTE_CHECK_TYPES.includes(checkType as PaletteCheckType)) {
-      throw new Error(`Unknown guardrail check type: ${checkType}`);
-    }
-    if (checkType !== 'relative-color' && (!entry.source || !entry.target)) {
-      throw new Error(`Palette guardrail ${entry.id} requires source and target`);
-    }
-    return {
-      checkType: checkType as GuardrailSpec['checkType'],
-      source: text('source'),
-      target: text('target'),
-      id: entry.id ?? `guardrail-${index + 1}`,
-      usage: entry.usage ?? 'unknown',
-      theme: entry.theme ?? 'default',
-      state: entry.state ?? 'state',
-      baseToken: entry.base_token,
-      derivedToken: entry.derived_token,
-      deltaLMin: numeric('delta_l_min'),
-      deltaLMax: numeric('delta_l_max'),
-      deltaCMin: numeric('delta_c_min'),
-      deltaCMax: numeric('delta_c_max'),
-      deltaHMax: numeric('delta_h_max'),
-      contrastForeground: text('contrast_foreground_token'),
-      contrastBackground: text('contrast_background_token'),
-      contrastThreshold: numeric('contrast_threshold'),
-    };
-  });
-}
-
-function evaluateGuardrail(spec: GuardrailSpec, tokens: Map<string, DtcgToken>): GuardrailResult {
+export function evaluateGuardrail(spec: GuardrailSpec, tokens: Map<string, DtcgToken>): GuardrailResult {
   const baseValue = resolveTokenValue(spec.baseToken, tokens);
   const derivedValue = resolveTokenValue(spec.derivedToken, tokens);
 
@@ -383,7 +293,7 @@ function resolveTokenValue(pathExpression: string, tokens: Map<string, DtcgToken
       throw new Error(`Circular token reference detected while resolving "${pathExpression}".`);
     }
 
-    const token = tokens.get(current);
+    const token = tokens.get(current) ?? tokens.get(current.replaceAll('_', '-'));
     if (!token) {
       throw new Error(`Token "${pathExpression}" references unknown token "${current}".`);
     }

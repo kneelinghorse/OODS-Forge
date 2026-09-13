@@ -17,7 +17,8 @@ describe('seed-generated palette boundary', () => {
     const seeds = await loadPaletteSeeds();
     const root = await scratch();
     const original = generatePaletteFiles(seeds);
-    expect(original.size).toBe(14);
+    // Theme0 surface/status are now producer-owned alongside the original 14 files.
+    expect(original.size).toBe(16);
     expect(generatePaletteFiles(seeds)).toEqual(original);
     await writePaletteFiles(original, root);
     expect(await writePaletteFiles(original, root, true)).toEqual([]);
@@ -90,7 +91,7 @@ describe('seed-generated palette boundary', () => {
 
   it('only emits the requested mission group so light work cannot mutate dark early', async () => {
     const files = generatePaletteFiles(await loadPaletteSeeds(), ['reference', 'light']);
-    expect(files.size).toBe(5);
+    expect(files.size).toBe(7);
     expect([...files.keys()].some((name) => name.endsWith('/dark.json'))).toBe(false);
   });
 

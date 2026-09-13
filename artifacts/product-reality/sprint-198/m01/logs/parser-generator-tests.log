@@ -1,0 +1,56 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge
+
+ ❯ |core| tests/tokens/palette-generator.s197.test.ts (18 tests | 1 failed) 1389ms
+   ✓ seed-generated palette boundary > reproduces every byte, detects seed drift, and never repairs files in check mode 178ms
+   ✓ seed-generated palette boundary > fails --check at the process boundary for changed seeds and missing outputs  978ms
+   ✓ seed-generated palette boundary > rejects unknown version rather than silently accepting an unused input 20ms
+   ✓ seed-generated palette boundary > rejects out of range hue rather than silently accepting an unused input 13ms
+   ✓ seed-generated palette boundary > rejects missing status rather than silently accepting an unused input 13ms
+   ✓ seed-generated palette boundary > rejects unknown seed rather than silently accepting an unused input 13ms
+   ✓ seed-generated palette boundary > rejects invalid dark canvas rather than silently accepting an unused input 15ms
+   ✓ seed-generated palette boundary > rejects independent B design rather than silently accepting an unused input 11ms
+   ✓ seed-generated palette boundary > keeps every existing reference step and brand semantic name; B shares the method 52ms
+   ✓ seed-generated palette boundary > generates coherent reference ramps from seeds, including gamut and mid-peak chroma 48ms
+   × seed-generated palette boundary > only emits the requested mission group so light work cannot mutate dark early 36ms
+     → expected 7 to be 5 // Object.is equality
+   ✓ seed-generated palette boundary > maps hue 0 into sRGB without altering lightness or hue 2ms
+   ✓ seed-generated palette boundary > maps hue 25 into sRGB without altering lightness or hue 3ms
+   ✓ seed-generated palette boundary > maps hue 85 into sRGB without altering lightness or hue 1ms
+   ✓ seed-generated palette boundary > maps hue 155 into sRGB without altering lightness or hue 1ms
+   ✓ seed-generated palette boundary > maps hue 210 into sRGB without altering lightness or hue 1ms
+   ✓ seed-generated palette boundary > maps hue 265 into sRGB without altering lightness or hue 1ms
+   ✓ seed-generated palette boundary > maps hue 305 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-guardrails.s197.test.ts (13 tests) 8ms
+stdout | tests/governance-gates/a11y-guardrail-dataset.s198.test.ts > the accessibility reader honors the typed palette dataset > keeps all six relative-color obligations while palette rows retain their separate gate ownership
+[a11y] 61 palette rows are owned by tokens-validate (scripts/tokens/color-guardrails.ts); evaluating 6 relative-color rows here.
+
+ ✓ |core| tests/governance-gates/a11y-guardrail-dataset.s198.test.ts (12 tests) 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > only emits the requested mission group so light work cannot mutate dark early
+AssertionError: expected 7 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 7
+
+ ❯ tests/tokens/palette-generator.s197.test.ts:94:24
+     92|   it('only emits the requested mission group so light work cannot muta…
+     93|     const files = generatePaletteFiles(await loadPaletteSeeds(), ['ref…
+     94|     expect(files.size).toBe(5);
+       |                        ^
+     95|     expect([...files.keys()].some((name) => name.endsWith('/dark.json'…
+     96|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 42 passed (43)
+   Start at  15:18:00
+   Duration  2.16s (transform 92ms, setup 0ms, collect 345ms, tests 1.41s, environment 0ms, prepare 115ms)
+
