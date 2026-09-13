@@ -1,0 +1,175 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge
+
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > reproduces every byte, detects seed drift, and never repairs files in check mode 124ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > fails --check at the process boundary for changed seeds and missing outputs 963ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects unknown version rather than silently accepting an unused input 19ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects out of range hue rather than silently accepting an unused input 16ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects missing status rather than silently accepting an unused input 15ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects unknown seed rather than silently accepting an unused input 15ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects invalid dark canvas rather than silently accepting an unused input 14ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > rejects independent B design rather than silently accepting an unused input 13ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > keeps every existing reference step and brand semantic name; B shares the method 37ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > only emits the requested mission group so light work cannot mutate dark early 24ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 0 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 25 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 85 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 155 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 210 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 265 into sRGB without altering lightness or hue 1ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts > seed-generated palette boundary > maps hue 305 into sRGB without altering lightness or hue 3ms
+ ✓ |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > declares all six new check types in the CSV while retaining the six original checks 2ms
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects reversed or flat lightness steps 5ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > checks hue circularly and rejects a drifting family 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects a consistently warm neutral, ignoring only truly achromatic endpoints 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01) 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.05) 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01) 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01) 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.02) 0ms
+   → expected false to be true // Object.is equality
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects out-of-gamut input before a serializer can hide it 0ms
+   → expected false to be true // Object.is equality
+ ✓ |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > requires each explicit dark override and fails closed for empty requirements 0ms
+ × |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > does not turn missing matches, alias cycles, or unresolved references into a green check 0ms
+   → expected false to be true // Object.is equality
+ ✓ |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > wires gamut, sequential chroma and diverging chroma symmetry into viz validation 1ms
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts > semantic token names frozen for consumer re-pins > pins every theme, both brands in base/dark/hc, aliases, and viz at the base 9ms
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts > semantic token names frozen for consumer re-pins > rejects a synthetic semantic key add 0ms
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts > semantic token names frozen for consumer re-pins > rejects a synthetic semantic key remove 0ms
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts > semantic token names frozen for consumer re-pins > rejects a synthetic semantic key rename 0ms
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts > semantic token names frozen for consumer re-pins > permits declared dark/HC overrides of existing viz names but rejects new names or deleted overrides 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects reversed or flat lightness steps
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:20:71
+     18|   });
+     19|   it('rejects reversed or flat lightness steps', () => {
+     20|     expect(passes(checkPalette('ramp-monotonicity', 'test', ramp()))).…
+       |                                                                       ^
+     21|     for (const value of ['oklch(0.95 0.05 265)', 'oklch(0.9 0.05 265)'…
+     22|       const colors = ramp(); colors[1].value = value;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > checks hue circularly and rejects a drifting family
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:28:64
+     26|   it('checks hue circularly and rejects a drifting family', () => {
+     27|     const colors = ramp(['oklch(0.9 0.01 359.8)', 'oklch(0.6 0.05 0.2)…
+     28|     expect(passes(checkPalette('family-hue', 'test', colors))).toBe(tr…
+       |                                                                ^
+     29|     colors[1].value = 'oklch(0.6 0.05 5)';
+     30|     expect(passes(checkPalette('family-hue', 'test', colors))).toBe(fa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects a consistently warm neutral, ignoring only truly achromatic endpoints
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:34:65
+     32|   it('rejects a consistently warm neutral, ignoring only truly achroma…
+     33|     const colors = ramp(); colors.unshift(token('ref.color.neutral.0',…
+     34|     expect(passes(checkPalette('neutral-hue', 'test', colors))).toBe(t…
+       |                                                                 ^
+     35|     expect(passes(checkPalette('neutral-hue', 'test', ramp().map((t) =…
+     36|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01)
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.05)
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01)
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.01)
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects endpoint peaks, dips, rebounds, and flat chroma (0.02)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:41:66
+     39|   ])('rejects endpoint peaks, dips, rebounds, and flat chroma (%j)', (…
+     40|     const colors = cs.map((c, i) => token(`ref.color.primary.${i}`, `o…
+     41|     expect(passes(checkPalette('chroma-curve', 'test', ramp()))).toBe(…
+       |                                                                  ^
+     42|     expect(passes(checkPalette('chroma-curve', 'test', colors))).toBe(…
+     43|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > rejects out-of-gamut input before a serializer can hide it
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:45:59
+     43|   });
+     44|   it('rejects out-of-gamut input before a serializer can hide it', () …
+     45|     expect(passes(checkPalette('gamut', 'test', ramp()))).toBe(true);
+       |                                                           ^
+     46|     expect(passes(checkPalette('gamut', 'test', [token('viz.scale.sequ…
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  |core| tests/tokens/palette-guardrails.s197.test.ts > palette coherence guardrails reject plausible but incoherent color sets > does not turn missing matches, alias cycles, or unresolved references into a green check
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/tokens/palette-guardrails.s197.test.ts:59:59
+     57|     }
+     58|     const colors = [token('a', '{b}'), token('b', 'oklch(0.5 0.01 265)…
+     59|     expect(passes(checkPalette('gamut', 'test', colors))).toBe(true);
+       |                                                           ^
+     60|   });
+     61|   it('wires gamut, sequential chroma and diverging chroma symmetry int…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  10 failed | 25 passed (35)
+   Start at  22:15:11
+   Duration  1.83s (transform 74ms, setup 0ms, collect 147ms, tests 1.27s, environment 0ms, prepare 110ms)
+

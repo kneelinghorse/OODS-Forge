@@ -3,18 +3,25 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
+import { fileURLToPath } from 'node:url';
 import Color from 'colorjs.io';
 import { contrastRatio } from '@oods/a11y-tools';
 
 import { loadDtcgTokens, type DtcgToken } from '../../src/tooling/tokens/dtcg.js';
 
+import { checkPalette, PALETTE_CHECK_TYPES, selectRamp, summarizeChecks, type PaletteCheckType } from './palette-checks.js';
+
 interface CliOptions {
   mission: string;
   diagnostics: boolean;
   quiet: boolean;
+  json?: string;
 }
 
-interface GuardrailSpec {
+export interface GuardrailSpec {
+  checkType: PaletteCheckType | 'relative-color';
+  source: string | null;
+  target: string | null;
   id: string;
   usage: string;
   theme: string;
@@ -88,10 +95,25 @@ async function main(): Promise<void> {
   const tokens = await loadDtcgTokens(tokensRoot);
   const tokenMap = new Map<string, DtcgToken>(tokens.map((token) => [token.path.join('.'), token]));
 
-  const results = guardrails.map((spec) => evaluateGuardrail(spec, tokenMap));
+  const results = guardrails.filter((spec) => spec.checkType === 'relative-color')
+    .map((spec) => evaluateGuardrail(spec, tokenMap));
+  const paletteResults = await evaluatePaletteGuardrails(guardrails);
+  const allChecks = [
+    ...results.flatMap((row) => row.checks.map((check) => ({ type: check.type, ok: check.pass, scope: row.spec.id }))),
+    ...paletteResults,
+  ];
+  const summary = summarizeChecks(allChecks);
+  if (options.json) {
+    await fs.writeFile(path.resolve(options.json), `${JSON.stringify({ summary, checks: allChecks }, null, 2)}\n`);
+  }
+  for (const result of paletteResults) {
+    if (!options.quiet || !result.ok) {
+      console[result.ok ? 'log' : 'error'](`${result.ok ? '✓' : '✖'} ${result.type} ${result.scope} — ${result.detail}`);
+    }
+  }
+  console.log(`Color check counts: ${JSON.stringify(summary)}`);
 
   const failures = results.filter((result) => result.failures.length > 0);
-  const passes = results.length - failures.length;
   const durationMs = Math.round(performance.now() - start);
 
   if (!options.quiet) {
@@ -115,9 +137,10 @@ async function main(): Promise<void> {
       }
     }
 
-    const outcome = failures.length === 0 ? '✔︎ Color guardrails pass' : '⚠︎ Color guardrails failed';
-    console[failures.length === 0 ? 'log' : 'error'](
-      `${outcome} (${passes}/${results.length} checks, ${durationMs}ms)`,
+    const failedChecks = allChecks.filter((check) => !check.ok).length;
+    const outcome = failedChecks === 0 ? '✔︎ Color guardrails pass' : '⚠︎ Color guardrails failed';
+    console[failedChecks === 0 ? 'log' : 'error'](
+      `${outcome} (${allChecks.length - failedChecks}/${allChecks.length} checks, ${durationMs}ms)`,
     );
   }
 
@@ -125,14 +148,14 @@ async function main(): Promise<void> {
     await appendDiagnostics({
       mission: options.mission,
       evaluatedAt: new Date().toISOString(),
-      checks: results.length,
-      passes,
-      failures: failures.length,
+      checks: allChecks.length,
+      passes: allChecks.filter((check) => check.ok).length,
+      failures: allChecks.filter((check) => !check.ok).length,
       durationMs,
     });
   }
 
-  if (failures.length > 0) {
+  if (failures.length > 0 || paletteResults.some((result) => !result.ok)) {
     process.exitCode = 1;
   }
 }
@@ -155,6 +178,10 @@ function parseArgs(argv: string[]): CliOptions {
         i += 1;
         break;
       }
+      case '--json':
+        if (!argv[i + 1] || argv[i + 1].startsWith('--')) throw new Error('Expected path after --json');
+        options.json = argv[++i];
+        break;
       case '--no-diagnostics':
         options.diagnostics = false;
         break;
@@ -172,7 +199,7 @@ function parseArgs(argv: string[]): CliOptions {
   return options;
 }
 
-async function loadGuardrails(filePath: string): Promise<GuardrailSpec[]> {
+export async function loadGuardrails(filePath: string): Promise<GuardrailSpec[]> {
   const content = await fs.readFile(filePath, 'utf8');
   const lines = content
     .split(/\r?\n/)
@@ -218,7 +245,17 @@ async function loadGuardrails(filePath: string): Promise<GuardrailSpec[]> {
       return raw ? raw : null;
     };
 
+    const checkType = entry.check_type || 'relative-color';
+    if (checkType !== 'relative-color' && !PALETTE_CHECK_TYPES.includes(checkType as PaletteCheckType)) {
+      throw new Error(`Unknown guardrail check type: ${checkType}`);
+    }
+    if (checkType !== 'relative-color' && (!entry.source || !entry.target)) {
+      throw new Error(`Palette guardrail ${entry.id} requires source and target`);
+    }
     return {
+      checkType: checkType as GuardrailSpec['checkType'],
+      source: text('source'),
+      target: text('target'),
       id: entry.id ?? `guardrail-${index + 1}`,
       usage: entry.usage ?? 'unknown',
       theme: entry.theme ?? 'default',
@@ -467,4 +504,24 @@ function ensureArray<T>(container: Record<string, unknown>, key: string): T[] {
   return value;
 }
 
-await main();
+export async function evaluatePaletteGuardrails(specs: readonly GuardrailSpec[], root = projectRoot) {
+  const cache = new Map<string, DtcgToken[]>();
+  const results = [];
+  for (const spec of specs) {
+    if (spec.checkType === 'relative-color') continue;
+    const source = path.resolve(root, spec.source!);
+    if (!cache.has(source)) cache.set(source, await loadDtcgTokens(source));
+    const tokens = cache.get(source)!;
+    const required = spec.checkType === 'dark-coverage' ? spec.target!.split('|') : [];
+    const entries = required.length ? tokens : selectRamp(tokens, spec.target!);
+    results.push(...checkPalette(spec.checkType, spec.id, entries, tokens, required));
+  }
+  return results;
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  void main().catch((error: unknown) => {
+    console.error(error instanceof Error ? error.stack ?? error.message : error);
+    process.exitCode = 1;
+  });
+}

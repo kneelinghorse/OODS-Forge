@@ -2,9 +2,12 @@
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { promises as fs } from 'node:fs';
 import Color from 'colorjs.io';
 
 import { loadDtcgTokens, type DtcgToken } from '../../src/tooling/tokens/dtcg.js';
+
+import { checkPalette, selectRamp, summarizeChecks } from './palette-checks.js';
 
 const projectRoot = process.cwd();
 const vizScaleSource = path.resolve(projectRoot, 'packages/tokens/src/viz-scales.json');
@@ -40,9 +43,11 @@ const CATEGORICAL_MIN_CHROMA = 0.045;
 
 interface CliOptions {
   quiet: boolean;
+  json?: string;
 }
 
 export interface VizScaleCheck {
+  readonly type?: string;
   readonly scope: string;
   readonly ok: boolean;
   readonly detail: string;
@@ -70,7 +75,15 @@ type OklchColor = {
 export async function runVizScaleValidation(sourcePath: string = vizScaleSource): Promise<VizScaleCheck[]> {
   const tokens = await loadDtcgTokens(sourcePath);
   const collections = collectVizScaleCollections(tokens);
-  return validateVizScaleCollections(collections);
+  const results = validateVizScaleCollections(collections);
+  for (const brand of ['A', 'B']) {
+    const source = path.resolve(path.dirname(sourcePath), `tokens/brands/${brand}/dark.json`);
+    const dark = await loadDtcgTokens(source);
+    const required = [...collections.sequential, ...collections.diverging].map((entry) => entry.token.path.join('.'));
+    results.push(...checkPalette('dark-coverage', `${brand}/dark`, dark, dark, required));
+    results.push(...checkPalette('gamut', `${brand}/dark/viz`, selectRamp(dark, 'viz.scale'), dark));
+  }
+  return results;
 }
 
 export function collectVizScaleCollections(tokens: readonly DtcgToken[]): VizScaleCollections {
@@ -128,6 +141,19 @@ export function validateVizScaleCollections(collections: VizScaleCollections): V
   results.push(...validateSequentialScales(collections.sequential));
   results.push(...validateDivergingScales(collections.diverging));
   results.push(...validateCategoricalScales(collections.categorical));
+  const sequential = collections.sequential.map((entry) => entry.token);
+  const all = [...sequential, ...collections.diverging.map((entry) => entry.token), ...collections.categorical];
+  results.push(...checkPalette('chroma-curve', 'sequential/chroma', sequential, all));
+  results.push(...checkPalette('gamut', 'viz', all));
+  const diverging = new Map(collections.diverging.map((entry) => [entry.id, entry]));
+  for (let index = 0; index < NEGATIVE_IDS.length; index += 1) {
+    const neg = diverging.get(NEGATIVE_IDS[index]);
+    const pos = diverging.get(POSITIVE_IDS[index]);
+    if (!neg || !pos) continue;
+    const delta = Math.abs(neg.oklch.c - pos.oklch.c);
+    results.push({ type: 'chroma-symmetry', scope: `diverging/chroma-${neg.id}|${pos.id}`,
+      ok: delta <= 0.002, detail: `|ΔC|=${delta.toFixed(5)} (allowed ≤ 0.002)` });
+  }
   return results;
 }
 
@@ -303,13 +329,20 @@ function parseArgs(argv: string[]): CliOptions {
       quiet = true;
     }
   }
-  return { quiet };
+  const jsonIndex = argv.indexOf('--json');
+  if (jsonIndex >= 0 && (!argv[jsonIndex + 1] || argv[jsonIndex + 1].startsWith('--'))) {
+    throw new Error('Expected path after --json');
+  }
+  return { quiet, json: jsonIndex >= 0 ? argv[jsonIndex + 1] : undefined };
 }
 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const results = await runVizScaleValidation();
   const failures = results.filter((result) => !result.ok);
+  const summary = summarizeChecks(results.map((result) => ({ ...result, type: result.type ?? 'scale-contract' })));
+  if (options.json) await fs.writeFile(options.json, `${JSON.stringify({ summary, checks: results }, null, 2)}\n`);
+  console.log(`Viz check counts: ${JSON.stringify(summary)}`);
 
   if (!options.quiet) {
     for (const result of results) {
