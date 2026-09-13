@@ -179,13 +179,13 @@ describe("Sprint 177 prose truth carriers", () => {
       "React and Vue are equal product commitments.",
     );
     expect(normalizedIndex).toContain(
-      "The live roadmap is organized around the Forge Product Reality Recovery program.",
+      "The live roadmap is `near.md`. Since 2026-09-12 it is the multi-phase, multi-sprint plan",
     );
     expect(normalizedIndex).toContain(
-      "The program document carries the mid- and far-horizon sequence",
+      "The program document changes only when Derek changes product direction.",
     );
     expect(normalizedIndex).toContain(
-      "`product-reality-program.md` is the durable direction, authorized **2026-09-03**, and `near.md` is the active sequencing surface, refreshed **2026-09-04**.",
+      "`product-reality-program.md` | The program's durable product contract and truth rules.",
     );
 
     for (const historicalVision of historicalVisionDocs) {

@@ -16,7 +16,7 @@ for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] a
   const slots = getVizScaleTokens('categorical').map(token => {
     const raw = resolveTokenToColor(token, scope)!;
     assert(raw, token);
-    const hex = normaliseColor(raw), [l, c, h] = new Color(hex).to('oklch').coords.map(Number);
+    const hex = normaliseColor(raw, token), [l, c, h] = new Color(hex).to('oklch').coords.map(Number);
     assert(c >= .045, `${brand}/${theme}/${token}: chroma ${c}`);
     const distances = [seeds.brands.A.primary.hue, seeds.brands.B.primaryHue, seeds.brands.A.accent.hue]
       .map(hue => Math.min(Math.abs(h - hue), 360 - Math.abs(h - hue)));

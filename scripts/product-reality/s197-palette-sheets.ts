@@ -54,7 +54,7 @@ if (palette === 'prepare') {
   const cssPath = palette === 'before' ? path.join(beforeRoot, 'css/tokens.css') : require.resolve('@oods/tokens/css');
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-s197-sheets-'));
   const browser = await chromium.launch({ headless: true });
-  const rows = [];
+  const rows: Array<Record<string, unknown>> = [];
   try {
     for (const ref of manifest.inputs) {
       const bytes = await fs.readFile(path.join(out, ref.file)); assert.equal(sha(bytes), ref.sha256);

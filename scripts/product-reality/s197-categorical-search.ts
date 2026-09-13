@@ -11,7 +11,7 @@ function random() { state |= 0; state = state + 0x6D2B79F5 | 0; let t = Math.imu
 const hueOffset = 17.5;
 const results = [];
 for (const theme of ['light', 'dark'] as const) {
-  const canvas = normaliseColor(theme === 'light' ? 'oklch(.985 .002327 265)' : 'oklch(.18 .008 265)');
+  const canvas = normaliseColor(theme === 'light' ? 'oklch(.985 .002327 265)' : 'oklch(.18 .008 265)', `${theme}.canvas`);
   let id = 0;
   const pools = Array.from({ length: 6 }, (_, slot) => {
     const found = new Map();
@@ -19,7 +19,7 @@ for (const theme of ['light', 'dark'] as const) {
       for (let ci = 5; ci <= 26; ci += 2) {
         const l = li / 100, chromaPeak = ci / 100, hue = (hueOffset + slot * 60) % 360;
         const value = paletteColor(l, chromaPeak, hue);
-        const hex = normaliseColor(value);
+        const hex = normaliseColor(value, `${theme}.categorical.${slot + 1}`);
         const chroma = Number(new Color(hex).to('oklch').coords[1]);
         const ratio = contrastRatio(hex, canvas);
         if (chroma < .045 || ratio < 3.05) continue;

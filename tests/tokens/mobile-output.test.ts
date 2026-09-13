@@ -20,7 +20,9 @@
  * Run `pnpm --filter @oods/tokens run build` first; the dist files are gitignored and this
  * oracle fails loudly when they are missing (CI's coverage job builds tokens before tests).
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, mkdtempSync, mkdirSync, cpSync, symlinkSync, writeFileSync, rmSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import os from 'node:os';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -104,14 +106,14 @@ const bytesToHex = (bytes: number[]) =>
 const swiftChannels = (bytes: number[]) => bytes.map((byte) => (byte / 255).toFixed(3));
 
 describe('mobile output — census and shape', () => {
-  // s192 m02: +134 component/system aliases; s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
+  // S197: +48 reference/dark colors; s192 m02: +134 component/system aliases; s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
   // collapse to the two base brand namespaces in the flat/mobile artifact; dark and hc stay
   // scoped web output. The dimension manifest counts (27/24/18/105/174) and the deferral
   // subtraction (54 easings + 14 font stacks) remain unmoved.
-  it('emits exactly 848 constants per file (916 − 54 easing − 14 font stacks), identical name sets', () => {
-    expect(flatEntries.length).toBe(916);
-    expect(swiftConstants.size).toBe(848);
-    expect(kotlinConstants.size).toBe(848);
+  it('emits exactly 896 constants per file (964 − 54 easing − 14 font stacks), identical name sets', () => {
+    expect(flatEntries.length).toBe(964);
+    expect(swiftConstants.size).toBe(896);
+    expect(kotlinConstants.size).toBe(896);
     expect([...swiftConstants.keys()].sort()).toEqual([...kotlinConstants.keys()].sort());
   });
 
@@ -263,7 +265,7 @@ describe('mobile output — anti-gaming, value-position anchored', () => {
 
   it('emits zero quoted-string values for colour-class or duration-class tokens', () => {
     const guarded = [...(byClass.get('color') ?? []), ...(byClass.get('duration') ?? [])];
-    expect(guarded.length).toBe(476 + 108); // s192 adds 81 semantic colour aliases.
+    expect(guarded.length).toBe(524 + 108); // S197 adds 48 reference/dark colors; 108 durations stay fixed.
     for (const entry of guarded) {
       const name = camelName(entry.path);
       expect(swiftConstants.get(name)?.startsWith('"'), `Swift ${name} is a quoted string`).toBe(false);
@@ -309,24 +311,36 @@ describe('mobile output — gamut mapping, not channel clipping (the m02 table a
     expect(bytesToHex(brandA!.clipped)).toBe('#C93E00');
   });
 
-  it('for EVERY divergent row the emitted bytes equal toGamut and differ from clip — a clip implementation cannot green', () => {
-    const colourEntries = (byClass.get('color') ?? []).filter((entry) => typeof entry.value === 'string');
-    for (const row of divergent) {
-      const carriers = colourEntries.filter((entry) => entry.value === row.oklch);
-      expect(carriers.length, `${row.oklch} has no emitting token`).toBeGreaterThan(0);
+  it('emits every historical divergent color through the real mobile build — clipping cannot pass when the live palette is in gamut', () => {
+    // S197 deliberately gamut-reduces palette chroma, so the historical out-of-gamut
+    // colors no longer have live carriers. Feed them to the UNMODIFIED production
+    // builder in an isolated package and inspect its emitted Swift/Kotlin literals.
+    const temporary = mkdtempSync(path.join(os.tmpdir(), 'oods-mobile-gamut-'));
+    const fixture = path.join(temporary, 'tokens'); mkdirSync(fixture);
+    try {
+      for (const file of ['src', 'scripts', 'style-dictionary.config.cjs', 'package.json']) cpSync(path.join(PKG, file), path.join(fixture, file), { recursive: true });
+      symlinkSync(path.join(PKG, 'node_modules'), path.join(fixture, 'node_modules'), 'dir');
+      symlinkSync(path.resolve('node_modules'), path.join(temporary, 'node_modules'), 'dir');
+      writeFileSync(path.join(fixture, 'src/mobile-gamut-fixture.json'), JSON.stringify({ fixture: Object.fromEntries(
+        divergent.map((row, index) => [`color-${index}`, { $type: 'color', $value: row.oklch }]),
+      ) }));
+      const built = spawnSync(process.execPath, [path.join(fixture, 'scripts/build.mjs')], { encoding: 'utf8', timeout: 30_000 });
+      expect(built.status, built.stdout + built.stderr).toBe(0);
+      const fixtureSwift = parseConstants(readFileSync(path.join(fixture, 'dist/ios-swift/OodsTokens.swift'), 'utf8'), /^\s*public static let (\w+) = (.+?)(?:\s*\/\*\*.*\*\/)?$/);
+      const fixtureKotlin = parseConstants(readFileSync(path.join(fixture, 'dist/compose/OodsTokens.kt'), 'utf8'), /^\s{2}val (\w+) = (.+)$/);
+    for (const [index, row] of divergent.entries()) {
       const mappedKotlin = `Color(0xFF${row.mapped.map((byte) => byte.toString(16).padStart(2, '0').toUpperCase()).join('')})`;
       const clippedKotlin = `Color(0xFF${row.clipped.map((byte) => byte.toString(16).padStart(2, '0').toUpperCase()).join('')})`;
       const [mr, mg, mb] = swiftChannels(row.mapped);
       const [cr, cg, cb] = swiftChannels(row.clipped);
       const mappedSwift = `UIColor(red: ${mr}, green: ${mg}, blue: ${mb}, alpha: 1)`;
       const clippedSwift = `UIColor(red: ${cr}, green: ${cg}, blue: ${cb}, alpha: 1)`;
-      for (const carrier of carriers) {
-        const name = camelName(carrier.path);
-        expect(kotlinConstants.get(name), `Kotlin ${name} must be the toGamut mapping`).toBe(mappedKotlin);
-        expect(kotlinConstants.get(name), `Kotlin ${name} must NOT be the naive clip`).not.toBe(clippedKotlin);
-        expect(swiftConstants.get(name), `Swift ${name} must be the toGamut mapping`).toBe(mappedSwift);
-        expect(swiftConstants.get(name), `Swift ${name} must NOT be the naive clip`).not.toBe(clippedSwift);
+        const name = camelName(['fixture', `color-${index}`]);
+        expect(fixtureKotlin.get(name), `Kotlin ${name} must be the toGamut mapping`).toBe(mappedKotlin);
+        expect(fixtureKotlin.get(name), `Kotlin ${name} must NOT be the naive clip`).not.toBe(clippedKotlin);
+        expect(fixtureSwift.get(name), `Swift ${name} must be the toGamut mapping`).toBe(mappedSwift);
+        expect(fixtureSwift.get(name), `Swift ${name} must NOT be the naive clip`).not.toBe(clippedSwift);
       }
-    }
+    } finally { rmSync(temporary, { recursive: true, force: true }); }
   });
 });

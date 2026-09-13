@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { verifySprint197Runtime, verifySprint197Roadmap } from '../../../../scripts/product-reality/s185-closeout.mjs';
+import { verifySprint197Runtime, verifySprint197Roadmap, verifySprint197BuildDependencies } from '../../../../scripts/product-reality/s185-closeout.mjs';
 import { auditSprint197Runtime, auditSprintRange } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 import { deriveRange, S197_BASE, S197_PUBLIC_RUNTIME_SCOPE } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
 
@@ -82,4 +82,14 @@ it('independently inventories token, golden, spec and documentation changes from
     write(files[0], 'uncommitted drift');
     expect(deriveRange(base, head, repository, S197_PUBLIC_RUNTIME_SCOPE)).toEqual(derived);
   } finally { rmSync(repository, { recursive: true, force: true }); }
+});
+
+it('the diagnostic dependency exception cannot conceal runtime or lock drift after measurement', () => {
+  const beforePackage = JSON.parse(execFileSync('git', ['show', `${S197_BASE}:package.json`], { cwd: root, encoding: 'utf8' }));
+  const beforeLock = execFileSync('git', ['show', `${S197_BASE}:pnpm-lock.yaml`], { cwd: root, encoding: 'utf8' });
+  const afterPackage = JSON.parse(raw('package.json').toString()), afterLock = raw('pnpm-lock.yaml').toString();
+  expect(() => verifySprint197BuildDependencies({ beforePackage, afterPackage, beforeLock, afterLock })).not.toThrow();
+  const changed = structuredClone(afterPackage); changed.dependencies['react'] = 'unmeasured-runtime';
+  expect(() => verifySprint197BuildDependencies({ beforePackage, afterPackage: changed, beforeLock, afterLock })).toThrow();
+  expect(() => verifySprint197BuildDependencies({ beforePackage, afterPackage, beforeLock, afterLock: afterLock + '# unrelated lock change\n' })).toThrow();
 });

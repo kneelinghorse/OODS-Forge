@@ -1618,6 +1618,19 @@ export function verifySprint197Roadmap(current, retained) {
   for (const value of ['16.540957', '20.105820', '24/24', '52', '180', '90']) assert(top.includes(value), `Roadmap omits measured palette result: ${value}`);
 }
 
+/** Only build diagnostics changed after palette measurement; package runtime inputs did not. */
+export function verifySprint197BuildDependencies({ beforePackage, afterPackage, beforeLock, afterLock }) {
+  const current = structuredClone(afterPackage);
+  assert.equal(current.devDependencies.esbuild, '0.25.10');
+  delete current.devDependencies.esbuild;
+  assert.equal(current.scripts['lint:tokens'], 'node tools/token-lint/index.mjs packages/tokens/src/tokens packages/tokens/src/presets packages/tokens/src/*.json');
+  current.scripts['lint:tokens'] = beforePackage.scripts['lint:tokens'];
+  assert.deepEqual(current, beforePackage, 'Package inputs drifted beyond the declared diagnostic correction.');
+  const addition = '      esbuild:\n        specifier: 0.25.10\n        version: 0.25.10\n';
+  assert.equal(afterLock.split(addition).length, 2);
+  assert.equal(afterLock.replace(addition, ''), beforeLock, 'Lock changed beyond the existing esbuild root importer.');
+}
+
 export function deriveSprint197Closeout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence }) {
   const base = 'artifacts/product-reality/sprint-197/m07', implementationHead = manifest.implementationHead;
   assert(fullHead(implementationHead) && fullHead(executionHead) && fullHead(reviewHead)); assert.equal(manifest.missionId, 's197-m07');
@@ -1677,9 +1690,11 @@ export function deriveSprint197Closeout({ executionHead, reviewHead, manifest, r
   assert.equal(suiteAccounting.closeout.runs.length, 1); assert.equal(suiteAccounting.closeout.runs[0].suiteExecutionIds.length, 5); assert.equal(suiteAccounting.comparisons.length, 5);
   suiteAccounting.references.forEach(verify);
   const relation = json('headRelations'); assert.deepEqual(relation.publicComparison, publicHeadEquivalence);
-  const carryOnly = new Set(['packages/mcp-server/registry/runtime-cells.v1.json', 'cmos/foundational-docs/roadmap/near.md', 'docs/how-forge-works.html',
+  const carryOnly = new Set(['pnpm-lock.yaml', 'scripts/quality/brand-cascade-browser-proof.mjs', 'scripts/quality/brand-focus-identity.mjs', 'tools/token-lint/index.mjs', 'tests/design-loop/design-loop.test.ts', 'tests/verification/how-forge-works.contract.test.ts', 'tests/verification/s177-prose-carriers.contract.test.ts', 'package.json', 'scripts/product-reality/s197-categorical-search.ts', 'scripts/product-reality/s197-palette-sheets.ts', 'scripts/product-reality/s197-viz-palette.ts', 'tests/tokens/__fixtures__/brand-css-slot-contract.json', 'tests/tokens/brand-root-and-containment.test.ts', 'tests/tokens/bridged-slot-specificity-census.test.ts', 'tests/tokens/collision-guard.test.ts', 'tests/tokens/mobile-output.test.ts', 'tests/tokens/palette-role-a.s195.test.ts', 'tests/tokens/palette-integration.s197.test.ts', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts', 'packages/mcp-server/registry/runtime-cells.v1.json', 'cmos/foundational-docs/roadmap/near.md', 'docs/how-forge-works.html',
     'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-audit-closeout.mjs', 'scripts/product-reality/s185-suite-accounting.mjs', 'scripts/product-reality/s185-sprint-wide-movers.mjs', 'scripts/product-reality/capture-s185-m01-baseline.mjs', 'scripts/product-reality/component-package-suite.mjs', 'scripts/product-reality/s185-reachability.mjs']);
   assert(publicHeadEquivalence.changedPaths.every(file => carryOnly.has(file)), 'A measured product source changed before capture.');
+  verifySprint197BuildDependencies({ beforePackage: JSON.parse(readHistorical(implementationHead, 'package.json')), afterPackage: JSON.parse(bytes('package.json')),
+    beforeLock: readHistorical(implementationHead, 'pnpm-lock.yaml').toString(), afterLock: bytes('pnpm-lock.yaml').toString() });
   const movers = json('movers'), attribution = json('moverAttribution'); assert.equal(movers.s197.base, S197_BASE); assert.equal(movers.s197.head, executionHead);
   assert.equal(attribution.base, S197_BASE); assert.equal(attribution.head, executionHead); assert.deepEqual(attribution.unattributedPaths, []);
   assert.deepEqual(attribution.rows.map(row => row.path).sort(), [...movers.s197.publicPaths].sort()); assert.equal(new Set(attribution.rows.map(row => row.path)).size, attribution.rows.length);

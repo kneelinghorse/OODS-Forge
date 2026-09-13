@@ -45,6 +45,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { focusIdentityFailures } from './brand-focus-identity.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = (rel) => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
@@ -279,33 +280,8 @@ for (const brand of BRANDS) {
 
 await browser.close();
 
-/**
- * Cross-brand identity/discrimination, checked over the values already measured above
- * rather than by painting more probes. Base is now branded and therefore must diverge;
- * hc remains keyword-identical. Dark remains branded and must also diverge.
- */
-for (const slot of FOCUS_SLOTS) {
-  for (const theme of ['base', 'hc']) {
-    const a = focusComputed[`A/${theme}`][slot];
-    const b = focusComputed[`B/${theme}`][slot];
-    const shouldMatch = theme === 'hc';
-    if ((a === b) !== shouldMatch) {
-      failures.push(
-        `${theme} ${slot}: A paints ${a} and B paints ${b} — this row must be ` +
-          `${shouldMatch ? 'brand-invariant' : 'brand-distinct'}; update the ratified contract ` +
-          'rather than weakening this check',
-      );
-    }
-  }
-  const aDark = focusComputed['A/dark'][slot];
-  const bDark = focusComputed['B/dark'][slot];
-  if (aDark === bDark) {
-    failures.push(
-      `dark ${slot}: A and B both paint ${aDark} — identical values mean the branded ` +
-        'dark focus identity was lost',
-    );
-  }
-}
+// Reuse the nine explicit primary/shared/HC relationships over the measured paints.
+failures.push(...focusIdentityFailures(focusComputed));
 
 console.log(
   `\nrendered-surface proof: ${asserted} computed-style assertions across 6 cells ` +
@@ -330,5 +306,5 @@ if (asserted === 0) {
 console.log(
   '✔ every bridged slot resolves in a real browser to the value its token source declares, ' +
     'and every focus slot resolves from the generated bridge ' +
-    '(brand-distinct in base and dark, system-keyword-identical in hc)',
+    '(primary ring brand-distinct, neutral/accent shared, HC system-keyword-identical)',
 );
