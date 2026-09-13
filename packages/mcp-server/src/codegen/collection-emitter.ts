@@ -83,7 +83,17 @@ export function emitCollectionNode(
   switch (node.collectionControl) {
     case 'empty': return emit({ ...node, collectionControl: undefined });
     case 'search': return `<SearchInput ${id} label="Search" placeholder="Search records" ${attr('value', "collectionQuery.search ?? ''")} ${attr('clearable', 'true')} ${on(react ? 'ValueChange' : 'valueChange', react ? `(search) => handleFilter({ ...collectionQuery, search })` : `handleFilter({ ...collectionQuery, search: $event })`)} />`;
-    case 'filter': return `<Select ${id} label="${escapeDoubleQuotedAttribute(String(node.props?.label ?? 'Status'))}" ${attr('value', "collectionQuery.status ?? ''")} ${attr('options', literal(node.props?.options ?? []))} ${on('Change', react ? `(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })` : `handleFilter({ ...collectionQuery, status: $event })`)} />`;
+    case 'filter': {
+      const options = node.props?.options as Array<{ value: string; label: string }> | undefined;
+      const field = snakeToCamel(String(node.props?.field ?? 'status'));
+      // String statuses have no enum. Offer observed values so the filter isn't
+      // a dead one-option select; retain the selected value across filtered pages.
+      // Function expressions also survive vue-tsc's handling of HTML-escaped attributes.
+      const values = `[...new Set([...rows.map(function(row) { return String(row.${field} ?? ''); }), collectionQuery.status ?? ''])].filter(Boolean).sort()`;
+      const expression = options && options.length > 1 ? literal(options)
+        : `[{ value: '', label: 'All states' }, ...${values}.map(function(value) { return { value, label: value.replaceAll('_', ' ') }; })]`;
+      return `<Select ${id} label="${escapeDoubleQuotedAttribute(String(node.props?.label ?? 'Status'))}" ${attr('value', "collectionQuery.status ?? ''")} ${attr('options', expression)} ${on('Change', react ? `(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })` : `handleFilter({ ...collectionQuery, status: $event })`)} />`;
+    }
     case 'sort': return `<Select ${id} label="Sort" ${attr('value', "collectionQuery.descending ? 'desc' : 'asc'")} ${attr('options', literal(node.props?.options ?? []))} ${on('Change', react ? `() => handleSort(${literal(node.props?.field)})` : `handleSort(${literal(node.props?.field)})`)} />`;
     case 'page': return `<PaginationBar ${id} ${attr('page', 'collectionQuery.page ?? 1')} ${attr('pageSize', 'collectionQuery.pageSize ?? 10')} ${attr('totalItems', 'collectionQuery.total ?? rows.length')} ${on(react ? 'PageChange' : 'pageChange', 'handlePageChange')} />`;
     case 'archive': {

@@ -494,6 +494,7 @@ function emitNode(
 
   // data-oods-component for runtime identification
   attrParts.push(`data-oods-component="${tag}"`);
+  if (node.children?.some(child => child.collectionControl === 'search')) attrParts.push('data-oods-collection-toolbar="true"');
   if (node.state !== undefined) {
     attrParts.push(node.state === 'success' && collectionSources([node]).has('rows') ? `data-oods-state={uiState === 'success' ? 'success' : undefined}` : `data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
   }

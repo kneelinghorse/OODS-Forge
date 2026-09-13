@@ -198,7 +198,7 @@ export const StatusBadge = defineComponent({
       return h(Badge, {
         ...attrs,
         class: mergedClass('oods-status-badge', attrs.class),
-        content: slots.default ? undefined : props.content,
+        content: slots.default ? undefined : props.content ?? presentation.label,
         status,
         domain: props.domain,
         tone,

@@ -19,7 +19,7 @@ export type PaginationItem = {
 type StatusMetadata = {
   description: string;
   tone: ComponentTone;
-  icon: string;
+  icon?: string;
 };
 
 export type StatusPresentation = StatusMetadata & {
@@ -134,7 +134,6 @@ export function getPortedStatusPresentation(domain: string, status: string): Sta
       label: statusLabel(status || 'Unknown'),
       description: 'Status not found in registry; falling back to the requested token set.',
       tone: 'neutral',
-      icon: '•',
     };
   }
   return { ...metadata, label: statusLabel(status) };

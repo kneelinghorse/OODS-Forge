@@ -4,6 +4,8 @@ import { handle as compose } from '../../packages/mcp-server/src/tools/design.co
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { deriveConsumerModel } from '../product-reality/s185-m04-consumer-contract.js';
+import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
+import { snakeToCamel } from '../../packages/mcp-server/src/codegen/binding-utils.js';
 import { DEFAULT_PORT, ROOT, digest, loopRequest, outputDirectory, validateReceipt, verifyTheme, writeJson, type RenderInput } from './common.js';
 
 /** Composition/generation run in the caller so producer edits take effect without restarting consumers. */
@@ -21,6 +23,17 @@ export async function render(input: RenderInput) {
   if (composition.status !== 'ok' || !composition.schema) throw new Error(`Composition failed: ${JSON.stringify(composition)}`);
   const composeMs = performance.now() - started;
   const schemaHash = digest(JSON.stringify(composition.schema));
+  const model = deriveConsumerModel(composition.schema, input.model);
+  if (Array.isArray(input.model?.rows)) model.collectionQuery = { page: 1, pageSize: Math.max(10, input.model.rows.length), total: input.model.rows.length };
+  if (input.compose.context === 'list' && input.compose.object && !Object.hasOwn(input.model ?? {}, 'rows')) {
+    // The preview uses the same object/trait seed policy as its workflow app.
+    // Generated standalone components still receive rows through their public API.
+    const workflow = await compose({ ...input.compose, context: 'workflow' });
+    if (workflow.status !== 'ok') throw new Error(`List seed composition failed: ${JSON.stringify(workflow.errors)}`);
+    const records = workflowSampleRecords(workflow.schema).filter(record => !record.is_archived);
+    model.rows = records.map(record => Object.fromEntries(Object.entries(record).map(([key, value]) => [snakeToCamel(key), value])));
+    model.collectionQuery = { page: 1, pageSize: 10, total: records.length };
+  }
   const sourceHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
   const receipts = [];
   for (const framework of input.framework && input.framework !== 'both' ? [input.framework] : ['react', 'vue'] as const) {
@@ -31,7 +44,7 @@ export async function render(input: RenderInput) {
     if (issues.length) throw new Error(issues.join('\n'));
     const receipt = await loopRequest(port, '/render', {
       framework, theme, brand, artifact: generated.artifact, schemaHash, compose: input.compose,
-      model: { ...deriveConsumerModel(composition.schema, input.model), ...Object.fromEntries(['rows', 'events', 'collectionQuery'].filter(key => input.model && Object.hasOwn(input.model, key)).map(key => [key, input.model![key]])) }, steps: input.steps ?? [], widths,
+      model: { ...model, ...Object.fromEntries(['rows', 'events', 'collectionQuery'].filter(key => input.model && Object.hasOwn(input.model, key)).map(key => [key, input.model![key]])) }, steps: input.steps ?? [], widths,
       output: path.join(output, framework), sourceHead,
       timings: { composeMs, generateMs: performance.now() - generationStarted },
     });
