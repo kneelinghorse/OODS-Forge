@@ -1,0 +1,39 @@
+from pathlib import Path
+import json,subprocess
+root=Path('/Users/systemsystems/.codex/worktrees/s197/OODS-Forge');base='artifacts/product-reality/sprint-197';m7=base+'/m07';A='a71ea114e344f3559e0780697f5a0817fe6f981e'
+old=json.loads((root/'artifacts/product-reality/sprint-196/m07/closeout/manifest.json').read_text())
+keys=['missions','runtime','runtimeValidation','reactTheme','vueTheme','reactMeasured','vueMeasured','sourceProof','registry','vizCensus','vizObservations','patternRegistry','patternCensus','taxonomy','toolLedger','componentCensus','schemaMovement','compatibility','preFreeze','headRelations','movers','moverAttribution','boundary','ci','near']
+sources={k:v.replace('sprint-196','sprint-197').replace('sprint-195/m07','sprint-197/m07') for k,v in old['sources'].items() if k in keys}
+sources['preFreeze']=m7+'/pre-freeze/corrective-report.json'
+sources.update(missions=m7+'/preparation/missions-at-start.json',sourceProof=m7+'/source-proof.json',boundary=m7+'/closeout/boundary.json')
+# These paths bind literal criteria to original mission receipts, not a fresh assertion that history ran at its retention commit.
+groups={
+'m01':[['setup/planning-commit.json'],['verification-commands.json','development/initial-color-guardrails.json','development/initial-viz-scales.json'],['verification-commands.json'],['verification-commands.json'],['baseline.json','export-baseline.json']],
+'m02':[['gate-resolution.json','gate-commands.json'],['gate-commands.json'],['ramps.json','color-guardrails.json'],['react/report.json','vue/report.json'],['attribution.json']],
+'m03':[['elevations.json'],['matrix/matrix.json'],['react/report.json','vue/report.json'],['shell-proof.json','verification-commands.json']],
+'m04':[['categorical-measurements.json'],['categorical-measurements.json'],['viz-scales.json'],['hc-scope-census.json'],['gate-commands.json','color-guardrails.json','viz-scales.json']],
+'m05':[['golden-attribution.before.json','golden-attribution.addendum-01.before.json','golden-attribution.addendum-02.before.json','golden-attribution.addendum-03.before.json','golden-attribution.addendum-04.historical.json','golden-attribution.json','qualification.json'],['migration-check-commands.json','mcp-final-run.json','core-suite.after.log','render-suite.after.log','mcp-suite.final.log'],['snapshot-diff-audit.json','qualification.json'],['migration-check-commands.json','close-verifiers.json']],
+'m06':[['side-by-side/comparison.json','verification.json'],['tracelab-repin/commands.json','tracelab-repin/oods-provenance.json','verification.json'],['scoped-gate-acceptance.json','tracelab-repin/source-boundary.json'],['gallery-browser.json','side-by-side/index.html']],
+'m07':[['five-suite-closeout/four-suite-baseline.json','closeout/capture-inputs.json'],['pre-freeze/report.json'],['runtime/runtime-cells.v1.json','saved-compatibility.json','component-census/report.json','schema-movement.json','source-proof.json'],['closeout/boundary.json'],['closeout/head-relations.json','closeout/manifest.json']]
+}
+heads={'m01':'dd206e9e2','m02':'ece0222dc','m03':'904511169','m04':'9f31f9d95','m05':'0d5fe1fc8','m06':A,'m07':'02d811f71a4f188142783edf0f9ea189590876c1'}
+executions=[];bindings=[]
+for mission,criteria in groups.items():
+ head=subprocess.check_output(['git','rev-parse',heads[mission]],cwd=root,text=True).strip(); allpaths=sorted({base+'/'+mission+'/'+f for group in criteria for f in group})
+ executions.append({'id':mission+'-receipts','head':head,'historical':mission!='m07','headRole':'Retained receipt commit; actual command/source heads and working-tree states remain inside the original raw receipts.' if mission!='m07' else 'Clean final capture head; runtime/theme measurements remain separately bound to implementationHead.', 'evidencePaths':allpaths})
+ for i,group in enumerate(criteria,1):
+  bindings.append({'missionId':'s197-'+mission,'criterionIndex':i,'executionIds':[mission+'-receipts'],'evidencePaths':[base+'/'+mission+'/'+f for f in group]})
+for b in bindings:
+ if b['missionId']=='s197-m07' and b['criterionIndex']==3:b['qualification']='240 current runtime cells at implementationHead; final capture product sources hash-identical. Original 77 compositions/11 objects and 17-file saved cohort preserved; current 37-file store already included 20 TraceLab additions before this build.'
+ if b['missionId']=='s197-m06' and b['criterionIndex']==4:b['qualification']='90 selectable comparisons and 180 loaded screenshots provide independent review material; builder makes no aesthetic certification.'
+ if b['missionId']=='s197-m05' and b['criterionIndex']==1:b['qualification']='Original 31-file m05 migration retains its before-edit attribution; m07 later reconciles four omitted palette/count contract files with separately retained before-edit hashes and explicit focus token deltas.'
+manifest={'missionId':'s197-m07','implementationHead':A,'sources':sources,'accounting':{'capturePath':m7+'/five-suite-closeout/four-suite-baseline.json','baselinePath':'artifacts/product-reality/sprint-196/m07/five-suite-closeout/four-suite-baseline.json','attempts':[{'name':'initial-closeout','path':m7+'/five-suite-closeout-attempt-1/four-suite-baseline.json','originalReferenceRoot':'five-suite-closeout','reason':'First clean five-suite capture at c5246c3f retained 15 root-core integration assertion failures. Corrected contracts and diagnostic build tooling before one permitted corrective capture; original bytes are unchanged.'}]},'executions':executions,'bindings':bindings}
+Path('/tmp/oods-s197-manifest-template.json').write_text(json.dumps(manifest,indent=2)+'\n')
+for e in executions:
+ if not e['historical']:continue
+ for file in e['evidencePaths']:
+  if not (root/file).is_file():print('MISSING',file)
+  else:
+   raw=subprocess.check_output(['git','show',e['head']+':'+file],cwd=root)
+   assert raw==(root/file).read_bytes(),file
+print('Prepared 32 bindings; final capture/review evidence paths remain unresolved until actual capture.')

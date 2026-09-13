@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { collectReleaseReadiness, generateReleaseReadiness, FACTS_PATH, PACKET_PATH } from '/Users/systemsystems/.codex/worktrees/s197/OODS-Forge/scripts/product-reality/s196-release-readiness.ts';
+const root='/Users/systemsystems/.codex/worktrees/s197/OODS-Forge';
+const out='/tmp/oods-s197-readiness-proposal';fs.mkdirSync(out,{recursive:true});
+const facts=collectReleaseReadiness(root), before=JSON.parse(fs.readFileSync(path.join(root,FACTS_PATH),'utf8'));
+const fixture=fs.mkdtempSync(path.join(os.tmpdir(),'oods-s197-readiness-fix-'));
+const sha=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
+function differences(a:any,b:any,p=''):string[]{if(JSON.stringify(a)===JSON.stringify(b))return [];if(a&&b&&typeof a==='object'&&typeof b==='object')return [...new Set([...Object.keys(a),...Object.keys(b)])].sort().flatMap(k=>differences(a[k],b[k],p+'/'+k));return[p]}
+const fields=differences(before,facts);
+try{
+ for(const file of [...facts.inputs.map(r=>r.path),FACTS_PATH,PACKET_PATH]){const dest=path.join(fixture,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(root,file),dest)}
+ generateReleaseReadiness(fixture);generateReleaseReadiness(fixture,true);
+ const rows=[FACTS_PATH,PACKET_PATH].map(file=>{const a=fs.readFileSync(path.join(root,file)),b=fs.readFileSync(path.join(fixture,file));fs.mkdirSync(path.dirname(path.join(out,file)),{recursive:true});fs.writeFileSync(path.join(out,file),b);return{path:file,beforeSha256:sha(a),afterSha256:sha(b),changed:!a.equals(b)}});
+ assert.deepEqual(collectReleaseReadiness(fixture),facts);
+ fs.writeFileSync(path.join(out,'proposal.json'),JSON.stringify({sourceHead:'02d811f71a4f188142783edf0f9ea189590876c1',changedFields:fields,outputs:rows,isolatedGeneratorCheckPassed:true,canonicalFilesWritten:false,builderSelfCertified:false},null,2)+'\n');
+ console.log(JSON.stringify({changedFields:fields,outputs:rows,isolatedGeneratorCheckPassed:true,canonicalFilesWritten:false}));
+}finally{fs.rmSync(fixture,{recursive:true,force:true})}
