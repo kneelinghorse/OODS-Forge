@@ -1,0 +1,26 @@
+import json,hashlib,subprocess,datetime
+from pathlib import Path
+root=Path('/Users/systemsystems/.codex/worktrees/s197/OODS-Forge')
+base=Path('artifacts/product-reality/sprint-197/m07')
+def digest(data): return hashlib.sha256(data).hexdigest()
+def git(*args): return subprocess.check_output(['git',*args],cwd=root)
+def load(path): return json.loads((root/path).read_bytes())
+fixed='542f9ee6bfceb96e61c5b2b44c241c9375a8596f'
+execution='02d811f71a4f188142783edf0f9ea189590876c1'
+review=git('rev-parse','HEAD').decode().strip()
+changes=git('diff','--name-status',fixed,review).decode().splitlines()
+assert all(row.split('\t',1)[0] in ('A','M') and row.split('\t',1)[1].startswith(str(base)+'/') for row in changes),changes
+source=load(base/'source-proof.json')['references']
+for ref in source: assert digest((root/ref['path']).read_bytes())==ref['sha256'],ref['path']
+capture=[r for r in load(base/'closeout/retained-evidence-index.json')['files'] if any(r['path'].startswith(str(base)+'/'+folder+'/') for folder in ['five-suite-closeout','five-suite-closeout-attempt-1'])]
+assert len(capture)==40
+for ref in capture:
+ data=(root/ref['path']).read_bytes()
+ assert len(data)==ref['bytes'] and digest(data)==ref['sha256'],ref['path']
+ assert data==git('show','0c6159821c2261afd060b682ca910723f31c0349:'+ref['path']),ref['path']
+acceptance=load(base/'closeout/exception-2008/acceptance.json')
+for ref in [acceptance['facts'],*acceptance['supportingFiles']]:
+ assert digest(git('show',execution+':'+ref['path']))==ref['beforeSha256'],ref['path']
+ assert digest((root/ref['path']).read_bytes())==ref['afterSha256'],ref['path']
+ assert (root/ref['path']).read_bytes()==git('show',fixed+':'+ref['path']),ref['path']
+print(json.dumps(dict(status='passed',observedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),executionHead=execution,fixedHead=fixed,reviewInputHead=review,sourceReferencesChecked=len(source),retainedCaptureFilesChecked=len(capture),readinessAndSupportingFilesChecked=5,postFixedChanges=len(changes),postFixedChangesEvidenceOnly=True,builderSelfCertified=False),indent=2))
