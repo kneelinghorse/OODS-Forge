@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { setImmediate } from 'node:timers/promises';
 import ts from 'typescript';
 import { handle as generate } from '../../src/tools/code.generate.js';
 import { typecheckWorkflow } from '../product-reality/workflow-typecheck.js';
@@ -82,6 +83,9 @@ it('generated Mission cancellation stays terminal and both frameworks typecheck'
     expect(source).not.toContain('CancellationSummary');
     const compilation = typecheckWorkflow(artifact);
     expect(compilation.status, compilation.stdout + compilation.stderr).toBe(0);
+    // The compiler is synchronous; let Vitest receive worker acknowledgements
+    // between consumers instead of blocking its RPC channel for the whole suite.
+    await setImmediate();
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'research-store-'));
     try {
       for (const file of artifact.files.filter(file => /^src\/(store|sample-data|chart-assets)\.ts$/.test(file.path))) {
@@ -111,6 +115,7 @@ it.each(['Project', 'Document', 'Collection', 'Report', 'Evidence'])('%s workflo
     expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
     const compilation = typecheckWorkflow(generated.artifact!);
     expect(compilation.status, compilation.stdout + compilation.stderr).toBe(0);
+    await setImmediate();
   }
 }, 90_000);
 

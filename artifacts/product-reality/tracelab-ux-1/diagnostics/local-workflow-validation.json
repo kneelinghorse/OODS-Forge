@@ -86,5 +86,21 @@
   "failed_gates": 0,
   "research_tests": "24 passed without skips in the full local run",
   "broader_collection_run": "41 passed, 1 Vue compiler timeout and 1 worker communication timeout; the isolated Vue retry passed in 8.6s (11 unrelated cases excluded by name filter).",
-  "pending": "Fresh full 240-cell pinned Linux CI sweep and canonical receipt retention"
+  "pending": "Fresh full 240-cell pinned Linux CI sweep and canonical receipt retention",
+  "test_runner_followup": {
+    "source_run": 34725928271,
+    "source_job": 103639903791,
+    "observation": "Full MCP run: 6834 passed, 6 failed, 16 skipped; one onTaskUpdate RPC timeout. Six failures are pending docs/runtime proof, separately accounted for.",
+    "inference": "Consecutive synchronous compiler calls in the new research suite blocked worker message processing; yield to the event loop after each compiler.",
+    "change": "Test scheduling only; compiler limits and assertions unchanged.",
+    "local_verification": {
+      "file": "packages/mcp-server/test/objects/research.spec.ts",
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "unhandled_errors": 0,
+      "duration_seconds": 29.28
+    },
+    "full_ci_verification": "pending next run"
+  }
 }
