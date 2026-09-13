@@ -1,0 +1,78 @@
+{
+  "mission": "s198-m02",
+  "builderSelfCertified": false,
+  "commands": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/codegen/list-craft.s198.spec.ts --coverage.enabled=false",
+      "exitCode": 0,
+      "testsPassed": 23,
+      "testsSkipped": 0,
+      "log": "list-tests-final.log"
+    },
+    {
+      "command": "pnpm exec vitest run --project core tests/design-loop/design-loop.test.ts --coverage.enabled=false",
+      "exitCode": 0,
+      "testsPassed": 15,
+      "testsSkipped": 0,
+      "log": "preview-tests.log"
+    },
+    {
+      "command": "pnpm --filter @oods/components-vue test",
+      "exitCode": 0,
+      "testsPassed": 615,
+      "testsSkipped": 0,
+      "log": "vue-package-tests.log"
+    },
+    {
+      "command": "pnpm --filter @oods/component-styles test",
+      "exitCode": 0,
+      "testsPassed": 47,
+      "testsSkipped": 0,
+      "log": "style-package-tests.log"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit -p tsconfig.json",
+      "exitCode": 0,
+      "compiler": "5.9.3",
+      "log": "typecheck-package.log"
+    },
+    {
+      "command": "pnpm exec tsc --noEmit --pretty false",
+      "exitCode": 0,
+      "compiler": "5.3.3",
+      "log": "root-typecheck.log"
+    },
+    {
+      "command": "python3 artifacts/product-reality/sprint-198/m02/verify.py",
+      "exitCode": 0,
+      "viewsPassed": 30,
+      "viewsSkipped": 0,
+      "log": "list-verification.json"
+    }
+  ],
+  "additionalRegressionTests": {
+    "uniqueCasesVerified": 18,
+    "mainRunPassed": 17,
+    "mainRunFailed": 1,
+    "mainFailure": "Vue standalone compilation exceeded30s while the full runtime sweep was active",
+    "isolatedRetryPassed": 1,
+    "isolatedRetryFilteredOut": 11,
+    "isolatedRetrySeconds": 6.142,
+    "timeoutSecondsUnchanged": 30,
+    "logs": [
+      "regression-tests-final.log",
+      "regression-isolated-retry.log"
+    ]
+  },
+  "runtimeGate": {
+    "head": "e307810dd719c31c1ad21d7eacfaac085def9518",
+    "passed": 240,
+    "failed": 0,
+    "typedGap": 0,
+    "validationIssues": [],
+    "movedHashes": 80,
+    "unchangedHashes": 160,
+    "receipt": "runtime/runtime-cells.v1.json",
+    "attribution": "runtime-attribution.json"
+  }
+}

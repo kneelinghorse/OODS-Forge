@@ -1,0 +1,45 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/collections.s189.spec.ts (12 tests | 1 failed) 68710ms
+   ✓ collection screens own the data presentation > declares one row template and moves the billing and archive recipes into it 245ms
+   ✓ collection screens own the data presentation > replaces fixed timeline slots with an event template and keeps the declared payment recipe 53ms
+   ✓ collection screens own the data presentation > rejects a dangling record key instead of generating navigation with an undefined ID 46ms
+   ✓ collection screens own the data presentation > rejects a mismatched control so its declared component cannot be silently discarded 33ms
+   ✓ collection screens own the data presentation > react standalone collection props compile without a workflow or invented records  14531ms
+   × collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records 31905ms
+     → Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ collection screens own the data presentation > react App binds the composed collection instead of shipping a competing presentation  1209ms
+   ✓ collection screens own the data presentation > vue App binds the composed collection instead of shipping a competing presentation  382ms
+   ✓ collection screens own the data presentation > react JavaScript collection output has real runtime props and no TypeScript-only imports  6031ms
+   ✓ collection screens own the data presentation > vue JavaScript collection output has real runtime props and no TypeScript-only imports  14246ms
+   ✓ collection screens own the data presentation > formats instants with an explicit UTC policy and allows callers to select their locale and zone 21ms
+   ✓ collection screens own the data presentation > merges event sources chronologically, preserves ties and does not mutate the caller 1ms
+ ✓ test/codegen/craft.s191.spec.ts (6 tests) 592ms
+   ✓ s191 craft values agree across render targets > seeds human titles and four recorded payments without changing domain codes or adding form fields  491ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/codegen/collections.s189.spec.ts:58:36
+     56|   });
+     57| 
+     58|   it.each(['react', 'vue'] as const)('%s standalone collection props c…
+       |                                    ^
+     59|     for (const context of ['list', 'timeline'] as const) {
+     60|       const composition = await compose({ object: 'Subscription', cont…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 17 passed (18)
+   Start at  17:54:30
+   Duration  77.72s (transform 3.35s, setup 156ms, collect 6.60s, tests 69.30s, environment 0ms, prepare 752ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/collections.s189.spec.ts test/codegen/craft.s191.spec.ts --coverage.enabled=false

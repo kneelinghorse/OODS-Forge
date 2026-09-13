@@ -1,0 +1,61 @@
+
+> @oods/component-styles@0.1.0 test /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-styles
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-styles
+
+ ✓ test/ported-styles.spec.ts (4 tests) 11ms
+ ❯ test/token-resolution.spec.ts (5 tests | 1 failed) 407ms
+   × component token-resolution contract (#1884) > resolves every colour role and every unguarded legacy name in all six scopes 231ms
+     → expected [ …(6) ] to deeply equal []
+   ✓ component token-resolution contract (#1884) > follows only selected fallbacks, including nested functions and cycles 7ms
+   ✓ component token-resolution contract (#1884) > does not count unreachable nested colours or forced-colors declarations as leaks 2ms
+   ✓ component token-resolution contract (#1884) > deleting an authored Card token makes the contract fail at the affected rule 160ms
+   ✓ component token-resolution contract (#1884) > authors component defaults as aliases of semantic tokens 5ms
+ ✓ test/styles.spec.ts (9 tests) 986ms
+   ✓ Sprint 182 shared component style contract > binds the six declared brand/theme cells to real token sources  961ms
+ ✓ test/high-contrast.browser.spec.ts (29 tests) 7826ms
+   ✓ Sprint 182 shared component-style browser corrections > s185-m02 preserves visible color labels in A/light, forcedColors=active  364ms
+   ✓ Sprint 182 shared component-style browser corrections > s185-m02 preserves visible color labels in B/light, forcedColors=none  317ms
+   ✓ Sprint 182 shared component-style browser corrections > s185-m02 preserves visible color labels in B/hc, forcedColors=none  417ms
+   ✓ Sprint 182 shared component-style browser corrections > A light/dark keeps the default disabled label distinct from its surface  426ms
+   ✓ Sprint 182 shared component-style browser corrections > B light/dark keeps the default disabled label distinct from its surface  397ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/token-resolution.spec.ts > component token-resolution contract (#1884) > resolves every colour role and every unguarded legacy name in all six scopes
+AssertionError: expected [ …(6) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "A/light: non-colour unresolved 15 exceeds 14",
++   "A/dark: non-colour unresolved 15 exceeds 14",
++   "A/hc: non-colour unresolved 15 exceeds 14",
++   "B/light: non-colour unresolved 15 exceeds 14",
++   "B/dark: non-colour unresolved 15 exceeds 14",
++   "B/hc: non-colour unresolved 15 exceeds 14",
++ ]
+
+ ❯ test/token-resolution.spec.ts:12:42
+     10|     const report = census();
+     11|     expect(report.rows.map(row => `${row.brand}/${row.theme}`)).toEqua…
+     12|     expect(contractFailures(report, 14)).toEqual([]);
+       |                                          ^
+     13|   });
+     14| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 46 passed (47)
+   Start at  17:36:59
+   Duration  10.51s (transform 2.41s, setup 0ms, collect 5.84s, tests 9.23s, environment 1ms, prepare 2.00s)
+
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-styles:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-styles@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

@@ -1,0 +1,162 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Button, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  rows?: Array<{ invoiceNumber: string; status: string; providerStatus?: string; issuedAt: string; dueAt?: string; paidAt?: string; totalMinor: number; balanceMinor?: number; currency: string; paymentTerms?: string; collectionState?: string; lastReminderAt?: string; agingBucketDays?: number; attemptCount?: number; nextPaymentAttempt?: string; memo?: string; refundableUntil?: string; refundPolicyUrl?: string; totalRefundedMinor?: number; creditMemoBalanceMinor?: number; creditMemoType?: string; lastRefundAt?: string; requiresManagerApproval?: boolean; notes?: string; createdAt: string; updatedAt?: string; lastEvent: string; lastEventAt?: string; invoiceId: string; subscriptionId: string; provider: string; providerInvoiceId?: string; billingContactName?: string; billingContactEmail?: string; taxMinor?: number; discountMinor?: number; subtotalMinor?: number; lineItems?: unknown[]; attachments?: unknown[]; portalUrl?: string; dunningStep?: string; paymentSource?: string }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: string;\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: string;\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: string;\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt, rows = [], collectionQuery = {} }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            {uiState === 'loading' && (\n              <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'empty' && (\n              <Banner id=\"screen-list-9-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {(uiState === 'success' || uiState === 'empty') && (\n              <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" data-oods-state={uiState === 'success' ? 'success' : undefined} data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-oods-collection-toolbar=\"true\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" value={collectionQuery.search ?? ''} clearable={true} onValueChange={(search) => handleFilter({ ...collectionQuery, search })} />\n                                <Select id=\"slot-filters-2\" label=\"Status\" value={collectionQuery.status ?? ''} options={[{ value: '', label: 'All states' }, ...[...new Set([...rows.map(function(row) { return String(row.status ?? ''); }), collectionQuery.status ?? ''])].filter(Boolean).sort().map(function(value) { return { value, label: value.replaceAll('_', ' ') }; })]} onChange={(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })} />\n                                <Select id=\"list-toolbar-4-sort\" label=\"Sort\" value={collectionQuery.descending ? 'desc' : 'asc'} options={[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]} onChange={() => handleSort('invoice_id')} />\n                              </Stack>\n                      <section id=\"list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ invoiceNumber, status, providerStatus, issuedAt, dueAt, paidAt, totalMinor, balanceMinor, currency, paymentTerms, collectionState, lastReminderAt, agingBucketDays, attemptCount, nextPaymentAttempt, memo, refundableUntil, refundPolicyUrl, totalRefundedMinor, creditMemoBalanceMinor, creditMemoType, lastRefundAt, requiresManagerApproval, notes, createdAt, updatedAt, lastEvent, lastEventAt, invoiceId, subscriptionId, provider, providerInvoiceId, billingContactName, billingContactEmail, taxMinor, discountMinor, subtotalMinor, lineItems, attachments, portalUrl, dunningStep, paymentSource }, collectionIndex) => <li key={String(invoiceId)}><Button id={'list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(invoiceId)} onClick={() => handleRowClick(String(invoiceId))}><Text id={'list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{invoiceId}</Text>\n                      <RelativeTimestamp id={'slot-items-6-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} /></Button></li>)}</ol>)}</section>\n                      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                                <PaginationBar id=\"slot-pagination-8\" page={collectionQuery.page ?? 1} pageSize={collectionQuery.pageSize ?? 10} totalItems={collectionQuery.total ?? rows.length} onPageChange={handlePageChange} />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:8ac2abf68ce58899b91c7dbfaa89b554c1518e1b24e0f1f3a0241123b2d7223d"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [
+      {
+        "name": "handleFilter",
+        "parameters": [
+          {
+            "name": "criteria",
+            "type": "Record<string, unknown>"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onFilter"
+          }
+        ]
+      },
+      {
+        "name": "handlePageChange",
+        "parameters": [
+          {
+            "name": "page",
+            "type": "number"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onPageChange"
+          }
+        ]
+      },
+      {
+        "name": "handleRowClick",
+        "parameters": [
+          {
+            "name": "rowId",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onRowClick"
+          }
+        ]
+      },
+      {
+        "name": "handleSort",
+        "parameters": [
+          {
+            "name": "column",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onSort"
+          }
+        ]
+      }
+    ],
+    "contentHash": "sha256:3162bf7b9a79ddd6b56fcfb59f63e7d682094c78db2cc7a2017d40b0b39e764b"
+  },
+  "code": "import React from 'react';\nimport { Banner, Button, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:78ef60870d55a6e088b4e3ef0a0961fa95794baa77ee43f37fdaee1bcc395469 */\n  /* @oods-domain-source sha256:300063760dda8c519a2f55163f592f1d2a1c688624ead19adb05a6639ee54617 */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  rows?: Array<{ invoiceNumber: string; status: string; providerStatus?: string; issuedAt: string; dueAt?: string; paidAt?: string; totalMinor: number; balanceMinor?: number; currency: string; paymentTerms?: string; collectionState?: string; lastReminderAt?: string; agingBucketDays?: number; attemptCount?: number; nextPaymentAttempt?: string; memo?: string; refundableUntil?: string; refundPolicyUrl?: string; totalRefundedMinor?: number; creditMemoBalanceMinor?: number; creditMemoType?: string; lastRefundAt?: string; requiresManagerApproval?: boolean; notes?: string; createdAt: string; updatedAt?: string; lastEvent: string; lastEventAt?: string; invoiceId: string; subscriptionId: string; provider: string; providerInvoiceId?: string; billingContactName?: string; billingContactEmail?: string; taxMinor?: number; discountMinor?: number; subtotalMinor?: number; lineItems?: unknown[]; attachments?: unknown[]; portalUrl?: string; dunningStep?: string; paymentSource?: string }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: string;\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: string;\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: string;\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt, rows = [], collectionQuery = {} }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            {uiState === 'loading' && (\n              <Banner id=\"screen-list-9-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'empty' && (\n              <Banner id=\"screen-list-9-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"screen-list-9-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {(uiState === 'success' || uiState === 'empty') && (\n              <Stack id=\"screen-list-9-success\" data-oods-component=\"Stack\" data-oods-state={uiState === 'success' ? 'success' : undefined} data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-oods-collection-toolbar=\"true\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <SearchInput id=\"slot-search-1\" label=\"Search\" placeholder=\"Search records\" value={collectionQuery.search ?? ''} clearable={true} onValueChange={(search) => handleFilter({ ...collectionQuery, search })} />\n                                <Select id=\"slot-filters-2\" label=\"Status\" value={collectionQuery.status ?? ''} options={[{ value: '', label: 'All states' }, ...[...new Set([...rows.map(function(row) { return String(row.status ?? ''); }), collectionQuery.status ?? ''])].filter(Boolean).sort().map(function(value) { return { value, label: value.replaceAll('_', ' ') }; })]} onChange={(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })} />\n                                <Select id=\"list-toolbar-4-sort\" label=\"Sort\" value={collectionQuery.descending ? 'desc' : 'asc'} options={[{'value': 'asc', 'label': 'Name A–Z'}, {'value': 'desc', 'label': 'Name Z–A'}]} onChange={() => handleSort('invoice_id')} />\n                              </Stack>\n                      <section id=\"list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ invoiceNumber, status, providerStatus, issuedAt, dueAt, paidAt, totalMinor, balanceMinor, currency, paymentTerms, collectionState, lastReminderAt, agingBucketDays, attemptCount, nextPaymentAttempt, memo, refundableUntil, refundPolicyUrl, totalRefundedMinor, creditMemoBalanceMinor, creditMemoType, lastRefundAt, requiresManagerApproval, notes, createdAt, updatedAt, lastEvent, lastEventAt, invoiceId, subscriptionId, provider, providerInvoiceId, billingContactName, billingContactEmail, taxMinor, discountMinor, subtotalMinor, lineItems, attachments, portalUrl, dunningStep, paymentSource }, collectionIndex) => <li key={String(invoiceId)}><Button id={'list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(invoiceId)} onClick={() => handleRowClick(String(invoiceId))}><Text id={'list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{invoiceId}</Text>\n                      <RelativeTimestamp id={'slot-items-6-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} /></Button></li>)}</ol>)}</section>\n                      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                                <PaginationBar id=\"slot-pagination-8\" page={collectionQuery.page ?? 1} pageSize={collectionQuery.pageSize ?? 10} totalItems={collectionQuery.total ?? rows.length} onPageChange={handlePageChange} />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:3162bf7b9a79ddd6b56fcfb59f63e7d682094c78db2cc7a2017d40b0b39e764b"
+    }
+  },
+  "meta": {
+    "nodeCount": 16,
+    "componentCount": 8
+  }
+}

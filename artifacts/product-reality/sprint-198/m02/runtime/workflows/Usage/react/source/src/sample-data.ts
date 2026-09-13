@@ -1,0 +1,384 @@
+import type { DomainRecord } from './store';
+
+export const sampleData: DomainRecord[] = [
+  {
+    "meter_name": "meter-name sample 1",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 1",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-001",
+    "subscription_id": "subscription-id sample 1",
+    "meter_id": "meter-id sample 1",
+    "provider": "provider sample 1",
+    "status": "ok",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 2",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 2",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-002",
+    "subscription_id": "subscription-id sample 2",
+    "meter_id": "meter-id sample 2",
+    "provider": "provider sample 2",
+    "status": "delayed",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 3",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 3",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-003",
+    "subscription_id": "subscription-id sample 3",
+    "meter_id": "meter-id sample 3",
+    "provider": "provider sample 3",
+    "status": "investigating",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 4",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 4",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-004",
+    "subscription_id": "subscription-id sample 4",
+    "meter_id": "meter-id sample 4",
+    "provider": "provider sample 4",
+    "status": "ok",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 5",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 5",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-005",
+    "subscription_id": "subscription-id sample 5",
+    "meter_id": "meter-id sample 5",
+    "provider": "provider sample 5",
+    "status": "delayed",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 6",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 6",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-006",
+    "subscription_id": "subscription-id sample 6",
+    "meter_id": "meter-id sample 6",
+    "provider": "provider sample 6",
+    "status": "investigating",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 7",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 7",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-007",
+    "subscription_id": "subscription-id sample 7",
+    "meter_id": "meter-id sample 7",
+    "provider": "provider sample 7",
+    "status": "ok",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 8",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 8",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-008",
+    "subscription_id": "subscription-id sample 8",
+    "meter_id": "meter-id sample 8",
+    "provider": "provider sample 8",
+    "status": "delayed",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 9",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 9",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-009",
+    "subscription_id": "subscription-id sample 9",
+    "meter_id": "meter-id sample 9",
+    "provider": "provider sample 9",
+    "status": "investigating",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  },
+  {
+    "meter_name": "meter-name sample 10",
+    "included_quantity": 0,
+    "consumed_quantity": 0,
+    "unit_label": "unit-label sample 10",
+    "period_start": "2026-01-01T00:00:00.000Z",
+    "period_end": "2026-02-01T00:00:00.000Z",
+    "rollover_strategy": "",
+    "overage_rate_minor": 0,
+    "projected_overage_minor": 0,
+    "samples": [
+      {
+        "timestamp": "2025-06-15T00:00:00Z",
+        "value": 1200
+      },
+      {
+        "timestamp": "2025-06-20T00:00:00Z",
+        "value": 1800
+      },
+      {
+        "timestamp": "2025-06-25T00:00:00Z",
+        "value": 1500
+      }
+    ],
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "updated_at": "2026-09-01T12:00:00.000Z",
+    "last_event": "reading_captured",
+    "last_event_at": "2026-09-01T12:00:00.000Z",
+    "usage_id": "usage-010",
+    "subscription_id": "subscription-id sample 10",
+    "meter_id": "meter-id sample 10",
+    "provider": "provider sample 10",
+    "status": "ok",
+    "trend_percent": 0,
+    "variance_minor": 0,
+    "last_reported_at": "2026-01-01T00:00:00.000Z",
+    "anomalies": []
+  }
+];
