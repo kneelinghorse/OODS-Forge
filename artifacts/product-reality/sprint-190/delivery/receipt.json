@@ -1,0 +1,61 @@
+{
+  "deliveredAt": "2026-09-10T01:59:01.766202+00:00",
+  "session": "post-review delivery requested by Derek 2026-09-10 (Sprint 191 m01 work done ahead of planning)",
+  "previous": {
+    "commit": "f19a654cfaad3632c9dcf9a3ee53d9b0d5532e63",
+    "pid": 31993,
+    "restarts": 11
+  },
+  "delivered": {
+    "commit": "d3a99d39f4a9d6072bcda77de1935b5da0b71c95",
+    "implementationHead": "502e9bf7459fa850afd33d9fb6a36e89ae696fa1",
+    "viaPullRequest": 92,
+    "reviewClosurePR": 93,
+    "reviewClosureCommit": "6c5ef72f (docs only, not required for runtime)"
+  },
+  "commands": [
+    "git merge --ff-only origin/OODS-pro",
+    "pnpm install --frozen-lockfile",
+    "pnpm run build:tokens",
+    "pnpm run build:packages",
+    "pnpm --filter @oods/mcp-bridge run build",
+    "pnpm run pkg:build",
+    "pm2 restart oods-forge-bridge",
+    "pm2 save"
+  ],
+  "pm2": {
+    "pid": 11390,
+    "cwd": "/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge",
+    "script": "/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge/dist/server.js",
+    "restarts": 12,
+    "status": "online"
+  },
+  "health": {
+    "status": "ok",
+    "revision": {
+      "commit": "d3a99d39f4a9d6072bcda77de1935b5da0b71c95",
+      "structuredDataManifestHash": "sha256:acd4c89664fb5edd4cab80427c49139d80416a6805305f4cd2851d1a0869dc70"
+    }
+  },
+  "tools": 21,
+  "storeHashesUnchanged": true,
+  "storeHashCount": 17,
+  "discriminators": {
+    "design_compose Subscription/detail contains VizAreaPreview with chart declaration": true,
+    "viz_render brand A light+dark 13 types: svgHash identical to m06/final/matrix/matrix.json": "26/26",
+    "dashboard_render A/light and A/dark 11 panels: outputHtmlHash identical to matrix.json": "2/2 (17a6ae66\u2026, 96e7decc\u2026)"
+  },
+  "rollback": "artifacts/product-reality/sprint-190/m01/rollback.sh pattern: stop bridge, checkout f19a654c, rebuild, restart, save (not executed)",
+  "reconnect": {
+    "sentAt": "2026-09-10",
+    "from": "artifacts/product-reality/sprint-190/m06/final/proof/reconnect/notice-plan.json (draft updated with the served commit)",
+    "sent": {
+      "cmos-dashboard": "5590b1b6-ca14-4646-bb33-0e30a68a0478",
+      "forge-demos": "0552982f-b135-4d77-a371-238566e30fac",
+      "aquex-mcp": "22509ade-0c83-4c4c-9598-f6d4797ce302"
+    },
+    "notSent": {
+      "dashboard-demos": "CMOS project archived; dashboard refuses messages (consistent with retirement #1719). Vendor SHA 502e9bf7 and the #881 answer are in the forge-demos/cmos-dashboard notices and the registry."
+    }
+  }
+}
