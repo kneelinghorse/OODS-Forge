@@ -22,8 +22,8 @@ palette pixels. No captured viewport has horizontal overflow.
 - Boundary proof: all 151 tracked frontend files and the two already modified
   CMOS reports retain their original hashes. Git HEAD and status are identical
   before/after. The checkout was already dirty; `source-boundary.json` reports
-  **zero added changes**, not a clean checkout. Clarification of the mission's
-  literal clean-status criterion remains pending with the user.
+  **zero added changes**. The user accepted this scoped gate on 2026-09-13;
+  [the acceptance receipt](scoped-gate-acceptance.json) binds the original source proofs.
 
 ## Validation and recovery
 
