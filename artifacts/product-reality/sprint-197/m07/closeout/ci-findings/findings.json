@@ -37,5 +37,18 @@
   },
   "classification": "The shipped palette added typed CSV rows; the older a11y CLI fails to parse them. A diagnostic-only parser fix reveals three contrast failures in the unbranded built token tree and six stale relative-state limits. The separate color-guardrails CLI evaluates its six relative-color rows against legacy tokens/ while palette rows use the canonical packages/tokens sources. The current tokens-validate result therefore does not establish that the built-tree state checks pass.",
   "scope": "Neither parser fix nor palette/CSV/source-loader changes are approved by #2008; none is applied. These are blocking review findings, not a waiver or a green CI claim.",
-  "builderSelfCertified": false
+  "builderSelfCertified": false,
+  "coverageTimeout": {
+    "ciCounts": {
+      "passed": 7301,
+      "failed": 1,
+      "skipped": 16,
+      "total": 7318
+    },
+    "testFile": "packages/mcp-server/test/product-reality/palette-golden-migration.s197.spec.ts",
+    "timeoutMs": 20000,
+    "localRetryPassed": 7,
+    "localRetrySkipped": 0,
+    "differentHostDiagnosticOnly": true
+  }
 }
