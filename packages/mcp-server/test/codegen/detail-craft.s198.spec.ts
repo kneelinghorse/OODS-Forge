@@ -71,7 +71,7 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
   it('preserves HTML tab panel content and layout while continuing to reject discarded application actions', async () => {
     const schema = { version: '2026.02', screens: [{ id: 'tabs', component: 'Tabs', props: { ariaLabel: 'Record details' }, children: [
       { id: 'identity', component: 'Stack', props: { label: 'Identity' }, layout: { type: 'stack' as const, gapToken: 'stack-default' }, children: [{ id: 'contact', component: 'Text', props: { content: 'Invoice contact' } }] },
-      { id: 'billing', component: 'Card', props: { label: 'Billing' }, children: [{ id: 'price', component: 'Text', props: { content: '$19.99' } }] },
+      { id: 'billing', component: 'Card', props: { label: 'Billing' }, children: [{ id: 'price', component: 'BillingSummaryBadge', props: { amount: 1999, currency: 'usd', minorUnits: 100, showInterval: false } }] },
     ] }] };
     const result = await generate({ schema, framework: 'html', profile: 'build' });
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
