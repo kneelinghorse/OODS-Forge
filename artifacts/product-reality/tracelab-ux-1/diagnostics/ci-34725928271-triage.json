@@ -1,0 +1,79 @@
+{
+  "run": 34725928271,
+  "source_head": "a7ef99a21c303e3ef66f57845e9f2b52475f79a3",
+  "branch_head": "335664b5875981f1a3ec0a9635263d17e40bfe42",
+  "runtime": {
+    "job": 103639903728,
+    "status": "passed",
+    "duration_seconds": 3539,
+    "cells": 240,
+    "workflows": 34,
+    "dashboards": 4,
+    "chart_theme_scopes": 48,
+    "emitter_mutation": "red rejected; exact-byte restoration passed"
+  },
+  "release": {
+    "job": 103639903681,
+    "cells": 42,
+    "passed": 42
+  },
+  "failed_checks": [
+    {
+      "job": 103639903621,
+      "name": "build",
+      "cause": "Tool-Specs generated ledger-head reference stale; fixed locally at ce2239c."
+    },
+    {
+      "job": 103639903748,
+      "name": "coverage",
+      "passed": 7163,
+      "failed": 5,
+      "skipped": 16,
+      "cause": "Two generated-doc freshness assertions and three pending canonical runtime assertions."
+    },
+    {
+      "job": 103639903791,
+      "name": "viz-determinism/full MCP suite",
+      "passed": 6834,
+      "failed": 6,
+      "skipped": 16,
+      "cause": "Two generated-doc freshness assertions, four canonical runtime/portable-health assertions, plus one worker RPC timeout. Test-only scheduling fix fbaa8265 has 24 local passes; CI confirmation pending."
+    },
+    {
+      "job": 103639903737,
+      "name": "product-reality-consumers",
+      "passed": 304,
+      "failed": 1,
+      "skipped": 0,
+      "cause": "Portable-health assertion cannot accept old 154-cell ledger under the current 240-cell census."
+    },
+    {
+      "jobs": [
+        103639903756,
+        103639903779
+      ],
+      "name": "portable-runtime Node20.11.1/24",
+      "cause": "Extracted runtime correctly reports degraded health until canonical 240-cell proof is present."
+    }
+  ],
+  "preservation": "Failures are preserved as rejected attempts; no receipt rows or source heads are relabeled.",
+  "post_retention_followup": {
+    "initial_replay": {
+      "passed": 59,
+      "failed": 1,
+      "skipped": 0
+    },
+    "failure": "B-12 dist-only native health remained null for runtime after retaining the valid 240-cell proof.",
+    "root_cause": "contextsForObject loaded authoring object YAML while validating the shipped ledger. A dist-only install lacks that registry.",
+    "correction": "Keep the compiled portable census independent of authoring files, and guard equivalence with every authored object context in a regression test. Existing B-12 exercised the real entrypoint and failed before this fix.",
+    "clarification": "The initial stale-proof explanation was incomplete for B-12; full portable bundles had the registry and also lacked current canonical proof.",
+    "fixed_replay": {
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "unhandled_errors": 0,
+      "docs_check": "passed",
+      "targeted_lint": "passed"
+    }
+  }
+}

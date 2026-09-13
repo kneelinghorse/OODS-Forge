@@ -1,0 +1,416 @@
+{
+  "status": "ok",
+  "layout": "card",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-card-7",
+        "component": "Card",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "card-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "CardHeader",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "props": {
+                  "titleField": "label",
+                  "supportingField": "description"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-body-3",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-body-4",
+                "component": "Card",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-footer-5",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-footer-6",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer"
+                },
+                "children": [
+                  {
+                    "id": "ve-footer-9",
+                    "component": "OwnershipMeta",
+                    "props": {
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role"
+                    }
+                  },
+                  {
+                    "id": "ve-footer-10",
+                    "component": "TagSummary",
+                    "props": {
+                      "field": "tags",
+                      "countField": "tag_count",
+                      "label": "Tags"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of name; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Display projection of description; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "description": "Ordered list of tags assigned to the entity.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Name.",
+        "semanticType": "text.label"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.collection.id"
+      },
+      "item_count": {
+        "type": "number",
+        "required": false,
+        "description": "Number of chunks in collection",
+        "semanticType": "research.collection.item_count"
+      },
+      "items": {
+        "type": "CollectionItemResponse[]",
+        "required": false,
+        "description": "Items.",
+        "semanticType": "research.collection.items"
+      }
+    }
+  },
+  "schemaRef": "compose-ecab7082",
+  "schemaRefCreatedAt": "2026-09-12T23:54:46.201Z",
+  "schemaRefExpiresAt": "2026-09-13T00:24:46.201Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "CardHeader",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CardHeader was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "CardHeader",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "footer",
+      "intent": "action-button",
+      "selectedComponent": "OwnershipMeta",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "OwnershipMeta was selected for slot \"footer\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "OwnershipMeta",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "body",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"body\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Collection' has maturity 'alpha' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"description\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"created_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"updated_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"label\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_id\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"owner_type\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_event\" in object schema overrides trait definition"
+    }
+  ],
+  "objectUsed": {
+    "name": "Collection",
+    "version": "0.1.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Timestampable",
+      "structural/Ownerable",
+      "behavioral/Taggable",
+      "behavioral/Searchable",
+      "behavioral/Filterable",
+      "behavioral/Pageable"
+    ],
+    "fieldsComposed": 27,
+    "viewExtensionsApplied": {
+      "list": 7,
+      "detail": 6,
+      "form": 2,
+      "card": 3,
+      "timeline": 2,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Collection card view",
+    "layoutDetected": "context-inferred: card (from context=\"card\")",
+    "slotCount": 3,
+    "nodeCount": 9,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Collection' has maturity 'alpha' — composed output may change.",
+      "Field collision: \"description\" in object schema overrides trait definition",
+      "Field collision: \"created_at\" in object schema overrides trait definition",
+      "Field collision: \"updated_at\" in object schema overrides trait definition",
+      "Field collision: \"label\" in object schema overrides trait definition",
+      "Field collision: \"owner_id\" in object schema overrides trait definition",
+      "Field collision: \"owner_type\" in object schema overrides trait definition",
+      "Field collision: \"last_event\" in object schema overrides trait definition"
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.8
+    }
+  }
+}

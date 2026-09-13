@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { BROWSER_IMAGE, FRAMEWORKS, OBJECTS, summarize, validateRuntimeLedger, type RuntimeLedger } from '../../../../scripts/product-reality/s193-runtime-cells.js';
 
-import { contextsForObject } from '../../src/lib/runtime-ledger.js';
+import { CONTEXTS, contextsForObject } from '../../src/lib/runtime-ledger.js';
+import { loadObject } from '../../src/objects/object-loader.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 function population(): RuntimeLedger {
@@ -17,6 +18,16 @@ function population(): RuntimeLedger {
 }
 
 describe('s193 runtime population accountability', () => {
+  it('keeps the portable census aligned with authored context restrictions', () => {
+    // Health must verify shipped evidence without YAML files, while new object
+    // restrictions must not silently leave its compiled population out of date.
+    for (const object of OBJECTS) {
+      const supported = loadObject(object).metadata?.supportedContexts;
+      expect(contextsForObject(object), object).toEqual(
+        CONTEXTS.filter(context => !supported || supported.includes(context)),
+      );
+    }
+  });
   it('requires all 206 distinct object/context/framework identities', () => {
     const ledger = population();
     expect(ledger.rows).toHaveLength(206);

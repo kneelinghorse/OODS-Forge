@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadObject } from '../objects/object-loader.js';
 
 export const OBJECTS = ['Article', 'Chunk', 'Collection', 'Document', 'Evidence', 'Invoice', 'Media', 'Mission', 'Organization', 'Plan', 'Product', 'Project', 'Relationship', 'Report', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
 export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
@@ -9,10 +8,9 @@ export const FRAMEWORKS = ['react', 'vue'] as const;
 export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';
 export type Context = typeof CONTEXTS[number];
 export type Framework = typeof FRAMEWORKS[number];
-/** The runtime census covers every declared context, including embedded-only objects. */
+/** Shipped proof remains verifiable without the authoring registry on disk. */
 export function contextsForObject(object: string): Context[] {
-  const supported = loadObject(object).metadata?.supportedContexts;
-  return CONTEXTS.filter(context => !supported || supported.includes(context));
+  return object === 'Chunk' ? ['inline'] : [...CONTEXTS];
 }
 export function supportsWorkflow(object: string): boolean {
   const contexts = contextsForObject(object);
