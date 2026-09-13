@@ -1613,8 +1613,8 @@ export function verifySprint197Roadmap(current, retained) {
   assert(current.includes(marker) && retained.includes(marker));
   assert.equal(current.slice(current.indexOf(marker)), retained.slice(retained.indexOf(marker)), 'Retained roadmap history changed.');
   const top = current.slice(0, current.indexOf(marker));
-  assert.match(top, /197 — \*\*BUILT, REVIEW PENDING\*\*/);
-  assert.match(top, /### Sprint 197 — Palette and the dark theme — BUILT, REVIEW PENDING/);
+  assert.match(top, /197 — \*\*(BUILT, REVIEW PENDING|CERTIFIED AND CLOSED 2026-09-13)\*\*/);
+  assert.match(top, /### Sprint 197 — Palette and the dark theme — (BUILT, REVIEW PENDING|CERTIFIED AND CLOSED 2026-09-13)/);
   for (const value of ['16.540957', '20.105820', '24/24', '52', '180', '90']) assert(top.includes(value), `Roadmap omits measured palette result: ${value}`);
 }
 
