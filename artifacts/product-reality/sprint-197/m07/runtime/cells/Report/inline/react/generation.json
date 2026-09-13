@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Chunk count. */\n  chunkCount?: number;\n  /** Citations. */\n  citations?: unknown[];\n  /** Content. */\n  content: string;\n  /** Created at. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Id. */\n  id: string;\n  /** Display projection of title; retain the complete source field. */\n  label: string;\n  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */\n  lastEvent?: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */\n  ownerId?: string;\n  /** user only when an authoritative owner_id is present. */\n  ownerType?: 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Project id. */\n  projectId?: string;\n  /** Prompt. */\n  prompt?: string;\n  /** Report type. */\n  reportType?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Sources. */\n  sources?: unknown[];\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value. */\n  status: 'draft' | 'final';\n  /** Title. */\n  title: string;\n  /** Tokens used. */\n  tokensUsed?: number;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Updated at. */\n  updatedAt: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ activeFilters, allowedTransitions, chunkCount, citations, content, createdAt, description, filterCount, filters, id, label, lastEvent, lastEventAt, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, placeholder, projectId, prompt, reportType, searchActive, searchQuery, sources, stateHistory, status, title, tokensUsed, totalItems, totalPages, updatedAt }) => {\n  const [handleChange_filterCountState, setHandleChange_filterCountState] = React.useState<string>(String(filterCount ?? ''));\n  /* @oods-local-binding handleChange_filterCount */ const handleChange_filterCount = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_filterCountState(event.currentTarget.value); };\n  const [handleUpdate_contentState, setHandleUpdate_contentState] = React.useState<string>(String(content ?? ''));\n  /* @oods-local-binding handleUpdate_content */ const handleUpdate_content = (value: string) => { setHandleUpdate_contentState(value); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" label=\"Content\" placeholder=\"Enter content\" value={handleUpdate_contentState} onUpdate={handleUpdate_content} />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Filter Count\" placeholder=\"Enter filterCount\" required type=\"number\" value={handleChange_filterCountState} onChange={handleChange_filterCount} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:abb5c4b980b7deb61e6d88c6cc0f41f003d7d765635bf1b04b3fb3fe0bff07af"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:050d42db59b62708c6c37abce0864b069c2fb93f87b6287a29484bc1b09eeed5"
+  },
+  "code": "import React from 'react';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Chunk count. */\n  chunkCount?: number;\n  /** Citations. */\n  citations?: unknown[];\n  /** Content. */\n  content: string;\n  /** Created at. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Id. */\n  id: string;\n  /** Display projection of title; retain the complete source field. */\n  label: string;\n  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */\n  lastEvent?: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */\n  ownerId?: string;\n  /** user only when an authoritative owner_id is present. */\n  ownerType?: 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Project id. */\n  projectId?: string;\n  /** Prompt. */\n  prompt?: string;\n  /** Report type. */\n  reportType?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Sources. */\n  sources?: unknown[];\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value. */\n  status: 'draft' | 'final';\n  /** Title. */\n  title: string;\n  /** Tokens used. */\n  tokensUsed?: number;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Updated at. */\n  updatedAt: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ activeFilters, allowedTransitions, chunkCount, citations, content, createdAt, description, filterCount, filters, id, label, lastEvent, lastEventAt, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, placeholder, projectId, prompt, reportType, searchActive, searchQuery, sources, stateHistory, status, title, tokensUsed, totalItems, totalPages, updatedAt }) => {\n  const [handleChange_filterCountState, setHandleChange_filterCountState] = React.useState<string>(String(filterCount ?? ''));\n  /* @oods-local-binding handleChange_filterCount */ const handleChange_filterCount = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_filterCountState(event.currentTarget.value); };\n  const [handleUpdate_contentState, setHandleUpdate_contentState] = React.useState<string>(String(content ?? ''));\n  /* @oods-local-binding handleUpdate_content */ const handleUpdate_content = (value: string) => { setHandleUpdate_contentState(value); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" label=\"Content\" placeholder=\"Enter content\" value={handleUpdate_contentState} onUpdate={handleUpdate_content} />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Filter Count\" placeholder=\"Enter filterCount\" required type=\"number\" value={handleChange_filterCountState} onChange={handleChange_filterCount} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:050d42db59b62708c6c37abce0864b069c2fb93f87b6287a29484bc1b09eeed5"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

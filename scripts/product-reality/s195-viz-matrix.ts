@@ -1,6 +1,9 @@
 // Bounded mission receipt; public handlers supply every rendered artifact.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { evaluateContrastPillar } from '../../packages/mcp-server/src/tools/certify-contrast.js';
+import { evaluateEChartsRenderContrast } from '../../packages/mcp-server/src/tools/certify-echarts-render-contrast.js';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 const { sha256 } = await import(new URL('../../packages/artifacts/dist/index.js', import.meta.url).href) as typeof import('../../packages/artifacts/src/index.js');
@@ -14,9 +17,11 @@ import type { VizRenderInput, DashboardRenderInput } from '../../packages/mcp-se
 
 const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
 const args = process.argv.slice(2);
-assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && args[1] === 's196'), 'Supported option: --mode s196');
-const sprint = args[1] === 's196' ? 196 : 195;
-const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/m05/golden-migration/matrix`) + '/');
+assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && ['s196', 's197-m03', 's197-m05'].includes(args[1])), 'Supported option: --mode s196|s197-m03|s197-m05');
+const darkMission = args[1] === 's197-m03';
+const paletteMigration = args[1] === 's197-m05';
+const sprint = darkMission || paletteMigration ? 197 : args[1] === 's196' ? 196 : 195;
+const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/${darkMission ? 'm03' : paletteMigration ? 'm05' : 'm05/golden-migration'}/matrix`) + '/');
 const inputs = [
   ...CASES.map(({ chartType, encodings }) => ({ chartType, rows: [...SALES], encodings })),
   ...ECHARTS_OPERAND_CASES.map(renderInputFor),
@@ -39,7 +44,25 @@ for (const input of inputs) {
       if (brand === 'A' && theme === 'light') assert.equal(first.svg, implicit.svg);
       const file = `svg/${input.chartType}-${brand}-${theme}.svg`;
       await fs.writeFile(new URL(file, out), first.svg!);
-      table.push({ chartType: input.chartType, brand, theme, file, svgHash: first.svgHash, secondHash: second.svgHash, svgBytes: first.svgBytes, render: first.render, canvas: canvasFill(first.svg!), expectedCanvas, ...(brand === 'A' && theme === 'light' ? { omittedScopeHash: implicit.svgHash } : {}) });
+      let contrast;
+      if (darkMission) {
+        if (first.spec) {
+          const result = await evaluateContrastPillar(
+            first.normalizedSpec as Parameters<typeof evaluateContrastPillar>[0],
+            first.spec as Parameters<typeof evaluateContrastPillar>[1], { brand, theme });
+          const { renderedSvg, ...grade } = result;
+          // Role C precedes Role A in the existing Cartesian grader. A pass or
+          // Role-A-only failure therefore establishes no Role-C failure.
+          const verdict = grade.contrast === 'exempt' ? 'exempt'
+            : grade.contrast === 'pass' || (grade.contrast === 'fail' && /Role-A/.test(grade.contrastNote ?? '')) ? 'pass'
+            : grade.contrast === 'fail' && /Role-C/.test(grade.contrastNote ?? '') ? 'fail' : 'ungradeable';
+          contrast = { ...grade, evidence: renderedSvg ? 'render' : 'none', roleC: { verdict } };
+        } else {
+          contrast = evaluateEChartsRenderContrast({ chartType: input.chartType as Parameters<typeof evaluateEChartsRenderContrast>[0]['chartType'],
+            normalizedSvg: first.svg!, projectedOption: first.echartsSpec!, scope: { brand, theme } });
+        }
+      }
+      table.push({ ...(contrast ? { contrast } : {}), chartType: input.chartType, brand, theme, file, svgHash: first.svgHash, secondHash: second.svgHash, svgBytes: first.svgBytes, render: first.render, canvas: canvasFill(first.svg!), expectedCanvas, ...(brand === 'A' && theme === 'light' ? { omittedScopeHash: implicit.svgHash } : {}) });
     }
   }
 }
@@ -62,7 +85,13 @@ for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] a
   const file = `dashboard-${brand}-${theme}.html`; await fs.writeFile(new URL(file, out), first.html!);
   dashboards.push({ brand, theme, file, svgCount: 11, canvasChecks: 11, expectedCanvas, outputHtmlHash: first.outputHtmlHash, secondHash: second.outputHtmlHash });
 }
-const head = sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
-const sourceState = sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
+const head = darkMission || paletteMigration ? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim() : sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
+const sourceState = paletteMigration ? 's197-m05 complete palette migration over recorded HEAD; prior identities and token bindings are pinned in golden-attribution.before.json.' : darkMission ? 's197-m03 generated dark palette over recorded HEAD; palette source bytes are pinned in the elevation receipt. Golden registry pins remain untouched until m05.' : sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
 await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState, builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
 console.log(JSON.stringify({ publicSvg: table.length, canvasChecks: table.length, omittedScopeIdentities: 13, dashboardScopes: dashboards.length, dashboardDrawnPerScope: 11 }));
+
+if (darkMission) {
+  const failures = table.filter(row => !['pass', 'exempt'].includes(row.contrast!.roleC.verdict));
+  assert.equal(failures.length, 0, JSON.stringify(failures.map(row => ({ chartType: row.chartType, brand: row.brand, theme: row.theme, contrast: row.contrast }))));
+  console.log(JSON.stringify({ roleCPass: table.filter(row => row.contrast!.roleC.verdict === 'pass').length, roleCExempt: table.filter(row => row.contrast!.roleC.verdict === 'exempt').length, roleCFailures: failures.length }));
+}

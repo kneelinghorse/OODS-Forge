@@ -82,7 +82,8 @@ function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): G
     roam,
     label: { show: false },
     itemStyle: {
-      areaColor: resolveColor(DEFAULT_AREA_COLOR, scope),
+      // HC owns a declared system canvas; the legacy light/dark fallback stays scoped.
+      areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope),
       borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
   });

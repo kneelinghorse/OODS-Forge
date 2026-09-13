@@ -16,6 +16,9 @@ type Measurement = { timezone: string; rows: Array<{ id: string; request: CodeGe
 const migration = JSON.parse(read(path.join(ROOT, 'migration.json'))) as { rows: MigrationRow[]; counts: Record<string, number>; controls: Array<{ id: string; beforeHash: string; afterHash: string; unchanged: boolean }>; controlsSourceSha256: string };
 const chicago = JSON.parse(read(path.join(ROOT, 'chicago/measurements.json'))) as Measurement;
 const utc = JSON.parse(read(path.join(ROOT, 'utc/measurements.json'))) as Measurement;
+const paletteRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-197/m05/consumers');
+const palette = JSON.parse(read(path.join(paletteRoot, 'migration.json')));
+const historicalSource = (relative: string): string => execFileSync('git', ['show', `${palette.beforeHead}:${relative}`], { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 
 describe('temporal placement migration preserves operands and historical proof (s196)', () => {
   it('qualifies every original request and source fixture against unchanged pre-UTC Git bytes', () => {
@@ -31,7 +34,9 @@ describe('temporal placement migration preserves operands and historical proof (
     for (const row of audit.unchangedSources) {
       const original = execFileSync('git', ['show', `${audit.beforeHead}:${row.path}`], { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
       expect(hash(original), row.path).toBe(row.beforeSha256);
-      expect(read(path.join(repositoryRoot, row.path)), row.path).toBe(original);
+      // The preview fixture acquired a later palette epoch. Historical UTC
+      // qualification still reads the exact pre-palette blob; raw receipts stay live.
+      expect(row.path === palette.samples.source ? historicalSource(row.path) : read(path.join(repositoryRoot, row.path)), row.path).toBe(original);
       expect(row.currentSha256).toBe(row.beforeSha256);
       expect(row.unchanged).toBe(true);
     }
@@ -74,7 +79,7 @@ describe('temporal placement migration preserves operands and historical proof (
 
   it('keeps the source JSON preview fixture outside the temporal migration because all six inputs are non-temporal', () => {
     const file = path.join(repositoryRoot, 'packages/component-contracts/fixtures/viz-preview-samples.v1.json');
-    const bytes = read(file);
+    const bytes = historicalSource(path.relative(repositoryRoot, file));
     const samples = JSON.parse(bytes).samples as Record<string, { svg: string; input: { chartType: string; encodings: Record<string, { type?: string; scale?: string }> } }>;
     expect(hash(bytes)).toBe(migration.controlsSourceSha256);
     expect(Object.keys(samples)).toHaveLength(6);
@@ -92,7 +97,7 @@ describe('temporal placement migration preserves operands and historical proof (
     expect(samples.VizAreaPreview.input.encodings.x.type).toBe('nominal');
   });
 
-  it.each(chicago.rows.filter(row => row.id.startsWith('Usage-')))('fresh $id generation matches the qualified UTC assets', async row => {
+  it.each(chicago.rows.filter(row => row.id.startsWith('Usage-')))('fresh $id generation follows the qualified UTC and palette assets', async row => {
     const request = wire('code.generate', 'input', structuredClone(row.request));
     const result = wire('code.generate', 'output', await generate(request));
     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
@@ -100,6 +105,13 @@ describe('temporal placement migration preserves operands and historical proof (
     // Complete historical artifacts remain compared across timezones above.
     const assets = (artifact: NonNullable<CodeGenerateOutput['artifact']>) => artifact.files.filter(file => file.path.endsWith('.svg'));
     expect(assets(result.artifact!)).not.toHaveLength(0);
-    expect(assets(result.artifact!)).toEqual(assets(row.result.artifact!));
+    const expected = assets(row.result.artifact!).map(asset => {
+      const moved = palette.placements.find((entry: any) => entry.case === row.id && entry.path === asset.path);
+      expect(moved).toMatchObject({ beforeHash: asset.contentHash, sameOperand: true, source: row.source });
+      const contents = read(path.join(paletteRoot, moved.raw));
+      expect(hash(contents)).toBe(moved.afterHash);
+      return { ...asset, contents, contentHash: moved.afterHash };
+    });
+    expect(assets(result.artifact!)).toEqual(expected);
   }, 60000);
 });

@@ -163,7 +163,7 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
     expect(result.errors?.[0]?.message).toContain('OODS-V165');
   });
 
-  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes follow the recorded UTC migration', async framework => {
+  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes follow the recorded UTC and palette migrations', async framework => {
     const source = `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json`;
     const previousBytes = fs.readFileSync(path.join(repositoryRoot, source), 'utf8');
     const previous = JSON.parse(previousBytes);
@@ -181,7 +181,13 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
       expect(receipt).toMatchObject({ case: `Subscription-detail-${framework}`, beforeHash: prior.contentHash, sourceSha256: `sha256:${sha256(previousBytes)}`, sameOperand: true, crossTimezoneEqual: true, changed: true });
       const current = fs.readFileSync(path.join(repositoryRoot, migrationRoot, receipt.utcRaw), 'utf8');
       expect(`sha256:${sha256(current)}`).toBe(receipt.afterHash);
-      expect(asset).toEqual({ ...prior, contents: current, contentHash: receipt.afterHash });
+      const paletteRoot = 'artifacts/product-reality/sprint-197/m05/consumers';
+      const palette = JSON.parse(fs.readFileSync(path.join(repositoryRoot, paletteRoot, 'migration.json'), 'utf8'));
+      const moved = palette.placements.find((row: any) => row.case === `Subscription-detail-${framework}` && row.path === asset.path);
+      expect(moved).toMatchObject({ beforeHash: receipt.afterHash, sameOperand: true, source });
+      const pixels = fs.readFileSync(path.join(repositoryRoot, paletteRoot, moved.raw), 'utf8');
+      expect(moved.afterHash).toBe(`sha256:${sha256(pixels)}`);
+      expect(asset).toEqual({ ...prior, contents: pixels, contentHash: moved.afterHash });
     }
     retain(`legacy-${framework}`, { before, after, unchanged: false, migration: `${migrationRoot}/migration.json` });
   });

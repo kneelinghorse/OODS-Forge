@@ -1,38 +1,14 @@
 /**
- * s171 m05a (#1158) — brand status literals must be brand-AUTHORED, not byte-copies of
- * the shared theme layer.
- *
- * WHAT THIS GUARDS. Each brand file declares 20 `color.brand.<X>.status.*` literals.
- * Copying a value verbatim from the theme status layer silently substitutes the shared
- * neutral identity for a brand identity — the drift the s169/s170 reviews flagged on
- * brand B dark. The control is SOURCE-JSON byte equality: brand literal value vs the
- * corresponding theme layer's status values (theme0 for base files, dark for dark files).
- *
- * WHAT THIS DOES NOT CLAIM. `base/reference/color.status.json` is LEGITIMATELY consumed —
- * the theme0 status layer aliases into it and it is emitted on every platform. Consuming
- * the reference ramp is not the defect; a brand literal that byte-copies a THEME value is.
- *
- * THE B/DARK RATCHET IS GONE (s172 m05). It pinned exactly five deferred byte-copies —
- * `status.critical.icon` plus all four `status.neutral` slots — as a hold-the-line measure
- * while re-authoring was deferred. s172 re-authored them: the four neutrals moved from hue
- * 260 to 252 (brand B's OWN info hue, an 8° nudge toward its brand hue 232) and
- * critical.icon from 24 to 23 (family-coherent ±1 — the critical family sits at ~24, and the
- * formula's 8° nudge would have landed on 16 and broken that coherence; the deviation is
- * Derek-ratified and recorded in the s172 memo §1e). L and C are BYTE-IDENTICAL in all five;
- * only hue moved, so the perceptual identity is preserved by construction and then proven:
- * measured through the enforcing oracle's own sRGB-clipped path, critical.icon vs
- * critical.surface is 6.7110 (floor 3), neutral.text vs the new surface is 8.2425 (floor
- * 4.5) and neutral.icon vs it is 5.4759 (floor 3). border carries no role, so no floor
- * applies to it.
- *
- * So B/dark is now in the SAME zero-copies loop as the other three cells, and this file has
- * no special case left. The test count is UNCHANGED: the ratchet test was replaced 1-for-1
- * by B/dark's zero-copies case, so what moved is the assertion, not the arithmetic.
+ * s197 supersedes #1158's byte-inequality proxy: status identity now comes from
+ * shared authored seeds, and Brand B varies only its primary hue. Equal generated
+ * values are intended. Verify provenance directly so hand-copied or independently
+ * nudged status values still fail, without manufacturing hue drift for identity.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { generatePaletteFiles, loadPaletteSeeds } from '../../scripts/tokens/generate-palette.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const TOKENS_SRC = path.resolve(moduleDir, '../../packages/tokens/src/tokens');
@@ -90,12 +66,28 @@ describe('brand status literal provenance (#1158)', () => {
     }
   });
 
-  // All FOUR cells now, B/dark included — the s171 filter and its ratchet companion are gone.
-  for (const { brand, theme, own } of CASES) {
-    it(`${brand}/${theme} has ZERO byte-copies of the ${own} status layer`, () => {
-      expect(byteCopies(brandStatusLeaves(brand, theme), themeStatus[own])).toEqual([]);
+  for (const { brand, theme } of CASES) {
+    it(`${brand}/${theme} is derived from the authored seeds`, async () => {
+      const file = `packages/tokens/src/tokens/brands/${brand}/${theme}.json`;
+      const expected = leaves(JSON.parse(generatePaletteFiles(await loadPaletteSeeds()).get(file)!));
+      expect(brandStatusLeaves(brand, theme)).toEqual(new Map([...expected].filter(([key]) => key.includes('status'))));
     });
   }
+
+  it('a status hue change reaches both brands and the shared dark theme, without changing unrelated families', async () => {
+    const seeds = await loadPaletteSeeds();
+    const before = generatePaletteFiles(seeds);
+    seeds.brands.A.status.success.hue += 12;
+    const after = generatePaletteFiles(seeds);
+    for (const file of [...CASES.map(({ brand, theme }) => `packages/tokens/src/tokens/brands/${brand}/${theme}.json`),
+      'packages/tokens/src/tokens/themes/dark/status.json']) {
+      const previous = leaves(JSON.parse(before.get(file)!));
+      const current = leaves(JSON.parse(after.get(file)!));
+      const changed = [...current].filter(([key, value]) => value !== previous.get(key)).map(([key]) => key);
+      expect(changed).toHaveLength(4);
+      expect(changed.every(key => key.includes('.status.success.'))).toBe(true);
+    }
+  });
 
   for (const { brand, theme, cross } of CASES) {
     it(`${brand}/${theme} has zero CROSS-SET copies (vs the ${cross} status layer)`, () => {

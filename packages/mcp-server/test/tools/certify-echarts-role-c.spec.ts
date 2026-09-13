@@ -25,42 +25,42 @@ const EXPECTED_ROLE_C: Readonly<
   >
 > = {
   treemap: {
-    paints: ["#416CD9", "#3E44BE", "#279669"],
+    paints: ["#580918", "#A97500", "#788E70"],
     chartElements: 8,
     unresolved: 0,
   },
   sunburst: {
-    paints: ["#416CD9", "#3E44BE", "#279669"],
+    paints: ["#580918", "#A97500", "#788E70"],
     chartElements: 4,
     unresolved: 0,
   },
   sankey: {
-    paints: ["#416CD9", "#3E44BE", "#279669"],
+    paints: ["#580918", "#A97500", "#788E70"],
     chartElements: 5,
     unresolved: 2,
   },
   chord: {
-    paints: ["#416CD9", "#3E44BE", "#279669"],
+    paints: ["#580918", "#A97500", "#788E70"],
     chartElements: 6,
     unresolved: 0,
   },
   force_graph: {
-    paints: ["#416CD9", "#3E44BE"],
+    paints: ["#580918", "#A97500"],
     chartElements: 5,
     unresolved: 0,
   },
   choropleth: {
-    paints: ["#003777", "#DFEDFC"],
+    paints: ["#043573", "#E5ECF6"],
     chartElements: 2,
     unresolved: 0,
   },
   bubble_map: {
-    paints: ["#003777", "#DFEDFC"],
+    paints: ["#043573", "#E5ECF6"],
     chartElements: 2,
     unresolved: 0,
   },
   flow_map: {
-    paints: ["#16558C"],
+    paints: ["#17509C"],
     chartElements: 2,
     unresolved: 0,
   },
@@ -116,10 +116,10 @@ describe.sequential("ECharts Role-C structural paint extraction", () => {
 
     expect(extracted.status).toBe("ok");
     expect(extracted.roleCPaints).toEqual([
-      "#416CD9",
-      "#809DE5",
-      "#3E44BE",
-      "#279669",
+      "#580918",
+      "#8F5B65",
+      "#A97500",
+      "#788E70",
     ]);
   });
 

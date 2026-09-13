@@ -1,0 +1,27 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/mcp-server
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/closeout.s197.spec.ts [ test/product-reality/closeout.s197.spec.ts ]
+Error: spawnSync git ENOBUFS
+ ❯ test/product-reality/closeout.s197.spec.ts:14:29
+     12| // Real retained 240-cell receipts exercise hash checks without relyin…
+     13| // closeout's generated claims. The fresh sweep is independently audit…
+     14| const original = JSON.parse(execFileSync('git', ['show', `${S197_BASE}…
+       |                             ^
+     15| const runtimePath = `${original.receiptRoot}/runtime-cells.v1.json`;
+     16| const raw = (file: string) => readFileSync(path.join(root, file));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  08:26:08
+   Duration  1.75s (transform 506ms, setup 79ms, collect 0ms, tests 0ms, environment 0ms, prepare 173ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/closeout.s197.spec.ts --coverage.enabled=false --testTimeout=60000 --maxWorkers=1

@@ -1,0 +1,932 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/viz-core
+
+ ✓ test/dashboard-layout.spec.ts (6 tests) 4ms
+ ✓ test/golden-profiles.spec.ts (5 tests) 7ms
+ ❯ test/golden-echarts-options.spec.ts (16 tests | 8 failed) 26ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): JSON-safe option matches the committed golden 12ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): same (spec, input) -> byte-identical option (determinism gate) 1ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): JSON-safe option matches the committed golden 3ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): JSON-safe option matches the committed golden 2ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): JSON-safe option matches the committed golden 2ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): JSON-safe option matches the committed golden 2ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): JSON-safe option matches the committed golden 1ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): JSON-safe option matches the committed golden 1ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): same (spec, input) -> byte-identical option (determinism gate) 0ms
+   × golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): JSON-safe option matches the committed golden 1ms
+     → Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): JSON-safe option matches the committed golden 1` mismatched
+   ✓ golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): same (spec, input) -> byte-identical option (determinism gate) 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,29 +1,29 @@
+  {
+    "aria": {
+      "description": "Treemap of org headcount.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "series": [
+      {
+        "breadcrumb": {
+          "itemStyle": {
+-           "borderColor": "#D6DAE4",
++           "borderColor": "#BABEC4",
+-           "color": "#FDF3DE",
++           "color": "#F9FAFC",
+          },
+          "show": true,
+          "textStyle": {
+-           "color": "#18233C",
++           "color": "#1A1D23",
+          },
+        },
+        "data": [
+          {
+            "children": [
+@@ -39,11 +39,11 @@
+                    "name": "Backend",
+                    "value": 35,
+                  },
+                ],
+                "itemStyle": {
+-                 "color": "rgb(65, 108, 217)",
++                 "color": "rgb(88, 9, 24)",
+                },
+                "name": "Engineering",
+                "value": 60,
+              },
+              {
+@@ -58,11 +58,11 @@
+                    "name": "EMEA",
+                    "value": 16,
+                  },
+                ],
+                "itemStyle": {
+-                 "color": "rgb(62, 68, 190)",
++                 "color": "rgb(169, 117, 0)",
+                },
+                "name": "Sales",
+                "value": 40,
+              },
+            ],
+@@ -71,26 +71,26 @@
+          },
+        ],
+        "emphasis": {
+          "focus": "ancestor",
+          "itemStyle": {
+-           "borderColor": "#4B4D5A",
++           "borderColor": "#484D58",
+            "borderWidth": 2,
+            "shadowBlur": 2,
+            "shadowColor": "rgba(0, 0, 0, 0.05)",
+          },
+        },
+        "itemStyle": {
+-         "borderColor": "#D6DAE4",
++         "borderColor": "#BABEC4",
+          "borderWidth": 1,
+          "gapWidth": 1,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "formatter": "{b}",
+          "show": true,
+-         "textBorderColor": "#FDF3DE",
++         "textBorderColor": "#F9FAFC",
+          "textBorderWidth": 2,
+        },
+        "levels": [
+          {
+            "itemStyle": {
+@@ -101,18 +101,18 @@
+              "show": false,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 2,
+              "gapWidth": 2,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 1,
+              "gapWidth": 1,
+            },
+          },
+        ],
+@@ -120,22 +120,22 @@
+        "nodeClick": "zoomToNode",
+        "roam": false,
+        "squareRatio": 1.618,
+        "type": "treemap",
+        "upperLabel": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "height": 28,
+          "show": true,
+-         "textBorderColor": "#FDF3DE",
++         "textBorderColor": "#F9FAFC",
+          "textBorderWidth": 2,
+        },
+      },
+    ],
+    "title": {
+      "text": "Org",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "trigger": "item",
+      "triggerOn": "mousemove",
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,29 +1,29 @@
+  {
+    "aria": {
+      "description": "Treemap from adjacency list.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "series": [
+      {
+        "breadcrumb": {
+          "itemStyle": {
+-           "borderColor": "#D6DAE4",
++           "borderColor": "#BABEC4",
+-           "color": "#FDF3DE",
++           "color": "#F9FAFC",
+          },
+          "show": true,
+          "textStyle": {
+-           "color": "#18233C",
++           "color": "#1A1D23",
+          },
+        },
+        "data": [
+          {
+            "children": [
+@@ -34,19 +34,19 @@
+                    "name": "Alpha-1",
+                    "value": 7,
+                  },
+                ],
+                "itemStyle": {
+-                 "color": "rgb(65, 108, 217)",
++                 "color": "rgb(88, 9, 24)",
+                },
+                "name": "Alpha",
+                "value": 12,
+              },
+              {
+                "children": [],
+                "itemStyle": {
+-                 "color": "rgb(62, 68, 190)",
++                 "color": "rgb(169, 117, 0)",
+                },
+                "name": "Beta",
+                "value": 18,
+              },
+            ],
+@@ -55,26 +55,26 @@
+          },
+        ],
+        "emphasis": {
+          "focus": "ancestor",
+          "itemStyle": {
+-           "borderColor": "#4B4D5A",
++           "borderColor": "#484D58",
+            "borderWidth": 2,
+            "shadowBlur": 2,
+            "shadowColor": "rgba(0, 0, 0, 0.05)",
+          },
+        },
+        "itemStyle": {
+-         "borderColor": "#D6DAE4",
++         "borderColor": "#BABEC4",
+          "borderWidth": 1,
+          "gapWidth": 1,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "formatter": "{b}",
+          "show": true,
+-         "textBorderColor": "#FDF3DE",
++         "textBorderColor": "#F9FAFC",
+          "textBorderWidth": 2,
+        },
+        "levels": [
+          {
+            "itemStyle": {
+@@ -85,18 +85,18 @@
+              "show": false,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 2,
+              "gapWidth": 2,
+            },
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 1,
+              "gapWidth": 1,
+            },
+          },
+        ],
+@@ -104,22 +104,22 @@
+        "nodeClick": "zoomToNode",
+        "roam": false,
+        "squareRatio": 1.618,
+        "type": "treemap",
+        "upperLabel": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "height": 28,
+          "show": true,
+-         "textBorderColor": "#FDF3DE",
++         "textBorderColor": "#F9FAFC",
+          "textBorderWidth": 2,
+        },
+      },
+    ],
+    "title": {
+      "text": "Company",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "trigger": "item",
+      "triggerOn": "mousemove",
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,18 +1,18 @@
+  {
+    "aria": {
+      "description": "Sunburst of org headcount.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "series": [
+      {
+        "data": [
+          {
+@@ -29,11 +29,11 @@
+                    "name": "Backend",
+                    "value": 35,
+                  },
+                ],
+                "itemStyle": {
+-                 "color": "rgb(65, 108, 217)",
++                 "color": "rgb(88, 9, 24)",
+                },
+                "name": "Engineering",
+                "value": 60,
+              },
+              {
+@@ -48,11 +48,11 @@
+                    "name": "EMEA",
+                    "value": 16,
+                  },
+                ],
+                "itemStyle": {
+-                 "color": "rgb(62, 68, 190)",
++                 "color": "rgb(169, 117, 0)",
+                },
+                "name": "Sales",
+                "value": 40,
+              },
+            ],
+@@ -61,53 +61,53 @@
+          },
+        ],
+        "emphasis": {
+          "focus": "ancestor",
+          "itemStyle": {
+-           "borderColor": "#4B4D5A",
++           "borderColor": "#484D58",
+            "borderWidth": 3,
+            "shadowBlur": 10,
+          },
+        },
+        "itemStyle": {
+-         "borderColor": "#FDF3DE",
++         "borderColor": "#F9FAFC",
+          "borderRadius": 4,
+          "borderWidth": 2,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "rotate": "radial",
+-         "textBorderColor": "#FDF3DE",
++         "textBorderColor": "#F9FAFC",
+          "textBorderWidth": 2,
+        },
+        "levels": [
+          {},
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 1,
+            },
+            "label": {
+              "rotate": "tangential",
+            },
+            "r": "32%",
+            "r0": "12%",
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 1,
+            },
+            "label": {
+              "align": "right",
+            },
+            "r": "68%",
+            "r0": "32%",
+          },
+          {
+            "itemStyle": {
+-             "borderColor": "#D6DAE4",
++             "borderColor": "#BABEC4",
+              "borderWidth": 2,
+            },
+            "label": {
+              "show": false,
+            },
+@@ -126,11 +126,11 @@
+      },
+    ],
+    "title": {
+      "text": "Org",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "trigger": "item",
+      "triggerOn": "mousemove",
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,60 +1,60 @@
+  {
+    "aria": {
+      "description": "Sankey of energy flow.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "series": [
+      {
+        "data": [
+          {
+            "itemStyle": {
+-             "color": "rgb(65, 108, 217)",
++             "color": "rgb(88, 9, 24)",
+            },
+            "name": "Coal",
+            "value": 100,
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(62, 68, 190)",
++             "color": "rgb(169, 117, 0)",
+            },
+            "name": "Grid",
+            "value": 100,
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(39, 150, 105)",
++             "color": "rgb(120, 142, 112)",
+            },
+            "name": "Homes",
+            "value": 60,
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(181, 133, 37)",
++             "color": "rgb(0, 160, 163)",
+            },
+            "name": "Industry",
+            "value": 40,
+          },
+        ],
+        "emphasis": {
+          "focus": "adjacency",
+        },
+        "itemStyle": {
+-         "borderColor": "#D6DAE4",
++         "borderColor": "#BABEC4",
+          "borderWidth": 1,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "position": "right",
+          "show": true,
+        },
+        "layoutIterations": 32,
+        "lineStyle": {
+@@ -88,11 +88,11 @@
+      },
+    ],
+    "title": {
+      "text": "Energy",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "trigger": "item",
+    },
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,48 +1,48 @@
+  {
+    "aria": {
+      "description": "Force graph of services.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "legend": {
+      "data": [
+        "backend",
+        "data",
+        "frontend",
+      ],
+      "show": true,
+      "textStyle": {
+-       "color": "#4B4D5A",
++       "color": "#484D58",
+      },
+    },
+    "series": [
+      {
+        "categories": [
+          {
+            "itemStyle": {
+-             "color": "rgb(65, 108, 217)",
++             "color": "rgb(88, 9, 24)",
+            },
+            "name": "backend",
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(62, 68, 190)",
++             "color": "rgb(169, 117, 0)",
+            },
+            "name": "data",
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(39, 150, 105)",
++             "color": "rgb(120, 142, 112)",
+            },
+            "name": "frontend",
+          },
+        ],
+        "data": [
+@@ -94,11 +94,11 @@
+          "gravity": 0.1,
+          "layoutAnimation": true,
+          "repulsion": 100,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "formatter": "{b}",
+          "position": "right",
+          "show": true,
+        },
+        "labelLayout": {
+@@ -141,11 +141,11 @@
+      },
+    ],
+    "title": {
+      "text": "Service map",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "trigger": "item",
+    },
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -83,20 +83,20 @@
+    },
+    "aria": {
+      "description": "Choropleth of state sales.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "geo": {
+      "emphasis": {
+        "itemStyle": {
+-         "areaColor": "rgb(245, 232, 206)",
++         "areaColor": "rgb(255, 255, 255)",
+        },
+      },
+      "itemStyle": {
+        "areaColor": "#f2f2f2",
+-       "borderColor": "rgb(218, 208, 186)",
++       "borderColor": "rgb(206, 209, 214)",
+      },
+      "label": {
+        "show": false,
+      },
+      "map": "map-viz:choropleth",
+@@ -157,18 +157,18 @@
+    },
+    "visualMap": {
+      "calculable": true,
+      "inRange": {
+        "color": [
+-         "rgb(223, 237, 252)",
++         "rgb(229, 236, 246)",
+-         "rgb(68, 114, 161)",
++         "rgb(53, 110, 189)",
+-         "rgb(0, 55, 119)",
++         "rgb(4, 53, 115)",
+        ],
+      },
+      "max": 580,
+      "min": 96,
+      "textStyle": {
+-       "color": "#4B4D5A",
++       "color": "#484D58",
+      },
+      "type": "continuous",
+    },
+  }
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -79,15 +79,15 @@
+    },
+    "aria": {
+      "description": "Bubble map of city population.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "geo": {
+      "itemStyle": {
+        "areaColor": "#f2f2f2",
+-       "borderColor": "rgb(218, 208, 186)",
++       "borderColor": "rgb(206, 209, 214)",
+      },
+      "label": {
+        "show": false,
+      },
+      "map": "map-viz:bubble",
+@@ -163,18 +163,18 @@
+    "visualMap": {
+      "calculable": true,
+      "dimension": 3,
+      "inRange": {
+        "color": [
+-         "rgb(223, 237, 252)",
++         "rgb(229, 236, 246)",
+-         "rgb(68, 114, 161)",
++         "rgb(53, 110, 189)",
+-         "rgb(0, 55, 119)",
++         "rgb(4, 53, 115)",
+        ],
+      },
+      "max": 874,
+      "min": 646,
+      "textStyle": {
+-       "color": "#4B4D5A",
++       "color": "#484D58",
+      },
+      "type": "continuous",
+    },
+  }
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  test/golden-echarts-options.spec.ts > golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): JSON-safe option matches the committed golden
+Error: Snapshot `golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): JSON-safe option matches the committed golden 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,32 +1,32 @@
+  {
+    "aria": {
+      "description": "Chord of regional trade.",
+      "enabled": true,
+    },
+-   "backgroundColor": "#FDF3DE",
++   "backgroundColor": "#F9FAFC",
+    "color": [
+-     "rgb(65, 108, 217)",
++     "rgb(88, 9, 24)",
+-     "rgb(62, 68, 190)",
++     "rgb(169, 117, 0)",
+-     "rgb(39, 150, 105)",
++     "rgb(120, 142, 112)",
+-     "rgb(181, 133, 37)",
++     "rgb(0, 160, 163)",
+-     "rgb(202, 73, 73)",
++     "rgb(0, 80, 173)",
+-     "rgb(153, 59, 0)",
++     "rgb(54, 6, 67)",
+    ],
+    "series": [
+      {
+        "clockwise": true,
+        "coordinateSystem": "none",
+        "emphasis": {
+          "focus": "adjacency",
+        },
+        "itemStyle": {
+-         "borderColor": "#D6DAE4",
++         "borderColor": "#BABEC4",
+          "borderWidth": 1,
+        },
+        "label": {
+-         "color": "#18233C",
++         "color": "#1A1D23",
+          "position": "outside",
+          "show": true,
+        },
+        "lineStyle": {
+          "color": "source",
+@@ -53,23 +53,23 @@
+        "minAngle": 0,
+        "name": "Trade corridors",
+        "nodes": [
+          {
+            "itemStyle": {
+-             "color": "rgb(65, 108, 217)",
++             "color": "rgb(88, 9, 24)",
+            },
+            "name": "AMER",
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(62, 68, 190)",
++             "color": "rgb(169, 117, 0)",
+            },
+            "name": "EMEA",
+          },
+          {
+            "itemStyle": {
+-             "color": "rgb(39, 150, 105)",
++             "color": "rgb(120, 142, 112)",
+            },
+            "name": "APAC",
+          },
+        ],
+        "padAngle": 3,
+@@ -78,11 +78,11 @@
+      },
+    ],
+    "title": {
+      "text": "Trade corridors",
+      "textStyle": {
+-       "color": "#18233C",
++       "color": "#1A1D23",
+      },
+    },
+    "tooltip": {
+      "formatter": "{b}: {c}",
+      "trigger": "item",
+
+ ❯ test/golden-echarts-options.spec.ts:179:33
+    177|   for (const [name, build] of CASES) {
+    178|     it(`${name}: JSON-safe option matches the committed golden`, () =>…
+    179|       expect(jsonSafe(build())).toMatchSnapshot();
+       |                                 ^
+    180|     });
+    181| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+  Snapshots  8 failed
+ Test Files  1 failed | 2 passed (3)
+      Tests  8 failed | 19 passed (27)
+   Start at  23:15:10
+   Duration  849ms (transform 316ms, setup 0ms, collect 1.66s, tests 37ms, environment 0ms, prepare 198ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s197/OODS-Forge/packages/viz-core:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/golden-echarts-options.spec.ts test/golden-profiles.spec.ts test/dashboard-layout.spec.ts --coverage.enabled=false

@@ -1,0 +1,43 @@
+{
+  "command": [
+    "pnpm",
+    "--filter",
+    "@oods/mcp-server",
+    "exec",
+    "vitest",
+    "run",
+    "--coverage.enabled=false"
+  ],
+  "exitCode": 1,
+  "log": "artifacts/product-reality/sprint-197/m05/mcp-suite.after-01.log",
+  "diagnostic": true,
+  "sourceState": "Started after the bounded snapshot migration; additional discovered pins were attributed and edited during this diagnostic. Not a final source qualification.",
+  "files": {
+    "failed": 9,
+    "passed": 367,
+    "skipped": 1
+  },
+  "tests": {
+    "failed": 26,
+    "passed": 6822,
+    "skipped": 16
+  },
+  "skips": [
+    {
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "tests": 9,
+      "reason": "Optional adjacent Stage1 linear/stripe bridge-summary and reconciliation fixtures absent in isolated worktree."
+    },
+    {
+      "file": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+      "tests": 7,
+      "reason": "Optional adjacent Stage1 sprint-46 identity/capability/object rollup fixtures absent in isolated worktree."
+    }
+  ],
+  "operationalFindings": [
+    {
+      "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "reason": "MCP dist still carried the previous pattern registry. Rebuild MCP after canonical registry regeneration; no assertion change."
+    }
+  ]
+}

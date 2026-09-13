@@ -71,8 +71,8 @@ describe("certify ECharts served-option render carrier (s179 m03)", () => {
 
     const marks = chartDataElements(svg);
     expect(marks.map((mark) => svgAttribute(mark, "fill"))).toEqual([
-      "rgb(0,55,119)",
-      "rgb(223,237,252)",
+      "rgb(4,53,115)",
+      "rgb(229,236,246)",
     ]);
     expect(
       marks.map((mark) => svgAttribute(mark, "ecmeta_data_index")),

@@ -232,7 +232,8 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
   });
 
   it('(b) the corresponding-slot oracle is discriminating (seeded cross-brand value)', () => {
-    const slot = 'surface-canvas';
+    // S197 shares neutrals; the primary remains the discriminating brand role.
+    const slot = 'surface-interactive-primary-default';
     const aKey = `--oods-color-brand-a-${slot}`;
     const bValue = cellVars('B', 'base').get(`--oods-color-brand-b-${slot}`)!;
     const aValue = cellVars('A', 'base').get(aKey)!;

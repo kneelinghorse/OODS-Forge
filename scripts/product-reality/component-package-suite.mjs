@@ -16,7 +16,7 @@ const reports = [];
 let failed = false;
 for (const name of packages) {
   const output = path.join(temporary, `${name}.json`);
-  const args = ['--filter', `@oods/${name}`, 'exec', 'vitest', 'run', '--reporter=default', '--reporter=json', `--outputFile=${output}`];
+  const args = ['--filter', `@oods/${name}`, 'exec', 'vitest', 'run', ...process.argv.filter(argument => /^--(?:testTimeout=|maxWorkers=|no-file-parallelism$)/.test(argument)), '--reporter=default', '--reporter=json', `--outputFile=${output}`];
   console.log(`$ pnpm ${args.join(' ')}`);
   const result = spawnSync('pnpm', args, { cwd: root, stdio: 'inherit' });
   failed ||= result.status !== 0;

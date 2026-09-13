@@ -1,0 +1,39 @@
+{
+  "implementationHead": "c6e3f5d86fed1fd324e90278ad90c6f2c3a6560c",
+  "goldenImplementationHead": "a86eaed61f48ebeb29288e5d47a2ae52ae88cafc",
+  "attributionCommand": [
+    "python3",
+    "scripts/product-reality/s197-attribute-palette-goldens.py",
+    "--finalize",
+    "--head",
+    "c6e3f5d86fed1fd324e90278ad90c6f2c3a6560c"
+  ],
+  "checkCommand": [
+    "python3",
+    "scripts/product-reality/s197-attribute-palette-goldens.py",
+    "--finalize",
+    "--head",
+    "c6e3f5d86fed1fd324e90278ad90c6f2c3a6560c",
+    "--check"
+  ],
+  "testCommand": [
+    "pnpm",
+    "--filter",
+    "@oods/mcp-server",
+    "exec",
+    "vitest",
+    "run",
+    "test/product-reality/palette-golden-migration.s197.spec.ts",
+    "--coverage.enabled=false"
+  ],
+  "testQualificationHead": "a86eaed61f48ebeb29288e5d47a2ae52ae88cafc",
+  "bindingNote": "All qualified golden inputs are identical at the final implementation head; its batch-read verifier additionally passed --check against that head.",
+  "exitCode": 0,
+  "tests": {
+    "passed": 7,
+    "skipped": 0,
+    "failed": 0
+  },
+  "log": "artifacts/product-reality/sprint-197/m05/qualification.test.log",
+  "builderSelfCertified": false
+}

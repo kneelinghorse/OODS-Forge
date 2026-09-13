@@ -1,0 +1,75 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/tokens/color-guardrails.ts",
+      "--no-diagnostics",
+      "--json",
+      "artifacts/product-reality/sprint-197/m03/color-guardrails.json"
+    ],
+    "exitCode": 1,
+    "log": "artifacts/product-reality/sprint-197/m03/color-guardrails.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/tokens/validate-viz-scales.ts",
+      "--json",
+      "artifacts/product-reality/sprint-197/m03/viz-scales.json"
+    ],
+    "exitCode": 1,
+    "log": "artifacts/product-reality/sprint-197/m03/viz-scales.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "tokens-validate"
+    ],
+    "exitCode": 1,
+    "log": "artifacts/product-reality/sprint-197/m03/tokens-validate.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "check:tokens"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/check-tokens.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/tokens/generate-palette.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/generator-check.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--skipLibCheck",
+      "--strict",
+      "--target",
+      "ES2022",
+      "--module",
+      "NodeNext",
+      "--moduleResolution",
+      "NodeNext",
+      "--esModuleInterop",
+      "--resolveJsonModule",
+      "scripts/tokens/generate-palette.ts"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/typecheck.log"
+  }
+]

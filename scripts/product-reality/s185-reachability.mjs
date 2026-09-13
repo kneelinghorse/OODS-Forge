@@ -12,6 +12,7 @@ let store = path.join(root, 'artifacts/product-reality/sprint-183/m04/saved-sche
 let missionId = 's185-m04';
 let fresh = false;
 let fullPopulation = false;
+let selectedObjects;
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === '--full-population') { fullPopulation = true; continue; }
   if (args[index] === '--fresh') { fresh = true; continue; }
@@ -20,6 +21,7 @@ for (let index = 0; index < args.length; index += 1) {
   if (!value || value.startsWith('--')) throw new Error(`Missing value for ${option}.`);
   if (option === '--store') store = path.resolve(root, value);
   else if (option === '--mission') missionId = value;
+  else if (option === '--objects') selectedObjects = value.split(',');
   else throw new Error(`Unknown argument: ${option}`);
 }
 if (fresh) {
@@ -27,7 +29,9 @@ if (fresh) {
   const { handle: list } = await load('packages/mcp-server/dist/tools/object.list.js');
   const { handle: compose } = await load('packages/mcp-server/dist/tools/design.compose.js');
   const { handle: generate } = await load('packages/mcp-server/dist/tools/code.generate.js');
-  const objects = (await list({})).objects.map(row => row.name).sort();
+  const availableObjects = (await list({})).objects.map(row => row.name).sort();
+  const objects = selectedObjects ? [...selectedObjects].sort() : availableObjects;
+  if (new Set(objects).size !== objects.length || objects.some(object => !availableObjects.includes(object))) throw new Error('--objects requires distinct registered object names.');
   const contexts = JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-server/src/schemas/design.compose.input.json'), 'utf8')).properties.context.enum.filter(context => context !== 'workflow');
   const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   fs.mkdirSync(output, { recursive: true });
@@ -57,7 +61,7 @@ if (fresh) {
   const screens = rows.filter(row => row.input.context !== 'workflow');
   const workflow = rows.find(row => row.input.context === 'workflow');
   const report = { missionId, head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), measuredAt: new Date().toISOString(), command: process.argv,
-    profile: 'build', objects, contexts, schemaCount: screens.length, greenSchemas: screens.filter(row => row.green).length,
+    profile: 'build', objects, ...(selectedObjects ? { population: 'explicit retained comparison roster', availableObjects } : {}), contexts, schemaCount: screens.length, greenSchemas: screens.filter(row => row.green).length,
     generationCells: screens.length * 2, greenCells: screens.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent && !cell.errors.length).length,
     workflow, rows: screens, limitation: 'Generation-only evidence; the full generated application has a separate packed browser proof.' };
   if (fullPopulation) Object.assign(report, { totalSchemas: rows.length, greenTotalSchemas: rows.filter(row => row.green).length, totalCells: rows.length * 2, greenTotalCells: rows.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent && !cell.errors.length).length, allRows: rows });

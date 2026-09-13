@@ -1,0 +1,90 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/tokens/palette-generator.s197.test.ts",
+      "tests/tokens/palette-guardrails.s197.test.ts",
+      "tests/tokens/semantic-keys.s197.test.ts",
+      "tests/tokens/palette-dark.s197.test.ts",
+      "packages/mcp-server/test/product-reality/theme.s197.spec.ts",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/focused-tests.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "testing/a11y",
+      "packages/mcp-server/test/product-reality/theme.s191.spec.ts",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/contrast-and-theme-tests.final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/components-react",
+      "test:visual",
+      "--cells=A-dark,B-dark",
+      "--mission=s197-m03",
+      "--output=artifacts/product-reality/sprint-197/m03/react"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/react-theme.final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/components-vue",
+      "test:visual",
+      "--cells=A-dark,B-dark",
+      "--mission=s197-m03",
+      "--output=artifacts/product-reality/sprint-197/m03/vue"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/vue-theme.final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s195-viz-matrix.ts",
+      "--mode",
+      "s197-m03"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/matrix.final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/product-reality/s197-dark-palette.ts"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/shell.final.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "scripts/tokens/generate-palette.ts",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m03/generator-check.final.log"
+  }
+]

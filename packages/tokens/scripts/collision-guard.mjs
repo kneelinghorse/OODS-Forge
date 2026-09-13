@@ -28,9 +28,8 @@
  * "any intra-scope duplicate" could never go green, because the prescribed structure
  * produces duplicates by design. The exemption is narrow — every declaration in the
  * group must live under ONE brand's directory. The separate s191 exception allows
- * only viz.scale.categorical.01..06 from src/viz-scales.json into one brand's
- * base/dark chain (base added in s195), plus slot 04 in hc.json to retain its old
- * bytes. Both globally loaded brand-base categorical overrides must agree exactly.
+ * only the 26 canonical viz.scale color names from src/viz-scales.json into
+ * one brand's base/dark/hc chain (all three scale families added in s197). Both globally loaded brand-base categorical overrides must agree exactly.
  * Other mixed shared/brand or
  * cross-brand declarations are reported.
  *
@@ -123,14 +122,17 @@ function isDeclaredOverlayChain(declarations) {
 }
 
 /**
- * The six categorical slots may overlay shared -> base -> one theme. Both brand
+ * The 26 canonical scale colors may overlay shared -> base -> one theme. Both brand
  * bases load in every scope for global alias resolution: their common categorical
  * overrides must be IDENTICAL, otherwise merge order would silently choose a brand.
- * Distinct brand-base values and mixed-theme chains still fail. HC permits only
- * the previously declared slot04 retention.
+ * Distinct brand-base values, invented slots, and mixed-theme chains still fail.
  */
-function isCategoricalThemeOverlay(tokenPath, declarations) {
-  if (!/^viz\.scale\.categorical\.0[1-6]$/.test(tokenPath)
+export function isVizColorTokenPath(tokenPath) {
+  return /^viz\.scale\.(?:categorical\.0[1-6]|sequential\.0[1-9]|diverging\.(?:neg-0[1-5]|pos-0[1-5]|neutral))$/.test(tokenPath);
+}
+
+function isVizThemeOverlay(tokenPath, declarations) {
+  if (!isVizColorTokenPath(tokenPath)
     || declarations[0]?.file !== 'src/viz-scales.json'
     || declarations.length < 2 || declarations.length > 4) return false;
   const overlays = declarations.slice(1).map(({ file, value }) => {
@@ -146,7 +148,6 @@ function isCategoricalThemeOverlay(tokenPath, declarations) {
   if (themes.length === 1) {
     const theme = themes[0];
     if (overlays.at(-1) !== theme) return false;
-    if (theme.theme === 'hc' && tokenPath !== 'viz.scale.categorical.04') return false;
     if (bases.length === 1 && bases[0].brand !== theme.brand) return false;
   }
   return true;
@@ -168,7 +169,7 @@ export function findCollisions(files, root = PACKAGE_ROOT) {
     if (declarations.length < 2) continue;
     const distinct = new Set(declarations.map((d) => JSON.stringify(d.value)));
     if (distinct.size < 2) continue; // identical values cannot change the output
-    if (isDeclaredOverlayChain(declarations) || isCategoricalThemeOverlay(tokenPath, declarations)) continue;
+    if (isDeclaredOverlayChain(declarations) || isVizThemeOverlay(tokenPath, declarations)) continue;
     violations.push({ tokenPath, declarations });
   }
   return violations;

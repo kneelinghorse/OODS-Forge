@@ -1,0 +1,44 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--project=core",
+      "tests/tokens/palette-generator.s197.test.ts",
+      "tests/tokens/palette-guardrails.s197.test.ts",
+      "tests/tokens/semantic-keys.s197.test.ts",
+      "tests/tokens/palette-baseline.s197.test.ts",
+      "--coverage.enabled=false",
+      "--maxWorkers=1",
+      "--reporter=verbose"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m01/final-contract-tests.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--target",
+      "ES2022",
+      "--module",
+      "NodeNext",
+      "--moduleResolution",
+      "NodeNext",
+      "--strict",
+      "--esModuleInterop",
+      "--skipLibCheck",
+      "scripts/tokens/generate-palette.ts",
+      "scripts/tokens/palette-checks.ts",
+      "scripts/tokens/color-guardrails.ts",
+      "scripts/tokens/validate-viz-scales.ts",
+      "scripts/tokens/semantic-key-contract.ts"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m01/typecheck.log"
+  }
+]

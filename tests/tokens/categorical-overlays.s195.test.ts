@@ -32,10 +32,15 @@ describe('s195 exact canonical categorical overlay chains', () => {
     expect(conflicts(both)).toHaveLength(1);
     expect(conflicts([...both, dark])).toHaveLength(1);
   });
-  it('retains HC slot04 only, including a base override before the retained HC value', () => {
+  it('s197 extends the declared HC chain to every canonical scale color', () => {
     expect(conflicts([shared, hc], ['viz', 'scale', 'categorical', '04'])).toEqual([]);
     expect(conflicts([shared, base, hc], ['viz', 'scale', 'categorical', '04'])).toEqual([]);
-    expect(conflicts([shared, hc])).toHaveLength(1);
+    expect(conflicts([shared, hc])).toEqual([]);
+    for (const path of [['viz', 'scale', 'sequential', '09'], ['viz', 'scale', 'diverging', 'neutral'], ['viz', 'scale', 'diverging', 'neg-05']]) {
+      expect(conflicts([shared, hc], path)).toEqual([]);
+      expect(conflicts([shared, base, dark], path)).toEqual([]);
+      expect(conflicts([shared, dark, hc], path)).toHaveLength(1);
+    }
   });
   it.each([
     [shared, base, 'src/tokens/brands/B/dark.json'],
@@ -46,8 +51,8 @@ describe('s195 exact canonical categorical overlay chains', () => {
   ])('rejects cross-brand, reversed, mixed-theme and undeclared chains: %j', (...files) => {
     expect(conflicts(files)).toHaveLength(1);
   });
-  it('rejects shared shadows outside the six fixed categorical slots', () => {
-    for (const path of [['viz', 'scale', 'categorical', '07'], ['viz', 'scale', 'sequential', '01'], ['sys', 'text', 'primary']]) {
+  it('rejects shared shadows outside the fixed canonical scale slots', () => {
+    for (const path of [['viz', 'scale', 'categorical', '07'], ['viz', 'scale', 'sequential', '10'], ['viz', 'scale', 'diverging', 'neg-06'], ['sys', 'text', 'primary']]) {
       expect(conflicts([shared, base], path)).toHaveLength(1);
     }
   });

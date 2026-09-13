@@ -22,15 +22,13 @@ import {
 type StableChartType = (typeof STABLE_CHART_TYPES)[number];
 
 const EXPECTED_NORMALIZED_HASHES: Readonly<Record<StableChartType, string>> = {
-  treemap: "bfa0ee12dc03bfc2b373db650cfbaeba8febf36f5e45974cbcc8f579ffc39694",
-  sunburst: "9904c873c359129e58db2dcb745900f871ed0ac7a8bf12788682c2d539d0835a",
-  sankey: "ea82ad48dcb7b533020a7f736508f52f165169e3252f8ec82ada9b8fb1f9803d",
-  chord: "86db1949d8c7f39033d1da48a126609dd1c86cee7db8d749392726e514884594",
-  choropleth:
-    "f10cbd6bcacaf64d7562b90ad6ad0619edd9a09a7fcf3674401d8b76feebc55f",
-  bubble_map:
-    "481fc41a1264b63d4596db1787c6380af7ad5536f78af36eed54db33bfa4f55c",
-  flow_map: "bab223b6a50ee581338bead62b54bd292be08a594b02ccca2c3b2ab1793b5e68",
+  treemap: "629e8b3435ac6ea24c288f8a5a2d9548e110f9517b769f96702cf758ebd9c0c9",
+  sunburst: "fcb9366be6cb54e1fa63f4ca95226232c303708f09d59fff3231e2284c644db0",
+  sankey: "86453b9db15eb5ba08bd38a3e370e6fdffe8edf80c4987cf004530c152d27288",
+  chord: "25f997cc68917e985ca39eef3499b4c119d13bf6dbeacd6481401d22f471a2ec",
+  choropleth: "17cd8a698349f0942badc4484473c378235de48299a15ef096079c6474dbc8a9",
+  bubble_map: "88080a236a3c898bb62c593b7be3c03806f2ab49dfa2e3c6fd15686c4d1eb1e7",
+  flow_map: "d5fbd43d80bc153ee74decc0821abc1cedd9cb426b5c3f3364f766b3c519855b",
 };
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -201,7 +199,7 @@ describe("s179 m01 — ECharts 6 SSR normalization baseline", () => {
     expect(chartElements).toHaveLength(2);
     expect(
       chartElements.map((element) => svgAttribute(element, "fill")),
-    ).toEqual(["rgb(0,55,119)", "rgb(223,237,252)"]);
+    ).toEqual(["rgb(4,53,115)", "rgb(229,236,246)"]);
     expect(
       chartElements.map((element) =>
         svgAttribute(element, "ecmeta_data_index"),

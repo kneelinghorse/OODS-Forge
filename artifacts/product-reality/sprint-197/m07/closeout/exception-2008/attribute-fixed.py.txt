@@ -1,0 +1,69 @@
+from pathlib import Path
+import subprocess,json,hashlib
+root=Path('/Users/systemsystems/.codex/worktrees/s197/OODS-Forge');out=Path('/tmp/oods-s197-fixed-movers');base='bc12723e9b7a42a4790a98f5d2a0dc4a1f970b99';head='542f9ee6bfceb96e61c5b2b44c241c9375a8596f'
+prefix='artifacts/product-reality/sprint-197/m07/movers'
+git=lambda *args:subprocess.check_output(['git',*args],cwd=root)
+sha=lambda value:hashlib.sha256(value).hexdigest()
+mission_prefixes={'5dcf4d5a9':1,'dd206e9e2':1,'403479399':2,'ece0222dc':2,'904511169':3,'9f31f9d95':4,'a86eaed61':5,'c6e3f5d86':5,'0d5fe1fc8':5,'3fb6d6a37':6,'a71ea114e':6,'c5246c3f7':7,'02d811f71':7,'0c6159821':7,'542f9ee6b':7}
+commits=git('log','--reverse','--format=%H',base+'..'+head).decode().splitlines();missions={c:'s197-m0'+str(next(m for p,m in mission_prefixes.items() if c.startswith(p))) for c in commits}
+paths=json.loads((out/'sprint-wide-movers.json').read_text())['s197']['publicPaths']
+by_path={f:git('log','--reverse','--format=%H',base+'..'+head,'--',f).decode().splitlines() for f in paths}
+refs=set()
+for f in paths:
+ refs.update([base+':'+f,head+':'+f])
+ if f.endswith('.json'):
+  for c in by_path[f]:refs.update([c+':'+f,c+'^:'+f])
+assert all('\n' not in ref for ref in refs)
+refs=sorted(refs);packed=git('cat-file','--batch',) if False else subprocess.check_output(['git','cat-file','--batch'],cwd=root,input=('\n'.join(refs)+'\n').encode())
+blobs={};offset=0
+for ref in refs:
+ end=packed.index(b'\n',offset);header=packed[offset:end];offset=end+1
+ if header.endswith(b' missing'):blobs[ref]=None;continue
+ length=int(header.rsplit(b' ',1)[1]);blobs[ref]=packed[offset:offset+length];offset+=length+1
+missing=object()
+def fields(left,right,pointer=''):
+ if left==right:return []
+ if isinstance(left,dict) or isinstance(right,dict):
+  a=left if isinstance(left,dict) else {};b=right if isinstance(right,dict) else {};keys=sorted(a.keys()|b.keys())
+  return [p for k in keys for p in fields(a.get(k,missing),b.get(k,missing),pointer+'/'+k.replace('~','~0').replace('/','~1'))] or [pointer]
+ if isinstance(left,list) or isinstance(right,list):
+  a=left if isinstance(left,list) else [];b=right if isinstance(right,list) else []
+  return [p for i in range(max(len(a),len(b))) for p in fields(a[i] if i<len(a) else missing,b[i] if i<len(b) else missing,pointer+'/'+str(i))] or [pointer]
+ return [pointer]
+def document(ref):
+ value=blobs[ref]
+ return json.loads(value) if value is not None else missing
+rows=[]
+for f in paths:
+ before,after=blobs[base+':'+f],blobs[head+':'+f];history=by_path[f];assert history
+ parts=[]
+ if f.endswith('.json'):
+  changed=fields(document(base+':'+f),document(head+':'+f));last={}
+  for c in history:
+   for pointer in fields(document(c+'^:'+f),document(c+':'+f)):last[pointer]=c
+  for pointer in changed:
+   c=last.get(pointer)
+   if c is None:
+    candidates=[(k,v) for k,v in last.items() if pointer.startswith(k+'/') or k.startswith(pointer+'/')]
+    assert candidates,(f,pointer)
+    c=max((v for k,v in candidates),key=commits.index)
+   parts.append({'pointer':pointer,'missionId':missions[c],'commit':c})
+ phases=sorted({missions[c] for c in history})
+ if f.startswith('packages/tokens/src/') or f.startswith('scripts/tokens/') or f.startswith('tools/a11y/'):
+  reason='Seeded palette generation, fixed semantic names, ramp/contrast/gamut gates and explicit dark/HC scopes; final JSON fields retain their last modifying mission.'
+ elif '__snapshots__' in f or f.endswith('.snap') or 'certified-matrix' in f or f.endswith('viz-preview-samples.v1.json'):
+  reason='The single m05 paint migration preserves operands and attributes the expected pixel or paint-hash changes; no second golden migration.'
+ elif 'registry/' in f:
+  reason='Measured canonical ledger or registry fields; palette pin movement belongs to m05, and the fresh240-cell runtime carry belongs to m07. Field pointers bind each final change.'
+ elif '/test/' in f or f.startswith('tests/') or '.test.' in f or '.spec.' in f:
+  reason='Intent checks or migrated paint expectations for the recorded missions, including mutation rejection and retained-history protection.'
+ elif f.startswith('docs/') or f.startswith('cmos/'):
+  reason='Locked planning inputs, generated palette documentation or the measured current roadmap update; historical roadmap bytes remain unchanged.'
+ elif 's185-' in f or 'component-package-suite' in f:
+  reason='Bounded s197 closeout, independent audit, explicit retained composition roster, sprint-wide attribution and serial60-second suite capture.'
+ else:
+  reason='Palette implementation, theme routing or repeatable comparison/re-pin evidence generation for the recorded missions.'
+ rows.append({'path':f,'missions':phases,'commits':history,'beforeSha256':sha(before) if before is not None else None,'afterSha256':sha(after) if after is not None else None,'reason':reason,'changedJsonFields':parts})
+patch=git('--literal-pathspecs','diff','--no-ext-diff','--no-renames','--unified=0',base,head,'--',*paths);(out/'sprint-wide.patch').write_bytes(patch)
+report={'base':base,'head':head,'method':'Paths come from one final advertised Git diff, including specs and goldens. File histories are attribution evidence only, never the scope selector. Each changed JSON leaf is attributed to its last modifying mission in that range.','builderSelfCertified':False,'rows':rows,'unattributedPaths':[],'patch':{'path':prefix+'/sprint-wide.patch','sha256':sha(patch)},'summary':{'paths':len(rows),'jsonFieldChanges':sum(len(r['changedJsonFields']) for r in rows),'missions':sorted(set(missions.values()))}}
+(out/'attribution.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report['summary']))

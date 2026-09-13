@@ -16,15 +16,15 @@ import {
 import type { EChartsPrimaryType } from "../../src/tools/echarts-primary.js";
 import { ECHARTS_OPERAND_CASES } from "./s172-echarts-operands.js";
 
-// Explicit light/A pixels after the qualified s195-m05 canonical palette revision.
+// Explicit light/A pixels after the qualified s197-m05 generated palette revision.
 // Keep this independent expectation: eight semantic categories must still cycle six slots.
 const PALETTE = [
-  "#416CD9",
-  "#3E44BE",
-  "#279669",
-  "#B58525",
-  "#CA4949",
-  "#993B00",
+  "#580918",
+  "#A97500",
+  "#788E70",
+  "#00A0A3",
+  "#0050AD",
+  "#360643",
 ] as const;
 const EXPECTED_EIGHT = [...PALETTE, PALETTE[0], PALETTE[1]] as const;
 

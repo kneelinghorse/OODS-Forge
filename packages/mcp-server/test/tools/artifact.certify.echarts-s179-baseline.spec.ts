@@ -99,9 +99,9 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
   BaselineCell
 >;
 
-// s195-m05: exact current hashes come from the real legacy operand matrix; the
+// s197-m05: exact current hashes come from the real legacy operand matrix; the
 // migration receipt retains every superseded s191 hash and the pristine fixture.
-const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-195/m05/golden-migration/matrix/matrix.json', import.meta.url), 'utf8'));
+const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-197/m05/matrix/matrix.json', import.meta.url), 'utf8'));
 const scopedHash = (chartType: string): string => currentMatrix.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
 // s195 m04 declared movers over the immutable historical fixture: coverage/fold,
 // a11y pillar, newly offered rule counts, actual bubble V169, and path-specific prose.
@@ -158,7 +158,7 @@ async function renderThenCertify(
 
 describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT}`, () => {
   it("the palette epoch carries an explicit before/after attribution for every legacy render identity", () => {
-    const migration = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-195/m05/golden-migration/golden-attribution.json', import.meta.url), 'utf8'));
+    const migration = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-197/m05/golden-attribution.json', import.meta.url), 'utf8'));
     for (const operand of ECHARTS_OPERAND_CASES) {
       const row = migration.matrixRows.find((entry: any) => entry.source === 'artifacts/product-reality/sprint-191/m01/matrix/matrix.json' && entry.identity === `${operand.chartType}/light/A`);
       expect(row).toMatchObject({ class: 'public-chart-matrix', afterHash: scopedHash(operand.chartType) });

@@ -1,0 +1,22 @@
+{
+  "missionId": "s197-m07",
+  "decision": {
+    "id": 1833,
+    "decision": "Test capture and timeout handling from Sprint 189 (review follow-up requested in decision 1830 and next-step 1407; 1830 is not a standing waiver). Measured cause: the root 'core' vitest project runs the product-reality git-range and census specs in parallel with about 530 other files — the five slowest files in the root-core capture were archive-workflow.s188 (62 s), workflow.s188 (61 s), sprint-wide-movers.s185 (53 s), public-head-equivalence.s185 (48 s) and fresh-composition.s187 (40 s) — while packages/mcp-server's own project runs the same specs with fileParallelism:false and passed them; the timed-out test shells out to git diff four times over a growing sprint range under the global 20 s per-test budget and took 1.1 s in isolation. Both projects execute those specs, so every capture currently counts them twice. (a) Sprint 189 gives the git-range/census tests an explicit per-test timeout of 60 s (vitest's own advice for long-running tests) or moves them under a serial product-reality project, and removes the double execution so each spec is counted once per capture; this lands with the sprint branch and is captured there. (b) Retry policy: a wall-clock timeout with no assertion failure triggers exactly one isolated rerun of the affected file, retained beside the original; if it passes with unchanged bytes, the capture is accepted with the timeout disclosed as an observed timeout and no full-population recapture. An assertion failure, or a second timeout of the same test in isolation, requires a code fix and one corrective full capture. At most two full four-suite captures per sprint without a new decision. (c) The four-suite capture stays once per sprint at the closeout mission; no per-mission captures.",
+    "domain": null,
+    "sprintId": "sprint-188",
+    "missionId": "s188-m06",
+    "createdAt": "2026-09-08T20:54:19.715Z",
+    "relevance": 1,
+    "source": "strategic",
+    "category": null,
+    "status": "archived",
+    "evidence": null,
+    "projectId": "forge"
+  },
+  "application": "The initial capture has 15 actual AssertionErrors, so clause (b) requires code fixes and one corrective full capture. The memo's no-full-recapture timeout shorthand is read with its cited #1833 exception; no lone-timeout recapture or third full capture is used.",
+  "firstCaptureHead": "c5246c3f721ea49761e4a5c5eecbbd4df0b10279",
+  "correctiveCaptureHead": "02d811f71a4f188142783edf0f9ea189590876c1",
+  "allowedTotalFullCaptures": 2,
+  "builderSelfCertified": false
+}

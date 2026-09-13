@@ -1,0 +1,78 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge
+
+ ✓ |core| tests/tokens/semantic-keys.s197.test.ts (5 tests) 63ms
+ ✓ |core| tests/tokens/categorical-overlays.s195.test.ts (11 tests) 64ms
+ ✓ |guardrails| testing/a11y/brand-contrast.spec.ts (10 tests) 93ms
+ ✓ |core| tests/tokens/palette-dark.s197.test.ts (3 tests) 282ms
+ ✓ |core| tests/tokens/palette-guardrails.s197.test.ts (13 tests) 16ms
+ ❯ |guardrails| testing/a11y/brand-description-truth.spec.ts (5 tests | 1 failed) 11ms
+   ✓ brand $description ratio claims are true (s168 m03) > every numeric ratio claim has a declared pair (no silent gaps) 2ms
+   × brand $description ratio claims are true (s168 m03) > every claim measures true through the evaluator path 4ms
+     → no claims were verified — the parser stopped matching: expected 0 to be greater than 0
+   ✓ brand $description ratio claims are true (s168 m03) > also verifies the raised-surface part of the Sprint 192 focus-ring claim 2ms
+   ✓ brand $description ratio claims are true (s168 m03) > also verifies the other-brand canvas named in categorical ratio claims 1ms
+   ✓ brand $description ratio claims are true (s168 m03) > hc cells carry no numeric ratio claims, because they cannot be graded 1ms
+ ❯ |core| tests/tokens/scoped-js-export.test.ts (18 tests | 2 failed) 17ms
+   ✓ scoped JavaScript token export matches shipped CSS > preserves the legacy flat export and exposes exactly six brand/theme cells 2ms
+   ✓ scoped JavaScript token export matches shipped CSS > A/light resolves canvas, text and border through its own CSS semantic bridge 1ms
+   ✓ scoped JavaScript token export matches shipped CSS > A/dark resolves canvas, text and border through its own CSS semantic bridge 0ms
+   ✓ scoped JavaScript token export matches shipped CSS > A/hc resolves canvas, text and border through its own CSS semantic bridge 0ms
+   ✓ scoped JavaScript token export matches shipped CSS > B/light resolves canvas, text and border through its own CSS semantic bridge 0ms
+   ✓ scoped JavaScript token export matches shipped CSS > B/dark resolves canvas, text and border through its own CSS semantic bridge 0ms
+   ✓ scoped JavaScript token export matches shipped CSS > B/hc resolves canvas, text and border through its own CSS semantic bridge 0ms
+   ✓ scoped JavaScript token export matches shipped CSS > retains high-contrast system colors instead of inventing a server palette 0ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > A/light matches all six CSS values, with a distinct dark palette 1ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > A/dark matches all six CSS values, with a distinct dark palette 0ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > A/hc matches all six CSS values, with a distinct dark palette 0ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > B/light matches all six CSS values, with a distinct dark palette 0ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > B/dark matches all six CSS values, with a distinct dark palette 0ms
+   ✓ categorical theme overrides follow the shipped CSS cascade (s191) > B/hc matches all six CSS values, with a distinct dark palette 0ms
+   ✓ s197 continuous scales reach both CSS and non-CSS consumers > A/dark explicitly overrides every sequential and diverging step 3ms
+   × s197 continuous scales reach both CSS and non-CSS consumers > A/hc explicitly overrides every sequential and diverging step 4ms
+     → expected 'oklch(0.82 0 265)' not to be 'oklch(0.82 0 265)' // Object.is equality
+   ✓ s197 continuous scales reach both CSS and non-CSS consumers > B/dark explicitly overrides every sequential and diverging step 1ms
+   × s197 continuous scales reach both CSS and non-CSS consumers > B/hc explicitly overrides every sequential and diverging step 1ms
+     → expected 'oklch(0.82 0 265)' not to be 'oklch(0.82 0 265)' // Object.is equality
+ ✓ |guardrails| testing/a11y/axe.spec.ts (4 tests) 4ms
+ ✓ |guardrails| testing/a11y/contrast.spec.ts (1 test) 5ms
+ ✓ |guardrails| testing/a11y/status-provenance.spec.ts (10 tests) 712ms
+ ✓ |core| packages/mcp-server/test/product-reality/hc-scope.s197.spec.ts (5 tests) 9ms
+ ✓ |core| tests/tokens/palette-viz.s197.test.ts (3 tests) 219ms
+ ✓ |core| tests/tokens/palette-generator.s197.test.ts (18 tests) 1822ms
+   ✓ seed-generated palette boundary > reproduces every byte, detects seed drift, and never repairs files in check mode  421ms
+   ✓ seed-generated palette boundary > fails --check at the process boundary for changed seeds and missing outputs  1177ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |guardrails| testing/a11y/brand-description-truth.spec.ts > brand $description ratio claims are true (s168 m03) > every claim measures true through the evaluator path
+AssertionError: no claims were verified — the parser stopped matching: expected 0 to be greater than 0
+ ❯ testing/a11y/brand-description-truth.spec.ts:173:79
+    171|       }
+    172|     }
+    173|     expect(verified, 'no claims were verified — the parser stopped mat…
+       |                                                                               ^
+    174|     expect(violations, `false ratio claims:\n  ${violations.join('\n  …
+    175|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > s197 continuous scales reach both CSS and non-CSS consumers > A/hc explicitly overrides every sequential and diverging step
+ FAIL  |core| tests/tokens/scoped-js-export.test.ts > s197 continuous scales reach both CSS and non-CSS consumers > B/hc explicitly overrides every sequential and diverging step
+AssertionError: expected 'oklch(0.82 0 265)' not to be 'oklch(0.82 0 265)' // Object.is equality
+ ❯ tests/tokens/scoped-js-export.test.ts:81:27
+     79|         expect(value, `Missing scoped CSS declaration ${key}`).toBeDef…
+     80|         expect(bundle.cssVariablesByScope[brand][theme][key]).toBe(val…
+     81|         expect(value).not.toBe(bundle.cssVariablesByScope[brand].light…
+       |                           ^
+     82|       }
+     83|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  2 failed | 11 passed (13)
+      Tests  3 failed | 103 passed (106)
+   Start at  23:06:34
+   Duration  2.29s (transform 987ms, setup 0ms, collect 2.54s, tests 3.32s, environment 1ms, prepare 904ms)
+

@@ -113,8 +113,8 @@ describe('theme receipts (s191)', () => {
   it('requires measured colors for version 1.1 while preserving version 1.0 readers', async () => {
     const updated: any = { ...receipt(), version: '1.1', theme: 'dark', brand: 'B' };
     await expect(validateReceipt(updated)).rejects.toThrow();
-    updated.views[0].measurements.bodyBackground = 'rgb(4, 22, 32)';
-    updated.views[0].measurements.chartCanvasFills = ['#041620'];
+    updated.views[0].measurements.bodyBackground = 'oklch(0.18 0.008 265)';
+    updated.views[0].measurements.chartCanvasFills = ['oklch(0.18 0.008 265)'];
     await expect(validateReceipt(updated)).resolves.toBeUndefined();
     const { verifyTheme } = await import('../../scripts/design-loop/common.js');
     expect(() => verifyTheme(updated)).not.toThrow();

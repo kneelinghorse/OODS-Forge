@@ -271,13 +271,13 @@ describe("how Forge works narrative truth", () => {
     const bridge = read("packages/tokens/scripts/brand-bridge.mjs");
     const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
 
-    expect(uniqueCssVariables.size).toBe(916);
+    expect(uniqueCssVariables.size).toBe(964);
     expect(countTokenLeaves(brandBase)).toBe(45);
     expect(bridgedSlots).toHaveLength(41);
     expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
     expect(BRAND_CONTRAST_RULES).toHaveLength(228);
 
-    expect(html).toContain("CSS custom properties (916 variables)");
+    expect(html).toContain("CSS custom properties (964 variables)");
     expect(html).toContain("45 leaves each");
     expect(html).toContain("re-assigns 41 shared theme slots");
     expect(html).toContain(

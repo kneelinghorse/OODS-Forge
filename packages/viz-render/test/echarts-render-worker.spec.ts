@@ -25,12 +25,12 @@ import {
 type ProjectedOption = Record<string, unknown>;
 
 // The synchronous, layoutAnimation:false snapshot under oods-echarts-lcg-v1.
-// The full projected option seeds the force layout. s195-m05's light slot 05
+// The full projected option seeds the force layout. s197-m05's generated
 // palette change therefore changed geometry, even though that color is unused
 // by this operand. This exact replacement hash is retained in the qualified m05
 // force_graph/A/light matrix; keep the convergence and intervening-RNG assertions.
 const CONVERGED_CANONICAL_FORCE_HASH =
-  "df5261688594d5f845960170d643c35518954198cda607a598e069beed7e53df";
+  "13a10edd4ff86a0e17bb7a1fa4bc2203bcdee2beacb643bc6b0efb8704ddd092";
 
 const optionFor = (chartType: string): ProjectedOption => {
   const operand = ECHARTS_OPERAND_CASES.find(
