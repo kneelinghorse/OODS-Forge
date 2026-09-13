@@ -1,0 +1,170 @@
+{
+  "capturedAt": "2026-09-13T13:27:58.450Z",
+  "source": "CMOS MCP cmos_mission(action=list,sprintId=sprint-197)",
+  "sprint": {
+    "id": "sprint-197",
+    "status": "Active"
+  },
+  "missions": [
+    {
+      "id": "s197-m01",
+      "sprintId": "sprint-197",
+      "name": "Worktree and planning commit; palette generator; stricter guardrails; the BEFORE proof that the current palette fails them; baseline of every pinned identity",
+      "status": "Completed",
+      "completedAt": "2026-09-13T03:23:58.395Z",
+      "notes": "[Started] [Started] Read review, agents.md, locked s197 handoff and m01 spec. Create worktree at bc12723e9 and planning commit first; preserve all existing token values through m01. Use consolidated transition API per current user instructions. | [Completed] [Completed] dd206e9e2 implements the seed-schema generator, all six coherence check types in canonical-source CSV/validators, semantic-key freeze and immutable baseline. Planning commit 5dcf4d5a9 is first from bc12723e9; four planning files hash-match primary. Full APFS copy-on-write worktree verified clean before planning copy after normal checkout ran out of disk; frozen install/build:tokens/build:packages passed. 40/40 focused tests (0 skipped), strict NodeNext typecheck, 7-file fixture generate/--check, baseline replay and check:tokens passed. Unchanged palette red receipts: color 122/358 failures, viz 53/116 failures (overlapping dark coverage reported explicitly). Baseline 1696 tracked identities: 1549 SVGs, 14 live +14 historical snapshots, 60+32 registry svgHash, 8 certified hashes plus tokenVersion, 138 literal lines; 9 exports and six scoped maps retained. No existing token values/goldens changed. Receipts artifacts/product-reality/sprint-197/m01/. No five-suite capture; builderSelfCertified:false.",
+      "objective": "Measured at bc12723e9: the reference color files are hand-authored JSON (color.brand.json primary hue 225.69 at step 100 vs 274.55 at 300–700, steps 200/800/900 missing, chroma dipping at 500; accent aliases primary; neutrals on ten hues 286→248→264–270 with non-monotonic chroma; status families spanning ~4 hues each); tools/a11y/guardrails/relative-color.csv has six rows (interactive hover/pressed deltas only); scripts/tokens/color-guardrails.ts and validate-viz-scales.ts gate nothing about ramp monotonicity, family hue drift, neutral drift, chroma shape, gamut or dark-scope coverage; no semantic key-set pin exists; the four planning files (near.md, roadmap README, s197 memo, s197 handoff) sit uncommitted in the primary checkout. Build: (1) git worktree add ~/.codex/worktrees/s197/OODS-Forge -b codex/sprint-197-palette bc12723e9; copy the four planning files from /Users/systemsystems/portfolio/Design-Tools/OODS-Forge and commit them first as the planning commit; pnpm install --frozen-lockfile, build:tokens, build:packages; (2) scripts/tokens/generate-palette.ts plus a JSON-schema'd seed file packages/tokens/src/palette/seeds.json (per brand: primary, accent, neutral and five status hues, chroma peaks, dark canvas parameters) that deterministically emits color.brand.json, color.neutral.json, color.status.json and brands/{A,B}/{base,dark}.json; --check compares emitted bytes to tracked files; a round-trip of the CURRENT palette expressed as seeds is not required — the generator is proven on its own seed schema with a fixture; (3) new guardrail check types in the CSV and the two validators: ramp lightness monotonicity, per-family hue drift (primary, accent, each status family), neutral hue drift, chroma-curve shape (mid-peak), sRGB gamut, dark-scope coverage for sequential/diverging, each with a contract spec that goes red on a synthetic violation; (4) the semantic key-set pin: a spec listing every semantic key across light/dark/hc × A/B × viz that fails on any add/remove/rename; (5) run the extended gates against the UNCHANGED palette and retain the red output with per-check counts under artifacts/product-reality/sprint-197/m01/before/ — the objective statement that the palette is bad; (6) m01/baseline.json: every tracked SVG, .snap, token source, registry svgHash (viz-recipes 60, viz-patterns 32), certified-matrix hash (8 + tokenVersion) and hand-pinned literal (certify specs, vega-lite-adapter.spec.ts), per the s195 m05 pattern. Nothing outside the worktree is touched; no token value moves in this mission.",
+      "successCriteria": [
+        "Planning commit is the first commit on the branch and the four files are byte-identical to the primary checkout copies",
+        "Extended gates are RED on the unchanged palette; counts per check retained",
+        "Generator emits deterministic bytes; --check green on an unchanged seed fixture; a synthetic seed edit turns --check red",
+        "Key-set pin green at the base; a synthetic key rename turns it red",
+        "baseline.json enumerates every pinned identity the memo §2 names"
+      ],
+      "deliverables": [
+        "Worktree ~/.codex/worktrees/s197/OODS-Forge on codex/sprint-197-palette at bc12723e9 with the planning commit (near.md, roadmap README, s197 memo, s197 handoff)",
+        "scripts/tokens/generate-palette.ts with --check and packages/tokens/src/palette/seeds.json + schema",
+        "Extended tools/a11y/guardrails/relative-color.csv and validators with six new check types and their contract specs",
+        "Semantic key-set pin spec",
+        "artifacts/product-reality/sprint-197/m01/before/ red receipts on the unchanged palette with per-check counts",
+        "artifacts/product-reality/sprint-197/m01/baseline.json"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m02",
+      "sprintId": "sprint-197",
+      "name": "Reference and light, generated from seeds: one hue per ramp, neutral surfaces, a real accent, one hue per status family; Brand B from a seed hue",
+      "status": "Completed",
+      "completedAt": "2026-09-13T03:40:09.809Z",
+      "notes": "[Started] [Started] m01 completed at dd206e9e2; implementing authorized reference/light generator changes and light proofs. Pending clarification: global tokens-validate exit criterion includes dark/chart work scheduled for m03/m04. No waiver assumed and mission will not complete with that criterion unresolved. | [Blocked] Locked m02 requires full tokens-validate green, but that command now enforces dark/chart coherence and explicit dark sequential/diverging overrides scheduled for serial m03/m04. All reference/light work is implemented at 403479399; 288 reference/light checks, 436 component cells, 44 focused tests, 29 contrast tests, scoped generator check, strict typecheck and check:tokens pass. Full tokens-validate exits 1 on 75 remaining dark checks; separate viz validator has 53 pending chart failures. User was asked to resolve the contradictory exit order; no waiver assumed.. Needs: Choose scoped per-mission gates with full tokens-validate green after m04, or amend mission boundaries to implement the required dark/chart work before m02 completion., Resume from clean worktree /Users/systemsystems/.codex/worktrees/s197/OODS-Forge, branch codex/sprint-197-palette, commit 403479399. Receipts: artifacts/product-reality/sprint-197/m02/README.md and checkpoint.json.\n[Gate scope approved] User approved scoped gates in the build session: m02 requires reference/light checks green; m03 requires its dark/shell checks green; scheduled chart checks remain visible until m04, where full tokens-validate and check:tokens must pass. Golden identity updates remain reserved for m05. | [Unblocked] User explicitly approved scoped gates. Retained m02 evidence satisfies all reference/light criteria; later dark/chart failures remain reported and must clear by m04. | [Completed] [Completed] User explicitly approved scoped gates. Implementation 403479399, gate-resolution ece0222dc; source hashes reverified unchanged on resume. 288 reference/light checks, 436 browser component cells across A/B light × React/Vue, 44 focused tests and 29 contrast tests passed, none skipped. check:tokens, scoped generator --check, strict typecheck and attribution replay pass. Retained ramps and pre-migration attribution (328 changed light tokens, 1577 golden files, 42 light registry scopes) at artifacts/product-reality/sprint-197/m02/. No golden update. Full validator remains red on scheduled dark/chart work and is now explicitly due green after m04.",
+      "objective": "Measured at bc12723e9: Brand A light canvas oklch(0.967 0.03 86) and subtle oklch(0.893 0.048 86) are a saturated beige under text at hue ~265; primary ramp on two hues; accent is primary renamed; neutrals on ten hues; status families drift ~4 hues internally; Brand B is five near-identical blues (230/232/238/240/252). Build, per memo §3 decisions 2, 3, 7: author Brand A seeds (primary on one hue; a real accent hue distinct from primary; neutrals on one slightly cool hue near 265 with a chroma envelope from ~0.002 at 0/50 to ~0.02 at 600–800 easing back; five status hues) and one Brand B seed hue; regenerate color.brand.json, color.neutral.json, color.status.json, brands/A/base.json and brands/B/base.json through the generator; keep theme0 alias targets unchanged (re-point only if a reference step name must change, and record why); Brand A light surfaces neutral, no beige. Gates: pnpm tokens-validate and pnpm check:tokens green under the m01 stricter checks; the key-set pin unchanged; light component theme cells (109 roots × light scopes, React and Vue) re-measured green; light goldens attributed by file and token into artifacts/product-reality/sprint-197/m02/attribution.json without updating them (viz golden specs are expected red from here through m04; nothing is captured). Receipts: the seeds, the generator --check log, the before/after oklch tables per ramp, the light component cell results.",
+      "successCriteria": [
+        "Reference/light coherence checks and scoped generator --check green; check:tokens green; later dark/chart failures retained until m04",
+        "Key-set pin unchanged",
+        "Every ramp: one hue (drift within the new guardrail tolerance), monotonic lightness, mid-peak chroma; neutrals one hue; Brand A light surfaces chroma under the neutral envelope",
+        "Light component theme cells green in both frameworks",
+        "Light goldens attributed by file and token; none updated"
+      ],
+      "deliverables": [
+        "packages/tokens/src/palette/seeds.json for Brand A and Brand B",
+        "Regenerated color.brand.json, color.neutral.json, color.status.json, brands/A/base.json, brands/B/base.json",
+        "artifacts/product-reality/sprint-197/m02/ oklch ramp tables before/after, gate logs, light component cell results, attribution.json"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m03",
+      "sprintId": "sprint-197",
+      "name": "Dark as its own set: neutral canvas ladder, even elevation, de-chromatized accents; the app shell takes data-theme from compose preferences",
+      "status": "Completed",
+      "completedAt": "2026-09-13T03:54:16.645Z",
+      "notes": "\n[Gate scope approved] User approved scoped gates in the build session: m02 requires reference/light checks green; m03 requires its dark/shell checks green; scheduled chart checks remain visible until m04, where full tokens-validate and check:tokens must pass. Golden identity updates remain reserved for m05. | [Started] [Started] m02 completed under user-approved scoped gates. Implement generated dark themes and shell preference boundary, then measure 52 chart cells and 436 dark component cells; chart-palette gates scheduled for m04 remain visible. | [Completed] Implemented and committed 904511169. Generated brand/shared dark colors: five near-neutral elevations, coherent status hues, de-chromatized accents. code.generate inherits compose theme with explicit options precedence. 74 tests pass, no skips; 436 dark component cells pass; 52 chart cells have 36 Role-C passes, 16 standing exemptions, zero failures. Mounted dark shell screenshot and receipts under m03. 414 scoped color checks pass; check:tokens, generator --check, strict typechecks green. Full token validators remain red only for scheduled m04 chart work per user-approved scope. Broader source contrast caught and fixed B dark pressed state; old #1158 byte inequality replaced with seed-provenance mutation checks under s197 shared-seed decisions. 1580 golden/registry/certified files retain baseline hashes, no golden migration.",
+      "objective": "Measured at bc12723e9: brands/A/dark.json canvas oklch(0.18 0.05 45), raised 0.24, subtle 0.30, all at chroma 0.05–0.06 (muddy brown, ΔL 0.06 per step); dark overrides exist only for the six categorical viz slots; the Sprint 190 review found 14 dark-scope contrast failures caused by light palette values on dark canvases before a stopgap dark categorical set landed (#1860 item 1); the generated app shell stays light under theme:'dark' while chart pixels follow the scope (#1860 item 3). Build, per memo §3 decision 4: re-author themes/dark/* and brands/{A,B}/dark.json from the generator against the m02 neutrals — near-neutral canvas ladder with chroma under about 0.012, four or five elevation steps at even ΔL, accents lightened and de-chromatized so they sit on dark without bloom, status families on their m02 hues at dark-tuned L/C; borrow the structure of Primer's dark and dark-dimmed sets, not their values; make the generated app shell take data-theme from compose preferences the way dashboard HTML already does (boundary spec for the shell emitter). Gates: the 52-cell chart contrast matrix (13 types × light/dark × A/B, s195 matrix tooling) re-measured with zero Role-C failures; dark component theme cells (109 roots, React and Vue) green; tokens-validate and check:tokens green. Receipts under artifacts/product-reality/sprint-197/m03/: the elevation ladder (L, C, H per step per brand), the matrix, the shell theme proof.",
+      "successCriteria": [
+        "Dark canvas ladder chroma under 0.012 with even ΔL steps, receipted",
+        "52-cell matrix: zero Role-C failures",
+        "Dark component theme cells green in both frameworks",
+        "A composed screen with theme:'dark' renders a dark shell (screenshot receipt), closing #1860 item 3"
+      ],
+      "deliverables": [
+        "Re-authored themes/dark/* and brands/{A,B}/dark.json generated from seeds",
+        "Generated app shell honoring data-theme from compose preferences, with a boundary spec",
+        "artifacts/product-reality/sprint-197/m03/ elevation ladder, 52-cell matrix, dark component cell results"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m04",
+      "sprintId": "sprint-197",
+      "name": "Chart colors from the new hue wheel (categorical light and dark, sequential, diverging, dark sets added); the high-contrast paint scope decided by census",
+      "status": "Completed",
+      "completedAt": "2026-09-13T04:12:41.188Z",
+      "notes": "\n[Gate scope approved] User approved scoped gates in the build session: m02 requires reference/light checks green; m03 requires its dark/shell checks green; scheduled chart checks remain visible until m04, where full tokens-validate and check:tokens must pass. Golden identity updates remain reserved for m05. | [Started] m03 verified and committed. Implement chart seeds, complete dark scales and HC paint scope; full tokens-validate/check:tokens/generator --check must be green at m04 close. Preserve all golden identities until m05. | [Completed] Implemented generated six-slot hue wheel, in-gamut sequential/diverging and full dark/HC declarations. Actual certify minima 16.540957 light /20.105820 dark over Machado simulations; 24/24 Role-C checks pass, no caution/ceiling exception. Full tokens-validate (454 color +232 scale checks), check:tokens, 14-file generator --check and strict typechecks green. 106 focused tests pass, no skips. HC compile-only census: 13 types x A/B,336 chart paint roles +230 component roles,zero undeclared and zero rendered SVGs. HC-only treemap/geo legacy defaults now use existing Canvas role; light/dark unchanged. Exact 26-slot CSS overlay/collision boundary tested. 1580 golden/registry/certified files retain m01 hashes; all evidence under m04. Independent pixel/visual review remains pending.",
+      "objective": "Measured at bc12723e9: viz categorical slot 01 hue 264.97 and slot 02 hue 274.17 are both blue; slot 06 hue 47.13 collides with the brand orange (43–45); Role-A pairwise ΔE00 minima 10.0176 light / 10.2364 dark against the clean line 10 (certify-contrast.ts:92) with no headroom; sequential nine steps at hue 250 with chroma rising to the darkest step, step 09 oklch(0.14 0.15 250) outside sRGB; diverging hue 210 against 25 with chroma 0.09 vs 0.11 under a lightness-only symmetry gate; no dark sequential or diverging sets; HC overrides one slot (04); nine chart types render undeclared paints under hc (OODS-V165, #1851). Build, per memo §3 decisions 5 and 6: regenerate viz-scales.json categorical and the brands/*/dark.json categorical overrides with six evenly spaced hues from the new wheel at pairwise ΔE00 ≥ 12 under the three Machado CVD simulations (floor 10 clean; a caution pass is not acceptable; if 12 is unreachable with Role-C intact, pin the measured ceiling with the reason), each ≥ 3:1 against its own canvas, chroma ≥ 0.045, no collision with the brand or accent hue; sequential nine steps in gamut with mid-peak chroma; diverging eleven steps symmetric in both lightness and chroma; add dark sequential and diverging sets to brands/{A,B}/dark.json; extend validate-viz-scales with gamut, chroma-shape and dark-coverage checks. Complete the hc scope: a declared value for every paint role the chart renderer and components emit under data-theme=\"hc\" (categorical slots, sequential and diverging steps, axis, grid, label, tooltip, legend, focus; CSS system-color keywords where a role maps to one, declared literals elsewhere), proven by a census script that lists renderer paint roles against the HC scope and reports zero undeclared roles — this sprint proves the scope by census; Sprint 199 renders the nine deferred types. Receipts under artifacts/product-reality/sprint-197/m04/: ΔE00 matrices light/dark, Role-C table, gamut check, the HC role census.",
+      "successCriteria": [
+        "Certify reports Role-A ≥ 12 light and dark (or the pinned ceiling ≥ 10 with reason) with NO caution",
+        "24/24 Role-C checks ≥ 3:1",
+        "Sequential and diverging steps all inside sRGB; diverging symmetric in L and C; dark sets present and validated",
+        "HC census: zero undeclared paint roles across all 13 types and component chrome",
+        "Full tokens-validate, check:tokens, and the complete generator --check pass; no remaining palette-gate failures (user-approved scoped gate resolution)."
+      ],
+      "deliverables": [
+        "Regenerated viz-scales.json (categorical, sequential, diverging) and dark categorical/sequential/diverging sets in brands/*/dark.json",
+        "Completed hc scope in brands/{A,B}/hc.json for every renderer paint role, with the census script",
+        "Extended scripts/tokens/validate-viz-scales.ts (gamut, chroma shape, dark coverage) with specs",
+        "artifacts/product-reality/sprint-197/m04/ ΔE00 matrices, Role-C table, gamut receipt, HC role census"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m05",
+      "sprintId": "sprint-197",
+      "name": "The one golden migration under the Sprint 195 procedure; hand-pinned literals moved; prior palette decisions superseded by reason",
+      "status": "Completed",
+      "completedAt": "2026-09-13T05:14:47.055Z",
+      "notes": "[Started] m04 full palette gates green. Begin the one attributed golden migration from m01 immutable baseline; retain initial reds and classify every moved golden/token before any bounded --update. No broad snapshot updates. | [Completed] [Completed] One attributed palette migration implemented at a86eaed61, final qualifier c6e3f5d86fed1fd324e90278ad90c6f2c3a6560c; receipt close0d5fe1fc8004a260496b416c83c77b1aec4dc84f. 31 changed golden/pin files;6/14 snapshots with27paint/hash-only entries;100pins;1564historical matrix rows preserved (1474superseded).6preview/2portableHTML/25placement assets re-rendered from exact old operands. Full viz-core1511pass/viz-render69pass/no skips; MCP6855pass16optional absent-Stage1 skips,377filespass/1skipped,zero source changes during787s finalrun. Five generator/verifier checks pass; qualified7tests pass after batching Git reads fixes20s timeout. Historical raw evidence untouched. See m05/README.md, golden-attribution.json, mcp-final-run.json, qualification.json. Decisions recorded once in sessionPS-2026-09-13-007.",
+      "objective": "Measured at bc12723e9: pinned identities that move with any palette change — 14 live .snap files (packages/viz-core/test, packages/viz-render/test, packages/mcp-server/src/tools, tests/), 60 svgHash entries in packages/viz-core/src/registry/viz-recipes.v1.json (56 unique), 32 in viz-patterns.v1.json, 8 normalizedSvgHashes plus tokenVersion in packages/viz-render/certified-matrix.json, hand-pinned literals in packages/mcp-server/test/tools/*certify*.spec.ts (CERTIFY_PALETTE, Role-C floor hex and ratio) and vega-lite-adapter.spec.ts (OODS_CATEGORICAL_6); the s190/s191/s195 matrix rows and the #1850/#1863/#1943 palette decisions. Precedent: artifacts/product-reality/sprint-195/m05/golden-migration/README.md; learning #543 (attribute every moved golden by file and token BEFORE any capture). Build, per memo §3 decision 9: from m01/baseline.json and the m02–m04 diffs, attribute every moved golden by file and token into m05/golden-attribution.json BEFORE any update; bounded --update runs with --coverage.enabled=false for the snapshot specs (retain every initial red); regenerate viz-recipes.v1.json svgHash, viz-patterns.v1.json and certified-matrix.json through their census scripts (s195-viz-matrix.ts, s195-qualify-viz-matrix.ts, or their s197-mode equivalents) — never by hand; move the hand-pinned literals in the certify and Vega-Lite adapter specs; supersede the s190/s191/s195 matrix rows by class and reason; record #1850, #1863 and #1943 as superseded by this sprint's palette decision; write a s197-attribute-palette-goldens.py modeled on s195-attribute-viz-goldens.py. Exit: before/after SHA for every moved entry; viz-core, viz-render and mcp-server suites green on the migrated goldens (rebuild viz-core before the mcp-server suite); nothing moved outside the declared palette class (any non-palette diff is a finding, retained, never tuned away).",
+      "successCriteria": [
+        "Every moved golden attributed by file and token before its update",
+        "viz-core, viz-render and mcp-server suites green after migration",
+        "No golden outside the declared palette mover class changed",
+        "Registries regenerated by scripts; zero hand edits"
+      ],
+      "deliverables": [
+        "artifacts/product-reality/sprint-197/m05/golden-attribution.json with before/after SHA per moved entry",
+        "Migrated snapshots, regenerated viz-recipes/viz-patterns svgHash and certified-matrix, moved certify/Vega-Lite literals",
+        "scripts/product-reality/s197-attribute-palette-goldens.py",
+        "Supersession record for #1850, #1863, #1943 and the s190/s191/s195 matrix rows"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m06",
+      "sprintId": "sprint-197",
+      "name": "Prove it looks better: side-by-side sheets of the generated apps and three TraceLab pages; the TraceLab re-pin prepared, never applied from Forge",
+      "status": "Completed",
+      "completedAt": "2026-09-13T13:09:30.750Z",
+      "notes": "[Started] [Started] From receipt head 0d5fe1fc8004a260496b416c83c77b1aec4dc84f. Produce Forge and scratch TraceLab comparisons with fixed inputs. Preserve two pre-existing TraceLab report edits; user clarification of literal clean-status criterion is pending. Optional chrome pass deferred under memo descope rung 1. | [Blocked] Implementation and all achievable proof complete at3fb6d6a37802d744887cc07c193271e0f25b0331. CMOS success criterion explicitly requires TraceLab git status clean, but checkout already has two user-owned modified CMOS reports. Source-boundary receipt proves HEAD/status,151 frontend hashes and both report hashes identical before/after. User clarification accepting zero added changes instead of literal clean status remains pending. Forge is prohibited from editing TraceLab and has preserved the edits.. Needs: User resolution of the literal clean-status criterion: accept committed m06/tracelab-repin/source-boundary.json zero-added-changes evidence, or supply a clean source checkout for a fresh boundary baseline. | [Unblocked] User explicitly accepted the verified zero-added-changes gate and instructed continuation: 'yes, that's fine. accept and move on.' The existing report edits remain untouched; criterion updated to match this authorization. | [Completed] [Completed] User accepted zero-added-changes scope. Implementation and evidence at 3fb6d6a37802d744887cc07c193271e0f25b0331: 90 comparisons / 180 screenshots, all same inputs and text, zero overflow; five contract tests passed and all 90 gallery browser selections loaded. Clean tarball install, token-color gate, installed CSS and npm integrities verified. TraceLab HEAD/status, 151 frontend files and both pre-existing report edits unchanged. Prepared re-pin unapplied; scratch copy removed. Optional chrome pass deferred. m06/README.md, verification.json, side-by-side/index.html and tracelab-repin/source-boundary.json.",
+      "objective": "Measured at bc12723e9: TraceLab (/Users/systemsystems/portfolio/TraceLab/frontend) consumes @oods/tokens and @oods/tw-variants as vendored tarballs pinned to Forge head 114a268e (vendor/oods-provenance.json: sha256, size, clean-install smoke), maps Tailwind colors to --theme-<semantic-name> in tailwind.config.ts, pins data-brand=\"A\" in _document.tsx, sets data-theme and the dark class from src/lib/theme.ts, and bans literal palette classes with scripts/check-token-colors.mjs; Subscription is the certified-usable reference app; Organization detail is the next most complete screen. Build, per memo §3 decision 10: (1) contact sheets under artifacts/product-reality/sprint-197/m06/side-by-side/ with an index.html — the generated Subscription list, detail, form, timeline and workflow screens and the Organization detail screen (React) rendered at the BASE palette (from the m01 baseline build) versus the NEW palette, light and dark, Brand A and B, at 390/820/1440; (2) three TraceLab pages (Home, Evidence ledger, a Mission detail) rendered from a throwaway copy of TraceLab/frontend under the scratch directory with the new tarballs installed (npm pack --ignore-scripts of @oods/tokens and @oods/tw-variants from the worktree), old versus new, light and dark; (3) the re-pin prepared under m06/tracelab-repin/: the two tarballs, a new oods-provenance.json (checkout head, sha256, size_bytes, clean_install_smoke result), and the exact command sequence TraceLab runs in its own repo; verified by a clean tarball install in the throwaway copy with TraceLab's check-token-colors green and the CSS exposing Brand A light/dark/hc. Never write into /Users/systemsystems/portfolio/TraceLab. Descope rung (only if m01–m05 are done with room; memo decision 12): a type scale, spacing rhythm, radius, elevation and focus-ring pass on component chrome and the generated app shell, with its own before/after sheets and the same gates.",
+      "successCriteria": [
+        "Every sheet renders both palettes from the same composition and seed; screenshots retained with hashes",
+        "Clean tarball install in the throwaway copy: check-token-colors green; CSS exposes Brand A light/dark/hc",
+        "TraceLab's repository has zero added changes from this build; preserve and hash-verify its two pre-existing modified CMOS reports (user accepted this scoped gate on 2026-09-13).",
+        "An independent reviewer can judge 'better' from the index.html alone"
+      ],
+      "deliverables": [
+        "artifacts/product-reality/sprint-197/m06/side-by-side/index.html with old-vs-new sheets: Subscription (5 screens) + Organization detail, light/dark, A/B, 390/820/1440",
+        "Three TraceLab pages old vs new, light/dark, from a throwaway frontend copy",
+        "artifacts/product-reality/sprint-197/m06/tracelab-repin/ with tarballs, oods-provenance.json and the exact re-pin commands",
+        "Optional: chrome pass (type, spacing, radius, elevation, focus) with its own sheets"
+      ],
+      "projectId": "forge"
+    },
+    {
+      "id": "s197-m07",
+      "sprintId": "sprint-197",
+      "name": "Closeout: pre-freeze verifiers, one five-suite capture, censuses, advertised diff from bc12723e9, near.md Sprint 197 BUILT/REVIEW PENDING, PR, review handoff",
+      "status": "In Progress",
+      "completedAt": null,
+      "notes": "[Started] [Started] All preceding missions complete. Reuse existing closeout producer, auditor, accounting and movers in bounded s197 mode; final serial five-suite capture under #1833, required censuses, limited roadmap edits, PR to OODS-pro and independent review handoff. No delivery or notices.",
+      "objective": "Freeze the implementation; run the pre-freeze verifier pass (registry integrity, narrative and link tests, docs:check); capture the five suites once under decision #1833 (viz-core, viz-render, mcp-server, root-core, component-packages; serial; 60 s budget and serial project for git-range specs; one isolated rerun for a lone timeout; a second attempt allowed, a third needs a decision receipt); regenerate and census: component theme/a11y cells 1,308 re-measured in both frameworks, runtime 240 cells re-swept at packages/mcp-server/registry/runtime-cells.v1.json (chart-theme scopes moved with the palette), viz 78 scopes and 84 pattern cells re-measured, tool ledger 24 unchanged, 17 saved-store hashes unchanged, composition census 77/77 unchanged; the advertised diff from bc12723e9 over the advertised path set attributing every changed token, golden, registry field, spec and doc to its mission (sprint-wide from the final diff, never per-mission scopes); update ONLY the top part of cmos/foundational-docs/roadmap/near.md — the §3 Sprint 197 row and the §5 header to BUILT, REVIEW PENDING with the measured Role-A minima, Role-C count, matrix result and sheet counts (never the retained record below the divider, which closeout.s190/s191 specs read); open the PR to OODS-pro; observe CI with per-run attribution; write artifacts/product-reality/sprint-197/m07/closeout/handoff.md with builderSelfCertified:false. Reuse the s185–s196 closeout producer, independent auditor, suite accounting and mover derivation in a bounded s197 mode; no new closeout framework. No reconnect is prepared and no message is sent to any project. Delivery (fast-forward the primary checkout, rebuild, pm2 restart, /health) belongs to the reviewing session after certification, not to this mission.",
+      "successCriteria": [
+        "Capture: zero failures or every failure attributed; zero unattributed deltas",
+        "closeout.s190.spec.ts and closeout.s191.spec.ts still green (retained record untouched)",
+        "Tool ledger, saved-store hashes and composition census unchanged; runtime 240/240 at the frozen head",
+        "No message sent; no reconnect prepared",
+        "Handoff names implementation, execution and review-input heads"
+      ],
+      "deliverables": [
+        "One five-suite capture record under #1833 with skip/delta accounting",
+        "Censuses: component 1,308 cells, runtime 240, viz 78 + 84, tool ledger 24, saved-store 17, composition 77",
+        "Advertised diff from bc12723e9 attributed by mission",
+        "near.md §3/§5 (top part only) at BUILT, REVIEW PENDING",
+        "PR to OODS-pro with CI observed",
+        "artifacts/product-reality/sprint-197/m07/closeout/handoff.md, builderSelfCertified:false"
+      ],
+      "projectId": "forge"
+    }
+  ]
+}

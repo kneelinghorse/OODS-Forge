@@ -19,6 +19,9 @@ const outputArgument = argument("--output-root");
 const sprintId = argument("--sprint") ?? "sprint-185";
 const missionId = argument("--mission") ?? "s185-m01";
 const captureLabel = argument("--label") ?? "baseline";
+const testTimeout = Number(argument('--test-timeout') ?? 20_000);
+const serial = args.includes('--serial');
+if (!Number.isInteger(testTimeout) || testTimeout < 1) throw new Error('--test-timeout must be a positive integer.');
 const runCount = Number.parseInt(argument("--runs") ?? "2", 10);
 // --suites <id,id>: a NAMED RETRY of a subset (recorded in the aggregate); the
 // default is all five suites; root-core's project set is unchanged.
@@ -307,7 +310,8 @@ const aggregate = {
   workspace,
   exclusiveWorktree: true,
   suiteConcurrency: "sequential; no concurrent suite jobs",
-  configuredTestTimeoutMs: 20_000,
+  configuredTestTimeoutMs: testTimeout,
+  fileScheduling: serial ? 'serial; maxWorkers=1' : 'package defaults',
   host,
   retryProtocol: {
     initialFailureRetention:
@@ -373,6 +377,8 @@ try {
         // red receipt stays diagnosable (the Sprint 184 capture discarded both).
         const executedArgs = [
           ...suite.args,
+          `--testTimeout=${testTimeout}`,
+          ...(serial ? ["--maxWorkers=1", "--no-file-parallelism"] : []),
           "--reporter=default",
           "--reporter=json",
           `--outputFile=${reportPath}`,
