@@ -21,7 +21,6 @@ describe('scoped chrome follows CSS, with light/A as the default', () => {
       expect(resolveOodsVegaConfig(spec, scope).background).toBe(canvas);
       expect(resolveOodsEchartsChrome(spec, scope).background).toBe(canvas);
       expect(resolveOodsVegaConfig(spec, scope).title.color).toBe(resolveOodsEchartsChrome(spec, scope).title);
-      expect(canvas).not.toBe('#FCFCFD'); // The old flat/base map was never the light theme.
     });
   }
   it('omission equals explicit light/A and never inherits a previous call', () => {
@@ -29,7 +28,8 @@ describe('scoped chrome follows CSS, with light/A as the default', () => {
     expect(resolveOodsVegaConfig(spec, { theme: 'dark', brand: 'B' })).not.toEqual(light);
     expect(resolveOodsVegaConfig(spec)).toEqual(light);
     expect(resolveOodsEchartsChrome(spec)).toEqual(resolveOodsEchartsChrome(spec, { theme: 'light', brand: 'A' }));
-    expect(resolveTokenValue('--oods-sys-surface-canvas')).not.toBe(tokensBundle.cssVariables['--oods-sys-surface-canvas']);
+    // A neutral palette can share the flat value; source selection is the contract.
+    expect(resolveTokenValue('--oods-sys-surface-canvas')).toBe(tokensBundle.cssVariablesByScope.A.light['--oods-sys-surface-canvas']);
   });
   it('keeps agent chrome overrides ahead of the scope and leaves series surfaces alone', () => {
     const override = { ...spec, config: { tokens: { '--oods-sys-surface-canvas': '#abcdef' } } };

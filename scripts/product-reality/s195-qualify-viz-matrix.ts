@@ -116,14 +116,22 @@ function epochPayload(matrix: any): string {
   ].join("\n");
 }
 
+const args = process.argv.slice(2);
+const modeIndex = args.indexOf('--mode');
+const s197 = modeIndex >= 0 && args[modeIndex + 1] === 's197';
+assert(args.every((arg, i) => arg === '--check' || arg === '--mode' || (i === modeIndex + 1 && s197)), 'Supported options: --check --mode s197');
+const receiptDirectory = s197 ? 'artifacts/product-reality/sprint-197/m05' : 'artifacts/product-reality/sprint-195/m05/golden-migration';
 const matrixPath = resolve(root, 'packages/viz-render/certified-matrix.json');
 const matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
 const changes = [];
+const tokenPackage = JSON.parse(readFileSync(resolve(root, 'packages/tokens/package.json'), 'utf8'));
+assert.equal(matrix.tokenVersion.package, tokenPackage.name);
+assert.equal(matrix.tokenVersion.version, tokenPackage.version, 'Declared token package version must match the qualified matrix');
 for (const family of MATRIX_FAMILIES) {
  const option = matrixOption(family), first = await renderEChartsToSvg(option), second = await renderEChartsToSvg(option);
  assert.equal(first, second);
  const next = sha256(first), previous = matrix.normalizedSvgHashes[family];
- if (previous !== next) changes.push({ family, before: previous, after: next, reason: 's195-m05 measured Role-A categorical palette revision; normalized-SVG contract and inputs unchanged' });
+ if (previous !== next) changes.push({ family, before: previous, after: next, reason: `${s197 ? 's197' : 's195'}-m05 generated palette revision; normalized-SVG contract and authored inputs unchanged` });
  matrix.normalizedSvgHashes[family] = next;
 }
 matrix.renderHashEpoch = 'sha256:' + sha256(epochPayload(matrix));
@@ -131,6 +139,6 @@ if (process.argv.includes('--check')) {
  assert.equal(changes.length, 0, 'Measured certified SVG hashes differ from the qualified matrix');
 } else {
 writeFileSync(matrixPath, JSON.stringify(matrix,null,2)+'\n');
-writeFileSync(resolve(root, 'artifacts/product-reality/sprint-195/m05/golden-migration/certified-matrix-attribution.json'), JSON.stringify({changes,renderHashEpoch:matrix.renderHashEpoch},null,2)+'\n');
+writeFileSync(resolve(root, `${receiptDirectory}/certified-matrix-attribution.json`), JSON.stringify({changes,renderHashEpoch:matrix.renderHashEpoch},null,2)+'\n');
 }
 console.log(JSON.stringify({families:8,changes,check:process.argv.includes('--check')}));

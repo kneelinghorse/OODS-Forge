@@ -32,7 +32,7 @@ const ROWS = [
 // The literal pin ALSO catches a token/palette drift; the resolveCategoricalPalette tie
 // proves the baked bytes come from the SAME resolver certify grades.
 // Sprint 195 m05's qualified Role-A revision changes light slot05 by one blue unit.
-const OODS_CATEGORICAL_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4949', '#993B00'];
+const OODS_CATEGORICAL_6 = ['#580918', '#A97500', '#788E70', '#00A0A3', '#0050AD', '#360643'];
 
 describe('vega-lite-adapter — OODS categorical palette bake (s138 m02; mutation guard s143 m03)', () => {
   it('multi-series: a nominal color encoding bakes the fixed-6 OODS palette into encoding.color.scale.range', () => {
@@ -143,26 +143,26 @@ describe('vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guar
     };
 
     // Background = the surface-canvas the render sits on (also the canvas certify grades against).
-    expect(compiled.config?.background).toBe('#FDF3DE');
+    expect(compiled.config?.background).toBe('#F9FAFC');
     // Typography = the OODS DM Sans stack, nested-quote artifact normalized.
     expect(compiled.config?.font).toBe("'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif");
     // Title chrome (left-anchored heading-lg).
-    expect(compiled.config?.title?.color).toBe('#18233C');
+    expect(compiled.config?.title?.color).toBe('#1A1D23');
     expect(compiled.config?.title?.fontSize).toBe(24);
     expect(compiled.config?.title?.fontWeight).toBe(600);
     expect(compiled.config?.title?.anchor).toBe('start');
     // Axis chrome: text-primary titles, text-neutral labels, subtle H-grid, neutral domain/ticks.
-    expect(compiled.config?.axis?.titleColor).toBe('#18233C');
-    expect(compiled.config?.axis?.labelColor).toBe('#4B4D5A');
-    expect(compiled.config?.axis?.gridColor).toBe('#DAD0BA');
-    expect(compiled.config?.axis?.domainColor).toBe('#D6DAE4');
-    expect(compiled.config?.axis?.tickColor).toBe('#D6DAE4');
+    expect(compiled.config?.axis?.titleColor).toBe('#1A1D23');
+    expect(compiled.config?.axis?.labelColor).toBe('#484D58');
+    expect(compiled.config?.axis?.gridColor).toBe('#CED1D6');
+    expect(compiled.config?.axis?.domainColor).toBe('#BABEC4');
+    expect(compiled.config?.axis?.tickColor).toBe('#BABEC4');
     // Gridlines are horizontal-only (Y grid on, X grid off) — regardless of orientation.
     expect(compiled.config?.axisX?.grid).toBe(false);
     expect(compiled.config?.axisY?.grid).toBe(true);
     // Legend chrome + the grey plot box killed.
-    expect(compiled.config?.legend?.titleColor).toBe('#18233C');
-    expect(compiled.config?.legend?.labelColor).toBe('#4B4D5A');
+    expect(compiled.config?.legend?.titleColor).toBe('#1A1D23');
+    expect(compiled.config?.legend?.labelColor).toBe('#484D58');
     expect(compiled.config?.view?.stroke).toBeNull();
 
     // The whole config block is exactly the shared resolver's output (single source).
@@ -196,7 +196,7 @@ describe('vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guar
       config?: { mark?: { tooltip?: boolean }; background?: string };
     };
     expect(compiled.config?.mark?.tooltip).toBe(true);
-    expect(compiled.config?.background).toBe('#FDF3DE');
+    expect(compiled.config?.background).toBe('#F9FAFC');
   });
 });
 

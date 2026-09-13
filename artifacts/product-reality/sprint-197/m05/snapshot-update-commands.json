@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/viz-core",
+      "exec",
+      "vitest",
+      "run",
+      "test/golden-echarts-options.spec.ts",
+      "--update",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m05/core-snapshots.update.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "--filter",
+      "@oods/viz-render",
+      "exec",
+      "vitest",
+      "run",
+      "test/emitter.spec.ts",
+      "--update",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 0,
+    "log": "artifacts/product-reality/sprint-197/m05/render-snapshots.update.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/mcp-server/src/tools/viz.render.fidelity.test.ts",
+      "packages/mcp-server/src/tools/viz.render.geo-fidelity.test.ts",
+      "packages/mcp-server/src/tools/viz.render.network-fidelity.test.ts",
+      "packages/mcp-server/src/tools/dashboard.render.fidelity.test.ts",
+      "--update",
+      "--coverage.enabled=false"
+    ],
+    "exitCode": 1,
+    "log": "artifacts/product-reality/sprint-197/m05/mcp-snapshots.update.log"
+  }
+]

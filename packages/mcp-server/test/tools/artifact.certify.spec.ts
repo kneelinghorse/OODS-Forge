@@ -196,13 +196,13 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
 
   it('bakes the resolved OODS palette into the compiled cartesian spec (s138 rendered-reality — the inversion of the s137 colorless tripwire, and the planned #564 cartesian-color change)', () => {
     // s138 rendered-reality: the compiled Vega-Lite spec now CARRIES the resolved OODS
-    // palette — scale.range including categorical-01 (#416CD9 post-s146 F1) for a multi-series
+    // palette — scale.range including categorical-01 (#580918 since s197) for a multi-series
     // color channel. The contrast pillar therefore grades what Forge RENDERS, not a declared
     // intent. This is exactly the deliberate non-additive #564 cartesian-color change
     // (its golden regen is owned by m04). Hand-inverted from the s137 `not.toContain`.
     const compiled = JSON.stringify(toVegaLiteSpec(buildMultiSeries()));
     expect(compiled).toContain('"range"');
-    expect(compiled).toContain('416CD9'); // resolved categorical-01, baked into scale.range
+    expect(compiled).toContain('580918'); // resolved categorical-01, baked into scale.range
     // Forge bakes an explicit hex range, NOT a Vega named 'scheme' — still absent.
     expect(compiled.toLowerCase()).not.toContain('scheme');
   });
@@ -573,12 +573,12 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
   };
 
   it('certify reconstructs the fixed default OODS 6-slot categorical palette', () => {
-    // s195: light slot05 hue -0.08 degrees moves its blue channel by one byte.
-    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4949', '#993B00']);
+    // s197: six generated slots, qualified by the one attributed golden migration.
+    expect(CERTIFY_PALETTE).toEqual(['#580918', '#A97500', '#788E70', '#00A0A3', '#0050AD', '#360643']);
   });
 
-  // s191 repairs the gold slot against the actual CSS light/A canvas.
-  it('pins the light/A Role-C repair — every slot clears 3:1 (s191)', () => {
+  // s197 preserves the Role-C floor against the generated neutral CSS light/A canvas.
+  it('pins the light/A Role-C floor — every generated slot clears 3:1 (s197)', () => {
     // Derive the canvas from the SAME token the grader resolves — resolveSlotHex ->
     // resolveTokenToColor at certify-contrast.ts:407 (with no override this is exactly
     // normaliseColor(resolveTokenToColor('--oods-sys-surface-canvas'))). s142-review #2:
@@ -589,14 +589,14 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
     const canvasRaw = resolveTokenToColor('--oods-sys-surface-canvas');
     expect(canvasRaw, 'the --oods-sys-surface-canvas token must resolve').toBeTruthy();
     const CANVAS = normaliseColor(canvasRaw as string, 'canvas');
-    expect(CANVAS).toBe('#FDF3DE'); // resolves here today (memo §1); pinned so a retoken is loud
+    expect(CANVAS).toBe('#F9FAFC'); // resolves here today (memo §1); pinned so a retoken is loud
     const ratios = reconstructEChartsCategoricalPalette().map((s) => ({
       ...s,
       ratio: contrastRatio(s.hex, CANVAS),
     }));
     expect(ratios.filter(({ ratio }) => ratio < 3).map(({ hex }) => hex)).toEqual([]);
     const min = ratios.reduce((a, b) => (b.ratio < a.ratio ? b : a));
-    expect(min.hex).toBe('#B58525');
+    expect(min.hex).toBe('#00A0A3');
     expect(min.ratio).toBeGreaterThanOrEqual(3);
   });
 

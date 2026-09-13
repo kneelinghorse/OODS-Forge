@@ -14,7 +14,7 @@ import { handle as certify } from '../../packages/mcp-server/src/tools/artifact.
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const PATTERN_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-patterns.v1.json';
 export const PATTERN_DOC_PATH = 'docs/viz/pattern-library-v2.md';
-export const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-196/m05/patterns/pattern-observations.json';
+export const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-197/m05/patterns/pattern-observations.json';
 const CLASSIFICATION_PATH = 'packages/viz-core/src/registry/viz-classification.v1.json';
 const TYPE_REGISTRY_PATH = 'packages/viz-core/src/registry/viz-recipes.v1.json';
 const INPUT_SCHEMA_PATH = 'packages/mcp-server/src/schemas/viz.render.input.json';

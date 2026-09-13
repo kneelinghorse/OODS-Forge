@@ -48,6 +48,15 @@ function migratedTemporalHash(source: string, identity: string, beforeHash: stri
   expect(sha(fs.readFileSync(path.join(repositoryRoot, matrix.path), 'utf8'))).toBe(matrix.sha256);
   return matches[0].afterHash;
 }
+const currentPaletteRoot = 'artifacts/product-reality/sprint-197/m05';
+function currentPaletteHash(identity: string, beforeHash: string): string {
+  const migration = read(`${currentPaletteRoot}/golden-attribution.json`);
+  const rows = migration.matrixRows.filter((row: any) => row.identity === identity && row.beforeHash === beforeHash);
+  expect(rows.length, `${identity}: missing prior-epoch attribution`).toBeGreaterThan(0);
+  const hashes = [...new Set(rows.map((row: any) => row.afterHash))];
+  expect(hashes).toHaveLength(1);
+  return hashes[0] as string;
+}
 function retain(name: string, value: unknown) {
   if (!process.env.S194_OPTION_RECEIPTS) return;
   fs.mkdirSync(process.env.S194_OPTION_RECEIPTS, { recursive: true });
@@ -88,14 +97,18 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     retain('measure-resolution', { input, good, unknown, disabled });
   });
 
-  it('keeps both portable dashboard HTML identities and their repeats unchanged', async () => {
+  it('keeps portable dashboard repeats byte-identical and attributes their s197 palette changes', async () => {
     const prior = read('artifacts/product-reality/sprint-193/m07/logs/portable-e2e.log').calls.dashboards;
     const rows = [];
     for (const [file, expected] of [['d3-preflight-dashboard.json', prior.twoPanelHtmlSha256], ['d3-four-panel-dashboard.json', prior.fourPanelHtmlSha256]]) {
       const input = wire('dashboard.render', 'input', read('packages/mcp-server/test/fixtures/portable-runtime/' + file));
       for (let repeat = 0; repeat < 2; repeat += 1) {
         const output = wire('dashboard.render', 'output', await dashboard(input));
-        expect(sha(output.html!)).toBe(expected);
+        const migration = read(`${currentPaletteRoot}/consumers/migration.json`).dashboards.find((row: any) => row.file === file);
+        expect(migration.beforeHash).toBe(expected);
+        const pixels = fs.readFileSync(path.join(repositoryRoot, currentPaletteRoot, 'consumers', migration.raw), 'utf8');
+        expect(sha(pixels)).toBe(migration.afterHash);
+        expect(output.html).toBe(pixels);
         rows.push({ file, repeat, htmlSha256: sha(output.html!) });
       }
     }
@@ -133,7 +146,7 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
       const expected = ['line', 'area'].includes(input.chartType)
         ? migratedTemporalHash('artifacts/product-reality/sprint-191/m05/matrix/matrix.json', `${input.chartType}/light/A`, beforeHash)
         : input.chartType === 'force_graph' ? migratedGraphHash(beforeHash, 'A', 'light') : beforeHash;
-      expect(output.svgHash).toBe(expected);
+      expect(output.svgHash).toBe(currentPaletteHash(`${input.chartType}/light/A`, expected));
       rows.push({ chartType: input.chartType, svgHash: output.svgHash });
     }
     const input = wire('dashboard.render', 'input', {
@@ -150,12 +163,14 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
     expect(migration.matrixRows).toContainEqual(expect.objectContaining({ source: 'artifacts/product-reality/sprint-191/m05/matrix/matrix.json', identity: 'dashboard/light/A', beforeHash: prior.dashboard.outputHtmlHash, afterHash: sha(paletteHtml), status: 'superseded' }));
     const afterHtml = fs.readFileSync(path.join(repositoryRoot, `${temporalMigrationRoot}/matrix/dashboard-A-light.html`), 'utf8');
     expect(sha(afterHtml)).toBe(migratedTemporalHash('artifacts/product-reality/sprint-195/m05/golden-migration/matrix/matrix.json', 'dashboard/light/A', sha(paletteHtml)));
-    expect(output.outputHtmlHash).toBe(sha(afterHtml));
-    expect(output.html).toBe(afterHtml);
+    const currentHtml = fs.readFileSync(path.join(repositoryRoot, `${currentPaletteRoot}/matrix/dashboard-A-light.html`), 'utf8');
+    expect(sha(currentHtml)).toBe(currentPaletteHash('dashboard/light/A', sha(afterHtml)));
+    expect(output.outputHtmlHash).toBe(sha(currentHtml));
+    expect(output.html).toBe(currentHtml);
     retain('delivered-render-identities', { rows, dashboard: { outputHtmlHash: output.outputHtmlHash } });
   }, 60_000);
 
-  it('retains non-temporal Sprint 193 SVG identities and accounts for palette and UTC changes', async () => {
+  it('retains Sprint 193 operands and accounts for the palette and UTC pixel migrations', async () => {
     const prior = read('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json').observations;
     const inputs = read('scripts/product-reality/s190-viz-operands.json');
     const rows = [];
@@ -164,7 +179,7 @@ describe('remaining options do what their public wire says (s194-m05)', () => {
       const expected = ['line', 'area'].includes(input.chartType)
         ? migratedTemporalHash('artifacts/product-reality/sprint-193/m07/proof-attempt-1/viz-observations.json', `${input.chartType}/${scope.theme}/${scope.brand}`, scope.svgHash)
         : input.chartType === 'force_graph' ? migratedGraphHash(scope.svgHash, scope.brand, scope.theme) : scope.svgHash;
-      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(expected);
+      expect(output.svgHash, `${input.chartType}/${scope.brand}/${scope.theme}`).toBe(currentPaletteHash(`${input.chartType}/${scope.theme}/${scope.brand}`, expected));
       rows.push({ chartType: input.chartType, brand: scope.brand, theme: scope.theme, svgHash: output.svgHash });
     }
     expect(rows).toHaveLength(52);

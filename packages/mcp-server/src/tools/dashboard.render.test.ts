@@ -597,13 +597,15 @@ describe('dashboard.render — a11y completeness: contrast scan + SR data-table 
     expect(scanBrandContrast().graded).toBe(CONTRAST_PAIRS.length);
   });
 
-  it('(A) brand A and brand B resolve DIFFERENT palettes over the same token names', () => {
-    // Threading is only meaningful if the two brands differ; assert that rather than trust it.
+  it('(A) both brands retain explicit token paths and share the s197 dashboard neutrals/statuses', () => {
+    // The dashboard selects neutral/status roles, which s197 deliberately shares.
+    // Brand-primary divergence is covered by the generated brand seam tests.
     const a = resolveBrandTokens('A');
     const b = resolveBrandTokens('B');
     expect(Object.keys(a).sort()).toEqual(Object.keys(b).sort());
     expect(Object.keys(a).length).toBe(Object.keys(exportTokenMap('A')).length);
-    expect(a).not.toEqual(b);
+    expect(exportTokenMap('A')).not.toEqual(exportTokenMap('B'));
+    expect(a).toEqual(b);
     // Absent brand === brand A, which is what "byte-identical when omitted" rests on.
     expect(resolveBrandTokens()).toEqual(a);
   });

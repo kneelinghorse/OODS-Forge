@@ -184,14 +184,15 @@ describe("artifact.certify — operand-backed ECharts render grading (s179 m05)"
     30_000,
   );
 
-  it("surfaces the real nested-sunburst tint as a render-measured contrast failure", async () => {
+  it("retains the measured s197 contrast improvement for the same nested-sunburst operand", async () => {
     const capture = await certifyOperand(
       operandFor("sunburst"),
       NESTED_SUNBURST,
     );
 
-    expect(capture.certified.pillars?.contrast).toBe("fail");
-    expect(capture.certified.contrastNote).toContain("#809DE5");
+    expect(capture.certified.pillars?.contrast).toBe("pass");
+    // The descendant remains graded; the palette improved its minimum to 3.84:1.
+    expect(capture.certified.contrastNote).not.toContain("failing");
     expect(capture.certified.contrastNote).toContain("actual rendered ECharts");
     expect(capture.certified.determinism?.renderHash).toMatch(/^[0-9a-f]{64}$/);
   });

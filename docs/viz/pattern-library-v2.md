@@ -65,38 +65,38 @@ Pass the full identity to `viz.render`, for example `{ "pattern": "pattern:viz:s
 
 | Identity | Theme / brand | SVG SHA-256 | Coverage | Conformant | A11y / contrast / accuracy |
 | --- | --- | --- | --- | --- | --- |
-| `pattern:viz:correlation-matrix` | light / A | `3d56ef4b2738af287ad6a1c537ae9b337c3e4efef2643c46501921a44888ff48` | certified | true | pass / unchecked / pass |
-| `pattern:viz:correlation-matrix` | light / B | `5666a243062a21693969d11e1e62d18ec31bc79bfe24efd93b128b7bc560daae` | certified | true | pass / unchecked / pass |
-| `pattern:viz:correlation-matrix` | dark / A | `3346861166da295edb35fc8e9c2c59357c8d7b3e5edda5723d14763b85d35f33` | certified | true | pass / unchecked / pass |
-| `pattern:viz:correlation-matrix` | dark / B | `d00d9b0d341d4361d00b4797df5bea3e05995c91d1b44c74c708034f55757478` | certified | true | pass / unchecked / pass |
-| `pattern:viz:correlation-scatter` | light / A | `3665bb5192c81e7879c558819d57a736970cdd64ea51aea3a65efa1d1104950d` | certified | true | pass / pass / pass |
-| `pattern:viz:correlation-scatter` | light / B | `7c5ecb823c50f6b94c29028c86a5ad45b0ed1f3464a84e39cfb81553ac08dfc2` | certified | true | pass / pass / pass |
-| `pattern:viz:correlation-scatter` | dark / A | `b0b2b0208d691dc5f777c5247159ac47b4ed51bfe04a4520b2d0e2d0ae0d250b` | certified | true | pass / pass / pass |
-| `pattern:viz:correlation-scatter` | dark / B | `9e8c79ad10b451dfa21df05ceaf775ec493e1911bb58d04b8e8b1c343d0dd96d` | certified | true | pass / pass / pass |
-| `pattern:viz:diverging-bar` | light / A | `49a3eed525e8ecda73dea5a5720785de1e0b8694fbbc0804f7ea16c20d92ce56` | certified | true | pass / unchecked / pass |
-| `pattern:viz:diverging-bar` | light / B | `4ab13276ec38430a04fd176bb2e4c205630b954b2dfd7c3633dccb958fc32b06` | certified | true | pass / unchecked / pass |
-| `pattern:viz:diverging-bar` | dark / A | `c9b4b12b102f4a60c21bf1a5d2d24b96cfeae0e042852888f705047d3fbbfb42` | certified | true | pass / unchecked / pass |
-| `pattern:viz:diverging-bar` | dark / B | `1d7d9be17758462d5f47dd4e2892139a6a108203e39d830cb40b649107bffd69` | certified | true | pass / unchecked / pass |
-| `pattern:viz:running-total-area` | light / A | `c4a98e646b50a81bb548494a0b83a26271b115854091c12083c7472fd966b84f` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | light / B | `0a7ad7cfc42808b8553da72848da82b0aa568178f48932a33574ace2cb43e638` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | dark / A | `de14fbd664785af212257c982c6aa9b9e92a9dda10cb83ac72c37e15d3503200` | certified | true | pass / pass / pass |
-| `pattern:viz:running-total-area` | dark / B | `256ef73327cd7dd2d299f6fcaa302aee00ca0438a5b0b670c6a91f8220f4f6b9` | certified | true | pass / pass / pass |
-| `pattern:viz:simple-bar` | light / A | `a5e4ce82840e2963e00b8c014e81becddaa579f8dce0b5cf795433a1157bec7d` | certified | true | pass / pass / pass |
-| `pattern:viz:simple-bar` | light / B | `63823713921492439ea444ff041667db66e140de43e4880200db18fd771a78e2` | certified | true | pass / pass / pass |
-| `pattern:viz:simple-bar` | dark / A | `b24c864165c30a5347d6d1c9c17d80f3430678252f406e6c62348ac3808ff4a5` | certified | true | pass / pass / pass |
-| `pattern:viz:simple-bar` | dark / B | `88651c89686cb1245e57d383a6392eff95837cc68628a0d3ebb8c7b9d2bd4131` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-100-bar` | light / A | `9064cb9a478ed54d78057f1540b374361690bf2ef668795cb920d427e6c12299` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-100-bar` | light / B | `53d1a35c809be1042b77f58324e3838e5bd2606a2b592b23f57e723161bd3fdb` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-100-bar` | dark / A | `3c87e933c6de0b57662c43fbfd9d91df25add88317e5bf64fe354feab367e67c` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-100-bar` | dark / B | `dd560b6c8da6512b420b7a9fcf4e93ecf92eaf0e7ab97a07ae2531021b05ab8a` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-bar` | light / A | `c3ad5598d88d8813a17d4aa5fc69951da0d42ebe1bf5e052883a5ec0cacaf7f2` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-bar` | light / B | `6d084fda00831741942b65ec2562494c62942cc12b814b365f748b1a66ef4fde` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-bar` | dark / A | `8c732b857b2b59923196f185716715e3d33594f731ee820f9ec76112a3cafb8f` | certified | true | pass / pass / pass |
-| `pattern:viz:stacked-bar` | dark / B | `71a1f7a1f3da45f14ab14e87d8bf5841c4bc2ccf61e4e8315213aab47a18b7b5` | certified | true | pass / pass / pass |
-| `pattern:viz:time-grid-heatmap` | light / A | `dee52ced39b9cc1db23ea32bcac190a84dfe94f81e3f81451999b4c58cea6b21` | certified | true | pass / exempt / pass |
-| `pattern:viz:time-grid-heatmap` | light / B | `218df655a783ee43e2844d4f76bc33b8dd81d0edb1bcc60f7ec1020ad1f45833` | certified | true | pass / exempt / pass |
-| `pattern:viz:time-grid-heatmap` | dark / A | `9ac7788cd619eaa33703f469849b5a6e3ac8f4f903572e750912da1685fb10d0` | certified | true | pass / exempt / pass |
-| `pattern:viz:time-grid-heatmap` | dark / B | `ab4162567009af2283fddde443b74e5b53b0e0ab34cd23cf23c78676cd555eaa` | certified | true | pass / exempt / pass |
+| `pattern:viz:correlation-matrix` | light / A | `52c731756bab1fe69c7edf303b7e7ddd831e253a5062ff239320f74da72e9f7a` | certified | true | pass / unchecked / pass |
+| `pattern:viz:correlation-matrix` | light / B | `52c731756bab1fe69c7edf303b7e7ddd831e253a5062ff239320f74da72e9f7a` | certified | true | pass / unchecked / pass |
+| `pattern:viz:correlation-matrix` | dark / A | `f3ad4de5a69d20fd6cbafb37385f100f6c1d944bae13e95b83b9d68ffa6e2c75` | certified | true | pass / unchecked / pass |
+| `pattern:viz:correlation-matrix` | dark / B | `f3ad4de5a69d20fd6cbafb37385f100f6c1d944bae13e95b83b9d68ffa6e2c75` | certified | true | pass / unchecked / pass |
+| `pattern:viz:correlation-scatter` | light / A | `222112a8012704b6cdd78529727253efa332bc3c892412f7f05d752e321f4743` | certified | true | pass / pass / pass |
+| `pattern:viz:correlation-scatter` | light / B | `222112a8012704b6cdd78529727253efa332bc3c892412f7f05d752e321f4743` | certified | true | pass / pass / pass |
+| `pattern:viz:correlation-scatter` | dark / A | `cd0f19adb1eebd0fe0aecb34aad793dc201a6a111dfc388fa9091a04456132b0` | certified | true | pass / pass / pass |
+| `pattern:viz:correlation-scatter` | dark / B | `cd0f19adb1eebd0fe0aecb34aad793dc201a6a111dfc388fa9091a04456132b0` | certified | true | pass / pass / pass |
+| `pattern:viz:diverging-bar` | light / A | `c14d2580280b5abc52d723b0a8153e51fbc7aaacd01b91d6cd3a8b69283301bb` | certified | true | pass / unchecked / pass |
+| `pattern:viz:diverging-bar` | light / B | `c14d2580280b5abc52d723b0a8153e51fbc7aaacd01b91d6cd3a8b69283301bb` | certified | true | pass / unchecked / pass |
+| `pattern:viz:diverging-bar` | dark / A | `84f88e006265e4b3d98866695d497b41e63e558643be862014cae19a39353fad` | certified | true | pass / unchecked / pass |
+| `pattern:viz:diverging-bar` | dark / B | `84f88e006265e4b3d98866695d497b41e63e558643be862014cae19a39353fad` | certified | true | pass / unchecked / pass |
+| `pattern:viz:running-total-area` | light / A | `61b72cef16f36480793fd631b6a14123829dccd301b8c9870beb27e2061cb1f0` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | light / B | `61b72cef16f36480793fd631b6a14123829dccd301b8c9870beb27e2061cb1f0` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | dark / A | `f4f41bfb2d916b1a388bb979a4481d55de6fb1e6b2bc782c61ecfdd1e917c169` | certified | true | pass / pass / pass |
+| `pattern:viz:running-total-area` | dark / B | `f4f41bfb2d916b1a388bb979a4481d55de6fb1e6b2bc782c61ecfdd1e917c169` | certified | true | pass / pass / pass |
+| `pattern:viz:simple-bar` | light / A | `eae03c2e006d5cef89ea31196478535fa1ad8ae695c649f3f0161185522956aa` | certified | true | pass / pass / pass |
+| `pattern:viz:simple-bar` | light / B | `eae03c2e006d5cef89ea31196478535fa1ad8ae695c649f3f0161185522956aa` | certified | true | pass / pass / pass |
+| `pattern:viz:simple-bar` | dark / A | `c94ea26dce51bb067c4aa4f95597a892d73777b58c01b092e4716910e614a10f` | certified | true | pass / pass / pass |
+| `pattern:viz:simple-bar` | dark / B | `c94ea26dce51bb067c4aa4f95597a892d73777b58c01b092e4716910e614a10f` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-100-bar` | light / A | `e0b179f0486edfadf6d965c83cd79c976a0de1874501e23fd5aa16587d5d49fd` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-100-bar` | light / B | `e0b179f0486edfadf6d965c83cd79c976a0de1874501e23fd5aa16587d5d49fd` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-100-bar` | dark / A | `650bcb8108510733604779e8e21ac34a7358b3221a794db5a1d0e9382871e65d` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-100-bar` | dark / B | `650bcb8108510733604779e8e21ac34a7358b3221a794db5a1d0e9382871e65d` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-bar` | light / A | `e079d4b4eb40f7f3ad8bef55c68ea5c0565c553347d7354f77db19bbd6a74791` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-bar` | light / B | `e079d4b4eb40f7f3ad8bef55c68ea5c0565c553347d7354f77db19bbd6a74791` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-bar` | dark / A | `7d1e1aadbd51a6705d3bc95a32aa856c56139a4f1d495701c737c8b6ad108464` | certified | true | pass / pass / pass |
+| `pattern:viz:stacked-bar` | dark / B | `7d1e1aadbd51a6705d3bc95a32aa856c56139a4f1d495701c737c8b6ad108464` | certified | true | pass / pass / pass |
+| `pattern:viz:time-grid-heatmap` | light / A | `320c8300287ecd2d0e6c479c90f389368466e12814657388282468eb18a1fb6d` | certified | true | pass / exempt / pass |
+| `pattern:viz:time-grid-heatmap` | light / B | `320c8300287ecd2d0e6c479c90f389368466e12814657388282468eb18a1fb6d` | certified | true | pass / exempt / pass |
+| `pattern:viz:time-grid-heatmap` | dark / A | `b60870e37d7784206e5d8e3938a7d2f6d473204640b7ea968552c25333aa561e` | certified | true | pass / exempt / pass |
+| `pattern:viz:time-grid-heatmap` | dark / B | `b60870e37d7784206e5d8e3938a7d2f6d473204640b7ea968552c25333aa561e` | certified | true | pass / exempt / pass |
 
 ## Authoring and regeneration
 

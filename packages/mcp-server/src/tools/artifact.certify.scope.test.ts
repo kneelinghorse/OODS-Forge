@@ -34,7 +34,7 @@ describe('certification describes the pixels at the requested scope', () => {
     const spec = { ...rendered.normalizedSpec!, config: { tokens: { '--oods-sys-surface-canvas': '#416CDA' } } };
     const backed = await certify({ spec, data: { sankey: SANKEY_BRANCH } });
     expect(backed.contrastResults?.[0]).toMatchObject({ verdict: 'fail', measured: true, evidence: 'render' });
-    expect(backed.contrastNote).toContain('#416CD9');
+    expect(backed.contrastNote).toContain('#580918'); // s197 carrier; the synthetic canvas override is unchanged.
     // The declared operand profile is evaluated even when rendered contrast fails.
     expect(backed.coverage).toBe('certified'); expect(backed.conformant).toBe(false);
     // This unchanged unnamed fixture also retains its native missing-name a11y failure.

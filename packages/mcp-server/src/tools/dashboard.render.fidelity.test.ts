@@ -153,7 +153,7 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     expect(out.outputHtmlHash).toBeUndefined();
   });
 
-  it('R-B: brand changes HTML and chart identity because the CSS scope changes rendered chrome', async () => {
+  it('R-B: brand changes HTML scope while the s197 shared chart palette preserves chart identity', async () => {
     const brandA = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'A' } as DashboardRenderInput);
     const brandB = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'B' } as DashboardRenderInput);
     const brandAWithHtmlHash = brandA as DashboardRenderOutput & { outputHtmlHash?: string };
@@ -165,7 +165,9 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     for (const hash of Object.values(brandAPanelHashes)) {
       expect(hash).toMatch(/^[a-f0-9]{64}$/);
     }
-    expect(brandAPanelHashes).not.toEqual(chartHashes(brandB));
+    expect(brandA.html).toContain('data-brand="A"');
+    expect(brandB.html).toContain('data-brand="B"');
+    expect(brandAPanelHashes).toEqual(chartHashes(brandB));
     expect(chartHashes(await handle({ ...METRIC_OVERVIEW_HTML, brand: 'A' }))).toEqual(brandAPanelHashes);
   });
 

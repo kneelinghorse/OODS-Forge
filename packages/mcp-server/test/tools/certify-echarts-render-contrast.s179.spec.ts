@@ -56,42 +56,42 @@ const NESTED_SUNBURST = {
 
 const EXPECTED_STANDARD = {
   treemap: {
-    roleCPaints: ["#416CD9", "#3E44BE", "#279669"],
-    roleAAssignment: ["#416CD9", "#3E44BE", "#279669"],
+    roleCPaints: ["#580918", "#A97500", "#788E70"],
+    roleAAssignment: ["#580918", "#A97500", "#788E70"],
     contrast: "pass",
   },
   sunburst: {
-    roleCPaints: ["#416CD9", "#3E44BE", "#279669"],
-    roleAAssignment: ["#416CD9", "#3E44BE", "#279669"],
+    roleCPaints: ["#580918", "#A97500", "#788E70"],
+    roleAAssignment: ["#580918", "#A97500", "#788E70"],
     contrast: "pass",
   },
   sankey: {
-    roleCPaints: ["#416CD9", "#3E44BE", "#279669"],
-    roleAAssignment: ["#416CD9", "#3E44BE", "#279669"],
+    roleCPaints: ["#580918", "#A97500", "#788E70"],
+    roleAAssignment: ["#580918", "#A97500", "#788E70"],
     contrast: "pass",
   },
   chord: {
-    roleCPaints: ["#416CD9", "#3E44BE", "#279669"],
-    roleAAssignment: ["#416CD9", "#3E44BE", "#279669"],
+    roleCPaints: ["#580918", "#A97500", "#788E70"],
+    roleAAssignment: ["#580918", "#A97500", "#788E70"],
     contrast: "pass",
   },
   force_graph: {
-    roleCPaints: ["#416CD9", "#3E44BE"],
-    roleAAssignment: ["#416CD9", "#3E44BE"],
+    roleCPaints: ["#580918", "#A97500"],
+    roleAAssignment: ["#580918", "#A97500"],
     contrast: "pass",
   },
   choropleth: {
-    roleCPaints: ["#003777", "#DFEDFC"],
+    roleCPaints: ["#043573", "#E5ECF6"],
     roleAAssignment: [],
     contrast: "exempt",
   },
   bubble_map: {
-    roleCPaints: ["#003777", "#DFEDFC"],
+    roleCPaints: ["#043573", "#E5ECF6"],
     roleAAssignment: [],
     contrast: "exempt",
   },
   flow_map: {
-    roleCPaints: ["#16558C"],
+    roleCPaints: ["#17509C"],
     roleAAssignment: [],
     contrast: "exempt",
   },
@@ -155,19 +155,19 @@ describe("ECharts rendered categorical contrast (s179 m04)", () => {
     30_000,
   );
 
-  it("pins the honest sunburst Role-C tint failure while Role A remains valid", async () => {
+  it("pins the s197 sunburst tint improvement while still grading descendants in Role C", async () => {
     const result = await grade(
       "sunburst",
       retainedProjection("sunburst", NESTED_SUNBURST),
     );
 
-    expect(result.roleCPaints).toContain("#809DE5");
-    expect(result.roleAAssignment).toEqual(["#416CD9", "#3E44BE"]);
-    expect(result.roleC.verdict).toBe("fail");
-    expect(result.roleC.minimumRatio).toBeCloseTo(2.4201494556220835, 12);
-    expect(result.roleC.failingPaints).toEqual(["#809DE5"]);
+    expect(result.roleCPaints).toContain("#8F5B65");
+    expect(result.roleAAssignment).toEqual(["#580918", "#A97500"]);
+    expect(result.roleC.verdict).toBe("pass");
+    expect(result.roleC.minimumRatio).toBeCloseTo(3.8435958442874267, 12);
+    expect(result.roleC.failingPaints).toEqual([]);
     expect(result.roleA.verdict).toBe("pass");
-    expect(result.contrast).toBe("fail");
+    expect(result.contrast).toBe("pass");
   });
 
   it("grades the retained projection: raw-only paint movement is inert, projected movement bites", async () => {
@@ -232,7 +232,7 @@ describe("ECharts rendered categorical contrast (s179 m04)", () => {
       "choropleth",
       retainedProjection("choropleth", operand.branchData),
     );
-    expect(result.roleCPaints).toEqual(["#003777", "#DFEDFC"]);
+    expect(result.roleCPaints).toEqual(["#043573", "#E5ECF6"]);
     expect(result.roleAAssignment).toEqual([]);
     expect(result.roleC.verdict).toBe("exempt");
     expect(result.roleA.verdict).toBe("not-applicable");
