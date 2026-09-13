@@ -112,10 +112,10 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
   },
   BillingSummaryBadge: {
     id: 'BillingSummaryBadge', version: COMPONENT_CONTRACT_VERSION,
-    props: ['amount', 'currency', 'minorUnits', 'interval'], slots: [], events: [],
+    props: ['amount', 'currency', 'minorUnits', 'interval', 'showInterval'], slots: [], events: [],
     states: ['populated', 'empty', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'billing.interval.text'],
     accessibility: ['Amount, currency and interval form one noninteractive announced phrase'],
-    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.',
+    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. showInterval defaults true; false formats a plain currency amount without a cadence term. Invalid amount/currency is named explicitly.',
   },
   Button: {
     id: 'Button', version: COMPONENT_CONTRACT_VERSION,

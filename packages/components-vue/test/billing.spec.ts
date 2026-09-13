@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { BillingAmountInput, BillingIntervalSelector, BillingSummaryBadge } from '../src/index.js';
 
 describe('Billable value semantics', () => {
+  it('formats a plain monetary field without inventing a billing cadence', async () => {
+    const wrapper = mount(BillingSummaryBadge, { props: { amount: 1250, currency: 'usd', minorUnits: 1000, showInterval: false } });
+    expect(wrapper.text()).toBe('$1.250');
+    await wrapper.setProps({ showInterval: true });
+    expect(wrapper.text()).toBe('$1.250 · No interval');
+    wrapper.unmount();
+  });
   it.each([[1999, 'usd', 100, '$19.99'], [0, 'usd', 100, '$0.00'], [1999, 'jpy', 1, '¥1,999']] as const)('announces minor-unit amount %s with its interval', (amount, currency, minorUnits, text) => {
     const wrapper = mount(BillingSummaryBadge, { props: { amount, currency, minorUnits, interval: 'monthly' } });
     expect(wrapper.text()).toBe(`${text} · monthly`);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText,
-  billingIntervalMessage, billingSummary, parseBillingAmount,
+  billingIntervalMessage, billingSummary, formatBillingAmount, parseBillingAmount,
 } from '@oods/component-contracts';
 
 export interface BillingSummaryBadgeProps {
@@ -10,12 +10,13 @@ export interface BillingSummaryBadgeProps {
   currency?: string;
   minorUnits?: number;
   interval?: string;
+  showInterval?: boolean;
   className?: string;
 }
 
-export function BillingSummaryBadge({ id, amount, currency, minorUnits, interval, className }: BillingSummaryBadgeProps) {
+export function BillingSummaryBadge({ id, amount, currency, minorUnits, interval, showInterval = true, className }: BillingSummaryBadgeProps) {
   return <span id={id} className={`oods-billing-summary ${className ?? ''}`.trim()} data-oods-component="BillingSummaryBadge">
-    {billingSummary(amount, currency, minorUnits, interval)}
+    {showInterval ? billingSummary(amount, currency, minorUnits, interval) : formatBillingAmount(amount, currency, minorUnits)}
   </span>;
 }
 

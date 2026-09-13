@@ -1,14 +1,14 @@
 import { defineComponent, h, ref, useId, watch, type PropType } from 'vue';
 import {
   BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText,
-  billingIntervalMessage, billingSummary, parseBillingAmount,
+  billingIntervalMessage, billingSummary, formatBillingAmount, parseBillingAmount,
 } from '@oods/component-contracts';
 
 const amountProps = { id: String, amount: Number, currency: { type: String, default: 'usd' }, minorUnits: { type: Number, default: BILLING_MINOR_UNITS } };
 
 export const BillingSummaryBadge = defineComponent({
-  name: 'BillingSummaryBadge', props: { ...amountProps, interval: String },
-  setup: (props) => () => h('span', { id: props.id, class: 'oods-billing-summary', 'data-oods-component': 'BillingSummaryBadge' }, billingSummary(props.amount, props.currency, props.minorUnits, props.interval)),
+  name: 'BillingSummaryBadge', props: { ...amountProps, interval: String, showInterval: { type: Boolean, default: true } },
+  setup: (props) => () => h('span', { id: props.id, class: 'oods-billing-summary', 'data-oods-component': 'BillingSummaryBadge' }, props.showInterval ? billingSummary(props.amount, props.currency, props.minorUnits, props.interval) : formatBillingAmount(props.amount, props.currency, props.minorUnits)),
 });
 
 export const BillingAmountInput = defineComponent({

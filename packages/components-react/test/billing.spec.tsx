@@ -5,6 +5,12 @@ import { BillingAmountInput, BillingIntervalSelector, BillingSummaryBadge } from
 afterEach(cleanup);
 
 describe('Billable value semantics', () => {
+  it('formats a plain monetary field without inventing a billing cadence', () => {
+    const { rerender } = render(<BillingSummaryBadge amount={1250} currency="usd" minorUnits={1000} showInterval={false} />);
+    expect(screen.getByText('$1.250')).toBeTruthy();
+    rerender(<BillingSummaryBadge amount={1250} currency="usd" minorUnits={1000} />);
+    expect(screen.getByText('$1.250 · No interval')).toBeTruthy();
+  });
   it.each([[1999, 'usd', 100, '$19.99'], [0, 'usd', 100, '$0.00'], [1999, 'jpy', 1, '¥1,999']] as const)('announces minor-unit amount %s with its interval', (amount, currency, minorUnits, text) => {
     const { container } = render(<BillingSummaryBadge amount={amount} currency={currency} minorUnits={minorUnits} interval="monthly" />);
     expect(container.textContent).toBe(`${text} · monthly`);

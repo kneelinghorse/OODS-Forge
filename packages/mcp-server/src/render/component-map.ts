@@ -1,6 +1,6 @@
 import { auditSummary, initialSort, ariaSort, assertStaticSvg } from '@oods/component-contracts';
 import { dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue } from '@oods/component-contracts';
-import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
+import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary, formatBillingAmount } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
@@ -300,7 +300,7 @@ function renderBillingSummaryBadge(node: UiElement): string {
   const amount = typeof props.amount === 'number' ? props.amount : undefined;
   const currency = asString(props.currency);
   const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : undefined;
-  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-summary" data-oods-component="BillingSummaryBadge">${escapeHtml(billingSummary(amount, currency, minorUnits, asString(props.interval)))}</span>`;
+  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-summary" data-oods-component="BillingSummaryBadge">${escapeHtml(props.showInterval === false ? formatBillingAmount(amount, currency, minorUnits) : billingSummary(amount, currency, minorUnits, asString(props.interval)))}</span>`;
 }
 
 function renderBillingAmountInput(node: UiElement): string {

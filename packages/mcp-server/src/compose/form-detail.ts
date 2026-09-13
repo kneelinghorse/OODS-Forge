@@ -61,14 +61,14 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   const minorUnits = Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100);
   const isControl = (node: UiElement) => controls.has(node.component) || (VIZ_CONTROL_IDS as readonly string[]).includes(node.component) || /(?:Editor|Form|Picker|Selector)$/.test(node.component);
   const traitFields = new Set(composed.traits.flatMap(trait => Object.keys(trait.definition.schema ?? {})));
-  const summaryField = (name: string) => !traitFields.has(name) || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || name.endsWith('_minor');
+  const summaryField = (name: string) => !traitFields.has(name) || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || /(?:_minor|_id|_code)$/.test(name);
   const isScalar = (name: string) => /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(fields[name]?.type ?? '');
   const labelField = ['plan_name', 'name', 'title', 'display_name', 'label', `${composed.object?.name?.toLowerCase()}_id`, 'id'].find(name => fields[name]);
   const fieldRow = (name: string, id: string): UiElement => {
     const money = Boolean(fields.currency && (name === 'amount' || name.endsWith('_minor')) && /^(?:integer|number)$/.test(fields[name]?.type ?? ''));
     return { id: `${id}-read-field`, component: 'Stack', children: [
       { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: fieldLabel(name.replace(/_minor$/, '')) } },
-      { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: money ? 'BillingSummaryBadge' : 'Text', props: money ? { amountField: name, currencyField: 'currency', minorUnits } : { field: name } },
+      { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: money ? 'BillingSummaryBadge' : 'Text', props: money ? { amountField: name, currencyField: 'currency', minorUnits, showInterval: false } : { field: name } },
     ] };
   };
   const categories = new Map<string, string>();
