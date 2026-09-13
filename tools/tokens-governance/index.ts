@@ -182,7 +182,6 @@ interface CodeownersEntry {
 }
 
 const PROJECT_ROOT = process.cwd();
-const STATUS_MAP_PATH = 'tokens/maps/saas-billing.status-map.json';
 const REQUIRE_BREAKING_LABEL = 'token-change:breaking';
 
 const TEXT_FILE_EXTENSIONS = new Set([

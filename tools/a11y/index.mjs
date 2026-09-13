@@ -9,6 +9,7 @@ import { createRequire } from 'node:module';
 import Color from 'colorjs.io';
 import { chromium } from 'playwright';
 import { contrastRatio } from './contrast.js';
+import { loadGuardrails } from './guardrails/read.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -408,69 +409,12 @@ function titleCase(value) {
     .join(' ');
 }
 
-async function loadGuardrailConfig() {
-  let raw;
-  try {
-    raw = await readFile(GUARDRAILS_PATH, 'utf8');
-  } catch (error) {
-    throw new Error(`Unable to read guardrail dataset at ${GUARDRAILS_PATH}: ${error instanceof Error ? error.message : String(error)}`);
-  }
-
-  const lines = raw.split(/\r?\n/).map((line) => line.trim());
-  const rows = lines.filter((line) => line.length > 0 && !line.startsWith('#'));
-
-  if (rows.length === 0) {
-    return [];
-  }
-
-  const headers = rows[0].split(',').map((header) => header.trim());
-  return rows.slice(1).map((line, index) => {
-    const columns = line.split(',').map((column) => column.trim());
-    if (columns.length !== headers.length) {
-      throw new Error(`Guardrail CSV row ${index + 2} expected ${headers.length} columns but received ${columns.length}.`);
-    }
-
-    const entry = {};
-    headers.forEach((header, columnIndex) => {
-      entry[header] = columns[columnIndex];
-    });
-
-    const numeric = (fieldName) => {
-      const value = entry[fieldName];
-      if (value === undefined || value === '') {
-        return null;
-      }
-      const asNumber = Number(value);
-      if (Number.isNaN(asNumber)) {
-        throw new Error(`Guardrail CSV row ${index + 2} column "${fieldName}" must be numeric. Received "${value}".`);
-      }
-      return asNumber;
-    };
-
-    if (!entry.base_token) {
-      throw new Error(`Guardrail CSV row ${index + 2} is missing "base_token".`);
-    }
-    if (!entry.derived_token) {
-      throw new Error(`Guardrail CSV row ${index + 2} is missing "derived_token".`);
-    }
-
-    return {
-      id: entry.id ?? `${entry.usage ?? 'guardrail'}-${entry.theme ?? 'default'}-${entry.state ?? 'state'}`,
-      usage: entry.usage ?? 'unknown',
-      theme: entry.theme ?? 'default',
-      state: entry.state ?? 'state',
-      baseToken: entry.base_token,
-      derivedToken: entry.derived_token,
-      deltaLMin: numeric('delta_l_min'),
-      deltaLMax: numeric('delta_l_max'),
-      deltaCMin: numeric('delta_c_min'),
-      deltaCMax: numeric('delta_c_max'),
-      deltaHMax: numeric('delta_h_max'),
-      contrastForeground: entry.contrast_foreground_token ? entry.contrast_foreground_token : null,
-      contrastBackground: entry.contrast_background_token ? entry.contrast_background_token : null,
-      contrastThreshold: numeric('contrast_threshold')
-    };
-  });
+export async function loadGuardrailConfig(csvPath = GUARDRAILS_PATH) {
+  const rows = await loadGuardrails(csvPath);
+  const relativeRows = rows.filter(row => row.checkType === 'relative-color');
+  const paletteRows = rows.length - relativeRows.length;
+  if (paletteRows > 0) console.log(`[a11y] ${paletteRows} palette rows are owned by tokens-validate (scripts/tokens/color-guardrails.ts); evaluating ${relativeRows.length} relative-color rows here.`);
+  return relativeRows;
 }
 
 async function loadContractDefinition() {

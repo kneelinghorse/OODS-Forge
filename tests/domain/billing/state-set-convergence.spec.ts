@@ -126,7 +126,7 @@ describe('account billing-status convergence guard', () => {
   });
 
   it('the saas-billing token-map subscription domain == SUBSCRIPTION_STATES with no orphaned delinquent', () => {
-    const tokenMap = loadJsonFile<StatusTokenMap>('tokens/maps/saas-billing.status-map.json');
+    const tokenMap = loadJsonFile<StatusTokenMap>('packages/tokens/src/maps/saas-billing.status-map.json');
     const subscriptionStatuses = Object.keys(tokenMap.domains?.subscription ?? {});
     expect(subscriptionStatuses).toEqual(CANONICAL);
     expect(subscriptionStatuses).not.toContain('delinquent');

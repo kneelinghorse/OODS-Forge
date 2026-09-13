@@ -2,7 +2,10 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Git-qualified evidence reads contend for disk in root coverage; keep the serial audit's budget.
+vi.setConfig({ testTimeout: 60_000 });
 
 const root = resolve(import.meta.dirname, '../../../..');
 const directory = 'artifacts/product-reality/sprint-197/m05';

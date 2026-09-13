@@ -29,7 +29,7 @@ type TokensStatusManifest = {
 
 const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const CONFIG_PATH = path.join(ROOT, 'configs/ui/status-map.json');
-const TOKENS_PATH = path.join(ROOT, 'tokens/maps/saas-billing.status-map.json');
+const TOKENS_PATH = path.join(ROOT, 'packages/tokens/src/maps/saas-billing.status-map.json');
 const TARGETS = [
   { kind: 'dir', path: 'apps/explorer/src/pages' },
   { kind: 'dir', path: 'apps/explorer/src/stories/Billing' },

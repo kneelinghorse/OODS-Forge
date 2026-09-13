@@ -89,6 +89,45 @@ function referenceRamp(tree: TokenTree, family: string, seed: ToneSeed): void {
   if (family === 'neutral') setColor(tree, 'ref.color.neutral.0', paletteColor(1, 0, seed.hue));
 }
 
+function interactiveColors(seed: ToneSeed, dark: boolean): Record<string, string> {
+  const baseL = dark ? .40 : .53;
+  const baseC = Math.min(seed.chromaPeak, .06);
+  return Object.fromEntries(Object.entries({ default: [0, 0], hover: [.10, .015], pressed: [.14, .025] })
+    .map(([state, [deltaL, deltaC]]) => [state,
+      paletteColor(baseL + (dark ? deltaL : -deltaL), baseC + deltaC, seed.hue)]));
+}
+
+/** Theme0 remains the unbranded semantic scope; reference/chart ramps stay frozen. */
+function lightThemeTrees(seed: BrandSeed): Record<string, TokenTree> {
+  const surface: TokenTree = {};
+  const status: TokenTree = {};
+  const alias = (tree: TokenTree, key: string, target: string) => {
+    const segments = key.split('.');
+    let node = tree;
+    for (const segment of segments.slice(0, -1)) node = (node[segment] ??= {}) as TokenTree;
+    node[segments.at(-1)!] = { $type: 'color', $value: `{${target}}`,
+      $description: `${key}; generated semantic binding by generate-palette.ts.` };
+  };
+  for (const [role, step] of Object.entries({ canvas: 50, raised: 100, subtle: 200, backdrop: 900, inverse: 900, disabled: 200 })) {
+    alias(surface, `theme.surface.${role}`, `ref.color.neutral.${step}`);
+  }
+  for (const [state, value] of Object.entries(interactiveColors(seed.primary, false))) {
+    setColor(surface, `theme.surface.interactive.primary.${state}`, value);
+    if (state !== 'default') {
+      const token = (surface as any).theme.surface.interactive.primary[state];
+      const [deltaL, deltaC] = state === 'hover' ? ['0.10', '0.015'] : ['0.14', '0.025'];
+      token.$extensions.ods.relative = `oklch(from var(--theme-surface-interactive-primary-default) calc(l - ${deltaL}) calc(c + ${deltaC}) h)`;
+    }
+  }
+  for (const [role, step] of Object.entries({ subtle: 200, strong: 300 })) alias(surface, `theme.border.${role}`, `ref.color.neutral.${step}`);
+  for (const family of ['info', 'success', 'warning', 'accent', 'critical', 'neutral', 'archive']) {
+    const steps = { surface: 100, border: 300, text: family === 'neutral' ? 800 : family === 'accent' ? 700 : 900,
+      icon: family === 'accent' ? 600 : 700 };
+    for (const [role, step] of Object.entries(steps)) alias(status, `theme.status.${family}.${role}`, `ref.color.${family}.${step}`);
+  }
+  return { surface, status };
+}
+
 function brandTree(brand: 'A' | 'B', seed: BrandSeed, dark: boolean, retainedViz: TokenTree): TokenTree {
   const tree: TokenTree = { $schema: 'https://design-tokens.org/dtcg/schema.json' };
   const put = (role: string, value: string) => setColor(tree, `color.brand.${brand}.${role}`, value);
@@ -101,9 +140,10 @@ function brandTree(brand: 'A' | 'B', seed: BrandSeed, dark: boolean, retainedViz
       disabled: canvas + elevation * 3, backdrop: canvas - elevation, inverse: .96 }
     : { canvas: .985, raised: 1, subtle: .95, disabled: .93, backdrop: .2, inverse: .23 };
   for (const [role, l] of Object.entries(surfaces)) put(`surface.${role}`, neutral(l));
-  for (const [state, l] of Object.entries(dark
-    ? { default: .52, hover: .53, pressed: .54 } : { default: .52, hover: .47, pressed: .42 })) {
-    put(`surface.interactive.primary.${state}`, tone(seed.primary, l, dark ? seed.dark.accentChromaScale : 1));
+  // State colors have their own chroma ladder: a tonal ramp reduces chroma
+  // toward the ends and cannot express the declared positive state deltas.
+  for (const [state, value] of Object.entries(interactiveColors(seed.primary, dark))) {
+    put(`surface.interactive.primary.${state}`, value);
   }
   put('border.subtle', neutral(dark ? .4 : .86));
   put('border.strong', neutral(dark ? .56 : .6));
@@ -238,6 +278,9 @@ export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly Palet
     if (groups.includes('hc')) emit(`brands/${brand}/hc.json`, hcBrandTree(brand, seed, vizTree(seeds, 'hc')));
   }
   if (groups.includes('viz')) files.set('packages/tokens/src/viz-scales.json', `${JSON.stringify({ viz: lightViz }, null, 2)}\n`);
+  if (groups.includes('light')) {
+    for (const [name, tree] of Object.entries(lightThemeTrees(a))) emit(`themes/theme0/${name}.json`, tree);
+  }
   if (groups.includes('dark')) {
     for (const [name, tree] of Object.entries(darkThemeTrees(a))) emit(`themes/dark/${name}.json`, tree);
   }
