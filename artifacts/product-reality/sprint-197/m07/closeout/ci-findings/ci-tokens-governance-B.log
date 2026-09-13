@@ -1,0 +1,856 @@
+﻿2026-09-13T15:42:19.2464941Z Current runner version: '2.337.0'
+2026-09-13T15:42:19.2502527Z ##[group]Runner Image Provisioner
+2026-09-13T15:42:19.2503853Z Hosted Compute Agent
+2026-09-13T15:42:19.2504911Z Version: 20260828.587
+2026-09-13T15:42:19.2506403Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-13T15:42:19.2507650Z Build Date: 2026-08-28T16:44:25Z
+2026-09-13T15:42:19.2509052Z Worker ID: {54cd0154-5db7-4ed9-8337-145ce9cb0a4e}
+2026-09-13T15:42:19.2510304Z Azure Region: westus2
+2026-09-13T15:42:19.2511355Z ##[endgroup]
+2026-09-13T15:42:19.2513805Z ##[group]Operating System
+2026-09-13T15:42:19.2514857Z Ubuntu
+2026-09-13T15:42:19.2516283Z 24.04.5
+2026-09-13T15:42:19.2517247Z LTS
+2026-09-13T15:42:19.2518096Z ##[endgroup]
+2026-09-13T15:42:19.2519274Z ##[group]Runner Image
+2026-09-13T15:42:19.2520274Z Image: ubuntu-24.04
+2026-09-13T15:42:19.2521327Z Version: 20260907.300.1
+2026-09-13T15:42:19.2523526Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-13T15:42:19.2526932Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-13T15:42:19.2528872Z ##[endgroup]
+2026-09-13T15:42:19.2531167Z ##[group]GITHUB_TOKEN Permissions
+2026-09-13T15:42:19.2533943Z Contents: read
+2026-09-13T15:42:19.2535092Z Metadata: read
+2026-09-13T15:42:19.2536421Z PullRequests: write
+2026-09-13T15:42:19.2537651Z ##[endgroup]
+2026-09-13T15:42:19.2540936Z Secret source: Actions
+2026-09-13T15:42:19.2542515Z Cache mode: write
+2026-09-13T15:42:19.2544024Z Prepare workflow directory
+2026-09-13T15:42:19.3148081Z Prepare all required actions
+2026-09-13T15:42:19.3219004Z Getting action download info
+2026-09-13T15:42:19.7850791Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-13T15:42:19.9274495Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-13T15:42:20.2439946Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-13T15:42:20.3405769Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-13T15:42:20.4781524Z Download action repository 'actions/github-script@v7' (SHA:f28e40c7f34bde8b3046d885e986cb6290c5673b)
+2026-09-13T15:42:20.7923641Z Complete job name: tokens-governance (B)
+2026-09-13T15:42:20.8818075Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:42:20.8829537Z ##[group]Run actions/checkout@v4
+2026-09-13T15:42:20.8830902Z with:
+2026-09-13T15:42:20.8831883Z   fetch-depth: 0
+2026-09-13T15:42:20.8832930Z   repository: kneelinghorse/OODS-Forge
+2026-09-13T15:42:20.8842499Z   token: ***
+2026-09-13T15:42:20.8843566Z   ssh-strict: true
+2026-09-13T15:42:20.8844573Z   ssh-user: git
+2026-09-13T15:42:20.8845586Z   persist-credentials: true
+2026-09-13T15:42:20.8846847Z   clean: true
+2026-09-13T15:42:20.8847798Z   sparse-checkout-cone-mode: true
+2026-09-13T15:42:20.8849005Z   fetch-tags: false
+2026-09-13T15:42:20.8849974Z   show-progress: true
+2026-09-13T15:42:20.8850985Z   lfs: false
+2026-09-13T15:42:20.8852036Z   submodules: false
+2026-09-13T15:42:20.8853051Z   set-safe-directory: true
+2026-09-13T15:42:20.8854164Z   allow-unsafe-pr-checkout: false
+2026-09-13T15:42:20.8855635Z env:
+2026-09-13T15:42:20.8856766Z   NODE_VERSION: 24
+2026-09-13T15:42:20.8857767Z ##[endgroup]
+2026-09-13T15:42:21.0202877Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-13T15:42:21.0210158Z ##[group]Getting Git version info
+2026-09-13T15:42:21.0280725Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-13T15:42:21.0283992Z [command]/usr/bin/git version
+2026-09-13T15:42:21.0285553Z git version 2.55.0
+2026-09-13T15:42:21.0290545Z ##[endgroup]
+2026-09-13T15:42:21.0299790Z Temporarily overriding HOME='/home/runner/work/_temp/72c0a628-f86c-44f1-98e5-01394ad5ab18' before making global git config changes
+2026-09-13T15:42:21.0304470Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-13T15:42:21.0308820Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T15:42:21.0407370Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-13T15:42:21.0412018Z ##[group]Initializing the repository
+2026-09-13T15:42:21.0416500Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T15:42:21.0547860Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-13T15:42:21.0551613Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-13T15:42:21.0560464Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-13T15:42:21.0563406Z hint: call:
+2026-09-13T15:42:21.0565384Z hint:
+2026-09-13T15:42:21.0567869Z hint: 	git config --global init.defaultBranch <name>
+2026-09-13T15:42:21.0570572Z hint:
+2026-09-13T15:42:21.0572808Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-13T15:42:21.0576871Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-13T15:42:21.0579897Z hint:
+2026-09-13T15:42:21.0581983Z hint: 	git branch -m <name>
+2026-09-13T15:42:21.0584052Z hint:
+2026-09-13T15:42:21.0587309Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-13T15:42:21.0591726Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-13T15:42:21.0600856Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-13T15:42:21.0651773Z ##[endgroup]
+2026-09-13T15:42:21.0654555Z ##[group]Disabling automatic garbage collection
+2026-09-13T15:42:21.0657812Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-13T15:42:21.0706663Z ##[endgroup]
+2026-09-13T15:42:21.0709387Z ##[group]Setting up auth
+2026-09-13T15:42:21.0712406Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-13T15:42:21.0771950Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-13T15:42:21.1458524Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-13T15:42:21.1475678Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-13T15:42:21.1738139Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-13T15:42:21.1776768Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-13T15:42:21.2021434Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-13T15:42:21.2063569Z ##[endgroup]
+2026-09-13T15:42:21.2067185Z ##[group]Fetching the repository
+2026-09-13T15:42:21.2078791Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +a998b94b2ddfc5a9562044a5253dddff232825e2:refs/remotes/pull/107/merge
+2026-09-13T15:42:40.3035759Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-13T15:42:40.3056412Z  * [new branch]          Forge-expansion                          -> origin/Forge-expansion
+2026-09-13T15:42:40.3057644Z  * [new branch]          OODS-pro                                 -> origin/OODS-pro
+2026-09-13T15:42:40.3059394Z  * [new branch]          codex/sprint-189-browser-design-loop     -> origin/codex/sprint-189-browser-design-loop
+2026-09-13T15:42:40.3060884Z  * [new branch]          codex/sprint-190-delivery-receipt        -> origin/codex/sprint-190-delivery-receipt
+2026-09-13T15:42:40.3063039Z  * [new branch]          codex/sprint-190-viz-public-render       -> origin/codex/sprint-190-viz-public-render
+2026-09-13T15:42:40.3064318Z  * [new branch]          codex/sprint-191-paydown                 -> origin/codex/sprint-191-paydown
+2026-09-13T15:42:40.3065531Z  * [new branch]          codex/sprint-192-component-truth         -> origin/codex/sprint-192-component-truth
+2026-09-13T15:42:40.3067563Z  * [new branch]          codex/sprint-193-runtime-at-scale        -> origin/codex/sprint-193-runtime-at-scale
+2026-09-13T15:42:40.3068952Z  * [new branch]          codex/sprint-194-tools-truthful          -> origin/codex/sprint-194-tools-truthful
+2026-09-13T15:42:40.3070262Z  * [new branch]          codex/sprint-195-visualization-breadth   -> origin/codex/sprint-195-visualization-breadth
+2026-09-13T15:42:40.3071633Z  * [new branch]          codex/sprint-196-release-proof           -> origin/codex/sprint-196-release-proof
+2026-09-13T15:42:40.3072862Z  * [new branch]          codex/sprint-197-palette                 -> origin/codex/sprint-197-palette
+2026-09-13T15:42:40.3073912Z  * [new branch]          codex/tracelab-ux-1                      -> origin/codex/tracelab-ux-1
+2026-09-13T15:42:40.3077277Z  * [new branch]          main                                     -> origin/main
+2026-09-13T15:42:40.3078529Z  * [new ref]             a998b94b2ddfc5a9562044a5253dddff232825e2 -> pull/107/merge
+2026-09-13T15:42:40.3081522Z ##[endgroup]
+2026-09-13T15:42:40.3082638Z ##[group]Determining the checkout info
+2026-09-13T15:42:40.3083922Z ##[endgroup]
+2026-09-13T15:42:40.3084778Z [command]/usr/bin/git sparse-checkout disable
+2026-09-13T15:42:40.3129465Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-13T15:42:40.3177813Z ##[group]Checking out the ref
+2026-09-13T15:42:40.3179967Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/107/merge
+2026-09-13T15:42:41.4739465Z Updating files:  12% (10217/84085)
+2026-09-13T15:42:41.5535079Z Updating files:  13% (10932/84085)
+2026-09-13T15:42:41.6695549Z Updating files:  14% (11772/84085)
+2026-09-13T15:42:41.8081037Z Updating files:  15% (12613/84085)
+2026-09-13T15:42:41.9100899Z Updating files:  16% (13454/84085)
+2026-09-13T15:42:42.0224171Z Updating files:  17% (14295/84085)
+2026-09-13T15:42:42.1332768Z Updating files:  18% (15136/84085)
+2026-09-13T15:42:42.2300814Z Updating files:  19% (15977/84085)
+2026-09-13T15:42:42.3144271Z Updating files:  20% (16817/84085)
+2026-09-13T15:42:42.3932144Z Updating files:  21% (17658/84085)
+2026-09-13T15:42:42.4104577Z Updating files:  21% (18405/84085)
+2026-09-13T15:42:42.5478863Z Updating files:  22% (18499/84085)
+2026-09-13T15:42:42.6620497Z Updating files:  23% (19340/84085)
+2026-09-13T15:42:42.7867409Z Updating files:  24% (20181/84085)
+2026-09-13T15:42:42.9047886Z Updating files:  25% (21022/84085)
+2026-09-13T15:42:43.2048815Z Updating files:  26% (21863/84085)
+2026-09-13T15:42:43.2745293Z Updating files:  27% (22703/84085)
+2026-09-13T15:42:43.3880873Z Updating files:  28% (23544/84085)
+2026-09-13T15:42:43.3933606Z Updating files:  29% (24385/84085)
+2026-09-13T15:42:43.5913335Z Updating files:  29% (24433/84085)
+2026-09-13T15:42:43.7778278Z Updating files:  30% (25226/84085)
+2026-09-13T15:42:43.8573743Z Updating files:  31% (26067/84085)
+2026-09-13T15:42:43.9880284Z Updating files:  32% (26908/84085)
+2026-09-13T15:42:44.0611211Z Updating files:  33% (27749/84085)
+2026-09-13T15:42:44.1432728Z Updating files:  34% (28589/84085)
+2026-09-13T15:42:44.2205695Z Updating files:  35% (29430/84085)
+2026-09-13T15:42:44.2875435Z Updating files:  36% (30271/84085)
+2026-09-13T15:42:44.3931154Z Updating files:  37% (31112/84085)
+2026-09-13T15:42:44.4033544Z Updating files:  37% (31874/84085)
+2026-09-13T15:42:44.4963285Z Updating files:  38% (31953/84085)
+2026-09-13T15:42:44.6150891Z Updating files:  39% (32794/84085)
+2026-09-13T15:42:44.7373770Z Updating files:  40% (33634/84085)
+2026-09-13T15:42:44.8821443Z Updating files:  41% (34475/84085)
+2026-09-13T15:42:44.9750935Z Updating files:  42% (35316/84085)
+2026-09-13T15:42:45.1322241Z Updating files:  43% (36157/84085)
+2026-09-13T15:42:45.2277681Z Updating files:  44% (36998/84085)
+2026-09-13T15:42:45.3906251Z Updating files:  45% (37839/84085)
+2026-09-13T15:42:45.3929156Z Updating files:  46% (38680/84085)
+2026-09-13T15:42:45.4573335Z Updating files:  46% (38714/84085)
+2026-09-13T15:42:45.5342384Z Updating files:  47% (39520/84085)
+2026-09-13T15:42:45.6847485Z Updating files:  48% (40361/84085)
+2026-09-13T15:42:45.7614888Z Updating files:  49% (41202/84085)
+2026-09-13T15:42:45.8294490Z Updating files:  50% (42043/84085)
+2026-09-13T15:42:45.9512463Z Updating files:  51% (42884/84085)
+2026-09-13T15:42:46.0719441Z Updating files:  52% (43725/84085)
+2026-09-13T15:42:46.1400357Z Updating files:  53% (44566/84085)
+2026-09-13T15:42:46.3297486Z Updating files:  54% (45406/84085)
+2026-09-13T15:42:46.3972325Z Updating files:  55% (46247/84085)
+2026-09-13T15:42:46.4607801Z Updating files:  55% (46615/84085)
+2026-09-13T15:42:46.5583030Z Updating files:  56% (47088/84085)
+2026-09-13T15:42:46.6321022Z Updating files:  57% (47929/84085)
+2026-09-13T15:42:46.7561197Z Updating files:  58% (48770/84085)
+2026-09-13T15:42:46.8439443Z Updating files:  59% (49611/84085)
+2026-09-13T15:42:46.9093256Z Updating files:  60% (50451/84085)
+2026-09-13T15:42:46.9731467Z Updating files:  61% (51292/84085)
+2026-09-13T15:42:47.0364844Z Updating files:  62% (52133/84085)
+2026-09-13T15:42:47.1431782Z Updating files:  63% (52974/84085)
+2026-09-13T15:42:47.2724729Z Updating files:  64% (53815/84085)
+2026-09-13T15:42:47.3937948Z Updating files:  65% (54656/84085)
+2026-09-13T15:42:47.4120291Z Updating files:  65% (55371/84085)
+2026-09-13T15:42:47.7845535Z Updating files:  66% (55497/84085)
+2026-09-13T15:42:47.9985712Z Updating files:  67% (56337/84085)
+2026-09-13T15:42:48.0740798Z Updating files:  68% (57178/84085)
+2026-09-13T15:42:48.1953739Z Updating files:  69% (58019/84085)
+2026-09-13T15:42:48.3464909Z Updating files:  70% (58860/84085)
+2026-09-13T15:42:48.3932423Z Updating files:  71% (59701/84085)
+2026-09-13T15:42:48.4504703Z Updating files:  71% (60231/84085)
+2026-09-13T15:42:48.5292757Z Updating files:  72% (60542/84085)
+2026-09-13T15:42:48.6538615Z Updating files:  73% (61383/84085)
+2026-09-13T15:42:48.7102482Z Updating files:  74% (62223/84085)
+2026-09-13T15:42:49.4117883Z Updating files:  75% (63064/84085)
+2026-09-13T15:42:49.5737143Z Updating files:  75% (63547/84085)
+2026-09-13T15:42:49.6489323Z Updating files:  76% (63905/84085)
+2026-09-13T15:42:49.7504480Z Updating files:  77% (64746/84085)
+2026-09-13T15:42:49.8287334Z Updating files:  78% (65587/84085)
+2026-09-13T15:42:49.9586348Z Updating files:  79% (66428/84085)
+2026-09-13T15:42:50.1748668Z Updating files:  80% (67268/84085)
+2026-09-13T15:42:50.3977757Z Updating files:  81% (68109/84085)
+2026-09-13T15:42:50.4391702Z Updating files:  81% (68899/84085)
+2026-09-13T15:42:50.6190317Z Updating files:  82% (68950/84085)
+2026-09-13T15:42:50.6851520Z Updating files:  83% (69791/84085)
+2026-09-13T15:42:50.7540841Z Updating files:  84% (70632/84085)
+2026-09-13T15:42:50.8815379Z Updating files:  85% (71473/84085)
+2026-09-13T15:42:51.0742467Z Updating files:  86% (72314/84085)
+2026-09-13T15:42:51.1716440Z Updating files:  87% (73154/84085)
+2026-09-13T15:42:51.2895047Z Updating files:  88% (73995/84085)
+2026-09-13T15:42:51.3969837Z Updating files:  89% (74836/84085)
+2026-09-13T15:42:51.4387893Z Updating files:  89% (75354/84085)
+2026-09-13T15:42:51.5178543Z Updating files:  90% (75677/84085)
+2026-09-13T15:42:51.5879780Z Updating files:  91% (76518/84085)
+2026-09-13T15:42:51.7010332Z Updating files:  92% (77359/84085)
+2026-09-13T15:42:51.8485468Z Updating files:  93% (78200/84085)
+2026-09-13T15:42:52.2772131Z Updating files:  94% (79040/84085)
+2026-09-13T15:42:52.3650761Z Updating files:  95% (79881/84085)
+2026-09-13T15:42:52.3931660Z Updating files:  96% (80722/84085)
+2026-09-13T15:42:52.4252822Z Updating files:  96% (81219/84085)
+2026-09-13T15:42:52.5406894Z Updating files:  97% (81563/84085)
+2026-09-13T15:42:52.6112617Z Updating files:  98% (82404/84085)
+2026-09-13T15:42:52.6724227Z Updating files:  99% (83245/84085)
+2026-09-13T15:42:52.6727004Z Updating files: 100% (84085/84085)
+2026-09-13T15:42:52.6727766Z Updating files: 100% (84085/84085), done.
+2026-09-13T15:42:52.8070128Z Note: switching to 'refs/remotes/pull/107/merge'.
+2026-09-13T15:42:52.8070641Z 
+2026-09-13T15:42:52.8087650Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-13T15:42:52.8096775Z changes and commit them, and you can discard any commits you make in this
+2026-09-13T15:42:52.8106980Z state without impacting any branches by switching back to a branch.
+2026-09-13T15:42:52.8107657Z 
+2026-09-13T15:42:52.8108172Z If you want to create a new branch to retain commits you create, you may
+2026-09-13T15:42:52.8109112Z do so (now or later) by using -c with the switch command. Example:
+2026-09-13T15:42:52.8109703Z 
+2026-09-13T15:42:52.8110018Z   git switch -c <new-branch-name>
+2026-09-13T15:42:52.8110476Z 
+2026-09-13T15:42:52.8110784Z Or undo this operation with:
+2026-09-13T15:42:52.8111190Z 
+2026-09-13T15:42:52.8111472Z   git switch -
+2026-09-13T15:42:52.8111819Z 
+2026-09-13T15:42:52.8112312Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-13T15:42:52.8112997Z 
+2026-09-13T15:42:52.8113778Z HEAD is now at a998b94b2 Merge 542f9ee6bfceb96e61c5b2b44c241c9375a8596f into bc12723e9b7a42a4790a98f5d2a0dc4a1f970b99
+2026-09-13T15:42:52.8222412Z ##[endgroup]
+2026-09-13T15:42:52.8269537Z [command]/usr/bin/git log -1 --format=%H
+2026-09-13T15:42:52.8299452Z a998b94b2ddfc5a9562044a5253dddff232825e2
+2026-09-13T15:42:52.8574450Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:42:52.8577708Z ##[group]Run pnpm/action-setup@v4
+2026-09-13T15:42:52.8578147Z with:
+2026-09-13T15:42:52.8578418Z   run_install: false
+2026-09-13T15:42:52.8578757Z   dest: ~/setup-pnpm
+2026-09-13T15:42:52.8579099Z   cache: false
+2026-09-13T15:42:52.8579469Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-13T15:42:52.8579949Z   package_json_file: package.json
+2026-09-13T15:42:52.8580364Z   standalone: false
+2026-09-13T15:42:52.8580695Z env:
+2026-09-13T15:42:52.8580999Z   NODE_VERSION: 24
+2026-09-13T15:42:52.8581338Z ##[endgroup]
+2026-09-13T15:42:53.0149670Z ##[group]Running self-installer...
+2026-09-13T15:42:53.6218299Z (node:2050) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-13T15:42:53.6220650Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-13T15:42:53.8087875Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-13T15:42:53.8344014Z Packages: +1
+2026-09-13T15:42:53.8366632Z +
+2026-09-13T15:42:54.3067961Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-13T15:42:54.7194482Z 
+2026-09-13T15:42:54.7201575Z dependencies:
+2026-09-13T15:42:54.7202218Z + pnpm 9.12.2 (12.4.1 is available)
+2026-09-13T15:42:54.7202673Z 
+2026-09-13T15:42:55.0210329Z Done in 1.6s
+2026-09-13T15:42:55.0311946Z ##[endgroup]
+2026-09-13T15:42:55.0312759Z Installation Completed!
+2026-09-13T15:42:55.0497965Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:42:55.0499329Z ##[group]Run actions/setup-node@v4
+2026-09-13T15:42:55.0499622Z with:
+2026-09-13T15:42:55.0499808Z   node-version: 24
+2026-09-13T15:42:55.0500006Z   cache: pnpm
+2026-09-13T15:42:55.0500379Z   always-auth: false
+2026-09-13T15:42:55.0500588Z   check-latest: false
+2026-09-13T15:42:55.0503004Z   token: ***
+2026-09-13T15:42:55.0503192Z env:
+2026-09-13T15:42:55.0503364Z   NODE_VERSION: 24
+2026-09-13T15:42:55.0503630Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:42:55.0503928Z ##[endgroup]
+2026-09-13T15:42:55.2138595Z (node:2063) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-13T15:42:55.2140550Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-13T15:42:55.2141360Z ##[group]Environment details
+2026-09-13T15:42:55.2142638Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-13T15:42:58.6138818Z node: v24.20.0
+2026-09-13T15:42:58.6139718Z npm: 11.19.0
+2026-09-13T15:42:58.6140373Z yarn: 1.22.22
+2026-09-13T15:42:58.6142040Z ##[endgroup]
+2026-09-13T15:42:58.6169907Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-13T15:42:59.0632433Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-13T15:42:59.3147045Z Cache hit for: node-cache-Linux-x64-pnpm-e86e0b840775c2371d6b245e9f0feece464ed344cc81e0b002bb553d30d2d730
+2026-09-13T15:42:59.3310839Z (node:2063) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-13T15:43:00.6087109Z Received 8388608 of 125405223 (6.7%), 8.0 MBs/sec
+2026-09-13T15:43:01.6087221Z Received 121210919 of 125405223 (96.7%), 57.8 MBs/sec
+2026-09-13T15:43:01.6617745Z Received 125405223 of 125405223 (100.0%), 58.1 MBs/sec
+2026-09-13T15:43:01.6619004Z Cache Size: ~120 MB (125405223 B)
+2026-09-13T15:43:01.6667572Z [command]/usr/bin/tar -xf /home/runner/work/_temp/c52afcd0-053c-48f1-bdcd-5ffa3b2618cf/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-13T15:43:04.2786494Z Cache restored successfully
+2026-09-13T15:43:04.2858102Z Cache restored from key: node-cache-Linux-x64-pnpm-e86e0b840775c2371d6b245e9f0feece464ed344cc81e0b002bb553d30d2d730
+2026-09-13T15:43:04.3073412Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-13T15:43:04.3073848Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-13T15:43:04.3168436Z shell: /usr/bin/bash -e {0}
+2026-09-13T15:43:04.3168724Z env:
+2026-09-13T15:43:04.3168924Z   NODE_VERSION: 24
+2026-09-13T15:43:04.3169202Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:04.3169521Z ##[endgroup]
+2026-09-13T15:43:04.8803040Z Scope: all 22 workspace projects
+2026-09-13T15:43:04.9582840Z Lockfile is up to date, resolution step is skipped
+2026-09-13T15:43:05.0491314Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-13T15:43:05.2217026Z Packages: +946
+2026-09-13T15:43:05.2217882Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-13T15:43:06.0497040Z Progress: resolved 946, reused 774, downloaded 0, added 0
+2026-09-13T15:43:07.0503338Z Progress: resolved 946, reused 945, downloaded 0, added 454
+2026-09-13T15:43:07.8838010Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-13T15:43:09.2158197Z 
+2026-09-13T15:43:09.2159340Z dependencies:
+2026-09-13T15:43:09.2160630Z + @radix-ui/react-slot 1.2.3
+2026-09-13T15:43:09.2161740Z + @rjsf/core 5.24.13
+2026-09-13T15:43:09.2162949Z + @rjsf/utils 5.24.13
+2026-09-13T15:43:09.2163853Z + @rjsf/validator-ajv8 5.24.13
+2026-09-13T15:43:09.2165236Z + @types/geojson 7946.0.16
+2026-09-13T15:43:09.2167106Z + @types/topojson-client 3.1.5
+2026-09-13T15:43:09.2168337Z + @types/topojson-specification 1.0.5
+2026-09-13T15:43:09.2169153Z + ajv 8.17.1
+2026-09-13T15:43:09.2170164Z + ajv-formats 3.0.1
+2026-09-13T15:43:09.2170970Z + d3-geo 3.1.1
+2026-09-13T15:43:09.2174135Z + d3-scale 4.0.2
+2026-09-13T15:43:09.2175626Z + echarts 6.0.0
+2026-09-13T15:43:09.2177324Z + js-yaml 4.1.0
+2026-09-13T15:43:09.2180206Z + luxon 3.7.2
+2026-09-13T15:43:09.2180620Z + pg 8.16.3
+2026-09-13T15:43:09.2181400Z + react 19.2.0
+2026-09-13T15:43:09.2181822Z + react-dom 19.2.0
+2026-09-13T15:43:09.2182376Z + react-window 1.8.11
+2026-09-13T15:43:09.2182877Z + topojson-client 3.1.0
+2026-09-13T15:43:09.2183316Z + vega 6.2.0
+2026-09-13T15:43:09.2183714Z + vega-embed 7.1.0
+2026-09-13T15:43:09.2184927Z + zod 4.1.12
+2026-09-13T15:43:09.2185179Z 
+2026-09-13T15:43:09.2185375Z devDependencies:
+2026-09-13T15:43:09.2187783Z + @chromatic-com/storybook 4.1.1
+2026-09-13T15:43:09.2190159Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-13T15:43:09.2191057Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-13T15:43:09.2191863Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-13T15:43:09.2192518Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-13T15:43:09.2193095Z + @playwright/test 1.56.1
+2026-09-13T15:43:09.2193643Z + @storybook/addon-a11y 9.1.10
+2026-09-13T15:43:09.2194214Z + @storybook/addon-docs 9.1.10
+2026-09-13T15:43:09.2194810Z + @storybook/addon-onboarding 9.1.10
+2026-09-13T15:43:09.2195383Z + @storybook/mdx2-csf 1.1.0
+2026-09-13T15:43:09.2196124Z + @storybook/react 9.1.10
+2026-09-13T15:43:09.2199178Z + @storybook/react-vite 9.1.10
+2026-09-13T15:43:09.2203346Z + @testing-library/dom 10.4.1
+2026-09-13T15:43:09.2203954Z + @testing-library/jest-dom 6.9.1
+2026-09-13T15:43:09.2204539Z + @testing-library/react 16.3.0
+2026-09-13T15:43:09.2205113Z + @testing-library/user-event 14.6.1
+2026-09-13T15:43:09.2205696Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-13T15:43:09.2206538Z + @types/d3-geo 3.1.0
+2026-09-13T15:43:09.2206971Z + @types/d3-scale 4.0.9
+2026-09-13T15:43:09.2207410Z + @types/js-yaml 4.0.9
+2026-09-13T15:43:09.2207830Z + @types/luxon 3.7.1
+2026-09-13T15:43:09.2208282Z + @types/node 20.19.21
+2026-09-13T15:43:09.2208700Z + @types/pg 8.15.6
+2026-09-13T15:43:09.2209102Z + @types/react 19.2.2
+2026-09-13T15:43:09.2209548Z + @types/react-dom 19.2.2
+2026-09-13T15:43:09.2210018Z + @types/react-window 1.8.8
+2026-09-13T15:43:09.2210790Z + @types/semver 7.7.1
+2026-09-13T15:43:09.2211202Z + @types/sql.js 1.4.9
+2026-09-13T15:43:09.2211716Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-13T15:43:09.2212634Z + @typescript-eslint/parser 6.21.0
+2026-09-13T15:43:09.2213178Z + @vitejs/plugin-react 5.0.4
+2026-09-13T15:43:09.2213669Z + @vitest/browser 3.2.4
+2026-09-13T15:43:09.2214117Z + @vitest/coverage-v8 3.2.4
+2026-09-13T15:43:09.2214549Z + axe-core 4.11.0
+2026-09-13T15:43:09.2214967Z + colorjs.io 0.5.2
+2026-09-13T15:43:09.2215359Z + dotenv 17.4.2
+2026-09-13T15:43:09.2218174Z + esbuild 0.25.10
+2026-09-13T15:43:09.2218587Z + eslint 8.57.1
+2026-09-13T15:43:09.2219086Z + eslint-plugin-storybook 9.1.10
+2026-09-13T15:43:09.2219559Z + globals 17.6.0
+2026-09-13T15:43:09.2219909Z + jsdom 24.1.3
+2026-09-13T15:43:09.2220480Z + json-schema-to-typescript 13.1.2
+2026-09-13T15:43:09.2221047Z + markdown-to-jsx 7.7.15
+2026-09-13T15:43:09.2221473Z + pg-mem 3.0.5
+2026-09-13T15:43:09.2221873Z + playwright 1.56.1
+2026-09-13T15:43:09.2222270Z + postcss 8.5.28
+2026-09-13T15:43:09.2222660Z + prettier 3.6.2
+2026-09-13T15:43:09.2223036Z + rimraf 5.0.10
+2026-09-13T15:43:09.2223394Z + semver 7.7.3
+2026-09-13T15:43:09.2223745Z + sql.js 1.13.0
+2026-09-13T15:43:09.2224161Z + storybook 9.1.10
+2026-09-13T15:43:09.2224599Z + style-dictionary 4.4.0
+2026-09-13T15:43:09.2225049Z + tailwindcss 3.4.18
+2026-09-13T15:43:09.2225410Z + tsup 8.5.0
+2026-09-13T15:43:09.2225742Z + tsx 4.20.6
+2026-09-13T15:43:09.2226375Z + typescript 5.3.3
+2026-09-13T15:43:09.2226797Z + vega-lite 6.4.1
+2026-09-13T15:43:09.2227245Z + vite-tsconfig-paths 5.1.4
+2026-09-13T15:43:09.2227684Z + vitest 3.2.4
+2026-09-13T15:43:09.2228069Z + vitest-axe 0.1.0
+2026-09-13T15:43:09.2228313Z 
+2026-09-13T15:43:09.3718667Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-13T15:43:09.4288005Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-13T15:43:09.4322451Z . prepare: Done
+2026-09-13T15:43:09.4566946Z Done in 5.1s
+2026-09-13T15:43:09.5159989Z ##[group]Run pnpm run build:tokens
+2026-09-13T15:43:09.5160524Z [36;1mpnpm run build:tokens[0m
+2026-09-13T15:43:09.5211807Z shell: /usr/bin/bash -e {0}
+2026-09-13T15:43:09.5212227Z env:
+2026-09-13T15:43:09.5212543Z   NODE_VERSION: 24
+2026-09-13T15:43:09.5212990Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:09.5213522Z ##[endgroup]
+2026-09-13T15:43:10.1164015Z 
+2026-09-13T15:43:10.1167222Z > @oods/foundry-mcp@0.1.0 build:tokens /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T15:43:10.1176256Z > node packages/tokens/scripts/build.mjs
+2026-09-13T15:43:10.1176943Z 
+2026-09-13T15:43:10.5337909Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-13T15:43:10.5338819Z Building design tokens with Style Dictionary…
+2026-09-13T15:43:10.6476568Z 
+2026-09-13T15:43:10.6488921Z Token collisions detected (9):
+2026-09-13T15:43:10.6490661Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:10.6491984Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:11.3019451Z 
+2026-09-13T15:43:11.3020346Z ios-swift
+2026-09-13T15:43:11.3021334Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-13T15:43:11.3031014Z 
+2026-09-13T15:43:11.3031394Z compose
+2026-09-13T15:43:11.3032187Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-13T15:43:11.4843440Z 
+2026-09-13T15:43:11.4846880Z ts
+2026-09-13T15:43:11.4847721Z ! dist/ts/tokens.ts, does not exist
+2026-09-13T15:43:11.4856518Z 
+2026-09-13T15:43:11.4856906Z tailwind
+2026-09-13T15:43:11.4857691Z ! dist/tailwind/tokens.json, does not exist
+2026-09-13T15:43:12.4293354Z 
+2026-09-13T15:43:12.4294383Z ios-swift
+2026-09-13T15:43:12.4295582Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-13T15:43:12.4296662Z 
+2026-09-13T15:43:12.4297048Z compose
+2026-09-13T15:43:12.4297773Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-13T15:43:12.5079262Z 
+2026-09-13T15:43:12.5081109Z ts
+2026-09-13T15:43:12.5086786Z ✔︎ dist/ts/tokens.ts
+2026-09-13T15:43:12.5087310Z 
+2026-09-13T15:43:12.5087792Z tailwind
+2026-09-13T15:43:12.5088451Z ✔︎ dist/tailwind/tokens.json
+2026-09-13T15:43:12.5924550Z 
+2026-09-13T15:43:12.5925449Z Token collisions detected (9):
+2026-09-13T15:43:12.5926993Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:12.5928423Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:12.8099577Z 
+2026-09-13T15:43:12.8100774Z css
+2026-09-13T15:43:12.8106342Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:12.8591056Z 
+2026-09-13T15:43:12.8591775Z Token collisions detected (9):
+2026-09-13T15:43:12.8593254Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:12.8594603Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:13.0159797Z 
+2026-09-13T15:43:13.0160668Z css
+2026-09-13T15:43:13.0162038Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:13.1843205Z 
+2026-09-13T15:43:13.1844111Z Token collisions detected (426):
+2026-09-13T15:43:13.1845676Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:13.1847291Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:13.3361396Z 
+2026-09-13T15:43:13.3362317Z css
+2026-09-13T15:43:13.3363721Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:13.4824589Z 
+2026-09-13T15:43:13.4825321Z Token collisions detected (376):
+2026-09-13T15:43:13.4828310Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:13.4829227Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:13.6471881Z 
+2026-09-13T15:43:13.6472878Z css
+2026-09-13T15:43:13.6474237Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:13.7988144Z 
+2026-09-13T15:43:13.7989027Z Token collisions detected (9):
+2026-09-13T15:43:13.7990489Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:13.7991755Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:13.9967716Z 
+2026-09-13T15:43:13.9968648Z css
+2026-09-13T15:43:13.9973346Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:14.2440165Z 
+2026-09-13T15:43:14.2456482Z Token collisions detected (426):
+2026-09-13T15:43:14.2667670Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:14.2669408Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:14.4547193Z 
+2026-09-13T15:43:14.4566772Z css
+2026-09-13T15:43:14.4586831Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:14.6815054Z 
+2026-09-13T15:43:14.6836880Z Token collisions detected (376):
+2026-09-13T15:43:14.6856727Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:14.6857681Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:14.9114390Z 
+2026-09-13T15:43:14.9115138Z css
+2026-09-13T15:43:14.9136890Z ✔︎ dist/css/tokens.css
+2026-09-13T15:43:15.1346478Z 
+2026-09-13T15:43:15.1366723Z Token collisions detected (9):
+2026-09-13T15:43:15.1367586Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-13T15:43:15.1368552Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-13T15:43:15.3678473Z ✔︎ tokens built successfully in 4.83s
+2026-09-13T15:43:15.3697132Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-13T15:43:15.3706627Z    types:    dist/ts/tokens.ts
+2026-09-13T15:43:15.3724993Z    tailwind: dist/tailwind/tokens.json
+2026-09-13T15:43:15.3736626Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-13T15:43:15.3756492Z    compose:  dist/compose/OodsTokens.kt
+2026-09-13T15:43:15.4254467Z ##[group]Run if [ -n "$PR_NUMBER" ]; then
+2026-09-13T15:43:15.4255021Z [36;1mif [ -n "$PR_NUMBER" ]; then[0m
+2026-09-13T15:43:15.4256329Z [36;1m  labels=$(gh api "repos/kneelinghorse/OODS-Forge/issues/${PR_NUMBER}/labels" --jq '[.[].name] | join(",")')[0m
+2026-09-13T15:43:15.4257240Z [36;1melse[0m
+2026-09-13T15:43:15.4257580Z [36;1m  labels=""[0m
+2026-09-13T15:43:15.4257927Z [36;1mfi[0m
+2026-09-13T15:43:15.4258309Z [36;1mecho "value=$labels" >> "$GITHUB_OUTPUT"[0m
+2026-09-13T15:43:15.4306154Z shell: /usr/bin/bash -e {0}
+2026-09-13T15:43:15.4306566Z env:
+2026-09-13T15:43:15.4306877Z   NODE_VERSION: 24
+2026-09-13T15:43:15.4307339Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:15.4312140Z   GH_TOKEN: ***
+2026-09-13T15:43:15.4312483Z   PR_NUMBER: 107
+2026-09-13T15:43:15.4312815Z ##[endgroup]
+2026-09-13T15:43:16.1256607Z ##[group]Run mkdir -p artifacts/tokens
+2026-09-13T15:43:16.1257197Z [36;1mmkdir -p artifacts/tokens[0m
+2026-09-13T15:43:16.1257820Z [36;1mbrand_lower=$(printf '%s' "$BRAND" | tr '[:upper:]' '[:lower:]')[0m
+2026-09-13T15:43:16.1258608Z [36;1mreport="artifacts/tokens/brand-${brand_lower}-report.json"[0m
+2026-09-13T15:43:16.1259363Z [36;1mcomment="artifacts/tokens/brand-${brand_lower}-comment.md"[0m
+2026-09-13T15:43:16.1259959Z [36;1mset +e[0m
+2026-09-13T15:43:16.1260348Z [36;1mpnpm run tokens:governance -- diff \[0m
+2026-09-13T15:43:16.1260847Z [36;1m  --brand "$BRAND" \[0m
+2026-09-13T15:43:16.1261360Z [36;1m  --base "bc12723e9b7a42a4790a98f5d2a0dc4a1f970b99" \[0m
+2026-09-13T15:43:16.1262023Z [36;1m  --head "a998b94b2ddfc5a9562044a5253dddff232825e2" \[0m
+2026-09-13T15:43:16.1262594Z [36;1m  --json "$report" \[0m
+2026-09-13T15:43:16.1263009Z [36;1m  --comment "$comment" \[0m
+2026-09-13T15:43:16.1263433Z [36;1m  --labels ""[0m
+2026-09-13T15:43:16.1263825Z [36;1mstatus=$?[0m
+2026-09-13T15:43:16.1264253Z [36;1mecho "status=$status" >> "$GITHUB_OUTPUT"[0m
+2026-09-13T15:43:16.1264812Z [36;1mecho "report=$report" >> "$GITHUB_OUTPUT"[0m
+2026-09-13T15:43:16.1265369Z [36;1mecho "comment=$comment" >> "$GITHUB_OUTPUT"[0m
+2026-09-13T15:43:16.1266179Z [36;1mexit 0[0m
+2026-09-13T15:43:16.1313693Z shell: /usr/bin/bash -e {0}
+2026-09-13T15:43:16.1314097Z env:
+2026-09-13T15:43:16.1314403Z   NODE_VERSION: 24
+2026-09-13T15:43:16.1314866Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:16.1315383Z   BRAND: B
+2026-09-13T15:43:16.1315689Z ##[endgroup]
+2026-09-13T15:43:16.7605072Z 
+2026-09-13T15:43:16.7606611Z > @oods/foundry-mcp@0.1.0 tokens:governance /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T15:43:16.7628661Z > tsx tools/tokens-governance/index.ts "--" "diff" "--brand" "B" "--base" "bc12723e9b7a42a4790a98f5d2a0dc4a1f970b99" "--head" "a998b94b2ddfc5a9562044a5253dddff232825e2" "--json" "artifacts/tokens/brand-b-report.json" "--comment" "artifacts/tokens/brand-b-comment.md" "--labels" ""
+2026-09-13T15:43:16.7646357Z 
+2026-09-13T15:43:21.4255150Z Token Governance (Brand B)
+2026-09-13T15:43:21.4258196Z   base: bc12723e9b7a42a4790a98f5d2a0dc4a1f970b99  →  head: a998b94b2ddfc5a9562044a5253dddff232825e2
+2026-09-13T15:43:21.4264730Z   changes: +138 / -0 / Δ223
+2026-09-13T15:43:21.4265317Z   removals: 0 duplicate-removed / 0 plain
+2026-09-13T15:43:21.4266133Z   risk: high=184 medium=26 low=151
+2026-09-13T15:43:21.4266653Z   orphans: 0  leaks: 0
+2026-09-13T15:43:21.4267232Z   label: missing required label "token-change:breaking"
+2026-09-13T15:43:21.4267685Z 
+2026-09-13T15:43:21.4267850Z Contrast deltas:
+2026-09-13T15:43:21.4269141Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.accent · brand B · base 5.13:1 → head 6.62:1 (Δ 1.49)
+2026-09-13T15:43:21.4271013Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.status.critical · brand B · base 6.79:1 → head 8.46:1 (Δ 1.67)
+2026-09-13T15:43:21.4273173Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.status.info · brand B · base 8.76:1 → head 7.72:1 (Δ -1.04)
+2026-09-13T15:43:21.4275063Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.status.neutral · brand B · base 7.84:1 → head 7.78:1 (Δ -0.06)
+2026-09-13T15:43:21.4277128Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.status.success · brand B · base 7.23:1 → head 7.37:1 (Δ 0.14)
+2026-09-13T15:43:21.4278898Z   packages/tokens/src/tokens/brands/B/base.json::color.brand.B.status.warning · brand B · base 5.94:1 → head 7.88:1 (Δ 1.94)
+2026-09-13T15:43:21.4280578Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.accent · brand B · base 7.07:1 → head 8.08:1 (Δ 1.01)
+2026-09-13T15:43:21.4282343Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.status.critical · brand B · base 9.04:1 → head 10.38:1 (Δ 1.34)
+2026-09-13T15:43:21.4284082Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.status.info · brand B · base 9.25:1 → head 10.18:1 (Δ 0.93)
+2026-09-13T15:43:21.4287153Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.status.neutral · brand B · base 8.24:1 → head 10.14:1 (Δ 1.90)
+2026-09-13T15:43:21.4289790Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.status.success · brand B · base 8.51:1 → head 10.04:1 (Δ 1.53)
+2026-09-13T15:43:21.4291829Z   packages/tokens/src/tokens/brands/B/dark.json::color.brand.B.status.warning · brand B · base 8.75:1 → head 10.16:1 (Δ 1.41)
+2026-09-13T15:43:21.4293710Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.accent · brand B · base 8.17:1 → head 10.36:1 (Δ 2.19)
+2026-09-13T15:43:21.4295079Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.archive · brand B · base 9.21:1 → head 10.14:1 (Δ 0.93)
+2026-09-13T15:43:21.4296608Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.critical · brand B · base 9.05:1 → head 10.38:1 (Δ 1.33)
+2026-09-13T15:43:21.4298718Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.info · brand B · base 9.16:1 → head 10.18:1 (Δ 1.02)
+2026-09-13T15:43:21.4300372Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.neutral · brand B · base 8.32:1 → head 10.14:1 (Δ 1.82)
+2026-09-13T15:43:21.4301417Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.success · brand B · base 8.57:1 → head 10.04:1 (Δ 1.47)
+2026-09-13T15:43:21.4302426Z   packages/tokens/src/tokens/themes/dark/status.json::theme-dark.status.warning · brand B · base 8.68:1 → head 10.16:1 (Δ 1.48)
+2026-09-13T15:43:21.4302893Z 
+2026-09-13T15:43:21.4303008Z High-risk tokens:
+2026-09-13T15:43:21.4303344Z   ADDED ref.color.primary.50 (protected namespace change)
+2026-09-13T15:43:21.4303798Z   ADDED ref.color.primary.200 (protected namespace change)
+2026-09-13T15:43:21.4304221Z   ADDED ref.color.primary.800 (protected namespace change)
+2026-09-13T15:43:21.4304880Z   ADDED ref.color.primary.900 (protected namespace change)
+2026-09-13T15:43:21.4305309Z   ADDED ref.color.primary.950 (protected namespace change)
+2026-09-13T15:43:21.4305722Z   ADDED ref.color.accent.50 (protected namespace change)
+2026-09-13T15:43:21.4306934Z   ADDED ref.color.accent.200 (protected namespace change)
+2026-09-13T15:43:21.4307662Z   ADDED ref.color.accent.600 (protected namespace change)
+2026-09-13T15:43:21.4308089Z   ADDED ref.color.accent.700 (protected namespace change)
+2026-09-13T15:43:21.4308507Z   ADDED ref.color.accent.800 (protected namespace change)
+2026-09-13T15:43:21.4322065Z   ADDED ref.color.accent.900 (protected namespace change)
+2026-09-13T15:43:21.4322816Z   ADDED ref.color.accent.950 (protected namespace change)
+2026-09-13T15:43:21.4323904Z   ADDED ref.color.neutral.950 (protected namespace change)
+2026-09-13T15:43:21.4324689Z   ADDED ref.color.info.50 (protected namespace change)
+2026-09-13T15:43:21.4325445Z   ADDED ref.color.info.200 (protected namespace change)
+2026-09-13T15:43:21.4326629Z   ADDED ref.color.info.400 (protected namespace change)
+2026-09-13T15:43:21.4327409Z   ADDED ref.color.info.500 (protected namespace change)
+2026-09-13T15:43:21.4328194Z   ADDED ref.color.info.600 (protected namespace change)
+2026-09-13T15:43:21.4328936Z   ADDED ref.color.info.800 (protected namespace change)
+2026-09-13T15:43:21.4329646Z   ADDED ref.color.info.950 (protected namespace change)
+2026-09-13T15:43:21.4330374Z   ADDED ref.color.success.50 (protected namespace change)
+2026-09-13T15:43:21.4331098Z   ADDED ref.color.success.200 (protected namespace change)
+2026-09-13T15:43:21.4331871Z   ADDED ref.color.success.400 (protected namespace change)
+2026-09-13T15:43:21.4332657Z   ADDED ref.color.success.500 (protected namespace change)
+2026-09-13T15:43:21.4333455Z   ADDED ref.color.success.600 (protected namespace change)
+2026-09-13T15:43:21.4334251Z   ADDED ref.color.success.800 (protected namespace change)
+2026-09-13T15:43:21.4335077Z   ADDED ref.color.success.950 (protected namespace change)
+2026-09-13T15:43:21.4336181Z   ADDED ref.color.warning.50 (protected namespace change)
+2026-09-13T15:43:21.4337277Z   ADDED ref.color.warning.200 (protected namespace change)
+2026-09-13T15:43:21.4338123Z   ADDED ref.color.warning.400 (protected namespace change)
+2026-09-13T15:43:21.4338947Z   ADDED ref.color.warning.500 (protected namespace change)
+2026-09-13T15:43:21.4339783Z   ADDED ref.color.warning.600 (protected namespace change)
+2026-09-13T15:43:21.4340657Z   ADDED ref.color.warning.800 (protected namespace change)
+2026-09-13T15:43:21.4341465Z   ADDED ref.color.warning.950 (protected namespace change)
+2026-09-13T15:43:21.4342248Z   ADDED ref.color.critical.50 (protected namespace change)
+2026-09-13T15:43:21.4343064Z   ADDED ref.color.critical.200 (protected namespace change)
+2026-09-13T15:43:21.4343890Z   ADDED ref.color.critical.400 (protected namespace change)
+2026-09-13T15:43:21.4344721Z   ADDED ref.color.critical.500 (protected namespace change)
+2026-09-13T15:43:21.4346946Z   ADDED ref.color.critical.600 (protected namespace change)
+2026-09-13T15:43:21.4347696Z   ADDED ref.color.critical.800 (protected namespace change)
+2026-09-13T15:43:21.4348391Z   ADDED ref.color.critical.950 (protected namespace change)
+2026-09-13T15:43:21.4349074Z   ADDED ref.color.archive.50 (protected namespace change)
+2026-09-13T15:43:21.4349748Z   ADDED ref.color.archive.200 (protected namespace change)
+2026-09-13T15:43:21.4350450Z   ADDED ref.color.archive.400 (protected namespace change)
+2026-09-13T15:43:21.4351225Z   ADDED ref.color.archive.500 (protected namespace change)
+2026-09-13T15:43:21.4351907Z   ADDED ref.color.archive.600 (protected namespace change)
+2026-09-13T15:43:21.4352613Z   ADDED ref.color.archive.800 (protected namespace change)
+2026-09-13T15:43:21.4353403Z   ADDED ref.color.archive.950 (protected namespace change)
+2026-09-13T15:43:21.4354173Z   MODIFIED ref.color.primary.100 (protected namespace change)
+2026-09-13T15:43:21.4355065Z   MODIFIED ref.color.primary.300 (protected namespace change)
+2026-09-13T15:43:21.4356511Z   MODIFIED ref.color.primary.400 (protected namespace change)
+2026-09-13T15:43:21.4357376Z   MODIFIED ref.color.primary.500 (protected namespace change)
+2026-09-13T15:43:21.4358223Z   MODIFIED ref.color.primary.600 (protected namespace change)
+2026-09-13T15:43:21.4359414Z   MODIFIED ref.color.primary.700 (protected namespace change)
+2026-09-13T15:43:21.4360888Z   MODIFIED ref.color.accent.100 (protected namespace change)
+2026-09-13T15:43:21.4362501Z   MODIFIED ref.color.accent.300 (protected namespace change)
+2026-09-13T15:43:21.4363734Z   MODIFIED ref.color.accent.400 (protected namespace change)
+2026-09-13T15:43:21.4365050Z   MODIFIED ref.color.accent.500 (protected namespace change)
+2026-09-13T15:43:21.4366460Z   MODIFIED ref.color.neutral.0 (protected namespace change)
+2026-09-13T15:43:21.4367741Z   MODIFIED ref.color.neutral.50 (protected namespace change)
+2026-09-13T15:43:21.4368737Z   MODIFIED ref.color.neutral.100 (protected namespace change)
+2026-09-13T15:43:21.4370134Z   MODIFIED ref.color.neutral.200 (protected namespace change)
+2026-09-13T15:43:21.4371229Z   MODIFIED ref.color.neutral.300 (protected namespace change)
+2026-09-13T15:43:21.4372748Z   MODIFIED ref.color.neutral.400 (protected namespace change)
+2026-09-13T15:43:21.4374006Z   MODIFIED ref.color.neutral.500 (protected namespace change)
+2026-09-13T15:43:21.4375568Z   MODIFIED ref.color.neutral.600 (protected namespace change)
+2026-09-13T15:43:21.4377334Z   MODIFIED ref.color.neutral.700 (protected namespace change)
+2026-09-13T15:43:21.4378795Z   MODIFIED ref.color.neutral.800 (protected namespace change)
+2026-09-13T15:43:21.4381891Z   MODIFIED ref.color.neutral.900 (protected namespace change)
+2026-09-13T15:43:21.4382752Z   MODIFIED ref.color.info.100 (protected namespace change)
+2026-09-13T15:43:21.4383461Z   MODIFIED ref.color.info.300 (protected namespace change)
+2026-09-13T15:43:21.4384193Z   MODIFIED ref.color.info.700 (protected namespace change)
+2026-09-13T15:43:21.4384860Z   MODIFIED ref.color.info.900 (protected namespace change)
+2026-09-13T15:43:21.4385528Z   MODIFIED ref.color.success.100 (protected namespace change)
+2026-09-13T15:43:21.4387683Z   MODIFIED ref.color.success.300 (protected namespace change)
+2026-09-13T15:43:21.4388562Z   MODIFIED ref.color.success.700 (protected namespace change)
+2026-09-13T15:43:21.4389505Z   MODIFIED ref.color.success.900 (protected namespace change)
+2026-09-13T15:43:21.4390356Z   MODIFIED ref.color.warning.100 (protected namespace change)
+2026-09-13T15:43:21.4391189Z   MODIFIED ref.color.warning.300 (protected namespace change)
+2026-09-13T15:43:21.4392000Z   MODIFIED ref.color.warning.700 (protected namespace change)
+2026-09-13T15:43:21.4392866Z   MODIFIED ref.color.warning.900 (protected namespace change)
+2026-09-13T15:43:21.4393709Z   MODIFIED ref.color.critical.100 (protected namespace change)
+2026-09-13T15:43:21.4394622Z   MODIFIED ref.color.critical.300 (protected namespace change)
+2026-09-13T15:43:21.4395506Z   MODIFIED ref.color.critical.700 (protected namespace change)
+2026-09-13T15:43:21.4396813Z   MODIFIED ref.color.critical.900 (protected namespace change)
+2026-09-13T15:43:21.4397734Z   MODIFIED ref.color.archive.100 (protected namespace change)
+2026-09-13T15:43:21.4398615Z   MODIFIED ref.color.archive.300 (protected namespace change)
+2026-09-13T15:43:21.4399461Z   MODIFIED ref.color.archive.700 (protected namespace change)
+2026-09-13T15:43:21.4400384Z   MODIFIED ref.color.archive.900 (protected namespace change)
+2026-09-13T15:43:21.4401343Z   MODIFIED color.brand.B.surface.canvas (foreground/background impact)
+2026-09-13T15:43:21.4402373Z   MODIFIED color.brand.B.surface.raised (foreground/background impact)
+2026-09-13T15:43:21.4403384Z   MODIFIED color.brand.B.surface.subtle (foreground/background impact)
+2026-09-13T15:43:21.4404460Z   MODIFIED color.brand.B.surface.disabled (foreground/background impact)
+2026-09-13T15:43:21.4405518Z   MODIFIED color.brand.B.surface.backdrop (foreground/background impact)
+2026-09-13T15:43:21.4407068Z   MODIFIED color.brand.B.surface.inverse (foreground/background impact)
+2026-09-13T15:43:21.4408342Z   MODIFIED color.brand.B.surface.interactive.primary.default (foreground/background impact)
+2026-09-13T15:43:21.4409718Z   MODIFIED color.brand.B.surface.interactive.primary.hover (foreground/background impact)
+2026-09-13T15:43:21.4411092Z   MODIFIED color.brand.B.surface.interactive.primary.pressed (foreground/background impact)
+2026-09-13T15:43:21.4412417Z   MODIFIED color.brand.B.focus.ring.outer (focus token change)
+2026-09-13T15:43:21.4413351Z   MODIFIED color.brand.B.focus.ring.inner (focus token change)
+2026-09-13T15:43:21.4414401Z   MODIFIED color.brand.B.focus.text (focus token change, foreground/background impact)
+2026-09-13T15:43:21.4415552Z   MODIFIED color.brand.B.text.primary (foreground/background impact)
+2026-09-13T15:43:21.4416854Z   MODIFIED color.brand.B.text.secondary (foreground/background impact)
+2026-09-13T15:43:21.4417838Z   MODIFIED color.brand.B.text.muted (foreground/background impact)
+2026-09-13T15:43:21.4418826Z   MODIFIED color.brand.B.text.inverse (foreground/background impact)
+2026-09-13T15:43:21.4419864Z   MODIFIED color.brand.B.text.onInteractive (foreground/background impact)
+2026-09-13T15:43:21.4420913Z   MODIFIED color.brand.B.text.disabled (foreground/background impact)
+2026-09-13T15:43:21.4421872Z   MODIFIED color.brand.B.text.accent (foreground/background impact)
+2026-09-13T15:43:21.4422880Z   MODIFIED color.brand.B.accent.background (foreground/background impact)
+2026-09-13T15:43:21.4424023Z   MODIFIED color.brand.B.accent.text (foreground/background impact)
+2026-09-13T15:43:21.4425036Z   MODIFIED color.brand.B.status.info.surface (foreground/background impact)
+2026-09-13T15:43:21.4426327Z   MODIFIED color.brand.B.status.info.text (foreground/background impact)
+2026-09-13T15:43:21.4427533Z   MODIFIED color.brand.B.status.success.surface (foreground/background impact)
+2026-09-13T15:43:21.4428647Z   MODIFIED color.brand.B.status.success.text (foreground/background impact)
+2026-09-13T15:43:21.4429782Z   MODIFIED color.brand.B.status.warning.surface (foreground/background impact)
+2026-09-13T15:43:21.4431083Z   MODIFIED color.brand.B.status.warning.text (foreground/background impact)
+2026-09-13T15:43:21.4432282Z   MODIFIED color.brand.B.status.critical.surface (foreground/background impact)
+2026-09-13T15:43:21.4433578Z   MODIFIED color.brand.B.status.critical.text (foreground/background impact)
+2026-09-13T15:43:21.4434780Z   MODIFIED color.brand.B.status.neutral.surface (foreground/background impact)
+2026-09-13T15:43:21.4436235Z   MODIFIED color.brand.B.status.neutral.text (foreground/background impact)
+2026-09-13T15:43:21.4437344Z   MODIFIED color.brand.B.surface.canvas (foreground/background impact)
+2026-09-13T15:43:21.4438369Z   MODIFIED color.brand.B.surface.raised (foreground/background impact)
+2026-09-13T15:43:21.4439397Z   MODIFIED color.brand.B.surface.subtle (foreground/background impact)
+2026-09-13T15:43:21.4440434Z   MODIFIED color.brand.B.surface.disabled (foreground/background impact)
+2026-09-13T15:43:21.4441490Z   MODIFIED color.brand.B.surface.backdrop (foreground/background impact)
+2026-09-13T15:43:21.4442518Z   MODIFIED color.brand.B.surface.inverse (foreground/background impact)
+2026-09-13T15:43:21.4443717Z   MODIFIED color.brand.B.surface.interactive.primary.default (foreground/background impact)
+2026-09-13T15:43:21.4445028Z   MODIFIED color.brand.B.surface.interactive.primary.hover (foreground/background impact)
+2026-09-13T15:43:21.4446641Z   MODIFIED color.brand.B.surface.interactive.primary.pressed (foreground/background impact)
+2026-09-13T15:43:21.4447679Z   MODIFIED color.brand.B.focus.ring.outer (focus token change)
+2026-09-13T15:43:21.4448513Z   MODIFIED color.brand.B.focus.ring.inner (focus token change)
+2026-09-13T15:43:21.4449534Z   MODIFIED color.brand.B.focus.text (focus token change, foreground/background impact)
+2026-09-13T15:43:21.4450604Z   MODIFIED color.brand.B.text.primary (foreground/background impact)
+2026-09-13T15:43:21.4451828Z   MODIFIED color.brand.B.text.secondary (foreground/background impact)
+2026-09-13T15:43:21.4452825Z   MODIFIED color.brand.B.text.muted (foreground/background impact)
+2026-09-13T15:43:21.4453800Z   MODIFIED color.brand.B.text.inverse (foreground/background impact)
+2026-09-13T15:43:21.4454815Z   MODIFIED color.brand.B.text.onInteractive (foreground/background impact)
+2026-09-13T15:43:21.4456176Z   MODIFIED color.brand.B.text.disabled (foreground/background impact)
+2026-09-13T15:43:21.4457177Z   MODIFIED color.brand.B.text.accent (foreground/background impact)
+2026-09-13T15:43:21.4458191Z   MODIFIED color.brand.B.accent.background (foreground/background impact)
+2026-09-13T15:43:21.4459203Z   MODIFIED color.brand.B.accent.text (foreground/background impact)
+2026-09-13T15:43:21.4460216Z   MODIFIED color.brand.B.status.info.surface (foreground/background impact)
+2026-09-13T15:43:21.4461269Z   MODIFIED color.brand.B.status.info.text (foreground/background impact)
+2026-09-13T15:43:21.4462360Z   MODIFIED color.brand.B.status.success.surface (foreground/background impact)
+2026-09-13T15:43:21.4463517Z   MODIFIED color.brand.B.status.success.text (foreground/background impact)
+2026-09-13T15:43:21.4464656Z   MODIFIED color.brand.B.status.warning.surface (foreground/background impact)
+2026-09-13T15:43:21.4465793Z   MODIFIED color.brand.B.status.warning.text (foreground/background impact)
+2026-09-13T15:43:21.4467281Z   MODIFIED color.brand.B.status.critical.surface (foreground/background impact)
+2026-09-13T15:43:21.4468433Z   MODIFIED color.brand.B.status.critical.text (foreground/background impact)
+2026-09-13T15:43:21.4469571Z   MODIFIED color.brand.B.status.neutral.surface (foreground/background impact)
+2026-09-13T15:43:21.4470721Z   MODIFIED color.brand.B.status.neutral.text (foreground/background impact)
+2026-09-13T15:43:21.4471658Z   MODIFIED theme-dark.focus.ring.outer (focus token change)
+2026-09-13T15:43:21.4472464Z   MODIFIED theme-dark.focus.ring.inner (focus token change)
+2026-09-13T15:43:21.4473404Z   MODIFIED theme-dark.focus.text (focus token change, foreground/background impact)
+2026-09-13T15:43:21.4475811Z   MODIFIED theme-dark.status.info.surface (foreground/background impact)
+2026-09-13T15:43:21.4477411Z   MODIFIED theme-dark.status.info.text (foreground/background impact)
+2026-09-13T15:43:21.4478017Z   MODIFIED theme-dark.status.success.surface (foreground/background impact)
+2026-09-13T15:43:21.4478584Z   MODIFIED theme-dark.status.success.text (foreground/background impact)
+2026-09-13T15:43:21.4479129Z   MODIFIED theme-dark.status.warning.surface (foreground/background impact)
+2026-09-13T15:43:21.4479662Z   MODIFIED theme-dark.status.warning.text (foreground/background impact)
+2026-09-13T15:43:21.4480205Z   MODIFIED theme-dark.status.critical.surface (foreground/background impact)
+2026-09-13T15:43:21.4480746Z   MODIFIED theme-dark.status.critical.text (foreground/background impact)
+2026-09-13T15:43:21.4481281Z   MODIFIED theme-dark.status.neutral.surface (foreground/background impact)
+2026-09-13T15:43:21.4481817Z   MODIFIED theme-dark.status.neutral.text (foreground/background impact)
+2026-09-13T15:43:21.4482339Z   MODIFIED theme-dark.status.accent.surface (foreground/background impact)
+2026-09-13T15:43:21.4482872Z   MODIFIED theme-dark.status.accent.text (foreground/background impact)
+2026-09-13T15:43:21.4483421Z   MODIFIED theme-dark.status.archive.surface (foreground/background impact)
+2026-09-13T15:43:21.4483965Z   MODIFIED theme-dark.status.archive.text (foreground/background impact)
+2026-09-13T15:43:21.4484472Z   MODIFIED theme-dark.surface.canvas (foreground/background impact)
+2026-09-13T15:43:21.4484962Z   MODIFIED theme-dark.surface.raised (foreground/background impact)
+2026-09-13T15:43:21.4485440Z   MODIFIED theme-dark.surface.subtle (foreground/background impact)
+2026-09-13T15:43:21.4486202Z   MODIFIED theme-dark.surface.disabled (foreground/background impact)
+2026-09-13T15:43:21.4486968Z   MODIFIED theme-dark.surface.backdrop (foreground/background impact)
+2026-09-13T15:43:21.4487500Z   MODIFIED theme-dark.surface.inverse (foreground/background impact)
+2026-09-13T15:43:21.4488248Z   MODIFIED theme-dark.surface.interactive.primary.default (foreground/background impact)
+2026-09-13T15:43:21.4488913Z   MODIFIED theme-dark.surface.interactive.primary.hover (foreground/background impact)
+2026-09-13T15:43:21.4489577Z   MODIFIED theme-dark.surface.interactive.primary.pressed (foreground/background impact)
+2026-09-13T15:43:21.4490155Z   MODIFIED theme-dark.text.primary (foreground/background impact)
+2026-09-13T15:43:21.4490634Z   MODIFIED theme-dark.text.secondary (foreground/background impact)
+2026-09-13T15:43:21.4491107Z   MODIFIED theme-dark.text.muted (foreground/background impact)
+2026-09-13T15:43:21.4491578Z   MODIFIED theme-dark.text.inverse (foreground/background impact)
+2026-09-13T15:43:21.4492047Z   MODIFIED theme-dark.text.disabled (foreground/background impact)
+2026-09-13T15:43:21.4492542Z   MODIFIED theme-dark.text.accent (foreground/background impact)
+2026-09-13T15:43:21.4493039Z   MODIFIED theme-dark.text.on-interactive (foreground/background impact)
+2026-09-13T15:43:21.4584544Z  ELIFECYCLE  Command failed with exit code 1.
+2026-09-13T15:43:21.4839944Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:43:21.4841218Z ##[group]Run actions/upload-artifact@v4
+2026-09-13T15:43:21.4841494Z with:
+2026-09-13T15:43:21.4841709Z   name: tokens-governance-B-34766250034
+2026-09-13T15:43:21.4842138Z   path: artifacts/tokens/brand-b-report.json
+artifacts/tokens/brand-b-comment.md
+
+2026-09-13T15:43:21.4842562Z   if-no-files-found: warn
+2026-09-13T15:43:21.4842799Z   compression-level: 6
+2026-09-13T15:43:21.4843016Z   overwrite: false
+2026-09-13T15:43:21.4843240Z   include-hidden-files: false
+2026-09-13T15:43:21.4843474Z env:
+2026-09-13T15:43:21.4843673Z   NODE_VERSION: 24
+2026-09-13T15:43:21.4843930Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:21.4844271Z ##[endgroup]
+2026-09-13T15:43:21.6767566Z (node:2347) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-13T15:43:21.6769886Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-13T15:43:21.6889206Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-09-13T15:43:21.6894099Z The least common ancestor is /home/runner/work/OODS-Forge/OODS-Forge/artifacts/tokens. This will be the root directory of the artifact
+2026-09-13T15:43:21.6895459Z With the provided path, there will be 2 files uploaded
+2026-09-13T15:43:21.6898195Z Artifact name is valid!
+2026-09-13T15:43:21.6901569Z Root directory input is valid!
+2026-09-13T15:43:22.0700460Z Beginning upload of artifact content to blob storage
+2026-09-13T15:43:22.0954286Z (node:2347) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-13T15:43:22.4465643Z Uploaded bytes 13738
+2026-09-13T15:43:22.5276952Z Finished uploading artifact content to blob storage!
+2026-09-13T15:43:22.5278112Z SHA256 digest of uploaded artifact zip is 72267ace2b71f1c66e9d89f0affb0979dd21d75f5a8680173a25aef121efb215
+2026-09-13T15:43:22.5278886Z Finalizing artifact upload
+2026-09-13T15:43:22.7977761Z Artifact tokens-governance-B-34766250034.zip successfully finalized. Artifact ID 10321026854
+2026-09-13T15:43:22.7979358Z Artifact tokens-governance-B-34766250034 has been successfully uploaded! Final size is 13738 bytes. Artifact ID is 10321026854
+2026-09-13T15:43:22.7981065Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34766250034/artifacts/10321026854
+2026-09-13T15:43:22.8207581Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:43:22.8209092Z ##[group]Run actions/github-script@v7
+2026-09-13T15:43:22.8209364Z with:
+2026-09-13T15:43:22.8211250Z   script: const fs = require('fs');
+const path = require('path');
+const filePath = path.resolve(process.env.GITHUB_WORKSPACE, 'artifacts/tokens/brand-b-comment.md');
+if (!fs.existsSync(filePath)) {
+  core.warning(`Governance comment file not found at ${filePath}`);
+  return;
+}
+const body = fs.readFileSync(filePath, 'utf8').trim();
+if (!body) {
+  core.warning('Governance comment body empty, skipping.');
+  return;
+}
+await github.rest.issues.createComment({
+  owner: context.repo.owner,
+  repo: context.repo.repo,
+  issue_number: context.issue.number,
+  body,
+});
+
+2026-09-13T15:43:22.8215364Z   github-token: ***
+2026-09-13T15:43:22.8215602Z   debug: false
+2026-09-13T15:43:22.8215832Z   user-agent: actions/github-script
+2026-09-13T15:43:22.8216501Z   result-encoding: json
+2026-09-13T15:43:22.8216771Z   retries: 0
+2026-09-13T15:43:22.8217033Z   retry-exempt-status-codes: 400,401,403,404,422
+2026-09-13T15:43:22.8217326Z env:
+2026-09-13T15:43:22.8217512Z   NODE_VERSION: 24
+2026-09-13T15:43:22.8217778Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:22.8218083Z ##[endgroup]
+2026-09-13T15:43:23.5751713Z ##[group]Run echo "tokens-governance exited with status 1 for brand B"
+2026-09-13T15:43:23.5752622Z [36;1mecho "tokens-governance exited with status 1 for brand B"[0m
+2026-09-13T15:43:23.5753379Z [36;1mexit 1[0m
+2026-09-13T15:43:23.5794016Z shell: /usr/bin/bash -e {0}
+2026-09-13T15:43:23.5794281Z env:
+2026-09-13T15:43:23.5794483Z   NODE_VERSION: 24
+2026-09-13T15:43:23.5794768Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-13T15:43:23.5795087Z ##[endgroup]
+2026-09-13T15:43:23.5852497Z tokens-governance exited with status 1 for brand B
+2026-09-13T15:43:23.5864185Z ##[error]Process completed with exit code 1.
+2026-09-13T15:43:23.6010787Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:43:23.6012044Z Post job cleanup.
+2026-09-13T15:43:23.7538261Z Pruning is unnecessary.
+2026-09-13T15:43:23.7766895Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-13T15:43:23.7769048Z Post job cleanup.
+2026-09-13T15:43:23.9096983Z [command]/usr/bin/git version
+2026-09-13T15:43:23.9166946Z git version 2.55.0
+2026-09-13T15:43:23.9277321Z Temporarily overriding HOME='/home/runner/work/_temp/4fcf9462-3f10-44ae-a31f-e2d81c4e365c' before making global git config changes
+2026-09-13T15:43:23.9279292Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-13T15:43:23.9280999Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-13T15:43:23.9290529Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-13T15:43:23.9351646Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-13T15:43:23.9833577Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-13T15:43:23.9865491Z http.https://github.com/.extraheader
+2026-09-13T15:43:23.9917510Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-13T15:43:23.9950492Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-13T15:43:24.0432894Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-13T15:43:24.0514078Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-13T15:43:24.1071157Z Cleaning up orphan processes
+2026-09-13T15:43:24.1354489Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/github-script@v7, actions/setup-node@v4, actions/upload-artifact@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

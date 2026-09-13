@@ -1,0 +1,41 @@
+{
+  "sourceHead": "542f9ee6bfceb96e61c5b2b44c241c9375a8596f",
+  "runtimeCI": 34766250034,
+  "diagnosticParserAppliedToBuild": false,
+  "diagnosticParserTests": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "diagnosticA11yDiff": {
+    "exitCode": 1,
+    "newViolations": 9,
+    "contrast": [
+      {
+        "target": "sys.status.accent.text on sys.status.accent.surface",
+        "ratio": 3.59,
+        "threshold": 4.5
+      },
+      {
+        "target": "sys.status.accent.icon on sys.status.accent.surface",
+        "ratio": 2.31,
+        "threshold": 3
+      },
+      {
+        "target": "sys.text.on-interactive on sys.surface.interactive.primary.default",
+        "ratio": 4.48,
+        "threshold": 4.5
+      }
+    ],
+    "relativeStateRules": 6
+  },
+  "governance": {
+    "labelApplied": "token-change:breaking",
+    "localAExitCode": 0,
+    "localBExitCode": 0,
+    "originalFailedCIJobsRetained": true
+  },
+  "classification": "The shipped palette added typed CSV rows; the older a11y CLI fails to parse them. A diagnostic-only parser fix reveals three contrast failures in the unbranded built token tree and six stale relative-state limits. The separate color-guardrails CLI evaluates its six relative-color rows against legacy tokens/ while palette rows use the canonical packages/tokens sources. The current tokens-validate result therefore does not establish that the built-tree state checks pass.",
+  "scope": "Neither parser fix nor palette/CSV/source-loader changes are approved by #2008; none is applied. These are blocking review findings, not a waiver or a green CI claim.",
+  "builderSelfCertified": false
+}
