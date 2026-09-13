@@ -326,8 +326,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
   if (schema) {
     const declaredOptions = (filter?.props?.options as Array<{ value: string }>).map(option => option.value);
     const states = schema.workflow!.data.lifecycleStates;
-    const expectedOptions = schema.objectSchema!.status && declaredOptions.length === 1 && states.length ? ['', ...states] : declaredOptions;
-    assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum or workflow lifecycle states');
+    const observedStates = [...new Set(workflowSampleRecords(schema).filter(record => !record.is_archived).map(record => String(record[filterField] ?? '')).filter(Boolean))].sort();
+    const expectedOptions = declaredOptions.length > 1 ? declaredOptions
+      : schema.objectSchema!.status && states.length ? ['', ...states] : ['', ...observedStates];
+    assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum, workflow lifecycle states, or actual loaded records');
   } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
   const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record[filterField] === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
     : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
@@ -350,10 +352,10 @@ export async function observeCollectionControls(page: Page, url: string, object 
     assert.equal(await records.count(), total);
     return { selectedStatus, selectedCount: expectedIds.length, expectedIds, restoredCount: total };
   });
-  else await observe(rows, 'filter-has-no-declared-enum', async () => {
+  else await observe(rows, 'filter-has-no-values', async () => {
     assert.deepEqual(options, ['']);
     assert.equal(await records.count(), total);
-    return { options, reason: 'The public schema declares no status enum values; only All states is available. Filtering by a status is not proven.' };
+    return { options, reason: 'Neither the public schema nor loaded records provide filter values; only All states is available. Filtering by a status is not proven.' };
   });
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
