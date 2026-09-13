@@ -95,7 +95,7 @@ function brandTree(brand: 'A' | 'B', seed: BrandSeed, dark: boolean, retainedViz
     : { canvas: .985, raised: 1, subtle: .95, disabled: .93, backdrop: .2, inverse: .23 };
   for (const [role, l] of Object.entries(surfaces)) put(`surface.${role}`, neutral(l));
   for (const [state, l] of Object.entries(dark
-    ? { default: .52, hover: .54, pressed: .56 } : { default: .52, hover: .47, pressed: .42 })) {
+    ? { default: .52, hover: .53, pressed: .54 } : { default: .52, hover: .47, pressed: .42 })) {
     put(`surface.interactive.primary.${state}`, tone(seed.primary, l, dark ? seed.dark.accentChromaScale : 1));
   }
   put('border.subtle', neutral(dark ? .4 : .86));
@@ -125,6 +125,30 @@ function brandTree(brand: 'A' | 'B', seed: BrandSeed, dark: boolean, retainedViz
   return tree;
 }
 
+/** Shared dark roles follow brand A; brands override the same public aliases. */
+function darkThemeTrees(seed: BrandSeed): Record<string, TokenTree> {
+  const brand = (brandTree('A', seed, true, {}).color as any).brand.A;
+  const theme = (roles: TokenTree): TokenTree => ({ 'theme-dark': roles });
+  const text = structuredClone(brand.text);
+  text['on-interactive'] = text.onInteractive;
+  delete text.onInteractive;
+  const icon: TokenTree = {};
+  for (const [role, l] of Object.entries({ primary: .85, muted: .64, 'on-interactive': .985 })) {
+    setColor(icon, role, paletteColor(l, seed.dark.canvasChroma, seed.neutral.hue));
+  }
+  const status = structuredClone(brand.status);
+  for (const [family, familySeed] of Object.entries({ accent: seed.accent, archive: seed.status.archive })) {
+    for (const [role, l] of Object.entries({ surface: .28, border: .45, text: .88, icon: .8 })) {
+      setColor(status, `${family}.${role}`, tone(familySeed, l, seed.dark.accentChromaScale));
+    }
+  }
+  const focus = { ...brand.focus, width: {
+    $type: 'dimension', $value: '2px', $description: 'Focus ring width shared with light theme.',
+  } };
+  return { surface: theme({ surface: brand.surface, border: brand.border }),
+    text: theme({ text, icon }), status: theme({ status }), focus: theme({ focus }) };
+}
+
 /** Pure derivation. No generated file is used as input, including its metadata. */
 export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly PaletteGroup[] = ['reference', 'light', 'dark']): Map<string, string> {
   const files = new Map<string, string>();
@@ -149,6 +173,9 @@ export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly Palet
       if (!groups.includes(mode === 'base' ? 'light' : 'dark')) continue;
       emit(`brands/${brand}/${mode}.json`, brandTree(brand, seed, mode === 'dark', seeds.retainedViz[mode]));
     }
+  }
+  if (groups.includes('dark')) {
+    for (const [name, tree] of Object.entries(darkThemeTrees(a))) emit(`themes/dark/${name}.json`, tree);
   }
   return files;
 }

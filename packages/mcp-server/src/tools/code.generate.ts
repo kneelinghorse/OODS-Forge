@@ -241,11 +241,13 @@ export async function handle(
 
   // Build codegen options (.oodsrc fallbacks between explicit and hardcoded defaults)
   const rc = loadOodsrc();
+  const composedTheme = schema.theme === 'light' || schema.theme === 'dark' || schema.theme === 'hc'
+    ? schema.theme : undefined;
   const options: CodegenOptions = {
     typescript: input.options?.typescript ?? rc.typescript ?? true,
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
-    // App shells default to light/A. Unscoped HTML retains the existing repl document contract.
-    theme: input.options?.theme ?? (framework === 'html' ? undefined : 'light'),
+    // Explicit options win; composed app scopes survive the handoff to code generation.
+    theme: input.options?.theme ?? (framework === 'html' ? undefined : composedTheme ?? 'light'),
     brand: input.options?.brand ?? (framework === 'html' ? undefined : 'A'),
   };
 

@@ -17,7 +17,7 @@ describe('seed-generated palette boundary', () => {
     const seeds = await loadPaletteSeeds();
     const root = await scratch();
     const original = generatePaletteFiles(seeds);
-    expect(original.size).toBe(7);
+    expect(original.size).toBe(11);
     expect(generatePaletteFiles(seeds)).toEqual(original);
     await writePaletteFiles(original, root);
     expect(await writePaletteFiles(original, root, true)).toEqual([]);

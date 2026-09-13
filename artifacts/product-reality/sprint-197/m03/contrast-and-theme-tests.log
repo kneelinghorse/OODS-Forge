@@ -1,0 +1,106 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s197/OODS-Forge
+
+ ❯ |guardrails| testing/a11y/status-provenance.spec.ts (9 tests | 2 failed) 10ms
+   ✓ brand status literal provenance (#1158) > every brand file declares exactly 20 status literals 3ms
+   ✓ brand status literal provenance (#1158) > A/base has ZERO byte-copies of the theme0 status layer 0ms
+   × brand status literal provenance (#1158) > A/dark has ZERO byte-copies of the dark status layer 4ms
+     → expected [ …(20) ] to deeply equal []
+   ✓ brand status literal provenance (#1158) > B/base has ZERO byte-copies of the theme0 status layer 0ms
+   × brand status literal provenance (#1158) > B/dark has ZERO byte-copies of the dark status layer 1ms
+     → expected [ …(20) ] to deeply equal []
+   ✓ brand status literal provenance (#1158) > A/base has zero CROSS-SET copies (vs the dark status layer) 0ms
+   ✓ brand status literal provenance (#1158) > A/dark has zero CROSS-SET copies (vs the theme0 status layer) 0ms
+   ✓ brand status literal provenance (#1158) > B/base has zero CROSS-SET copies (vs the dark status layer) 0ms
+   ✓ brand status literal provenance (#1158) > B/dark has zero CROSS-SET copies (vs the theme0 status layer) 0ms
+ ✓ |guardrails| testing/a11y/axe.spec.ts (4 tests) 6ms
+ ✓ |guardrails| testing/a11y/brand-description-truth.spec.ts (5 tests) 9ms
+ ✓ |guardrails| testing/a11y/contrast.spec.ts (1 test) 5ms
+ ❯ |guardrails| testing/a11y/brand-contrast.spec.ts (10 tests | 1 failed) 118ms
+   ✓ brand contrast grading (s168 m04) > grades every brand × graded-theme cell, and hc is exempt with a stated reason 6ms
+   ✓ brand contrast grading (s168 m04) > pins the fifth pair group at 30 templates and the full surface at 57 / 228 1ms
+   ✓ brand contrast grading (s168 m04) > the fifth group grades 60 icon and 60 text candidates, all passing 12ms
+   ✓ brand contrast grading (s168 m04) > every rule’s tokens resolve, so a failure can only mean a real ratio 38ms
+   × brand contrast grading (s168 m04) > every graded cell passes its thresholds 18ms
+     → brand contrast failures:
+  brand-b-dark-on-interactive-pressed: 4.3 < 4.5 (Expected contrast ≥4.5:1 but measured 4.3:1.): expected [ Array(1) ] to deeply equal []
+   ✓ brand contrast grading (s168 m04) > RED-first: the pre-F4 icon values reproduce exactly seven status-on-panel failures 10ms
+   ✓ brand contrast grading (s168 m04) > RED-first: the same rules name the pre-m03 failures, while the rest pass in that run 12ms
+   ✓ brand contrast grading (s168 m04) > RED-first: the widened grid names exactly the three pairs this mission fixed 16ms
+   ✓ brand contrast grading (s168 m04) > the ratified brand.css dark ramp fails AA on hover and pressed (why m03 deviates from it) 1ms
+   ✓ brand contrast grading (s168 m04) > every gradeable bridged slot is named by at least one rule 1ms
+ ✓ |core| packages/mcp-server/test/product-reality/theme.s191.spec.ts (3 tests) 5999ms
+   ✓ generated applications own their token scope (s191) > react shell, mount, styles and embedded chart share dark/B  2538ms
+   ✓ generated applications own their token scope (s191) > vue shell, mount, styles and embedded chart share dark/B  3450ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |guardrails| testing/a11y/brand-contrast.spec.ts > brand contrast grading (s168 m04) > every graded cell passes its thresholds
+AssertionError: brand contrast failures:
+  brand-b-dark-on-interactive-pressed: 4.3 < 4.5 (Expected contrast ≥4.5:1 but measured 4.3:1.): expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "brand-b-dark-on-interactive-pressed: 4.3 < 4.5 (Expected contrast ≥4.5:1 but measured 4.3:1.)",
++ ]
+
+ ❯ testing/a11y/brand-contrast.spec.ts:195:78
+    193|     }
+    194|     expect(graded).toBe(BRAND_CONTRAST_PAIRS.length * BRANDS.length * …
+    195|     expect(failures, `brand contrast failures:\n  ${failures.join('\n …
+       |                                                                              ^
+    196|   });
+    197| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  |guardrails| testing/a11y/status-provenance.spec.ts > brand status literal provenance (#1158) > A/dark has ZERO byte-copies of the dark status layer
+ FAIL  |guardrails| testing/a11y/status-provenance.spec.ts > brand status literal provenance (#1158) > B/dark has ZERO byte-copies of the dark status layer
+AssertionError: expected [ …(20) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "color.brand.A.status.critical.border",
++   "color.brand.A.status.critical.icon",
++   "color.brand.A.status.critical.surface",
++   "color.brand.A.status.critical.text",
++   "color.brand.A.status.info.border",
++   "color.brand.A.status.info.icon",
++   "color.brand.A.status.info.surface",
++   "color.brand.A.status.info.text",
++   "color.brand.A.status.neutral.border",
++   "color.brand.A.status.neutral.icon",
++   "color.brand.A.status.neutral.surface",
++   "color.brand.A.status.neutral.text",
++   "color.brand.A.status.success.border",
++   "color.brand.A.status.success.icon",
++   "color.brand.A.status.success.surface",
++   "color.brand.A.status.success.text",
++   "color.brand.A.status.warning.border",
++   "color.brand.A.status.warning.icon",
++   "color.brand.A.status.warning.surface",
++   "color.brand.A.status.warning.text",
++ ]
+
+ ❯ testing/a11y/status-provenance.spec.ts:96:77
+     94|   for (const { brand, theme, own } of CASES) {
+     95|     it(`${brand}/${theme} has ZERO byte-copies of the ${own} status la…
+     96|       expect(byteCopies(brandStatusLeaves(brand, theme), themeStatus[o…
+       |                                                                             ^
+     97|     });
+     98|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  3 failed | 29 passed (32)
+   Start at  22:50:01
+   Duration  7.69s (transform 950ms, setup 0ms, collect 1.75s, tests 6.15s, environment 1ms, prepare 409ms)
+
