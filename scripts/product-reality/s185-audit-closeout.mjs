@@ -2129,19 +2129,91 @@ export function auditSprint197Runtime({ runtime, head, runtimePath, readFrozen }
   assert.equal(charts, 24); return { cells: expected.length, chartThemeCells: charts };
 }
 
+// Independent verification of #2008: do not import the accounting validator.
+export function auditSprint197Readiness({ approval, changes, executionHead, reviewHead, failures, readHistorical, readBytes }) {
+  const root = 'artifacts/product-reality/sprint-197/m07';
+  const facts = { path: 'artifacts/product-reality/sprint-196/m06/release-readiness-facts.json',
+    beforeSha256: '8fbfcb74551f8370ed52d4b10ddc55526cceba48a8ab0074f3e67192c6819f67',
+    afterSha256: 'ba27bb2e7d5c9a6b9278b916d69ac593608bfe971a769a927d3af39cf2218c1d' };
+  assert.equal(executionHead, '02d811f71a4f188142783edf0f9ea189590876c1'); assert.equal(approval.executionHead, executionHead);
+  assert.equal(approval.decisionId, 2008); assert.equal(approval.missionId, 's197-m07'); assert.equal(approval.builderSelfCertified, false); assert(fullHead(approval.fixedHead));
+  const receipt = ref => { const b = readBytes(ref.path); assert.equal(digest(b), ref.sha256, ref.path); return b; };
+  const decision = JSON.parse(receipt(approval.decision));
+  assert.equal(decision.id, 2008); assert.equal(decision.missionId, 's197-m07'); assert.equal(decision.sprintId, 'sprint-197');
+  assert(decision.decision.includes(facts.afterSha256) && decision.decision.includes('NO third full five-suite capture'));
+  assert.deepEqual(approval.facts, facts);
+  assert.equal(digest(readHistorical(executionHead, facts.path)), facts.beforeSha256);
+  for (const head of [approval.fixedHead, reviewHead]) assert.equal(digest(readHistorical(head, facts.path)), facts.afterSha256);
+  assert.equal(digest(readBytes(facts.path)), facts.afterSha256);
+  const unchanged = {
+    'cmos/planning/forge-gate2-decision-packet.md': 'e7279d225d7e9fee64d14c6695f7b32e83f04107a19ce7e656e457c8802957c3',
+    'scripts/product-reality/s196-release-readiness.ts': 'a11560a8e2c31c399c6081f7aa343929025372a39f3491b12e016888fda83786',
+    'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts': '9cc8db7dc765b26c1885eab95b5e6f9d63fd7bd2c7533c4cb58169890c140fc8',
+  };
+  for (const [file, expected] of Object.entries(unchanged)) for (const head of [executionHead, approval.fixedHead, reviewHead]) assert.equal(digest(readHistorical(head, file)), expected);
+  const paths = ['scripts/product-reality/s185-audit-closeout.mjs', 'scripts/product-reality/s185-closeout.mjs',
+    'scripts/product-reality/s185-suite-accounting.mjs', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts'].sort();
+  assert.deepEqual(approval.supportingFiles.map(row => row.path).sort(), paths);
+  for (const row of approval.supportingFiles) {
+    assert.equal(digest(readHistorical(executionHead, row.path)), row.beforeSha256);
+    assert.equal(digest(readBytes(row.path)), row.afterSha256);
+    for (const head of [approval.fixedHead, reviewHead]) assert.equal(digest(readHistorical(head, row.path)), row.afterSha256);
+  }
+  const exceptions = [...paths, facts.path].sort();
+  assert.deepEqual(changes.filter(row => exceptions.includes(row.path)).map(row => row.path).sort(), exceptions);
+  for (const row of changes) {
+    if (exceptions.includes(row.path)) assert.equal(row.status, 'M');
+    else { assert.equal(row.status, 'A'); assert(/^artifacts\/product-reality\/sprint-197\/m07\/(?:five-suite-closeout[^/]*|closeout|ci|movers)\/.*\.(?:json|log|md|patch|txt)$/.test(row.path), row.path); }
+  }
+  const checkpoint = '0c6159821c2261afd060b682ca910723f31c0349';
+  const index = JSON.parse(readHistorical(checkpoint, `${root}/closeout/retained-evidence-index.json`));
+  const captureFiles = index.files.filter(row => row.path.startsWith(`${root}/five-suite-closeout`)); assert.equal(captureFiles.length, 40);
+  for (const ref of captureFiles) { receipt(ref); assert.equal(digest(readHistorical(checkpoint, ref.path)), ref.sha256); }
+  assert.equal(failures.length, 2); assert.deepEqual(failures.map(row => row.suite).sort(), ['mcp-server', 'root-core']);
+  for (const failure of failures) {
+    assert.equal(failure.file, 'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts');
+    assert.equal(failure.testKey, 's196 release readiness derives facts without making Gate 2 decisions checks generated JSON and the marked facts block while preserving authored prose#0');
+  }
+  assert.deepEqual(approval.scoped.map(row => row.project).sort(), ['mcp-server', 'root-core']);
+  for (const run of approval.scoped) {
+    assert.equal(run.head, approval.fixedHead); assert.equal(run.exitCode, 0); assert(run.command.includes('vitest')); receipt(run.log);
+    const raw = JSON.parse(receipt(run.report)); assert.equal(raw.success, true);
+    assert.equal(raw.numFailedTests + raw.numPendingTests + raw.numTodoTests, 0);
+    const names = raw.testResults.map(file => file.name.split('/').pop()).sort();
+    assert.deepEqual(names, ['closeout.s196.spec.ts', 'closeout.s197.spec.ts', 'release-readiness.s196.spec.ts']);
+    const rows = raw.testResults.flatMap(file => file.assertionResults); assert.equal(rows.length, raw.numTotalTests); assert(rows.every(row => row.status === 'passed'));
+    for (const file of raw.testResults) assert(file.assertionResults.length > 0);
+    assert.equal(raw.testResults.find(file => file.name.endsWith('/release-readiness.s196.spec.ts')).assertionResults.length, 22);
+  }
+  assert.equal(approval.docs.head, approval.fixedHead); assert.equal(approval.docs.exitCode, 0); assert.equal(approval.docs.command, 'pnpm docs:check'); receipt(approval.docs.log);
+  return { decisionId: 2008, fixedHead: approval.fixedHead, facts, preservedCaptureFiles: captureFiles.length };
+}
+
 export function auditSprint197Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath }) {
   const base = 'artifacts/product-reality/sprint-197/m07', manifest = JSON.parse(readFrozen(manifestPath));
   const ledger = JSON.parse(readOutput(`${base}/closeout/claim-ledger.json`)), handoff = JSON.parse(readOutput(`${base}/closeout/review-handoff.json`)), accounting = JSON.parse(readOutput(`${base}/closeout/suite-accounting.json`));
+  const fixedHead = manifest.fixedHead ?? executionHead;
   const checked = new Set();
   const verify = ref => { assert(ref.path && !path.isAbsolute(ref.path) && !ref.path.split('/').includes('..')); const bytes = readFrozen(ref.path); assert.equal(digest(bytes), bare(ref.sha256), ref.path); checked.add(ref.path); return bytes; };
   const source = key => JSON.parse(readFrozen(manifest.sources[key]));
   for (const result of [ledger, handoff]) {
     assert.equal(result.builderSelfCertified, false); assert.equal(result.separateReviewRequired, true); assert.equal(result.sprintStatus, 'Active');
-    assert.equal(result.executionHead, executionHead); assert.equal(result.reviewHead, reviewHead); assert.equal(result.implementationHead, manifest.implementationHead);
+    assert.equal(result.fixedHead, fixedHead); assert.equal(result.executionHead, executionHead); assert.equal(result.reviewHead, reviewHead); assert.equal(result.implementationHead, manifest.implementationHead);
   }
   assert.equal(handoff.evidenceCommit, reviewHead); assert.equal(handoff.state, 'BUILT, REVIEW PENDING');
   assert.equal(gitEvidence.ancestor, true); assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
-  for (const change of gitEvidence.changes) {
+  if (manifest.accounting.readinessCorrection) {
+    const approval = JSON.parse(readFrozen(manifest.accounting.readinessCorrection));
+    const accepted = auditSprint197Readiness({ approval, changes: gitEvidence.changes, executionHead, reviewHead,
+      failures: accounting.closeoutFailures, readHistorical, readBytes: readFrozen });
+    assert.equal(manifest.fixedHead, accepted.fixedHead);
+    for (const key of Object.keys(accepted)) assert.deepEqual(accounting.readinessAcceptance[key], accepted[key]);
+    assert.equal(accounting.readinessAcceptance.approval.path, manifest.accounting.readinessCorrection); verify(accounting.readinessAcceptance.approval);
+    assert.equal(accounting.closeout.status, 'failed'); assert.equal(accounting.closeoutAttempts.length, 1);
+    assert.equal(accounting.closeoutAttempts[0].status, 'failed'); assert.equal(accounting.closeoutAttempts[0].measuredHead, 'c5246c3f721ea49761e4a5c5eecbbd4df0b10279');
+    assert.equal(accounting.captureExtensionAcceptance, undefined);
+    for (const row of accounting.closeoutFailures) { assert.equal(row.status, 'introduced-generated-provenance-drift'); assert.equal(row.correctionDecisionId, 2008); assert.equal(row.correctionHead, manifest.fixedHead); }
+  } else for (const change of gitEvidence.changes) {
     assert.equal(change.status, 'A'); assert(/^artifacts\/product-reality\/sprint-197\/m07\/(?:five-suite-closeout[^/]*|closeout|ci|movers)\/.*\.(?:json|log|md|patch|txt)$/.test(change.path), change.path);
   }
   [...ledger.references, ...accounting.references].forEach(verify);
@@ -2205,7 +2277,7 @@ export function auditSprint197Closeout({ executionHead, reviewHead, readOutput, 
   currentPackage.scripts['lint:tokens'] = beforePackage.scripts['lint:tokens']; assert.deepEqual(currentPackage, beforePackage);
   const lock = readFrozen('pnpm-lock.yaml').toString(), addition = '      esbuild:\n        specifier: 0.25.10\n        version: 0.25.10\n';
   assert.equal(lock.split(addition).length, 2); assert.equal(lock.replace(addition, ''), readHistorical(manifest.implementationHead, 'pnpm-lock.yaml').toString());
-  assert.equal(rangeGitEvidence.base, S197_BUILD_BASE); assert.equal(rangeGitEvidence.head, executionHead);
+  assert.equal(rangeGitEvidence.base, S197_BUILD_BASE); assert.equal(rangeGitEvidence.head, fixedHead);
   const movers = source('movers'), declared = JSON.parse(readFrozen(`${base}/movers/declared-movers.json`));
   for (const key of ['canonicalPaths', 'publicPaths']) { assert.deepEqual(movers.s197[key], rangeGitEvidence[key]); assert.deepEqual(declared.s197[key], rangeGitEvidence[key]); }
   const attribution = source('moverAttribution'); assert.deepEqual(attribution.unattributedPaths, []); assert.deepEqual(attribution.rows.map(row => row.path).sort(), rangeGitEvidence.publicPaths);
@@ -2213,11 +2285,12 @@ export function auditSprint197Closeout({ executionHead, reviewHead, readOutput, 
   for (const row of attribution.rows) {
     assert(row.reason?.trim() && row.missions.length && row.missions.every(id => /^s197-m0[1-7]$/.test(id))); assert(row.commits.length && row.commits.every(fullHead));
     if (row.beforeSha256 !== null) assert.equal(digest(readHistorical(S197_BUILD_BASE, row.path)), row.beforeSha256);
-    if (row.afterSha256 !== null) assert.equal(digest(readHistorical(executionHead, row.path)), row.afterSha256);
+    if (row.afterSha256 !== null) assert.equal(digest(readHistorical(fixedHead, row.path)), row.afterSha256);
   }
   const boundary = source('boundary'); assert.equal(boundary.messagesSent, 0); assert.equal(boundary.reconnectPrepared, false); assert.equal(boundary.deliveryExecuted, false);
   const ci = source('ci'); assert.equal(ci.pr.baseRefName, 'OODS-pro'); assert(ci.runs.length > 0);
   for (const run of ci.runs) { const raw = JSON.parse(verify(run.receipt)); assert.equal(raw.headSha, run.headSha); assert.equal(raw.status, 'completed'); assert.equal(raw.conclusion, run.conclusion); assert(run.conclusion === 'success' || (run.disposition?.trim() && run.evidence?.length)); for (const ref of run.evidence ?? []) verify(ref); }
+  if (manifest.accounting.readinessCorrection) assert(ci.runs.some(run => run.headSha === fixedHead && JSON.parse(verify(run.receipt)).status === 'completed'), 'Decision 2008 requires CI on the fixed source.');
   const text = readFrozen(manifest.sources.near).toString(), before = readHistorical(manifest.implementationHead, manifest.sources.near).toString(), marker = '\n---\n\n# Retained record —';
   assert(text.includes(marker)); assert.equal(text.slice(text.indexOf(marker)), before.slice(before.indexOf(marker)));
   const top = text.slice(0, text.indexOf(marker)); assert.match(top, /197 — \*\*BUILT, REVIEW PENDING\*\*/); assert.match(top, /### Sprint 197 — Palette and the dark theme — BUILT, REVIEW PENDING/);
@@ -2243,7 +2316,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const implementationHead = ['s196-m07', 's197-m07'].includes(manifest.missionId) ? manifest.implementationHead : JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
     const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead,
       sprintId: manifest.missionId === 's197-m07' ? 'sprint-197' : manifest.missionId === 's196-m07' ? 'sprint-196' : manifest.missionId === 's195-m07' ? 'sprint-195' : manifest.missionId === 's194-m07' ? 'sprint-194' : manifest.missionId === 's193-m07' ? 'sprint-193' : manifest.missionId === 's192-m07' ? 'sprint-192' : manifest.missionId === 's191-m05' ? 'sprint-191' : manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
-    const rangeGitEvidence = manifest.missionId === 's197-m07' ? auditSprintRange({ root, base: S197_BUILD_BASE, head: executionHead, sprintId: 'sprint-197' }) : manifest.missionId === 's196-m07' ? auditSprintRange({ root, base: S196_BUILD_BASE, head: executionHead, sprintId: 'sprint-196' }) : manifest.missionId === 's195-m07' ? auditSprintRange({ root, base: '5b25c3c9ec795315bf52a698d135c96bffd66393', head: implementationHead, sprintId: 'sprint-195' }) : manifest.missionId === 's194-m07' ? auditSprintRange({ root, base: '1f69c957f4435a0a2f18b168b684de050f7a5f22', head: implementationHead, sprintId: 'sprint-194' }) : manifest.missionId === 's193-m07' ? auditSprintRange({ root, base: 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d', head: implementationHead, sprintId: 'sprint-193' }) : manifest.missionId === 's192-m07' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','5fdf8a18'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-192' }) : manifest.missionId === 's191-m05' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','d3a99d39'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-191' }) : manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
+    const rangeGitEvidence = manifest.missionId === 's197-m07' ? auditSprintRange({ root, base: S197_BUILD_BASE, head: manifest.fixedHead ?? executionHead, sprintId: 'sprint-197' }) : manifest.missionId === 's196-m07' ? auditSprintRange({ root, base: S196_BUILD_BASE, head: executionHead, sprintId: 'sprint-196' }) : manifest.missionId === 's195-m07' ? auditSprintRange({ root, base: '5b25c3c9ec795315bf52a698d135c96bffd66393', head: implementationHead, sprintId: 'sprint-195' }) : manifest.missionId === 's194-m07' ? auditSprintRange({ root, base: '1f69c957f4435a0a2f18b168b684de050f7a5f22', head: implementationHead, sprintId: 'sprint-194' }) : manifest.missionId === 's193-m07' ? auditSprintRange({ root, base: 'c098237f1a1d026df4f1ad5c0ca51b15ebab0f4d', head: implementationHead, sprintId: 'sprint-193' }) : manifest.missionId === 's192-m07' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','5fdf8a18'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-192' }) : manifest.missionId === 's191-m05' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','d3a99d39'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-191' }) : manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
       ? auditSprintRange({ root, base: 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076', head: implementationHead, sprintId: 'sprint-188' }) : manifest.missionId === 's187-m06'
       ? auditSprintRange({ root, base: '21c7c31906fbb81d049b943155c64ed78409fb9f', head: implementationHead, sprintId: 'sprint-187' }) : manifest.missionId === 's186-m06'
       ? auditSprintRange({ root, base: '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2', head: implementationHead }) : undefined;

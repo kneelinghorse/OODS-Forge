@@ -1633,6 +1633,7 @@ export function verifySprint197BuildDependencies({ beforePackage, afterPackage, 
 
 export function deriveSprint197Closeout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence }) {
   const base = 'artifacts/product-reality/sprint-197/m07', implementationHead = manifest.implementationHead;
+  const fixedHead = manifest.fixedHead ?? executionHead;
   assert(fullHead(implementationHead) && fullHead(executionHead) && fullHead(reviewHead)); assert.equal(manifest.missionId, 's197-m07');
   assert(!Object.hasOwn(manifest, 'criteria') && !Object.hasOwn(manifest, 'claims'));
   const references = new Map(), cache = new Map();
@@ -1689,24 +1690,29 @@ export function deriveSprint197Closeout({ executionHead, reviewHead, manifest, r
   assert.deepEqual(suiteAccounting.validationIssues, []); assert.deepEqual(suiteAccounting.unattributedDeltas, []);
   assert.equal(suiteAccounting.closeout.runs.length, 1); assert.equal(suiteAccounting.closeout.runs[0].suiteExecutionIds.length, 5); assert.equal(suiteAccounting.comparisons.length, 5);
   suiteAccounting.references.forEach(verify);
+  if (manifest.accounting.readinessCorrection) {
+    assert.equal(suiteAccounting.readinessAcceptance.decisionId, 2008); assert.equal(suiteAccounting.readinessAcceptance.fixedHead, fixedHead);
+    assert.equal(suiteAccounting.readinessAcceptance.approval.path, manifest.accounting.readinessCorrection);
+  }
   const relation = json('headRelations'); assert.deepEqual(relation.publicComparison, publicHeadEquivalence);
   const carryOnly = new Set(['pnpm-lock.yaml', 'scripts/quality/brand-cascade-browser-proof.mjs', 'scripts/quality/brand-focus-identity.mjs', 'tools/token-lint/index.mjs', 'tests/design-loop/design-loop.test.ts', 'tests/verification/how-forge-works.contract.test.ts', 'tests/verification/s177-prose-carriers.contract.test.ts', 'package.json', 'scripts/product-reality/s197-categorical-search.ts', 'scripts/product-reality/s197-palette-sheets.ts', 'scripts/product-reality/s197-viz-palette.ts', 'tests/tokens/__fixtures__/brand-css-slot-contract.json', 'tests/tokens/brand-root-and-containment.test.ts', 'tests/tokens/bridged-slot-specificity-census.test.ts', 'tests/tokens/collision-guard.test.ts', 'tests/tokens/mobile-output.test.ts', 'tests/tokens/palette-role-a.s195.test.ts', 'tests/tokens/palette-integration.s197.test.ts', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts', 'packages/mcp-server/registry/runtime-cells.v1.json', 'cmos/foundational-docs/roadmap/near.md', 'docs/how-forge-works.html',
     'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-audit-closeout.mjs', 'scripts/product-reality/s185-suite-accounting.mjs', 'scripts/product-reality/s185-sprint-wide-movers.mjs', 'scripts/product-reality/capture-s185-m01-baseline.mjs', 'scripts/product-reality/component-package-suite.mjs', 'scripts/product-reality/s185-reachability.mjs']);
   assert(publicHeadEquivalence.changedPaths.every(file => carryOnly.has(file)), 'A measured product source changed before capture.');
   verifySprint197BuildDependencies({ beforePackage: JSON.parse(readHistorical(implementationHead, 'package.json')), afterPackage: JSON.parse(bytes('package.json')),
     beforeLock: readHistorical(implementationHead, 'pnpm-lock.yaml').toString(), afterLock: bytes('pnpm-lock.yaml').toString() });
-  const movers = json('movers'), attribution = json('moverAttribution'); assert.equal(movers.s197.base, S197_BASE); assert.equal(movers.s197.head, executionHead);
-  assert.equal(attribution.base, S197_BASE); assert.equal(attribution.head, executionHead); assert.deepEqual(attribution.unattributedPaths, []);
+  const movers = json('movers'), attribution = json('moverAttribution'); assert.equal(movers.s197.base, S197_BASE); assert.equal(movers.s197.head, fixedHead);
+  assert.equal(attribution.base, S197_BASE); assert.equal(attribution.head, fixedHead); assert.deepEqual(attribution.unattributedPaths, []);
   assert.deepEqual(attribution.rows.map(row => row.path).sort(), [...movers.s197.publicPaths].sort()); assert.equal(new Set(attribution.rows.map(row => row.path)).size, attribution.rows.length);
   for (const row of attribution.rows) {
     assert(row.missions.length && row.missions.every(id => /^s197-m0[1-7]$/.test(id))); assert(nonempty(row.reason)); assert(row.commits.length && row.commits.every(fullHead));
     if (row.beforeSha256 !== null) assert.equal(sha256(readHistorical(S197_BASE, row.path)), row.beforeSha256);
-    if (row.afterSha256 !== null) assert.equal(sha256(readHistorical(executionHead, row.path)), row.afterSha256);
+    if (row.afterSha256 !== null) assert.equal(sha256(readHistorical(fixedHead, row.path)), row.afterSha256);
   }
   verify(attribution.patch);
   const boundary = json('boundary'); assert.equal(boundary.messagesSent, 0); assert.equal(boundary.reconnectPrepared, false); assert.equal(boundary.deliveryExecuted, false);
   const ci = json('ci'); assert.equal(ci.pr.baseRefName, 'OODS-pro'); assert.match(ci.pr.url, /^https:\/\/github\.com\//); assert(ci.runs.length > 0);
   for (const run of ci.runs) { assert(fullHead(run.headSha)); verify(run.receipt); assert(run.conclusion === 'success' || (nonempty(run.disposition) && run.evidence?.length)); for (const ref of run.evidence ?? []) verify(ref); }
+  if (manifest.accounting.readinessCorrection) assert(ci.runs.some(run => run.headSha === fixedHead && JSON.parse(bytes(run.receipt.path)).status === 'completed'), 'Decision 2008 requires completed CI on the fixed source.');
   verifySprint197Roadmap(bytes(manifest.sources.near).toString(), readHistorical(implementationHead, manifest.sources.near).toString());
   const executions = manifest.executions.map(row => { assert(nonempty(row.id) && fullHead(row.head) && row.evidencePaths.length); const evidence = row.evidencePaths.map(file => { const value = bytes(file); if (row.historical) assert(value.equals(readHistorical(row.head, file)), `Historical receipt changed: ${file}`); return references.get(file); }); return { ...row, evidence }; });
   assert.equal(new Set(executions.map(row => row.id)).size, executions.length); assert.equal(manifest.bindings.length, expected.length);
@@ -1716,10 +1722,10 @@ export function deriveSprint197Closeout({ executionHead, reviewHead, manifest, r
     for (const file of binding.evidencePaths) { bytes(file); assert(binding.executionIds.some(id => executions.find(row => row.id === id)?.evidencePaths.includes(file))); }
     return { ...criterion, status: 'proven', ...(binding.qualification ? { qualification: binding.qualification } : {}), executionIds: binding.executionIds, evidence: binding.evidencePaths.map(file => references.get(file)) };
   });
-  const shared = { missionId: 's197-m07', sprintStatus: 'Active', builderSelfCertified: false, separateReviewRequired: true, implementationHead, executionHead, reviewHead };
+  const shared = { missionId: 's197-m07', sprintStatus: 'Active', builderSelfCertified: false, separateReviewRequired: true, implementationHead, executionHead, fixedHead, reviewHead };
   return {
     [`${base}/closeout/claim-ledger.json`]: { ...shared, claims, executions, headline: { total: expected.length, proven: expected.length, unproven: 0 }, references: [...references.values()] },
-    [`${base}/closeout/review-handoff.json`]: { ...shared, evidenceCommit: reviewHead, state: 'BUILT, REVIEW PENDING', sources: manifest.sources, claims: `${base}/closeout/claim-ledger.json`, suiteAccounting: `${base}/closeout/suite-accounting.json`, pullRequest: ci, boundary, viz: summary, limitations: ['Independent visual judgment remains pending.', 'Nine HC chart types retain typed-deferred pixels; m04 decided their paint scope only.', 'Existing typed chart/pattern gaps and measured accuracy failures remain explicit.', 'Optional type/spacing/radius/elevation/focus pass deferred under memo rung 1.', 'Saved stores:17 retained cohort files unchanged; the primary store already held37 files and an expanded index before this build. Its sixteen original schemas and index entries remain unchanged; current37 hashes are preserved.', 'TraceLab re-pin prepared in m06; consumer source retained with zero added changes. No delivery or notices.'] },
+    [`${base}/closeout/review-handoff.json`]: { ...shared, evidenceCommit: reviewHead, state: 'BUILT, REVIEW PENDING', sources: manifest.sources, claims: `${base}/closeout/claim-ledger.json`, suiteAccounting: `${base}/closeout/suite-accounting.json`, pullRequest: ci, boundary, viz: summary, limitations: ['Independent visual judgment remains pending.', 'Nine HC chart types retain typed-deferred pixels; m04 decided their paint scope only.', 'Existing typed chart/pattern gaps and measured accuracy failures remain explicit.', 'Optional type/spacing/radius/elevation/focus pass deferred under memo rung 1.', 'Saved stores:17 retained cohort files unchanged; the primary store already held37 files and an expanded index before this build. Its sixteen original schemas and index entries remain unchanged; current37 hashes are preserved.', 'TraceLab re-pin is prepared at the recorded m06 checkout. TraceLab later advanced independently; boundary evidence qualifies that historical receipt. No delivery or notices.', 'Decision 2008 retains two failed full captures and records the exact generated-readiness correction through scoped verification at fixedHead; no third local capture.'] },
     [`${base}/closeout/suite-accounting.json`]: suiteAccounting,
   };
 }

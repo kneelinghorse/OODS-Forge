@@ -384,8 +384,76 @@ export function validateCloseoutCaptureLimit({ sprintId, closeout, attempts, ext
   return { decisionId: 1911, totalCaptures: 3, priorExecutionHeads, stopAfterThisCapture: true };
 }
 
+// Decision 2008 closes one generated-input blast radius; it is not a retry waiver.
+export function validateSprint197Readiness({ approval, changes, executionHead, reviewHead, failures, readHistorical, readBytes }) {
+  const base = 'artifacts/product-reality/sprint-197/m07';
+  const factsPath = 'artifacts/product-reality/sprint-196/m06/release-readiness-facts.json';
+  const beforeHash = '8fbfcb74551f8370ed52d4b10ddc55526cceba48a8ab0074f3e67192c6819f67';
+  const afterHash = 'ba27bb2e7d5c9a6b9278b916d69ac593608bfe971a769a927d3af39cf2218c1d';
+  const checkpoint = '0c6159821c2261afd060b682ca910723f31c0349';
+  const support = ['scripts/product-reality/s185-suite-accounting.mjs', 'scripts/product-reality/s185-closeout.mjs',
+    'scripts/product-reality/s185-audit-closeout.mjs', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts'].sort();
+  assert.equal(executionHead, '02d811f71a4f188142783edf0f9ea189590876c1');
+  assert.equal(approval.executionHead, executionHead); assert.equal(approval.decisionId, 2008); assert.equal(approval.missionId, 's197-m07');
+  assert.match(approval.fixedHead, /^[a-f0-9]{40}$/); assert.equal(approval.builderSelfCertified, false);
+  const verify = ref => { const bytes = readBytes(ref.path); assert.equal(hash(bytes), ref.sha256, ref.path); return bytes; };
+  const decision = JSON.parse(verify(approval.decision));
+  assert.equal(decision.id, 2008); assert.equal(decision.missionId, 's197-m07'); assert.equal(decision.sprintId, 'sprint-197');
+  assert(decision.decision.includes(afterHash) && decision.decision.includes('NO third full five-suite capture'));
+  assert.deepEqual(approval.facts, { path: factsPath, beforeSha256: beforeHash, afterSha256: afterHash });
+  const before = readHistorical(executionHead, factsPath), after = readHistorical(approval.fixedHead, factsPath);
+  assert.equal(hash(before), beforeHash); assert.equal(hash(after), afterHash); assert.equal(hash(readBytes(factsPath)), afterHash);
+  assert.equal(hash(readHistorical(reviewHead, factsPath)), afterHash);
+  // Equal hashes bind the exact approved bytes; this separate check documents
+  // the semantic limit and rejects a widened four-field claim.
+  const a = JSON.parse(before), b = JSON.parse(after);
+  a.root.manifestSha256 = b.root.manifestSha256; a.inputs[33].bytes = b.inputs[33].bytes;
+  a.inputs[33].sha256 = b.inputs[33].sha256; a.inputsSha256 = b.inputsSha256;
+  assert.deepEqual(a, b);
+  for (const [file, expected] of [
+    ['cmos/planning/forge-gate2-decision-packet.md', 'e7279d225d7e9fee64d14c6695f7b32e83f04107a19ce7e656e457c8802957c3'],
+    ['scripts/product-reality/s196-release-readiness.ts', 'a11560a8e2c31c399c6081f7aa343929025372a39f3491b12e016888fda83786'],
+    ['packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts', '9cc8db7dc765b26c1885eab95b5e6f9d63fd7bd2c7533c4cb58169890c140fc8'],
+  ]) for (const head of [executionHead, approval.fixedHead, reviewHead]) assert.equal(hash(readHistorical(head, file)), expected, file);
+  assert.deepEqual(approval.supportingFiles.map(row => row.path).sort(), support);
+  for (const row of approval.supportingFiles) {
+    assert.equal(hash(readHistorical(executionHead, row.path)), row.beforeSha256);
+    for (const head of [approval.fixedHead, reviewHead]) assert.equal(hash(readHistorical(head, row.path)), row.afterSha256);
+    assert.equal(hash(readBytes(row.path)), row.afterSha256);
+  }
+  const modified = [factsPath, ...support].sort();
+  assert.deepEqual(changes.filter(row => modified.includes(row.path)).map(row => row.path).sort(), modified);
+  for (const row of changes) {
+    if (modified.includes(row.path)) assert.equal(row.status, 'M');
+    else assertEvidenceOnlyHeadChanges([row], 'sprint-197');
+  }
+  const index = JSON.parse(readHistorical(checkpoint, `${base}/closeout/retained-evidence-index.json`));
+  const captures = index.files.filter(row => row.path.startsWith(`${base}/five-suite-closeout`));
+  assert.equal(captures.length, 40);
+  for (const ref of captures) { verify(ref); assert.equal(hash(readHistorical(checkpoint, ref.path)), ref.sha256); }
+  assert.deepEqual(failures.map(row => row.suite).sort(), ['mcp-server', 'root-core']);
+  for (const row of failures) {
+    assert.equal(row.file, 'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts');
+    assert.equal(row.testKey, 's196 release readiness derives facts without making Gate 2 decisions checks generated JSON and the marked facts block while preserving authored prose#0');
+  }
+  assert.deepEqual(approval.scoped.map(row => row.project).sort(), ['mcp-server', 'root-core']);
+  for (const row of approval.scoped) {
+    assert.equal(row.head, approval.fixedHead); assert.equal(row.exitCode, 0); assert(row.command.includes('vitest')); verify(row.log);
+    const raw = JSON.parse(verify(row.report)), files = raw.testResults;
+    assert.equal(raw.success, true); assert.equal(raw.numFailedTests, 0); assert.equal(raw.numPendingTests, 0); assert.equal(raw.numTodoTests, 0);
+    assert.deepEqual(files.map(file => path.posix.basename(file.name)).sort(), ['closeout.s196.spec.ts', 'closeout.s197.spec.ts', 'release-readiness.s196.spec.ts']);
+    assert.equal(files.find(file => file.name.endsWith('/release-readiness.s196.spec.ts')).assertionResults.length, 22);
+    assert.equal(files.flatMap(file => file.assertionResults).length, raw.numTotalTests);
+    assert(files.every(file => file.assertionResults.length && file.assertionResults.every(test => test.status === 'passed')));
+  }
+  assert.equal(approval.docs.head, approval.fixedHead); assert.equal(approval.docs.exitCode, 0); assert.equal(approval.docs.command, 'pnpm docs:check'); verify(approval.docs.log);
+  return { decisionId: 2008, fixedHead: approval.fixedHead, facts: approval.facts, supportingFiles: approval.supportingFiles,
+    scoped: approval.scoped, docs: approval.docs, preservedCaptureFiles: captures.length,
+    classification: 'introduced-generated-provenance-drift', capturedStatusesPreserved: true, thirdFullCapture: false };
+}
+
 export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, attributions = [], failureDispositions = [],
-  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation, captureExtension,
+  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation, captureExtension, readinessCorrection,
   capturePath = sprintId === 'sprint-197' ? 'artifacts/product-reality/sprint-197/m07/five-suite-closeout/four-suite-baseline.json' : sprintId === 'sprint-196' ? 'artifacts/product-reality/sprint-196/m07/five-suite-closeout/four-suite-baseline.json' : sprintId === 'sprint-195' ? 'artifacts/product-reality/sprint-195/m07/five-suite-closeout/four-suite-baseline.json' : sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
   assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196', 'sprint-197'].includes(sprintId), 'Unsupported sprint.');
@@ -531,7 +599,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const historicalFailures = observedFailures.filter(row => Object.hasOwn(baselinePaths, row.cohort));
   const closeoutFailures = observedFailures.filter(row => row.cohort === 'closeout').map(failure => {
     const classified = classifyFailure(failure, historicalFailures, failureDispositions);
-    if (!approvedTimeout && !timeoutRerun && classified.status === 'unexplained-failure') issues.push({ kind: 'unexplained-closeout-failure', executionId: failure.executionId,
+    if (!approvedTimeout && !timeoutRerun && !readinessCorrection && classified.status === 'unexplained-failure') issues.push({ kind: 'unexplained-closeout-failure', executionId: failure.executionId,
       file: failure.file, testKey: failure.testKey });
     const testSource = { commit: executionHead, path: failure.file, blob: git(['rev-parse', `${executionHead}:${failure.file}`]) };
     const historicalTestSources = classified.matchingHistoricalReceipts.map(receiptPath => {
@@ -546,8 +614,19 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', executionHead, reviewHead], { cwd: root }).status === 0;
   assert(ancestor, 'The review head must descend from the actual execution head.');
   const headChanges = changedPaths(executionHead, reviewHead);
-  let timeoutAcceptance, derivationAcceptance;
-  if (postCaptureDerivation) {
+  let timeoutAcceptance, derivationAcceptance, readinessAcceptance;
+  if (readinessCorrection) {
+    assert.equal(sprintId, 'sprint-197'); assert(!approvedTimeout && !timeoutRerun && !postCaptureDerivation && !captureExtension);
+    assert.equal(closeoutAttempts.length, 1); assert.equal(closeoutAttempts[0].measuredHead, 'c5246c3f721ea49761e4a5c5eecbbd4df0b10279');
+    assert.equal(closeout.status, 'failed'); assert.equal(closeoutAttempts[0].status, 'failed');
+    const approval = json(readinessCorrection);
+    execFileSync('git', ['merge-base', '--is-ancestor', executionHead, approval.fixedHead], { cwd: root });
+    execFileSync('git', ['merge-base', '--is-ancestor', approval.fixedHead, reviewHead], { cwd: root });
+    readinessAcceptance = validateSprint197Readiness({ approval, changes: headChanges, executionHead, reviewHead, failures: closeoutFailures,
+      readBytes: bytes, readHistorical: (head, file) => execFileSync('git', ['show', `${head}:${file}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 }) });
+    readinessAcceptance.approval = refs.get(readinessCorrection);
+    for (const row of closeoutFailures) { row.status = 'introduced-generated-provenance-drift'; row.correctionDecisionId = 2008; row.correctionHead = approval.fixedHead; }
+  } else if (postCaptureDerivation) {
     assert.equal(sprintId, 'sprint-192'); assert(!approvedTimeout && !timeoutRerun);
     derivationAcceptance = validateSprint192Derivation({ approval: json(postCaptureDerivation), changes: headChanges, executionHead, reviewHead,
       readHistorical: (head, file) => execFileSync('git', ['show', `${head}:${file}`], { cwd: root }) });
@@ -656,10 +735,11 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   }
   return { schemaVersion: '1.0.0', mission: missionId, kind: ['sprint-192', 'sprint-193', 'sprint-194', 'sprint-195', 'sprint-196', 'sprint-197'].includes(sprintId) ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
-    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout && !postCaptureDerivation,
+    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout && !postCaptureDerivation && !readinessCorrection,
       ...(derivationAcceptance ?? {}),
       ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
-      limitation: postCaptureDerivation ? 'Decision 1890 permits exactly three hash-bound derivation files after capture; all product, test, package, configuration, schema and fixture inputs retain their actual execution identity.' : approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
+      limitation: readinessCorrection ? 'Decision 2008 permits the exact four-field generated facts refresh and hash-bound accounting/audit support. Both failed captures retain their true heads and statuses; scoped verification records the correction at fixedHead, never a replacement capture.' : postCaptureDerivation ? 'Decision 1890 permits exactly three hash-bound derivation files after capture; all product, test, package, configuration, schema and fixture inputs retain their actual execution identity.' : approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
+    ...(readinessAcceptance ? { readinessAcceptance } : {}),
     ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
     ...(captureExtensionAcceptance ? { captureExtensionAcceptance } : {}),
     ...(goldenAttribution ? { goldenAttribution, goldenHistory } : {}),
@@ -667,7 +747,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     baselines, closeout, closeoutAttempts, executions, comparisons, historicalAttempts, closeoutFailures, unattributedDeltas, unusedAttributions,
     unusedFailureDispositions, validationIssues: issues,
     references: [...refs.values()].sort((a, b) => a.path.localeCompare(b.path)),
-    countPolicy: 'Status describes accounting validity, not blanket suite greenness. Counts belong to individual executed receipts. Any disclosed inherited failure remains a failed execution; new or unmatched failures invalidate accounting unless exactly bound to the explicit Sprint 188 decision 1830 timeout exception. Skips and prior failures remain visible; no cross-suite or retry total claims unique tests.',
+    countPolicy: 'Status describes accounting validity, not blanket suite greenness. Counts belong to individual executed receipts. Any disclosed inherited failure remains a failed execution; new or unmatched failures invalidate accounting unless exactly bound to the Sprint 188 decision 1830 timeout exception or Sprint 197 decision 2008 generated-readiness correction. Skips and prior failures remain visible; no cross-suite or retry total claims unique tests.',
     builderSelfCertified: false, separateReviewRequired: true };
 }
 
