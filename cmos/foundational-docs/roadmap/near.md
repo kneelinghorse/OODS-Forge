@@ -1,4 +1,279 @@
-# Near Roadmap
+# Forge Roadmap — the phases after the Product Reality Program
+
+**Status:** ACTIVE. Written 2026-09-12 in planning session `PS-2026-09-13-002`, after the Sprint 196 review closed Increment 15 (decision `#1977`) and Derek's direction reset (decision `#1979`). This document replaces the near roadmap. Every remaining item from that roadmap is placed in section 10; the roadmap it replaces is retained verbatim below the divider at the end of this file because several closeout checks read it.
+
+**Live bridge:** serves `bc12723e9` (OODS-pro after PR #105 TraceLab research objects and PR #106) since 2026-09-12 evening, 19 tools, runtime ledger 240/240 across 18 objects.
+
+**Inputs:** Derek's words on 2026-09-12 (below), the Sprint 196 review and its carries, the remaining-work phase map of 2026-09-11, the Meridian design-platform vision v0.2 (a directional work in progress, not a plan) and the article "Design systems were already broken", the state of TraceLab (Sprint 50, redesign), Stage1 (Sprint 81 complete, awaiting close) and CMOS (3.0.0).
+
+---
+
+## 1. Where we are, in plain words
+
+**What works today.** Forge is a design-system engine an agent drives over MCP. It has 109 components implemented in React and Vue, each measured for accessibility, theme and interaction in both frameworks. It has 18 objects (the original 11, plus the seven research objects TraceLab needed this week: Project, Document, Collection, Mission, Report, Evidence, Chunk) and seven contexts; every object composes into list, detail, form, timeline, card, dashboard and workflow screens, and all 240 generated screens build and run from the portable bundle in both frameworks. All 19 tools are proven at the MCP boundary and called from the bundle. Thirteen chart types render public SVG in light and dark for both brands, and 56 of the 60 rendered chart scopes are certified. Component docs, tool specs and public claims are generated from ledgers and fail a check when they drift. A browser design loop exists and runs locally. Three reference apps (Subscription, Organization, User) generate, build and run from the release bundle.
+
+**What does not work, or is not good.**
+
+- Only the Subscription app is certified usable. Organization and User generate and pass their gates but read as sample output: raw seeded strings, unseeded composite editors, unlabeled numbers, raw timestamps in places.
+- The palette is poor. Brand A's primary ramp drifts across two hues, the neutrals wander, the dark theme is an inversion rather than a design, and the six categorical chart colors barely clear their separation floor. TraceLab ships on this palette today.
+- Nine chart types have no high-contrast pixels because no high-contrast palette has ever been decided. Seven chart cells are typed gaps. Thirteen of 21 chart patterns are authoring-only. Four bubble-map scopes fail their accuracy rule.
+- Brand authoring works on this machine but not from the bundle: the bundle ships no brand source, so `brand.apply` is a typed limit there. The browser preview needs the local design-loop server, so it is a typed limit from the bundle too.
+- The brownfield path is narrowed: `map` records mappings that nothing downstream consumes.
+- Nothing is available to anyone but Derek. The repo is private, nothing is published, and there is no way for another person to install it.
+- There is no design surface beyond the local loop. Derek's ask from 2026-09-02 stands: see design work in the browser, iterate, move things, compare, collaborate.
+
+**What Derek can do with it today.** Through Claude or aquex, compose any of the 18 objects into any of the seven contexts, generate React or Vue, certify the output, render charts and dashboards, apply brand and theme, preview locally, and pull the tokens and Tailwind plugin into his own apps (TraceLab does this from vendored tarballs pinned to a Forge head).
+
+## 2. What this roadmap is for
+
+Derek, 2026-09-12, in substance:
+
+- Finish the work left on the last roadmap.
+- Packaging is a phase. Make Forge and Stage1 available: not open source, not commercializable by anyone else, Derek keeps the right to charge a company; open to individuals so they can prove the tools out and give feedback.
+- Leverage TraceLab, CMOS and Stage1 where they are useful; they are evolving too.
+- Look at the design-platform ideas (Meridian `design-platform/VISION.md`, the Substack piece) and see what resonates, what makes sense, what is possible. That vision is directional, not final.
+- The core system needs a designerly pass: colors more harmonious, dark theme fixed, data viz too. Borrowing palettes from great systems is fine.
+- Be frugal with usage this week.
+
+## 3. The phases and the sprint order
+
+| Phase | Sprint | What ships | Done when |
+|---|---|---|---|
+| **B. Look like a design system** | 197 — **LOCKED 2026-09-12** ([memo](../../planning/forge-s197-palette-decision-memo.md), [handoff](../../planning/forge-s197-build-handoff.md), CMOS `sprint-197`, missions m01–m07) | A new palette for Brand A and the dark theme, a decided high-contrast paint scope, re-derived chart colors, Brand B rebuilt by the same method; type/spacing/radius pass if it fits | Side-by-side renders of the Subscription and Organization screens and three TraceLab pages, light and dark, look better to an independent reviewer; every color gate green; the TraceLab re-pin prepared and verified |
+| **A1. Finish: application craft** | 198 | The composer templates fixed so Organization and User reach Subscription's bar; the TraceLab research objects compose at that bar | Organization and User certified usable in React and Vue; a TraceLab Evidence and Mission screen composes without hand edits |
+| **A2. Finish: charts** | 199 | The seven typed chart gaps and 13 authoring-only patterns born or retired; bubble-map fixed; high-contrast pixels rendered on the palette from 197; ECharts object placement authored; the soak and timezone carries decided | 20/20 core chart cells surface-complete or retired with reasons; 78/78 scopes rendered; certification breadth stated in one table |
+| **C. Available to individuals** | 200 | License and contributor terms in the repo; brand source in the bundle; a GitHub Release of the bundle with install steps; a README that explains Forge to a newcomer; feedback path | A person with the link installs the bundle in Claude Desktop, Claude Code or Cursor in under ten minutes and files feedback |
+| **D. See the work** | 201–202 | The design loop as a first-class surface served by the bridge (201), then the same preview inside Claude and Cursor as an MCP Apps resource (202) | Derek composes, previews, compares two alternatives, and accepts one without leaving the conversation |
+| **E. Toward the design platform** | 203+ | Forge's slices of the vision: objects born from use, context beside the design, lineage of compositions, observation against intent with Stage1, decisions checked against compositions | Each slice proven on Derek's own products first |
+| **F. Enterprise walk and parks** | later | Shopify-Forge in its own repo when Derek pulls it forward; Parts Town and mobile stay parked | Derek's call |
+
+Why the palette goes first: it is the most visible improvement one sprint can make, TraceLab's redesign (its Sprint 50) is consuming the palette right now, and the chart sprint needs the high-contrast and dark chart palettes decided before it can render the deferred scopes and migrate goldens once instead of twice. Craft and charts follow; then packaging, because releasing to individuals before the apps look and read well would collect feedback about problems we already know.
+
+Sprint numbers after 199 shift if a sprint splits. Each sprint is locked in its own short memo before build.
+
+## 4. Phase A — finish what the last roadmap started
+
+### Sprint 198 — Application craft
+
+The Product Reality Program's eighth exit criterion asks for one complete greenfield app usable in React and Vue. Subscription is certified usable (`#1844`). Organization and User are not, and the reasons are composer and template defects, not component defects. The ranked lists from the Sprint 188, 191 and 193 reviews (`#1832`, `#1881`, `#1915`) are the work:
+
+- List screens: the unwired source-template header block (second search, stretched status pill, dead Filter/Sort buttons, wrong paginator), the 390px row that truncates the Sort select, empty-state seeding.
+- Detail and timeline screens: raw ISO timestamps, unlabeled minor-unit amounts, `Archived: false` literals, raw lifecycle words on timeline entries, empty card shells, duplicated tabs, unthemed recipe surfaces (CancellationSummary, Billing/Details) that ignore the surface and border tokens.
+- Forms: field descriptions used as labels, duplicated raw fields beside formatted ones, blank date inputs for seeded datetimes, framework-inconsistent seeds.
+- Sample data: seeds that make sense (payments related to price, periods that are not 100% complete on day one), composite editors (Preference Editor, Role Assignment, Template Picker) seeded.
+- Tabs normalization in the full Invoice and Usage detail HTML (the pre-existing OODS-V007 limit).
+- The release profile: confirm it executes its own evidence rather than trusting caller-supplied hashes (exit criterion 6); fix if not. Small.
+
+Also in this sprint: compose TraceLab's Evidence (list, detail, timeline) and Mission (detail, workflow) through Forge and inspect them at the same bar. TraceLab's own screens are built in TraceLab; Forge's job is that its objects compose well enough to be worth using. This is the first time a real screen Derek wants is composed from objects a real project asked for.
+
+Exit: Organization and User certified usable in both frameworks by independent review of the screenshots; the TraceLab compositions inspected; the ranked lists closed or carried with a reason each.
+
+### Sprint 199 — Charts, finished
+
+Everything the visualization reviews carried (`#1860`, `#1881`, `#1951`, `#1978`), on the palette from Sprint 197:
+
+- The seven typed core-profile gaps: each becomes a rendering chart type or is retired from the Core Analytics Profile with a reason.
+- The 13 authoring-only patterns: public pixels or retirement, each with a reason.
+- High-contrast pixels for the nine deferred types, on the decided HC palette (closes `#1851`).
+- Bubble map: radius scaling fixed so the four nonconformant scopes pass the accuracy rule.
+- ECharts object placement (`#1944`): an authored mark and preview, and the edge-fields-to-network contract, so graph types can be placed in generated apps like bar and line are.
+- ECharts dual-axis band rendering and a per-renderer fidelity assertion (next-step 982).
+- ScaleTemporal timezone: either the renderer consumes it as a declared schema change or the field leaves the authoring schema (`#1969`). The ECharts server-side line limitation stays documented (`#1971`).
+- The strict soak (`#1946`): fix the heap slope or retire the strict variant with the measurement retained. Decide, do not carry again.
+
+Exit: one table of the 13 types × certification state with no `deferred` cells left unexplained; goldens migrated once; certification of the ECharts path stated honestly (spec-only stays uncertified).
+
+## 5. Phase B — make it look like a design system
+
+### Sprint 197 — Palette and the dark theme — LOCKED 2026-09-12
+
+Locked memo: [forge-s197-palette-decision-memo.md](../../planning/forge-s197-palette-decision-memo.md); build handoff: [forge-s197-build-handoff.md](../../planning/forge-s197-build-handoff.md); CMOS `sprint-197`, seven serial missions. Base `bc12723e9` (already served by the bridge; no delivery mission). Status moves to BUILT, REVIEW PENDING at the m07 closeout and to CERTIFIED AND CLOSED after independent review.
+
+The problem, measured (details in 5a): Brand A's primary ramp puts step 100 at oklch hue 225 and steps 300–700 at hue 274, with steps 200, 800 and 900 missing; "accent" is the primary color renamed; the neutrals drift across ten different hues so the canvas reads lavender while cards read cool blue; Brand A's light surfaces are a saturated beige under cool type, which is the main reason it reads cheap; the dark canvas is a muddy brown with a coarse elevation ladder; each status family spans four hues between its surface, border, text and icon; Brand B is five near-identical blues; two of the six categorical chart slots are both blue and a third collides with the brand orange; the sequential ramp clips out of gamut at its dark end and has no dark set; and the guardrails gate none of this (six rows, all hover/pressed deltas). There is no high-contrast palette at all, which is why nine chart types have no HC pixels.
+
+What ships:
+
+- A coherent reference palette in oklch for Brand A: one hue per ramp with monotonic lightness and a deliberate chroma curve; neutrals on one hue; five status families (info, success, warning, critical, neutral) with surface, text and border steps that pass the existing guardrails in both themes.
+- Dark as its own tuned set (surfaces, text, borders, focus rings), not an inversion.
+- A decided high-contrast palette: the concrete forced-colors-compatible set that the chart renderer and components use under `data-theme="hc"`.
+- Chart colors re-derived from the same system: six categorical slots for light and for dark with pairwise ΔE comfortably above 10 and the Role-C checks passing, a nine-step sequential ramp and an eleven-step diverging ramp, both on hues from the brand system.
+- Brand B rebuilt by the same method so it remains a truthful demonstration of the brand seam, not a second design.
+- Every semantic token name stays the same. TraceLab and the generated apps consume names (`--theme-surface-canvas`, `--theme-text-primary`, and so on), so the change reaches them by re-vendoring, with no code edits.
+- If it fits in the sprint: type scale, spacing rhythm, radius, elevation and focus-ring treatment on the component chrome and the generated app shell. If not, this becomes Sprint 200's first half and packaging moves one sprint.
+
+Where to borrow from: permissively licensed systems with admired neutrals, dark modes, status families and chart palettes (list in 5a). Borrow structure and taste, then re-derive in oklch from a generator so the guardrails and certification stay ours and Brand B cannot drift.
+
+Sprint shape, six missions: (1) the oklch ramp generator and the extended guardrails first, and prove the current palette fails them; (2) reference and light sets regenerated from seeds; (3) dark as its own set, the 52-cell chart contrast matrix re-measured; (4) chart colors, categorical slots at pairwise ΔE of 12 or more under color-vision-deficiency simulation so certify passes clean instead of with a caution; (5) one golden migration under the Sprint 195 procedure, about 100 pinned hashes attributed then updated, one capture at close; (6) prove it looks better: side-by-side renders of the generated Subscription list, detail and workflow screens and three TraceLab pages, old versus new, light and dark, both brands, at three widths, then re-pin the tokens in TraceLab and restart the bridge. An independent reviewer looks at the screens and says whether it reads as a designed system.
+
+### 5a. Palette assessment (from the 2026-09-12 research read)
+
+Measured defects in the current tokens:
+
+- Primary ramp: hue 225.69 at step 100, 274.55 at steps 300–700; lightness steps of 0.253 / 0.040 / 0.100 / 0.100 / 0.040; chroma dips at 500 instead of peaking mid-ramp; steps 200, 800, 900 absent.
+- `ref.color.accent` is pure aliasing of primary (100/300/400/500 equal primary 100/500/600/700); there is no second hue in the reference layer.
+- Neutrals sit on hues 286, 248, 248, 264, 268, 269, 270, 269, 268, 266 with a chroma curve that peaks at step 700 and falls, so dark text reads warmer than the borders above it.
+- Status families drift inside themselves: critical 20.8 / 27.0 / 32.9 / 32.4, warning 82.1 / 79.9 / 74.2 / 73.7, success 159.9 / 157.3 / 155.0 / 153.3. A banner's surface, border, text and icon are four hues.
+- Brand A light canvas oklch(0.967 0.03 86) and subtle oklch(0.893 0.048 86): a saturated beige under text at hue 265.
+- Brand A dark canvas oklch(0.18 0.05 45), raised 0.24, subtle 0.30, all at chroma 0.05–0.06: muddy brown, coarse elevation.
+- Brand B: surfaces 230, interactive 232, focus and accent text 238, accent 240, info 252/254. Brand and "info" are indistinguishable.
+- Chart categorical slots 01 (hue 265) and 02 (274) are both blue; slot 06 (hue 47) collides with Brand A's brand orange (43–45). Role-A pairwise ΔE00 minimum 9.88 light / 9.95 dark against the clean line of 10 (`certify-contrast.ts:92`); passes with a caution.
+- Dark overrides exist only for the categorical slots; sequential and diverging have no dark set. Sequential step 09 oklch(0.14 0.15 250) is out of sRGB gamut. Diverging pairs hue 210 against 25 with asymmetric chroma under a gate that checks lightness only.
+- `tools/a11y/guardrails/relative-color.csv` has six rows, all interactive hover/pressed deltas. Nothing gates ramp monotonicity, per-family hue consistency or neutral drift.
+
+Reference systems worth borrowing from (licenses verified 2026-09-12):
+
+| System | License | Borrow for |
+|---|---|---|
+| Radix Colors | MIT | Neutral scales with 12 steps that each have a job; separately tuned dark scales |
+| GitHub Primer primitives | MIT | Dark and dark-dimmed as designed sets; one hue per status family |
+| IBM Carbon | Apache-2.0 | Data viz: categorical, sequential and diverging palettes tested for color-vision deficiency |
+| Tailwind CSS v4 default palette | MIT | Already oklch; lightness and chroma curves per step |
+| Material color utilities | Apache-2.0 | The generator method: a full tonal ramp from one seed with contrast guarantees |
+| Open Props | MIT | How few hues a system needs; adaptive light/dark |
+| Atlassian design tokens | Apache-2.0 | Semantic naming closest to ours; check our frozen names cover the real surface set |
+| Shopify Polaris | Modified MIT with a Shopify brand clause | Study the warm admin neutral stack; do not copy values |
+
+Blast radius: reference JSON (brand, neutral, status), both brands' base/dark/hc, the theme0 and dark theme aliases, `viz-scales.json`, the guardrail CSV and the two validator scripts, pinned svgHash values in the viz recipe and pattern registries (60 + 32), the certified matrix (8), 14 snapshot files, and hand-pinned literals in the certify and Vega-Lite adapter specs. Gates that re-measure: `tokens-validate`, `check:tokens`, certify contrast, the 52-cell contrast matrix, `docs:check`, one capture, and TraceLab's literal-color gate plus a visual pass after re-pinning. TraceLab sets both `data-theme` and the Tailwind dark class from one bootstrap script, so the new dark set reaches it through the existing scope; no new semantic name may be added without a matching entry in its Tailwind config, which is why this sprint adds none.
+
+## 6. Phase C — available to individuals
+
+### Sprint 200 — License, release shape, onboarding
+
+Derek's terms, turned into decisions (not questions):
+
+- **License: PolyForm Noncommercial 1.0.0** (SPDX `PolyForm-Noncommercial-1.0.0`) for Forge and for Stage1. Individuals, students, hobbyists, nonprofits and governments may run, modify and share it for free; any commercial purpose, including a company using it internally, needs a license from Derek, sold separately at his price. It is source-available, not open source, never converts to open source, and leaves Derek every other right. The alternatives and why each was rejected are in 6a. Stage1's change is done from Stage1's repo.
+- **Contributions.** The noncommercial license alone does not let Derek sell a commercial license that contains someone else's patch. A one-paragraph inbound grant in CONTRIBUTING (perpetual, irrevocable, sublicensable license to the contribution under any terms) plus a required checkbox in the PR template, in place before the repo goes public. A signed CLA only if someone lands substantial code.
+- **Repo changes.** Root LICENSE replaced with the PolyForm text, with Derek's real name or entity as the license holder (the current file names "Design System Team", which muddies the ownership chain and the right to sell); every one of the 22 manifests set to the SPDX identifier, including the generator that writes the packed `dist/pkg/package.json`; the ten manifests that currently say MIT flipped; the five packages with a public publish flag (`@oods/tokens`, `@oods/tw-variants`, `@oods/a11y-tools`, `@oods/viz-core`, `@oods/viz-render`) set `private:true` until Derek wants them on a registry; a plain-English LICENSING paragraph in the README (GitHub's license detector will show "Other" for PolyForm, so the README must say it); a COMMERCIAL file with how to reach Derek; a third-party notices file in the bundle, since PolyForm covers only Derek's code; a short FAQ for the fuzzy edge (a freelancer evaluating for client work is arguably commercial); "open source" wording removed from README and CHANGELOG.
+- **What was already MIT.** The public OODS-Foundry repository (last pushed 2026-03-01) has no LICENSE file but its package manifest declares MIT; anyone who fetched those commits keeps a perpetual MIT grant to that snapshot, and Derek cannot revoke it. New work in OODS-Forge has no such exposure once the current MIT LICENSE and manifests are closed. Stated plainly in the README, no legal theater.
+- **The commercial product.** PolyForm reserves the right to sell but does not create the product. A one-page commercial license agreement and a price are written in this sprint so a company that asks gets an answer.
+- **Distribution shape.** The repository becomes public as source-available. The existing portable bundle (13 runtime packages, bridge included, hash-bound readiness attestation, built by `scripts/runtime/assemble.mjs` and proven in Sprint 196) is attached to a GitHub Release with install steps for Claude Desktop, Claude Code and Cursor over stdio. Its runbook still frames it as a private bundle for named consumers; that framing and any consumer gating go, and the bundle carries the LICENSE and third-party notices. No npm publishing (npm signals open reuse and a publish is irreversible). A `.mcpb` one-click bundle is the natural second step once individuals ask; no OCI image. Clone-and-build stays documented as the contributor path, not the user path.
+- **Brand source in the bundle.** Ship the token sources so `brand.apply` works from the bundle and the typed limit closes.
+- **Alias retirement.** The `/ported` and `/readiness-ported` export aliases go; no external migration exists to wait for.
+- **Onboarding.** This is the long-standing "communicate Forge" desire, now with a reason: a README that says what an object, a trait and a context are in plain words, what Forge generates and certifies, and a ten-minute first run (install, compose one screen, certify it, see it). `docs/how-forge-works.html` stays as the deep explanation.
+- **Feedback path.** GitHub Issues with two templates (bug, "this did not read right") and a FEEDBACK file that says what kind of feedback helps.
+
+The one action only Derek can take: flipping the repository to public and confirming the license holder's name. One line, when the sprint is reviewed.
+
+Exit: a person who is not Derek installs the release from the link, composes and certifies one screen in under ten minutes, and files feedback. Measured with one outside individual before the sprint is called done.
+
+### 6a. License findings (from the 2026-09-12 research read, verified against the license texts)
+
+Why PolyForm Noncommercial fits Derek's three requirements: it grants every normal use (run, modify, redistribute) for noncommercial purposes, so individuals can prove the tools out; commercial use is simply outside the grant, so nobody else can commercialize; the license holder keeps every other right, so paid commercial licenses stay available; it is lawyer-drafted, plain-language and SPDX-registered, so package tooling accepts it; and it has no conversion clause.
+
+Rejected, one line each:
+
+| License | Why not |
+|---|---|
+| PolyForm Strict | Forbids distributing changes or new works; individuals could not fork or patch |
+| Prosperity Public License 3.0 | Close, but gives commercial users a free 30-day trial and exemptions Derek did not ask for |
+| Business Source License 1.1 | Requires a change date (at most four years) after which it becomes open source |
+| Functional Source License | Converts to Apache or MIT after two years and allows most commercial use meanwhile |
+| Elastic License 2.0 | Permits ordinary commercial and internal business use; only bars managed-service resale |
+| Sustainable Use License (n8n) | Explicitly allows internal business use by companies |
+| Commons Clause | A rider, not a license; "substantially derives value" is ambiguous and it only bars selling |
+| CC BY-NC 4.0 | Creative Commons recommends against it for software; no source or patent terms |
+
+Risks, plainly: "noncommercial" has fuzzy edges (answer with a FAQ, not amendments); some companies ban non-OSI dependencies and registries will not carry it, so contribution volume stays low; the MIT snapshot in OODS-Foundry is out for good; enforcement is Derek's alone and the deterrent is the text, not litigation; a careless publish from any of the five public-flagged packages would put MIT-labeled code on a registry permanently, which is why `private:true` lands first.
+
+Sources: polyformproject.org (Noncommercial and Strict 1.0.0), spdx.org (PolyForm-Noncommercial-1.0.0), prosperitylicense.com 3.0.0, fsl.software, commonsclause.com, the Creative Commons software FAQ, github.com/modelcontextprotocol/mcpb, the OODS-Foundry repository metadata and manifest, and this repo's LICENSE, `package.json` and `docs/runtime/portable-runtime.md`.
+
+## 7. Phase D — see the work
+
+Derek's direction from 2026-09-02 is the whole of this phase: see design work in progress in the browser, iterate, move things, adjust, collaborate. Two sprints.
+
+### Sprint 201 — The design loop becomes the surface
+
+The local design loop (`scripts/design-loop`, `design.preview`) becomes a first-class surface: bundled and served by the bridge (closing the typed limit from the bundle), one URL per composition, brand and theme toggles, two alternatives side by side, a "what changed" view between variants, and the certification report beside the render. Edits made in the preview (reorder a region, swap a component, change a seed) round-trip into the composition rather than living in the browser only. Every preview keeps its lineage: which composition it came from, at which head.
+
+### Sprint 202 — The preview inside the conversation
+
+The same preview as an MCP Apps `ui://` resource so it appears inside Claude and Cursor next to the tool call (the candidate from the 2026-08-31 landscape read, DT-R002). Accept, request changes, and compare live from the conversation. Figma remains parked: its agent path is gated and priced, and nothing here depends on it.
+
+Exit: Derek composes a screen, previews it in the conversation, compares two alternatives, and accepts one, with the accepted composition and its certification saved.
+
+## 8. Phase E — toward the design platform: what Forge owns
+
+The Meridian vision v0.2 describes a platform that keeps a useful, inspectable understanding of a product: objects and behaviors, evidence, commitments, working possibilities, and how the software behaves. Read against what exists, this is what resonates for Forge, what makes sense, and what is possible now.
+
+**What resonates and is already Forge's.**
+
+- *Objects connect design to the business.* This is Forge's founding idea and it is real: traits like Cancellable and Billable carry business semantics into every screen. The vision's claim that a subscription's states, obligations and permitted actions shape the interface is exactly how the composer works.
+- *Working possibilities with lineage.* Compositions are durable semantic work in progress, not disposable renders. Phase D gives them lineage and comparison.
+- *A design environment entered from several directions.* An agent conversation, a browser preview, and (later) a canvas are entry points into the same compositions.
+
+**What makes sense as Forge's next slices, in order, each proven on Derek's own products first.**
+
+1. *Objects born from use (Sprint 203).* TraceLab's seven research objects came from a real need and landed in one PR. Do the same for Derek's other products as they redesign: cmos-dashboard's decisions, missions, sprints and sessions; Hive's people, articles and cohorts. The registry grows because a real screen needed it, never speculatively.
+2. *Context beside the design (Sprint 203–204).* When a composition is previewed, show the CMOS decisions and TraceLab evidence about that object next to it, pulled live through the tools that already exist (`cmos_context` search, `tracelab_search`), keyed on the object name and Forge URN. This is the vision's central promise in its smallest honest form: less work reconstructing context. It is also the first cross-tool join and needs no binding table yet.
+3. *Observation against intent (Sprint 204–205).* Stage1 captures TraceLab's live frontend; Forge composes the same screens from the same objects; the difference is presented as evidence for review. This is the loop the article describes, run on Derek's own product with three of his own tools. Stage1's Sprint 81 already fixed the token seam between the two engines.
+4. *Decisions checked against compositions (research in 205, slice after).* The article's two-filters example: a decision with stated applicability, checked against a composition, reporting relevance, conflict, exception or non-applicability. Start by attaching decisions to recipes and components ("why this exists, where it applies") and surfacing them in `catalog_list` and the preview. Conflict detection comes only after applicability is expressible.
+
+**What is possible but not Forge's to build.** Sustained upkeep and small-model routing belong to CMOS and Hive. The identity binding table (`node_id` across Figma keys, code identifiers and runtime anchors) waits until a second surface adapter exists; Forge URNs are enough while the surfaces are Forge and Stage1. Hosting a multi-tenant platform is not on the table. CMOS stays the system of record for decisions; Forge reads it.
+
+**What does not resonate.** Autonomous semantic reconciliation (Stage1 shelved it after confident errors, and nothing has changed). A universal proposal-and-approval queue for every difference. Vendor-absence as a foundation.
+
+Phase E is scheduled loosely on purpose. Each slice is locked only when the previous one is proven on a real screen, and the sprint count is a guess. The research read for slice 4 is the one place a TraceLab mission is warranted.
+
+## 9. Phase F — enterprise walk and the parks
+
+- **Shopify-Forge** (its own repo, Sprint 0 done 2026-08-25). The enterprise walk resumes when Derek pulls it forward; it depends on the brand seam from the bundle (Phase C) and benefits from the design surface (Phase D). Not scheduled here.
+- **Parts Town brand seed and mobile federation.** Parked until Derek unparks; their next-steps are carried with no target.
+- **Narrated correlation certification.** Parked (`#1335`); resumes only on a real case where an agent is misled.
+- **`schema.ingest`.** Shelved (`#1652`).
+
+## 10. Remaining-work ledger from the last roadmap
+
+Every open item from the near roadmap, its carries and the phase map, and where it lands. Nothing is dropped silently.
+
+| Item | Source | Lands |
+|---|---|---|
+| Application craft: ranked list/detail/form/timeline/sample-data defects | `#1832`, `#1881`, `#1845`, `#1915` | Sprint 198 |
+| Organization and User certified usable | exit criterion 8 | Sprint 198 |
+| Tabs normalization limit in full Invoice/Usage detail HTML (OODS-V007) | `#1951`, `#1978` | Sprint 198 |
+| Release profile executes its own evidence | exit criterion 6, phase map | Sprint 198 (check and fix) |
+| TraceLab research objects compose at the craft bar | TraceLab UX-1, PR #105 | Sprint 198 |
+| Palette: dark categorical set, Role-A separation, tooltip chrome, border-strong token, hue revision | `#1860`, `#1881`, next-step 831 | Sprint 197 |
+| High-contrast chart pixels (nine types, 18 scopes) | `#1851`, `#1951` | Palette decided 197, rendered 199 |
+| Seven typed core-profile chart gaps; 13 authoring-only patterns | `#1951`, `#1978` | Sprint 199 |
+| Bubble-map radius scaling (four scopes) | `#1951` | Sprint 199 |
+| ECharts object placement | `#1944` | Sprint 199 |
+| ECharts dual-axis band rendering, per-renderer fidelity assertion | next-step 982 | Sprint 199 |
+| ScaleTemporal timezone metadata | `#1969` | Sprint 199 (decide) |
+| ECharts server-side line rendering limitation | `#1971` | Documented limit, stays |
+| Strict soak heap slope | `#1442`, `#1946` | Sprint 199 (decide) |
+| `brand.apply` typed limit from the bundle (no brand source) | OODS-N020, `#1978` | Sprint 200 |
+| `design.preview` typed limit from the bundle (local server) | OODS-N019, `#1978` | Sprint 201 |
+| Alias retirement (`/ported`, `/readiness-ported`, `/css-ported`) | `#1382`, `#1385` | Sprint 200 |
+| Public publication, licensing, distribution, installer, "communicate Forge" onboarding | parks, gate-2 packet, strategic direction | Sprint 200, decided in section 6 |
+| Design-surface adapter (MCP Apps, Figma, Penpot, canvas) | parks, DT-R002 | Sprints 201–202 (MCP Apps); Figma parked |
+| Brownfield `map` consumption | phase map | Phase E slice 3; the claim stays narrowed until then |
+| Classification approval, `approvedRuntimeCensus` | `#1438` | Closed as an agenda item by `#1979`; labels stay proposed; nothing depends on it |
+| Nine disputed catalog rows, two alias/merge proposals | `#1421`, `#1881` | Implementation closed by 109/109 in Sprint 193; the labeling question closes with the line above |
+| Accessibility/theme/interaction maturity beyond measurement | `#1881`, roadmap parks | Sprint 197 (chrome and focus) and 198 (interaction states in craft review) |
+| CI-14 power floor re-ratification | next-step 1300 | Trigger-based; unchanged |
+| Parts Town: brand seed, collisions, stage1 re-extraction, PT questions, easing emission, strain ledger | next-steps 881, 1122, 1123, 1128, 1149, 1189, 1196, 1213, 1262 | Parked, carried with no target |
+| Shopify-Forge enterprise walk | strategic direction | Phase F, Derek's pull |
+| Consumer reconnect notices, gate-2 decision packet | `#1979` | Removed; never again |
+| Derek's git housekeeping (branch protection, dead `main`, tracked scratch files) | next-steps 1150, 1225 | Not roadmap work; dropped from the list |
+
+The Product Reality Program's ten exit criteria, for the record: 1–2 (classification) closed as not needed; 3, 4, 5, 10 met; 6 checked in Sprint 198; 7 completed in Sprints 197 and 199; 8 completed in Sprint 198; 9 (design-surface writes) is Phase D.
+
+## 11. How sprints run from here
+
+- One short locked memo per sprint: what ships, what proves it, the descope ladder. No decision packets.
+- Build in an isolated worktree on a `codex/sprint-NNN-*` branch, PR into `OODS-pro`; the primary checkout is the served bridge checkout, rebuilt and restarted by the agent after each merge.
+- Ship first, verify with the suites the change touches, one full capture at sprint close. No per-mission baselines.
+- Independent review in a separate session; it opens by saying where we are in plain words: what works, what does not, what Derek can do with it today. Sprint complete is the agent's call once the review certifies.
+- No consumer notices, ever. TraceLab, cmos-dashboard, forge-demos and aquex-mcp are Derek's projects.
+- Next work comes from this roadmap or Derek's own list, never from lists created during a session. Residue found at review is recorded and folded into the next sprint that touches the surface.
+- Research runs on non-Fable agents when usage is tight.
+
+---
+
+# Retained record — Product Reality Program near roadmap, Increments 1–15 (Sprints 182–196)
+
+*Retained verbatim on 2026-09-12 when the roadmap above replaced it. It is the measured history of the program and the source several closeout checks read; it is not the active plan. Its sprint-scoped numbers (for example 154/154 runtime cells) describe the heads named in each section.*
+
 
 **Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`; Sprint 192 independently certified and closed by `#1891`; residual carries `#1892`; Sprint 193 independently certified and closed by `#1914`; residual craft carries `#1915`; Sprint 194 independently certified and closed by `#1934`; residual carries `#1935`; Sprint 195 independently certified and closed by `#1950`; residual carries `#1951`; Sprint 196 independently certified and closed by `#1977`; residual carries `#1978`
 
