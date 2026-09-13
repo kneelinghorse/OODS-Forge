@@ -60,6 +60,8 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   const fields = schema.objectSchema ?? {};
   const minorUnits = Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100);
   const isControl = (node: UiElement) => controls.has(node.component) || (VIZ_CONTROL_IDS as readonly string[]).includes(node.component) || /(?:Editor|Form|Picker|Selector)$/.test(node.component);
+  const traitFields = new Set(composed.traits.flatMap(trait => Object.keys(trait.definition.schema ?? {})));
+  const summaryField = (name: string) => !traitFields.has(name) || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || name.endsWith('_minor');
   const isScalar = (name: string) => /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(fields[name]?.type ?? '');
   const labelField = ['plan_name', 'name', 'title', 'display_name', 'label', `${composed.object?.name?.toLowerCase()}_id`, 'id'].find(name => fields[name]);
   const fieldRow = (name: string, id: string): UiElement => {
@@ -99,12 +101,14 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       }
       node.children = node.children?.map(prune).filter((child): child is UiElement => Boolean(child));
       if (['Stack', 'Card', 'Tabs'].includes(node.component) && !node.children?.length) return undefined;
+      if (node.component === 'Card' && node.layout?.type === 'sidebar' && node.children?.length === 1) node.layout = { ...node.layout, type: 'stack' };
       return node;
     };
     screen.children = screen.children?.map(prune).filter((child): child is UiElement => Boolean(child));
     let header: UiElement | undefined;
     let tabs: UiElement | undefined;
     walk(screen, node => { if (node.id.includes('detail-header')) header = node; if (node.component === 'Tabs') tabs = node; });
+    if (header) header.layout = { ...header.layout, type: 'stack', gapToken: 'stack-default' };
     if (header && labelField && !header.children?.some(child => child.component === 'DetailHeader' || child.children?.some(item => item.component === 'DetailHeader'))) {
       header.children = [{ id: `${header.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 2 } }, ...(header.children ?? [])];
     }
@@ -112,7 +116,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       covered.add(labelField);
       if (!header && !screen.children?.some(node => node.component === 'DetailHeader')) screen.children = [{ id: `${screen.id}-record-title`, component: 'DetailHeader', props: { titleField: labelField, headingLevel: 2 } }, ...(screen.children ?? [])];
     }
-    const remaining = Object.keys(fields).filter(name => isScalar(name) && !covered.has(name));
+    const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name));
     if (remaining.length && !tabs) {
       tabs = { id: `${screen.id}-record-tabs`, component: 'Tabs', children: [] };
       screen.children = [...(screen.children ?? []), { id: `${screen.id}-record-body`, component: 'Card', children: [tabs] }];
