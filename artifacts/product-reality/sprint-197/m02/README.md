@@ -1,11 +1,10 @@
 # s197-m02 — reference and light palette checkpoint
 
-The reference and Brand A/B light work is implemented and verified. Mission status
-is **Blocked**, because the locked m02 exit criterion requires the full
-`pnpm tokens-validate` green, including dark/chart work explicitly scheduled for
-m03/m04. The user was asked whether to use per-mission scoped gates with full green
-after m04, or move the dependent work earlier. No waiver has been assumed and this
-mission is not marked complete.
+The reference and Brand A/B light work is implemented and verified. The user
+approved scoped gates ("yes, use scoped gates"): m02 requires reference/light gates;
+m03 requires its dark/shell gates; full token validation is required after m04.
+`gate-resolution.json` records completion under that approval. The earlier blocked
+checkpoint and its actual full-validator failures remain retained as history.
 
 The sole palette authoring input remains `packages/tokens/src/palette/seeds.json`:
 Brand A primary hue 43, accent 305, neutral 265; status hues 245/155/85/25/285;
@@ -39,10 +38,8 @@ mounted correctly and all requested cells were measured with zero failures.
 No component code or contract changed. No five-suite closeout capture was run.
 `builderSelfCertified: false`.
 
-## Resume
+## Next
 
-Resolve the CMOS m02 gate-order conflict, then either accept the measured scoped
-reference/light gate and complete m02, or amend the serial mission boundaries to
-bring the dark/chart dependency work forward. Do not call the existing full
-validator green: `gate-commands.json` retains its actual exit status. The next
-scheduled implementation is m03 (dark palette and app-shell theme preference).
+Continue m03 (dark palette and app-shell theme preference), then m04 (chart colors
+and HC scope). Full token validation must be green after m04. The only golden
+migration remains m05.
