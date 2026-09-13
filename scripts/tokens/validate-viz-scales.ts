@@ -7,7 +7,7 @@ import Color from 'colorjs.io';
 
 import { loadDtcgTokens, type DtcgToken } from '../../src/tooling/tokens/dtcg.js';
 
-import { checkPalette, selectRamp, summarizeChecks } from './palette-checks.js';
+import { checkPalette, summarizeChecks } from './palette-checks.js';
 
 const projectRoot = process.cwd();
 const vizScaleSource = path.resolve(projectRoot, 'packages/tokens/src/viz-scales.json');
@@ -81,7 +81,8 @@ export async function runVizScaleValidation(sourcePath: string = vizScaleSource)
     const dark = await loadDtcgTokens(source);
     const required = [...collections.sequential, ...collections.diverging].map((entry) => entry.token.path.join('.'));
     results.push(...checkPalette('dark-coverage', `${brand}/dark`, dark, dark, required));
-    results.push(...checkPalette('gamut', `${brand}/dark/viz`, selectRamp(dark, 'viz.scale'), dark));
+    results.push(...validateVizScaleCollections(collectVizScaleCollections(dark))
+      .map(check => ({ ...check, scope: `${brand}/dark/${check.scope}` })));
   }
   return results;
 }

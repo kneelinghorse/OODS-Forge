@@ -10,7 +10,7 @@ import StyleDictionary from 'style-dictionary';
 import { register as registerSdTransforms, expandTypesMap } from '@tokens-studio/sd-transforms';
 import ColorJs from 'colorjs.io';
 
-import { auditAllScopes, resolveScopeFiles } from './collision-guard.mjs';
+import { auditAllScopes, resolveScopeFiles, isVizColorTokenPath } from './collision-guard.mjs';
 import { renderBridgeBlock } from './brand-bridge.mjs';
 import { MOBILE_DEFERRED_TYPES, MOBILE_REM_REFERENCE_SIZE, mobileDimensionClass } from './mobile-manifest.mjs';
 
@@ -161,10 +161,10 @@ function runCollisionGuard() {
  *
  * Block 1 is the DEFAULT_SCOPE's FULL dictionary under `:root` (memo SS3 D2/D3 — one
  * file, because document.ts:20 inlines exactly one path). Blocks 2..7 carry the
- * `color.brand.<X>.*` literals and declared categorical theme overrides for their cell,
+ * `color.brand.<X>.*` literals and declared chart color theme overrides for their cell,
  * under the D9 two-attribute selectors.
  *
- * Brand literals and declared categorical overrides are re-emitted per scope. The `brand.<X>.*` aliases are
+ * Brand literals and declared chart color overrides are re-emitted per scope. The `brand.<X>.*` aliases are
  * emitted once at `:root` as `var(--oods-color-brand-...)` references, and a `var()`
  * resolves at computed-value time on the element, so they pick up the scoped override
  * through the cascade without being restated.
@@ -189,7 +189,7 @@ async function renderCssBundle() {
         destination: 'tokens.css',
         format: 'css/variables',
         filter: (token) => oodsScoping.isBrandToken(token, scope.brand)
-          || (/^viz\.scale\.categorical\.0[1-6]$/.test(token.path.join('.'))
+          || (isVizColorTokenPath(token.path.join('.'))
             && [
               'src/tokens/brands/A/base.json',
               'src/tokens/brands/B/base.json',

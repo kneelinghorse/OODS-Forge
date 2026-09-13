@@ -17,7 +17,7 @@ describe('seed-generated palette boundary', () => {
     const seeds = await loadPaletteSeeds();
     const root = await scratch();
     const original = generatePaletteFiles(seeds);
-    expect(original.size).toBe(11);
+    expect(original.size).toBe(14);
     expect(generatePaletteFiles(seeds)).toEqual(original);
     await writePaletteFiles(original, root);
     expect(await writePaletteFiles(original, root, true)).toEqual([]);
@@ -66,7 +66,8 @@ describe('seed-generated palette boundary', () => {
       const oldKeys = tokenKeys(JSON.parse(await readFile(file, 'utf8')));
       const newKeys = tokenKeys(JSON.parse(bytes));
       for (const key of oldKeys) expect(newKeys, file).toContain(key);
-      if (file.includes('/brands/')) expect(newKeys, file).toEqual(oldKeys);
+      // The frozen semantic contract separately permits new dark/HC declarations
+      // of existing viz names; it still forbids new public names or removals.
     }
     const a = JSON.parse(files.get('packages/tokens/src/tokens/brands/A/base.json')!).color.brand.A;
     const b = JSON.parse(files.get('packages/tokens/src/tokens/brands/B/base.json')!).color.brand.B;

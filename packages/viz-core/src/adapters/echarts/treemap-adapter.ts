@@ -83,7 +83,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
         borderColor: chrome.emphasisBorder,
         borderWidth: 2,
         shadowBlur: 2,
-        shadowColor: 'rgba(0, 0, 0, 0.05)',
+        shadowColor: scope.theme === 'hc' ? chrome.background : 'rgba(0, 0, 0, 0.05)',
       },
     },
   }) as TreemapSeriesOption;

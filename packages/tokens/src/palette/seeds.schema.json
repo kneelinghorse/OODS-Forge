@@ -5,7 +5,7 @@
   "required": [
     "version",
     "brands",
-    "retainedViz"
+    "viz"
   ],
   "properties": {
     "version": {
@@ -253,210 +253,124 @@
         }
       }
     },
-    "retainedViz": {
+    "viz": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "base",
-        "dark"
+        "categorical",
+        "sequential",
+        "diverging"
       ],
       "properties": {
-        "base": {
+        "categorical": {
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "scale"
+            "hueOffset",
+            "light",
+            "dark"
           ],
           "properties": {
-            "scale": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "categorical"
-              ],
-              "properties": {
-                "categorical": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "05"
-                  ],
-                  "properties": {
-                    "05": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    }
+            "hueOffset": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 60
+            },
+            "light": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "lightness",
+                  "chromaPeak"
+                ],
+                "properties": {
+                  "lightness": {
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 0.99
+                  },
+                  "chromaPeak": {
+                    "type": "number",
+                    "minimum": 0.045,
+                    "maximum": 0.4
+                  }
+                }
+              }
+            },
+            "dark": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "lightness",
+                  "chromaPeak"
+                ],
+                "properties": {
+                  "lightness": {
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 0.99
+                  },
+                  "chromaPeak": {
+                    "type": "number",
+                    "minimum": 0.045,
+                    "maximum": 0.4
                   }
                 }
               }
             }
           }
         },
-        "dark": {
+        "sequential": {
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "scale"
+            "hue",
+            "chromaPeak"
           ],
           "properties": {
-            "scale": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "categorical"
-              ],
-              "properties": {
-                "categorical": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "01",
-                    "02",
-                    "03",
-                    "04",
-                    "05",
-                    "06"
-                  ],
-                  "properties": {
-                    "01": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "02": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "03": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "04": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "05": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "06": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "$type",
-                        "$value"
-                      ],
-                      "properties": {
-                        "$type": {
-                          "const": "color"
-                        },
-                        "$value": {
-                          "type": "string",
-                          "pattern": "^oklch\\([0-9.]+ [0-9.]+ [0-9.]+\\)$"
-                        },
-                        "$description": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+            "hue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "chromaPeak": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 0.4
+            }
+          }
+        },
+        "diverging": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "negativeHue",
+            "positiveHue",
+            "chromaPeak"
+          ],
+          "properties": {
+            "negativeHue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "positiveHue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "chromaPeak": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 0.4
             }
           }
         }

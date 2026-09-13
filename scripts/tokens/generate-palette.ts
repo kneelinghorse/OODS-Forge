@@ -17,10 +17,14 @@ export interface BrandSeed {
 export interface PaletteSeeds {
   version: 1;
   brands: { A: BrandSeed; B: { primaryHue: number } };
-  retainedViz: { base: Record<string, unknown>; dark: Record<string, unknown> };
+  viz: {
+    categorical: { hueOffset: number; light: Array<{ lightness: number; chromaPeak: number }>; dark: Array<{ lightness: number; chromaPeak: number }> };
+    sequential: ToneSeed;
+    diverging: { negativeHue: number; positiveHue: number; chromaPeak: number };
+  };
 }
 type TokenTree = { [key: string]: unknown };
-export type PaletteGroup = 'reference' | 'light' | 'dark';
+export type PaletteGroup = 'reference' | 'light' | 'dark' | 'viz' | 'hc';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SEED_PATH = 'packages/tokens/src/palette/seeds.json';
 const TOKEN_ROOT = 'packages/tokens/src/tokens';
@@ -58,10 +62,13 @@ function neutralTone(seed: ToneSeed, l: number): string {
 }
 
 function leaf(value: string, name: string) {
+  const system = /^(Canvas|CanvasText|Highlight|HighlightText|GrayText|LinkText)$/.test(value);
   return {
     $type: 'color', $value: value,
-    $description: `${name}; generated from palette/seeds.json by generate-palette.ts.`,
-    $extensions: { ods: { fallback: new Color(value).to('srgb').toString({ format: 'hex', collapse: false }).toUpperCase() } },
+    $description: `${name}; generated from palette/seeds.json by generate-palette.ts.`
+      + (!system && /^color\.brand\.[AB]\.text\.onInteractive$/.test(name)
+        ? ' Foreground contrast ≥4.5:1 on its default interactive surface.' : ''),
+    ...(!system ? { $extensions: { ods: { fallback: new Color(value).to('srgb').toString({ format: 'hex', collapse: false }).toUpperCase() } } } : {}),
   };
 }
 
@@ -149,11 +156,66 @@ function darkThemeTrees(seed: BrandSeed): Record<string, TokenTree> {
     text: theme({ text, icon }), status: theme({ status }), focus: theme({ focus }) };
 }
 
+function vizTree(seeds: PaletteSeeds, theme: 'light' | 'dark' | 'hc'): TokenTree {
+  const tree: TokenTree = {};
+  const put = (role: string, value: string) => setColor(tree, `scale.${role}`, value);
+  const categorical = seeds.viz.categorical;
+  for (let i = 0; i < 6; i += 1) {
+    const slot = categorical[theme === 'dark' ? 'dark' : 'light'][i];
+    put(`categorical.0${i + 1}`, theme === 'hc' ? 'CanvasText'
+      : paletteColor(slot.lightness, slot.chromaPeak, (categorical.hueOffset + i * 60) % 360));
+  }
+  for (let i = 0; i < 9; i += 1) {
+    const l = (theme === 'dark' ? .96 : .94) - i * .1;
+    put(`sequential.0${i + 1}`, theme === 'hc' ? paletteColor(l, 0, seeds.brands.A.neutral.hue)
+      : tone(seeds.viz.sequential, l, theme === 'dark' ? .8 : 1));
+  }
+  const diverging = seeds.viz.diverging;
+  for (let step = 1; step <= 5; step += 1) {
+    const l = (theme === 'dark' ? .86 : .82) - step * .12;
+    const desired = diverging.chromaPeak * Math.sin(Math.PI * l) ** 1.3;
+    // Map both wings to the smaller in-gamut chroma so their L AND C stay symmetric.
+    const chroma = theme === 'hc' ? 0 : Math.min(...[diverging.negativeHue, diverging.positiveHue]
+      .map(hue => Number(new Color(paletteColor(l, desired, hue)).to('oklch').coords[1])));
+    for (const [side, hue] of [['neg', diverging.negativeHue], ['pos', diverging.positiveHue]] as const) {
+      put(`diverging.${side}-0${step}`, paletteColor(l, chroma, hue));
+    }
+  }
+  put('diverging.neutral', paletteColor(theme === 'dark' ? .86 : .82, 0, seeds.brands.A.neutral.hue));
+  return tree;
+}
+
+function hcBrandTree(brand: 'A' | 'B', seed: BrandSeed, viz: TokenTree): TokenTree {
+  const tree = brandTree(brand, seed, false, viz);
+  const walk = (node: TokenTree, trail: string[] = []): void => {
+    for (const [key, value] of Object.entries(node)) {
+      if (!value || typeof value !== 'object') continue;
+      const token = value as TokenTree;
+      const role = [...trail, key].join('.');
+      if ('$value' in token) {
+        let color = 'CanvasText';
+        if (role.startsWith('surface.')) color = role.includes('interactive') ? 'Highlight' : role === 'surface.inverse' ? 'CanvasText' : 'Canvas';
+        else if (role.startsWith('text.')) color = ({ secondary: 'GrayText', muted: 'GrayText', inverse: 'Canvas', accent: 'LinkText', onInteractive: 'HighlightText', disabled: 'GrayText' } as Record<string, string>)[key] ?? 'CanvasText';
+        else if (role.startsWith('focus.')) color = key === 'inner' ? 'Canvas' : key === 'text' ? 'HighlightText' : 'Highlight';
+        else if (role.startsWith('accent.')) color = key === 'background' ? 'Canvas' : key === 'border' ? 'Highlight' : 'HighlightText';
+        else if (role.startsWith('border.')) color = key === 'strong' ? 'Highlight' : 'CanvasText';
+        else if (role.startsWith('status.')) color = key === 'surface' ? 'Canvas' : role.startsWith('status.neutral.') ? 'CanvasText' : key === 'border' ? 'Highlight' : 'HighlightText';
+        node[key] = leaf(color, `color.brand.${brand}.${role}`);
+      } else walk(token, [...trail, key]);
+    }
+  };
+  walk(((tree.color as TokenTree).brand as Record<string, TokenTree>)[brand]);
+  return tree;
+}
+
 /** Pure derivation. No generated file is used as input, including its metadata. */
-export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly PaletteGroup[] = ['reference', 'light', 'dark']): Map<string, string> {
+export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly PaletteGroup[] = ['reference', 'light', 'dark', 'viz', 'hc']): Map<string, string> {
   const files = new Map<string, string>();
   const emit = (name: string, tree: TokenTree) => files.set(`${TOKEN_ROOT}/${name}`, `${JSON.stringify(tree, null, 2)}\n`);
   const a = seeds.brands.A;
+  const lightViz = vizTree(seeds, 'light');
+  const baseViz = { scale: { categorical: { '05': ((lightViz.scale as TokenTree).categorical as TokenTree)['05'] } } };
+  const darkViz = vizTree(seeds, 'dark');
   if (groups.includes('reference')) {
     const brand: TokenTree = {};
     referenceRamp(brand, 'primary', a.primary);
@@ -170,10 +232,12 @@ export function generatePaletteFiles(seeds: PaletteSeeds, groups: readonly Palet
     // Brand B demonstrates the same design with one different primary seed hue.
     const seed = brand === 'A' ? a : { ...a, primary: { ...a.primary, hue: seeds.brands.B.primaryHue } };
     for (const mode of ['base', 'dark'] as const) {
-      if (!groups.includes(mode === 'base' ? 'light' : 'dark')) continue;
-      emit(`brands/${brand}/${mode}.json`, brandTree(brand, seed, mode === 'dark', seeds.retainedViz[mode]));
+      if (!groups.includes(mode === 'base' ? 'light' : 'dark') && !groups.includes('viz')) continue;
+      emit(`brands/${brand}/${mode}.json`, brandTree(brand, seed, mode === 'dark', mode === 'base' ? baseViz : darkViz));
     }
+    if (groups.includes('hc')) emit(`brands/${brand}/hc.json`, hcBrandTree(brand, seed, vizTree(seeds, 'hc')));
   }
+  if (groups.includes('viz')) files.set('packages/tokens/src/viz-scales.json', `${JSON.stringify({ viz: lightViz }, null, 2)}\n`);
   if (groups.includes('dark')) {
     for (const [name, tree] of Object.entries(darkThemeTrees(a))) emit(`themes/dark/${name}.json`, tree);
   }
@@ -204,7 +268,7 @@ async function main() {
   let seedPath = path.join(ROOT, SEED_PATH);
   let outputRoot = ROOT;
   let check = false;
-  let groups: PaletteGroup[] = ['reference', 'light', 'dark'];
+  let groups: PaletteGroup[] = ['reference', 'light', 'dark', 'viz', 'hc'];
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === '--check') { check = true; continue; }
     if (!['--seeds', '--out', '--only'].includes(args[i])) throw new Error(`Unknown option: ${args[i]}`);
@@ -213,7 +277,7 @@ async function main() {
     if (args[i] === '--seeds') seedPath = path.resolve(value);
     if (args[i] === '--out') outputRoot = path.resolve(value);
     if (args[i] === '--only') {
-      if (!value.split(',').every((group) => ['reference', 'light', 'dark'].includes(group))) throw new Error(`Invalid palette groups: ${value}`);
+      if (!value.split(',').every((group) => ['reference', 'light', 'dark', 'viz', 'hc'].includes(group))) throw new Error(`Invalid palette groups: ${value}`);
       groups = value.split(',') as PaletteGroup[];
     }
     i += 1;

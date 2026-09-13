@@ -62,3 +62,25 @@ describe('categorical theme overrides follow the shipped CSS cascade (s191)', ()
     });
   }
 });
+
+
+describe('s197 continuous scales reach both CSS and non-CSS consumers', () => {
+  for (const brand of ['A', 'B']) for (const theme of ['dark', 'hc']) {
+    it(`${brand}/${theme} explicitly overrides every sequential and diverging step`, () => {
+      const blocks = css.split('}').filter(block => block.includes(`[data-brand='${brand}'][data-theme='${theme}']`));
+      const declarations = blocks.map(block => block.slice(block.lastIndexOf('{') + 1)).join('\n');
+      const keys = [
+        ...Array.from({ length: 9 }, (_, i) => `--oods-viz-scale-sequential-0${i + 1}`),
+        ...['neg', 'pos'].flatMap(side => Array.from({ length: 5 }, (_, i) => `--oods-viz-scale-diverging-${side}-0${i + 1}`)),
+        '--oods-viz-scale-diverging-neutral',
+      ];
+      for (const key of keys) {
+        const value = declarations.match(new RegExp(`${key}:\\s*([^;]+);`))?.[1];
+        expect(value, `Missing scoped CSS declaration ${key}`).toBeDefined();
+        expect(bundle.cssVariablesByScope[brand][theme][key]).toBe(value);
+        // HC may deliberately share an achromatic neutral; it must still declare it.
+        if (theme === 'dark') expect(value).not.toBe(bundle.cssVariablesByScope[brand].light[key]);
+      }
+    });
+  }
+});
