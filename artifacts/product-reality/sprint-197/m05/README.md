@@ -87,6 +87,10 @@ pnpm exec tsx scripts/product-reality/s197-palette-consumer-goldens.ts
 node scripts/product-reality/s193-tool-truth.mjs --check
 ```
 
-After implementation is committed, qualify the attribution with `--head` and
-that exact full commit SHA. This keeps later runtime/release census updates
-from redefining the palette migration's after-state.
+The attribution is qualified with `--head` and its exact implementation commit.
+This keeps later runtime/release census updates from redefining the palette
+migration's after-state. The initial qualified test exceeded its default 20-second
+budget (25.5 seconds) while launching one Git process per historical file.
+A length-delimited `git cat-file --batch` read verifies the same immutable blobs
+without that process overhead; the original timeout log is retained. The
+qualified rerun and commit binding are recorded in `qualification.json`.

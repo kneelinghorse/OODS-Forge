@@ -30,8 +30,9 @@ args = parser.parse_args()
 if args.head:
     assert re.fullmatch('[a-f0-9]{40}', args.head), 'Expected full commit SHA'
 
+qualified_blobs = {}
 def after_bytes(path):
-    return subprocess.check_output(['git', 'show', f'{args.head}:{path}'], cwd=ROOT) if args.head else (ROOT / path).read_bytes()
+    return qualified_blobs[path] if args.head else (ROOT / path).read_bytes()
 
 paint_map = {}
 for token in PAINTS['tokens']:
@@ -89,6 +90,23 @@ else:
             assert sha(read_before(row['path'])) == row['sha256'], 'Historical addendum is not Git-qualified'
             historical_matrices.append({**row, 'value': json.loads((ROOT / row['path']).read_text())})
     assert len({row['file'] for row in identities}) == len(identities), 'Duplicate attribution identity'
+    if args.head:
+        # One immutable Git read avoids thousands of process launches in the
+        # normal test budget. Parse lengths, never delimit on file contents.
+        files = [row['file'] for row in identities]
+        payload = subprocess.check_output(['git', 'cat-file', '--batch'], cwd=ROOT,
+            input=''.join(f'{args.head}:{file}\n' for file in files).encode())
+        offset = 0
+        for file in files:
+            end = payload.index(b'\n', offset)
+            oid, kind, size = payload[offset:end].split()
+            assert kind == b'blob', f'Qualified input is not a blob: {file}'
+            start = end + 1
+            stop = start + int(size)
+            qualified_blobs[file] = payload[start:stop]
+            assert payload[stop:stop + 1] == b'\n'
+            offset = stop + 1
+        assert offset == len(payload), 'Unexpected trailing Git batch output'
     # Discovered test pins require a before-update addendum; fail instead of
     # silently omitting a new literal pin from the after-state report.
     delta = subprocess.check_output(['git', 'diff', '--name-only', plan['paletteHead'], *([args.head] if args.head else [])], cwd=ROOT, text=True).splitlines()
