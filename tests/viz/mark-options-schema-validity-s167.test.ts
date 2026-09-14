@@ -42,10 +42,10 @@
  * Corpus, same run: 42 mark-bearing fixtures, 4 invalid mark defs → 0 after the fix.
  *
  * ── CLAIM CEILING ──────────────────────────────────────────────────────────────────
- * No OODS-only key reaches the emitted mark def, every declared trait option is covered
- * by a probe, and every committed mark-bearing fixture emits a schema-valid mark def.
- * NOT "FF#22 is closed". Whole-spec validity is a separate oracle below: 28 of the 42
- * mark-bearing fixtures validate directly, while 14 advertised fixture surfaces retain
+ * No OODS-only key reaches the emitted mark def, every declared Cartesian trait option
+ * is covered by a probe, and every committed mark-bearing fixture emits a schema-valid mark def.
+ * NOT "FF#22 is closed". Whole-spec validity is a separate oracle below: 28 of the 44
+ * mark-bearing fixtures validate directly, while 16 advertised fixture surfaces retain
  * executable exception records with their exact AJV reasons and sufficient output-level
  * corrections. Zero whole-spec failure is unannotated. The inherited attribution of that
  * bucket to "facet/repeat" did NOT reproduce and is not repeated here.
@@ -257,6 +257,9 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
 
 /** The declared surface itself, read at test time so a new trait option cannot arrive untested. */
 const TRAIT_SCHEMA_DIR = path.resolve(repoRoot, 'schemas/traits');
+// MarkGraph declares an ECharts edge-array placement, not a Vega-Lite mark vocabulary.
+// Its closed placement shape is checked below; unknown mark schemas still fail discovery.
+const PLACEMENT_ONLY_SCHEMAS = new Set(['mark-graph.parameters.schema.json']);
 const TRAIT_OF_FILE: Record<string, string> = {
   'mark-area.parameters.schema.json': 'MarkArea',
   'mark-bar.parameters.schema.json': 'MarkBar',
@@ -271,6 +274,7 @@ function declaredOptions(): DeclaredOption[] {
   const files = readdirSync(TRAIT_SCHEMA_DIR).filter((f) => /^mark-.*\.parameters\.schema\.json$/.test(f));
   const out: DeclaredOption[] = [];
   for (const file of files) {
+    if (PLACEMENT_ONLY_SCHEMAS.has(file)) continue;
     const trait = TRAIT_OF_FILE[file];
     if (!trait) throw new Error(`Unmapped trait parameter schema ${file} — add it to TRAIT_OF_FILE`);
     const doc = JSON.parse(readFileSync(path.join(TRAIT_SCHEMA_DIR, file), 'utf8')) as {
@@ -339,6 +343,8 @@ const omitY2Type = (path: string): WholeSpecCorrection => ({
  * These are advertised example/corpus surfaces, so the sprint's zero-advertised-movement
  * invariant rules out silently rewriting their source bytes. Each entry names exact AJV
  * reasons and output corrections sufficient to make that compiled fixture valid.
+ * Sprint 199's histogram and waterfall inherit the same secondary-channel type defect;
+ * their two new entries preserve the exact reason and necessity/sufficiency controls.
  */
 const WHOLE_SPEC_EXCEPTIONS: Readonly<Record<string, WholeSpecException>> = {
   'examples/viz/before-after/accessibility-tighten/after.spec.json': {
@@ -385,6 +391,10 @@ const WHOLE_SPEC_EXCEPTIONS: Readonly<Record<string, WholeSpecException>> = {
     reasons: [0, 1].map((index) => paddingReason('/vconcat/' + index)),
     corrections: [0, 1].map((index) => hoistPadding('/vconcat/' + index)),
   },
+  'examples/viz/patterns-v2/histogram.spec.json': {
+    reasons: [y2TypeReason('/encoding/x2')],
+    corrections: [omitY2Type('/encoding/x2')],
+  },
   'examples/viz/patterns-v2/sparkline-grid.spec.json': {
     reasons: [paddingReason('/spec')],
     corrections: [hoistPadding('/spec')],
@@ -392,6 +402,10 @@ const WHOLE_SPEC_EXCEPTIONS: Readonly<Record<string, WholeSpecException>> = {
   'examples/viz/patterns-v2/target-band-line.spec.json': {
     reasons: [y2TypeReason('/layer/0/encoding/y2')],
     corrections: [omitY2Type('/layer/0/encoding/y2')],
+  },
+  'examples/viz/patterns-v2/waterfall.spec.json': {
+    reasons: [y2TypeReason('/encoding/y2')],
+    corrections: [omitY2Type('/encoding/y2')],
   },
   'examples/viz/patterns/target-band-line.spec.json': {
     reasons: [y2TypeReason('/layer/0/encoding/y2')],
@@ -513,6 +527,17 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
   // The committed corpus exercises only 7 of these keys, so a fixture sweep alone cannot
   // reach the rest. Generated from the trait schemas, not hand-listed.
   const DECLARED = declaredOptions();
+
+  it('classifies MarkGraph as a closed edge-array placement instead of a Vega-Lite mark option vocabulary', () => {
+    const graph = JSON.parse(readFileSync(path.join(TRAIT_SCHEMA_DIR, 'mark-graph.parameters.schema.json'), 'utf8'));
+    expect(Object.keys(graph.properties).sort()).toEqual(['chart', 'description', 'previewSvg', 'title']);
+    expect(graph.additionalProperties).toBe(false);
+    expect(graph.properties.chart.oneOf).toHaveLength(1);
+    const declaration = graph.properties.chart.oneOf[0];
+    expect(declaration.additionalProperties).toBe(false);
+    expect(declaration.properties.chartType).toEqual({ const: 'force_graph' });
+    expect(declaration.properties.source).toEqual({ const: 'edge-array' });
+  });
 
   it('covers every declared trait option key', () => {
     expect(DECLARED.length).toBeGreaterThanOrEqual(17);
@@ -757,7 +782,7 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     // starts with "Mark". Generated outputs and root artifacts/ receipts are excluded.
     // s196 m07 measured 43 with receipts included: m05's retained timezone-bite input
     // duplicates running-total-area.spec.json. Evidence retention must not add a new
-    // product fixture; the actual source corpus remains the same 42 examples.
+    // product fixture. Sprint 199 adds exactly waterfall and histogram: 44 examples.
     //
     // Walk source locations without a Git dependency, then require exact agreement with
     // the independent examples discovery used by the whole-spec oracle below. A new
@@ -802,19 +827,23 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
       if (errors.length) failures.push(`${rel} :: ${errors.join(' ; ')}`);
     }
 
-    expect(checked, 'the corpus definition stopped matching — re-derive it').toHaveLength(42);
+    expect(checked, 'the corpus definition stopped matching — re-derive it').toHaveLength(44);
+    expect(checked).toEqual(expect.arrayContaining([
+      'examples/viz/patterns-v2/waterfall.spec.json',
+      'examples/viz/patterns-v2/histogram.spec.json',
+    ]));
     expect(checked.sort()).toEqual(wholeSpecFixtures().map(({ rel }) => rel).sort());
     expect(failures, `schema-invalid mark defs:\n  ${failures.join('\n  ')}`).toEqual([]);
   }, 60_000);
 });
 
 describe('s177 m06 — whole-spec fixture validity reconciliation', () => {
-  it('leaves zero unannotated whole-spec failures across the exact 42-fixture corpus', () => {
+  it('leaves zero unannotated whole-spec failures across the exact 44-fixture corpus', () => {
     const fixtures = wholeSpecFixtures();
     const invalid: string[] = [];
 
-    expect(fixtures, 'the corpus definition stopped matching — re-derive it').toHaveLength(42);
-    expect(Object.keys(WHOLE_SPEC_EXCEPTIONS), 'the reconciled exception count moved').toHaveLength(14);
+    expect(fixtures, 'the corpus definition stopped matching — re-derive it').toHaveLength(44);
+    expect(Object.keys(WHOLE_SPEC_EXCEPTIONS), 'the reconciled exception count moved').toHaveLength(16);
 
     for (const { rel, spec } of fixtures) {
       const compiled = toVegaLiteSpec(spec) as unknown as Record<string, unknown>;
