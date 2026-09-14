@@ -39,21 +39,24 @@ class GraphIntakeTest(unittest.TestCase):
     def test_graph_measurements_are_current_and_fail_without_their_actual_assertions(self):
         original = refresh.load_json
         graph = original(ROOT / 'packages/component-contracts/registry/component-capability-additions.v1.json')['rows'][0]
+        readiness = original(ROOT / 'packages/components-react/evidence/react-readiness.v1.json')
+        proof_root = next(row for row in readiness['rows'] if row['componentId'] == 'VizGraphPreview')['measurementRoot']
+        self.assertEqual(proof_root, 'artifacts/product-reality/sprint-199/m07/graph-correction')
         projected = refresh.project_measured_surfaces({'VizGraphPreview': graph})['VizGraphPreview']
         self.assertEqual(projected['surfaces']['theme']['state'], 'verified')
         self.assertEqual(projected['surfaces']['accessibility']['state'], 'verified')
         self.assertEqual(projected['surfaces']['interaction']['state'], 'not-applicable')
         for surface in ['theme', 'accessibility']:
             refs = projected['surfaces'][surface]['evidence']
-            self.assertTrue(any('sprint-199/m06/' in ref for ref in refs))
+            self.assertTrue(any(proof_root in ref for ref in refs))
             self.assertFalse(any('sprint-193' in ref for ref in refs))
         for mutation, surface in [('axe', 'accessibility'), ('theme', 'theme'), ('readiness', 'theme')]:
             def corrupt(path):
                 value = copy.deepcopy(original(path))
-                if mutation == 'axe' and str(path).endswith('sprint-199/m06/react-measured.json'):
+                if mutation == 'axe' and str(path).endswith(f'{proof_root}/react-measured.json'):
                     for file in value['testResults']:
                         file['assertionResults'] = [test for test in file['assertionResults'] if 'VizGraphPreview' not in test['fullName']]
-                if mutation == 'theme' and str(path).endswith('sprint-199/m06/react-theme/report.json'):
+                if mutation == 'theme' and str(path).endswith(f'{proof_root}/react-theme/report.json'):
                     value['cells'][0]['rows'] = [row for row in value['cells'][0]['rows'] if row['componentId'] != 'VizGraphPreview']
                 if mutation == 'readiness' and str(path).endswith('components-react/evidence/react-readiness.v1.json'):
                     next(row for row in value['rows'] if row['componentId'] == 'VizGraphPreview')['evidence']['frameworkScenario']['status'] = 'missing'

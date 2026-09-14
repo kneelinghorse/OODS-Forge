@@ -1,0 +1,113 @@
+{
+  "status": "passed",
+  "commandsNotRun": 0,
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 421,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/readiness.log",
+        "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+      }
+    },
+    {
+      "name": "registry",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "--project=core",
+        "tests/registry",
+        "tests/integration/object-registry.test.ts"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2820,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/registry.log",
+        "sha256": "3b1310b969d8140d6c68c97725308554c8b52344d7f9d0b31b12c1d71248d255"
+      }
+    },
+    {
+      "name": "near-contracts",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "test/product-reality/closeout.s190.spec.ts",
+        "test/product-reality/closeout.s191.spec.ts",
+        "test/product-reality/closeout.s196.spec.ts",
+        "test/product-reality/closeout.s197.spec.ts",
+        "test/product-reality/closeout.s198.spec.ts",
+        "test/product-reality/public-head-equivalence.s185.spec.ts",
+        "test/product-reality/release-readiness.s196.spec.ts"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 26665,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/near-contracts.log",
+        "sha256": "fc6f1053da867dfebe58993a85bba443c565e9b5a721db51cb9124cf7159e56f"
+      }
+    },
+    {
+      "name": "prose-contracts",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "--project=core",
+        "tests/verification"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 18376,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/prose-contracts.log",
+        "sha256": "f6646b2daf186ccf0b993df2fcd071358c87b18629bd590b6a7c542da1e2724d"
+      }
+    },
+    {
+      "name": "viz-gate",
+      "command": [
+        "pnpm",
+        "viz:gate",
+        "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/viz-gate"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 133081,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-corrective/viz-gate.log",
+        "sha256": "d821c813f4366918668da0955346c6e69ea0ae8dd4162c63b19b7a37b0d4ccd4"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

@@ -59,7 +59,7 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m06.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m06.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m07.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m07.json).
 
 | Field | Values |
 | --- | --- |

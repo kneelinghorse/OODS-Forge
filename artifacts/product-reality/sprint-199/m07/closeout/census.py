@@ -21,14 +21,14 @@ assert len(taxonomy['retiredCells'])==3 and taxonomy['summary']['coreSurfaceComp
 assert len(intake['rows'])==110
 component=[]
 for framework in ['react','vue']:
- r=read(f'artifacts/product-reality/sprint-199/m06/{framework}-theme/report.json')
+ r=read(f'artifacts/product-reality/sprint-199/m07/graph-correction/{framework}-theme/report.json')
  assert r['status']=='passed' and r['failed']==r['skipped']==0
  component.append({'framework':framework,'cells':sum(len(c['rows']) for c in r['cells']), 'scopeIds':[c['cell'] for c in r['cells']]})
 assert sum(r['cells'] for r in component)==1320
 runtime=read('artifacts/product-reality/sprint-199/m07/runtime-diff.json')
 assert runtime['scopedEqual']==70 and runtime['unattributed']==0
 for mission, cells in [('m01',56),('m06',14)]:
- r=read(f'artifacts/product-reality/sprint-199/{mission}/'+('runtime' if mission=='m01' else 'runtime-final')+'/runtime-cells.v1.json')
+ r=read(('artifacts/product-reality/sprint-199/m01/runtime' if mission=='m01' else 'artifacts/product-reality/sprint-199/m07/graph-correction/runtime-final')+'/runtime-cells.v1.json')
  assert r['summary']=={'cells':cells,'pass':cells,'typedGap':0,'fail':0}
 result={'builderSelfCertified':False,'viz':{'types':13,'rendered':78,'conformant':78,'hcRendered':26,'rows':rows},
  'patterns':{'rows':len(patterns),'public':22,'retired':retired,'scopes':sum(len(r['scopes']) for r in patterns),'publicConformant':sum(s.get('certify',{}).get('conformant') is True for r in patterns for s in r['scopes'])},

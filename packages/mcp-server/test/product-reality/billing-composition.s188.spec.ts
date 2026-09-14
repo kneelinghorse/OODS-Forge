@@ -86,7 +86,10 @@ describe('Decision 1822 bounded recipe composition', () => {
       const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
       expect(retained.schema, `${row.object}/${row.context} historical recipe diff changed`).toEqual(expectedSchema(row));
       // s198 adds seed/form metadata without changing the retained field contract.
-      expect(Object.keys(result.schema.objectSchema!)).toEqual(Object.keys(row.schema.objectSchema!));
+      const addedFields = row.object === 'Relationship' ? ['neighborhood'] : [];
+      expect(Object.keys(result.schema.objectSchema!).filter(name => !addedFields.includes(name))).toEqual(Object.keys(row.schema.objectSchema!));
+      expect(Object.keys(result.schema.objectSchema!).filter(name => !Object.hasOwn(row.schema.objectSchema!, name))).toEqual(addedFields);
+      if (row.object === 'Relationship') expect(result.schema.objectSchema!.neighborhood).toMatchObject({ type: 'array', required: false });
       for (const [name, original] of Object.entries(row.schema.objectSchema!)) {
         const current = result.schema.objectSchema![name];
         expect(Object.fromEntries(Object.keys(original).map(key => [key, current[key]]))).toEqual(original);

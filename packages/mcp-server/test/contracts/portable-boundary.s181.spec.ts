@@ -335,23 +335,23 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(fetchResult).toMatchObject({ dataset: 'components', version: manifest.version,
       generatedAt: manifest.generatedAt, etag: artifact.etag, path: artifact.path,
       sizeBytes: artifact.sizeBytes, payloadIncluded: false, schemaValidated: true,
-      meta: { componentCount: 109 } });
+      meta: { componentCount: 110 } });
     expect(await fetchStructuredData({ dataset: 'components', includePayload: false })).toEqual(fetchResult);
-    expect(payload.obligationScope).toMatchObject({ decisionId: 1788, controllingObligationDenominator: 109, approvedRuntimeCensus: null });
+    expect(payload.obligationScope).toMatchObject({ decisionId: 2054, controllingObligationDenominator: 110, approvedRuntimeCensus: null });
     expect([...registry.names].sort()).toEqual(payload.components.map((entry: { id: string }) => entry.id).sort());
     expect(registry.version).toBe(manifest.version);
     expect(registry.warnings).toEqual([]);
-    const declaredAdditions = ['EncodingOpacity', 'EncodingShape', 'MarkRect', 'ScatterPlot'];
-    expect(traits).toHaveLength(45);
+    const declaredAdditions = ['EncodingOpacity', 'EncodingShape', 'MarkRect', 'ScatterPlot', 'MarkGraph'];
+    expect(traits).toHaveLength(46);
     expect(traits).toEqual(expect.arrayContaining(declaredAdditions));
-    // Adding the four real authoring traits must not silently remove or rename
+    // Adding the declared authoring traits and graph placement must not silently remove or rename
     // any member of the previously published discovery set.
     expect(sha256Json(traits.filter(trait => !declaredAdditions.includes(trait))))
       .toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
     // The active manifest can select an authorized named release, while the
-    // 109-row identity set and warning-free discovery remain the boundary.
+    // historical 109-row identity set plus the explicit graph and warning-free discovery remain the boundary.
     expect(registryResult).toEqual({ names: payload.components.map((entry: { id: string }) => entry.id).sort(), version: manifest.version, warnings: [] });
-    expect(sha256Json(registryResult.names)).toBe('cddc0aa36f209ef51e2da48c029ecc7dd6d8f20c9da038e745832fafc4a1804b');
+    expect(sha256Json(registryResult.names.filter(name => name !== 'VizGraphPreview'))).toBe('cddc0aa36f209ef51e2da48c029ecc7dd6d8f20c9da038e745832fafc4a1804b');
   });
 
   it('B-19 keeps the runtime data schema out of generated.ts', () => {

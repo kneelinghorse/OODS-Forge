@@ -65,8 +65,8 @@ describe('Canonical object registry integration', () => {
     },
     {
       name: 'Relationship',
-      expectedFields: ['relationship_type', 'source_id', 'direction'],
-      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Ownerable', 'Taggable'],
+      expectedFields: ['relationship_type', 'source_id', 'direction', 'neighborhood'],
+      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Ownerable', 'Taggable', 'MarkGraph'],
       unionSnippet: "relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';",
     },
     {

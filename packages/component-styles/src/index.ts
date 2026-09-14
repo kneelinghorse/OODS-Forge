@@ -20,7 +20,7 @@ export const COMPONENT_STYLE_IDS = [
   'ArchiveEvent', 'CancellationEvent', 'ColorStatePicker', 'CommunicationDetailPanel', 'GeoFieldMappingForm',
   'GeoResolutionBadge', 'GeocodablePreview', 'StateTransitionEvent', 'StatusColorLegend', 'VizAreaControls',
   'VizAxisControls', 'VizAxisSummary', 'VizColorControls', 'VizColorLegendConfig', 'VizEncodingBadge',
-  'VizHeatmapControls', 'VizHeatmapPreview', 'VizLineControls', 'VizLinePreview', 'VizMarkControls',
+  'VizGraphPreview', 'VizHeatmapControls', 'VizHeatmapPreview', 'VizLineControls', 'VizLinePreview', 'VizMarkControls',
   'VizMarkPreview', 'VizOpacityControls', 'VizOpacitySummary', 'VizPointControls', 'VizPointPreview',
   'VizRoleBadge', 'VizScaleControls', 'VizScaleSummary', 'VizScatterControls', 'VizScatterPreview',
   'VizShapeControls', 'VizShapeLegend', 'VizSizeControls', 'VizSizeSummary',

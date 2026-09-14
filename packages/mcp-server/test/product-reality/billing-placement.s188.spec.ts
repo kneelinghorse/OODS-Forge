@@ -95,7 +95,10 @@ describe('Sprint 188 remaining trait placement obligations', () => {
       const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
       expect(retained.schema, `${row.object}/${row.context} historical placement diff changed`).toEqual(expectedSchema(row));
       // s198 adds seed/form metadata without changing the retained field contract.
-      expect(Object.keys(current.schema.objectSchema!)).toEqual(Object.keys(row.schema.objectSchema!));
+      const addedFields = row.object === 'Relationship' ? ['neighborhood'] : [];
+      expect(Object.keys(current.schema.objectSchema!).filter(name => !addedFields.includes(name))).toEqual(Object.keys(row.schema.objectSchema!));
+      expect(Object.keys(current.schema.objectSchema!).filter(name => !Object.hasOwn(row.schema.objectSchema!, name))).toEqual(addedFields);
+      if (row.object === 'Relationship') expect(current.schema.objectSchema!.neighborhood).toMatchObject({ type: 'array', required: false });
       for (const [name, original] of Object.entries(row.schema.objectSchema!)) {
         const field = current.schema.objectSchema![name];
         expect(Object.fromEntries(Object.keys(original).map(key => [key, field[key]]))).toEqual(original);

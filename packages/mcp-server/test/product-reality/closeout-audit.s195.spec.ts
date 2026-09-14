@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../../../..');
 // Source operands belong to the retained proofs. Read their recorded revisions
 // so later renderer/cancellation work never rewrites or invalidates history.
 const historicalSourceHeads = new Map([
-  ...['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/registry/viz-taxonomy.v1.json', 'packages/viz-core/src/registry/viz-classification.v1.json', 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json', 'examples/viz/patterns-v2/sparkline-grid.spec.json', 'packages/mcp-server/src/schemas/viz.render.input.json'].map(file => [file, '1d100e20bcc0911031192406625357638adecbe5'] as const),
+  ...['packages/viz-core/src/accuracy/echarts-index.ts', 'packages/component-contracts/registry/component-capability-ledger.v1.json', 'packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/registry/viz-taxonomy.v1.json', 'packages/viz-core/src/registry/viz-classification.v1.json', 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json', 'examples/viz/patterns-v2/sparkline-grid.spec.json', 'packages/mcp-server/src/schemas/viz.render.input.json'].map(file => [file, '1d100e20bcc0911031192406625357638adecbe5'] as const),
   ['packages/mcp-server/src/codegen/react-emitter.ts', 'c6453c97883feb38dda203628684a7bb9643765d'],
 ]);
 const historicalSources = new Map<string, Buffer>();

@@ -4,7 +4,7 @@
 
 110 component pages join the capability ledger, exported contracts, manifest-selected catalog and 110 shared scenarios.
 
-Sources: [packages/component-contracts/registry/component-capability-ledger.v1.json](../../packages/component-contracts/registry/component-capability-ledger.v1.json), [packages/component-contracts/src/contracts.ts](../../packages/component-contracts/src/contracts.ts), [packages/component-contracts/src/scenarios.ts](../../packages/component-contracts/src/scenarios.ts), [artifacts/structured-data/oods-components-2026-09-14-s199-m06.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m06.json).
+Sources: [packages/component-contracts/registry/component-capability-ledger.v1.json](../../packages/component-contracts/registry/component-capability-ledger.v1.json), [packages/component-contracts/src/contracts.ts](../../packages/component-contracts/src/contracts.ts), [packages/component-contracts/src/scenarios.ts](../../packages/component-contracts/src/scenarios.ts), [artifacts/structured-data/oods-components-2026-09-14-s199-m07.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m07.json).
 
 The classification column is the recorded proposal; each page preserves reconciliation state and evidence for all nine surfaces. Scenario counts are authored coverage, not execution claims.
 

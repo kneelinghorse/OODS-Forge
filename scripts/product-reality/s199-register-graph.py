@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BASE = 'b5b1294e9523cdaa436d0c8f52352146dcf4545a'
 REGISTRY = 'packages/component-contracts/registry'
-PROOF = 'artifacts/product-reality/sprint-199/m06'
+PROOF = 'artifacts/product-reality/sprint-199/m07/graph-correction'
 ID = 'VizGraphPreview'
 
 
@@ -40,9 +40,14 @@ def append(name, row):
 
 
 def main():
+    global PROOF
     parser = argparse.ArgumentParser()
     parser.add_argument('--evidence', action='store_true')
+    parser.add_argument('--proof-root', default=PROOF)
+    parser.add_argument('--version-tag', default='2026-09-14-s199-m07')
     args = parser.parse_args()
+    assert (ROOT / args.proof_root).resolve().is_relative_to(ROOT / 'artifacts/product-reality/sprint-199')
+    PROOF = args.proof_root
     append('component-intake.v1.json', {
         'id': ID, 'displayName': ID,
         'baselineMetadata': {'categories': ['viz.mark'], 'tags': ['graph', 'mark', 'network', 'viz'], 'contexts': ['detail'], 'regions': ['detail']},
@@ -123,7 +128,7 @@ def main():
         generated_at='2026-09-14T00:00:00Z',
         component_capabilities_path=ROOT / PROOF / 'component-capabilities-input.json',
         artifact_dir=ROOT / 'artifacts/structured-data',
-        version_tag='2026-09-14-s199-m06',
+        version_tag=args.version_tag,
         include_delta=False,
     )
     print(json.dumps({'identities': len(ledger['rows']), 'graphEvidencePromoted': args.evidence, 'preservedBaselineHead': BASE}))

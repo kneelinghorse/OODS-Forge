@@ -11,7 +11,9 @@ import { componentContracts, NUCLEUS_COMPONENT_IDS } from '@oods/component-contr
 import { SUPPORTED_COMPONENT_THEME_CELLS } from '@oods/component-styles';
 
 const root = path.resolve(import.meta.dirname, '../..');
-const output = path.join(root, 'artifacts/product-reality/sprint-199/m06');
+const relativeOutput = process.argv[2] ?? 'artifacts/product-reality/sprint-199/m06';
+const output = path.resolve(root, relativeOutput);
+assert(output.startsWith(path.join(root, 'artifacts/product-reality/sprint-199/')));
 const samples = JSON.parse(await fs.readFile(path.join(root, 'packages/component-contracts/fixtures/viz-preview-samples.v1.json'), 'utf8'));
 const cases: any[] = [];
 for (const framework of ['react', 'vue']) {
@@ -39,7 +41,7 @@ assert.equal(report.browser.version, '141.0.7390.37');
 // Run the same governed component theme measurements used by readiness. The
 // page mounts all scenarios, while this new evidence owns only the new row.
 for (const framework of ['react', 'vue']) {
-  process.argv = [process.argv[0]!, process.argv[1]!, `--output=artifacts/product-reality/sprint-199/m06/${framework}-theme`, '--mission=s199-m06'];
+  process.argv = [process.argv[0]!, process.argv[1]!, `--output=${relativeOutput}/${framework}-theme`, '--mission=s199-m06'];
   await runComponentThemeProof({ framework, packageRoot: path.join(root, `packages/components-${framework}`),
     canonicalIds: NUCLEUS_COMPONENT_IDS, supportedCells: SUPPORTED_COMPONENT_THEME_CELLS,
     contracts: componentContracts, createServer, chromium });

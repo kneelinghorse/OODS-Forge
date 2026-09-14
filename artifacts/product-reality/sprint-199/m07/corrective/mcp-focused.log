@@ -1,0 +1,157 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts (13 tests | 1 failed) 5086ms
+   ✓ s181 portable-runtime publish boundary > keeps the runtime component schema byte-identical to the planning producer output 3ms
+   ✓ s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data  904ms
+   ✓ s181 portable-runtime publish boundary > s196 serves null runtime proof when its shipped canonical ledger is absent  523ms
+   ✓ s181 portable-runtime publish boundary > s196 serves null release proof when its shipped canonical ledger is absent  535ms
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-taxonomy.v1.json is absent  540ms
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-classification.v1.json is absent  561ms
+   ✓ s181 portable-runtime publish boundary > s195 serves null viz with a warning when shipped viz-patterns.v1.json is absent  597ms
+   ✓ s181 portable-runtime publish boundary > s195 serves the same generated viz summary through the staged MCP adapter  729ms
+   ✓ s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist  523ms
+   ✓ s181 portable-runtime publish boundary > allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript 12ms
+   × s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership 29ms
+     → expected { schemaVersion: '1.0.0', …(5) } to match object { decisionId: 1788, …(2) }
+(3 matching properties omitted from actual)
+   ✓ s181 portable-runtime publish boundary > B-19 keeps the runtime data schema out of generated.ts 2ms
+   ✓ s181 portable-runtime publish boundary > derives the adapter wire version from package.json and no longer stages planning files for fresh installs 128ms
+ ✓ test/product-reality/closeout-audit.s195.spec.ts (28 tests) 3598ms
+   ✓ Sprint 195 independent closeout predicates reject false greens > independently reconciles13 type identities,78 outcomes,21 pattern identities,84 outcomes and34 taxonomy identities  509ms
+   ✓ Sprint 195 independent closeout predicates reject false greens > keeps palette historical after hashes qualified at m05 rather than mutable current source  2482ms
+ ✓ test/product-reality/options.s194.spec.ts (9 tests) 1812ms
+   ✓ remaining options do what their public wire says (s194-m05) > keeps portable dashboard repeats byte-identical and attributes their s197 palette changes  340ms
+   ✓ remaining options do what their public wire says (s194-m05) > omits the Vega placeholder for every primary ECharts sample without moving SVG bytes  485ms
+   ✓ remaining options do what their public wire says (s194-m05) > retains Sprint 193 operands and accounts for the palette and UTC pixel migrations  429ms
+ ❯ test/product-reality/billing-placement.s188.spec.ts (8 tests | 1 failed) 1102ms
+   ✓ Sprint 188 remaining trait placement obligations > never chooses any of the five recipes for generic slots on Product 138ms
+   ✓ Sprint 188 remaining trait placement obligations > retains historical grouped-slot bytes and current status fields after detail reconciliation 16ms
+   ✓ Sprint 188 remaining trait placement obligations > leaves an unroutable generic main extension unplaced, with the existing warning and no timeline fallback 13ms
+   × Sprint 188 remaining trait placement obligations > preserves the historical placement diff and current declared recipes across 66 schemas, 132 artifacts and workflow 835ms
+     → expected [ 'label', 'description', …(24) ] to deeply equal [ 'label', 'description', …(24) ]
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared detail recipe as a real node through all composer post-processing 47ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared timeline recipe as a real node through all composer post-processing 18ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared card recipe as a real node through all composer post-processing 15ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared list recipe as a real node through all composer post-processing 19ms
+ ❯ test/product-reality/billing-composition.s188.spec.ts (3 tests | 1 failed) 1149ms
+   ✓ Decision 1822 bounded recipe composition > resolves object overrides before trait defaults, preserves references and authored runtime props, and does not mutate inputs 25ms
+   ✓ Decision 1822 bounded recipe composition > never selects the recipes for generic detail slots or an amount-bearing object without Billable 90ms
+   × Decision 1822 bounded recipe composition > preserves the historical exact diff and current declared recipes across 66 schemas and 132 artifacts 1034ms
+     → expected [ 'label', 'description', …(24) ] to deeply equal [ 'label', 'description', …(24) ]
+stdout | test/contracts/tool-specs-generator.s196.spec.ts > Tool-Specs generated from dispatched contracts (s196 m04) > checks freshness without writes and detects description drift until regeneration
+Tool-Specs is fresh (dispatcher schemas, descriptions, ledgers and notes).
+Generated docs/mcp/Tool-Specs.md.
+Tool-Specs is fresh (dispatcher schemas, descriptions, ledgers and notes).
+
+stdout | test/contracts/tool-specs-generator.s196.spec.ts > Tool-Specs generated from dispatched contracts (s196 m04) > is byte-for-byte fresh from current source without timestamps or current-HEAD substitutions
+Tool-Specs is fresh (dispatcher schemas, descriptions, ledgers and notes).
+
+ ✓ test/contracts/tool-specs-generator.s196.spec.ts (19 tests) 231ms
+ ✓ test/contracts/repl.registry.contract.spec.ts (2 tests) 6ms
+ ✓ test/tools/viz.render.bubble-symbolsize-s172.spec.ts (6 tests) 7ms
+ ✓ test/contracts/artifact-certify-render-prose.s179.spec.ts (13 tests) 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/portable-boundary.s181.spec.ts > s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership
+AssertionError: expected { schemaVersion: '1.0.0', …(5) } to match object { decisionId: 1788, …(2) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "approvedRuntimeCensus": null,
+    "controllingObligationDenominator": 110,
+-   "decisionId": 1788,
++   "decisionId": 2054,
+  }
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts:340:37
+    338|       meta: { componentCount: 110 } });
+    339|     expect(await fetchStructuredData({ dataset: 'components', includeP…
+    340|     expect(payload.obligationScope).toMatchObject({ decisionId: 1788, …
+       |                                     ^
+    341|     expect([...registry.names].sort()).toEqual(payload.components.map(…
+    342|     expect(registry.version).toBe(manifest.version);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/product-reality/billing-composition.s188.spec.ts > Decision 1822 bounded recipe composition > preserves the historical exact diff and current declared recipes across 66 schemas and 132 artifacts
+AssertionError: expected [ 'label', 'description', …(24) ] to deeply equal [ 'label', 'description', …(24) ]
+
+- Expected
++ Received
+
+@@ -14,15 +14,15 @@
+    "ownership_role",
+    "ownership_transferred_at",
+    "tags",
+    "tag_count",
+    "tag_metadata",
++   "neighborhood",
+    "relationship_id",
+    "source_id",
+    "target_id",
+    "relationship_type",
+    "direction",
+    "strength",
+    "origin_source",
+    "is_bidirectional",
+-   "neighborhood",
+  ]
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts:90:56
+     88|       // s198 adds seed/form metadata without changing the retained fi…
+     89|       const addedFields = row.object === 'Relationship' ? ['neighborho…
+     90|       expect(Object.keys(result.schema.objectSchema!)).toEqual([...Obj…
+       |                                                        ^
+     91|       if (row.object === 'Relationship') expect(result.schema.objectSc…
+     92|       for (const [name, original] of Object.entries(row.schema.objectS…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/product-reality/billing-placement.s188.spec.ts > Sprint 188 remaining trait placement obligations > preserves the historical placement diff and current declared recipes across 66 schemas, 132 artifacts and workflow
+AssertionError: expected [ 'label', 'description', …(24) ] to deeply equal [ 'label', 'description', …(24) ]
+
+- Expected
++ Received
+
+@@ -14,15 +14,15 @@
+    "ownership_role",
+    "ownership_transferred_at",
+    "tags",
+    "tag_count",
+    "tag_metadata",
++   "neighborhood",
+    "relationship_id",
+    "source_id",
+    "target_id",
+    "relationship_type",
+    "direction",
+    "strength",
+    "origin_source",
+    "is_bidirectional",
+-   "neighborhood",
+  ]
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts:99:57
+     97|       // s198 adds seed/form metadata without changing the retained fi…
+     98|       const addedFields = row.object === 'Relationship' ? ['neighborho…
+     99|       expect(Object.keys(current.schema.objectSchema!)).toEqual([...Ob…
+       |                                                         ^
+    100|       if (row.object === 'Relationship') expect(current.schema.objectS…
+    101|       for (const [name, original] of Object.entries(row.schema.objectS…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 6 passed (9)
+      Tests  3 failed | 98 passed (101)
+   Start at  07:29:00
+   Duration  17.20s (transform 875ms, setup 35ms, collect 2.88s, tests 12.99s, environment 1ms, prepare 366ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/artifact-certify-render-prose.s179.spec.ts test/contracts/portable-boundary.s181.spec.ts test/contracts/repl.registry.contract.spec.ts test/contracts/tool-specs-generator.s196.spec.ts test/tools/viz.render.bubble-symbolsize-s172.spec.ts test/product-reality/billing-composition.s188.spec.ts test/product-reality/billing-placement.s188.spec.ts test/product-reality/closeout-audit.s195.spec.ts test/product-reality/options.s194.spec.ts --no-file-parallelism --maxWorkers=1 --testTimeout=60000 --coverage.enabled=false
