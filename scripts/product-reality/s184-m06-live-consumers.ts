@@ -17,6 +17,7 @@ import { handle as objectList } from '../../packages/mcp-server/src/tools/object
 import { handle as codeGenerate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import type { CodeGenerateOutput } from '../../packages/mcp-server/src/tools/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 import { extractBareImports } from './s183-m05-saved-schema-consumers.mjs';
 import {
   EDITOR_TYPED_TEXT,
@@ -1765,11 +1766,15 @@ export async function runLiveConsumerCell({
     }
     await writeJson(path.join(sourceRoot, 'consumer-package.json'), normalizedManifest(manifest));
     const environment = isolatedNpmEnvironment(consumerRoot, userConfig, globalConfig);
-    const install = commandResult('npm', [
-      'install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig,
-    ], consumerRoot, { environment, scrubNpmCredentials: true });
+    const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+    const install = commandResult('npm', installArgs, consumerRoot, { environment, scrubNpmCredentials: true });
     await writeCommandLog(path.join(logRoot, 'install.log'), install, replacements);
     requireGreen(install, `${schemaName}/${framework} fresh exact tarball install`);
+    await writeJson(path.join(logRoot, 'rollup.json'), await ensureConsumerRollup(consumerRoot, async extraArgs => {
+      const retry = commandResult('npm', [...installArgs, ...extraArgs], consumerRoot, { environment, scrubNpmCredentials: true });
+      await writeCommandLog(path.join(logRoot, 'install-optional-retry.log'), retry, replacements);
+      requireGreen(retry, `${framework} optional native package reinstall`);
+    }));
     const isolation = assertInstalledIsolation(consumerRoot, framework, localTarballs, files);
     const resolutions = resolveImports(consumerRoot, files);
     await writeLog(path.join(logRoot, 'isolation.log'), canonicalJson({ isolation, localTarballs, resolutions }));

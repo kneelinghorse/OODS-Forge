@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-export const FACTS_PATH = 'artifacts/product-reality/sprint-199/readiness/release-readiness-facts.json';
+export const FACTS_PATH = 'artifacts/product-reality/sprint-200/readiness/release-readiness-facts.json';
 export const BASELINE_PATH = 'artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json';
 export const PACKET_PATH = 'cmos/planning/forge-gate2-decision-packet.md';
 export const START = '<!-- BEGIN GENERATED GATE2 FACTS -->';
@@ -254,7 +254,7 @@ export function renderReleaseFacts(facts: ReleaseReadiness, factsPath = FACTS_PA
 }
 export function generateReleaseReadiness(root: string, check = false, factsPath = FACTS_PATH): ReleaseReadiness {
   const relativeFactsPath = path.relative(root, inside(root, factsPath)).split(path.sep).join('/');
-  assert(!/^artifacts\/product-reality\/sprint-19[5-8]\//.test(relativeFactsPath), 'Readiness output must not overwrite sealed Sprint 195–198 receipts');
+  assert(!/^artifacts\/product-reality\/sprint-19[5-9]\//.test(relativeFactsPath), 'Readiness output must not overwrite sealed Sprint 195–199 receipts');
   const facts = collectReleaseReadiness(root), packetFile = inside(root, PACKET_PATH), packet = fs.readFileSync(packetFile, 'utf8');
   assert.equal(packet.split(START).length, 2, 'Packet must contain exactly one facts start marker');
   assert.equal(packet.split(END).length, 2, 'Packet must contain exactly one facts end marker');

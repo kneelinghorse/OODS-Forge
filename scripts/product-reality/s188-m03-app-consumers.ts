@@ -15,6 +15,7 @@ import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import type { GeneratedArtifact } from '../../packages/mcp-server/src/codegen/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 import {
   GATE_NAMES, REPOSITORY_ROOT, commandResult, requireGreen, prepareManifest,
   isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, withStaticServer, cssProof, launchProofBrowser,
@@ -539,7 +540,10 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
         await json(path.join(consumer, 'package.json'), manifest);
         await json(path.join(cellRoot, 'installed-manifest.json'), manifest);
         await Promise.all([fs.writeFile(userConfig, ''), fs.writeFile(globalConfig, ''), fs.writeFile(path.join(consumer, '.npmrc'), '')]);
-        await command('install', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig]);
+        const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+        await command('install', installArgs);
+        await json(path.join(cellRoot, 'logs', 'rollup.json'), await ensureConsumerRollup(consumer,
+          extraArgs => command('install-optional-retry', [...installArgs, ...extraArgs])));
         const isolation = assertInstalledIsolation(consumer, framework, prepared.localTarballs, sourceFiles);
         const resolutions = resolveImports(consumer, sourceFiles);
         await json(path.join(cellRoot, 'isolation.json'), { isolation, resolutions, localTarballs: prepared.localTarballs });

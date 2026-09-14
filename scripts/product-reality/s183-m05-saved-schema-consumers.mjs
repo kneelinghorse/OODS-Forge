@@ -8,6 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const REPOSITORY_ROOT = path.resolve(scriptDirectory, '../..');
@@ -1144,12 +1145,16 @@ async function runFrameworkConsumer({ framework, artifact, artifactRoot, tarball
     await writeJson(path.join(sourceRoot, 'consumer-package.json'), normalizedManifest(manifest));
 
     const environment = isolatedNpmEnvironment(consumerRoot, userConfig, globalConfig);
-    const install = commandResult('npm', [
-      'install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig,
-    ], consumerRoot, { environment, scrubNpmCredentials: true });
+    const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+    const install = commandResult('npm', installArgs, consumerRoot, { environment, scrubNpmCredentials: true });
     commands.push({ name: 'install', result: install });
     await writeCommandLog(path.join(logRoot, 'install.log'), install, replacements);
     requireGreen(install, `${framework} clean consumer install`);
+    await writeJson(path.join(logRoot, 'rollup.json'), await ensureConsumerRollup(consumerRoot, async extraArgs => {
+      const retry = commandResult('npm', [...installArgs, ...extraArgs], consumerRoot, { environment, scrubNpmCredentials: true });
+      await writeCommandLog(path.join(logRoot, 'install-optional-retry.log'), retry, replacements);
+      requireGreen(retry, `${framework} optional native package reinstall`);
+    }));
     assertInstalledIsolation(consumerRoot, dependencyPlan);
 
     const typecheckArgs = framework === 'react'

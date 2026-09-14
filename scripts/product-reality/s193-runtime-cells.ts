@@ -13,6 +13,7 @@ import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from './consumer-rollup.mjs';
 import { deriveConsumerModel, deriveMountObligations, observeMountObligations, schemaNodes } from './s185-m04-consumer-contract.js';
 import {
   REPOSITORY_ROOT, createConsumerFiles, prepareManifest, isolatedNpmEnvironment,
@@ -179,7 +180,10 @@ async function runCell(output: string, object: string, context: Context, framewo
       requireGreen(result, name); return { exitCode: result.exitCode, log: `${relative}/${name}.json` };
     };
     await gate('fresh-exact-tarball-install', async () => {
-      const installed = await command('install', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig]);
+      const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+      const installed = await command('install', installArgs);
+      await write(path.join(cellRoot, 'rollup.json'), await ensureConsumerRollup(consumer!,
+        extraArgs => command('install-optional-retry', [...installArgs, ...extraArgs])));
       const isolation = assertInstalledIsolation(consumer!, framework, localTarballs, files);
       return { ...installed, isolation, imports: resolveImports(consumer!, files), tarballs: localTarballs };
     });

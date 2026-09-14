@@ -10,6 +10,7 @@ import { handle as compose } from '../../packages/mcp-server/src/tools/design.co
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { packFoundationPackages } from '../product-reality/s182-m04-consumer-harness.mjs';
+import { ensureConsumerRollup } from '../product-reality/consumer-rollup.mjs';
 import { prepareManifest, commandResult, requireGreen, isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, launchProofBrowser, type PackedPackageRecord } from '../product-reality/s184-m06-live-consumers.js';
 import { DEFAULT_PORT, DEFAULT_STATE, outputDirectory, relativeFile, validateReceipt, writeJson, type CaptureRequest, type Framework } from './common.js';
 import { applySteps, observeView } from './observe.js';
@@ -135,9 +136,15 @@ export async function serve({ port = DEFAULT_PORT, state = DEFAULT_STATE } = {})
       const userConfig = path.join(root, 'empty-user.npmrc'), globalConfig = path.join(root, 'empty-global.npmrc');
       await Promise.all([userConfig, globalConfig, path.join(root, '.npmrc')].map(file => fs.writeFile(file, '')));
       const environment = isolatedNpmEnvironment(root, userConfig, globalConfig);
-      const install = commandResult('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig], root, { environment, scrubNpmCredentials: true });
+      const installArgs = ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', '--userconfig', userConfig];
+      const install = commandResult('npm', installArgs, root, { environment, scrubNpmCredentials: true });
       await writeJson(path.join(state, `${framework}-install.json`), install);
       requireGreen(install, `${framework} exact tarball install`);
+      await writeJson(path.join(state, `${framework}-rollup.json`), await ensureConsumerRollup(root, async extraArgs => {
+        const retry = commandResult('npm', [...installArgs, ...extraArgs], root, { environment, scrubNpmCredentials: true });
+        await writeJson(path.join(state, `${framework}-install-optional-retry.json`), retry);
+        requireGreen(retry, `${framework} optional native package reinstall`);
+      }));
       const isolation = assertInstalledIsolation(root, framework, prepared.localTarballs, {});
       const viteConfig = framework === 'vue' ? "import vue from '@vitejs/plugin-vue';\nexport default { plugins: [vue()] };\n" : 'export default {};\n';
       await fs.writeFile(path.join(root, 'vite.config.mjs'), viteConfig);

@@ -1,0 +1,1092 @@
+{
+  "schemaVersion": 1,
+  "builderSelfCertified": false,
+  "baselineHead": "8fd3d04ddf9af7d17863308ab579e3023ef4f491",
+  "workspacePatterns": [
+    "packages/*",
+    "tools/*",
+    "apps/*"
+  ],
+  "root": {
+    "path": "package.json",
+    "name": "@oods/foundry-mcp",
+    "version": "0.1.0",
+    "fields": {
+      "private": true,
+      "license": "MIT",
+      "files": [
+        "dist/pkg"
+      ],
+      "exports": {
+        ".": {
+          "types": "./dist/pkg/index.d.ts",
+          "import": "./dist/pkg/index.js",
+          "require": "./dist/pkg/index.cjs"
+        },
+        "./package.json": "./package.json",
+        "./provenance.json": "./dist/pkg/provenance.json"
+      },
+      "bin": {
+        "tokens-governance": "./tools/tokens-governance/index.ts"
+      }
+    },
+    "licenseFiles": [
+      {
+        "path": "LICENSE",
+        "bytes": 1075,
+        "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+      }
+    ],
+    "manifestSha256": "f747f5c53c523acc6703756af0a2636ab6c44ed47ed49fba484afb584c64fe5a"
+  },
+  "workspaces": [
+    {
+      "path": "apps/playground/package.json",
+      "name": "@oods/playground",
+      "version": "0.1.0",
+      "fields": {
+        "private": true
+      },
+      "licenseFiles": [],
+      "manifestSha256": "88831185575be3f3c35844a1a4ca4ae31be7d693c6ba45e071a56cfa5cb0a04e"
+    },
+    {
+      "path": "packages/a11y-tools/package.json",
+      "name": "@oods/a11y-tools",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "CHANGELOG.md",
+          "README.md",
+          "LICENSE"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          }
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [
+        {
+          "path": "packages/a11y-tools/LICENSE",
+          "bytes": 1075,
+          "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+        }
+      ],
+      "manifestSha256": "30af7e095eaf6c72ecdf5b76ec6957d877f36bc31700ccd77465f17bbb726054"
+    },
+    {
+      "path": "packages/artifacts/package.json",
+      "name": "@oods/artifacts",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "dist"
+        ]
+      },
+      "licenseFiles": [],
+      "manifestSha256": "72b2b83b12001f47e63b5a206ef8824067e6a080e00b940c4deca8bd2d5b0d4c"
+    },
+    {
+      "path": "packages/component-contracts/package.json",
+      "name": "@oods/component-contracts",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "registry"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./registry/intake": "./registry/component-intake.v1.json",
+          "./registry/reconciliation": "./registry/component-reconciliation.proposed.v2.json",
+          "./registry/capabilities": "./registry/component-capability-ledger.v1.json",
+          "./registry/capabilities/foundation-v1": "./registry/component-capability-foundation-v1.s182.v1.json",
+          "./package.json": "./package.json"
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "69dc4ae444c61f2139a89efbb5b7b77c334dbffc23186479e4a1aad498a10199"
+    },
+    {
+      "path": "packages/component-styles/package.json",
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./ported": {
+            "types": "./dist/ported.d.ts",
+            "import": "./dist/ported.js",
+            "require": "./dist/ported.cjs"
+          },
+          "./css": {
+            "default": "./dist/components.css"
+          },
+          "./css-ported": {
+            "default": "./dist/components.css"
+          },
+          "./package.json": "./package.json"
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "f4e05e24fc3470f20bd0087f2e47af530cb017ca7134039557d62ce8b37b9ea5"
+    },
+    {
+      "path": "packages/components-react/package.json",
+      "name": "@oods/components-react",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "evidence"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./readiness": {
+            "default": "./evidence/react-readiness.v1.json"
+          },
+          "./ported": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./readiness-ported": {
+            "default": "./evidence/react-readiness.v1.json"
+          },
+          "./status": {
+            "types": "./dist/status.d.ts",
+            "import": "./dist/status.js",
+            "require": "./dist/status.cjs"
+          },
+          "./table": {
+            "types": "./dist/table.d.ts",
+            "import": "./dist/table.js",
+            "require": "./dist/table.cjs"
+          },
+          "./package.json": "./package.json"
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "4a197bc972f6d8cf16129e45bc1f3bc2d78d8c4606a0c912e2859c9456100897"
+    },
+    {
+      "path": "packages/components-vue/package.json",
+      "name": "@oods/components-vue",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "evidence"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./ported": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./readiness": {
+            "default": "./evidence/vue-readiness.v1.json"
+          },
+          "./readiness-ported": {
+            "default": "./evidence/vue-readiness.v1.json"
+          },
+          "./package.json": "./package.json"
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "52247d7b50333a356a0e33a6cf94db9677fbc63d49cea637fef6b60336abcd18"
+    },
+    {
+      "path": "packages/mcp-adapter/package.json",
+      "name": "@oods/mcp-adapter",
+      "version": "0.3.0",
+      "fields": {
+        "private": true,
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "f75222ca39aad0a779a9d06941de6f36850b440ecccdb55a9cf1b1f7431a6f41"
+    },
+    {
+      "path": "packages/mcp-bridge/package.json",
+      "name": "@oods/mcp-bridge",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "dist"
+        ],
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "9de610f20f24aa2a8dbefa1313209a52ae58c9f3764f091b8a480fd4867cc2bc"
+    },
+    {
+      "path": "packages/mcp-server/package.json",
+      "name": "@oods/mcp-server",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "dist"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+          },
+          "./types": {
+            "types": "./dist/public-types.d.ts",
+            "import": "./dist/public-types.js"
+          }
+        },
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "429bb9435ce049a482b144072de612f7631e19fa70250264e54b382d1d1c1dcf"
+    },
+    {
+      "path": "packages/release-utils/package.json",
+      "name": "@oods/release-utils",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "dist"
+        ]
+      },
+      "licenseFiles": [],
+      "manifestSha256": "f7379d31ab4b8446d48b1b80f7b4a670c6189eb7bd4efacf6f63ba4c1de3be20"
+    },
+    {
+      "path": "packages/schemas-tools/package.json",
+      "name": "@oods/schemas-tools",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "src"
+        ]
+      },
+      "licenseFiles": [],
+      "manifestSha256": "ae511c45efa8bc156bbeb6d5dfd050de8f5543155adb078522b82dbd536a909d"
+    },
+    {
+      "path": "packages/sdk/package.json",
+      "name": "@oods/sdk",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "files": [
+          "dist"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+          }
+        },
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "e4aebc310b46a723e0eec6c2afbaf1e218f802c96afe5d08e3c6d11f7cbec504"
+    },
+    {
+      "path": "packages/tokens/package.json",
+      "name": "@oods/tokens",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "CHANGELOG.md",
+          "README.md",
+          "LICENSE"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "node": {
+              "import": "./dist/index.cjs",
+              "require": "./dist/index.cjs"
+            },
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./css": {
+            "import": "./dist/css/tokens.css",
+            "require": "./dist/css/tokens.css",
+            "default": "./dist/css/tokens.css"
+          },
+          "./tailwind": {
+            "import": "./dist/tailwind/tokens.json",
+            "require": "./dist/tailwind/tokens.json",
+            "default": "./dist/tailwind/tokens.json"
+          },
+          "./package.json": "./package.json"
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [
+        {
+          "path": "packages/tokens/LICENSE",
+          "bytes": 1075,
+          "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+        }
+      ],
+      "manifestSha256": "f3adec7e987aa700180497f07e1baf5ad0a9bc9dba02ba78ff8cb2a0591b7249"
+    },
+    {
+      "path": "packages/tw-variants/package.json",
+      "name": "@oods/tw-variants",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist",
+          "CHANGELOG.md",
+          "README.md",
+          "LICENSE"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./context-matrix": {
+            "types": "./dist/context-matrix.d.ts",
+            "import": "./dist/context-matrix.js",
+            "require": "./dist/context-matrix.cjs"
+          }
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [
+        {
+          "path": "packages/tw-variants/LICENSE",
+          "bytes": 1075,
+          "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+        }
+      ],
+      "manifestSha256": "498176e2d49b3e90c2685acfe31141a330680cad5ef1f3fc574909d133eebc36"
+    },
+    {
+      "path": "packages/viz-core/package.json",
+      "name": "@oods/viz-core",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          }
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [
+        {
+          "path": "packages/viz-core/LICENSE",
+          "bytes": 1075,
+          "sha256": "47fec3be626545ecccc4c6f4d3f9a29e7a39364a5f12de4a21acd0ffece063ac"
+        }
+      ],
+      "manifestSha256": "e7b9bb741dfe5dc84b723a76dc073c2aebe1f794c9faa5cd7e88984ed96014a3"
+    },
+    {
+      "path": "packages/viz-render/package.json",
+      "name": "@oods/viz-render",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "license": "MIT",
+        "files": [
+          "dist"
+        ],
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          }
+        },
+        "engines": {
+          "node": ">=20.11.1"
+        }
+      },
+      "licenseFiles": [
+        {
+          "path": "packages/viz-render/LICENSE",
+          "bytes": 1075,
+          "sha256": "47fec3be626545ecccc4c6f4d3f9a29e7a39364a5f12de4a21acd0ffece063ac"
+        }
+      ],
+      "manifestSha256": "029afd3b41c838bd92c09d55dd7e6c14bfb99367a61de8b4a677b771eca88706"
+    },
+    {
+      "path": "tools/agents-smoke/package.json",
+      "name": "@oods/agents-smoke",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "aaf5c65aad3f81acc5c765edb79ebeb8c6e3f8cc3ce6ea6e6fd19e206dc55374"
+    },
+    {
+      "path": "tools/design-lab-shell/package.json",
+      "name": "@oods/design-lab-shell",
+      "version": "0.1.0",
+      "fields": {
+        "private": true
+      },
+      "licenseFiles": [],
+      "manifestSha256": "781e1642cc7cbddb4d88f1e4ccdb4988777473a12eb9ea97dfb2fc90689ba20a"
+    },
+    {
+      "path": "tools/oods-agent-cli/package.json",
+      "name": "@oods/agent-cli",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "1e4d95e13dd16fd67025f4a3afe0dc5bb161deafd60de9cf26a403d0279078a5"
+    },
+    {
+      "path": "tools/soak-runner/package.json",
+      "name": "@oods/soak-runner",
+      "version": "0.1.0",
+      "fields": {
+        "private": true,
+        "engines": {
+          "node": ">=20.0.0"
+        }
+      },
+      "licenseFiles": [],
+      "manifestSha256": "ea196b0553e0a7330a44442f3fb678f851f622356c5751348714dae4a5750fb6"
+    }
+  ],
+  "packageSummary": {
+    "workspaces": 21,
+    "workspacePrivate": 21,
+    "workspaceWithoutLicenseField": 12,
+    "workspacePublishConfig": 0,
+    "workspaceLicenseFiles": 5,
+    "rootLicenseFiles": 1
+  },
+  "evidenceScope": "Historical retained CI evidence, predating the s196-m05 UTC implementation. These archives are not the current UTC runtime; current package metadata and recorded bundle identities are separate observations.",
+  "portable": [
+    {
+      "sourceCommit": "415c7cc02822e64d64e2c8a9696d852d7faa2db7",
+      "executedMergeCommit": "405315b16b109aab8ff4e87f9389888c59d43668",
+      "treeSha": "392b519c4a0b8dfc87978c1de9295da98d2aea55",
+      "treesIdentical": true,
+      "runId": 34677270788,
+      "jobId": 103509303160,
+      "jobUrl": "https://github.com/kneelinghorse/OODS-Forge/actions/runs/34677270788/job/103509303160",
+      "startedAt": "2026-09-12T06:06:56Z",
+      "completedAt": "2026-09-12T06:11:04Z",
+      "nodeVersion": "v20.11.1",
+      "pass": 17,
+      "typed": 2,
+      "tools": 19,
+      "calls": 30,
+      "typedCodes": {
+        "brand.apply": "OODS-N020",
+        "design.preview": "OODS-N019"
+      },
+      "bridgeParity": true,
+      "cleanLifecycle": true,
+      "extractedTreeRestored": true,
+      "servedRelease": {
+        "apps": [
+          "Organization",
+          "Subscription",
+          "User"
+        ],
+        "archiveSha256": "70bbb9d5766ffef4afde430a8c90b851359ade932950ea729bc9a93311b53558",
+        "bundleHead": "2148c93e6ee28ea0220560ce9a327e1d05ce3d67",
+        "cells": 42,
+        "fail": 0,
+        "frameworks": [
+          "react",
+          "vue"
+        ],
+        "pass": 42,
+        "typedGap": 0
+      },
+      "bundle": {
+        "manifestPath": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-out-1/forge-runtime.manifest.json",
+        "commit": "405315b16b109aab8ff4e87f9389888c59d43668",
+        "archive": {
+          "byteSize": 29804561,
+          "file": "forge-runtime.tar.gz",
+          "sha256": "1d656011682bcfd3584ea7aee1cc9346e575c19e67f6a478c22870220a3c6264"
+        },
+        "archiveBinaryRetained": false,
+        "payloadTreeSha256": "01aecbc6daa7bc34731fda34081ef4db7335d305abb4502df0038a515b98823b",
+        "thirdPartyCount": 283,
+        "nodeFloor": ">=20.11.1",
+        "buildNodeMajor": 24,
+        "runtimePackages": {
+          "@oods/a11y-tools": "0.1.0",
+          "@oods/artifacts": "0.1.0",
+          "@oods/component-contracts": "0.1.0",
+          "@oods/component-styles": "0.1.0",
+          "@oods/components-react": "0.1.0",
+          "@oods/components-vue": "0.1.0",
+          "@oods/mcp-adapter": "0.3.0",
+          "@oods/mcp-bridge": "0.1.0",
+          "@oods/mcp-server": "0.1.0",
+          "@oods/release-utils": "0.1.0",
+          "@oods/tokens": "0.1.0",
+          "@oods/viz-core": "0.1.0",
+          "@oods/viz-render": "0.1.0"
+        },
+        "bridgeIncluded": true,
+        "structuredDataManifestHash": "993644cc01a5f150ea42d2882a953577a0066a6cecb3f74032e1877d6e4e620d",
+        "determinismCertified": true
+      },
+      "attestation": {
+        "path": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json",
+        "fileSha256": "b2544c102bfb0e178246b7e1cdd1f91353e26993c695deaf3e975b3f01415d88",
+        "payloadSha256": "a68286385a833d1e3e65126a8d630d996091c4befb2b082e87b29be92218c39f",
+        "sourceHead": "405315b16b109aab8ff4e87f9389888c59d43668",
+        "shippedPackageFiles": 615,
+        "targets": {
+          "react": {
+            "rows": 109,
+            "emissionEligible": 109
+          },
+          "vue": {
+            "rows": 109,
+            "emissionEligible": 109
+          }
+        },
+        "scope": "Retained seal and its digest verified; original CI E2E exercised emitted artifacts. Shipped package bytes are not reverified here because the archive binary was not uploaded."
+      }
+    },
+    {
+      "sourceCommit": "415c7cc02822e64d64e2c8a9696d852d7faa2db7",
+      "executedMergeCommit": "405315b16b109aab8ff4e87f9389888c59d43668",
+      "treeSha": "392b519c4a0b8dfc87978c1de9295da98d2aea55",
+      "treesIdentical": true,
+      "runId": 34677270788,
+      "jobId": 103509303157,
+      "jobUrl": "https://github.com/kneelinghorse/OODS-Forge/actions/runs/34677270788/job/103509303157",
+      "startedAt": "2026-09-12T06:06:56Z",
+      "completedAt": "2026-09-12T06:11:41Z",
+      "nodeVersion": "v24.20.0",
+      "pass": 17,
+      "typed": 2,
+      "tools": 19,
+      "calls": 30,
+      "typedCodes": {
+        "brand.apply": "OODS-N020",
+        "design.preview": "OODS-N019"
+      },
+      "bridgeParity": true,
+      "cleanLifecycle": true,
+      "extractedTreeRestored": true,
+      "servedRelease": {
+        "apps": [
+          "Organization",
+          "Subscription",
+          "User"
+        ],
+        "archiveSha256": "70bbb9d5766ffef4afde430a8c90b851359ade932950ea729bc9a93311b53558",
+        "bundleHead": "2148c93e6ee28ea0220560ce9a327e1d05ce3d67",
+        "cells": 42,
+        "fail": 0,
+        "frameworks": [
+          "react",
+          "vue"
+        ],
+        "pass": 42,
+        "typedGap": 0
+      },
+      "bundle": {
+        "manifestPath": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-out-1/forge-runtime.manifest.json",
+        "commit": "405315b16b109aab8ff4e87f9389888c59d43668",
+        "archive": {
+          "byteSize": 29804561,
+          "file": "forge-runtime.tar.gz",
+          "sha256": "1d656011682bcfd3584ea7aee1cc9346e575c19e67f6a478c22870220a3c6264"
+        },
+        "archiveBinaryRetained": false,
+        "payloadTreeSha256": "01aecbc6daa7bc34731fda34081ef4db7335d305abb4502df0038a515b98823b",
+        "thirdPartyCount": 283,
+        "nodeFloor": ">=20.11.1",
+        "buildNodeMajor": 24,
+        "runtimePackages": {
+          "@oods/a11y-tools": "0.1.0",
+          "@oods/artifacts": "0.1.0",
+          "@oods/component-contracts": "0.1.0",
+          "@oods/component-styles": "0.1.0",
+          "@oods/components-react": "0.1.0",
+          "@oods/components-vue": "0.1.0",
+          "@oods/mcp-adapter": "0.3.0",
+          "@oods/mcp-bridge": "0.1.0",
+          "@oods/mcp-server": "0.1.0",
+          "@oods/release-utils": "0.1.0",
+          "@oods/tokens": "0.1.0",
+          "@oods/viz-core": "0.1.0",
+          "@oods/viz-render": "0.1.0"
+        },
+        "bridgeIncluded": true,
+        "structuredDataManifestHash": "993644cc01a5f150ea42d2882a953577a0066a6cecb3f74032e1877d6e4e620d",
+        "determinismCertified": true
+      },
+      "attestation": {
+        "path": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json",
+        "fileSha256": "b2544c102bfb0e178246b7e1cdd1f91353e26993c695deaf3e975b3f01415d88",
+        "payloadSha256": "a68286385a833d1e3e65126a8d630d996091c4befb2b082e87b29be92218c39f",
+        "sourceHead": "405315b16b109aab8ff4e87f9389888c59d43668",
+        "shippedPackageFiles": 615,
+        "targets": {
+          "react": {
+            "rows": 109,
+            "emissionEligible": 109
+          },
+          "vue": {
+            "rows": 109,
+            "emissionEligible": 109
+          }
+        },
+        "scope": "Retained seal and its digest verified; original CI E2E exercised emitted artifacts. Shipped package bytes are not reverified here because the archive binary was not uploaded."
+      }
+    }
+  ],
+  "release": {
+    "sourceCommit": "944f4dda5f784e266310978b31f65b3d452e6387",
+    "executedMergeCommit": "d8b6b052d2a1ac896279005ba62b9384b9f22c01",
+    "treeSha": "e3ce31d9ecb730898ed8a56ef3551a483a5813b7",
+    "treesIdentical": true,
+    "runId": 34679856153,
+    "jobId": 103516340942,
+    "jobUrl": "https://github.com/kneelinghorse/OODS-Forge/actions/runs/34679856153/job/103516340942",
+    "completedAt": "2026-09-12T07:22:19Z",
+    "bundle": {
+      "manifestPath": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/archive/forge-runtime.manifest.json",
+      "commit": "d8b6b052d2a1ac896279005ba62b9384b9f22c01",
+      "archive": {
+        "byteSize": 29804565,
+        "file": "forge-runtime.tar.gz",
+        "sha256": "c7a5d97c12fc24d5f57ee8b27be24a023a92deaaa0f9a193d16b740d4216f922"
+      },
+      "archiveBinaryRetained": false,
+      "payloadTreeSha256": "7da93957a0fd92f162594c7a94e98e8beb20f44fd7692852b5f93802695e448a",
+      "thirdPartyCount": 283,
+      "nodeFloor": ">=20.11.1",
+      "buildNodeMajor": 24,
+      "runtimePackages": {
+        "@oods/a11y-tools": "0.1.0",
+        "@oods/artifacts": "0.1.0",
+        "@oods/component-contracts": "0.1.0",
+        "@oods/component-styles": "0.1.0",
+        "@oods/components-react": "0.1.0",
+        "@oods/components-vue": "0.1.0",
+        "@oods/mcp-adapter": "0.3.0",
+        "@oods/mcp-bridge": "0.1.0",
+        "@oods/mcp-server": "0.1.0",
+        "@oods/release-utils": "0.1.0",
+        "@oods/tokens": "0.1.0",
+        "@oods/viz-core": "0.1.0",
+        "@oods/viz-render": "0.1.0"
+      },
+      "bridgeIncluded": true,
+      "structuredDataManifestHash": "993644cc01a5f150ea42d2882a953577a0066a6cecb3f74032e1877d6e4e620d",
+      "determinismCertified": true
+    },
+    "measuredRelease": {
+      "runId": "23e4b83a-e05f-46ea-8678-f4d1e53ba18a",
+      "cells": 42,
+      "pass": 42,
+      "typedGap": 0,
+      "fail": 0
+    },
+    "scope": "Original manifest, SBOM, sidecar, hosted identity and 42-row ledger retained. Detailed app receipts were independently verified in m05; this facts generator validates their retained metadata, not another runtime sweep."
+  },
+  "inputs": [
+    {
+      "path": "apps/playground/package.json",
+      "bytes": 544,
+      "sha256": "88831185575be3f3c35844a1a4ca4ae31be7d693c6ba45e071a56cfa5cb0a04e"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/merge-commit.remote.json",
+      "bytes": 2723,
+      "sha256": "2b23872affde57dd1b69dd834f03e9ed9cb004da8a4bc6e2343b4e18f5358952"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-out-1/forge-runtime.manifest.json",
+      "bytes": 2362,
+      "sha256": "0b8d6ba178c47eac4310df59b2093c84c3e7799419e08ccb89b8b51ef56509c8"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-out-1/forge-runtime.tar.gz.sha256",
+      "bytes": 87,
+      "sha256": "9d51c021adde6023e1bdc8961a0b6b95ca6419bcdb8a6c2b98d837f2ad00435b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-out-1/runtime-sbom-lite.json",
+      "bytes": 70776,
+      "sha256": "2a7d4727905737e9a9177fe8475099dff3c0cef080fd9be848b4e69b427ee7dc"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json",
+      "bytes": 612743,
+      "sha256": "b2544c102bfb0e178246b7e1cdd1f91353e26993c695deaf3e975b3f01415d88"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/github-artifact.json",
+      "bytes": 817,
+      "sha256": "7a02dc7fcfe3b5f4adf40a70fb76ad3e8bf1fe040e1eea8532f6f7aa8ed828f1"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/job.json",
+      "bytes": 5753,
+      "sha256": "9024e3c2cd3066d1d6edadc02eed8f89eca31e1561dd1adfba9ca1a12583942d"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/job.log",
+      "bytes": 130762,
+      "sha256": "a62a8f2b6d3edd5acd208301eb0f89dd9c87a1ec81da2aaef01dd609e7f53be7"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/portable-runtime-e2e.json",
+      "bytes": 13223,
+      "sha256": "ec7fe4c64f2b87f599cd0b57ba8b0279eb130bab98e3bc3dd936d25d4757cdd8"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node20/verification.json",
+      "bytes": 3442,
+      "sha256": "e95724b23a8b1e1e63d97ce849d5396c2b32153e8bba1f6b7e1aafc621785927"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-out-1/forge-runtime.manifest.json",
+      "bytes": 2362,
+      "sha256": "0b8d6ba178c47eac4310df59b2093c84c3e7799419e08ccb89b8b51ef56509c8"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-out-1/forge-runtime.tar.gz.sha256",
+      "bytes": 87,
+      "sha256": "9d51c021adde6023e1bdc8961a0b6b95ca6419bcdb8a6c2b98d837f2ad00435b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-out-1/runtime-sbom-lite.json",
+      "bytes": 70776,
+      "sha256": "2a7d4727905737e9a9177fe8475099dff3c0cef080fd9be848b4e69b427ee7dc"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/forge-runtime-work-1/payload/packages/mcp-server/dist/registry/readiness-attestation.v1.json",
+      "bytes": 612743,
+      "sha256": "b2544c102bfb0e178246b7e1cdd1f91353e26993c695deaf3e975b3f01415d88"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/github-artifact.json",
+      "bytes": 812,
+      "sha256": "e975ae99b3677f9bfdf3e92f4bea55ee8ed5b9b0ca6fc9f06f51672bece3522f"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/job.json",
+      "bytes": 5738,
+      "sha256": "6fae82135e23a37a740cdb5f193cf90412c2a271d2e28f610aa1cf7f575287a9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/job.log",
+      "bytes": 130867,
+      "sha256": "1e9e7714c828af0e9cc91f6fd779f6d7d3ed5b728372e76ac3ec578e2a6c4f51"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/portable-runtime-e2e.json",
+      "bytes": 13223,
+      "sha256": "f6df7d35465b4d71d4717a9a90546dfd6357ddf7cad666e2a45f1d7f01eabafe"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/node24/verification.json",
+      "bytes": 3437,
+      "sha256": "b4cb71f3db360d50c03454d60d2e45b990911a2275bc92f7f7d12248714404e2"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m03/ci/source-commit.remote.json",
+      "bytes": 1174,
+      "sha256": "907ebc1c42bb41a9320e8fa6b30f4c8fbef590ebde07665cbba04eb6a2ff0b59"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/merge-commit.remote.json",
+      "bytes": 2723,
+      "sha256": "acd0d7ecd3a088bf4542c89287830734438b732369db88a91d33fdc7e03a6bff"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release-job.json",
+      "bytes": 4455,
+      "sha256": "ccfd3f12cbb709a9784e1ae28e7674228f1ca8512835b80e31768b38bc1e1695"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release-job.log",
+      "bytes": 97826,
+      "sha256": "dff299f43998cc9c420c7bea1b13251b1b3c77c8234cf36d4657c03b49526c7a"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/archive/forge-runtime.manifest.json",
+      "bytes": 2367,
+      "sha256": "c1ed84d30c122fd90adfc886f3e599e0f6664be716503dd24da802047e606f88"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/archive/forge-runtime.tar.gz.sha256",
+      "bytes": 87,
+      "sha256": "0a9e52ed9be1155e51911708df28e8f68c03adbbb248dcdde60784104aaaa1b1"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/archive/runtime-sbom-lite.json",
+      "bytes": 70776,
+      "sha256": "2a7d4727905737e9a9177fe8475099dff3c0cef080fd9be848b4e69b427ee7dc"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/bundle-identity.json",
+      "bytes": 672,
+      "sha256": "2c3e5587d04e78ac539800f77cc2bb53dbdee52973d4e0031a1e8c929235cf53"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/release/release-cells.v1.json",
+      "bytes": 512928,
+      "sha256": "393ffc85d61b4536467e04c396faf768e3bf537cc875b2edd13298efdafe3fad"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/source-commit.remote.json",
+      "bytes": 1185,
+      "sha256": "142e86637af6b6f2978ffe2ae114d66e88fe8c923fdd0a3461db9a9f9b44f7d1"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m05/ci-followthrough/verification.json",
+      "bytes": 9498,
+      "sha256": "34f475505cce09567f817097ba7a17fcf7ba1544b0a0162e51706f9f9a27abf9"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-196/m06/package-shapes-baseline.json",
+      "bytes": 6036,
+      "sha256": "7ae915577a430c8bf9c87f93c97e4e58ead7511243b4ff488b3aca83c9565a36"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1075,
+      "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+    },
+    {
+      "path": "package.json",
+      "bytes": 14627,
+      "sha256": "f747f5c53c523acc6703756af0a2636ab6c44ed47ed49fba484afb584c64fe5a"
+    },
+    {
+      "path": "packages/a11y-tools/LICENSE",
+      "bytes": 1075,
+      "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+    },
+    {
+      "path": "packages/a11y-tools/package.json",
+      "bytes": 973,
+      "sha256": "30af7e095eaf6c72ecdf5b76ec6957d877f36bc31700ccd77465f17bbb726054"
+    },
+    {
+      "path": "packages/artifacts/package.json",
+      "bytes": 700,
+      "sha256": "72b2b83b12001f47e63b5a206ef8824067e6a080e00b940c4deca8bd2d5b0d4c"
+    },
+    {
+      "path": "packages/component-contracts/package.json",
+      "bytes": 1267,
+      "sha256": "69dc4ae444c61f2139a89efbb5b7b77c334dbffc23186479e4a1aad498a10199"
+    },
+    {
+      "path": "packages/component-styles/package.json",
+      "bytes": 1337,
+      "sha256": "f4e05e24fc3470f20bd0087f2e47af530cb017ca7134039557d62ce8b37b9ea5"
+    },
+    {
+      "path": "packages/components-react/package.json",
+      "bytes": 2095,
+      "sha256": "4a197bc972f6d8cf16129e45bc1f3bc2d78d8c4606a0c912e2859c9456100897"
+    },
+    {
+      "path": "packages/components-vue/package.json",
+      "bytes": 1803,
+      "sha256": "52247d7b50333a356a0e33a6cf94db9677fbc63d49cea637fef6b60336abcd18"
+    },
+    {
+      "path": "packages/mcp-adapter/package.json",
+      "bytes": 433,
+      "sha256": "f75222ca39aad0a779a9d06941de6f36850b440ecccdb55a9cf1b1f7431a6f41"
+    },
+    {
+      "path": "packages/mcp-bridge/package.json",
+      "bytes": 814,
+      "sha256": "9de610f20f24aa2a8dbefa1313209a52ae58c9f3764f091b8a480fd4867cc2bc"
+    },
+    {
+      "path": "packages/mcp-server/package.json",
+      "bytes": 2303,
+      "sha256": "429bb9435ce049a482b144072de612f7631e19fa70250264e54b382d1d1c1dcf"
+    },
+    {
+      "path": "packages/release-utils/package.json",
+      "bytes": 499,
+      "sha256": "f7379d31ab4b8446d48b1b80f7b4a670c6189eb7bd4efacf6f63ba4c1de3be20"
+    },
+    {
+      "path": "packages/schemas-tools/package.json",
+      "bytes": 479,
+      "sha256": "ae511c45efa8bc156bbeb6d5dfd050de8f5543155adb078522b82dbd536a909d"
+    },
+    {
+      "path": "packages/sdk/package.json",
+      "bytes": 662,
+      "sha256": "e4aebc310b46a723e0eec6c2afbaf1e218f802c96afe5d08e3c6d11f7cbec504"
+    },
+    {
+      "path": "packages/tokens/LICENSE",
+      "bytes": 1075,
+      "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+    },
+    {
+      "path": "packages/tokens/package.json",
+      "bytes": 1443,
+      "sha256": "f3adec7e987aa700180497f07e1baf5ad0a9bc9dba02ba78ff8cb2a0591b7249"
+    },
+    {
+      "path": "packages/tw-variants/LICENSE",
+      "bytes": 1075,
+      "sha256": "7fac24ada5ec12e12a5b11b85c8b99ee8b35c08b5f1afa19550e9c7fecaa55f9"
+    },
+    {
+      "path": "packages/tw-variants/package.json",
+      "bytes": 1023,
+      "sha256": "498176e2d49b3e90c2685acfe31141a330680cad5ef1f3fc574909d133eebc36"
+    },
+    {
+      "path": "packages/viz-core/LICENSE",
+      "bytes": 1075,
+      "sha256": "47fec3be626545ecccc4c6f4d3f9a29e7a39364a5f12de4a21acd0ffece063ac"
+    },
+    {
+      "path": "packages/viz-core/package.json",
+      "bytes": 1371,
+      "sha256": "e7b9bb741dfe5dc84b723a76dc073c2aebe1f794c9faa5cd7e88984ed96014a3"
+    },
+    {
+      "path": "packages/viz-render/LICENSE",
+      "bytes": 1075,
+      "sha256": "47fec3be626545ecccc4c6f4d3f9a29e7a39364a5f12de4a21acd0ffece063ac"
+    },
+    {
+      "path": "packages/viz-render/package.json",
+      "bytes": 1171,
+      "sha256": "029afd3b41c838bd92c09d55dd7e6c14bfb99367a61de8b4a677b771eca88706"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "bytes": 48,
+      "sha256": "3f497127a8545d27d54332c26e88a58f4e5ff797d8d1e0e77923d6ee7c448aa7"
+    },
+    {
+      "path": "tools/agents-smoke/package.json",
+      "bytes": 288,
+      "sha256": "aaf5c65aad3f81acc5c765edb79ebeb8c6e3f8cc3ce6ea6e6fd19e206dc55374"
+    },
+    {
+      "path": "tools/design-lab-shell/package.json",
+      "bytes": 584,
+      "sha256": "781e1642cc7cbddb4d88f1e4ccdb4988777473a12eb9ea97dfb2fc90689ba20a"
+    },
+    {
+      "path": "tools/oods-agent-cli/package.json",
+      "bytes": 389,
+      "sha256": "1e4d95e13dd16fd67025f4a3afe0dc5bb161deafd60de9cf26a403d0279078a5"
+    },
+    {
+      "path": "tools/soak-runner/package.json",
+      "bytes": 251,
+      "sha256": "ea196b0553e0a7330a44442f3fb678f851f622356c5751348714dae4a5750fb6"
+    }
+  ],
+  "inputsSha256": "5f7555da2b6630d8a174915c08e91bf32bd964f11825b3a07b5e441550c1ca4f"
+}

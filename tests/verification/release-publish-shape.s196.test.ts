@@ -56,7 +56,7 @@ function verifyShapes(before: Row[], after: Row[], approvals: Approval[], docume
 const currentRows = (): Row[] => collectPackageFacts(root).map(row => ({ path: row.path, name: row.name, shape: shape(JSON.parse(read(row.path))) }));
 
 describe('Gate-2 preparation changes no publish shape without a named decision (s196 m06)', () => {
-  it('pins every root/workspace baseline to clean Git bytes and permits only the approved root hygiene change', () => {
+  it('pins every root/workspace baseline to clean Git bytes and permits only the approved root hygiene and s200 package safety changes', () => {
     expect(baseline.sourceHead).toBe('8fd3d04ddf9af7d17863308ab579e3023ef4f491');
     expect(baseline.packages).toHaveLength(22);
     for (const row of baseline.packages) {
@@ -66,7 +66,13 @@ describe('Gate-2 preparation changes no publish shape without a named decision (
       expect(shape(JSON.parse(bytes.toString()))).toEqual(row.shape);
     }
     const approvals = approvalsFrom(packet);
-    expect(approvals).toEqual([{ path: 'package.json', field: 'private', before: { present: false }, after: { present: true, value: true }, decisionId: 1952, status: 'approved' }]);
+    expect(approvals).toEqual([
+      { path: 'package.json', field: 'private', before: { present: false }, after: { present: true, value: true }, decisionId: 1952, status: 'approved' },
+      ...['a11y-tools', 'tw-variants', 'tokens', 'viz-render', 'viz-core'].flatMap(name => [
+        { path: `packages/${name}/package.json`, field: 'private', before: { present: false }, after: { present: true, value: true }, decisionId: 2061, status: 'approved' },
+        { path: `packages/${name}/package.json`, field: 'publishConfig', before: { present: true, value: { access: 'public', provenance: true } }, after: { present: false }, decisionId: 2061, status: 'approved' },
+      ]),
+    ]);
     expect(JSON.parse(read('package.json')).private).toBe(true);
     verifyShapes(baseline.packages, currentRows(), approvals, packet);
   });
