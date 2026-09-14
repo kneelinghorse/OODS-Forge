@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { runAppConsumers, observeFlow, observeCollectionControls, assertWorkflowFlow, type AppInspection } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
 import { packFoundationPackages } from '../../../../scripts/product-reality/s182-m04-consumer-harness.mjs';
+const mission = process.env.OODS_PROOF_MISSION ?? 's198-m05';
 const output = path.resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-198/m05');
 const objects = process.argv.slice(3).length ? process.argv.slice(3) : ['Organization', 'User', 'Subscription'];
 const sourceHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -66,7 +67,7 @@ const inspect: AppInspection = async ({ page, url, output, framework, artifact, 
 };
 for (const object of objects) {
   const directory = path.join(output, object.toLowerCase());
-  const report = await runAppConsumers(directory, 's198-m05', object, packed, undefined, sourceHead, inspect);
+  const report = await runAppConsumers(directory, mission, object, packed, undefined, sourceHead, inspect);
   assert(report.cells.every(cell => (cell.gates as Array<{status: string}>).every(gate => gate.status === 'passed')), `${object}: packed gate failed`);
   const read = async (framework: string) => JSON.parse(await fs.readFile(path.join(directory, `craft/${framework}/observations.json`), 'utf8'));
   const react = await read('react'), vue = await read('vue');

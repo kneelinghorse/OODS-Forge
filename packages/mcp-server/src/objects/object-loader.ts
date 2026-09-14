@@ -1,6 +1,6 @@
 /**
  * Object loader with singleton cache.
- * Scans objects/core/, objects/content/, and domains/* /objects/ for *.object.yaml files.
+ * Scans objects/core/, objects/content/, objects/research/, and domains/* /objects/ for *.object.yaml files.
  */
 
 import { load as parseYaml } from 'js-yaml';
