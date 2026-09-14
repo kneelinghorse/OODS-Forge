@@ -101,11 +101,12 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         walk(node, child => { for (const key of ['field', 'amountField']) { const field = child.props?.[key]; if (typeof field === 'string') covered.add(field); } });
         return node;
       }
-      if (isControl(node)) return undefined;
+      if (isControl(node) || ['SearchInput', 'FilterPanel'].includes(node.component)) return undefined;
+      if (node.component === 'StatusBadge' && node.meta?.intent?.startsWith('slot:') && !node.props && !node.children?.length) return undefined;
       // These panel contracts render authored children, not their saved-schema directives.
       // Bind a bounded read summary rather than leave a titled empty shell.
-      if (!node.children?.length && ['MembershipPanel', 'PreferencePanel'].includes(node.component) && !['summary', 'text', 'body', 'emptyMessage'].some(key => node.props?.[key])) {
-        const names = node.component === 'MembershipPanel' ? [node.props?.membershipsField] : [node.props?.namespaceField, 'preference_version'];
+      if (!node.children?.length && ['MembershipPanel', 'PreferencePanel', 'ClassificationPanel'].includes(node.component) && !['summary', 'text', 'body', 'emptyMessage'].some(key => node.props?.[key])) {
+        const names = node.component === 'MembershipPanel' ? [node.props?.membershipsField] : node.component === 'ClassificationPanel' ? ['primary_category_id', node.props?.tagsField] : [node.props?.namespaceField, 'preference_version'];
         node.children = names.filter((name): name is string => typeof name === 'string' && Boolean(fields[name])).map(name => fieldRow(name, `${node.id}-${name}`));
       }
 

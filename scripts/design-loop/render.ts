@@ -34,6 +34,9 @@ export async function render(input: RenderInput) {
     if (workflow.status !== 'ok') throw new Error(`List seed composition failed: ${JSON.stringify(workflow.errors)}`);
     const records = workflowSampleRecords(workflow.schema).filter(record => !record.is_archived);
     const rows = records.map(record => Object.fromEntries(Object.entries(record).map(([key, value]) => [snakeToCamel(key), value])));
+    // Absence in the seed is meaningful (for example, an active record has no cancellation date).
+    // Do not retain the older consumer probe's invented values for omitted domain fields.
+    for (const field of Object.keys(workflow.schema.objectSchema ?? {})) delete model[snakeToCamel(field)];
     Object.assign(model, rows[2] ?? rows[0], input.model);
     if (input.compose.context === 'timeline' && !Object.hasOwn(input.model ?? {}, 'events')) {
       const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);

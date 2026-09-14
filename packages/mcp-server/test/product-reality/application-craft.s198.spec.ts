@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
+import { workflowSampleRecords } from '../../src/codegen/workflow-data-emitter.js';
 import { fieldHelp } from '../../src/compose/label-generator.js';
 import { expectedCollectionOrder, expectedWorkflowFlow, workflowEditProbe } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
 
@@ -50,6 +51,22 @@ describe('s198 application proof follows object declarations and real record tit
       const values = walk(panel.children ?? []).filter(node => node.meta?.intent === 'read-only-field');
       expect(values.map(node => node.props?.field)).toEqual(fields);
     }
+  });
+  it.each(['Evidence', 'Mission'])('%s detail omits collection controls and binds classification content when declared', async object => {
+    const { schema } = await compose({ object, context: 'detail' });
+    const walk = (nodes: typeof schema.screens): typeof schema.screens => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
+    const nodes = walk(schema.screens);
+    expect(nodes.filter(node => ['SearchInput', 'FilterPanel'].includes(node.component))).toEqual([]);
+    expect(nodes.filter(node => node.component === 'StatusBadge' && !node.props && !node.children?.length)).toEqual([]);
+    if (object === 'Evidence') {
+      const panel = nodes.find(node => node.component === 'ClassificationPanel')!;
+      expect(walk(panel.children ?? []).filter(node => node.meta?.intent === 'read-only-field').map(node => node.props?.field)).toEqual(['primary_category_id', 'tags']);
+    }
+  });
+  it('Mission seeds an objective long enough to save its declared research form', async () => {
+    const { schema } = await compose({ object: 'Mission', context: 'workflow' });
+    expect(schema.objectSchema!.objective!.examples).toHaveLength(3);
+    expect(workflowSampleRecords(schema).every(record => String(record.objective).length >= 10)).toBe(true);
   });
   it('timestamp-backed Plan history remains a required populated timeline', async () => {
     const { schema } = await compose({ object: 'Plan', context: 'workflow' });

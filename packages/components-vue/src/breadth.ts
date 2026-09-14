@@ -937,12 +937,13 @@ export const ClassificationEditor = defineComponent({
       const content = authoredContent(slots.default?.());
       const tagText = typeof props.tags === 'string' ? props.tags : props.tags === undefined ? '' : JSON.stringify(props.tags);
       const choices = normalizeSelectOptions(Array.isArray(props.modes) ? props.modes : ['strict', 'flexible']);
+      const selected = firstText(props.mode, props.classificationMode) ?? choices[0]?.value;
       return h('form', { class: 'oods-classification-editor', 'data-oods-component': 'ClassificationEditor', 'data-form-type': 'classification-editor', onSubmit: (event: Event) => event.preventDefault() }, [
         formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Classification Editor', firstText(props.description, props.subtitle, props.hint)),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
           h('label', { 'data-form-control': 'input' }, [h('span', 'Category'), h('input', { type: 'text', name: 'category', value: firstText(props.category, props.primaryCategory) ?? '' })]),
           h('label', { 'data-form-control': 'input' }, [h('span', 'Tags'), h('input', { type: 'text', name: 'tags', placeholder: 'tag-1, tag-2', value: tagText })]),
-          h('label', { 'data-form-control': 'select' }, [h('span', 'Mode'), h('select', { name: 'mode', value: firstText(props.mode, props.classificationMode) }, selectOptionNodes(choices, firstText(props.mode, props.classificationMode)))]),
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Mode'), h('select', { name: 'mode', value: selected }, selectOptionNodes(choices, selected))]),
         ]),
       ]);
     };

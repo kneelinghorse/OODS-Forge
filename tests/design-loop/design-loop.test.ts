@@ -43,11 +43,15 @@ describe('Design-loop observations remain evidence rather than repaired output',
       await render({ compose: { object: 'Subscription', context }, framework: 'react', output });
       expect(requests.at(-1)!.model.planName).toBe(rows[2]!.planName);
       expect(requests.at(-1)!.model.amount).toBe(rows[2]!.amount);
+      expect(requests.at(-1)!.model.cancellationRequestedAt).toBeUndefined();
+      expect(requests.at(-1)!.model.archivedAt).toBeUndefined();
       if (context === 'timeline') expect((requests.at(-1)!.model.events as Array<{ title: string }>).some(event => event.title === 'Last payment')).toBe(true);
     }
     await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output, model: { rows: [], collectionQuery: { total: 0 }, uiState: 'empty' } });
     expect(requests.at(-1)!.model.rows).toEqual([]);
     expect(requests.at(-1)!.model.collectionQuery).toEqual({ total: 0 });
+    await render({ compose: { object: 'Mission', context: 'detail' }, framework: 'react', output, model: { cancellationRequestedAt: '2026-09-08T11:00:00Z' } });
+    expect(requests.at(-1)!.model.cancellationRequestedAt).toBe('2026-09-08T11:00:00Z');
   });
   it('retains actual browser graphics descendants instead of guessing from authored DOM roles', async () => {
     const replies: Record<string, unknown> = {
