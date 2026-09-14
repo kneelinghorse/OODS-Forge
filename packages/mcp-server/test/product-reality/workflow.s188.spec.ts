@@ -186,7 +186,9 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
       expect(store.list({ archived: true }).total).toBe(1);
       expect(store.list({ search: 'subscription-003' }).records).toHaveLength(1);
       expect(store.list({ status: 'active' }).records[0].subscription_id).toBe('subscription-003');
-      expect(store.list({ sort: 'amount', descending: true, page: 2, pageSize: 3 }).records.map((record: { amount: number }) => record.amount)).toEqual([11400, 9500, 7600]);
+      // The s198 price ladder has ties; pagination must retain their stable record order.
+      expect(store.list({ sort: 'amount', descending: true, page: 2, pageSize: 3 }).records.map((record: { subscription_id: string; amount: number }) => [record.subscription_id, record.amount]))
+        .toEqual([['subscription-003', 9900], ['subscription-008', 9900], ['subscription-002', 4900]]);
       const edited = store.get('subscription-003');
       edited.plan_name = 'Team annual';
       expect(store.get('subscription-003').plan_name).not.toBe('Team annual');

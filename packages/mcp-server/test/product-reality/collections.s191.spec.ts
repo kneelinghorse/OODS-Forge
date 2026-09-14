@@ -75,7 +75,8 @@ describe('workflow collection domain ownership (s191)', () => {
       const other = structuredClone(seed[0].locations[0]);
       seed[0].preferred_role = 'shipping';
       const app = createWorkflow({ seed, latency: 0, now: () => '2026-09-10T12:00:00.000Z' });
-      await app.navigate('form');
+      // Select the configured fixture explicitly; display-name sorting need not select seed[0].
+      await app.navigate('form', seed[0][schema.workflow!.data.idField]);
       expect(collectionAddress(app.snapshot().draft.locations).street).toBe('100 Main Street');
       app.actions.handleChange_locations({ street: '8 Lake Road', city: 'Madison', region: 'WI', postalCode: '53703' });
       expect(app.snapshot().draft.locations).toHaveLength(2);

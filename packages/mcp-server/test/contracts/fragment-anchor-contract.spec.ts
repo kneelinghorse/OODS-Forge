@@ -129,9 +129,12 @@ describe('fragment-anchor contract: data-oods-label durable, data-oods-node-id b
   });
 
   it('a surviving slot keeps its data-oods-label while data-oods-node-id may shift', async () => {
-    // Structural change: 3 tabs -> 5 tabs is an add-sections re-compose.
-    const fewer = await composedLabelToNodeId({ object: 'Subscription', context: 'detail', preferences: { tabCount: 3 } });
-    const more = await composedLabelToNodeId({ object: 'Subscription', context: 'detail', preferences: { tabCount: 5 } });
+    // Generic detail retains the requested sections. Object detail intentionally
+    // consolidates empty/duplicate trait tabs (s198), so it no longer exercises
+    // the structural change this consumer anchor contract requires.
+    const fewer = await composedLabelToNodeId({ layout: 'detail', preferences: { tabCount: 3 } });
+    const more = await composedLabelToNodeId({ layout: 'detail', preferences: { tabCount: 5 } });
+    expect(more.size - fewer.size).toBe(2);
 
     // Surviving slots = labels present in BOTH renders.
     const surviving = [...fewer.keys()].filter((label) => more.has(label));
@@ -151,13 +154,11 @@ describe('fragment-anchor contract: data-oods-label durable, data-oods-node-id b
 
     // Concrete pins of the mechanism:
     //  - `header` precedes the tab block, so both its label and node-id are stable.
-    //  - `tab-3` survives template/section recomposition but its allocated id shifts.
-    //    The former metadata pin was an undeclared AuditTimeline, removed in s191-m03.
-    //    A removed slot is outside this surviving-anchor contract.
+    //  - Generic `metadata` follows the tab block, so its allocated id shifts.
     expect(fewer.has('header') && more.has('header')).toBe(true);
     expect(more.get('header')).toBe(fewer.get('header'));
 
-    expect(fewer.has('tab-3') && more.has('tab-3')).toBe(true);
-    expect(more.get('tab-3')).not.toBe(fewer.get('tab-3'));
+    expect(fewer.has('metadata') && more.has('metadata')).toBe(true);
+    expect(more.get('metadata')).not.toBe(fewer.get('metadata'));
   });
 });

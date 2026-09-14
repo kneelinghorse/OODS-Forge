@@ -189,8 +189,8 @@ describe('object-aware compose — pipeline tab label wiring (s86-m01)', () => {
       expect(label.length).toBeGreaterThan(0);
     }
 
-    // Decision 1832: label the populated panels, without the old empty category tabs.
-    expect(labels).toEqual(['Billing', 'Details']);
+    // The s198 read-only record summary precedes the populated Billing recipes.
+    expect(labels).toEqual(['Details', 'Billing']);
     expect(new Set(labels).size).toBe(labels.length);
   });
 

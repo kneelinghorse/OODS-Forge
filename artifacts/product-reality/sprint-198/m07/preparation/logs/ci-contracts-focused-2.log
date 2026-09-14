@@ -1,0 +1,68 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts (8 tests | 1 failed) 2178ms
+   ✓ Sprint 188 remaining trait placement obligations > never chooses any of the five recipes for generic slots on Product 274ms
+   × Sprint 188 remaining trait placement obligations > retains historical grouped-slot bytes and current status fields after detail reconciliation 23ms
+     → expected [ 'allowed_transitions' ] to deeply equal [ 'status', 'allowed_transitions' ]
+   ✓ Sprint 188 remaining trait placement obligations > leaves an unroutable generic main extension unplaced, with the existing warning and no timeline fallback 14ms
+   ✓ Sprint 188 remaining trait placement obligations > preserves the historical placement diff and current declared recipes across 66 schemas, 132 artifacts and workflow  1730ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared detail recipe as a real node through all composer post-processing 27ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared timeline recipe as a real node through all composer post-processing 29ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared card recipe as a real node through all composer post-processing 58ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared list recipe as a real node through all composer post-processing 21ms
+ ❯ test/product-reality/billing-composition.s188.spec.ts (3 tests | 1 failed) 275ms
+   ✓ Decision 1822 bounded recipe composition > resolves object overrides before trait defaults, preserves references and authored runtime props, and does not mutate inputs 23ms
+   ✓ Decision 1822 bounded recipe composition > never selects the recipes for generic detail slots or an amount-bearing object without Billable 99ms
+   × Decision 1822 bounded recipe composition > preserves the historical exact diff and current declared recipes across 66 schemas and 132 artifacts 153ms
+     → expected 'detail' to be 'timeline' // Object.is equality
+ ✓ test/contracts/fragment-anchor-contract.spec.ts (3 tests) 255ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/billing-composition.s188.spec.ts > Decision 1822 bounded recipe composition > preserves the historical exact diff and current declared recipes across 66 schemas and 132 artifacts
+AssertionError: expected 'detail' to be 'timeline' // Object.is equality
+
+Expected: "timeline"
+Received: "detail"
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts:102:31
+    100|         if (!declaration) {
+    101|           // Decision 1832 adds an explicit monetary header to timelin…
+    102|           expect(row.context).toBe('timeline'); expect(node.component)…
+       |                               ^
+    103|           expect(node.props).toEqual({ amountField: 'amount', currency…
+    104|           continue;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/billing-placement.s188.spec.ts > Sprint 188 remaining trait placement obligations > retains historical grouped-slot bytes and current status fields after detail reconciliation
+AssertionError: expected [ 'allowed_transitions' ] to deeply equal [ 'status', 'allowed_transitions' ]
+
+- Expected
++ Received
+
+  [
+-   "status",
+    "allowed_transitions",
+  ]
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts:74:127
+     72|     expect(group.component).toBe('Stack');
+     73|     expect(group.props).toBeUndefined();
+     74|     expect(group.children?.map(node => node.children?.find(child => ch…
+       |                                                                                                                               ^
+     75|     expect(nodes({ ...current.schema, screens: [group] }).filter(node …
+     76|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 12 passed (14)
+   Start at  22:14:51
+   Duration  5.46s (transform 861ms, setup 17ms, collect 2.28s, tests 2.71s, environment 0ms, prepare 146ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/fragment-anchor-contract.spec.ts test/product-reality/billing-composition.s188.spec.ts test/product-reality/billing-placement.s188.spec.ts --reporter=default

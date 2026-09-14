@@ -15,7 +15,7 @@ export const commands = [
   ['docs', ['pnpm', 'docs:check']],
   ['contracts', ['pnpm', 'exec', 'vitest', 'run', '--project=core', '--no-file-parallelism', '--maxWorkers=1', '--testTimeout=60000', '--coverage.enabled=false',
     'tests/governance-gates/a11y-guardrail-dataset.s198.test.ts', 'tests/tokens/canonical-guardrails.s198.test.ts',
-    'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s198.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s190.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s191.spec.ts', 'packages/mcp-server/test/product-reality/runtime-cells.s193.spec.ts', 'tests/verification/how-forge-works.contract.test.ts']],
+    'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s197.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s198.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s190.spec.ts', 'packages/mcp-server/test/product-reality/closeout.s191.spec.ts', 'packages/mcp-server/test/product-reality/runtime-cells.s193.spec.ts', 'tests/verification/how-forge-works.contract.test.ts', 'tests/verification/forge-claims.contract.test.ts']],
 ];
 export function verify(output = 'artifacts/product-reality/sprint-198/m07/pre-freeze') {
   const directory = path.resolve(root, output);

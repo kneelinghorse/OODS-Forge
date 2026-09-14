@@ -1,0 +1,2818 @@
+anchors 3 [
+  [ 'header', 'slot-header-2' ],
+  [ 'tab-0', 'slot-tab-0-4' ],
+  [ 'tab-1', 'slot-tab-1-6' ],
+  [ 'tab-2', 'slot-tab-2-8' ],
+  [ 'metadata', 'slot-metadata-12' ]
+]
+anchors 5 [
+  [ 'header', 'slot-header-2' ],
+  [ 'tab-0', 'slot-tab-0-4' ],
+  [ 'tab-1', 'slot-tab-1-6' ],
+  [ 'tab-2', 'slot-tab-2-8' ],
+  [ 'tab-3', 'slot-tab-3-10' ],
+  [ 'tab-4', 'slot-tab-4-12' ],
+  [ 'metadata', 'slot-metadata-16' ]
+]
+field Article status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'draft', 'in_review', 'scheduled', 'published', 'archived' ],
+    semanticType: 'status.state'
+  }
+}
+field Article state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Article allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Article last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'created', 'scheduled', 'published', 'updated', 'archived' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Article categories {
+  old: {
+    type: 'CategoryNode[]',
+    required: false,
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  },
+  current: {
+    type: 'CategoryNode[]',
+    required: false,
+    default: [],
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  }
+}
+field Article tags {
+  old: {
+    type: 'Tag[]',
+    required: false,
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  },
+  current: {
+    type: 'Tag[]',
+    required: false,
+    default: [],
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  }
+}
+field Article tag_count {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Number of canonical tags assigned to the object.'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Number of canonical tags assigned to the object.'
+  }
+}
+field Article content_type {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Editorial template driving layout and governance workflows.',
+    enum: [ 'knowledge_base', 'announcement', 'release_notes', 'how_to' ],
+    semanticType: 'content.article.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'knowledge_base',
+    description: 'Editorial template driving layout and governance workflows.',
+    enum: [ 'knowledge_base', 'announcement', 'release_notes', 'how_to' ],
+    semanticType: 'content.article.type'
+  }
+}
+field Article locale {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Locale tag determining headline, copy, and SEO metadata.',
+    semanticType: 'content.article.locale'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'en-US',
+    description: 'Locale tag determining headline, copy, and SEO metadata.',
+    semanticType: 'content.article.locale'
+  }
+}
+status [{"id":"ve-header-23","component":"StatusTimeline","props":{"field":"status","historyField":"state_history","statesParameter":"states","showActorId":true,"showReason":true}},{"id":"slot-tab-0-4","component":"Stack","meta":{"intent":"slot:tab-0","label":"tab-0","notes":"pattern-group:status-timeline"},"layout":{"type":"stack","gapToken":"cluster-tight"},"children":[{"id":"pg-status-timeline-27-read-field","component":"Stack","children":[{"id":"pg-status-timeline-27-label","component":"Text","props":{"as":"strong","content":"Allowed transitions"}},{"id":"pg-status-timeline-27-value","meta":{"intent":"read-only-field"},"component":"Text","props":{"field":"allowed_transitions"}}]}]}]
+field Invoice status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical invoice status after provider mapping.',
+    semanticType: 'billing.invoice.status'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical invoice status after provider mapping.',
+    enum: [
+      'draft',
+      'posted',
+      'open',
+      'processing',
+      'past_due',
+      'paid',
+      'refunded',
+      'uncollectible',
+      'void'
+    ],
+    semanticType: 'billing.invoice.status'
+  }
+}
+field Invoice balance_minor {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Remaining amount outstanding in minor units.',
+    semanticType: 'billing.invoice.balance_minor'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 0,
+    description: 'Remaining amount outstanding in minor units.',
+    semanticType: 'billing.invoice.balance_minor'
+  }
+}
+field Invoice payment_terms {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Payment term label describing when payment is expected.',
+    semanticType: 'billing.invoice.payment_terms'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Payment term label describing when payment is expected.',
+    enum: [ 'due_upon_receipt', 'net_15', 'net_30', 'net_45' ],
+    semanticType: 'billing.invoice.payment_terms'
+  }
+}
+field Invoice attempt_count {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.',
+    semanticType: 'billing.invoice.attempt_count'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 0,
+    description: 'Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.',
+    semanticType: 'billing.invoice.attempt_count'
+  }
+}
+field Invoice total_refunded_minor {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Cumulative amount refunded in minor currency units.',
+    semanticType: 'billing.refund.total_minor'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 0,
+    description: 'Cumulative amount refunded in minor currency units.',
+    semanticType: 'billing.refund.total_minor'
+  }
+}
+field Invoice credit_memo_balance_minor {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Remaining credit memo balance that can be applied to invoices.',
+    semanticType: 'billing.refund.credit_memo_balance_minor'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 0,
+    description: 'Remaining credit memo balance that can be applied to invoices.',
+    semanticType: 'billing.refund.credit_memo_balance_minor'
+  }
+}
+field Invoice credit_memo_type {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Category of credit memo tied to business justification.',
+    semanticType: 'billing.refund.credit_memo_type'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Category of credit memo tied to business justification.',
+    enum: [ 'service_failure', 'retention_incentive', 'goodwill' ],
+    semanticType: 'billing.refund.credit_memo_type'
+  }
+}
+field Invoice requires_manager_approval {
+  old: {
+    type: 'boolean',
+    required: false,
+    description: 'Indicates if finance manager approval is required before issuing refund.',
+    semanticType: 'billing.refund.requires_manager_approval'
+  },
+  current: {
+    type: 'boolean',
+    required: false,
+    default: false,
+    description: 'Indicates if finance manager approval is required before issuing refund.',
+    semanticType: 'billing.refund.requires_manager_approval'
+  }
+}
+field Invoice last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [
+      'created',
+      'posted',
+      'payment_initiated',
+      'payment_cleared',
+      'payment_failed',
+      'voided',
+      'written_off'
+    ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Invoice line_items {
+  old: {
+    type: 'InvoiceLineItem[]',
+    required: false,
+    description: 'Normalized line items with quantity, amount_minor, and description fields.',
+    semanticType: 'billing.invoice.line_items'
+  },
+  current: {
+    type: 'InvoiceLineItem[]',
+    required: false,
+    default: [],
+    description: 'Normalized line items with quantity, amount_minor, and description fields.',
+    semanticType: 'billing.invoice.line_items'
+  }
+}
+field Invoice attachments {
+  old: {
+    type: 'AssetReference[]',
+    required: false,
+    description: 'Supporting documents or credit memos associated with the invoice.',
+    semanticType: 'billing.invoice.attachments'
+  },
+  current: {
+    type: 'AssetReference[]',
+    required: false,
+    default: [],
+    description: 'Supporting documents or credit memos associated with the invoice.',
+    semanticType: 'billing.invoice.attachments'
+  }
+}
+billing Invoice detail [
+  {
+    id: 'detail-tabs-9-total_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'total_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-balance_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'balance_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-total_refunded_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'total_refunded_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-credit_memo_balance_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'credit_memo_balance_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-tax_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'tax_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-discount_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'discount_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-subtotal_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'subtotal_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  }
+]
+field Media status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'ingested', 'processing', 'available', 'deprecated' ],
+    semanticType: 'status.state'
+  }
+}
+field Media state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Media allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Media last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'ingested', 'transcoded', 'published', 'archived' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Media categories {
+  old: {
+    type: 'CategoryNode[]',
+    required: false,
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  },
+  current: {
+    type: 'CategoryNode[]',
+    required: false,
+    default: [],
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  }
+}
+field Media tags {
+  old: {
+    type: 'Tag[]',
+    required: false,
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  },
+  current: {
+    type: 'Tag[]',
+    required: false,
+    default: [],
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  }
+}
+field Media tag_count {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Number of canonical tags assigned to the object.'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Number of canonical tags assigned to the object.'
+  }
+}
+field Media transcoding_profiles {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'List of transcoding profiles generated for the asset.'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'List of transcoding profiles generated for the asset.'
+  }
+}
+field Organization status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'prospect', 'onboarding', 'active', 'churned' ],
+    semanticType: 'status.state'
+  }
+}
+field Organization state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Organization allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Organization owner_type {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    semanticType: 'ownership.owner.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    enum: [ 'parent_organization', 'reseller', 'platform' ],
+    semanticType: 'ownership.owner.type'
+  }
+}
+field Organization last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [
+      'created',
+      'plan_upgraded',
+      'plan_downgraded',
+      'ownership_transferred'
+    ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Organization tags {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  }
+}
+field Organization tag_count {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 0,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  }
+}
+field Organization tag_metadata {
+  old: {
+    type: 'object[]',
+    required: false,
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  },
+  current: {
+    type: 'object[]',
+    required: false,
+    default: [],
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  }
+}
+field Organization address_roles {
+  old: {
+    type: 'string[]',
+    required: true,
+    description: 'Ordered list of roles that currently have address entries.',
+    semanticType: 'location.address.roles'
+  },
+  current: {
+    type: 'string[]',
+    required: true,
+    default: [],
+    description: 'Ordered list of roles that currently have address entries.',
+    semanticType: 'location.address.roles'
+  }
+}
+field Organization default_address_role {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Role surfaced in UI contexts when one address must be highlighted.',
+    semanticType: 'location.address.default_role'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Role surfaced in UI contexts when one address must be highlighted.',
+    enum: [ 'headquarters', 'office', 'warehouse', 'branch' ],
+    semanticType: 'location.address.default_role'
+  }
+}
+field Organization addresses {
+  old: {
+    type: 'AddressableEntry[]',
+    required: false,
+    description: 'Collection of { role, address, metadata } entries keyed by role.',
+    semanticType: 'location.address.collection'
+  },
+  current: {
+    type: 'AddressableEntry[]',
+    required: false,
+    default: [],
+    description: 'Collection of { role, address, metadata } entries keyed by role.',
+    semanticType: 'location.address.collection'
+  }
+}
+field Organization preference_document {
+  old: {
+    type: 'PreferenceDocument',
+    required: true,
+    description: 'Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).',
+    semanticType: 'preferences.document'
+  },
+  current: {
+    type: 'PreferenceDocument',
+    required: true,
+    default: { version: '1.0.0', preferences: [Object], metadata: [Object] },
+    description: 'Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).',
+    semanticType: 'preferences.document'
+  }
+}
+field Organization preference_version {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'SemVer mirror of preference_document.version for indexing and analytics.',
+    semanticType: 'preferences.version'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: '2.0.0',
+    description: 'SemVer mirror of preference_document.version for indexing and analytics.',
+    semanticType: 'preferences.version'
+  }
+}
+field Organization preference_namespaces {
+  old: {
+    type: 'string[]',
+    required: true,
+    description: 'Materialized namespace list resolved from parameters/registry for auditing.',
+    semanticType: 'preferences.namespaces'
+  },
+  current: {
+    type: 'string[]',
+    required: true,
+    default: [ 'notifications', 'display', 'privacy' ],
+    description: 'Materialized namespace list resolved from parameters/registry for auditing.',
+    semanticType: 'preferences.namespaces'
+  }
+}
+field Organization preference_mutations {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Monotonic counter incremented whenever preferences mutate (invalidates caches).'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Monotonic counter incremented whenever preferences mutate (invalidates caches).'
+  }
+}
+field Organization role_catalog {
+  old: {
+    type: 'AuthzRoleDocument[]',
+    required: true,
+    description: 'Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).',
+    semanticType: 'authorization.roles'
+  },
+  current: {
+    type: 'AuthzRoleDocument[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).',
+    semanticType: 'authorization.roles'
+  }
+}
+field Organization permission_catalog {
+  old: {
+    type: 'AuthzPermissionDocument[]',
+    required: true,
+    description: 'Atomic permissions following resource:action notation (TABLE 2).',
+    semanticType: 'authorization.permissions'
+  },
+  current: {
+    type: 'AuthzPermissionDocument[]',
+    required: true,
+    default: [],
+    description: 'Atomic permissions following resource:action notation (TABLE 2).',
+    semanticType: 'authorization.permissions'
+  }
+}
+field Organization role_permissions {
+  old: {
+    type: 'Record<string, string[]>',
+    required: true,
+    description: 'Junction map for role→permission edges (TABLE 3).'
+  },
+  current: {
+    type: 'Record<string, string[]>',
+    required: true,
+    default: {},
+    description: 'Junction map for role→permission edges (TABLE 3).'
+  }
+}
+field Organization membership_records {
+  old: {
+    type: 'AuthzMembershipDocument[]',
+    required: true,
+    description: 'SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).',
+    semanticType: 'authorization.memberships'
+  },
+  current: {
+    type: 'AuthzMembershipDocument[]',
+    required: true,
+    default: [],
+    description: 'SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).',
+    semanticType: 'authorization.memberships'
+  }
+}
+field Organization role_hierarchy_edges {
+  old: {
+    type: 'AuthzRoleHierarchyEdge[]',
+    required: false,
+    description: 'Parent→child adjacency list for hierarchical RBAC (Part 3.1).'
+  },
+  current: {
+    type: 'AuthzRoleHierarchyEdge[]',
+    required: false,
+    default: [],
+    description: 'Parent→child adjacency list for hierarchical RBAC (Part 3.1).'
+  }
+}
+field Organization session_roles {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized roles granted within the current session/token exchange.'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized roles granted within the current session/token exchange.'
+  }
+}
+field Organization channel_catalog {
+  old: {
+    type: 'Channel[]',
+    required: true,
+    description: 'Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).',
+    semanticType: 'communication.channels'
+  },
+  current: {
+    type: 'Channel[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).',
+    semanticType: 'communication.channels'
+  }
+}
+field Organization template_catalog {
+  old: {
+    type: 'Template[]',
+    required: true,
+    description: 'Localized template definitions with declared variables per R20.1 Part 2.3.',
+    semanticType: 'communication.templates'
+  },
+  current: {
+    type: 'Template[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Localized template definitions with declared variables per R20.1 Part 2.3.',
+    semanticType: 'communication.templates'
+  }
+}
+field Organization delivery_policies {
+  old: {
+    type: 'DeliveryPolicy[]',
+    required: true,
+    description: 'Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).',
+    semanticType: 'communication.delivery_policy'
+  },
+  current: {
+    type: 'DeliveryPolicy[]',
+    required: true,
+    default: [],
+    description: 'Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).',
+    semanticType: 'communication.delivery_policy'
+  }
+}
+field Organization messages {
+  old: {
+    type: 'Message[]',
+    required: false,
+    description: 'Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).',
+    semanticType: 'communication.messages'
+  },
+  current: {
+    type: 'Message[]',
+    required: false,
+    default: [],
+    description: 'Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).',
+    semanticType: 'communication.messages'
+  }
+}
+field Organization conversations {
+  old: {
+    type: 'Conversation[]',
+    required: false,
+    description: 'Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).',
+    semanticType: 'communication.conversations'
+  },
+  current: {
+    type: 'Conversation[]',
+    required: false,
+    default: [],
+    description: 'Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).',
+    semanticType: 'communication.conversations'
+  }
+}
+field Organization message_statuses {
+  old: {
+    type: 'MessageStatusEntry[]',
+    required: false,
+    description: 'Delivery state machine transitions (queued → sent → delivered → failed → retried → read).'
+  },
+  current: {
+    type: 'MessageStatusEntry[]',
+    required: false,
+    default: [],
+    description: 'Delivery state machine transitions (queued → sent → delivered → failed → retried → read).'
+  }
+}
+field Organization billing_status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Coarse account-level financial standing used by the billing subsystem. Intentionally coarser than the subscription lifecycle: this is a 4-state account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the 8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.',
+    enum: [ 'good_standing', 'past_due', 'unpaid', 'suspended' ],
+    semanticType: 'billing.account.status'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'good_standing',
+    description: 'Coarse account-level financial standing used by the billing subsystem. Intentionally coarser than the subscription lifecycle: this is a 4-state account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the 8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.',
+    enum: [ 'good_standing', 'past_due', 'unpaid', 'suspended' ],
+    semanticType: 'billing.account.status'
+  }
+}
+field Plan billing_interval {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Billing cadence name selected from supportedIntervals.',
+    semanticType: 'billing.plan.interval'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Billing cadence name selected from supportedIntervals.',
+    enum: [ 'monthly', 'quarterly', 'annual' ],
+    semanticType: 'billing.plan.interval'
+  }
+}
+field Plan interval_count {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Multiplier for interval (ex: 12 with monthly => yearly cadence).',
+    semanticType: 'billing.plan.interval_count'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 1,
+    description: 'Multiplier for interval (ex: 12 with monthly => yearly cadence).',
+    semanticType: 'billing.plan.interval_count'
+  }
+}
+field Plan currency {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'ISO 4217 currency for the plan price.',
+    semanticType: 'billing.plan.currency'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'usd',
+    description: 'ISO 4217 currency for the plan price.',
+    semanticType: 'billing.plan.currency'
+  }
+}
+field Plan pricing_model {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Price strategy (flat, per_unit, tiered, package).',
+    semanticType: 'billing.plan.pricing_model'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'flat',
+    description: 'Price strategy (flat, per_unit, tiered, package).',
+    semanticType: 'billing.plan.pricing_model'
+  }
+}
+field Plan unit_label {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Label for display, defaults to the unit parameter.',
+    semanticType: 'billing.usage.unit_label'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'seats',
+    description: 'Label for display, defaults to the unit parameter.',
+    semanticType: 'billing.usage.unit_label'
+  }
+}
+field Plan rollover_strategy {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Strategy for unused units (inherits rolloverStrategy parameter).',
+    semanticType: 'billing.usage.rollover_strategy'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'none',
+    description: 'Strategy for unused units (inherits rolloverStrategy parameter).',
+    semanticType: 'billing.usage.rollover_strategy'
+  }
+}
+field Plan samples {
+  old: {
+    type: 'UsageSample[]',
+    required: false,
+    description: 'Rolling usage measurements for charts or anomaly detection.',
+    semanticType: 'billing.usage.samples'
+  },
+  current: {
+    type: 'UsageSample[]',
+    required: false,
+    default: [],
+    description: 'Rolling usage measurements for charts or anomaly detection.',
+    semanticType: 'billing.usage.samples'
+  }
+}
+field Plan owner_type {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    semanticType: 'ownership.owner.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    enum: [ 'organization', 'team', 'user' ],
+    semanticType: 'ownership.owner.type'
+  }
+}
+field Plan feature_matrix {
+  old: {
+    type: 'FeatureDescriptor[]',
+    required: false,
+    description: 'Array of feature descriptors listing entitlement tiers.',
+    semanticType: 'billing.plan.feature_matrix'
+  },
+  current: {
+    type: 'FeatureDescriptor[]',
+    required: false,
+    default: [],
+    description: 'Array of feature descriptors listing entitlement tiers.',
+    semanticType: 'billing.plan.feature_matrix'
+  }
+}
+field Plan add_on_ids {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Identifiers for add-ons commonly sold with this plan.',
+    semanticType: 'billing.plan.add_on_ids'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Identifiers for add-ons commonly sold with this plan.',
+    semanticType: 'billing.plan.add_on_ids'
+  }
+}
+field Plan upgrade_targets {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Plans presented as upgrade destinations.',
+    semanticType: 'billing.plan.upgrade_targets'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Plans presented as upgrade destinations.',
+    semanticType: 'billing.plan.upgrade_targets'
+  }
+}
+field Plan downgrade_targets {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Plans that can be downgraded to from this plan.',
+    semanticType: 'billing.plan.downgrade_targets'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Plans that can be downgraded to from this plan.',
+    semanticType: 'billing.plan.downgrade_targets'
+  }
+}
+billing Plan detail [
+  {
+    id: 'detail-tabs-9-overage_rate_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'overage_rate_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'detail-tabs-9-projected_overage_minor-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'projected_overage_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  },
+  {
+    id: 'slot-tab-3-15-value',
+    meta: { intent: 'read-only-field' },
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'amount_minor',
+      currencyField: 'currency',
+      minorUnits: 100,
+      showInterval: false
+    }
+  }
+]
+field Product status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'draft', 'in_review', 'active', 'retired' ],
+    semanticType: 'status.state'
+  }
+}
+field Product state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Product allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Product last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'created', 'spec_updated', 'price_changed', 'retired' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Product currency {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'ISO currency code for the unit amount.',
+    semanticType: 'commerce.price.currency'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'ISO currency code for the unit amount.',
+    enum: [ 'USD', 'EUR', 'GBP', 'AUD' ],
+    semanticType: 'commerce.price.currency'
+  }
+}
+field Product pricing_model {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Monetization model applied to the entity.',
+    semanticType: 'commerce.price.model'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Monetization model applied to the entity.',
+    enum: [ 'one_time', 'subscription', 'usage_based' ],
+    semanticType: 'commerce.price.model'
+  }
+}
+field Product billing_interval {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Billing cadence when pricing_model indicates recurring revenue.',
+    semanticType: 'commerce.price.interval'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Billing cadence when pricing_model indicates recurring revenue.',
+    enum: [ 'one_time', 'month', 'year' ],
+    semanticType: 'commerce.price.interval'
+  }
+}
+field Product tax_behavior {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Defines whether taxes are included in the displayed price.',
+    enum: [ 'exclusive', 'inclusive' ],
+    semanticType: 'commerce.price.tax_behavior'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'exclusive',
+    description: 'Defines whether taxes are included in the displayed price.',
+    enum: [ 'exclusive', 'inclusive' ],
+    semanticType: 'commerce.price.tax_behavior'
+  }
+}
+field Product categories {
+  old: {
+    type: 'CategoryNode[]',
+    required: false,
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  },
+  current: {
+    type: 'CategoryNode[]',
+    required: false,
+    default: [],
+    description: 'Ordered taxonomy nodes scoped to the object.',
+    semanticType: 'classification.categories'
+  }
+}
+field Product tags {
+  old: {
+    type: 'Tag[]',
+    required: false,
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  },
+  current: {
+    type: 'Tag[]',
+    required: false,
+    default: [],
+    description: 'Canonical tag collection after synonym collapse.',
+    semanticType: 'classification.tags'
+  }
+}
+field Product tag_count {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Number of canonical tags assigned to the object.'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Number of canonical tags assigned to the object.'
+  }
+}
+field Product searchQuery {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'The current search query string entered by the user.',
+    semanticType: 'input.search.query'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: '',
+    description: 'The current search query string entered by the user.',
+    semanticType: 'input.search.query'
+  }
+}
+field Product searchActive {
+  old: {
+    type: 'boolean',
+    required: false,
+    description: 'Whether the search input is currently focused or has a non-empty query.',
+    semanticType: 'state.search.active'
+  },
+  current: {
+    type: 'boolean',
+    required: false,
+    default: false,
+    description: 'Whether the search input is currently focused or has a non-empty query.',
+    semanticType: 'state.search.active'
+  }
+}
+field Product filters {
+  old: {
+    type: 'object[]',
+    required: false,
+    description: 'Array of available filter descriptors. Each entry defines a filterable dimension:\n' +
+      '  - field: string (the schema field to filter on)\n' +
+      '  - label: string (display label)\n' +
+      '  - type: "select" | "multi-select" | "range" | "boolean" | "date-range"\n' +
+      '  - options: array of { value, label } for select/multi-select types\n',
+    semanticType: 'input.filter.descriptors'
+  },
+  current: {
+    type: 'object[]',
+    required: false,
+    default: [],
+    description: 'Array of available filter descriptors. Each entry defines a filterable dimension:\n' +
+      '  - field: string (the schema field to filter on)\n' +
+      '  - label: string (display label)\n' +
+      '  - type: "select" | "multi-select" | "range" | "boolean" | "date-range"\n' +
+      '  - options: array of { value, label } for select/multi-select types\n',
+    semanticType: 'input.filter.descriptors'
+  }
+}
+field Product activeFilters {
+  old: {
+    type: 'object[]',
+    required: false,
+    description: 'Array of currently applied filter values:\n' +
+      '  - field: string (matches a filter descriptor field)\n' +
+      '  - operator: "eq" | "in" | "range" | "gt" | "lt" | "between"\n' +
+      '  - value: unknown (the selected filter value or values)\n',
+    semanticType: 'state.filter.active'
+  },
+  current: {
+    type: 'object[]',
+    required: false,
+    default: [],
+    description: 'Array of currently applied filter values:\n' +
+      '  - field: string (matches a filter descriptor field)\n' +
+      '  - operator: "eq" | "in" | "range" | "gt" | "lt" | "between"\n' +
+      '  - value: unknown (the selected filter value or values)\n',
+    semanticType: 'state.filter.active'
+  }
+}
+field Product filterCount {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Computed count of currently active filters.',
+    semanticType: 'metric.filter.count'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 0,
+    description: 'Computed count of currently active filters.',
+    semanticType: 'metric.filter.count'
+  }
+}
+field Product page {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Current page number (1-based).',
+    semanticType: 'state.pagination.page'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 1,
+    description: 'Current page number (1-based).',
+    semanticType: 'state.pagination.page'
+  }
+}
+field Product pageSize {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Number of items displayed per page.',
+    semanticType: 'state.pagination.pageSize'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 25,
+    description: 'Number of items displayed per page.',
+    semanticType: 'state.pagination.pageSize'
+  }
+}
+field Product totalItems {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Total number of items across all pages. Used to compute total page count.',
+    semanticType: 'metric.pagination.totalItems'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Total number of items across all pages. Used to compute total page count.',
+    semanticType: 'metric.pagination.totalItems'
+  }
+}
+field Product totalPages {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Computed total number of pages (ceil(totalItems / pageSize)).',
+    semanticType: 'metric.pagination.totalPages'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Computed total number of pages (ceil(totalItems / pageSize)).',
+    semanticType: 'metric.pagination.totalPages'
+  }
+}
+field Product inventory_status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Availability state synchronized with inventory service.',
+    enum: [ 'in_stock', 'low_stock', 'backorder', 'discontinued' ],
+    semanticType: 'product.inventory.status'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'in_stock',
+    description: 'Availability state synchronized with inventory service.',
+    enum: [ 'in_stock', 'low_stock', 'backorder', 'discontinued' ],
+    semanticType: 'product.inventory.status'
+  }
+}
+field Product release_channel {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Channel describing how the product is released to customers.',
+    enum: [ 'alpha', 'beta', 'limited', 'general_availability' ],
+    semanticType: 'product.release.channel'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'general_availability',
+    description: 'Channel describing how the product is released to customers.',
+    enum: [ 'alpha', 'beta', 'limited', 'general_availability' ],
+    semanticType: 'product.release.channel'
+  }
+}
+field Product requires_subscription {
+  old: {
+    type: 'boolean',
+    required: true,
+    description: 'Indicates whether access to the product requires an active subscription.',
+    semanticType: 'product.access.requires_subscription'
+  },
+  current: {
+    type: 'boolean',
+    required: true,
+    default: false,
+    description: 'Indicates whether access to the product requires an active subscription.',
+    semanticType: 'product.access.requires_subscription'
+  }
+}
+field Relationship status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'proposed', 'active', 'paused', 'completed', 'terminated' ],
+    semanticType: 'status.state'
+  }
+}
+field Relationship state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Relationship allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Relationship last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'created', 'activated', 'paused', 'terminated', 'reactivated' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Relationship owner_type {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    semanticType: 'ownership.owner.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Categorical owner type sourced from the ownerTypes parameter.',
+    enum: [ 'organization', 'team', 'platform' ],
+    semanticType: 'ownership.owner.type'
+  }
+}
+field Relationship tags {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  }
+}
+field Relationship tag_count {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 0,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  }
+}
+field Relationship tag_metadata {
+  old: {
+    type: 'object[]',
+    required: false,
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  },
+  current: {
+    type: 'object[]',
+    required: false,
+    default: [],
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  }
+}
+field Relationship direction {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Directionality applied when traversing the relationship.',
+    enum: [ 'unidirectional', 'bidirectional' ],
+    semanticType: 'graph.relationship.direction'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'bidirectional',
+    description: 'Directionality applied when traversing the relationship.',
+    enum: [ 'unidirectional', 'bidirectional' ],
+    semanticType: 'graph.relationship.direction'
+  }
+}
+field Relationship is_bidirectional {
+  old: {
+    type: 'boolean',
+    required: true,
+    description: 'Flag indicating whether the relationship is symmetric.'
+  },
+  current: {
+    type: 'boolean',
+    required: true,
+    default: true,
+    description: 'Flag indicating whether the relationship is symmetric.'
+  }
+}
+field Subscription state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Subscription allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Subscription last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [
+      'billing_cycle_started',
+      'billing_cycle_completed',
+      'payment_received',
+      'cancellation_requested'
+    ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Subscription payment_status {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Outcome of the most recent collection attempt. Distinct from subscription\n' +
+      'lifecycle status — a subscription can be "active" with payment_status "retrying".\n',
+    enum: [ 'pending', 'succeeded', 'failed', 'retrying', 'refunded' ],
+    semanticType: 'billing.cycle.payment_status'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'pending',
+    description: 'Outcome of the most recent collection attempt. Distinct from subscription\n' +
+      'lifecycle status — a subscription can be "active" with payment_status "retrying".\n',
+    enum: [ 'pending', 'succeeded', 'failed', 'retrying', 'refunded' ],
+    semanticType: 'billing.cycle.payment_status'
+  }
+}
+field Subscription proration_amount {
+  old: {
+    type: 'integer',
+    required: false,
+    description: 'Prorated credit or charge in minor currency units generated by a mid-cycle\n' +
+      'plan change. Positive values are charges; negative values are credits.\n' +
+      'Only populated when the supportProration parameter is true.\n',
+    semanticType: 'billing.cycle.proration'
+  },
+  current: {
+    type: 'integer',
+    required: false,
+    default: 0,
+    description: 'Prorated credit or charge in minor currency units generated by a mid-cycle\n' +
+      'plan change. Positive values are charges; negative values are credits.\n' +
+      'Only populated when the supportProration parameter is true.\n',
+    semanticType: 'billing.cycle.proration'
+  }
+}
+field Subscription is_archived {
+  old: {
+    type: 'boolean',
+    required: true,
+    description: 'Flag indicating whether the entity is currently archived (soft-deleted).',
+    semanticType: 'status.archive.state'
+  },
+  current: {
+    type: 'boolean',
+    required: true,
+    default: false,
+    description: 'Flag indicating whether the entity is currently archived (soft-deleted).',
+    semanticType: 'status.archive.state'
+  }
+}
+billing Subscription list [
+  {
+    id: 'slot-toolbar-actions-3',
+    component: 'BillingSummaryBadge',
+    meta: { intent: 'slot:toolbar-actions', label: 'toolbar-actions' },
+    props: {
+      amountField: 'amount',
+      currencyField: 'currency',
+      intervalField: 'billing_interval',
+      minorUnitsParameter: 'minorUnits',
+      minorUnits: 100
+    }
+  }
+]
+billing Subscription form [
+  {
+    id: 've-field-0-26',
+    component: 'BillingIntervalSelector',
+    props: {
+      intervalField: 'billing_interval',
+      intervalsParameter: 'billingIntervals',
+      intervals: [Array],
+      help: 'Recurrence cadence (monthly, yearly, quarterly, etc.).'
+    },
+    children: undefined
+  },
+  {
+    id: 've-field-0-27',
+    component: 'BillingAmountInput',
+    props: {
+      amountField: 'amount',
+      currencyField: 'currency',
+      minorUnitsParameter: 'minorUnits',
+      minorUnits: 100,
+      help: 'Amount in USD'
+    },
+    children: undefined
+  }
+]
+billing Subscription timeline [
+  {
+    id: 'timeline-header-1-billing',
+    component: 'BillingSummaryBadge',
+    props: {
+      amountField: 'amount',
+      currencyField: 'currency',
+      intervalField: 'billing_interval',
+      minorUnits: 100
+    }
+  }
+]
+field Transaction status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'pending', 'authorized', 'settled', 'failed', 'refunded' ],
+    semanticType: 'status.state'
+  }
+}
+field Transaction state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field Transaction allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field Transaction last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'initiated', 'authorized', 'settled', 'refunded', 'failed' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Transaction currency {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'ISO currency code for the unit amount.',
+    semanticType: 'commerce.price.currency'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'ISO currency code for the unit amount.',
+    enum: [ 'USD', 'EUR', 'GBP', 'JPY', 'AUD' ],
+    semanticType: 'commerce.price.currency'
+  }
+}
+field Transaction pricing_model {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Monetization model applied to the entity.',
+    semanticType: 'commerce.price.model'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Monetization model applied to the entity.',
+    enum: [ 'one_time', 'usage_based' ],
+    semanticType: 'commerce.price.model'
+  }
+}
+field Transaction billing_interval {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Billing cadence when pricing_model indicates recurring revenue.',
+    semanticType: 'commerce.price.interval'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Billing cadence when pricing_model indicates recurring revenue.',
+    enum: [ 'one_time' ],
+    semanticType: 'commerce.price.interval'
+  }
+}
+field Transaction tax_behavior {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Defines whether taxes are included in the displayed price.',
+    enum: [ 'exclusive', 'inclusive' ],
+    semanticType: 'commerce.price.tax_behavior'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'exclusive',
+    description: 'Defines whether taxes are included in the displayed price.',
+    enum: [ 'exclusive', 'inclusive' ],
+    semanticType: 'commerce.price.tax_behavior'
+  }
+}
+field Transaction cancel_at_period_end {
+  old: {
+    type: 'boolean',
+    required: true,
+    description: "Whether cancellation occurs at the natural period end instead of immediately. When true the entity is in a REVERSIBLE pending-cancellation state: the schedule can be undone (set back to false) any time before period end, returning the entity to active. This is distinct from a terminal cancellation (a `terminated`/canceled subscription), which is irreversible and non-reactivatable. Mirrors Stripe's cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).",
+    semanticType: 'status.cancel.deferred'
+  },
+  current: {
+    type: 'boolean',
+    required: true,
+    default: false,
+    description: "Whether cancellation occurs at the natural period end instead of immediately. When true the entity is in a REVERSIBLE pending-cancellation state: the schedule can be undone (set back to false) any time before period end, returning the entity to active. This is distinct from a terminal cancellation (a `terminated`/canceled subscription), which is irreversible and non-reactivatable. Mirrors Stripe's cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).",
+    semanticType: 'status.cancel.deferred'
+  }
+}
+field Transaction cancellation_reason_code {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Structured reason code chosen from the allowedReasons parameter.',
+    semanticType: 'status.cancel.reason_code'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Structured reason code chosen from the allowedReasons parameter.',
+    enum: [
+      'customer_request',
+      'suspected_fraud',
+      'duplicate_charge',
+      'payment_method_error'
+    ],
+    semanticType: 'status.cancel.reason_code'
+  }
+}
+field Transaction is_archived {
+  old: {
+    type: 'boolean',
+    required: true,
+    description: 'Flag indicating whether the entity is currently archived (soft-deleted).',
+    semanticType: 'status.archive.state'
+  },
+  current: {
+    type: 'boolean',
+    required: true,
+    default: false,
+    description: 'Flag indicating whether the entity is currently archived (soft-deleted).',
+    semanticType: 'status.archive.state'
+  }
+}
+field Transaction channel {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Sales channel through which the transaction was initiated.',
+    enum: [ 'online', 'in_app', 'point_of_sale', 'partner' ],
+    semanticType: 'commerce.transaction.channel'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'online',
+    description: 'Sales channel through which the transaction was initiated.',
+    enum: [ 'online', 'in_app', 'point_of_sale', 'partner' ],
+    semanticType: 'commerce.transaction.channel'
+  }
+}
+field Usage unit_label {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Label for display, defaults to the unit parameter.',
+    semanticType: 'billing.usage.unit_label'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'api_calls',
+    description: 'Label for display, defaults to the unit parameter.',
+    semanticType: 'billing.usage.unit_label'
+  }
+}
+field Usage rollover_strategy {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Strategy for unused units (inherits rolloverStrategy parameter).',
+    semanticType: 'billing.usage.rollover_strategy'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'expire',
+    description: 'Strategy for unused units (inherits rolloverStrategy parameter).',
+    semanticType: 'billing.usage.rollover_strategy'
+  }
+}
+field Usage samples {
+  old: {
+    type: 'UsageSample[]',
+    required: false,
+    description: 'Rolling usage measurements for charts or anomaly detection.',
+    semanticType: 'billing.usage.samples'
+  },
+  current: {
+    type: 'UsageSample[]',
+    required: false,
+    default: [],
+    description: 'Rolling usage measurements for charts or anomaly detection.',
+    semanticType: 'billing.usage.samples'
+  }
+}
+field Usage last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'reading_captured', 'anomaly_detected', 'reset' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field Usage status {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Health of the usage feed (ok, delayed, investigating).',
+    enum: [ 'ok', 'delayed', 'investigating' ],
+    semanticType: 'billing.usage.status'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'ok',
+    description: 'Health of the usage feed (ok, delayed, investigating).',
+    enum: [ 'ok', 'delayed', 'investigating' ],
+    semanticType: 'billing.usage.status'
+  }
+}
+field Usage anomalies {
+  old: {
+    type: 'UsageAnomaly[]',
+    required: false,
+    description: 'Detected anomalies with context for investigation.',
+    semanticType: 'billing.usage.anomalies'
+  },
+  current: {
+    type: 'UsageAnomaly[]',
+    required: false,
+    default: [],
+    description: 'Detected anomalies with context for investigation.',
+    semanticType: 'billing.usage.anomalies'
+  }
+}
+field User status {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    semanticType: 'status.state'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Canonical lifecycle state derived from the states parameter. This is the single source\n' +
+      "of truth for the entity's current lifecycle position. Consumed by Colorized to resolve\n" +
+      'visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n',
+    enum: [ 'invited', 'active', 'suspended', 'deactivated' ],
+    semanticType: 'status.state'
+  }
+}
+field User state_history {
+  old: {
+    type: 'StateTransition[]',
+    required: false,
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  },
+  current: {
+    type: 'StateTransition[]',
+    required: false,
+    default: [],
+    description: 'Chronological log of state transitions. Each entry records the before/after states,\n' +
+      'timestamp, and (when governance is enabled) the actor, reason, and transition metadata.\n' +
+      'Rendered by StatusTimeline in the detail and timeline views.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - from: string (previous state)\n' +
+      '  - to: string (new state)\n' +
+      '  - timestamp: ISO 8601 datetime\n' +
+      '  - actor_id: string (user/system who triggered the transition, optional)\n' +
+      '  - reason: string (human-readable justification, required when requireTransitionReason is true)\n' +
+      '  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n',
+    semanticType: 'timeline.state_transition'
+  }
+}
+field User allowed_transitions {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized list of valid next states from the current status, computed from the\n' +
+      'transitionRules parameter. When transitionRules is null (open model), this contains\n' +
+      'all states except the current one. Used by StatusSelector to disable invalid options\n' +
+      'and by StatusBadge to indicate available paths.\n',
+    semanticType: 'status.navigation'
+  }
+}
+field User last_event {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    semanticType: 'audit.event.type'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    description: 'Lifecycle event associated with the most recent timestamp mutation.',
+    enum: [ 'created', 'profile_updated', 'status_changed', 'role_updated' ],
+    semanticType: 'audit.event.type'
+  }
+}
+field User tags {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Ordered list of tags assigned to the entity.',
+    semanticType: 'taxonomy.tag.collection'
+  }
+}
+field User tag_count {
+  old: {
+    type: 'number',
+    required: true,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  },
+  current: {
+    type: 'number',
+    required: true,
+    default: 0,
+    description: 'Computed number of tags assigned to the entity.',
+    semanticType: 'metric.collection.count'
+  }
+}
+field User tag_metadata {
+  old: {
+    type: 'object[]',
+    required: false,
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  },
+  current: {
+    type: 'object[]',
+    required: false,
+    default: [],
+    description: 'Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\n' +
+      'tracks provenance and usage for taxonomy health monitoring.\n' +
+      '\n' +
+      'Entry structure:\n' +
+      '  - tag: string (the tag value, matches entry in tags array)\n' +
+      '  - created_at: ISO 8601 datetime\n' +
+      '  - created_by: string (user ID or "system" for allow-list tags)\n' +
+      '  - usage_count: number (how many entities use this tag, computed)\n' +
+      '  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)\n' +
+      '  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n',
+    semanticType: 'taxonomy.tag.governance'
+  }
+}
+field User address_roles {
+  old: {
+    type: 'string[]',
+    required: true,
+    description: 'Ordered list of roles that currently have address entries.',
+    semanticType: 'location.address.roles'
+  },
+  current: {
+    type: 'string[]',
+    required: true,
+    default: [],
+    description: 'Ordered list of roles that currently have address entries.',
+    semanticType: 'location.address.roles'
+  }
+}
+field User default_address_role {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Role surfaced in UI contexts when one address must be highlighted.',
+    semanticType: 'location.address.default_role'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    description: 'Role surfaced in UI contexts when one address must be highlighted.',
+    enum: [ 'home', 'billing', 'shipping' ],
+    semanticType: 'location.address.default_role'
+  }
+}
+field User addresses {
+  old: {
+    type: 'AddressableEntry[]',
+    required: false,
+    description: 'Collection of { role, address, metadata } entries keyed by role.',
+    semanticType: 'location.address.collection'
+  },
+  current: {
+    type: 'AddressableEntry[]',
+    required: false,
+    default: [],
+    description: 'Collection of { role, address, metadata } entries keyed by role.',
+    semanticType: 'location.address.collection'
+  }
+}
+field User preference_document {
+  old: {
+    type: 'PreferenceDocument',
+    required: true,
+    description: 'Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).',
+    semanticType: 'preferences.document'
+  },
+  current: {
+    type: 'PreferenceDocument',
+    required: true,
+    default: { version: '1.0.0', preferences: [Object], metadata: [Object] },
+    description: 'Normalized preference payload captured by PreferenceStore (version, preferences map, metadata).',
+    semanticType: 'preferences.document'
+  }
+}
+field User preference_version {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'SemVer mirror of preference_document.version for indexing and analytics.',
+    semanticType: 'preferences.version'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: '2.0.0',
+    description: 'SemVer mirror of preference_document.version for indexing and analytics.',
+    semanticType: 'preferences.version'
+  }
+}
+field User preference_namespaces {
+  old: {
+    type: 'string[]',
+    required: true,
+    description: 'Materialized namespace list resolved from parameters/registry for auditing.',
+    semanticType: 'preferences.namespaces'
+  },
+  current: {
+    type: 'string[]',
+    required: true,
+    default: [ 'theme', 'notifications', 'display', 'privacy' ],
+    description: 'Materialized namespace list resolved from parameters/registry for auditing.',
+    semanticType: 'preferences.namespaces'
+  }
+}
+field User preference_mutations {
+  old: {
+    type: 'number',
+    required: false,
+    description: 'Monotonic counter incremented whenever preferences mutate (invalidates caches).'
+  },
+  current: {
+    type: 'number',
+    required: false,
+    default: 0,
+    description: 'Monotonic counter incremented whenever preferences mutate (invalidates caches).'
+  }
+}
+field User role_catalog {
+  old: {
+    type: 'AuthzRoleDocument[]',
+    required: true,
+    description: 'Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).',
+    semanticType: 'authorization.roles'
+  },
+  current: {
+    type: 'AuthzRoleDocument[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Canonical RBAC roles (R21.2 Part 4.2 TABLE 1).',
+    semanticType: 'authorization.roles'
+  }
+}
+field User permission_catalog {
+  old: {
+    type: 'AuthzPermissionDocument[]',
+    required: true,
+    description: 'Atomic permissions following resource:action notation (TABLE 2).',
+    semanticType: 'authorization.permissions'
+  },
+  current: {
+    type: 'AuthzPermissionDocument[]',
+    required: true,
+    default: [],
+    description: 'Atomic permissions following resource:action notation (TABLE 2).',
+    semanticType: 'authorization.permissions'
+  }
+}
+field User role_permissions {
+  old: {
+    type: 'Record<string, string[]>',
+    required: true,
+    description: 'Junction map for role→permission edges (TABLE 3).'
+  },
+  current: {
+    type: 'Record<string, string[]>',
+    required: true,
+    default: {},
+    description: 'Junction map for role→permission edges (TABLE 3).'
+  }
+}
+field User membership_records {
+  old: {
+    type: 'AuthzMembershipDocument[]',
+    required: true,
+    description: 'SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).',
+    semanticType: 'authorization.memberships'
+  },
+  current: {
+    type: 'AuthzMembershipDocument[]',
+    required: true,
+    default: [],
+    description: 'SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).',
+    semanticType: 'authorization.memberships'
+  }
+}
+field User role_hierarchy_edges {
+  old: {
+    type: 'AuthzRoleHierarchyEdge[]',
+    required: false,
+    description: 'Parent→child adjacency list for hierarchical RBAC (Part 3.1).'
+  },
+  current: {
+    type: 'AuthzRoleHierarchyEdge[]',
+    required: false,
+    default: [],
+    description: 'Parent→child adjacency list for hierarchical RBAC (Part 3.1).'
+  }
+}
+field User session_roles {
+  old: {
+    type: 'string[]',
+    required: false,
+    description: 'Materialized roles granted within the current session/token exchange.'
+  },
+  current: {
+    type: 'string[]',
+    required: false,
+    default: [],
+    description: 'Materialized roles granted within the current session/token exchange.'
+  }
+}
+field User channel_catalog {
+  old: {
+    type: 'Channel[]',
+    required: true,
+    description: 'Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).',
+    semanticType: 'communication.channels'
+  },
+  current: {
+    type: 'Channel[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).',
+    semanticType: 'communication.channels'
+  }
+}
+field User template_catalog {
+  old: {
+    type: 'Template[]',
+    required: true,
+    description: 'Localized template definitions with declared variables per R20.1 Part 2.3.',
+    semanticType: 'communication.templates'
+  },
+  current: {
+    type: 'Template[]',
+    required: true,
+    default: [],
+    examples: [ [Array] ],
+    description: 'Localized template definitions with declared variables per R20.1 Part 2.3.',
+    semanticType: 'communication.templates'
+  }
+}
+field User delivery_policies {
+  old: {
+    type: 'DeliveryPolicy[]',
+    required: true,
+    description: 'Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).',
+    semanticType: 'communication.delivery_policy'
+  },
+  current: {
+    type: 'DeliveryPolicy[]',
+    required: true,
+    default: [],
+    description: 'Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).',
+    semanticType: 'communication.delivery_policy'
+  }
+}
+field User messages {
+  old: {
+    type: 'Message[]',
+    required: false,
+    description: 'Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).',
+    semanticType: 'communication.messages'
+  },
+  current: {
+    type: 'Message[]',
+    required: false,
+    default: [],
+    description: 'Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).',
+    semanticType: 'communication.messages'
+  }
+}
+field User conversations {
+  old: {
+    type: 'Conversation[]',
+    required: false,
+    description: 'Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).',
+    semanticType: 'communication.conversations'
+  },
+  current: {
+    type: 'Conversation[]',
+    required: false,
+    default: [],
+    description: 'Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).',
+    semanticType: 'communication.conversations'
+  }
+}
+field User message_statuses {
+  old: {
+    type: 'MessageStatusEntry[]',
+    required: false,
+    description: 'Delivery state machine transitions (queued → sent → delivered → failed → retried → read).'
+  },
+  current: {
+    type: 'MessageStatusEntry[]',
+    required: false,
+    default: [],
+    description: 'Delivery state machine transitions (queued → sent → delivered → failed → retried → read).'
+  }
+}
+field User role {
+  old: {
+    type: 'string',
+    required: true,
+    description: 'Highest privilege role currently granted to the user.',
+    enum: [ 'end_user', 'admin', 'owner', 'billing' ],
+    semanticType: 'identity.user.role'
+  },
+  current: {
+    type: 'string',
+    required: true,
+    default: 'end_user',
+    description: 'Highest privilege role currently granted to the user.',
+    enum: [ 'end_user', 'admin', 'owner', 'billing' ],
+    semanticType: 'identity.user.role'
+  }
+}
+field User timezone {
+  old: {
+    type: 'string',
+    required: false,
+    description: 'Preferred timezone applied when rendering timestamps.',
+    semanticType: 'identity.user.timezone'
+  },
+  current: {
+    type: 'string',
+    required: false,
+    default: 'UTC',
+    description: 'Preferred timezone applied when rendering timestamps.',
+    semanticType: 'identity.user.timezone'
+  }
+}

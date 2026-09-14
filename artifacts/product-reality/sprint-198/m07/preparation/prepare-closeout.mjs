@@ -15,7 +15,6 @@ const git = args => execFileSync('git', args, { cwd: root, maxBuffer: 128 * 1024
 const old = json('artifacts/product-reality/sprint-197/m07/closeout/manifest.json');
 const sources = Object.fromEntries(Object.entries(old.sources).map(([key, value]) => [key, value.replaceAll('sprint-197/', 'sprint-198/')]));
 sources.preFreeze = `${out}/pre-freeze-final/report.json`;
-assert.equal(json(sources.sourceProof).head, implementationHead);
 
 const criterionEvidence = {
   m01: [
@@ -76,6 +75,11 @@ for (const [mission, criteria] of Object.entries(criterionEvidence)) {
   criteria.forEach((files, index) => bindings.push({ missionId: `s198-${mission}`, criterionIndex: index + 1,
     executionIds: [`${mission}-receipts`], evidencePaths: files.map(file => `${base}/${mission}/${file}`), qualification: qualifications[mission] }));
 }
+if (process.argv.includes('--check-history')) {
+  console.log(JSON.stringify({ historicalExecutions: executions.length, historicalCriteria: bindings.length, references: executions.reduce((count, row) => count + row.evidencePaths.length, 0) }));
+  process.exit(0);
+}
+assert.equal(json(sources.sourceProof).head, implementationHead);
 const currentCriteria = [
   [`${out}/five-suite-closeout/four-suite-baseline.json`, sources.preFreeze],
   [sources.preFreeze, sources.near],
