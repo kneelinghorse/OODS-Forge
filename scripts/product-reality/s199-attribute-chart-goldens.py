@@ -60,6 +60,7 @@ parser.add_argument('--check', action='store_true')
 parser.add_argument('--finalize', action='store_true')
 parser.add_argument('--mission')
 parser.add_argument('--reason')
+parser.add_argument('--reason-map', help='JSON rows {file,pin,reason} for producer-specific attribution')
 args = parser.parse_args()
 out = (ROOT / args.out).resolve()
 assert out.is_relative_to(ROOT / 'artifacts/product-reality/sprint-199'), 'Output must stay under sprint-199'
@@ -96,6 +97,7 @@ else:
     attributed = dict(zip(identities, ledger['entries']))
     if args.record:
         assert re.fullmatch(r's199-m0[1-7]', args.mission or '') and args.reason, '--mission and --reason required'
+    reason_map = {(row['file'], row['pin']): row['reason'] for row in json.loads((ROOT / args.reason_map).read_text())} if args.reason_map else {}
     changes = []
     for plan in ledger['beforePlan'] + ledger.get('additionalBeforePlan', []):
         file = ROOT / plan['file']
@@ -106,10 +108,12 @@ else:
             if key in attributed:
                 assert attributed[key]['before'] == before and attributed[key]['after'] == after, f'Pin moved again: {key}'
             elif before != after:
-                row = {'file': plan['file'], 'pin': pin, 'before': before, 'after': after, 'mission': args.mission, 'reason': args.reason}
+                row = {'file': plan['file'], 'pin': pin, 'before': before, 'after': after, 'mission': args.mission, 'reason': reason_map.get(key, args.reason)}
                 changes.append(row)
                 if args.record:
                     ledger['entries'].append(row)
+    if args.reason_map and args.record:
+        assert set(reason_map) == {(row['file'], row['pin']) for row in changes}, 'Reason map must cover exactly the new pins'
     if not args.record:
         assert not changes, f'Unattributed pins: {changes}'
     original_patterns = json.loads(git('show', f'{BASE}:packages/viz-core/src/registry/viz-patterns.v1.json'))

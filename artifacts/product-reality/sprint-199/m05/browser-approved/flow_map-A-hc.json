@@ -1,0 +1,380 @@
+{
+  "request": {
+    "chartType": "flow_map",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "from": "CA",
+          "to": "NV",
+          "oLng": -120,
+          "oLat": 37,
+          "dLng": -116,
+          "dLat": 39,
+          "volume": 540
+        },
+        {
+          "from": "NV",
+          "to": "CA",
+          "oLng": -116,
+          "oLat": 39,
+          "dLng": -120,
+          "dLat": 37,
+          "volume": 210
+        }
+      ],
+      "originLongitudeField": "oLng",
+      "originLatitudeField": "oLat",
+      "destinationLongitudeField": "dLng",
+      "destinationLatitudeField": "dLat",
+      "strengthField": "volume",
+      "curvature": 0.3
+    },
+    "name": "Trade corridors",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true
+    },
+    "brand": "A",
+    "theme": "hc"
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "flow_map",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "geo": {
+        "map": "map-viz:flow_map",
+        "roam": false,
+        "label": {
+          "show": false
+        },
+        "itemStyle": {
+          "areaColor": "Canvas",
+          "borderColor": "CanvasText"
+        },
+        "emphasis": {
+          "itemStyle": {
+            "areaColor": "Canvas"
+          }
+        }
+      },
+      "visualMap": {
+        "type": "continuous",
+        "min": 210,
+        "max": 540,
+        "calculable": true,
+        "show": false,
+        "seriesIndex": 0,
+        "inRange": {
+          "lineWidth": [
+            1,
+            6
+          ]
+        },
+        "textStyle": {
+          "color": "CanvasText"
+        }
+      },
+      "series": [
+        {
+          "type": "lines",
+          "coordinateSystem": "geo",
+          "geoIndex": 0,
+          "polyline": false,
+          "name": "Trade corridors",
+          "data": [
+            {
+              "coords": [
+                [
+                  -120,
+                  37
+                ],
+                [
+                  -116,
+                  39
+                ]
+              ],
+              "value": 540,
+              "raw": {
+                "from": "CA",
+                "to": "NV",
+                "oLng": -120,
+                "oLat": 37,
+                "dLng": -116,
+                "dLat": 39,
+                "volume": 540
+              }
+            },
+            {
+              "coords": [
+                [
+                  -116,
+                  39
+                ],
+                [
+                  -120,
+                  37
+                ]
+              ],
+              "value": 210,
+              "raw": {
+                "from": "NV",
+                "to": "CA",
+                "oLng": -116,
+                "oLat": 39,
+                "dLng": -120,
+                "dLat": 37,
+                "volume": 210
+              }
+            }
+          ],
+          "lineStyle": {
+            "color": "CanvasText",
+            "curveness": 0.3,
+            "opacity": 0.6
+          },
+          "tooltip": {}
+        }
+      ],
+      "tooltip": {
+        "trigger": "item"
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Flow map of Trade corridors."
+      },
+      "title": {
+        "text": "Trade corridors",
+        "backgroundColor": "transparent",
+        "borderColor": "CanvasText",
+        "textStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        },
+        "subtextStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:flow_map",
+          "name": "Trade corridors",
+          "a11y": {
+            "description": "Flow map of Trade corridors."
+          },
+          "dimensions": {
+            "width": 860,
+            "height": 520
+          }
+        }
+      },
+      "__registration": {
+        "name": "map-viz:flow_map",
+        "geoJson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "a11yDescription": "Flow map of Trade corridors.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkFlow",
+      "rowCount": 2,
+      "fields": []
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:flow_map",
+      "name": "Trade corridors",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkFlow"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Flow map of Trade corridors."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-5c7957f2",
+    "specRefCreatedAt": "2026-09-14T08:30:38.505Z",
+    "specRefExpiresAt": "2026-09-14T09:00:38.505Z",
+    "contentHash": "e37bd0aa79e6baf482f1d035bb3d5bc448eabfdea244c79f66ce391895e11d4d",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M180 360L420 360L420 40L180 40L180 360Z\" fill=\"Canvas\" stroke=\"CanvasText\" stroke-width=\"0.5\" class=\"oods-zr-0\"></path>\n<path d=\"M276 264L420 264L420 40L276 40L276 264Z\" fill=\"Canvas\" stroke=\"CanvasText\" stroke-width=\"0.5\" class=\"oods-zr-0\"></path>\n<path d=\"M276 200Q304.8 139.2 372 136\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-opacity=\"0.6\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M372 136Q343.2 196.8 276 200\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-opacity=\"0.6\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M-66.1 -5l132.2 0l0 28l-132.2 0Z\" transform=\"translate(300 20)\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"CanvasText\">Trade corridors</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nfill:Canvas;\n}\n.oods-zr-1:hover {\ncursor:pointer;\n}\n.oods-zr-2:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "bfd497f548b1278635c466051ea0eff242842999db6ce58bc70dfd388efcd859",
+    "svgBytes": 1471,
+    "svgRef": "viz.render-9068b568",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "A"
+    }
+  }
+}

@@ -149,7 +149,7 @@ describe("artifact.certify — operand-backed ECharts render grading (s179 m05)"
 
       expect(out.status).toBe("ok");
       expect(out.coverage).toBe("certified");
-      expect(out.conformant).toBe(operand.chartType !== "bubble_map");
+      expect(out.conformant).toBe(true);
       expect(out.determinism).toEqual({
         stable: true,
         contentHash: capture.renderedContentHash,

@@ -1,0 +1,476 @@
+{
+  "request": {
+    "chartType": "choropleth",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "state": "CA",
+          "sales": 580
+        },
+        {
+          "state": "NV",
+          "sales": 96
+        }
+      ],
+      "join": {
+        "dataKey": "state",
+        "featureProperty": "region"
+      },
+      "valueField": "sales",
+      "colorScale": "linear"
+    },
+    "name": "State sales",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true
+    },
+    "theme": "hc",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "choropleth",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "geo": {
+        "map": "map-viz:choropleth",
+        "nameProperty": "region",
+        "roam": false,
+        "label": {
+          "show": false
+        },
+        "itemStyle": {
+          "areaColor": "Canvas",
+          "borderColor": "CanvasText"
+        },
+        "emphasis": {
+          "itemStyle": {
+            "areaColor": "Canvas"
+          }
+        }
+      },
+      "visualMap": {
+        "type": "piecewise",
+        "splitNumber": 3,
+        "pieces": [
+          {
+            "min": 96,
+            "max": 257.33333333333337,
+            "color": "oklch(0.94 0 265)"
+          },
+          {
+            "min": 257.33333333333337,
+            "max": 418.66666666666674,
+            "color": "oklch(0.54 0 265)"
+          },
+          {
+            "min": 418.66666666666674,
+            "max": 580,
+            "color": "oklch(0.34 0 265)"
+          }
+        ],
+        "textStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        },
+        "backgroundColor": "transparent",
+        "borderColor": "CanvasText",
+        "selectedMode": false,
+        "hoverLink": false,
+        "contentColor": "Canvas",
+        "inactiveColor": "Canvas",
+        "inRange": {
+          "color": []
+        },
+        "outOfRange": {
+          "color": []
+        },
+        "handleStyle": {
+          "color": "CanvasText",
+          "borderColor": "CanvasText"
+        },
+        "indicatorStyle": {
+          "color": "CanvasText",
+          "borderColor": "CanvasText"
+        },
+        "controller": {
+          "inRange": {
+            "color": []
+          },
+          "outOfRange": {
+            "color": []
+          }
+        }
+      },
+      "series": [
+        {
+          "type": "map",
+          "map": "map-viz:choropleth",
+          "geoIndex": 0,
+          "name": "State sales",
+          "data": [
+            {
+              "name": "CA",
+              "value": 580,
+              "rawProperties": {
+                "region": "CA",
+                "state_name": "California",
+                "state": "CA",
+                "sales": 580
+              }
+            },
+            {
+              "name": "NV",
+              "value": 96,
+              "rawProperties": {
+                "region": "NV",
+                "state_name": "Nevada",
+                "state": "NV",
+                "sales": 96
+              }
+            }
+          ],
+          "emphasis": {
+            "focus": "self",
+            "itemStyle": {
+              "areaColor": "Canvas"
+            }
+          }
+        }
+      ],
+      "tooltip": {
+        "trigger": "item"
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Choropleth map of State sales."
+      },
+      "title": {
+        "text": "State sales",
+        "backgroundColor": "transparent",
+        "borderColor": "CanvasText",
+        "textStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        },
+        "subtextStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:choropleth",
+          "name": "State sales",
+          "a11y": {
+            "description": "Choropleth map of State sales."
+          },
+          "dimensions": {
+            "width": 860,
+            "height": 520
+          }
+        }
+      },
+      "__registration": {
+        "name": "map-viz:choropleth",
+        "geoJson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California",
+                "state": "CA",
+                "sales": 580
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada",
+                "state": "NV",
+                "sales": 96
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "a11yDescription": "Choropleth map of State sales.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkChoropleth",
+      "rowCount": 2,
+      "fields": []
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:choropleth",
+      "name": "State sales",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkChoropleth"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Choropleth map of State sales."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-7fc003ae",
+    "specRefCreatedAt": "2026-09-14T08:20:40.738Z",
+    "specRefExpiresAt": "2026-09-14T08:50:40.738Z",
+    "contentHash": "defab2f44b0e0679c4ce18af8bea9e5ced5404e5a575dcfbd373d1cf14f2c47d",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M180 360L420 360L420 40L180 40L180 360Z\" fill=\"oklch(0.34 0 265)\" stroke=\"CanvasText\" stroke-width=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M276 264L420 264L420 40L276 40L276 264Z\" fill=\"oklch(0.94 0 265)\" stroke=\"CanvasText\" stroke-width=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M-15 -15l111 0l0 92l-111 0Z\" transform=\"translate(15 323)\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-width=\"0\" class=\"oods-zr-1\"></path>\n<path d=\"M3.5 0L16.5 0A3.5 3.5 0 0 1 20 3.5L20 10.5A3.5 3.5 0 0 1 16.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0\" transform=\"translate(15 323)\" fill=\"oklch(0.34 0 265)\" class=\"oods-zr-1\"></path>\n<path d=\"M30 1l51 0l0 12l-51 0Z\" transform=\"translate(15 323)\" fill=\"none\" pointer-events=\"visible\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" xml:space=\"preserve\" x=\"30\" y=\"7\" transform=\"translate(15 323)\" fill=\"CanvasText\">419 - 580</text>\n<path d=\"M3.5 0L16.5 0A3.5 3.5 0 0 1 20 3.5L20 10.5A3.5 3.5 0 0 1 16.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0\" transform=\"translate(15 347)\" fill=\"oklch(0.54 0 265)\" class=\"oods-zr-1\"></path>\n<path d=\"M30 1l51 0l0 12l-51 0Z\" transform=\"translate(15 347)\" fill=\"none\" pointer-events=\"visible\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" xml:space=\"preserve\" x=\"30\" y=\"7\" transform=\"translate(15 347)\" fill=\"CanvasText\">257 - 419</text>\n<path d=\"M3.5 0L16.5 0A3.5 3.5 0 0 1 20 3.5L20 10.5A3.5 3.5 0 0 1 16.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0\" transform=\"translate(15 371)\" fill=\"oklch(0.94 0 265)\" class=\"oods-zr-1\"></path>\n<path d=\"M30 1l44.3 0l0 12l-44.3 0Z\" transform=\"translate(15 371)\" fill=\"none\" pointer-events=\"visible\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" xml:space=\"preserve\" x=\"30\" y=\"7\" transform=\"translate(15 371)\" fill=\"CanvasText\">96 - 257</text>\n<path d=\"M-49.7 -5l99.5 0l0 28l-99.5 0Z\" transform=\"translate(300 20)\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-width=\"0\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"CanvasText\">State sales</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nfill:Canvas;\n}\n.oods-zr-1:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "f5f94a771e38ea34664f9fc6eb257e251d190db130cfc40a456cc378223eaece",
+    "svgBytes": 2943,
+    "svgRef": "viz.render-ae5456b7",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V159"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "defab2f44b0e0679c4ce18af8bea9e5ced5404e5a575dcfbd373d1cf14f2c47d",
+      "renderHash": "f5f94a771e38ea34664f9fc6eb257e251d190db130cfc40a456cc378223eaece"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 1,
+      "failing": 0
+    },
+    "notes": [
+      "MarkChoropleth is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  }
+}

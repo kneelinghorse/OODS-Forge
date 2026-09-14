@@ -56,7 +56,7 @@ describe('artifact.certify — a11y-equivalence declared operand profile (s195 m
       // Ordinary warnings remain visible without failing the a11y pillar.
       expect(a11yFindingsOf(out.findings).length).toBeGreaterThan(0);
       expect(out.pillars?.a11yEquivalence).toBe('pass');
-      expect(out.conformant).toBe(operand.chartType !== 'bubble_map');
+      expect(out.conformant).toBe(true);
       expect(out.coverage).toBe('certified');
     },
   );

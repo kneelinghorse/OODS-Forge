@@ -14,7 +14,7 @@ import type { EChartsOption, GraphSeriesOption } from 'echarts';
 
 import type { NetworkInput, NetworkLink, NetworkNode } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
@@ -161,7 +161,8 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
     // Emphasis
     emphasis: {
       focus: 'adjacency' as const,
-      lineStyle: { width: 4 },
+      lineStyle: { width: 4, ...(scope.theme === 'hc' ? { color: palette[0] } : {}) },
+      ...(scope.theme === 'hc' ? { itemStyle: { color: palette[0], borderColor: chrome.background } } : {}),
     },
 
     // Edge styling
@@ -183,12 +184,12 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
     height: dimensions.height,
   }) as GraphSeriesOption;
 
-  return pruneUndefined({
+  return applyHcEchartsChrome(pruneUndefined({
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
     tooltip: generateGraphTooltip(),
-    legend: categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
+    legend: scope.theme !== 'hc' && categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
     aria: { enabled: true, description: graphSpec.a11y?.description },
     title: graphSpec.name ? { text: graphSpec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
@@ -201,7 +202,7 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
         a11y: graphSpec.a11y,
       }),
     },
-  }) as unknown as EChartsOption;
+  }), chrome, scope) as unknown as EChartsOption;
 }
 
 function transformNodes(

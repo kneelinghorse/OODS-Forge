@@ -46,7 +46,7 @@ import { registerGeoJson, type GeoRegistration } from './echarts-geo-registratio
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
 import type { DataRecord } from './geo-data-joiner.js';
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_BUBBLE_RANGE: [number, number] = [6, 28];
@@ -118,6 +118,7 @@ function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): G
       areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope),
       borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
+    emphasis: { itemStyle: { areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope) } },
   });
 }
 
@@ -353,7 +354,7 @@ export function adaptBubbleToECharts(
     (option as Record<string, unknown>).__registration = result.registration;
   }
 
-  return option;
+  return applyHcEchartsChrome(option, chrome, scope);
 }
 
 export type { BubbleBuildResult };

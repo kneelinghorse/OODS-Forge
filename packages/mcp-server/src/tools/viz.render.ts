@@ -426,6 +426,12 @@ async function renderSpec(input: VizRenderInput, presentation?: PatternPresentat
     // viz-core before adapters, a11y gates, hashes and certification observe it.
     const built = presentation ? { ...rawBuilt, spec: applyPatternPresentation(rawBuilt.spec, presentation) } : rawBuilt;
 
+    // Public heatmap defaults are explicit in the normalized IR so certify replays
+    // the same sequential palette. Authored pattern presentation remains authoritative.
+    if (!presentation && !scene && built.chartType === 'heatmap') {
+      for (const mark of built.spec.marks) mark.options = { ...mark.options, colorScheme: 'sequential' };
+    }
+
     if (input.opacity !== undefined) {
       for (const mark of built.spec.marks) {
         mark.options = {

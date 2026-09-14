@@ -9,7 +9,10 @@ import { handle as dashboard } from '../../packages/mcp-server/src/tools/dashboa
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 
 const root = path.resolve(import.meta.dirname, '../..');
-const out = path.join(root, 'artifacts/product-reality/sprint-197/m05/consumers');
+const args = process.argv.slice(2);
+const chartsMigration = args.includes('--s199');
+const samplesOnly = args.includes('--samples-only');
+const out = path.join(root, `artifacts/product-reality/sprint-${chartsMigration ? 199 : 197}/m05/consumers`);
 const read = (file: string) => fs.readFileSync(path.join(root, file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 const sha = (bytes: string) => createHash('sha256').update(bytes).digest('hex');
@@ -17,9 +20,9 @@ const save = (file: string, value: unknown) => {
   const target = path.join(out, file); fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
 };
-const beforeHead = json('artifacts/product-reality/sprint-197/m01/baseline.json').beforeHead;
+const beforeHead = chartsMigration ? 'b7a96ab0f' : json('artifacts/product-reality/sprint-197/m01/baseline.json').beforeHead;
 const write = process.argv.includes('--write-samples');
-assert(process.argv.slice(2).every(arg => arg === '--write-samples'), 'Unknown option');
+assert(process.argv.slice(2).every(arg => ['--write-samples', '--s199', '--samples-only'].includes(arg)), 'Unknown option');
 const samplePath = 'packages/component-contracts/fixtures/viz-preview-samples.v1.json';
 const beforeSamples = execFileSync('git', ['show', `${beforeHead}:${samplePath}`], { cwd: root, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 const samples = JSON.parse(beforeSamples);
@@ -36,6 +39,12 @@ for (const [id, sample] of Object.entries(samples.samples) as Array<[string, any
 const generatedSamples = JSON.stringify(samples, null, 2) + '\n';
 if (write) fs.writeFileSync(path.join(root, samplePath), generatedSamples);
 else assert.equal(read(samplePath), generatedSamples, 'Preview sample SVGs need the attributed --write-samples migration');
+if (samplesOnly) {
+  save('samples.json', { missionId: chartsMigration ? 's199-m05' : 's197-m05', beforeHead, builderSelfCertified: false,
+    scope: 'preview-samples-only', source: samplePath, beforeSha256: sha(beforeSamples), afterSha256: sha(generatedSamples), rows: sampleRows });
+  console.log(JSON.stringify({ previewSamples: sampleRows.length, scope: 'preview-samples-only' }));
+  process.exit(0);
+}
 const portableSource = 'artifacts/product-reality/sprint-193/m07/logs/portable-e2e.log';
 const oldPortable = json(portableSource).calls.dashboards;
 const dashboards = [];
@@ -66,7 +75,7 @@ for (const cell of prior.rows) {
       path: asset.path, brand: cell.brand, theme: cell.theme, beforeHash: old.contentHash, afterHash: asset.contentHash, raw, sameOperand: true });
   }
 }
-save('migration.json', { schemaVersion: 1, missionId: 's197-m05', builderSelfCertified: false, beforeHead,
-  reason: 'Generated scoped palette supersedes consumer pixels; exact requests and historical palette/UTC receipts remain unchanged.',
+save('migration.json', { schemaVersion: 1, missionId: chartsMigration ? 's199-m05' : 's197-m05', builderSelfCertified: false, beforeHead,
+  reason: chartsMigration ? 'S199 chart producer fixes supersede consumer pixels; exact operands are unchanged and each moved pin is attributed in the sprint ledger.' : 'Generated scoped palette supersedes consumer pixels; exact requests and historical palette/UTC receipts remain unchanged.',
   samples: { source: samplePath, beforeSha256: sha(beforeSamples), afterSha256: sha(generatedSamples), rows: sampleRows }, dashboards, placements });
 console.log(JSON.stringify({ previewSamples: sampleRows.length, portableDashboards: dashboards.length, placementAssets: placements.length }));

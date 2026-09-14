@@ -131,3 +131,37 @@ export function resolveOodsEchartsChrome(spec: EchartsChromeSpecInput, scope: To
     },
   };
 }
+
+/** HC-only text/box defaults. This never edits series paints; other themes retain exact bytes. */
+export function applyHcEchartsChrome<T extends object>(option: T, chrome: OodsEchartsChrome, scope: TokenScope): T {
+  if (scope.theme !== 'hc') return option;
+  const source = option as Record<string, any>;
+  const text = { color: chrome.labelOnCanvas, backgroundColor: 'transparent', borderColor: 'transparent', textBorderColor: 'transparent' };
+  const box = { backgroundColor: 'transparent', borderColor: chrome.tileBorder };
+  const map = (value: any, decorate: (entry: Record<string, any>) => object): any =>
+    Array.isArray(value) ? value.map(decorate) : decorate(value);
+  return {
+    ...option,
+    ...(source.title ? { title: map(source.title, entry => ({ ...entry, ...box,
+      textStyle: { ...entry.textStyle, ...text }, subtextStyle: { ...entry.subtextStyle, ...text },
+    })) } : {}),
+    ...(source.legend ? { legend: map(source.legend, entry => ({ ...entry, ...box,
+      textStyle: { ...entry.textStyle, ...text }, pageTextStyle: text,
+      inactiveColor: chrome.labelOnCanvas, inactiveBorderColor: chrome.tileBorder,
+      pageIconColor: chrome.labelOnCanvas, pageIconInactiveColor: chrome.labelOnCanvas,
+    })) } : {}),
+    ...(source.visualMap ? { visualMap: map(source.visualMap, entry => entry.show === false ? entry : ({ ...entry, ...box,
+      textStyle: { ...entry.textStyle, ...text }, borderColor: chrome.tileBorder,
+      selectedMode: false,
+      hoverLink: false,
+      contentColor: chrome.background,
+      inactiveColor: chrome.background,
+      // Per-piece literals own the color; empty fallback ranges avoid native interpolation.
+      inRange: { ...entry.inRange, color: [] },
+      outOfRange: { ...entry.outOfRange, color: [] },
+      handleStyle: { color: chrome.labelOnCanvas, borderColor: chrome.tileBorder },
+      indicatorStyle: { color: chrome.labelOnCanvas, borderColor: chrome.tileBorder },
+      controller: { inRange: { color: [] }, outOfRange: { color: [] } },
+    })) } : {}),
+  };
+}

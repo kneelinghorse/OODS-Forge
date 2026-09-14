@@ -22,13 +22,13 @@ import {
 type StableChartType = (typeof STABLE_CHART_TYPES)[number];
 
 const EXPECTED_NORMALIZED_HASHES: Readonly<Record<StableChartType, string>> = {
-  treemap: "629e8b3435ac6ea24c288f8a5a2d9548e110f9517b769f96702cf758ebd9c0c9",
+  treemap: "ce9f3f02228255ff2b0428b4163de10d798ceb9ae1b893c2077b58af422f3251",
   sunburst: "fcb9366be6cb54e1fa63f4ca95226232c303708f09d59fff3231e2284c644db0",
-  sankey: "86453b9db15eb5ba08bd38a3e370e6fdffe8edf80c4987cf004530c152d27288",
+  sankey: "dddc8d9aed8968ebe31c46d3550393fcd2ff1e288bd3a029f1f7db7cc7539d03",
   chord: "25f997cc68917e985ca39eef3499b4c119d13bf6dbeacd6481401d22f471a2ec",
   choropleth: "17cd8a698349f0942badc4484473c378235de48299a15ef096079c6474dbc8a9",
-  bubble_map: "88080a236a3c898bb62c593b7be3c03806f2ab49dfa2e3c6fd15686c4d1eb1e7",
-  flow_map: "d5fbd43d80bc153ee74decc0821abc1cedd9cb426b5c3f3364f766b3c519855b",
+  bubble_map: "40d0c96e3e92f15263f14cb4de74d63842de50550e265569ea0294a636482c67",
+  flow_map: "214bb735d665df680aaaac8d141e9a87eb65da641f3b4b45c90ef22d2b4cd9b4",
 };
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

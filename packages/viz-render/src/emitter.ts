@@ -57,6 +57,7 @@ export async function renderVegaLiteToSvg(
 
   const branded = prepareSpecForBrand(spec, options);
   const compiled = compile(branded);
+  preserveQuantizedSymbolLegends(branded, compiled.spec);
   const view = new View(parse(compiled.spec), { renderer: 'none' });
   // Silence Vega's logger so warnings never leak to stdout/stderr (and so output
   // is purely the SVG string). None = 0.
@@ -167,4 +168,32 @@ function normalizeAutoIds(svg: string): string {
     out = out.replace(new RegExp(`url\\(#${escaped}\\)`, 'g'), `url(#${stable})`);
   });
   return out;
+}
+
+/** Vega-Lite 6 omits symbol type for quantize, but Vega 6 infers a gradient.
+ * Restore only an explicitly authored quantized symbol legend. */
+export function preserveQuantizedSymbolLegends(source: unknown, compiled: unknown): void {
+  const requested = new Set<string>();
+  const visit = (value: unknown, action: (entry: Record<string, any>) => void): void => {
+    if (!value || typeof value !== 'object') return;
+    if (!Array.isArray(value)) action(value as Record<string, any>);
+    for (const child of Object.values(value)) visit(child, action);
+  };
+  visit(source, entry => {
+    for (const binding of Object.values(entry.encoding ?? {}) as any[]) {
+      if (binding?.scale?.type === 'quantize' && binding?.legend?.type === 'symbol' && typeof binding.field === 'string') requested.add(binding.field);
+    }
+  });
+  if (!requested.size) return;
+  const scales = new Set<string>();
+  visit(compiled, entry => {
+    for (const scale of entry.scales ?? []) {
+      if (scale.type === 'quantize' && requested.has(scale.domain?.field)) scales.add(scale.name);
+    }
+  });
+  visit(compiled, entry => {
+    for (const legend of entry.legends ?? []) {
+      if (scales.has(legend.fill) || scales.has(legend.stroke)) legend.type = 'symbol';
+    }
+  });
 }

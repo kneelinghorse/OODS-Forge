@@ -15,7 +15,7 @@ import { buildEChartsTooltipFormatter, createFlowLineTooltipFields } from './spa
 import { registerGeoJson, type GeoRegistration } from './echarts-geo-registration.js';
 import { resolveColor } from './geo-token-color.js';
 import type { DataRecord } from './geo-data-joiner.js';
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_CURVENESS = 0.3;
@@ -86,6 +86,7 @@ function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): G
       areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope),
       borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
+    emphasis: { itemStyle: { areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope) } },
   });
 }
 
@@ -117,7 +118,7 @@ export function buildFlowLineSeries(
   const staticWidth = widthEncoding?.value ?? DEFAULT_LINE_WIDTH;
   const curveness = layer.encoding.curvature?.value ?? DEFAULT_CURVENESS;
   const opacity = layer.encoding.opacity?.value ?? DEFAULT_LINE_OPACITY;
-  const lineColor = resolveColor(layer.encoding.color?.value ?? DEFAULT_LINE_COLOR, scope);
+  const lineColor = resolveColor(scope.theme === 'hc' ? '--oods-viz-scale-categorical-01' : layer.encoding.color?.value ?? DEFAULT_LINE_COLOR, scope);
 
   const strengthValues = strengthField
     ? data.map((datum) => coerceNumber(datum[strengthField])).filter((value): value is number => value !== null)
@@ -248,7 +249,7 @@ export function adaptFlowLineToECharts(
     (option as Record<string, unknown>).__registration = result.registration;
   }
 
-  return option;
+  return applyHcEchartsChrome(option, chrome, scope);
 }
 
 export type { FlowLineBuildResult };

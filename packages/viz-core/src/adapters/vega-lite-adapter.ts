@@ -202,9 +202,25 @@ function createLayer(
   return {
     key: inferLayerKey(mark),
     mark: createMark(mark, singleSeriesColor),
-    encoding: applyBaselineToEncoding(mark, encoding),
+    encoding: applyBaselineToEncoding(mark, applyHeatmapPalette(mark, encoding, scope)),
     data: mark.from ? { name: mark.from } : undefined,
   };
+}
+
+/** Public defaults opt into the sequential range; authored pattern presentation stays stable. */
+function applyHeatmapPalette(mark: NormalizedMark, encoding: Record<string, unknown>, scope: TokenScope): Record<string, unknown> {
+  const color = encoding.color as Record<string, unknown> | undefined;
+  if (mark.trait !== 'MarkRect' || color?.type !== 'quantitative') return encoding;
+  const scale = (color.scale ?? {}) as Record<string, unknown>;
+  const hc = scope.theme === 'hc';
+  if (!hc && (mark.options?.colorScheme !== 'sequential' || scale.range)) return encoding;
+  const range = (scale.domainMid === 0 ? getVizScaleTokens('diverging') : getVizScaleTokens('sequential'))
+    .map(token => hc ? resolveTokenToColor(token, scope) : toHex(resolveTokenToColor(token, scope) ?? ''));
+  if (range.some(paint => !paint)) throw new VegaLiteAdapterError('Heatmap palette tokens did not resolve.');
+  return { ...encoding, color: { ...color,
+    scale: { ...scale, ...(hc ? { type: 'quantize' } : {}), range },
+    ...(hc ? { legend: { ...(color.legend as object), type: 'symbol', symbolStrokeColor: resolveTokenToColor('--oods-sys-text-primary', scope) } } : {}),
+  } };
 }
 
 /**

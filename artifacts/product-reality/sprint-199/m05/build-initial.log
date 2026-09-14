@@ -1,0 +1,40 @@
+
+> @oods/viz-core@0.1.0 build /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core
+> rimraf dist && tsup --config tsup.config.ts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core/tsup.config.ts
+CLI Target: node20
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+DTS Build start
+ESM dist/index.js     736.78 KB
+ESM dist/index.js.map 1.77 MB
+ESM ⚡️ Build success in 1165ms
+CJS dist/index.cjs     741.68 KB
+CJS dist/index.cjs.map 1.77 MB
+CJS ⚡️ Build success in 1166ms
+src/adapters/vega-lite-adapter.ts(217,35): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(scheme: "sequential", options?: SequentialScaleOptions | undefined): ("--viz-scale-sequential-01" | "--viz-scale-sequential-02" | "--viz-scale-sequential-03" | ... 5 more ... | "--viz-scale-sequential-09")[]', gave the following error.
+    Argument of type '"diverging" | "sequential"' is not assignable to parameter of type '"sequential"'.
+      Type '"diverging"' is not assignable to type '"sequential"'.
+  Overload 2 of 3, '(scheme: "diverging", options?: DivergingScaleOptions | undefined): DivergingToken[]', gave the following error.
+    Argument of type '"diverging" | "sequential"' is not assignable to parameter of type '"diverging"'.
+      Type '"sequential"' is not assignable to type '"diverging"'.
+  Overload 3 of 3, '(scheme: "categorical", options?: CategoricalScaleOptions | undefined): ("--viz-scale-categorical-01" | "--viz-scale-categorical-02" | "--viz-scale-categorical-03" | "--viz-scale-categorical-04" | "--viz-scale-categorical-05" | "--viz-scale-categorical-06")[]', gave the following error.
+    Argument of type '"diverging" | "sequential"' is not assignable to parameter of type '"categorical"'.
+      Type '"diverging"' is not assignable to type '"categorical"'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/viz-core@0.1.0 build: `rimraf dist && tsup --config tsup.config.ts`
+Exit status 1

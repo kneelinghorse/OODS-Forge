@@ -11,7 +11,7 @@ import type { SankeyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 import { transformLinks, transformNodes, validateSankeyInput } from './sankey-utils.js';
@@ -88,6 +88,8 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     name: sankeySpec.name ?? 'Sankey',
     data: nodes,
     links,
+    // Every node is explicitly colored; suppress the unused native gradient parser in HC.
+    ...(scope.theme === 'hc' ? { color: [] } : {}),
 
     // Orientation
     orient: orientation,
@@ -103,6 +105,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     // Emphasis
     emphasis: {
       focus: 'adjacency' as const, // Highlight connected flows on hover
+      lineStyle: { color: 'source' as const },
     },
 
     // Labels
@@ -114,7 +117,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
 
     // Link styling
     lineStyle: {
-      color: sankeySpec.encoding?.link?.color ?? 'gradient',
+      color: scope.theme === 'hc' ? 'source' : sankeySpec.encoding?.link?.color ?? 'gradient',
       curveness: DEFAULT_CURVENESS,
       opacity: DEFAULT_LINK_OPACITY,
     },
@@ -130,7 +133,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     height: dimensions.height,
   }) as SankeySeriesOption;
 
-  return pruneUndefined({
+  return applyHcEchartsChrome(pruneUndefined({
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
@@ -147,7 +150,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
         a11y: sankeySpec.a11y,
       }),
     },
-  }) as unknown as EChartsOption;
+  }), chrome, scope) as unknown as EChartsOption;
 }
 
 /**

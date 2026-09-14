@@ -12,7 +12,7 @@ import { joinGeoWithData, type DataRecord } from './geo-data-joiner.js';
 import { registerGeoJson, type GeoRegistration } from './echarts-geo-registration.js';
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 // Geo region fills/borders stay via resolveColor on the UNIFIED --oods-sys-* namespace
@@ -92,7 +92,7 @@ function buildGeoComponent(mapName: string, roam: boolean, nameProperty?: string
       borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
     emphasis: {
-      itemStyle: { areaColor: resolveColor(DEFAULT_EMPHASIS_COLOR, scope) },
+      itemStyle: { areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_EMPHASIS_COLOR, scope) },
     },
   });
 }
@@ -165,7 +165,7 @@ export function buildChoropleth(
     geoIndex: 0,
     name: spec.name ?? 'Choropleth',
     data: seriesData,
-    emphasis: { focus: 'self' },
+    emphasis: { focus: 'self', itemStyle: { areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_EMPHASIS_COLOR, scope) } },
   }) as unknown as MapSeriesOption;
 
   const diagnostics: GeoJoinDiagnostics | undefined =
@@ -238,7 +238,7 @@ export function adaptChoroplethToECharts(
     (option as Record<string, unknown>).__joinDiagnostics = result.diagnostics;
   }
 
-  return option;
+  return applyHcEchartsChrome(option, chrome, scope);
 }
 
 export type { ChoroplethBuildResult };
