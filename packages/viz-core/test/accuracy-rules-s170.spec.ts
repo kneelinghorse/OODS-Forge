@@ -34,7 +34,7 @@ import {
 // Sprint-170 m01 — the four ACCURACY rules (#818, the fourth #977 pillar), proven RED-first.
 //
 // EVERY red here is SYNTHETIC by necessity: the committed corpus contains zero specs that trip
-// any of the four (the 42-fixture sweep below is that fact, asserted). So each rule ships with
+// any of the four (the 44-fixture sweep below is that fact, asserted). So each rule ships with
 //   (a) a RED that positively trips it and a minimal GREEN twin differing in ONE property,
 //   (b) a MUTATION GATE proving the rule's own evaluate() is the only thing that fires its RED,
 //   (c) for the two scope-sensitive rules, a DISCRIMINATING check proving the scope term is what
@@ -760,11 +760,11 @@ describe('s170 m01 — the engine', () => {
 // The committed corpus: the standing false-positive guard
 // ============================================================================
 
-describe('s170 m01 — 42-fixture corpus sweep (zero findings)', () => {
+describe('s170 m01 — 44-fixture corpus sweep (zero findings)', () => {
   const FIXTURES = globSync(path.join(REPO_ROOT, 'examples/viz/**/*.spec.json')).sort();
 
-  it('the corpus is exactly the 42 mark-bearing committed fixtures (a corpus move cannot hollow this gate)', () => {
-    expect(FIXTURES).toHaveLength(42);
+  it('the corpus is exactly the 44 mark-bearing committed fixtures (a corpus move cannot hollow this gate)', () => {
+    expect(FIXTURES).toHaveLength(44);
   });
 
   type ValidationEvidence = readonly [path: string, keyword: string, message: string, count?: number];

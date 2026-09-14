@@ -8,7 +8,7 @@ import { ROOT, PATTERN_REGISTRY_PATH, writePatternOutputs } from '../../../../sc
 import { cpSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 
-const observationsPath = 'artifacts/product-reality/sprint-197/m05/patterns/pattern-observations.json';
+const observationsPath = 'artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json';
 const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const directories: string[] = [];
 afterEach(() => directories.splice(0).forEach(directory => rmSync(directory, { recursive: true, force: true })));

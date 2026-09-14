@@ -1,3 +1,4 @@
+import { humanize } from '../a11y/format.js';
 import sources from './viz-pattern-sources.v1.json' with { type: 'json' };
 import { assertNormalizedVizSpec, type EncodingMap, type NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import type { BuildVizSpecInput, EncodingChannel, EncodingInput } from '../builder/spec-builder.js';
@@ -23,7 +24,13 @@ export interface PatternPresentation {
   readonly markOptions?: NormalizedVizSpec['marks'][number]['options'];
 }
 
+export const RETIRED_VIZ_PATTERNS: Readonly<Record<string, string>> = {
+  'pattern:viz:linked-brush-scatter': 'Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter.',
+};
+
 export type PatternTranslation =
+  | { readonly status: 'scene'; readonly baseChartType: ChartType; readonly spec: NormalizedVizSpec }
+  | { readonly status: 'retired'; readonly baseChartType: ChartType; readonly reasons: ReadonlyArray<string> }
   | { readonly status: 'renderable'; readonly baseChartType: ChartType; readonly explicitInput: BuildVizSpecInput; readonly presentation: PatternPresentation }
   | { readonly status: 'authoring-only'; readonly baseChartType: ChartType; readonly reasons: ReadonlyArray<string> };
 
@@ -41,7 +48,7 @@ const CHANNELS: ReadonlyArray<EncodingChannel> = ['x', 'y', 'color', 'size', 'sh
 const INPUT_BINDING_KEYS = ['field', 'aggregate', 'scale', 'timeUnit', 'sort', 'title', 'type', 'range'] as const;
 // These authored option keys have existing Vega-Lite translations. Unknown keys
 // remain authoring-only instead of inheriting the adapter's silent option drop.
-const MARK_OPTIONS = new Set(['baseline', 'curve', 'opacity', 'fillOpacity', 'strokeWidth', 'strokeDash']);
+const MARK_OPTIONS = new Set(['orientation', 'baseline', 'curve', 'opacity', 'fillOpacity', 'strokeWidth', 'strokeDash']);
 
 /** Translate the single-scene public subset; never flatten a richer source to its first mark. */
 export function translatePattern(input: NormalizedVizSpec | string): PatternTranslation {
@@ -52,10 +59,11 @@ export function translatePattern(input: NormalizedVizSpec | string): PatternTran
     ?? record?.baseChartType ?? MARK_TYPES[spec.marks[0].trait];
   if (!baseChartType) throw new PatternTranslationError(`Pattern has no supported Cartesian base mark: ${spec.marks[0].trait}`);
 
+  const retirement = RETIRED_VIZ_PATTERNS[spec.id ?? ''];
+  if (retirement) return { status: 'retired', baseChartType, reasons: [retirement] };
   const reasons: string[] = [];
-  if (spec.marks.length !== 1) reasons.push(`marks: ${spec.marks.length} independently bound marks require multi-mark composition; the public pattern translation supports one mark.`);
-  if (spec.layout) reasons.push(`layout: ${spec.layout.trait} requires layout composition that the public single-scene pattern translation cannot preserve.`);
-  if (spec.interactions?.length) reasons.push(`interactions: ${spec.interactions.map(interaction => `${interaction.select.type}/${interaction.select.on}/${interaction.rule.bindTo}`).join(', ')} require interaction composition that the public pattern translation cannot preserve.`);
+  const scene = spec.marks.length !== 1 || Boolean(spec.layout) || Boolean(spec.interactions?.length)
+    || [spec.encoding, ...spec.marks.map(mark => mark.encodings)].some(bindings => bindings?.x2 || bindings?.y2);
   if (spec.transforms?.length) reasons.push('transforms: authored transforms require a transform-aware translation; rows must not be silently substituted for transformed data.');
   if (spec.datasets && Object.keys(spec.datasets).length) reasons.push('datasets: named datasets are outside the inline single-scene pattern translation.');
   if (!spec.data.values?.length || spec.data.values.length > 5000 || spec.data.url || spec.data.name) reasons.push('data: the public pattern translation requires 1–5000 inline rows with no external or named data reference.');
@@ -69,10 +77,20 @@ export function translatePattern(input: NormalizedVizSpec | string): PatternTran
   }
   const encodings = { ...spec.encoding, ...spec.marks[0].encodings };
   for (const channel of Object.keys(encodings)) {
-    if (!CHANNELS.includes(channel as EncodingChannel)) reasons.push(`encoding.${channel}: secondary positional channels require a multi-bound mark translation.`);
+    if (!CHANNELS.includes(channel as EncodingChannel) && !['x2', 'y2'].includes(channel)) reasons.push(`encoding.${channel}: secondary positional channels require a multi-bound mark translation.`);
   }
   if (!encodings.x || !encodings.y) reasons.push('encoding: the public explicit translation requires both x and y bindings.');
   if (reasons.length) return { status: 'authoring-only', baseChartType, reasons: [...new Set(reasons)] };
+
+  if (scene) {
+    for (const bindings of [spec.encoding, ...spec.marks.map(mark => mark.encodings)]) {
+      for (const channel of ['x', 'y', 'color'] as const) {
+        const binding = bindings?.[channel];
+        if (binding && !binding.title?.trim()) binding.title = humanize(binding.field);
+      }
+    }
+    return { status: 'scene', baseChartType, spec: assertNormalizedVizSpec(spec) };
+  }
 
   const explicitEncodings: Partial<Record<EncodingChannel, EncodingInput>> = {};
   for (const channel of CHANNELS) {

@@ -9,10 +9,10 @@ import { buildNotices, requestHash } from '../../../../scripts/product-reality/s
 const root = new URL('../../../../', import.meta.url).pathname;
 // These source operands belong to the retained Sprint195 proofs; UTC intentionally
 // changed the live registry and renderer in Sprint196. Do not rewrite old receipts.
-const historicalVizPaths = new Set(['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts']);
+const historicalVizPaths = new Set(['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/registry/viz-taxonomy.v1.json', 'packages/viz-core/src/registry/viz-classification.v1.json', 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json', 'examples/viz/patterns-v2/sparkline-grid.spec.json']);
 const historicalViz = new Map<string, Buffer>();
 const read = (file: string): Buffer => {
-  if (!historicalVizPaths.has(file)) return readFileSync(`${root}/${file}`);
+  if (!historicalVizPaths.has(file) && !file.startsWith('examples/viz/patterns-v2/')) return readFileSync(`${root}/${file}`);
   if (!historicalViz.has(file)) historicalViz.set(file, execFileSync('git', ['show', `1d100e20bcc0911031192406625357638adecbe5:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
   return historicalViz.get(file)!;
 };

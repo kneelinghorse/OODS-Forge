@@ -1,0 +1,649 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "line",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "SLA adherence by region",
+      "description": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+      "data": {
+        "values": [
+          {
+            "week": "W01",
+            "region": "Amer",
+            "actual": 310,
+            "lower": 280,
+            "upper": 340,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "Amer"
+          },
+          {
+            "week": "W02",
+            "region": "Amer",
+            "actual": 325,
+            "lower": 285,
+            "upper": 345,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "Amer"
+          },
+          {
+            "week": "W03",
+            "region": "Amer",
+            "actual": 335,
+            "lower": 290,
+            "upper": 350,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "Amer"
+          },
+          {
+            "week": "W01",
+            "region": "EMEA",
+            "actual": 270,
+            "lower": 250,
+            "upper": 310,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "EMEA"
+          },
+          {
+            "week": "W02",
+            "region": "EMEA",
+            "actual": 280,
+            "lower": 255,
+            "upper": 315,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "EMEA"
+          },
+          {
+            "week": "W03",
+            "region": "EMEA",
+            "actual": 292,
+            "lower": 260,
+            "upper": 320,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "EMEA"
+          },
+          {
+            "week": "W01",
+            "region": "APAC",
+            "actual": 240,
+            "lower": 230,
+            "upper": 300,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "APAC"
+          },
+          {
+            "week": "W02",
+            "region": "APAC",
+            "actual": 248,
+            "lower": 235,
+            "upper": 305,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "APAC"
+          },
+          {
+            "week": "W03",
+            "region": "APAC",
+            "actual": 255,
+            "lower": 240,
+            "upper": 310,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual",
+            "__oods_facet": "APAC"
+          }
+        ]
+      },
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false,
+          "labelOverlap": true
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:facet-target-band",
+          "name": "SLA adherence by region",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "preferredRenderer": "echarts",
+            "tableColumnOrder": [
+              "region",
+              "week",
+              "actual",
+              "lower",
+              "upper"
+            ]
+          },
+          "a11y": {
+            "ariaLabel": "Facet grid with SLA bands and actuals per region",
+            "description": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+            "tableFallback": {
+              "enabled": true,
+              "caption": "SLA adherence per region"
+            }
+          }
+        }
+      },
+      "facet": {
+        "field": "__oods_facet",
+        "type": "nominal",
+        "title": "Region",
+        "sort": [
+          "Amer",
+          "EMEA",
+          "APAC"
+        ]
+      },
+      "columns": 3,
+      "spec": {
+        "layer": [
+          {
+            "params": [
+              {
+                "name": "region-hover",
+                "select": {
+                  "type": "point",
+                  "on": "hover",
+                  "fields": [
+                    "region",
+                    "week",
+                    "actual"
+                  ]
+                }
+              }
+            ],
+            "mark": {
+              "type": "area",
+              "fillOpacity": 0.2
+            },
+            "encoding": {
+              "x": {
+                "field": "week",
+                "type": "ordinal",
+                "scale": {
+                  "type": "point"
+                },
+                "title": "Week"
+              },
+              "y": {
+                "field": "upper",
+                "type": "quantitative",
+                "scale": {
+                  "type": "linear"
+                },
+                "title": "Upper"
+              },
+              "y2": {
+                "field": "lower",
+                "type": "ordinal"
+              },
+              "color": {
+                "field": "bandSeries",
+                "type": "nominal",
+                "scale": {
+                  "range": [
+                    "#580918",
+                    "#A97500",
+                    "#788E70",
+                    "#00A0A3",
+                    "#0050AD",
+                    "#360643"
+                  ]
+                },
+                "title": "Band Series",
+                "legend": {
+                  "title": "Series"
+                }
+              },
+              "tooltip": [
+                {
+                  "field": "region"
+                },
+                {
+                  "field": "week"
+                },
+                {
+                  "field": "actual"
+                },
+                {
+                  "field": "lower"
+                },
+                {
+                  "field": "upper"
+                }
+              ]
+            }
+          },
+          {
+            "mark": {
+              "type": "line",
+              "strokeWidth": 2
+            },
+            "encoding": {
+              "x": {
+                "field": "week",
+                "type": "ordinal",
+                "scale": {
+                  "type": "point"
+                },
+                "title": "Week"
+              },
+              "y": {
+                "field": "actual",
+                "type": "quantitative",
+                "scale": {
+                  "type": "linear"
+                },
+                "title": "Actual"
+              },
+              "color": {
+                "field": "actualSeries",
+                "type": "nominal",
+                "scale": {
+                  "range": [
+                    "#580918",
+                    "#A97500",
+                    "#788E70",
+                    "#00A0A3",
+                    "#0050AD",
+                    "#360643"
+                  ]
+                },
+                "title": "Actual Series"
+              },
+              "tooltip": [
+                {
+                  "field": "region"
+                },
+                {
+                  "field": "week"
+                },
+                {
+                  "field": "actual"
+                },
+                {
+                  "field": "lower"
+                },
+                {
+                  "field": "upper"
+                }
+              ]
+            }
+          }
+        ],
+        "width": 232,
+        "height": 480,
+        "padding": 16
+      },
+      "spacing": 12,
+      "resolve": {
+        "scale": {
+          "x": "shared",
+          "y": "shared"
+        }
+      }
+    },
+    "a11yDescription": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkArea",
+      "rowCount": 9,
+      "fields": [
+        "week",
+        "region",
+        "actual",
+        "lower",
+        "upper",
+        "bandSeries",
+        "actualSeries"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:facet-target-band",
+      "name": "SLA adherence by region",
+      "data": {
+        "values": [
+          {
+            "week": "W01",
+            "region": "Amer",
+            "actual": 310,
+            "lower": 280,
+            "upper": 340,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W02",
+            "region": "Amer",
+            "actual": 325,
+            "lower": 285,
+            "upper": 345,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W03",
+            "region": "Amer",
+            "actual": 335,
+            "lower": 290,
+            "upper": 350,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W01",
+            "region": "EMEA",
+            "actual": 270,
+            "lower": 250,
+            "upper": 310,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W02",
+            "region": "EMEA",
+            "actual": 280,
+            "lower": 255,
+            "upper": 315,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W03",
+            "region": "EMEA",
+            "actual": 292,
+            "lower": 260,
+            "upper": 320,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W01",
+            "region": "APAC",
+            "actual": 240,
+            "lower": 230,
+            "upper": 300,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W02",
+            "region": "APAC",
+            "actual": 248,
+            "lower": 235,
+            "upper": 305,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          },
+          {
+            "week": "W03",
+            "region": "APAC",
+            "actual": 255,
+            "lower": 240,
+            "upper": 310,
+            "bandSeries": "Target Band",
+            "actualSeries": "Actual"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkArea",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "upper",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Upper"
+            },
+            "y2": {
+              "field": "lower",
+              "trait": "EncodingPositionY",
+              "channel": "y"
+            },
+            "color": {
+              "field": "bandSeries",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Series"
+              },
+              "title": "Band Series"
+            }
+          },
+          "options": {
+            "fillOpacity": 0.2
+          }
+        },
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "actual",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Actual"
+            },
+            "color": {
+              "field": "actualSeries",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "title": "Actual Series"
+            }
+          },
+          "options": {
+            "strokeWidth": 2
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "title": "Week"
+        },
+        "y": {
+          "field": "actual",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "title": "Actual"
+        }
+      },
+      "layout": {
+        "trait": "LayoutFacet",
+        "rows": {
+          "field": "region",
+          "title": "Region",
+          "limit": 3
+        },
+        "columns": {
+          "field": "region",
+          "limit": 3
+        },
+        "wrap": "row",
+        "gap": 12,
+        "sharedScales": {
+          "x": "shared",
+          "y": "shared"
+        }
+      },
+      "interactions": [
+        {
+          "id": "region-hover",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "region",
+              "week",
+              "actual"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "region",
+              "week",
+              "actual",
+              "lower",
+              "upper"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 720,
+          "height": 480,
+          "padding": 16
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Facet grid with SLA bands and actuals per region",
+        "description": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "SLA adherence per region"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "preferredRenderer": "echarts",
+        "tableColumnOrder": [
+          "region",
+          "week",
+          "actual",
+          "lower",
+          "upper"
+        ]
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-3f3863e7",
+    "specRefCreatedAt": "2026-09-14T07:19:06.130Z",
+    "specRefExpiresAt": "2026-09-14T07:49:06.130Z",
+    "contentHash": "3fafde1b0666784c61d637555effc1a0a0531cca9d0198b4d5514e073f821973",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"970\" height=\"605\" viewBox=\"0 0 970 605\"><rect width=\"970\" height=\"605\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(51,74)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\"/><g><g class=\"mark-group role-column-title facet-title\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(360,-20)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\"/><g><g class=\"mark-group role-title\"><g transform=\"translate(0,-21)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Region'\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#000\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-row-header row_header\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v480h0Z\"/><g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Upper, Actual' for a linear scale with values from 0 to 350\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,453)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,425)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,398)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,370)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,261)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,233)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,178)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,151)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,123)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,41)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,14)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,483)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,455.57142857142856)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(-7,428.1428571428571)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">40</text><text text-anchor=\"end\" transform=\"translate(-7,400.71428571428567)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">60</text><text text-anchor=\"end\" transform=\"translate(-7,373.2857142857143)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">80</text><text text-anchor=\"end\" transform=\"translate(-7,345.8571428571429)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">100</text><text text-anchor=\"end\" transform=\"translate(-7,318.42857142857144)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">120</text><text text-anchor=\"end\" transform=\"translate(-7,291)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">140</text><text text-anchor=\"end\" transform=\"translate(-7,263.5714285714286)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">160</text><text text-anchor=\"end\" transform=\"translate(-7,236.14285714285717)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">180</text><text text-anchor=\"end\" transform=\"translate(-7,208.71428571428572)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">200</text><text text-anchor=\"end\" transform=\"translate(-7,181.28571428571428)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">220</text><text text-anchor=\"end\" transform=\"translate(-7,153.85714285714286)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">240</text><text text-anchor=\"end\" transform=\"translate(-7,126.42857142857142)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">260</text><text text-anchor=\"end\" transform=\"translate(-7,98.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">280</text><text text-anchor=\"end\" transform=\"translate(-7,71.5714285714286)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">300</text><text text-anchor=\"end\" transform=\"translate(-7,44.14285714285715)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">320</text><text text-anchor=\"end\" transform=\"translate(-7,16.71428571428572)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">340</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"0\" y2=\"-480\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,240) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Upper, Actual</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-column-footer column_footer\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,480)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v0h-232Z\"/><g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 3 values: W01, W02, W03\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(39,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(116,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(193,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(38.66666666666667,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W01</text><text text-anchor=\"end\" transform=\"translate(116,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W02</text><text text-anchor=\"end\" transform=\"translate(193.33333333333331,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W03</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"232\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(116,44)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(244,480)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v0h-232Z\"/><g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 3 values: W01, W02, W03\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(39,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(116,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(193,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(38.66666666666667,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W01</text><text text-anchor=\"end\" transform=\"translate(116,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W02</text><text text-anchor=\"end\" transform=\"translate(193.33333333333331,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W03</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"232\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(116,44)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(488,480)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v0h-232Z\"/><g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 3 values: W01, W02, W03\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(39,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(116,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(193,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(38.66666666666667,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W01</text><text text-anchor=\"end\" transform=\"translate(116,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W02</text><text text-anchor=\"end\" transform=\"translate(193.33333333333331,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">W03</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"232\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(116,44)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope cell\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,453)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,425)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,398)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,370)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,261)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,233)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,178)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,151)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,123)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,41)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,14)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-area role-mark child_layer_0_marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Week: W01; Upper: 340; lower: 280; Band Series: Target Band; region: Amer; week: W01; actual: 310; upper: 340\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M38.667,13.714L116,6.857L193.333,0L193.333,82.286L116,89.143L38.667,96Z\" fill=\"#A97500\" fill-opacity=\"0.2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-line role-mark child_layer_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: W01; Actual: 310; Actual Series: Actual; region: Amer; week: W01; actual: 310; lower: 280; upper: 340\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M38.667,54.857L116,34.286L193.333,20.571\" stroke=\"#580918\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(116,-20)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Amer'\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(0,8)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#000\" opacity=\"1\">Amer</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(244,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,453)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,425)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,398)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,370)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,261)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,233)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,178)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,151)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,123)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,41)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,14)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-area role-mark child_layer_0_marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Week: W01; Upper: 310; lower: 250; Band Series: Target Band; region: EMEA; week: W01; actual: 270; upper: 310\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M38.667,54.857L116,48L193.333,41.143L193.333,123.429L116,130.286L38.667,137.143Z\" fill=\"#A97500\" fill-opacity=\"0.2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-line role-mark child_layer_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: W01; Actual: 270; Actual Series: Actual; region: EMEA; week: W01; actual: 270; lower: 250; upper: 310\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M38.667,109.714L116,96L193.333,79.543\" stroke=\"#580918\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(116,-20)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'EMEA'\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(0,8)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#000\" opacity=\"1\">EMEA</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(488,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,453)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,425)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,398)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,370)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,261)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,233)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,178)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,151)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,123)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,96)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,41)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,14)\" x2=\"232\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-area role-mark child_layer_0_marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Week: W01; Upper: 300; lower: 230; Band Series: Target Band; region: APAC; week: W01; actual: 240; upper: 300\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M38.667,68.571L116,61.714L193.333,54.857L193.333,150.857L116,157.714L38.667,164.571Z\" fill=\"#A97500\" fill-opacity=\"0.2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope child_layer_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h232v480h-232Z\"/><g><g class=\"mark-line role-mark child_layer_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: W01; Actual: 240; Actual Series: Actual; region: APAC; week: W01; actual: 240; lower: 230; upper: 300\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M38.667,150.857L116,139.886L193.333,130.286\" stroke=\"#580918\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(116,-20)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'APAC'\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(0,8)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#000\" opacity=\"1\">APAC</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Series, Actual Series' for fill color and stroke color with 2 values: Actual, Target Band\"><g transform=\"translate(738,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h176v45h-176Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h104v12.5h-104Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#580918\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Actual</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h104v12.5h-104Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#A97500\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Target Band</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Series, Actual Seri…</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-69)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'SLA adherence by region'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">SLA adherence by region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "ae80f6b3e4a5e1fcb138d1485095cb1842ba79913dad36f00246286ba895c589",
+    "svgBytes": 30150,
+    "svgRef": "viz.render-3f858df4",
+    "render": {
+      "engine": "vega-lite",
+      "width": 970,
+      "height": 605,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "3fafde1b0666784c61d637555effc1a0a0531cca9d0198b4d5514e073f821973",
+      "renderHash": "ae80f6b3e4a5e1fcb138d1485095cb1842ba79913dad36f00246286ba895c589"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

@@ -24,13 +24,17 @@ export function derivePatternSources(sources: ReadonlyArray<{ specPath: string; 
     assert(!paths.has(source.specPath), `Duplicate pattern source: ${source.specPath}`);
     ids.add(spec.id);
     paths.add(source.specPath);
-    // Join by source path: the recommender's cohort-scatter id intentionally
-    // differs from its authored linked-brush identity. Do not create an alias.
+    // Recommender aliases may share an authored source. Explicit-only and retired
+    // sources derive their Cartesian base from the first authored mark.
     const catalog = chartPatterns.filter(pattern => pattern.specPath === source.specPath);
-    assert.equal(catalog.length, 1, `Pattern needs one catalog base type: ${source.specPath}`);
+    const markTypes: Record<string, string> = { MarkBar: 'bar', MarkLine: 'line', MarkArea: 'area', MarkPoint: 'scatter', MarkRect: 'heatmap' };
+    const baseTypes = [...new Set(catalog.map(pattern => pattern.chartType))];
+    assert(baseTypes.length <= 1, `Conflicting catalog base types: ${source.specPath}`);
+    const baseChartType = baseTypes[0] ?? markTypes[spec.marks[0].trait];
+    assert(baseChartType, `Pattern needs a supported Cartesian base mark: ${source.specPath}`);
     return { id: spec.id, specPath: source.specPath,
       specSha256: createHash('sha256').update(source.bytes).digest('hex'),
-      baseChartType: catalog[0]!.chartType, portability: spec.portability, spec };
+      baseChartType, portability: spec.portability, spec };
   });
 }
 

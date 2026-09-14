@@ -1,0 +1,258 @@
+{
+  "head": "2a0f3c63b70c19ecb7457f2fc8274e7ec994cba0",
+  "status": "passed",
+  "wallMs": 116238,
+  "commandsNotRun": 0,
+  "reports": [
+    {
+      "name": "build-viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2806,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/build-viz-core.log",
+        "sha256": "d90b5339b7dced59a7f5dbd6a4145d851eac02bb905db3e354546078e44d3d86"
+      }
+    },
+    {
+      "name": "build-viz-render",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-render",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2183,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/build-viz-render.log",
+        "sha256": "f4030a386693808fc6cceff85edda5967afda6c8472adb12df5648b97f6a7b9b"
+      }
+    },
+    {
+      "name": "typecheck-viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 1750,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/typecheck-viz-core.log",
+        "sha256": "37cbbf95a594f1d81124893455faa9a4ff3086c1dc6bb1b93499bcd055fc7538"
+      }
+    },
+    {
+      "name": "viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 20611,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/viz-core.log",
+        "sha256": "f91a909c46a04d2843d93a87771696bd29348624f80fefa125c116075543029c"
+      }
+    },
+    {
+      "name": "viz-render",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-render",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 9563,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/viz-render.log",
+        "sha256": "39af273a1c29a167a36d9cbc626fbacd99b6e8557342a120dc83b1d6c83f3f19"
+      }
+    },
+    {
+      "name": "named-goldens",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "src/tools/viz.render.test.ts",
+        "src/tools/viz.render.svg.test.ts",
+        "src/tools/viz.render.fidelity.test.ts",
+        "src/tools/viz.render.network-fidelity.test.ts",
+        "src/tools/viz.render.geo-fidelity.test.ts",
+        "src/tools/viz.render.intent.test.ts",
+        "src/tools/dashboard.render.test.ts",
+        "src/tools/dashboard.render.fidelity.test.ts",
+        "src/tools/dashboard.render.faostat-e2e.test.ts",
+        "src/tools/dashboard.render.strict-fields.test.ts",
+        "src/tools/dashboard.render.kpi-types.test.ts",
+        "src/tools/dashboard.render.measure-depth.test.ts",
+        "src/tools/repl.render.skin-mapping.test.ts",
+        "src/tools/repl.render.brand.test.ts",
+        "src/tools/ci-golden-list.guard.test.ts",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 9179,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/named-goldens.log",
+        "sha256": "589b1d27efe2d401c4b22e69c2da7d8abca1f679fa1a187a7e2cbe0405c47a89"
+      }
+    },
+    {
+      "name": "viz-contracts",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "test/contracts/chart-gate.s199.spec.ts",
+        "test/contracts/viz-recipes.s190.spec.ts",
+        "test/contracts/viz-pattern-registry.s195.spec.ts",
+        "test/contracts/viz-taxonomy.s195.spec.ts",
+        "test/product-reality/viz-recipes.s193.spec.ts",
+        "test/product-reality/viz-recipes-proof.s193.spec.ts",
+        "test/product-reality/viz-patterns.s195.spec.ts",
+        "test/product-reality/viz-certification.s195.spec.ts",
+        "test/product-reality/high-contrast.s195.spec.ts",
+        "test/product-reality/chart-placement-codegen.s195.spec.ts",
+        "test/product-reality/palette-golden-migration.s197.spec.ts",
+        "test/product-reality/viz-golden-migration.s195.spec.ts",
+        "test/product-reality/viz-golden-migration.s196.spec.ts",
+        "test/tools/artifact.certify.accuracy-fault.spec.ts",
+        "test/tools/artifact.certify.contrast-fault.spec.ts",
+        "test/tools/artifact.certify.data-operand.spec.ts",
+        "test/tools/artifact.certify.echarts-a11y-warnfirst.spec.ts",
+        "test/tools/artifact.certify.echarts-accuracy.spec.ts",
+        "test/tools/artifact.certify.echarts-determinism.spec.ts",
+        "test/tools/artifact.certify.echarts-option-stability.s179.spec.ts",
+        "test/tools/artifact.certify.echarts-render-grading.s179.spec.ts",
+        "test/tools/artifact.certify.echarts-s179-baseline.spec.ts",
+        "test/tools/artifact.certify.geo-id-parity.spec.ts",
+        "test/tools/artifact.certify.render-determinism.spec.ts",
+        "test/tools/artifact.certify.spec-only-bytes.spec.ts",
+        "test/tools/artifact.certify.spec.ts",
+        "test/tools/artifact.certify.ten-series-collision.spec.ts",
+        "test/tools/artifact.certify.unchecked-tristate.spec.ts",
+        "test/tools/certify-contrast.echarts-caveat-pin.spec.ts",
+        "test/tools/certify-contrast.spec.ts",
+        "test/tools/certify-echarts-projected-render-s179.spec.ts",
+        "test/tools/certify-echarts-render-contrast.s179.spec.ts",
+        "test/tools/certify-echarts-role-c.spec.ts",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 59342,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/viz-contracts.log",
+        "sha256": "7c013d2add4b386f5e0ae678fd9202fad3470502faff1f44a647ba5aa0add91f"
+      }
+    },
+    {
+      "name": "scale",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "run",
+        "test:scale"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 4096,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/scale.log",
+        "sha256": "5cadfc2bc56dd303fdd22dda404b545afc1184d500b1bcc76412fcb5f2f73704"
+      }
+    },
+    {
+      "name": "docs",
+      "command": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 3234,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/docs.log",
+        "sha256": "e51ca583cf9c5ec9d098557c0070af8ab108c3a6317466e42d74ef55f7bd0ae0"
+      }
+    },
+    {
+      "name": "matrix",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s195-qualify-viz-matrix.ts",
+        "--mode",
+        "s199",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 1167,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/matrix.log",
+        "sha256": "7a1f75228e7b2ade3367f93f04c1fd66ac322eae19a508d74636e67b54869ea8"
+      }
+    },
+    {
+      "name": "tool-truth",
+      "command": [
+        "node",
+        "scripts/product-reality/s193-tool-truth.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2281,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate-verified/tool-truth.log",
+        "sha256": "9a5a7e90b11669ea5f0bab10520e9bb1a780e729030abfb285d71e09f7762fa6"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

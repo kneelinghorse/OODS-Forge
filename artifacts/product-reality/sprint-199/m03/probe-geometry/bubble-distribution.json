@@ -1,0 +1,471 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "scatter",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Initiative Impact Matrix",
+      "description": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+      "data": {
+        "values": [
+          {
+            "initiative": "Playbooks",
+            "impact": 4.5,
+            "effort": 3.5,
+            "customers": 1800
+          },
+          {
+            "initiative": "Audit Trails",
+            "impact": 3.2,
+            "effort": 2.1,
+            "customers": 2400
+          },
+          {
+            "initiative": "AI Assist",
+            "impact": 4.8,
+            "effort": 4.2,
+            "customers": 950
+          },
+          {
+            "initiative": "Usage Alerts",
+            "impact": 3.8,
+            "effort": 1.8,
+            "customers": 1500
+          },
+          {
+            "initiative": "Billing Revamp",
+            "impact": 4.1,
+            "effort": 4.5,
+            "customers": 2200
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "bubble-highlight",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "initiative"
+            ]
+          }
+        },
+        {
+          "name": "bubble-tooltip",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "initiative",
+              "impact",
+              "effort",
+              "customers"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:bubble-distribution",
+          "name": "Initiative Impact Matrix",
+          "theme": "brand-b",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "initiative",
+              "impact",
+              "effort",
+              "customers"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "ariaLabel": "Initiative impact bubble chart",
+            "description": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+            "narrative": {
+              "summary": "Usage Alerts sits in the high-impact/low-effort quadrant; Billing Revamp is large but expensive.",
+              "keyFindings": [
+                "Usage Alerts ideal quick win",
+                "AI Assist promises biggest impact if we can fund it"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Initiative effort vs impact"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "point"
+      },
+      "encoding": {
+        "x": {
+          "field": "effort",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Engineering Effort"
+        },
+        "y": {
+          "field": "impact",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Customer Impact"
+        },
+        "color": {
+          "field": "initiative",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#580918",
+              "#A97500",
+              "#788E70",
+              "#00A0A3",
+              "#0050AD",
+              "#360643"
+            ]
+          },
+          "title": "Initiative",
+          "legend": {
+            "title": "Initiative"
+          }
+        },
+        "size": {
+          "field": "customers",
+          "type": "quantitative",
+          "title": "Customers affected"
+        },
+        "strokeWidth": {
+          "condition": {
+            "param": "bubble-highlight",
+            "empty": false,
+            "value": 2
+          },
+          "value": 0.5
+        },
+        "tooltip": [
+          {
+            "field": "initiative"
+          },
+          {
+            "field": "impact"
+          },
+          {
+            "field": "effort"
+          },
+          {
+            "field": "customers"
+          }
+        ]
+      },
+      "width": 720,
+      "height": 420,
+      "padding": 24
+    },
+    "a11yDescription": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkPoint",
+      "rowCount": 5,
+      "fields": [
+        "initiative",
+        "impact",
+        "effort",
+        "customers"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:bubble-distribution",
+      "name": "Initiative Impact Matrix",
+      "data": {
+        "values": [
+          {
+            "initiative": "Playbooks",
+            "impact": 4.5,
+            "effort": 3.5,
+            "customers": 1800
+          },
+          {
+            "initiative": "Audit Trails",
+            "impact": 3.2,
+            "effort": 2.1,
+            "customers": 2400
+          },
+          {
+            "initiative": "AI Assist",
+            "impact": 4.8,
+            "effort": 4.2,
+            "customers": 950
+          },
+          {
+            "initiative": "Usage Alerts",
+            "impact": 3.8,
+            "effort": 1.8,
+            "customers": 1500
+          },
+          {
+            "initiative": "Billing Revamp",
+            "impact": 4.1,
+            "effort": 4.5,
+            "customers": 2200
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkPoint",
+          "encodings": {
+            "x": {
+              "field": "effort",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "linear",
+              "title": "Engineering Effort"
+            },
+            "y": {
+              "field": "impact",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Customer Impact"
+            },
+            "size": {
+              "field": "customers",
+              "trait": "EncodingSize",
+              "channel": "size",
+              "title": "Customers affected"
+            },
+            "color": {
+              "field": "initiative",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Initiative"
+              },
+              "title": "Initiative"
+            }
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "effort",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear",
+          "title": "Engineering Effort"
+        },
+        "y": {
+          "field": "impact",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Customer Impact"
+        },
+        "size": {
+          "field": "customers",
+          "trait": "EncodingSize",
+          "channel": "size",
+          "title": "Customers affected"
+        },
+        "color": {
+          "field": "initiative",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": {
+            "title": "Initiative"
+          },
+          "title": "Initiative"
+        }
+      },
+      "interactions": [
+        {
+          "id": "bubble-highlight",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "initiative"
+            ]
+          },
+          "rule": {
+            "bindTo": "visual",
+            "property": "strokeWidth",
+            "condition": {
+              "value": 2
+            },
+            "else": {
+              "value": 0.5
+            }
+          }
+        },
+        {
+          "id": "bubble-tooltip",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "initiative",
+              "impact",
+              "effort",
+              "customers"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "initiative",
+              "impact",
+              "effort",
+              "customers"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-b",
+        "layout": {
+          "width": 720,
+          "height": 420,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Initiative impact bubble chart",
+        "description": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+        "narrative": {
+          "summary": "Usage Alerts sits in the high-impact/low-effort quadrant; Billing Revamp is large but expensive.",
+          "keyFindings": [
+            "Usage Alerts ideal quick win",
+            "AI Assist promises biggest impact if we can fund it"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Initiative effort vs impact"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "initiative",
+          "impact",
+          "effort",
+          "customers"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-119b100d",
+    "specRefCreatedAt": "2026-09-14T07:19:05.662Z",
+    "specRefExpiresAt": "2026-09-14T07:49:05.662Z",
+    "contentHash": "3eabe7e5e8365f4aa0f48a66578aaad1457a38205fc9c1b7791a0c1953029d89",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"990\" height=\"533\" viewBox=\"0 0 990 533\"><rect width=\"990\" height=\"533\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(70,57)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v420h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,378)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,336)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,294)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,252)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,168)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,126)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,84)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,42)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Engineering Effort' for a linear scale with values from 0 to 5\"><g transform=\"translate(0.5,420.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(32,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(64,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(96,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(128,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(160,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(192,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(224,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(256,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(288,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(320,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(352,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(384,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(416,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(448,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(512,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(544,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(576,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(608,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(640,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(672,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(704,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"middle\" transform=\"translate(32,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">0.2</text><text text-anchor=\"middle\" transform=\"translate(64,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.4</text><text text-anchor=\"middle\" transform=\"translate(96,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">0.6</text><text text-anchor=\"middle\" transform=\"translate(128,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.8</text><text text-anchor=\"middle\" transform=\"translate(160,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">1.0</text><text text-anchor=\"middle\" transform=\"translate(192,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.2</text><text text-anchor=\"middle\" transform=\"translate(224,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">1.4</text><text text-anchor=\"middle\" transform=\"translate(256,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.6</text><text text-anchor=\"middle\" transform=\"translate(288,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">1.8</text><text text-anchor=\"middle\" transform=\"translate(320,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.0</text><text text-anchor=\"middle\" transform=\"translate(352,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">2.2</text><text text-anchor=\"middle\" transform=\"translate(384,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.4</text><text text-anchor=\"middle\" transform=\"translate(416.00000000000006,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">2.6</text><text text-anchor=\"middle\" transform=\"translate(448,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.8</text><text text-anchor=\"middle\" transform=\"translate(480,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">3.0</text><text text-anchor=\"middle\" transform=\"translate(512,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.2</text><text text-anchor=\"middle\" transform=\"translate(544,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">3.4</text><text text-anchor=\"middle\" transform=\"translate(576,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.6</text><text text-anchor=\"middle\" transform=\"translate(608,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">3.8</text><text text-anchor=\"middle\" transform=\"translate(640,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.0</text><text text-anchor=\"middle\" transform=\"translate(672,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">4.2</text><text text-anchor=\"middle\" transform=\"translate(704,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.4</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Engineering Effort</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Customer Impact' for a linear scale with values from 0 to 5\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,378)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,336)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,294)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,252)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,168)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,126)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,84)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,42)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,423)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,381)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,339)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,297)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.5</text><text text-anchor=\"end\" transform=\"translate(-7,255)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.0</text><text text-anchor=\"end\" transform=\"translate(-7,213)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.5</text><text text-anchor=\"end\" transform=\"translate(-7,171)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.0</text><text text-anchor=\"end\" transform=\"translate(-7,129)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.5</text><text text-anchor=\"end\" transform=\"translate(-7,86.99999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.0</text><text text-anchor=\"end\" transform=\"translate(-7,44.99999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.5</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5.0</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,420)\" x2=\"0\" y2=\"-420\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,210) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Customer Impact</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Engineering Effort: 3.5; Customer Impact: 4.5; Initiative: Playbooks; Customers affected: 1800; initiative: Playbooks; impact: 4.5; effort: 3.5; customers: 1800\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(560,41.99999999999999)\" d=\"M8.242,0A8.242,8.242,0,1,1,-8.242,0A8.242,8.242,0,1,1,8.242,0\" stroke=\"#00A0A3\" stroke-width=\"0.5\" opacity=\"0.7\"/><path aria-label=\"Engineering Effort: 2.1; Customer Impact: 3.2; Initiative: Audit Trails; Customers affected: 2400; initiative: Audit Trails; impact: 3.2; effort: 2.1; customers: 2400\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(336,151.2)\" d=\"M9.5,0A9.5,9.5,0,1,1,-9.5,0A9.5,9.5,0,1,1,9.5,0\" stroke=\"#A97500\" stroke-width=\"0.5\" opacity=\"0.7\"/><path aria-label=\"Engineering Effort: 4.2; Customer Impact: 4.8; Initiative: AI Assist; Customers affected: 950; initiative: AI Assist; impact: 4.8; effort: 4.2; customers: 950\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(672,16.800000000000015)\" d=\"M6.027,0A6.027,6.027,0,1,1,-6.027,0A6.027,6.027,0,1,1,6.027,0\" stroke=\"#580918\" stroke-width=\"0.5\" opacity=\"0.7\"/><path aria-label=\"Engineering Effort: 1.8; Customer Impact: 3.8; Initiative: Usage Alerts; Customers affected: 1500; initiative: Usage Alerts; impact: 3.8; effort: 1.8; customers: 1500\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(288,100.8)\" d=\"M7.535,0A7.535,7.535,0,1,1,-7.535,0A7.535,7.535,0,1,1,7.535,0\" stroke=\"#0050AD\" stroke-width=\"0.5\" opacity=\"0.7\"/><path aria-label=\"Engineering Effort: 4.5; Customer Impact: 4.1; Initiative: Billing Revamp; Customers affected: 2200; initiative: Billing Revamp; impact: 4.1; effort: 4.5; customers: 2200\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(720,75.60000000000002)\" d=\"M9.1,0A9.1,9.1,0,1,1,-9.1,0A9.1,9.1,0,1,1,9.1,0\" stroke=\"#788E70\" stroke-width=\"0.5\" opacity=\"0.7\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Initiative' for stroke color with 5 values: AI Assist, Audit Trails, Billing Revamp, Playbooks, Usage Alerts\"><g transform=\"translate(738,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v93h-128Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v12.5h-128Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">AI Assist</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v12.5h-128Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Audit Trails</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,32)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v12.5h-128Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#788E70\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Billing Revamp</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,48)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v12.5h-128Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#00A0A3\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Playbooks</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,64)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h128v12.5h-128Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" stroke=\"#0050AD\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Usage Alerts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Initiative</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Customers affected' for size with values from 0 to 2,400\"><g transform=\"translate(738,101)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h158v103h-158Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h63v10h-63Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(9.5,5)\" d=\"M1,0A1,1,0,1,1,-1,0A1,1,0,1,1,1,0\" stroke=\"#888\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(23,8)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h63v11.426482802406444h-63Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(9.5,5.5)\" d=\"M4.426,0A4.426,4.426,0,1,1,-4.426,0A4.426,4.426,0,1,1,4.426,0\" stroke=\"#888\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(23,8.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">500</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h63v14.679603547154137h-63Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(9.5,7)\" d=\"M6.18,0A6.18,6.18,0,1,1,-6.18,0A6.18,6.18,0,1,1,6.18,0\" stroke=\"#888\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(23,10)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1,000</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,46)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h63v17.535333436550772h-63Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(9.5,8.5)\" d=\"M7.535,0A7.535,7.535,0,1,1,-7.535,0A7.535,7.535,0,1,1,7.535,0\" stroke=\"#888\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(23,11.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1,500</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,67)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h63v19.68187767709267h-63Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(9.5,9.5)\" d=\"M8.682,0A8.682,8.682,0,1,1,-8.682,0A8.682,8.682,0,1,1,8.682,0\" stroke=\"#888\" stroke-width=\"1.5\" opacity=\"0.7\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(23,12.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2,000</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Customers affected</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Initiative Impact Matrix'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Initiative Impact Matrix</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "af4492cb28d02ed751a3c17c7a4d9893bea3da0cd6fb6f4984591b1863185032",
+    "svgBytes": 25090,
+    "svgRef": "viz.render-cad2f80c",
+    "render": {
+      "engine": "vega-lite",
+      "width": 990,
+      "height": 533,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "3eabe7e5e8365f4aa0f48a66578aaad1457a38205fc9c1b7791a0c1953029d89",
+      "renderHash": "af4492cb28d02ed751a3c17c7a4d9893bea3da0cd6fb6f4984591b1863185032"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

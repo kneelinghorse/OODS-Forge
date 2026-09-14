@@ -156,7 +156,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec, scope: TokenScope = {}):
     // referenced layers gain a data:{name}; the primary layer stays inline (top-level data).
     datasets: spec.datasets,
     transform,
-    params: interactionParams,
+    params: requiresLayer ? undefined : interactionParams,
     width: layout.width,
     height: layout.height,
     padding: layout.padding,
@@ -166,8 +166,9 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec, scope: TokenScope = {}):
 
   const primitive = requiresLayer
     ? {
-        layer: orderedLayers.map((layer) =>
+        layer: orderedLayers.map((layer, index) =>
           removeUndefined({
+            params: index === 0 ? interactionParams : undefined,
             mark: layer.mark,
             encoding: layer.encoding,
             data: layer.data,
@@ -621,6 +622,7 @@ function convertInteractionBindings(
       encoding[property] = removeUndefined({
         condition: {
           param: interaction.id,
+          empty: false,
           value: active,
         },
         value: inactive,

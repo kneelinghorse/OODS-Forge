@@ -5,11 +5,12 @@ import { VIZ_PATTERN_SOURCES, VIZ_RECIPES, validateVizPatternRegistry } from '@o
 
 type Assignment = { id: string; family: string; role: 'core' | 'extension'; coreCell: string | null };
 type CellDefinition = { cell: string; definition: string; gapReason: string };
-type Classification = { schemaVersion: 1; families: Array<{ id: string; definition: string; coreCells: CellDefinition[] }>; assignments: Assignment[] };
+type RetiredCell = { family: string; cell: string; definition: string; reason: string };
+type Classification = { schemaVersion: 1; families: Array<{ id: string; definition: string; coreCells: CellDefinition[] }>; assignments: Assignment[]; retiredCells: RetiredCell[] };
 type VizIdentity = Assignment & { kind: 'type' | 'pattern'; publicSvg: boolean; specPath?: string; specSha256?: string };
 type CoreCell = { family: string; cell: string; definition: string; status: 'surface-complete' | 'typed-gap'; identities: string[]; reason?: string };
-export type VizSummary = { types: number; patterns: number; families: number; classified: number; coreCells: number; coreSurfaceComplete: number; typedGaps: number };
-export type VizTaxonomy = { schemaVersion: 1; families: Array<{ id: string; definition: string }>; identities: VizIdentity[]; coreCells: CoreCell[]; summary: VizSummary };
+export type VizSummary = { types: number; patterns: number; families: number; classified: number; coreCells: number; coreSurfaceComplete: number; typedGaps: number; retiredCells: number };
+export type VizTaxonomy = { schemaVersion: 1; families: Array<{ id: string; definition: string }>; identities: VizIdentity[]; coreCells: CoreCell[]; retiredCells: RetiredCell[]; summary: VizSummary };
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const cellKey = (family: string, cell: string) => `${family}/${cell}`;
@@ -74,6 +75,14 @@ export function projectVizSummary(value: unknown, classificationValue: unknown, 
     if (!complete && (!text(declared.gapReason) || cell.reason !== declared.gapReason)) reject(`${cell.family}/${cell.cell}: gap requires its declared reason`);
     if (complete && cell.reason !== undefined) reject(`${cell.family}/${cell.cell}: complete cell cannot retain a gap reason`);
   }
+  if (!Array.isArray(taxonomy.retiredCells) || !Array.isArray(classification.retiredCells)) reject('Retired cells require an explicit population');
+  const retiredKeys = taxonomy.retiredCells.map(row => cellKey(row.family, row.cell));
+  if (new Set(retiredKeys).size !== retiredKeys.length || !same(retiredKeys, classification.retiredCells.map(row => cellKey(row.family, row.cell)))) reject('Retired cell population differs');
+  for (const cell of taxonomy.retiredCells) {
+    const declared = classification.retiredCells.find(row => row.family === cell.family && row.cell === cell.cell)!;
+    if (!families.has(cell.family) || declaredCells.has(cellKey(cell.family, cell.cell))) reject('Retired cells must be disjoint from the active profile');
+    if (!text(cell.definition) || !text(cell.reason) || cell.definition !== declared.definition || cell.reason !== declared.reason) reject('Retired cell requires its declared definition and reason');
+  }
   const summary: VizSummary = {
     types: taxonomy.identities.filter(identity => identity.kind === 'type').length,
     patterns: taxonomy.identities.filter(identity => identity.kind === 'pattern').length,
@@ -82,6 +91,7 @@ export function projectVizSummary(value: unknown, classificationValue: unknown, 
     coreCells: taxonomy.coreCells.length,
     coreSurfaceComplete: taxonomy.coreCells.filter(cell => cell.status === 'surface-complete').length,
     typedGaps: taxonomy.coreCells.filter(cell => cell.status === 'typed-gap').length,
+    retiredCells: taxonomy.retiredCells.length,
   };
   if (!taxonomy.summary || !same(Object.keys(taxonomy.summary), Object.keys(summary)) || (Object.keys(summary) as Array<keyof VizSummary>).some(key => taxonomy.summary[key] !== summary[key])) reject('summary differs from classified identities and core cells');
   return summary;

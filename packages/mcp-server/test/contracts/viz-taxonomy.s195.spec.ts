@@ -23,14 +23,14 @@ const freshRoot = () => {
 };
 
 describe('generated visualization taxonomy preserves the exact census and primary-cell proof (s195 m02)', () => {
-  it('classifies each of the 13 measured types and 21 exact pattern identities once', () => {
+  it('classifies each of the 13 measured types and 23 exact pattern identities once', () => {
     const inputs = readTaxonomyInputs();
     const taxonomy = deriveVizTaxonomy(inputs);
     const population = [...inputs.registry.map(row => row.chartType), ...inputs.patterns.map(row => JSON.parse(row.bytes).id)].sort();
     expect(taxonomy.identities.map(row => row.id).sort()).toEqual(population);
-    expect(new Set(taxonomy.identities.map(row => row.id)).size).toBe(34);
+    expect(new Set(taxonomy.identities.map(row => row.id)).size).toBe(36);
     expect(taxonomy.families.map(row => row.id)).toEqual(['statistical', 'temporal', 'financial', 'hierarchy', 'network', 'flow', 'geo', 'scientific']);
-    expect(taxonomy.summary).toEqual({ types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 });
+    expect(taxonomy.summary).toEqual({ types: 13, patterns: 23, families: 8, classified: 36, coreCells: 17, coreSurfaceComplete: 17, typedGaps: 0, retiredCells: 3 });
     for (const row of taxonomy.identities) {
       expect(['core', 'extension']).toContain(row.role);
       expect(taxonomy.families.some(family => family.id === row.family)).toBe(true);
@@ -71,8 +71,8 @@ describe('generated visualization taxonomy preserves the exact census and primar
     }
     const measured = readTaxonomyInputs().patternRegistry as Array<{ id: string; publicSvg: boolean }>;
     for (const pattern of taxonomy.identities.filter(row => row.kind === 'pattern')) expect(pattern.publicSvg).toBe(measured.find(row => row.id === pattern.id)!.publicSvg);
-    expect(taxonomy.identities.find(row => row.id === 'pattern:viz:multi-series-line')!.publicSvg).toBe(false);
-    expect(taxonomy.coreCells.find(row => row.family === 'temporal' && row.cell === 'multi-series')?.status).toBe('typed-gap');
+    expect(taxonomy.identities.find(row => row.id === 'pattern:viz:multi-series-line')!.publicSvg).toBe(true);
+    expect(taxonomy.coreCells.find(row => row.family === 'temporal' && row.cell === 'multi-series')?.status).toBe('surface-complete');
     expect(taxonomy.identities.find(row => row.id === 'line')).toMatchObject({ publicSvg: true, coreCell: 'trend' });
     expect(taxonomy.identities.find(row => row.id === 'heatmap')).toMatchObject({ publicSvg: true, role: 'extension', coreCell: null });
     const distribution = taxonomy.coreCells.find(row => row.family === 'statistical' && row.cell === 'distribution')!;
@@ -83,17 +83,28 @@ describe('generated visualization taxonomy preserves the exact census and primar
 
   it('removes completion when its only public registry proof disappears, despite unproved same-cell patterns', () => {
     const inputs = readTaxonomyInputs();
-    inputs.registry.find(row => row.chartType === 'line')!.publicSvg = false;
+    inputs.registry.find(row => row.chartType === 'treemap')!.publicSvg = false;
     const taxonomy = deriveVizTaxonomy(inputs);
-    expect(taxonomy.coreCells.find(row => row.family === 'temporal' && row.cell === 'trend')).toMatchObject({ status: 'typed-gap', reason: expect.stringMatching(/\S/) });
-    expect(taxonomy.summary).toMatchObject({ classified: 34, coreSurfaceComplete: 12, typedGaps: 8 });
+    expect(taxonomy.coreCells.find(row => row.family === 'hierarchy' && row.cell === 'containment')).toMatchObject({ status: 'typed-gap', reason: expect.stringMatching(/\S/) });
+    expect(taxonomy.summary).toMatchObject({ classified: 36, coreSurfaceComplete: 16, typedGaps: 1 });
   });
 
-  it('names every deferred financial and scientific cell with a concrete reason', () => {
+  it('retains a reason for each retired cell while active financial/scientific patterns have public proof', () => {
     const taxonomy = deriveVizTaxonomy(readTaxonomyInputs());
-    const cells = taxonomy.coreCells.filter(row => ['financial', 'scientific'].includes(row.family));
-    expect(cells.map(row => `${row.family}/${row.cell}`)).toEqual(['financial/candlestick', 'financial/waterfall', 'scientific/box', 'scientific/histogram', 'scientific/contour']);
-    for (const cell of cells) expect(cell).toMatchObject({ status: 'typed-gap', identities: [], reason: expect.stringContaining('No registered') });
+    expect(taxonomy.retiredCells.map(row => `${row.family}/${row.cell}`)).toEqual(['financial/candlestick', 'scientific/box', 'scientific/contour']);
+    for (const cell of taxonomy.retiredCells) {
+      expect(cell.reason).toMatch(/\S/);
+      expect(taxonomy.coreCells.some(row => row.family === cell.family && row.cell === cell.cell)).toBe(false);
+    }
+    expect(taxonomy.coreCells.filter(row => ['financial', 'scientific'].includes(row.family)).every(row => row.status === 'surface-complete')).toBe(true);
+  });
+
+  it.each(['missing-reason', 'duplicate', 'active-overlap'])('rejects %s in retirements', fault => {
+    const input = readTaxonomyInputs(), retired = input.classification.retiredCells;
+    if (fault === 'missing-reason') retired[0].reason = '';
+    if (fault === 'duplicate') retired.push({ ...retired[0] });
+    if (fault === 'active-overlap') { retired[0].family = 'financial'; retired[0].cell = 'waterfall'; }
+    expect(() => deriveVizTaxonomy(input)).toThrow();
   });
 
   it('pins the raw bytes and exact source ID of each pattern, including the linked-brush identity', () => {

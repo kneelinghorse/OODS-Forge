@@ -9,7 +9,7 @@ import { repositoryRoot, wire } from '../helpers/wire-boundary.js';
 
 const source = path.join(repositoryRoot, 'packages/viz-core/src/registry');
 const read = (name: string) => JSON.parse(fs.readFileSync(path.join(source, name), 'utf8'));
-const expected = { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20, coreSurfaceComplete: 13, typedGaps: 7 };
+const expected = { types: 13, patterns: 23, families: 8, classified: 36, coreCells: 17, coreSurfaceComplete: 17, typedGaps: 0, retiredCells: 3 };
 const classification = () => read('viz-classification.v1.json');
 const taxonomy = (): VizTaxonomy => read('viz-taxonomy.v1.json');
 const patterns = () => read('viz-patterns.v1.json');
@@ -25,11 +25,11 @@ const mutate: Array<[string, (value: VizTaxonomy) => void]> = [
   ['missing family', value => { value.families.pop(); value.summary.families -= 1; }],
   ['invented family definition', value => { value.families[0].definition = 'Invented definition.'; }],
   ['duplicate core cell', value => { value.coreCells[0] = structuredClone(value.coreCells[1]); }],
-  ['missing gap with recomputed total', value => { value.coreCells.splice(value.coreCells.findIndex(cell => cell.status === 'typed-gap'), 1); value.summary.coreCells -= 1; value.summary.typedGaps -= 1; }],
+  ['missing retired cell with recomputed total', value => { value.retiredCells.pop(); value.summary.retiredCells -= 1; }],
   ['wrong family backing', value => { value.coreCells.find(cell => cell.status === 'surface-complete')!.identities = ['flow_map']; }],
-  ['gap without reason', value => { delete value.coreCells.find(cell => cell.status === 'typed-gap')!.reason; }],
-  ['fabricated gap reason', value => { value.coreCells.find(cell => cell.status === 'typed-gap')!.reason = 'Unrecorded excuse.'; }],
-  ['unsupported complete cell with recomputed summary', value => { const gap = value.coreCells.find(cell => cell.status === 'typed-gap')!; gap.status = 'surface-complete'; delete gap.reason; value.summary.coreSurfaceComplete += 1; value.summary.typedGaps -= 1; }],
+  ['gap without reason', value => { delete value.retiredCells[0].reason; }],
+  ['fabricated gap reason', value => { value.retiredCells[0].reason = 'Unrecorded excuse.'; }],
+  ['retirement overlaps active cell', value => { value.retiredCells[0].family = 'financial'; value.retiredCells[0].cell = 'waterfall'; }],
   ['authoring pattern promoted to pixels', value => { value.identities.find(identity => identity.kind === 'pattern' && !identity.publicSvg)!.publicSvg = true; }],
   ['false measured type proof', value => { value.identities.find(identity => identity.kind === 'type')!.publicSvg = false; }],
   ['invented summary', value => { value.summary.classified = 99; }],

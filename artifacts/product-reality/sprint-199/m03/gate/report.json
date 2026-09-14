@@ -1,0 +1,79 @@
+{
+  "head": "2a0f3c63b70c19ecb7457f2fc8274e7ec994cba0",
+  "status": "failed",
+  "wallMs": 28325,
+  "commandsNotRun": 7,
+  "reports": [
+    {
+      "name": "build-viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2866,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate/build-viz-core.log",
+        "sha256": "6bc7f5bce58743e5c58861877123356be844fe74189dff5a14186cce94f82dc9"
+      }
+    },
+    {
+      "name": "build-viz-render",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-render",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2169,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate/build-viz-render.log",
+        "sha256": "e196e2507f299579940d540555d971a8131d67d3b5c938c2ddf7d53be82e0894"
+      }
+    },
+    {
+      "name": "typecheck-viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 1718,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate/typecheck-viz-core.log",
+        "sha256": "37cbbf95a594f1d81124893455faa9a4ff3086c1dc6bb1b93499bcd055fc7538"
+      }
+    },
+    {
+      "name": "viz-core",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/viz-core",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "wallMs": 21552,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m03/gate/viz-core.log",
+        "sha256": "c7ad9144a2ec1759ea7c9675a91cae103ac217e6bce0b29a11e9752e2c5b4e16"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

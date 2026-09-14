@@ -167,9 +167,9 @@ describe("how Forge works narrative truth", () => {
 
   it("pins the taxonomy sentence to classified identities without claiming every pattern has public pixels", () => {
     const taxonomy = JSON.parse(read("packages/viz-core/src/registry/viz-taxonomy.v1.json"));
-    expect(taxonomy.summary).toMatchObject({ types: 13, patterns: 21, families: 8, classified: 34 });
-    expect(html).toContain("classifies 34 chart identities (13 types and 21 patterns) across eight families");
-    expect(html).toContain("each Core Analytics Profile cell as surface-complete or a typed gap");
+    expect(taxonomy.summary).toMatchObject({ types: 13, patterns: 23, families: 8, classified: 36 });
+    expect(html).toContain("classifies 36 chart identities (13 types and 23 patterns) across eight families");
+    expect(html).toContain("active Core Analytics Profile cells as surface-complete or typed gaps");
     expect(html).toContain('href="viz/taxonomy.md"');
     expect(read("docs/viz/taxonomy.md")).toContain("Core Analytics Profile");
     const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
@@ -181,11 +181,11 @@ describe("how Forge works narrative truth", () => {
     const render = JSON.parse(read("packages/mcp-server/src/schemas/viz.render.input.json"));
     const patterns = JSON.parse(read("packages/viz-core/src/registry/viz-patterns.v1.json"));
     expect(render.properties.pattern.enum).toEqual(patterns.map((row: { id: string }) => row.id));
-    expect(patterns).toHaveLength(21);
+    expect(patterns).toHaveLength(23);
     expect(html).toContain("Four input modes: a catalog pattern identity");
-    expect(html).toContain("typed authoring-only result (OODS-V167)");
+    expect(html).toContain("retired patterns return OODS-V174 with reasons");
     const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
-    for (const code of ["OODS-V166", "OODS-V167"]) {
+    for (const code of ["OODS-V166", "OODS-V167", "OODS-V174", "OODS-V175"]) {
       expect(descriptions["viz.render"]).toContain(code);
       expect(read("docs/api/viz-render.md")).toContain(code);
     }

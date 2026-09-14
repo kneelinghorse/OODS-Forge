@@ -1167,7 +1167,7 @@ const registry = [
       rationale: 'Cohort-colored scatter improved anomaly detection accuracy by 32% in RSIP studies.',
       source: 'RSIP Pattern Tests',
     },
-    specPath: 'examples/viz/patterns-v2/linked-brush-scatter.spec.json',
+    specPath: 'examples/viz/patterns-v2/correlation-scatter.spec.json',
     heuristics: {
       measures: { min: 2, max: 2 },
       dimensions: { min: 1, max: 2 },

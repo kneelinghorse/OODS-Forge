@@ -17,9 +17,9 @@ const simple = (): NormalizedVizSpec => structuredClone(VIZ_PATTERN_SOURCES.find
 describe('authored pattern translation (s195-m03)', () => {
   it('bundles every exact source identity and byte hash so portable callers need no examples directory', () => {
     const files = readdirSync(path.join(ROOT, 'examples/viz/patterns-v2')).filter(file => file.endsWith('.spec.json')).sort();
-    expect(files).toHaveLength(21);
+    expect(files).toHaveLength(23);
     expect(VIZ_PATTERN_SOURCES.map(row => path.basename(row.specPath))).toEqual(files);
-    expect(new Set(VIZ_PATTERN_SOURCES.map(row => row.id)).size).toBe(21);
+    expect(new Set(VIZ_PATTERN_SOURCES.map(row => row.id)).size).toBe(23);
     for (const row of VIZ_PATTERN_SOURCES) {
       const bytes = readFileSync(path.join(ROOT, row.specPath), 'utf8');
       expect(row.specSha256, row.id).toBe(createHash('sha256').update(bytes).digest('hex'));
@@ -39,7 +39,15 @@ describe('authored pattern translation (s195-m03)', () => {
     expect(result).toEqual(translatePattern(id));
     expect(row.spec).toEqual(before);
     expect(result.baseChartType).toBe(row.baseChartType);
-    expect(result.status).toBe(renderable.has(id) ? 'renderable' : 'authoring-only');
+    expect(result.status).toBe(renderable.has(id) ? 'renderable' : id.endsWith('linked-brush-scatter') ? 'retired' : 'scene');
+    if (result.status === 'retired') { expect(result.reasons[0]).toContain('keyboard'); return; }
+    if (result.status === 'scene') {
+      expect(result.spec.marks).toHaveLength(row.spec.marks.length);
+      expect(result.spec.layout).toEqual(row.spec.layout);
+      expect(result.spec.interactions).toEqual(row.spec.interactions);
+      expect(validateNormalizedVizSpec(result.spec).valid).toBe(true);
+      return;
+    }
     if (result.status === 'authoring-only') {
       expect(result.reasons.length).toBeGreaterThan(0);
       if (row.spec.layout) expect(result.reasons.some(reason => reason.startsWith('layout:'))).toBe(true);
@@ -75,7 +83,7 @@ describe('authored pattern translation (s195-m03)', () => {
   it('keeps curve, baseline, aggregation and legend semantics in compiled output', () => {
     const compile = (id: string) => {
       const result = translatePattern(`pattern:viz:${id}`);
-      if (result.status !== 'renderable') throw new Error(result.reasons.join('; '));
+      if (result.status !== 'renderable') throw new Error(`Expected explicit translation; got ${result.status}`);
       return toVegaLiteSpec(applyPatternPresentation(buildVizSpecFromRows(result.explicitInput).spec, result.presentation)) as any;
     };
     const area = compile('running-total-area');
@@ -91,14 +99,10 @@ describe('authored pattern translation (s195-m03)', () => {
   });
 
   it.each([
-    ['multiple marks', (spec: NormalizedVizSpec) => { spec.marks.push(structuredClone(spec.marks[0])); }, 'marks:'],
-    ['layout', (spec: NormalizedVizSpec) => { spec.layout = { trait: 'LayoutLayer' }; }, 'layout:'],
-    ['interactions', (spec: NormalizedVizSpec) => { spec.interactions = [{ id: 'hover', select: { type: 'point', on: 'hover', fields: ['department'] }, rule: { bindTo: 'tooltip', fields: ['department'] } }]; }, 'interactions:'],
     ['transforms', (spec: NormalizedVizSpec) => { spec.transforms = [{ type: 'filter', params: { field: 'headcount', value: 10 } }]; }, 'transforms:'],
     ['named datasets', (spec: NormalizedVizSpec) => { spec.datasets = { detail: [{ value: 10 }] }; }, 'datasets:'],
     ['mark data source', (spec: NormalizedVizSpec) => { spec.marks[0].from = 'detail'; }, 'marks.from:'],
     ['external data', (spec: NormalizedVizSpec) => { spec.data = { url: 'https://example.invalid/data.json' }; }, 'data:'],
-    ['secondary axis', (spec: NormalizedVizSpec) => { spec.encoding.y2 = { field: 'headcount', trait: 'EncodingPositionY', channel: 'y2' }; }, 'encoding.y2:'],
     ['unmapped mark option', (spec: NormalizedVizSpec) => { spec.marks[0].options = { inventedStyle: 'unmapped' }; }, 'marks.options.inventedStyle:'],
     ['unknown mark', (spec: NormalizedVizSpec) => { spec.marks[0].trait = 'MarkUnknown'; }, 'marks.trait:'],
   ] as const)('does not silently flatten newly authored %s into a known renderable id', (_label, change, reasonPrefix) => {

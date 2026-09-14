@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/viz.render.input.json",
   "title": "Viz render input",
-  "description": "Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Authoring-only patterns return OODS-V167 with their structural limits; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.",
+  "description": "Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Retired patterns return OODS-V174 with reasons; structurally unsupported patterns return OODS-V167; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.",
   "type": "object",
   "properties": {
     "theme": {
@@ -624,6 +624,7 @@
         "pattern:viz:facet-target-band",
         "pattern:viz:focus-context-line",
         "pattern:viz:grouped-bar",
+        "pattern:viz:histogram",
         "pattern:viz:layered-line-area",
         "pattern:viz:linked-brush-scatter",
         "pattern:viz:multi-series-line",
@@ -634,9 +635,10 @@
         "pattern:viz:stacked-area-projection",
         "pattern:viz:stacked-bar",
         "pattern:viz:target-band-line",
-        "pattern:viz:time-grid-heatmap"
+        "pattern:viz:time-grid-heatmap",
+        "pattern:viz:waterfall"
       ],
-      "description": "Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Authoring-only identities return OODS-V167 with reasons. Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166)."
+      "description": "Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Retired identities return OODS-V174 with reasons. Structurally unsupported scenes return OODS-V167. Static SVG shows the default selection state (OODS-V175). Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166)."
     }
   },
   "allOf": [

@@ -29,6 +29,7 @@ import {
   validateVizEquivalenceRules,
   type AccessibleTableResult,
   type BuildVizSpecInput,
+  type BuildVizSpecResult,
   type HierarchyInput,
   type MeasureNarrativeContext,
   type NarrativeResult,
@@ -234,6 +235,7 @@ function neverCycleWarnings(
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   let presentation: PatternPresentation | undefined;
+  let scene: BuildVizSpecResult | undefined;
   if (Object.hasOwn(input, 'pattern')) {
     const conflicts = ['chartType', 'encodings', 'rows', 'datasetRef', 'intent', 'hierarchy', 'sankey', 'chord', 'network', 'geo', 'id', 'name', 'description', 'opacity']
       .filter(field => Object.hasOwn(input, field));
@@ -242,11 +244,17 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
     try { translated = translatePattern(input.pattern!); }
     catch (error) { return errorOut('OODS-V123', `viz.render: ${error instanceof Error ? error.message : String(error)}`, input.output?.compact ?? true, input.output?.echarts ?? false); }
     if (translated.status === 'authoring-only') return errorOut('OODS-V167', `viz.render: pattern "${input.pattern}" is authoring-only: ${translated.reasons.join('; ')}`, input.output?.compact ?? true, input.output?.echarts ?? false);
+    if (translated.status === 'retired') return errorOut('OODS-V174', `viz.render: pattern "${input.pattern}" is retired: ${translated.reasons.join('; ')}`, input.output?.compact ?? true, input.output?.echarts ?? false);
     const { pattern: _pattern, ...controls } = input;
+    if (translated.status === 'scene') {
+      scene = { spec: translated.spec, chartType: translated.baseChartType, mode: 'explicit' };
+      input = { ...controls, chartType: translated.baseChartType, rows: translated.spec.data.values } as VizRenderInput;
+    } else {
     input = { ...controls, ...translated.explicitInput } as VizRenderInput;
     presentation = translated.presentation;
+    }
   }
-  const out = await renderSpec(input, presentation);
+  const out = await renderSpec(input, presentation, scene);
   if (out.status !== 'ok' || !input.output?.svg) return out;
 
   try {
@@ -280,7 +288,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   }
 }
 
-async function renderSpec(input: VizRenderInput, presentation?: PatternPresentation): Promise<VizRenderOutput> {
+async function renderSpec(input: VizRenderInput, presentation?: PatternPresentation, scene?: BuildVizSpecResult): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
@@ -397,7 +405,7 @@ async function renderSpec(input: VizRenderInput, presentation?: PatternPresentat
     // intent dispatch (sprint-131 m03): a structured intent routes through the
     // deterministic buildFromIntent (recommender pick under the named fields + goal);
     // intent-absent is the byte-identical pre-s131 buildVizSpecFromRows path.
-    const rawBuilt = input.intent
+    const rawBuilt = scene ?? (input.intent
       ? buildFromIntent({
           intent: input.intent as StructuredIntent,
           rows,
@@ -412,7 +420,7 @@ async function renderSpec(input: VizRenderInput, presentation?: PatternPresentat
           id: input.id,
           name: input.name,
           description: input.description,
-        });
+        }));
 
     // The source presentation is applied to fresh builder IR and validated by
     // viz-core before adapters, a11y gates, hashes and certification observe it.
@@ -536,7 +544,7 @@ async function renderSpec(input: VizRenderInput, presentation?: PatternPresentat
       mode: built.mode === 'intent' ? 'suggest' : built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
-      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings, ...neverCycleWarnings161],
+      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings, ...neverCycleWarnings161, ...(scene?.spec.interactions?.length ? [{ code: 'OODS-V175', message: 'Static SVG shows the default selection state; interactive behavior requires a client renderer.', severity: 'warning' as const }] : [])],
       output: {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),

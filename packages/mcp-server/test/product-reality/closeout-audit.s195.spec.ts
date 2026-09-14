@@ -12,12 +12,12 @@ const root = resolve(import.meta.dirname, '../../../..');
 // Source operands belong to the retained proofs. Read their recorded revisions
 // so later renderer/cancellation work never rewrites or invalidates history.
 const historicalSourceHeads = new Map([
-  ...['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts'].map(file => [file, '1d100e20bcc0911031192406625357638adecbe5'] as const),
+  ...['packages/viz-core/src/registry/viz-patterns.v1.json', 'packages/viz-core/src/registry/viz-recipes.v1.json', 'packages/viz-core/src/adapters/vega-lite-adapter.ts', 'packages/viz-core/src/registry/viz-taxonomy.v1.json', 'packages/viz-core/src/registry/viz-classification.v1.json', 'packages/viz-core/src/patterns/viz-pattern-sources.v1.json', 'examples/viz/patterns-v2/sparkline-grid.spec.json', 'packages/mcp-server/src/schemas/viz.render.input.json'].map(file => [file, '1d100e20bcc0911031192406625357638adecbe5'] as const),
   ['packages/mcp-server/src/codegen/react-emitter.ts', 'c6453c97883feb38dda203628684a7bb9643765d'],
 ]);
 const historicalSources = new Map<string, Buffer>();
 const bytes = (file: string): Buffer => {
-  const head = historicalSourceHeads.get(file);
+  const head = historicalSourceHeads.get(file) ?? (file.startsWith('examples/viz/patterns-v2/') ? '1d100e20bcc0911031192406625357638adecbe5' : undefined);
   if (!head) return readFileSync(resolve(root, file));
   if (!historicalSources.has(file)) historicalSources.set(file, execFileSync('git', ['show', `${head}:${file}`], { cwd: root, maxBuffer: 16 * 1024 * 1024 }));
   return historicalSources.get(file)!;
@@ -170,13 +170,14 @@ describe('Sprint 195 independent closeout predicates reject false greens', () =>
     const ledgerPath = 'packages/mcp-server/registry/tool-capability-ledger.v1.json', tools = json(ledgerPath);
     const implementationHead = '38eb20c4d7e08f32cad77bb4e6eaf71441d07c19';
     const proof = { censusHead: tools.head, implementationHead, byteIdentical: true, sha256: hash(ledgerPath), summary: tools.summary };
-    const data = { tools, proof, implementationHead, ledgerPath, readFrozen: bytes };
+    const liveBytes = (file: string) => readFileSync(resolve(root, file));
+    const data = { tools, proof, implementationHead, ledgerPath, readFrozen: liveBytes };
     expect(tools.head).not.toBe(implementationHead);
     expect(auditSprint195ToolProof(data)).toEqual({ censusHead: tools.head, implementationHead, entries: 24 });
     expect(() => auditSprint195ToolProof({ ...data, proof: { ...proof, censusHead: implementationHead } })).toThrow();
     expect(() => auditSprint195ToolProof({ ...data, proof: { ...proof, implementationHead: tools.head } })).toThrow();
     expect(() => auditSprint195ToolProof({ ...data, proof: { ...proof, sha256: '0'.repeat(64) } })).toThrow();
-    const changed = (file: string) => file === tools.rows[0].inputSchemaPath ? Buffer.concat([bytes(file), Buffer.from(' ')]) : bytes(file);
+    const changed = (file: string) => file === tools.rows[0].inputSchemaPath ? Buffer.concat([liveBytes(file), Buffer.from(' ')]) : liveBytes(file);
     expect(() => auditSprint195ToolProof({ ...data, readFrozen: changed })).toThrow();
   });
   it('includes the actual added viz documents and domain declarations in its independent scope', () => {

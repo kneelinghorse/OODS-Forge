@@ -305,6 +305,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // V169 reports the public builder's default linear diameter; no size-scale override
   // is exposed. V170 uses emitted coordinates, not the unused bubble geo.join.
   // V172/V173 are directed: reciprocal flows/edges remain valid.
+  ['OODS-V174', { code: 'OODS-V174', category: 'validation', message: 'viz.render: pattern retired; use the named supported alternative', retryable: false }],
+  ['OODS-V175', { code: 'OODS-V175', category: 'validation', message: 'viz.render: static SVG shows the default selection state', retryable: false }],
   ['OODS-V168', { code: 'OODS-V168', category: 'validation', message: 'artifact.certify: bubble-map size is negative or non-finite', retryable: true }],
   ['OODS-V169', { code: 'OODS-V169', category: 'validation', message: 'artifact.certify: bubble-map magnitudes use radius rather than area scaling', retryable: true }],
   ['OODS-V170', { code: 'OODS-V170', category: 'validation', message: 'artifact.certify: overlapping bubble-map rows have conflicting encoded values', retryable: true }],

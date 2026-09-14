@@ -54,6 +54,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--out', default=DEFAULT_OUT)
 parser.add_argument('--plan', action='store_true')
 parser.add_argument('--record', action='store_true')
+parser.add_argument('--extend-plan', action='store_true')
+parser.add_argument('--file', action='append', default=[])
 parser.add_argument('--check', action='store_true')
 parser.add_argument('--finalize', action='store_true')
 parser.add_argument('--mission')
@@ -61,7 +63,7 @@ parser.add_argument('--reason')
 args = parser.parse_args()
 out = (ROOT / args.out).resolve()
 assert out.is_relative_to(ROOT / 'artifacts/product-reality/sprint-199'), 'Output must stay under sprint-199'
-assert sum([args.plan, args.record, args.check or args.finalize]) == 1, 'Choose --plan, --record, or --check/--finalize'
+assert sum([args.plan, args.extend_plan, args.record, args.check or args.finalize]) == 1, 'Choose --plan, --record, or --check/--finalize'
 
 if args.plan:
     assert not out.exists(), 'The before-plan is immutable'
@@ -79,6 +81,14 @@ if args.plan:
     ledger = {'schemaVersion': 1, 'sprint': 'sprint-199', 'beforeHead': git('rev-parse', BASE).decode().strip(),
               'builderSelfCertified': False, 'policy': 'Each pin moves at most once. Eight existing public pattern SVG hashes and all sealed sprint-195..198 receipts stay unchanged.',
               'beforePlan': before, 'entries': []}
+elif args.extend_plan:
+    ledger = json.loads(out.read_text())
+    assert args.file and args.reason, '--file and --reason required'
+    existing = {row['file'] for row in ledger['beforePlan'] + ledger.get('additionalBeforePlan', [])}
+    for name in sorted(set(args.file)):
+        assert name not in existing, f'File already planned: {name}'
+        data = git('show', f'{BASE}:{name}')
+        ledger.setdefault('additionalBeforePlan', []).append({'file': name, 'beforeSha256': sha(data), 'pins': pins(data, name), 'reason': args.reason, 'source': f'{BASE}:{name}'})
 else:
     ledger = json.loads(out.read_text())
     identities = [(row['file'], row['pin']) for row in ledger['entries']]
@@ -87,7 +97,7 @@ else:
     if args.record:
         assert re.fullmatch(r's199-m0[1-7]', args.mission or '') and args.reason, '--mission and --reason required'
     changes = []
-    for plan in ledger['beforePlan']:
+    for plan in ledger['beforePlan'] + ledger.get('additionalBeforePlan', []):
         file = ROOT / plan['file']
         current = pins(file.read_bytes() if file.exists() else None, plan['file'])
         for pin in sorted(set(plan['pins']) | set(current)):
@@ -113,7 +123,7 @@ else:
     if args.finalize:
         ledger['verifiedHead'] = git('rev-parse', 'HEAD').decode().strip()
         ledger['verifiedEntries'] = len(ledger['entries'])
-if args.plan or args.record or args.finalize:
+if args.plan or args.extend_plan or args.record or args.finalize:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(ledger, indent=2) + '\n')
-print(json.dumps({'filesPlanned': len(ledger['beforePlan']), 'pinsPlanned': sum(len(row['pins']) for row in ledger['beforePlan']), 'attributed': len(ledger['entries']), 'checked': args.check or args.finalize}))
+print(json.dumps({'filesPlanned': len(ledger['beforePlan'] + ledger.get('additionalBeforePlan', [])), 'pinsPlanned': sum(len(row['pins']) for row in ledger['beforePlan'] + ledger.get('additionalBeforePlan', [])), 'attributed': len(ledger['entries']), 'checked': args.check or args.finalize}))
