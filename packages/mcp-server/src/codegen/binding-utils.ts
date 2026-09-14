@@ -848,7 +848,7 @@ export function fieldValuePropTarget(component: string): string | undefined {
  * while no renderer reads it as data: the field must exist, and the directive
  * is consumed without a binding on every target.
  */
-export const FIELD_CONSUMED_UNBOUND: ReadonlySet<string> = new Set(['AddressCollectionPanel', 'AddressEditor', 'VizAreaControls', 'VizAxisControls', 'VizColorControls', 'VizHeatmapControls', 'VizLineControls', 'VizMarkControls', 'VizOpacityControls', 'VizPointControls', 'VizScaleControls', 'VizScatterControls', 'VizShapeControls', 'VizSizeControls', 'VizColorLegendConfig', 'VizShapeLegend', 'VizAxisSummary', 'VizOpacitySummary', 'VizScaleSummary', 'VizSizeSummary', 'VizEncodingBadge', 'VizRoleBadge', 'VizHeatmapPreview', 'VizLinePreview', 'VizMarkPreview', 'VizPointPreview', 'VizScatterPreview']);
+export const FIELD_CONSUMED_UNBOUND: ReadonlySet<string> = new Set(['AddressCollectionPanel', 'AddressEditor', 'VizAreaControls', 'VizAxisControls', 'VizColorControls', 'VizHeatmapControls', 'VizLineControls', 'VizMarkControls', 'VizOpacityControls', 'VizPointControls', 'VizScaleControls', 'VizScatterControls', 'VizShapeControls', 'VizSizeControls', 'VizColorLegendConfig', 'VizShapeLegend', 'VizAxisSummary', 'VizOpacitySummary', 'VizScaleSummary', 'VizSizeSummary', 'VizEncodingBadge', 'VizRoleBadge', 'VizHeatmapPreview', 'VizGraphPreview', 'VizLinePreview', 'VizMarkPreview', 'VizPointPreview', 'VizScatterPreview']);
 
 export type FieldContentResolution = {
   /** The content strategy used */
@@ -1180,6 +1180,7 @@ export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[
   VizHeatmapPreview: ["svgParameter"],
   VizLineControls: ["curveField", "joinField", "markersField", "strokeField", "intentParameter"],
   VizLinePreview: ["curveField", "markersField", "strokeWidthField", "svgParameter"],
+  VizGraphPreview: ["svgParameter"],
   VizMarkControls: ["cornerRadiusField", "orientationField", "paddingField", "stackingField", "intentParameter"],
   VizMarkPreview: ["orientationField", "stackingField", "typeField", "svgParameter"],
   VizOpacityControls: ["intentParameter"],

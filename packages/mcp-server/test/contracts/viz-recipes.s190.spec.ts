@@ -39,13 +39,15 @@ describe('one executable visualization registry (s190 m05)', () => {
       ['Invoice', 'detail', null, 'VizMarkPreview', 'bar', 'line_items'],
       ['Invoice', 'workflow', null, 'VizMarkPreview', 'bar', 'line_items'],
       ['Invoice', null, 'dashboard', 'VizMarkPreview', 'bar', 'line_items'],
+      ['Relationship', 'detail', null, 'VizGraphPreview', 'force_graph', 'neighborhood'],
+      ['Relationship', 'workflow', null, 'VizGraphPreview', 'force_graph', 'neighborhood'],
       ['Subscription', 'detail', null, 'VizAreaPreview', 'area', null],
       ['Subscription', 'workflow', null, 'VizAreaPreview', 'area', null],
       ['Usage', 'detail', null, 'VizLinePreview', 'line', 'samples'],
       ['Usage', 'workflow', null, 'VizLinePreview', 'line', 'samples'],
       ['Usage', null, 'dashboard', 'VizLinePreview', 'line', 'samples'],
     ]);
-    expect([...new Set(result.placements.map(place => place.chartType))].sort()).toEqual(['area', 'bar', 'line']);
+    expect([...new Set(result.placements.map(place => place.chartType))].sort()).toEqual(['area', 'bar', 'force_graph', 'line']);
     expect(result.placements.every(place => place.evidence === 'composed-declaration')).toBe(true);
     expect(source).toHaveLength(13);
     expect(result.observations.flatMap(row => row.scopes)).toHaveLength(78);
@@ -71,7 +73,10 @@ describe('one executable visualization registry (s190 m05)', () => {
       expect(row.certifyProfile).toBe(row.specEngine === 'echarts' ? 'echarts-data' : 'cartesian');
       if (row.chartInApp === 'not-placed') {
         expect(row.notes.join(' ')).toContain('Not placed:');
-        if (row.specEngine === 'echarts') expect(row.notes.join(' ')).toContain('decision #1944');
+        if (row.specEngine === 'echarts') {
+          expect(row.notes.join(' ')).toContain(`${row.chartType} requires`);
+          expect(row.chartType).not.toBe('force_graph');
+        }
       } else expect(row.notes.join(' ')).toContain('runtime proof is retained separately');
       expect(row.certifyScopes).toEqual(result.observations.find(observation => observation.chartType === row.chartType).scopes.filter((scope: any) => scope.status === 'rendered')
         .map(({ theme, brand, coverage, conformant, pillars, accuracySummary }: any) => ({ theme, brand, coverage, conformant, pillars, accuracySummary })));

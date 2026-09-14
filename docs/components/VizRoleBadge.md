@@ -56,14 +56,14 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../../artifacts/structured-data/oods-components-2026-09-11-s193-m07.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m06.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m06.json).
 
 | Field | Values |
 | --- | --- |
 | `categories` | `viz.mark` |
 | `tags` | `area`, `band`, `bar`, `comparison`, `distribution`, `line`, `mark`, `point`, `trend`, `viz` |
 | `contexts` | `list` |
-| `regions` | `detail`, `form`, `list` |
+| `regions` | `dashboard`, `detail`, `form`, `list` |
 
 ### Trait usages
 

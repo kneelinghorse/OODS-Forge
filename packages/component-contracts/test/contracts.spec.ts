@@ -29,34 +29,34 @@ function passingEmissionEvidence(): EmissionEligibilityEvidence {
 }
 
 describe('Sprint 182 canonical component truth plane', () => {
-  it('derives the controlling 109-row denominator from unique sorted membership', () => {
+  it('derives the controlling 110-row denominator from unique sorted membership', () => {
     const ids = componentIntake.rows.map((row) => row.id);
-    expect(ids).toHaveLength(109);
-    expect(deriveStartingComponentCount()).toBe(109);
+    expect(ids).toHaveLength(110);
+    expect(deriveStartingComponentCount()).toBe(110);
     expect(ids).toEqual([...ids].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
     expect(new Set(ids).size).toBe(ids.length);
-    expect(componentIntake.controllingObligationDenominator).toBe(109);
+    expect(componentIntake.controllingObligationDenominator).toBe(110);
     expect(validateComponentIntakeDocument(componentIntake)).toEqual([]);
   });
 
   it('B-01 reds when one intake ID is dropped or duplicated', () => {
     const dropped = { ...componentIntake, rows: componentIntake.rows.slice(1) };
     const duplicated = { ...componentIntake, rows: [...componentIntake.rows, componentIntake.rows[0]] };
-    expect(validateComponentIntakeDocument(dropped)).toContain('intake must contain exactly 109 rows; received 108');
+    expect(validateComponentIntakeDocument(dropped)).toContain('intake must contain exactly 110 rows; received 109');
     expect(validateComponentIntakeDocument(duplicated)).toContain('intake IDs must be unique');
   });
 
   it('B-02 rejects a restored independent 101 count instead of trusting it', () => {
     const mutated = { ...componentIntake, componentCount: 101 };
-    expect(new Set(mutated.rows.map((row) => row.id)).size).toBe(109);
+    expect(new Set(mutated.rows.map((row) => row.id)).size).toBe(110);
     expect(validateComponentIntakeDocument(mutated)).toContain('intake must not contain an independent componentCount');
   });
 
   it('classifies and reports target-specific evidence for every starting row without approving it', () => {
-    expect(componentReconciliationProposal.rows).toHaveLength(109);
+    expect(componentReconciliationProposal.rows).toHaveLength(110);
     expect(componentReconciliationProposal.approvedRuntimeCensus).toBeNull();
     expect(componentReconciliationProposal.rows.every((row) => row.approvalState === 'pending-derek-approval')).toBe(true);
-    expect(componentCapabilityBaseline.rows).toHaveLength(109);
+    expect(componentCapabilityBaseline.rows).toHaveLength(110);
     for (const row of componentCapabilityBaseline.rows) {
       expect(row.surfaces).toEqual(expect.objectContaining({
         metadata: expect.any(Object), html: expect.any(Object), react: expect.any(Object),

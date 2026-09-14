@@ -49,7 +49,7 @@ export type A11yReport = A11yReportSchema.A11YReport;
 // Source: a11y.scan.input.json
 export namespace A11yScanInputSchema {
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -84,6 +84,36 @@ export namespace A11yScanInputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -1360,7 +1390,7 @@ export namespace CodeGenerateInputSchema {
     [k: string]: any;
   };
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -1395,6 +1425,36 @@ export namespace CodeGenerateInputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -3134,7 +3194,7 @@ export type DesignComposeInput = DesignComposeInputSchema.DesignComposeInput;
 // Source: design.compose.output.json
 export namespace DesignComposeOutputSchema {
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -3169,6 +3229,36 @@ export namespace DesignComposeOutputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -5926,7 +6016,7 @@ export namespace ReplOutputSchema {
    */
   export type ReplOutput = AgenticREPLRenderOutput | AgenticREPLValidateOutput;
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -5961,6 +6051,36 @@ export namespace ReplOutputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -6340,7 +6460,7 @@ export namespace ReplRenderInputSchema {
     [k: string]: any;
   };
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -6375,6 +6495,36 @@ export namespace ReplRenderInputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -6684,7 +6834,7 @@ export type ReplRenderInput = ReplRenderInputSchema.ReplRenderInput;
 // Source: repl.render.output.json
 export namespace ReplRenderOutputSchema {
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -6719,6 +6869,36 @@ export namespace ReplRenderOutputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -7044,7 +7224,7 @@ export type ReplRenderOutput = ReplRenderOutputSchema.ReplRenderOutput;
 // Source: repl.ui.schema.json
 export namespace UiSchemaSchema {
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -7079,6 +7259,36 @@ export namespace UiSchemaSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -7309,7 +7519,7 @@ export namespace ReplValidateInputSchema {
     [k: string]: any;
   };
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -7344,6 +7554,36 @@ export namespace ReplValidateInputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */
@@ -7641,7 +7881,7 @@ export type ReplValidateInput = ReplValidateInputSchema.ReplValidateInput;
 // Source: repl.validate.output.json
 export namespace ReplValidateOutputSchema {
   /**
-   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+   * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
    */
   export type ChartDeclaration =
     | {
@@ -7676,6 +7916,36 @@ export namespace ReplValidateOutputSchema {
         };
         /**
          * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+         *
+         * @minItems 1
+         */
+        sampleRows: [
+          {
+            [k: string]: any;
+          },
+          ...{
+            [k: string]: any;
+          }[]
+        ];
+        brand?: 'A' | 'B';
+      }
+    | {
+        chartType: 'force_graph';
+        source: 'edge-array';
+        /**
+         * Declared objectSchema neighborhood array containing edge records.
+         */
+        dataField: string;
+        edges: {
+          source: string;
+          target: string;
+          /**
+           * When declared, every row must contain this boolean; true also emits the reverse directed link.
+           */
+          bidirectionalField?: string;
+        };
+        /**
+         * Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field.
          *
          * @minItems 1
          */

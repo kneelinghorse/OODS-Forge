@@ -32,7 +32,7 @@ export function validateComponentIntakeDocument(input: unknown): string[] {
       : ''
   ));
   if (ids.some((id) => id.length === 0)) errors.push('every intake row must have a non-empty id');
-  if (ids.length !== 109) errors.push(`intake must contain exactly 109 rows; received ${ids.length}`);
+  if (ids.length !== 110) errors.push(`intake must contain exactly 110 rows; received ${ids.length}`);
   const uniqueCount = new Set(ids).size;
   if (uniqueCount !== ids.length) errors.push('intake IDs must be unique');
   const sorted = [...ids].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));

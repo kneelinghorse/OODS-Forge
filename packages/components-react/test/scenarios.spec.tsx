@@ -53,6 +53,7 @@ describe('@oods/components-react shared scenarios', () => {
         case 'VizEncodingBadge':
         case 'VizRoleBadge':
         case 'VizHeatmapPreview':
+        case 'VizGraphPreview':
         case 'VizLinePreview':
         case 'VizMarkPreview':
         case 'VizPointPreview':

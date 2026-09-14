@@ -1,6 +1,6 @@
 object:
   name: Relationship
-  version: 1.0.0
+  version: 1.1.0
   domain: core.graph
   description: Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.
   tags:
@@ -49,7 +49,27 @@ traits:
         - pending_review
       caseSensitive: false
 
+  - name: viz/MarkGraph
+    parameters:
+      title: Example connected relationships
+      description: Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.
+      chart:
+        chartType: force_graph
+        source: edge-array
+        dataField: neighborhood
+        edges:
+          source: source_id
+          target: target_id
+          bidirectionalField: is_bidirectional
+        sampleRows:
+          - { source_id: example-team, target_id: example-project, is_bidirectional: false }
+          - { source_id: example-project, target_id: example-document, is_bidirectional: true }
+
 schema:
+  neighborhood:
+    type: array
+    required: false
+    description: Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic.
   relationship_id:
     type: uuid
     required: true
@@ -135,6 +155,9 @@ metadata:
     - platform@oods.systems
   steward: graph@oods.systems
   changelog:
+    - version: 1.1.0
+      date: "2026-09-14"
+      description: Declared neighborhood edge array and a read-only graph of explicitly synthetic connected relationship examples.
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.

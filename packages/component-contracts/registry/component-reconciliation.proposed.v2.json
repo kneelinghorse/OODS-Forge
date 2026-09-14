@@ -4,9 +4,9 @@
   "baselineCommit": "a5638cf819bdadb86e2336c4aabe9b2184699c13",
   "planningCommit": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
   "status": "proposed-awaiting-derek-approval",
-  "controllingObligationDenominator": 109,
+  "controllingObligationDenominator": 110,
   "approvedRuntimeCensus": null,
-  "proposedRuntimeCensus": 109,
+  "proposedRuntimeCensus": 110,
   "rows": [
     {
       "id": "AddressCollectionPanel",
@@ -1875,6 +1875,24 @@
       ],
       "implementationStatus": "pending",
       "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizGraphPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizGraphPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:figure",
+        "primitiveBasis": "Named wrapper embeds the exact public force_graph SVG."
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/viz/mark-graph.trait.yaml",
+        "packages/component-contracts/src/contracts.ts#VizGraphPreview"
+      ],
+      "implementationStatus": "implemented",
+      "compatibilityNote": "New identity explicitly requested by s199-m06; classification remains a proposal independently of measured surfaces."
     },
     {
       "id": "VizHeatmapControls",

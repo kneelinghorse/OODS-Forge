@@ -1,4 +1,4 @@
-import { VizAreaControls, VizAxisControls, VizColorControls, VizHeatmapControls, VizLineControls, VizMarkControls, VizOpacityControls, VizPointControls, VizScaleControls, VizScatterControls, VizShapeControls, VizSizeControls, VizColorLegendConfig, VizShapeLegend, VizAxisSummary, VizOpacitySummary, VizScaleSummary, VizSizeSummary, VizEncodingBadge, VizRoleBadge, VizHeatmapPreview, VizLinePreview, VizMarkPreview, VizPointPreview, VizScatterPreview } from '../src/viz-recipes.js';
+import { VizAreaControls, VizAxisControls, VizColorControls, VizHeatmapControls, VizLineControls, VizMarkControls, VizOpacityControls, VizPointControls, VizScaleControls, VizScatterControls, VizShapeControls, VizSizeControls, VizColorLegendConfig, VizShapeLegend, VizAxisSummary, VizOpacitySummary, VizScaleSummary, VizSizeSummary, VizEncodingBadge, VizRoleBadge, VizHeatmapPreview, VizGraphPreview, VizLinePreview, VizMarkPreview, VizPointPreview, VizScatterPreview } from '../src/viz-recipes.js';
 import { ArchiveEvent, CancellationEvent, ColorStatePicker, CommunicationDetailPanel, GeoFieldMappingForm, GeoResolutionBadge, GeocodablePreview, StateTransitionEvent, StatusColorLegend } from '../src/trait-recipes.js';
 import type { SharedScenario } from '@oods/component-contracts';
 import type { ReactElement } from 'react';
@@ -99,6 +99,7 @@ export function renderSharedScenario(
     case 'VizEncodingBadge': return <VizEncodingBadge {...scenario.props} />;
     case 'VizRoleBadge': return <VizRoleBadge {...scenario.props} />;
     case 'VizHeatmapPreview': return <VizHeatmapPreview {...scenario.props} />;
+    case 'VizGraphPreview': return <VizGraphPreview {...scenario.props} />;
     case 'VizLinePreview': return <VizLinePreview {...scenario.props} />;
     case 'VizMarkPreview': return <VizMarkPreview {...scenario.props} />;
     case 'VizPointPreview': return <VizPointPreview {...scenario.props} />;

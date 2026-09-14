@@ -131,7 +131,7 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("server-side high-contrast chart pixels are unsupported");
     const recipes = JSON.parse(read("packages/viz-core/src/registry/viz-recipes.v1.json"));
     const supported = recipes.filter((row: { themes: { hc: boolean } }) => row.themes.hc);
-    expect(supported.map((row: { chartType: string }) => row.chartType)).toEqual(["bar", "line", "area", "scatter"]);
+    expect(supported.map((row: { chartType: string }) => row.chartType)).toEqual(["bar", "line", "area", "scatter", "heatmap", "treemap", "sunburst", "sankey", "chord", "force_graph", "choropleth", "bubble_map", "flow_map"]);
     for (const tool of ["viz-render", "dashboard-render", "artifact-certify"]) {
       expect(read(`docs/api/${tool}.md`)).toContain(`hc (${supported.length}/${recipes.length} with measured SVGs; ${recipes.length - supported.length}/${recipes.length} typed-deferred)`);
     }
@@ -154,8 +154,9 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("synthetic API-call counts");
     expect(html).toContain("capability inventory observes composed declarations");
     expect(html).toContain("generated-application runtime proof is recorded separately");
-    expect(html).toContain("ECharts placement is carried under decision #1944");
-    expect(html).toContain("explicit directed nodes/links transformation");
+    expect(html).toContain("Relationship declares a force graph in detail and workflow");
+    expect(html).toContain("edge-array transformation sorts distinct node IDs");
+    expect(html).toContain("10 declarations across 4 chart types");
     expect(html).not.toContain("MarkHeatmap");
     const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
     expect(descriptions["code.generate"]).toContain("Bound record-array charts");
@@ -290,22 +291,22 @@ describe("how Forge works narrative truth", () => {
   it("keeps the historical component ledger separate from current public runtime placement", () => {
     const ledger = JSON.parse(read("packages/component-contracts/registry/component-capability-ledger.v1.json"));
     const counts = (surface: string, state: string) => ledger.rows.filter((row: { surfaces: Record<string, { state: string }> }) => row.surfaces[surface].state === state).length;
-    expect(ledger.rows).toHaveLength(109);
-    expect(counts("react", "implemented-evidence-complete")).toBe(109);
-    expect(counts("vue", "implemented-evidence-complete")).toBe(109);
-    expect(counts("html", "mapped")).toBe(109);
-    expect(counts("accessibility", "verified")).toBe(109);
-    expect(counts("theme", "verified")).toBe(109);
+    expect(ledger.rows).toHaveLength(110);
+    expect(counts("react", "implemented-evidence-complete")).toBe(110);
+    expect(counts("vue", "implemented-evidence-complete")).toBe(110);
+    expect(counts("html", "mapped")).toBe(110);
+    expect(counts("accessibility", "verified")).toBe(110);
+    expect(counts("theme", "verified")).toBe(110);
     expect(counts("interaction", "verified")).toBe(40);
-    expect(counts("interaction", "not-applicable")).toBe(69);
+    expect(counts("interaction", "not-applicable")).toBe(70);
     expect(counts("interaction", "unavailable")).toBe(0);
     expect(ledger.approvedRuntimeCensus).toBeNull();
-    expect(html).toContain("109 React and 109 Vue implementations, 109 HTML mappings");
-    expect(html).toContain("verified for 40 and explicitly not applicable for 69 static rows");
-    expect(html).toContain("24 native, 84 recipe and 1 alias");
+    expect(html).toContain("110 React and 110 Vue implementations, 110 HTML mappings");
+    expect(html).toContain("verified for 40 and explicitly not applicable for 70 static rows");
+    expect(html).toContain("24 native, 85 recipe and 1 alias");
     expect(nearRoadmap).toContain("40 verified / 69 not-applicable");
     expect(nearRoadmap).toContain("Increment 12 — Sprint 193: Runtime at scale — CERTIFIED AND CLOSED");
-    expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(66);
+    expect(counts("generatedConsumer", "implemented-evidence-complete")).toBe(67);
     expect(counts("generatedConsumer", "unavailable")).toBe(43);
     const runtime = JSON.parse(read("artifacts/product-reality/sprint-195/m06/runtime-final/runtime-cells.v1.json"));
     const placed = new Set(runtime.rows.flatMap((row: { components: string[] }) => row.components));
@@ -415,7 +416,7 @@ describe("how Forge works narrative truth", () => {
       expect(currentIds).toEqual(expect.arrayContaining(approvedIds));
     }
 
-    expect(html).toContain("109 unique component claims");
+    expect(html).toContain("110 unique component claims");
     expect(html).toContain("98 as runtime component rows");
     expect(html).toContain("11 as non-runtime authoring-only rows");
     expect(html).toContain("Derek accepted retaining all 109 obligations in decision #1788");

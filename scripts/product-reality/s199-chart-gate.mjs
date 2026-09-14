@@ -12,7 +12,7 @@ export function commands(directory = root) {
   if (!goldenLine) throw new Error('The named chart golden command is missing from ci.yml');
   const serial = ['--no-file-parallelism', '--maxWorkers=1', '--testTimeout=60000', '--coverage.enabled=false'];
   const contractNames = ['chart-gate.s199', 'viz-recipes.s190', 'viz-pattern-registry.s195', 'viz-taxonomy.s195'];
-  const realityNames = ['viz-recipes.s193', 'viz-recipes-proof.s193', 'viz-patterns.s195', 'viz-certification.s195', 'high-contrast.s195', 'chart-placement-codegen.s195'];
+  const realityNames = ['viz-recipes.s193', 'viz-recipes-proof.s193', 'viz-patterns.s195', 'viz-certification.s195', 'high-contrast.s195', 'chart-placement-codegen.s195', 'graph-placement-codegen.s199'];
   const specs = [
     ...contractNames.map(name => `test/contracts/${name}.spec.ts`),
     ...realityNames.map(name => `test/product-reality/${name}.spec.ts`),

@@ -27,8 +27,8 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
     const seedValue = (name: string, field: FieldSchemaEntry): unknown => {
       const value = (result: unknown, rule: string) => { rules[name] = rule; return structuredClone(result); };
       const type = field.type.replace(/\?$/, '');
-      const declaredChart = charts.find(chart => chart.source === 'record-array' && chart.dataField === name);
-      if (declaredChart?.source === 'record-array') return value(declaredChart.sampleRows, 'authored chart rows');
+      const declaredChart = charts.find(chart => (chart.source === 'record-array' || chart.source === 'edge-array') && chart.dataField === name);
+      if (declaredChart?.source === 'record-array' || declaredChart?.source === 'edge-array') return value(declaredChart.sampleRows, 'authored chart rows');
       if (field.examples?.length) return value(field.examples[index % field.examples.length], 'authored field example');
       if (name === idField) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key');
       if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');

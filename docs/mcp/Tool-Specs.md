@@ -19,7 +19,7 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"1d4213a816acc12859e01e79ab87bc3a8ba70b3b"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"b5b1294e9523cdaa436d0c8f52352146dcf4545a"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
@@ -29,21 +29,21 @@ Recorded portable execution: 17 pass and 2 typed dependency outcomes across 19 t
 
 ## Current component capability counts
 
-Generated from [packages/component-contracts/registry/component-capability-ledger.v1.json](../../packages/component-contracts/registry/component-capability-ledger.v1.json): 109 component rows; controlling obligation denominator 109; approvedRuntimeCensus=`null`. Classifications remain proposals independently of measured surface availability.
+Generated from [packages/component-contracts/registry/component-capability-ledger.v1.json](../../packages/component-contracts/registry/component-capability-ledger.v1.json): 110 component rows; controlling obligation denominator 110; approvedRuntimeCensus=`null`. Classifications remain proposals independently of measured surface availability.
 
 | Surface | State | Component rows |
 |---|---|---|
-| `"accessibility"` | `"verified"` | 109 |
-| `"contract"` | `"versioned-v1"` | 109 |
-| `"generatedConsumer"` | `"implemented-evidence-complete"` | 66 |
+| `"accessibility"` | `"verified"` | 110 |
+| `"contract"` | `"versioned-v1"` | 110 |
+| `"generatedConsumer"` | `"implemented-evidence-complete"` | 67 |
 | `"generatedConsumer"` | `"unavailable"` | 43 |
-| `"html"` | `"mapped"` | 109 |
-| `"interaction"` | `"not-applicable"` | 69 |
+| `"html"` | `"mapped"` | 110 |
+| `"interaction"` | `"not-applicable"` | 70 |
 | `"interaction"` | `"verified"` | 40 |
-| `"metadata"` | `"available"` | 109 |
-| `"react"` | `"implemented-evidence-complete"` | 109 |
-| `"theme"` | `"verified"` | 109 |
-| `"vue"` | `"implemented-evidence-complete"` | 109 |
+| `"metadata"` | `"available"` | 110 |
+| `"react"` | `"implemented-evidence-complete"` | 110 |
+| `"theme"` | `"verified"` | 110 |
+| `"vue"` | `"implemented-evidence-complete"` | 110 |
 
 ## Retired tools
 
@@ -360,7 +360,7 @@ Additional properties: `false`.
 
 ### `code.generate`
 
-Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.
+Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. Relationship detail and workflow declare an edge-array force_graph over optional neighborhood rows, explicitly labelled synthetic. Source and target IDs produce sorted distinct nodes and row-ordered directed links; a true bidirectional flag adds the reverse link, with directed-pair deduplication and no invented values or groups. Missing or malformed edge fields fail closed. VizGraphPreview embeds the exact public SVG inside a named wrapper. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.
 
 [Complete input/output reference](../api/code-generate.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 

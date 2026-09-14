@@ -143,7 +143,17 @@ export async function measureVizCensus() {
       const scopes = [...new Set(places.map(place => `${place.object}/${place.context ?? `layout:${place.layout}`}`))];
       notes.push(`Composed chart declarations: ${scopes.join(', ')}. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG.`);
     } else if (defaultRender.render?.engine === 'echarts') {
-      notes.push('Not placed: no public object declares this ECharts operand and no governed ECharts preview trait is authored. Relationship scalar edges need an explicit directed nodes/links transformation; ECharts placement is carried under decision #1944.');
+      const missingOperands: Record<string, string> = {
+        treemap: 'treemap requires a hierarchy array; no public object declares one.',
+        sunburst: 'sunburst requires a hierarchy array; no public object declares one.',
+        sankey: 'sankey requires numeric link values; Relationship neighborhood edges do not declare them.',
+        chord: 'chord requires numeric link values; Relationship neighborhood edges do not declare them.',
+        choropleth: 'choropleth requires inline geometry and matched region values; no public object declares that operand.',
+        bubble_map: 'bubble_map requires inline geometry and size-bound point values; no public object declares that operand.',
+        flow_map: 'flow_map requires inline geometry and origin/destination flows; no public object declares that operand.',
+      };
+      assert(missingOperands[input.chartType!], `Missing placement reason for ${input.chartType}`);
+      notes.push(`Not placed: ${missingOperands[input.chartType!]}`);
     } else {
       notes.push('Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate.');
     }

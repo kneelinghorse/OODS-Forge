@@ -4,6 +4,7 @@ const previewTypes: Readonly<Record<string, string>> = {
   VizAreaPreview: 'area',
   VizMarkPreview: 'bar',
   VizLinePreview: 'line',
+  VizGraphPreview: 'force_graph',
   VizPointPreview: 'scatter',
   VizScatterPreview: 'scatter',
   VizHeatmapPreview: 'heatmap',

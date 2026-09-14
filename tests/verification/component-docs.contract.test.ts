@@ -38,12 +38,12 @@ function replaceFixture(root: string, file: string, content: string) {
 describe('governed component documentation derives its claims from four agreeing sources (s196 m04)', () => {
   it('publishes exactly one page for every ledger, contract, catalog and shared-scenario component', () => {
     const ids = inputs.ledger.rows.map(row => row.id).sort();
-    expect(ids).toHaveLength(109);
+    expect(ids).toHaveLength(110);
     expect(Object.keys(inputs.contracts).sort()).toEqual(ids);
     expect(inputs.catalog.components.map(component => component.id).sort()).toEqual(ids);
     expect([...new Set(inputs.scenarios.map(scenario => scenario.oodsComponentId))].sort()).toEqual(ids);
-    // The planning memo counted 72 literals; public source exports now supply 109 scenarios.
-    expect(inputs.scenarios).toHaveLength(109);
+    // The planning memo counted 72 literals; public source exports now supply 110 scenarios.
+    expect(inputs.scenarios).toHaveLength(110);
     expect([...documents.keys()].sort()).toEqual([...ids.map(id => `${OUTPUT_DIRECTORY}/${id}.md`), `${OUTPUT_DIRECTORY}/README.md`].sort());
     const index = documents.get(`${OUTPUT_DIRECTORY}/README.md`)!;
     expect([...index.matchAll(/\| \[([^\]]+)\]\(\.\/([^)]+)\.md\)/g)].map(match => [match[1], match[2]])).toEqual(ids.map(id => [id, id]));
@@ -64,7 +64,7 @@ describe('governed component documentation derives its claims from four agreeing
     }
     // Historical generated-consumer coverage must not be inflated by a newer, separate runtime sweep.
     const index = documents.get(`${OUTPUT_DIRECTORY}/README.md`)!;
-    expect(index).toContain('| `generatedConsumer` | `implemented-evidence-complete` | 66 |');
+    expect(index).toContain('| `generatedConsumer` | `implemented-evidence-complete` | 67 |');
     expect(index).toContain('| `generatedConsumer` | `unavailable` | 43 |');
   });
 
@@ -151,7 +151,7 @@ describe('governed component documentation derives its claims from four agreeing
     await generateComponentDocs({ root, inputs });
     expect(await generateComponentDocs({ root, inputs, check: true })).toMatchObject({ ok: true, stale: [], orphans: [] });
     expect(read(button, root)).toBe(documents.get(button));
-    writeFileSync(join(root, index), read(index, root).replace('109 component pages', '110 component pages'));
+    writeFileSync(join(root, index), read(index, root).replace('110 component pages', '111 component pages'));
     expect((await generateComponentDocs({ root, inputs, check: true })).stale).toEqual([index]);
   });
 

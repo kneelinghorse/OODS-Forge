@@ -19,7 +19,7 @@ export const VIZ_CONTROL_IDS = ['VizAreaControls', 'VizAxisControls', 'VizColorC
 export type VizControlId = typeof VIZ_CONTROL_IDS[number];
 export const VIZ_SUMMARY_IDS = ['VizAxisSummary', 'VizOpacitySummary', 'VizScaleSummary', 'VizSizeSummary', 'VizEncodingBadge', 'VizRoleBadge'] as const;
 export type VizSummaryId = typeof VIZ_SUMMARY_IDS[number];
-export const VIZ_PREVIEW_TYPES = { VizHeatmapPreview: 'heatmap', VizLinePreview: 'line', VizMarkPreview: 'bar', VizPointPreview: 'scatter', VizScatterPreview: 'scatter' } as const;
+export const VIZ_PREVIEW_TYPES = { VizGraphPreview: 'force_graph', VizHeatmapPreview: 'heatmap', VizLinePreview: 'line', VizMarkPreview: 'bar', VizPointPreview: 'scatter', VizScatterPreview: 'scatter' } as const;
 export const VIZ_CONTROL_TITLES: Record<VizControlId, string> = {
   VizAreaControls: 'Area chart', VizAxisControls: 'Axis', VizColorControls: 'Color encoding', VizHeatmapControls: 'Heatmap', VizLineControls: 'Line chart', VizMarkControls: 'Chart mark', VizOpacityControls: 'Mark opacity', VizPointControls: 'Point chart', VizScaleControls: 'Scale', VizScatterControls: 'Scatter chart', VizShapeControls: 'Shape encoding', VizSizeControls: 'Size encoding', VizColorLegendConfig: 'Color legend', VizShapeLegend: 'Shape legend',
 };

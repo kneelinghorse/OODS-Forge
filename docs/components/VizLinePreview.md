@@ -56,19 +56,20 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../../artifacts/structured-data/oods-components-2026-09-11-s193-m07.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m06.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m06.json).
 
 | Field | Values |
 | --- | --- |
 | `categories` | `viz.mark` |
 | `tags` | `line`, `mark`, `trend`, `viz` |
-| `contexts` | `detail` |
-| `regions` | `detail`, `form`, `list` |
+| `contexts` | `dashboard`, `detail` |
+| `regions` | `dashboard`, `detail`, `form`, `list` |
 
 ### Trait usages
 
 | Trait | Category | Context | Position | Priority | Props | Source |
 | --- | --- | --- | --- | --- | --- | --- |
+| `MarkLine` | `viz.mark` | `dashboard` | `top` | 60 | `{"svgParameter":"previewSvg","curveField":"viz_line_curve","strokeWidthField":"viz_line_stroke_width","markersField":"viz_line_markers"}` | [traits/viz/mark-line.trait.yaml](../../traits/viz/mark-line.trait.yaml) |
 | `MarkLine` | `viz.mark` | `detail` | `top` | 60 | `{"svgParameter":"previewSvg","curveField":"viz_line_curve","strokeWidthField":"viz_line_stroke_width","markersField":"viz_line_markers"}` | [traits/viz/mark-line.trait.yaml](../../traits/viz/mark-line.trait.yaml) |
 
 Source files:

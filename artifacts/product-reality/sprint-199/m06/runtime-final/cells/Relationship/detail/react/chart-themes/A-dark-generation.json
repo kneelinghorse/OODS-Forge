@@ -1,0 +1,829 @@
+{
+  "request": {
+    "schema": {
+      "version": "2026.02",
+      "screens": [
+        {
+          "id": "screen-detail-13",
+          "component": "Stack",
+          "layout": {
+            "type": "stack",
+            "gapToken": "cluster-default"
+          },
+          "children": [
+            {
+              "id": "detail-header-1",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "align": "space-between",
+                "gapToken": "stack-default"
+              },
+              "style": {
+                "spacingToken": "inset-default"
+              },
+              "children": [
+                {
+                  "id": "slot-header-2",
+                  "component": "Stack",
+                  "meta": {
+                    "intent": "slot:header",
+                    "label": "header"
+                  },
+                  "children": [
+                    {
+                      "id": "ve-header-22",
+                      "component": "DetailHeader",
+                      "props": {
+                        "titleField": "label",
+                        "subtitleField": "description",
+                        "headingLevel": 2
+                      }
+                    },
+                    {
+                      "id": "ve-header-23",
+                      "component": "VizGraphPreview",
+                      "props": {
+                        "title": "Example connected relationships",
+                        "description": "Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data."
+                      },
+                      "chart": {
+                        "chartType": "force_graph",
+                        "source": "edge-array",
+                        "dataField": "neighborhood",
+                        "edges": {
+                          "source": "source_id",
+                          "target": "target_id",
+                          "bidirectionalField": "is_bidirectional"
+                        },
+                        "sampleRows": [
+                          {
+                            "source_id": "example-team",
+                            "target_id": "example-project",
+                            "is_bidirectional": false
+                          },
+                          {
+                            "source_id": "example-project",
+                            "target_id": "example-document",
+                            "is_bidirectional": true
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "ve-header-24",
+                      "component": "StatusTimeline",
+                      "props": {
+                        "field": "status",
+                        "historyField": "state_history",
+                        "statesParameter": "states",
+                        "showActorId": true,
+                        "showReason": true
+                      }
+                    },
+                    {
+                      "id": "ve-header-25",
+                      "component": "OwnershipSummary",
+                      "props": {
+                        "ownerIdField": "owner_id",
+                        "ownerTypeField": "owner_type",
+                        "roleField": "ownership_role",
+                        "transferredAtField": "ownership_transferred_at",
+                        "allowTransferParameter": "allowTransfer"
+                      }
+                    },
+                    {
+                      "id": "ve-header-26",
+                      "component": "TagSummary",
+                      "props": {
+                        "field": "tags",
+                        "countField": "tag_count",
+                        "label": "Tags"
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "type": "stack",
+                    "gapToken": "cluster-default"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "detail-body-10",
+              "component": "Card",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-tabs-9",
+                  "component": "Tabs",
+                  "children": [
+                    {
+                      "id": "detail-tabs-9-read-fields",
+                      "component": "Stack",
+                      "props": {
+                        "label": "Details"
+                      },
+                      "children": [
+                        {
+                          "id": "detail-tabs-9-updated_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-updated_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Updated at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-updated_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "updated_at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event_at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-relationship_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-relationship_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Relationship id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-relationship_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "relationship_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-source_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-source_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Source id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-source_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "source_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-target_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-target_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Target id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-target_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "target_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-relationship_type-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-relationship_type-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Relationship type"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-relationship_type-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "relationship_type"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-direction-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-direction-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Direction"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-direction-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "direction"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-strength-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-strength-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Strength"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-strength-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "strength"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-origin_source-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-origin_source-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Origin source"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-origin_source-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "origin_source"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-is_bidirectional-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-is_bidirectional-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Is bidirectional"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-is_bidirectional-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "is_bidirectional"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-0-4",
+                          "component": "Stack",
+                          "meta": {
+                            "intent": "slot:tab-0",
+                            "label": "tab-0",
+                            "notes": "pattern-group:status-timeline"
+                          },
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-tight"
+                          },
+                          "children": [
+                            {
+                              "id": "pg-status-timeline-29-read-field",
+                              "component": "Stack",
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-29-label",
+                                  "component": "Text",
+                                  "props": {
+                                    "as": "strong",
+                                    "content": "Allowed transitions"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-29-value",
+                                  "meta": {
+                                    "intent": "read-only-field"
+                                  },
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "allowed_transitions"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-2-8-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "slot-tab-2-8-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Created at"
+                              }
+                            },
+                            {
+                              "id": "slot-tab-2-8-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "created_at"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "props": {
+                    "ariaLabel": "Record details"
+                  }
+                }
+              ]
+            }
+          ],
+          "bindings": {
+            "onEdit": "handleEdit",
+            "onDelete": "handleDelete",
+            "onViewTimeline": "handleViewTimeline"
+          }
+        }
+      ],
+      "objectSchema": {
+        "label": {
+          "type": "string",
+          "required": true,
+          "description": "Human-readable display name rendered in primary surfaces.",
+          "semanticType": "text.label"
+        },
+        "description": {
+          "type": "string",
+          "required": false,
+          "description": "Supporting description used in detail and card contexts.",
+          "semanticType": "text.description"
+        },
+        "placeholder": {
+          "type": "string",
+          "required": false,
+          "description": "Hint copy surfaced in form fields when the label is empty.",
+          "semanticType": "text.placeholder"
+        },
+        "status": {
+          "type": "string",
+          "required": true,
+          "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+          "enum": [
+            "proposed",
+            "active",
+            "paused",
+            "completed",
+            "terminated"
+          ],
+          "semanticType": "status.state"
+        },
+        "state_history": {
+          "type": "StateTransition[]",
+          "required": false,
+          "default": [],
+          "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+          "semanticType": "timeline.state_transition"
+        },
+        "allowed_transitions": {
+          "type": "string[]",
+          "required": false,
+          "default": [],
+          "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+          "semanticType": "status.navigation"
+        },
+        "created_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp recording when the entity was first created.",
+          "semanticType": "audit.created_at"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the most recent modification, when available.",
+          "semanticType": "audit.updated_at"
+        },
+        "last_event": {
+          "type": "string",
+          "required": true,
+          "description": "Lifecycle event associated with the most recent timestamp mutation.",
+          "enum": [
+            "created",
+            "activated",
+            "paused",
+            "terminated",
+            "reactivated"
+          ],
+          "semanticType": "audit.event.type"
+        },
+        "last_event_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the lifecycle event captured in last_event.",
+          "semanticType": "audit.event.timestamp"
+        },
+        "owner_id": {
+          "type": "string",
+          "required": true,
+          "description": "Identifier of the owning principal scoped by owner_type.",
+          "semanticType": "ownership.owner.id"
+        },
+        "owner_type": {
+          "type": "string",
+          "required": true,
+          "description": "Categorical owner type sourced from the ownerTypes parameter.",
+          "enum": [
+            "organization",
+            "team",
+            "platform"
+          ],
+          "semanticType": "ownership.owner.type"
+        },
+        "ownership_role": {
+          "type": "string",
+          "required": false,
+          "description": "Optional role name describing how the owner governs the entity.",
+          "semanticType": "ownership.owner.role"
+        },
+        "ownership_transferred_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp recording when ownership was last transferred.",
+          "semanticType": "ownership.owner.transferred_at"
+        },
+        "tags": {
+          "type": "string[]",
+          "required": false,
+          "default": [],
+          "description": "Ordered list of tags assigned to the entity.",
+          "semanticType": "taxonomy.tag.collection"
+        },
+        "tag_count": {
+          "type": "number",
+          "required": true,
+          "default": 0,
+          "description": "Computed number of tags assigned to the entity.",
+          "semanticType": "metric.collection.count"
+        },
+        "tag_metadata": {
+          "type": "object[]",
+          "required": false,
+          "default": [],
+          "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+          "semanticType": "taxonomy.tag.governance"
+        },
+        "neighborhood": {
+          "type": "array",
+          "required": false,
+          "description": "Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic."
+        },
+        "relationship_id": {
+          "type": "uuid",
+          "required": true,
+          "description": "Primary identifier for the relationship edge.",
+          "semanticType": "graph.relationship.id"
+        },
+        "source_id": {
+          "type": "uuid",
+          "required": true,
+          "description": "Identifier of the source node in the relationship."
+        },
+        "target_id": {
+          "type": "uuid",
+          "required": true,
+          "description": "Identifier of the target node in the relationship."
+        },
+        "relationship_type": {
+          "type": "string",
+          "required": true,
+          "description": "Semantic type describing the edge between the source and target.",
+          "enum": [
+            "membership",
+            "ownership",
+            "follows",
+            "depends_on",
+            "references"
+          ],
+          "semanticType": "graph.relationship.type"
+        },
+        "direction": {
+          "type": "string",
+          "required": true,
+          "default": "bidirectional",
+          "description": "Directionality applied when traversing the relationship.",
+          "enum": [
+            "unidirectional",
+            "bidirectional"
+          ],
+          "semanticType": "graph.relationship.direction"
+        },
+        "strength": {
+          "type": "string",
+          "required": false,
+          "description": "Signal representing how strongly the entities are connected.",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "semanticType": "graph.relationship.strength"
+        },
+        "origin_source": {
+          "type": "string",
+          "required": false,
+          "description": "System that originated or inferred the relationship.",
+          "enum": [
+            "manual",
+            "ingestion",
+            "analytics",
+            "integration"
+          ],
+          "semanticType": "graph.relationship.origin"
+        },
+        "is_bidirectional": {
+          "type": "boolean",
+          "required": true,
+          "default": true,
+          "description": "Flag indicating whether the relationship is symmetric."
+        }
+      }
+    },
+    "framework": "react",
+    "profile": "build",
+    "options": {
+      "styling": "tokens",
+      "typescript": true,
+      "brand": "A",
+      "theme": "dark"
+    }
+  },
+  "response": {
+    "status": "ok",
+    "framework": "react",
+    "artifact": {
+      "schemaVersion": "1.0.0",
+      "framework": "react",
+      "files": [
+        {
+          "path": "src/GeneratedUI.tsx",
+          "contents": "import React from 'react';\nimport { Card, DetailHeader, OwnershipSummary, Stack, StatusTimeline, Tabs, TagSummary, Text, VizGraphPreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'activated' | 'paused' | 'terminated' | 'reactivated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic. */\n  neighborhood?: unknown[];\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'platform';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'proposed' | 'active' | 'paused' | 'completed' | 'terminated';\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype OwnershipSummaryProps = React.ComponentPropsWithoutRef<typeof OwnershipSummary>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusTimelineProps = React.ComponentPropsWithoutRef<typeof StatusTimeline>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TagSummaryProps = React.ComponentPropsWithoutRef<typeof TagSummary>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizGraphPreviewProps = React.ComponentPropsWithoutRef<typeof VizGraphPreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, neighborhood, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt, svg }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ alignItems: 'space-between', display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-stack-default)', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"ve-header-22\" data-oods-component=\"DetailHeader\" title={label} subtitle={description} level={2} />\n                                <VizGraphPreview id=\"ve-header-23\" data-oods-component=\"VizGraphPreview\" svg={svg ?? \"<svg width=\\\"360\\\" height=\\\"200\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" baseProfile=\\\"full\\\" viewBox=\\\"0 0 360 200\\\">\\n<rect width=\\\"360\\\" height=\\\"200\\\" x=\\\"0\\\" y=\\\"0\\\" fill=\\\"#101215\\\"></rect>\\n<path d=\\\"M152.3 124.5Q160.2 103.6 182.4 100.8\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"0\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M182.4 100.8Q186 80.9 205.3 74.6\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"1\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M205.3 74.6Q201.7 94.6 182.4 100.8\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"2\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,205.2935,74.6474)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"0\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,182.4052,100.8417)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"1\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,152.2904,124.5121)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"2\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(215.2935 74.6474)\\\" fill=\\\"#E8EBF1\\\">example-document</text>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(192.4052 100.8417)\\\" fill=\\\"#E8EBF1\\\">example-project</text>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(162.2904 124.5121)\\\" fill=\\\"#E8EBF1\\\">example-team</text>\\n<path d=\\\"M-137.6 -5l275.1 0l0 28l-275.1 0Z\\\" transform=\\\"translate(180 20)\\\" fill=\\\"rgb(0,0,0)\\\" fill-opacity=\\\"0\\\" stroke=\\\"#3c3c41\\\" stroke-width=\\\"0\\\" class=\\\"oods-zr-2\\\"></path>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"middle\\\" style=\\\"font-size:18px;font-family:sans-serif;font-weight:bold;\\\" xml:space=\\\"preserve\\\" y=\\\"9\\\" transform=\\\"translate(180 20)\\\" fill=\\\"#E8EBF1\\\">Example connected relationships</text>\\n<style ><![CDATA[\\n.oods-zr-0:hover {\\ncursor:pointer;\\nstroke-width:4;\\n}\\n.oods-zr-1:hover {\\ncursor:pointer;\\nfill:rgba(243,0,72,1);\\n}\\n.oods-zr-2:hover {\\npointer-events:none;\\n}\\n\\n]]>\\n\\n</style>\\n</svg>\"} description=\"Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.\" height={200} title=\"Example connected relationships\" width={360} />\n                                <StatusTimeline id=\"ve-header-24\" data-oods-component=\"StatusTimeline\" showActorId showReason history={stateHistory} allowedTransitions={allowedTransitions} status={status} />\n                                <OwnershipSummary id=\"ve-header-25\" data-oods-component=\"OwnershipSummary\" ownerId={ownerId} ownerType={ownerType} role={ownershipRole} />\n                                <TagSummary id=\"ve-header-26\" data-oods-component=\"TagSummary\" label=\"Tags\" tagCount={tagCount} tags={tags} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                        { ...{\"id\":\"detail-tabs-9-read-fields\",\"label\":\"Details\"}, panel: (\n                          <Stack id=\"detail-tabs-9-read-fields\" data-oods-component=\"Stack\">\n                            <Stack id=\"detail-tabs-9-updated_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-updated_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                <Text id=\"detail-tabs-9-updated_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(updatedAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                                <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEvent, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                                <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEventAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-relationship_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-relationship_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Relationship id\" />\n                                <Text id=\"detail-tabs-9-relationship_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(relationshipId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-source_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-source_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Source id\" />\n                                <Text id=\"detail-tabs-9-source_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(sourceId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-target_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-target_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Target id\" />\n                                <Text id=\"detail-tabs-9-target_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(targetId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-relationship_type-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-relationship_type-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Relationship type\" />\n                                <Text id=\"detail-tabs-9-relationship_type-value\" data-oods-component=\"Text\">{formatReadOnlyValue(relationshipType, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-direction-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-direction-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Direction\" />\n                                <Text id=\"detail-tabs-9-direction-value\" data-oods-component=\"Text\">{formatReadOnlyValue(direction, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-strength-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-strength-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Strength\" />\n                                <Text id=\"detail-tabs-9-strength-value\" data-oods-component=\"Text\">{formatReadOnlyValue(strength, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-origin_source-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-origin_source-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Origin source\" />\n                                <Text id=\"detail-tabs-9-origin_source-value\" data-oods-component=\"Text\">{formatReadOnlyValue(originSource, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-is_bidirectional-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-is_bidirectional-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Is bidirectional\" />\n                                <Text id=\"detail-tabs-9-is_bidirectional-value\" data-oods-component=\"Text\">{formatReadOnlyValue(isBidirectional, \"boolean\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                <Stack id=\"pg-status-timeline-29-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-29-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Allowed transitions\" />\n                                      <Text id=\"pg-status-timeline-29-value\" data-oods-component=\"Text\">{formatReadOnlyValue(allowedTransitions, \"string[]\", false)}</Text>\n                                    </Stack>\n                              </Stack>\n                            <Stack id=\"slot-tab-2-8-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"slot-tab-2-8-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                                <Text id=\"slot-tab-2-8-value\" data-oods-component=\"Text\">{formatReadOnlyValue(createdAt, \"datetime\", false)}</Text>\n                              </Stack>\n                          </Stack>\n                        ) }\n                      ]} />\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+          "contentHash": "sha256:f8734871820c0f069376539284b82d6c8e2316230f0943e7d9c859bd2d6b0c81"
+        },
+        {
+          "path": "src/charts/force_graph-001.svg",
+          "contents": "<svg width=\"360\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 360 200\">\n<rect width=\"360\" height=\"200\" x=\"0\" y=\"0\" fill=\"#101215\"></rect>\n<path d=\"M152.3 124.5Q160.2 103.6 182.4 100.8\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(221, 0, 66)\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M182.4 100.8Q186 80.9 205.3 74.6\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(221, 0, 66)\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M205.3 74.6Q201.7 94.6 182.4 100.8\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(221, 0, 66)\" stroke-opacity=\"0.5\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,205.2935,74.6474)\" fill=\"rgb(221, 0, 66)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,182.4052,100.8417)\" fill=\"rgb(221, 0, 66)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,152.2904,124.5121)\" fill=\"rgb(221, 0, 66)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(215.2935 74.6474)\" fill=\"#E8EBF1\">example-document</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(192.4052 100.8417)\" fill=\"#E8EBF1\">example-project</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(162.2904 124.5121)\" fill=\"#E8EBF1\">example-team</text>\n<path d=\"M-137.6 -5l275.1 0l0 28l-275.1 0Z\" transform=\"translate(180 20)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#3c3c41\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(180 20)\" fill=\"#E8EBF1\">Example connected relationships</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nstroke-width:4;\n}\n.oods-zr-1:hover {\ncursor:pointer;\nfill:rgba(243,0,72,1);\n}\n.oods-zr-2:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+          "contentHash": "sha256:d81ade97298823500f247dce913087112a921a52284a9b985d0fb8d30414a4b7"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "@oods/component-contracts",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/component-styles",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/components-react",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "react",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        },
+        {
+          "name": "react-dom",
+          "version": "19.2.0",
+          "kind": "peerDependency"
+        }
+      ],
+      "actions": [
+        {
+          "name": "handleDelete",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onDelete"
+            }
+          ]
+        },
+        {
+          "name": "handleEdit",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onEdit"
+            }
+          ]
+        },
+        {
+          "name": "handleViewTimeline",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onViewTimeline"
+            }
+          ]
+        }
+      ],
+      "contentHash": "sha256:f5b5113cebfcdd7829e6209bf07213dc456c0539c3a161db8cd339f839712ece"
+    },
+    "code": "import React from 'react';\nimport { Card, DetailHeader, OwnershipSummary, Stack, StatusTimeline, Tabs, TagSummary, Text, VizGraphPreview } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'activated' | 'paused' | 'terminated' | 'reactivated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Edge records sharing an endpoint with this relationship, each containing source_id and target_id strings and an is_bidirectional boolean. Generated sample rows are explicitly synthetic. */\n  neighborhood?: unknown[];\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: 'organization' | 'team' | 'platform';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'proposed' | 'active' | 'paused' | 'completed' | 'terminated';\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;\ntype OwnershipSummaryProps = React.ComponentPropsWithoutRef<typeof OwnershipSummary>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusTimelineProps = React.ComponentPropsWithoutRef<typeof StatusTimeline>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TagSummaryProps = React.ComponentPropsWithoutRef<typeof TagSummary>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\ntype VizGraphPreviewProps = React.ComponentPropsWithoutRef<typeof VizGraphPreview>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, neighborhood, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt, svg }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ alignItems: 'space-between', display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-stack-default)', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <DetailHeader id=\"ve-header-22\" data-oods-component=\"DetailHeader\" title={label} subtitle={description} level={2} />\n                                <VizGraphPreview id=\"ve-header-23\" data-oods-component=\"VizGraphPreview\" svg={svg ?? \"<svg width=\\\"360\\\" height=\\\"200\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" baseProfile=\\\"full\\\" viewBox=\\\"0 0 360 200\\\">\\n<rect width=\\\"360\\\" height=\\\"200\\\" x=\\\"0\\\" y=\\\"0\\\" fill=\\\"#101215\\\"></rect>\\n<path d=\\\"M152.3 124.5Q160.2 103.6 182.4 100.8\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"0\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M182.4 100.8Q186 80.9 205.3 74.6\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"1\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M205.3 74.6Q201.7 94.6 182.4 100.8\\\" fill=\\\"none\\\" pointer-events=\\\"visible\\\" stroke=\\\"rgb(221, 0, 66)\\\" stroke-opacity=\\\"0.5\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"2\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-0\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,205.2935,74.6474)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"0\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,182.4052,100.8417)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"1\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<path d=\\\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\\\" transform=\\\"matrix(5,0,0,5,152.2904,124.5121)\\\" fill=\\\"rgb(221, 0, 66)\\\" ecmeta_series_index=\\\"0\\\" ecmeta_data_index=\\\"2\\\" ecmeta_ssr_type=\\\"chart\\\" class=\\\"oods-zr-1\\\"></path>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(215.2935 74.6474)\\\" fill=\\\"#E8EBF1\\\">example-document</text>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(192.4052 100.8417)\\\" fill=\\\"#E8EBF1\\\">example-project</text>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"start\\\" style=\\\"font-size:12px;font-family:sans-serif;\\\" transform=\\\"translate(162.2904 124.5121)\\\" fill=\\\"#E8EBF1\\\">example-team</text>\\n<path d=\\\"M-137.6 -5l275.1 0l0 28l-275.1 0Z\\\" transform=\\\"translate(180 20)\\\" fill=\\\"rgb(0,0,0)\\\" fill-opacity=\\\"0\\\" stroke=\\\"#3c3c41\\\" stroke-width=\\\"0\\\" class=\\\"oods-zr-2\\\"></path>\\n<text dominant-baseline=\\\"central\\\" text-anchor=\\\"middle\\\" style=\\\"font-size:18px;font-family:sans-serif;font-weight:bold;\\\" xml:space=\\\"preserve\\\" y=\\\"9\\\" transform=\\\"translate(180 20)\\\" fill=\\\"#E8EBF1\\\">Example connected relationships</text>\\n<style ><![CDATA[\\n.oods-zr-0:hover {\\ncursor:pointer;\\nstroke-width:4;\\n}\\n.oods-zr-1:hover {\\ncursor:pointer;\\nfill:rgba(243,0,72,1);\\n}\\n.oods-zr-2:hover {\\npointer-events:none;\\n}\\n\\n]]>\\n\\n</style>\\n</svg>\"} description=\"Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.\" height={200} title=\"Example connected relationships\" width={360} />\n                                <StatusTimeline id=\"ve-header-24\" data-oods-component=\"StatusTimeline\" showActorId showReason history={stateHistory} allowedTransitions={allowedTransitions} status={status} />\n                                <OwnershipSummary id=\"ve-header-25\" data-oods-component=\"OwnershipSummary\" ownerId={ownerId} ownerType={ownerType} role={ownershipRole} />\n                                <TagSummary id=\"ve-header-26\" data-oods-component=\"TagSummary\" label=\"Tags\" tagCount={tagCount} tags={tags} />\n                              </Stack>\n                    </Stack>\n              <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                        { ...{\"id\":\"detail-tabs-9-read-fields\",\"label\":\"Details\"}, panel: (\n                          <Stack id=\"detail-tabs-9-read-fields\" data-oods-component=\"Stack\">\n                            <Stack id=\"detail-tabs-9-updated_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-updated_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                <Text id=\"detail-tabs-9-updated_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(updatedAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                                <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEvent, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                                <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{formatReadOnlyValue(lastEventAt, \"datetime\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-relationship_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-relationship_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Relationship id\" />\n                                <Text id=\"detail-tabs-9-relationship_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(relationshipId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-source_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-source_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Source id\" />\n                                <Text id=\"detail-tabs-9-source_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(sourceId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-target_id-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-target_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Target id\" />\n                                <Text id=\"detail-tabs-9-target_id-value\" data-oods-component=\"Text\">{formatReadOnlyValue(targetId, \"uuid\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-relationship_type-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-relationship_type-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Relationship type\" />\n                                <Text id=\"detail-tabs-9-relationship_type-value\" data-oods-component=\"Text\">{formatReadOnlyValue(relationshipType, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-direction-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-direction-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Direction\" />\n                                <Text id=\"detail-tabs-9-direction-value\" data-oods-component=\"Text\">{formatReadOnlyValue(direction, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-strength-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-strength-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Strength\" />\n                                <Text id=\"detail-tabs-9-strength-value\" data-oods-component=\"Text\">{formatReadOnlyValue(strength, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-origin_source-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-origin_source-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Origin source\" />\n                                <Text id=\"detail-tabs-9-origin_source-value\" data-oods-component=\"Text\">{formatReadOnlyValue(originSource, \"string\", true)}</Text>\n                              </Stack>\n                            <Stack id=\"detail-tabs-9-is_bidirectional-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"detail-tabs-9-is_bidirectional-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Is bidirectional\" />\n                                <Text id=\"detail-tabs-9-is_bidirectional-value\" data-oods-component=\"Text\">{formatReadOnlyValue(isBidirectional, \"boolean\", false)}</Text>\n                              </Stack>\n                            <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                <Stack id=\"pg-status-timeline-29-read-field\" data-oods-component=\"Stack\">\n                                      <Text id=\"pg-status-timeline-29-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Allowed transitions\" />\n                                      <Text id=\"pg-status-timeline-29-value\" data-oods-component=\"Text\">{formatReadOnlyValue(allowedTransitions, \"string[]\", false)}</Text>\n                                    </Stack>\n                              </Stack>\n                            <Stack id=\"slot-tab-2-8-read-field\" data-oods-component=\"Stack\">\n                                <Text id=\"slot-tab-2-8-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                                <Text id=\"slot-tab-2-8-value\" data-oods-component=\"Text\">{formatReadOnlyValue(createdAt, \"datetime\", false)}</Text>\n                              </Stack>\n                          </Stack>\n                        ) }\n                      ]} />\n                    </Card>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Delete</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+    "fileExtension": ".tsx",
+    "imports": [
+      "react",
+      "@oods/components-react",
+      "@oods/component-styles/css",
+      "@oods/component-contracts"
+    ],
+    "warnings": [],
+    "validationReceipt": {
+      "profile": "build",
+      "defaulted": false,
+      "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+      "axes": {
+        "scope": "generated-artifact",
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "target": {
+          "requested": "react",
+          "resolved": "react",
+          "source": "explicit"
+        }
+      },
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "notChecked": [
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+        "performance-evidence",
+        "certification-evidence"
+      ],
+      "evidence": {
+        "required": [],
+        "provided": [],
+        "missing": [],
+        "mismatched": [],
+        "accepted": [],
+        "notApplicable": [],
+        "artifactContentHash": "sha256:f5b5113cebfcdd7829e6209bf07213dc456c0539c3a161db8cd339f839712ece"
+      }
+    },
+    "meta": {
+      "nodeCount": 51,
+      "componentCount": 9
+    }
+  }
+}

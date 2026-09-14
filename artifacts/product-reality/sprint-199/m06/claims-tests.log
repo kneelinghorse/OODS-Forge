@@ -1,0 +1,62 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge
+
+ ❯ |core| tests/verification/how-forge-works.contract.test.ts (16 tests | 1 failed) 80ms
+   ✓ how Forge works narrative truth > pins the source-writing brand seam and the explicitly bounded token consumers (s194) 4ms
+   ✓ how Forge works narrative truth > pins the accepted mapping descope and distinguishes surfaced draft data from runtime behavior 1ms
+   ✓ how Forge works narrative truth > pins the observable option limits in narrative, descriptors and generated API pages (s194) 5ms
+   ✓ how Forge works narrative truth > derives the registered tool counts and roster split from registry.json 2ms
+   × how Forge works narrative truth > states all registered chart SVG families and the actual certification scope 15ms
+     → expected [ 'bar', 'line', 'area', …(10) ] to deeply equal [ 'bar', 'line', 'area', 'scatter' ]
+   ✓ how Forge works narrative truth > distinguishes authored object charts from executed proof and labels API-call examples truthfully (s195) 1ms
+   ✓ how Forge works narrative truth > pins the taxonomy sentence to classified identities without claiming every pattern has public pixels 1ms
+   ✓ how Forge works narrative truth > describes pattern rendering and typed authoring limits using the public source identities 12ms
+   ✓ how Forge works narrative truth > Tool-Specs has one grouped section per live registry entry and portable prose discloses actual outcomes 4ms
+   ✓ how Forge works narrative truth > Tool-Specs links resolve to existing grouped API pages 1ms
+   ✓ how Forge works narrative truth > names all four certification pillars, including accuracy 1ms
+   ✓ how Forge works narrative truth > describes the declared ECharts operand profile and the complete offered accuracy vocabulary 3ms
+   ✓ how Forge works narrative truth > derives the published token, bridge, and brand-contrast counts 4ms
+   ✓ how Forge works narrative truth > keeps the historical component ledger separate from current public runtime placement 15ms
+   ✓ how Forge works narrative truth > records that the narrative base has been tracked since 4f64bcf 1ms
+   ✓ how Forge works narrative truth > keeps Sprint-182 product-reality claims evidence-scoped and review-gated 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/verification/how-forge-works.contract.test.ts > how Forge works narrative truth > states all registered chart SVG families and the actual certification scope
+AssertionError: expected [ 'bar', 'line', 'area', …(10) ] to deeply equal [ 'bar', 'line', 'area', 'scatter' ]
+
+- Expected
++ Received
+
+  [
+    "bar",
+    "line",
+    "area",
+    "scatter",
++   "heatmap",
++   "treemap",
++   "sunburst",
++   "sankey",
++   "chord",
++   "force_graph",
++   "choropleth",
++   "bubble_map",
++   "flow_map",
+  ]
+
+ ❯ tests/verification/how-forge-works.contract.test.ts:134:74
+    132|     const recipes = JSON.parse(read("packages/viz-core/src/registry/vi…
+    133|     const supported = recipes.filter((row: { themes: { hc: boolean } }…
+    134|     expect(supported.map((row: { chartType: string }) => row.chartType…
+       |                                                                          ^
+    135|     for (const tool of ["viz-render", "dashboard-render", "artifact-ce…
+    136|       expect(read(`docs/api/${tool}.md`)).toContain(`hc (${supported.l…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  04:04:45
+   Duration  1.40s (transform 598ms, setup 0ms, collect 1.04s, tests 80ms, environment 0ms, prepare 66ms)
+
