@@ -31,7 +31,25 @@ describe('s198 application proof follows object declarations and real record tit
     expect(flow).toContain('address-save-persists');
     expect(flow).toContain('save-record-title');
     expect(flow).not.toContain('cancel-detail');
+    expect(schema.workflow!.transitions.some(row => row.effect === 'archive')).toBe(false);
+    expect(schema.screens.some(screen => screen.bindings?.onDelete)).toBe(false);
+    expect(workflowEditProbe(schema).archivable).toBe(false);
+    for (const framework of ['react', 'vue'] as const) {
+      const result = await generate({ schema, framework });
+      expect(result.status).toBe('ok');
+      expect(result.artifact!.actions.some(action => action.name === 'handleDelete')).toBe(false);
+    }
     expect(workflowEditProbe(schema).timelineEmpty).toBe(false);
+  });
+  it.each(['Organization', 'User'])('%s detail panels bind actual membership counts and preference namespaces without changing panel contracts', async object => {
+    const { schema } = await compose({ object, context: 'detail' });
+    const walk = (nodes: typeof schema.screens): typeof schema.screens => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
+    const nodes = walk(schema.screens);
+    for (const [component, fields] of [['MembershipPanel', ['membership_records']], ['PreferencePanel', ['preference_namespaces', 'preference_version']]] as const) {
+      const panel = nodes.find(node => node.component === component)!;
+      const values = walk(panel.children ?? []).filter(node => node.meta?.intent === 'read-only-field');
+      expect(values.map(node => node.props?.field)).toEqual(fields);
+    }
   });
   it('timestamp-backed Plan history remains a required populated timeline', async () => {
     const { schema } = await compose({ object: 'Plan', context: 'workflow' });
@@ -40,6 +58,7 @@ describe('s198 application proof follows object declarations and real record tit
   it('Subscription retains cancellation, billing edit persistence and actual archive membership', async () => {
     const { schema } = await compose({ object: 'Subscription', context: 'workflow' });
     expect(expectedWorkflowFlow(schema)).toEqual(['ten-sample-records','detail-navigation','edit-seeded-values','billing-edit-values','save-plan-name','billing-save-persists','cancel-detail','cancel-list-badge','timeline-navigation-and-history']);
+    expect(schema.workflow!.transitions.some(row => row.effect === 'archive')).toBe(true);
     expect(expectedCollectionOrder(schema)).toHaveLength(9);
     expect(expectedCollectionOrder(schema)).not.toContain('subscription-010');
   });

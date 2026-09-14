@@ -46,6 +46,15 @@ async function go(page: Page, context: string) {
   await page.getByRole('navigation', { name: 'Workflow screens' }).getByRole('button', { name: label, exact: true }).click();
 }
 
+async function selectDetailTab(page: Page, name: string) {
+  const tab = page.getByRole('tab', { name, exact: true });
+  if (await tab.isVisible()) await tab.click();
+  else {
+    await page.getByRole('button', { name: 'More tabs', exact: true }).click();
+    await page.getByRole('menuitem', { name, exact: true }).click();
+  }
+}
+
 async function selectPaymentTab(page: Page) {
   if (await page.locator('[data-oods-component="PaymentTimeline"]').isVisible()) return;
   const tab = page.getByRole('tab', { name: 'Status & History', exact: true });
@@ -85,7 +94,8 @@ export function workflowEditProbe(schema: UiSchema) {
   const samples = workflowSampleRecords(schema);
   const kind = selectable.includes(field) ? 'select' as const : 'text' as const;
   const saved = kind === 'select' ? String(fields[field]!.enum!.find(value => value !== samples[2]![field])) : field === 'currency' ? 'EUR' : 'Team annual';
-  return { field, titleField, kind, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved, timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
+  const archivable = schema.workflow!.data.traits.some(name => name.split('/').pop() === 'Archivable');
+  return { field, titleField, kind, archivable, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved, timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
 }
 
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
@@ -154,6 +164,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click();
       await ready(page, 'detail');
       assert.equal(await screen(page).getAttribute('data-selected-id'), selectedId);
+      if (editProbe && !editProbe.archivable) assert.equal(await page.locator('[data-oods-action="handleDelete"]').count(), 0, 'An app without Archivable must not expose its archive action');
+      if (requireBillingViews) await selectDetailTab(page, 'Billing');
       const cycle = page.locator('[data-oods-component="CycleProgressCard"]');
       const payments = page.locator('[data-oods-component="PaymentTimeline"]');
       const mounts = await mountedRecipes(page);

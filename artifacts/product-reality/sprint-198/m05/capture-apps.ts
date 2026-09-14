@@ -30,6 +30,7 @@ const inspect: AppInspection = async ({ page, url, output, framework, artifact, 
       await page.evaluate(() => document.fonts.ready);
       const proof = await page.locator('[data-oods-workflow]').evaluate(element => ({
         screen: element.getAttribute('data-screen'), selectedId: element.getAttribute('data-selected-id'),
+        emptyPanels: Array.from(element.querySelectorAll('[data-oods-component="MembershipPanel"] [data-panel-content], [data-oods-component="PreferencePanel"] [data-panel-content]')).filter(node => node.getClientRects().length > 0 && !(node.textContent ?? '').trim()).length,
         text: (element as HTMLElement).innerText.replace(/\s+/g, ' ').trim(),
         controls: Array.from(element.querySelectorAll('input,textarea,select')).filter(node => node.getClientRects().length > 0).map(node => {
           const field = node as HTMLInputElement;
@@ -45,6 +46,7 @@ const inspect: AppInspection = async ({ page, url, output, framework, artifact, 
       observations.push(row);
       await json(path.join(output, `craft/${framework}/observations.json`), { sourceHead, artifactHash: artifact.contentHash, browser: await page.evaluate(() => navigator.userAgent), errors, observations, flows, builderSelfCertified: false });
       assert.equal(proof.layout.document, width, `${name}/${width}: document overflow`);
+      assert.equal(proof.emptyPanels, 0, `${name}/${width}: empty trait panel`);
       assert.deepEqual(proof.layout.overflow, [], `${name}/${width}: element overflow`);
       assert.deepEqual(errors, []);
     };

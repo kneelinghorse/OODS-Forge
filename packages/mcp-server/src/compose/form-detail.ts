@@ -102,6 +102,13 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         return node;
       }
       if (isControl(node)) return undefined;
+      // These panel contracts render authored children, not their saved-schema directives.
+      // Bind a bounded read summary rather than leave a titled empty shell.
+      if (!node.children?.length && ['MembershipPanel', 'PreferencePanel'].includes(node.component) && !['summary', 'text', 'body', 'emptyMessage'].some(key => node.props?.[key])) {
+        const names = node.component === 'MembershipPanel' ? [node.props?.membershipsField] : [node.props?.namespaceField, 'preference_version'];
+        node.children = names.filter((name): name is string => typeof name === 'string' && Boolean(fields[name])).map(name => fieldRow(name, `${node.id}-${name}`));
+      }
+
       if (node.component === 'AuditTimeline' && !(typeof node.props?.auditLogField === 'string' && fields[node.props.auditLogField])) return undefined;
       // A pattern's scalar children are values, not an additional history log.
       if (node.component === 'Stack' && node.props?.patternComponent === 'StatusTimeline') node.props = undefined;

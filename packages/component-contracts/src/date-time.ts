@@ -44,7 +44,10 @@ export function formatReadOnlyValue(value: unknown, type: string, code = false):
   if (value == null || value === '') return 'Not recorded';
   if (type === 'date' || type === 'datetime') return formatDateTime(value as string | number | Date) || 'Invalid date';
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-  if (Array.isArray(value)) return value.map(item => summaryValue(item) ?? '').join(', ') || 'None recorded';
+  if (Array.isArray(value)) {
+    if (value.some(item => item !== null && typeof item === 'object')) return `${value.length} ${value.length === 1 ? 'record' : 'records'}`;
+    return value.map(item => summaryValue(item) ?? '').join(', ') || 'None recorded';
+  }
   const text = String(value);
   return code ? text.replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase()) : text;
 }
