@@ -1,0 +1,104 @@
+- main:
+  - paragraph: ORGANIZATION WORKSPACE
+  - heading "Team annual" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Organization screen":
+    - text: Preference version
+    - textbox "Preference version": 2.0.0
+    - text: SemVer mirror of preference_document.version for indexing and analytics. Domain
+    - textbox "Domain": cedar.example.com
+    - text: Verified root domain associated with the organization. Team annual Status
+    - combobox "Status":
+      - option "Prospect"
+      - option "Onboarding"
+      - option "Active" [selected]
+      - option "Churned"
+    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+    - group "Tags":
+      - text: Tags Tag
+      - textbox "Tag":
+        - /placeholder: Enter tags
+    - heading "Addresses" [level=3]
+    - text: Street
+    - textbox "Street": 42 Lake Road
+    - text: City
+    - textbox "City": Madison
+    - text: Region
+    - textbox "Region": IL
+    - text: Postal Code
+    - textbox "Postal Code": "62701"
+    - heading "Preference Editor" [level=3]
+    - text: Namespace
+    - combobox "Namespace":
+      - option "notifications" [selected]
+      - option "display"
+      - option "privacy"
+    - text: Preference Document
+    - textbox "Preference Document": "{ \"version\": \"2.0.0\", \"preferences\": { \"notifications\": { \"mention\": { \"email\": true, \"push\": true } }, \"display\": {}, \"privacy\": {} }, \"metadata\": { \"schemaVersion\": \"2.0.0\", \"lastUpdated\": \"2026-09-01T12:00:00.000Z\", \"source\": \"system\", \"migrationApplied\": [] } }"
+    - heading "Role Assignment" [level=3]
+    - text: Role
+    - combobox "Role":
+      - option "Owner" [selected]
+      - option "Approver"
+      - option "Editor"
+    - text: Assignee
+    - textbox "Assignee"
+    - group "Template Picker":
+      - text: Template Picker Template
+      - combobox "Template":
+        - option "Welcome Email" [selected]
+        - option "Password Reset Email"
+        - option "In-App Notification"
+      - text: Channel
+      - combobox "Channel":
+        - option "Primary Email (SMTP)" [selected]
+        - option "Twilio SMS"
+        - option "FCM Push"
+        - option "Realtime In-App"
+    - text: Plan tier
+    - combobox "Plan tier":
+      - option "Enter plan tier" [disabled]
+      - option "free"
+      - option "growth"
+      - option "enterprise" [selected]
+    - paragraph: Billing plan currently assigned to the organization.
+    - text: Ownership transferred at
+    - textbox "Ownership transferred at":
+      - /placeholder: Timestamp recording when ownership was last transferred.
+      - text: 2026-09-01T12:00
+    - paragraph: Timestamp recording when ownership was last transferred.
+    - text: Tag count
+    - spinbutton "Tag count": "0"
+    - paragraph: Computed number of tags assigned to the entity.
+    - text: Billing contact email
+    - textbox "Billing contact email":
+      - /placeholder: Enter billing contact email
+      - text: sunny.rivera@example.com
+    - paragraph: Primary contact email for invoicing and finance escalations.
+    - text: Label
+    - textbox "Label":
+      - /placeholder: Enter label
+      - text: Team annual
+    - paragraph: Human-readable display name rendered in primary surfaces.
+    - text: Placeholder
+    - textbox "Placeholder":
+      - /placeholder: Enter placeholder
+    - paragraph: Hint copy surfaced in form fields when the label is empty.
+    - text: Owner id
+    - textbox "Owner id":
+      - /placeholder: Enter owner id
+      - text: owner-003
+    - paragraph: Identifier of the owning principal scoped by owner_type.
+    - text: Owner type
+    - combobox "Owner type":
+      - option "Parent Organization"
+      - option "Reseller"
+      - option "Platform" [selected]
+    - paragraph: Categorical owner type sourced from the ownerTypes parameter.
+    - button "Save"
+  - status: Unsaved changes

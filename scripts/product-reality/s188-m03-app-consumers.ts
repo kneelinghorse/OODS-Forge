@@ -29,8 +29,11 @@ const digest = (contents: string | Buffer) => `sha256:${createHash('sha256').upd
 async function json(file: string, value: unknown) { await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, JSON.stringify(value, null, 2) + '\n'); }
 async function writeFiles(root: string, files: Record<string, string>) { for (const [name, contents] of Object.entries(files)) { await fs.mkdir(path.dirname(path.join(root, name)), { recursive: true }); await fs.writeFile(path.join(root, name), contents); } }
 async function observeCheckpoint(rows: Row[], name: string, action: () => Promise<unknown>, checkpoint?: WorkflowCheckpoint) {
-  await observe(rows, name, action);
-  await checkpoint?.(name);
+  await observe(rows, name, async () => {
+    const detail = await action();
+    await checkpoint?.(name);
+    return detail;
+  });
 }
 async function observe(rows: Row[], name: string, action: () => Promise<unknown>) {
   try { const detail = await action(); rows.push({ name, status: 'passed', detail }); }

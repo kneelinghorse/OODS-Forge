@@ -49,6 +49,11 @@ const inspect: AppInspection = async ({ page, url, output, framework, artifact, 
     };
     const flow = await observeFlow(page, url, requireBillingViews, object, titleField, editProbe, checkpoint);
     flows.push({ width, flow });
+    await json(path.join(output, `craft/${framework}/flow-${width}.json`), flow);
+    if (flow.some(row => row.status !== 'passed')) {
+      await fs.writeFile(path.join(output, `craft/${framework}/failure-${width}.a11y.txt`), await page.locator('[data-oods-workflow]').ariaSnapshot());
+      await json(path.join(output, `craft/${framework}/failure-${width}.json`), await page.locator('input,textarea,select').evaluateAll(nodes => nodes.map(node => { const field = node as HTMLInputElement; return { name: field.name, id: field.id, value: field.value, valid: field.checkValidity(), message: field.validationMessage }; })));
+    }
     assertWorkflowFlow(flow, requiredFlow);
     const controls = await observeCollectionControls(page, url, object, schema, checkpoint);
     assert(controls.length > 0 && controls.every(row => row.status === 'passed'));
