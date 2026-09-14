@@ -1,3 +1,5 @@
+import { JSDOM } from 'jsdom';
+import { renderMappedComponent } from '../../src/render/component-map.js';
 import { recordCollectionEvents } from '@oods/component-contracts';
 import { describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
@@ -13,6 +15,17 @@ import { loadTrait } from '../../src/objects/trait-loader.js';
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 
 describe('s198 form craft and one attributable seed policy', () => {
+  it('HTML uses catalog names for labels while retaining stored role/template IDs', () => {
+    for (const [component, props, names] of [
+      ['RoleAssignmentForm', { availableRoles: [{ id: 'role-001', name: 'Owner' }, { id: 'role-002', name: 'Editor', label: 'Content editor' }] }, ['Owner', 'Content editor']],
+      ['TemplatePicker', { templates: [{ id: 'template-001', name: 'Welcome Email' }], channels: [{ id: 'channel-001', name: 'Primary Email' }] }, ['Welcome Email', 'Primary Email']],
+    ] as const) {
+      const html = renderMappedComponent({ id: 'catalog', component, props }, '')!;
+      const options = [...JSDOM.fragment(html).querySelectorAll('option')];
+      expect(options.map(option => option.textContent)).toEqual(names);
+      expect(options.every(option => option.value.includes('-00'))).toBe(true);
+    }
+  });
   it('keeps authored trait examples tied to canonical role and communication catalogs', () => {
     // The canonical fixture imports root aliases; evaluate it with the root tsx config.
     const roles = JSON.parse(execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', "import { AUTHZ_SAMPLE_DATASET } from './src/data/authz/sample-entitlements.ts'; console.log(JSON.stringify(AUTHZ_SAMPLE_DATASET.roles));"], { cwd: fileURLToPath(new URL('../../../../', import.meta.url)), encoding: 'utf8' }));

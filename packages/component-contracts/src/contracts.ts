@@ -420,7 +420,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'roles', 'availableRoles', 'role', 'defaultRoleId', 'assignee', 'member'], slots: ['default'], events: [],
     states: ['editing'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['A real h3 heading names the form', 'Role is a labelled select and Assignee a labelled text input'],
-    compatibility: 'Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles, selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.',
+    compatibility: 'Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles (record labels use label, then name; IDs remain values), selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.',
   },
   RoleBadgeList: {
     id: 'RoleBadgeList', version: COMPONENT_CONTRACT_VERSION,
@@ -534,7 +534,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'templates', 'options', 'templateId', 'value', 'channels', 'channel'], slots: ['default'], events: [],
     states: ['editing'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['A fieldset whose legend is the title', 'Template and Channel are labelled selects'],
-    compatibility: 'Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options, selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.',
+    compatibility: 'Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options (record labels use label, then name; IDs remain values), selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.',
   },
   Text: {
     id: 'Text', version: COMPONENT_CONTRACT_VERSION_1_1,

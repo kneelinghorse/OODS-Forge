@@ -433,7 +433,7 @@ function normalizeSelectOptions(rawOptions: unknown, selectedValue: unknown): Ar
   for (const entry of rawOptions) {
     if (isRecord(entry)) {
       const value = asString(entry.value) ?? asString(entry.id) ?? asString(entry.label) ?? '';
-      const label = asString(entry.label) ?? value;
+      const label = asString(entry.label) ?? asString(entry.name) ?? value;
       if (!value && !label) continue;
       options.push({ value, label, selected: selectedValues.has(value) });
       continue;

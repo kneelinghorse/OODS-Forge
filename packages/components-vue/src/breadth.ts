@@ -626,7 +626,7 @@ export const AuditEvent = defineComponent({
 
 type SelectChoice = { value: string; label: string };
 
-// Mirrors the HTML renderer's normalizeSelectOptions (records read value/id/label, scalars render as text).
+// Mirrors the HTML renderer's normalizeSelectOptions (records retain value/id and display label/name, scalars render as text).
 function normalizeSelectOptions(raw: unknown): SelectChoice[] {
   if (!Array.isArray(raw)) return [];
   const choices: SelectChoice[] = [];
@@ -634,7 +634,7 @@ function normalizeSelectOptions(raw: unknown): SelectChoice[] {
     if (isRecord(entry)) {
       const text = (key: string) => (typeof entry[key] === 'string' && (entry[key] as string).length > 0 ? entry[key] as string : undefined);
       const value = text('value') ?? text('id') ?? text('label') ?? '';
-      const label = text('label') ?? value;
+      const label = text('label') ?? text('name') ?? value;
       if (!value && !label) continue;
       choices.push({ value, label });
       continue;

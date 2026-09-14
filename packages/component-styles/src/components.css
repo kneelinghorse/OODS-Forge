@@ -1322,3 +1322,8 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
 .oods-field > label.oods-checkbox { display: flex; align-items: center; gap: 0.5rem; }
 .oods-field :is(input[type='checkbox'], .form-field__checkbox) { margin: 0; flex: 0 0 auto; }
 .workflow-field > input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; }
+
+/* Catalog choices may have long labels; form grids must shrink with their screen. */
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) { min-inline-size: 0; max-inline-size: 100%; box-sizing: border-box; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is([data-form-content], [data-form-control]) { min-inline-size: 0; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is(select, input, textarea) { min-inline-size: 0; inline-size: 100%; max-inline-size: 100%; box-sizing: border-box; }
