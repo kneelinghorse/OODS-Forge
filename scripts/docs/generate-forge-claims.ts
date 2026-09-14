@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 /** Generate the marked narrative claims and package READMEs from live sources. */
 import fs from 'node:fs';
+import { RELEASE_EVIDENCE_LIMIT } from '../../packages/mcp-server/src/codegen/validation-profile.js';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
@@ -125,7 +126,15 @@ export async function collectFacts(): Promise<Facts> {
   const grouped = toolGroups.flatMap(([, names]) => [...names]);
   if (JSON.stringify([...grouped].sort()) !== JSON.stringify([...registry.auto].sort())) throw new Error('Tool grouping must cover the live auto roster exactly.');
   const traitGroups = unique(traits.map(row => row.file.startsWith('domains/') ? 'SaaS-billing pack' : row.file.split('/')[1]));
+  // docs:check rejects drift between the advertised claims and both ledger limits.
+  const descriptions = json<Record<string, string>>('packages/mcp-adapter/tool-descriptions.json');
+  const releaseRows = json<{ rows: Array<{ name: string; caveats: Array<{ file: string; reason: string }> }> }>('packages/mcp-server/registry/tool-capability-ledger.v1.json');
+  for (const name of ['code.generate', 'pipeline']) {
+    const limit = releaseRows.rows.find(row => row.name === name)?.caveats.find(row => row.file.endsWith('/validation-profile.ts'));
+    if (!descriptions[name]?.includes(RELEASE_EVIDENCE_LIMIT) || limit?.reason !== RELEASE_EVIDENCE_LIMIT) throw new Error(`${name}: release evidence limit differs from the runtime disclosure`);
+  }
   const facts: Facts = {
+    releaseEvidenceLimit: RELEASE_EVIDENCE_LIMIT,
     auto: registry.auto.length, onDemand: registry.onDemand.length, tools: registry.auto.length + registry.onDemand.length,
     actionFamilyCount: words(actionTools.length), actionFamilies: actionTools.map(tool => `\`${tool}\``).join(', '),
     toolRowsHtml: [...toolGroups.map(([group, names]) => `<tr><td>${group}</td><td>${names.map(tool => displayTool(tool)).join(' · ')}</td></tr>`), `<tr><td>On demand</td><td>${registry.onDemand.join(' · ')}</td></tr>`].join('\n      '),

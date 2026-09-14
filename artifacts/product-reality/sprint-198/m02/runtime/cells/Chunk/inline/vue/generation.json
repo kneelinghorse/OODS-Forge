@@ -1,0 +1,92 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" label=\"Embedding id\" placeholder=\"Enter embedding id\" :modelValue=\"handleUpdate_embedding_idState\" @update:modelValue=\"handleUpdate_embedding_id\" />\n            <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Chunk index\" placeholder=\"Enter chunk index\" required type=\"number\" :modelValue=\"handleChange_chunk_indexState\" @update:modelValue=\"setHandleChange_chunk_indexState\" @change=\"handleChange_chunk_index\" />\n            <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n          </Stack>\n      <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n            <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" :maxLength=\"40\" :label=\"label\" />\n          </Stack>\n      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n            <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  chunkIndex?: number;\n  content?: string;\n  createdAt?: string;\n  description?: string;\n  documentId?: string;\n  embeddingId?: string;\n  endChar?: number;\n  id?: string;\n  label?: string;\n  nextChunkId?: string;\n  placeholder?: string;\n  prevChunkId?: string;\n  startChar?: number;\n  tokenCount?: number;\n}\nconst generatedProps = defineProps<Props>();\n/** Chunk index. */\nconst chunkIndex = ref<number>(generatedProps.chunkIndex ?? 0);\n/** Content. */\nconst content = ref<string>(generatedProps.content ?? '');\n/** Created at. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Supporting description used in detail and card contexts. */\nconst description = ref<string>(generatedProps.description ?? '');\n/** Document id. */\nconst documentId = ref<string>(generatedProps.documentId ?? '');\n/** Embedding id. */\nconst embeddingId = ref<string>(generatedProps.embeddingId ?? '');\n/** End char. */\nconst endChar = ref<number>(generatedProps.endChar ?? 0);\n/** Id. */\nconst id = ref<string>(generatedProps.id ?? '');\n/** Display projection of content; retain the complete source field. */\nconst label = ref<string>(generatedProps.label ?? '');\n/** Next chunk id. */\nconst nextChunkId = ref<string>(generatedProps.nextChunkId ?? '');\n/** Hint copy surfaced in form fields when the label is empty. */\nconst placeholder = ref<string>(generatedProps.placeholder ?? '');\n/** Prev chunk id. */\nconst prevChunkId = ref<string>(generatedProps.prevChunkId ?? '');\n/** Start char. */\nconst startChar = ref<number>(generatedProps.startChar ?? 0);\n/** Token count. */\nconst tokenCount = ref<number>(generatedProps.tokenCount ?? 0);\n\nconst handleChange_chunk_indexState = ref<string>(String(chunkIndex.value ?? ''));\nconst setHandleChange_chunk_indexState = (value: string) => { handleChange_chunk_indexState.value = value; };\n/* @oods-local-binding handleChange_chunk_index */ const handleChange_chunk_index = (value: string) => { setHandleChange_chunk_indexState(value); };\nconst handleUpdate_embedding_idState = ref<string>(String(embeddingId.value ?? ''));\nconst setHandleUpdate_embedding_idState = (value: string) => { handleUpdate_embedding_idState.value = value; };\n/* @oods-local-binding handleUpdate_embedding_id */ const handleUpdate_embedding_id = (value: string) => { setHandleUpdate_embedding_idState(value); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:ab5b1e5267cd609020f64e455afdaa6cde1238e5860e7c8873ef10b17b930430"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:bd42722b040bb938e0a4be3e1b1e0170c47e40419968b8cf6676b45b1c38e9cd"
+  },
+  "code": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" label=\"Embedding id\" placeholder=\"Enter embedding id\" :modelValue=\"handleUpdate_embedding_idState\" @update:modelValue=\"handleUpdate_embedding_id\" />\n            <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Chunk index\" placeholder=\"Enter chunk index\" required type=\"number\" :modelValue=\"handleChange_chunk_indexState\" @update:modelValue=\"setHandleChange_chunk_indexState\" @change=\"handleChange_chunk_index\" />\n            <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n          </Stack>\n      <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n            <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" :maxLength=\"40\" :label=\"label\" />\n          </Stack>\n      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n            <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  chunkIndex?: number;\n  content?: string;\n  createdAt?: string;\n  description?: string;\n  documentId?: string;\n  embeddingId?: string;\n  endChar?: number;\n  id?: string;\n  label?: string;\n  nextChunkId?: string;\n  placeholder?: string;\n  prevChunkId?: string;\n  startChar?: number;\n  tokenCount?: number;\n}\nconst generatedProps = defineProps<Props>();\n/** Chunk index. */\nconst chunkIndex = ref<number>(generatedProps.chunkIndex ?? 0);\n/** Content. */\nconst content = ref<string>(generatedProps.content ?? '');\n/** Created at. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Supporting description used in detail and card contexts. */\nconst description = ref<string>(generatedProps.description ?? '');\n/** Document id. */\nconst documentId = ref<string>(generatedProps.documentId ?? '');\n/** Embedding id. */\nconst embeddingId = ref<string>(generatedProps.embeddingId ?? '');\n/** End char. */\nconst endChar = ref<number>(generatedProps.endChar ?? 0);\n/** Id. */\nconst id = ref<string>(generatedProps.id ?? '');\n/** Display projection of content; retain the complete source field. */\nconst label = ref<string>(generatedProps.label ?? '');\n/** Next chunk id. */\nconst nextChunkId = ref<string>(generatedProps.nextChunkId ?? '');\n/** Hint copy surfaced in form fields when the label is empty. */\nconst placeholder = ref<string>(generatedProps.placeholder ?? '');\n/** Prev chunk id. */\nconst prevChunkId = ref<string>(generatedProps.prevChunkId ?? '');\n/** Start char. */\nconst startChar = ref<number>(generatedProps.startChar ?? 0);\n/** Token count. */\nconst tokenCount = ref<number>(generatedProps.tokenCount ?? 0);\n\nconst handleChange_chunk_indexState = ref<string>(String(chunkIndex.value ?? ''));\nconst setHandleChange_chunk_indexState = (value: string) => { handleChange_chunk_indexState.value = value; };\n/* @oods-local-binding handleChange_chunk_index */ const handleChange_chunk_index = (value: string) => { setHandleChange_chunk_indexState(value); };\nconst handleUpdate_embedding_idState = ref<string>(String(embeddingId.value ?? ''));\nconst setHandleUpdate_embedding_idState = (value: string) => { handleUpdate_embedding_idState.value = value; };\n/* @oods-local-binding handleUpdate_embedding_id */ const handleUpdate_embedding_id = (value: string) => { setHandleUpdate_embedding_idState(value); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "vue",
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:bd42722b040bb938e0a4be3e1b1e0170c47e40419968b8cf6676b45b1c38e9cd"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

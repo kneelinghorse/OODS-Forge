@@ -161,7 +161,7 @@ export const Banner = defineComponent({
             : null,
           props.detail ? h('p', { class: 'oods-banner-detail' }, props.detail) : null,
           slots.default || props.content
-            ? h('div', { class: 'oods-banner-body' }, [slotOrValue(slots.default, props.content)])
+            ? h(slots.default ? 'div' : 'p', { class: 'oods-banner-body' }, [slotOrValue(slots.default, props.content)])
             : null,
           slots.actions ? h('div', { class: 'oods-banner-actions' }, slots.actions()) : null,
         ]),

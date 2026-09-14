@@ -1,0 +1,183 @@
+import React from 'react';
+import { Banner, Button, Checkbox, FormLabelGroup, Input, Select, Stack, TagInput } from '@oods/components-react';
+import '@oods/component-styles/css';
+
+export type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';
+
+export interface GeneratedUIActions {
+  handleSubmit: () => void;
+}
+
+export interface PageProps {
+  actions: GeneratedUIActions;
+  uiState: GeneratedUIState;
+  /** Array of currently applied filter values:
+  - field: string (matches a filter descriptor field)
+  - operator: "eq" | "in" | "range" | "gt" | "lt" | "between"
+  - value: unknown (the selected filter value or values)
+ */
+  activeFilters?: Record<string, unknown>[];
+  /** Created at. */
+  createdAt: string;
+  /** Display projection of description; never truncates persisted content. */
+  description?: string;
+  /** Computed count of currently active filters. */
+  filterCount: number;
+  /** Array of available filter descriptors. Each entry defines a filterable dimension:
+  - field: string (the schema field to filter on)
+  - label: string (display label)
+  - type: "select" | "multi-select" | "range" | "boolean" | "date-range"
+  - options: array of { value, label } for select/multi-select types
+ */
+  filters?: Record<string, unknown>[];
+  /** Id. */
+  id: string;
+  /** Number of chunks in collection */
+  itemCount?: number;
+  /** Items. */
+  items?: unknown[];
+  /** Display projection of name; retain the complete source field. */
+  label: string;
+  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */
+  lastEvent?: string;
+  /** Timestamp for the lifecycle event captured in last_event. */
+  lastEventAt?: string;
+  /** Name. */
+  name: string;
+  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */
+  ownerId?: string;
+  /** user only when an authoritative owner_id is present. */
+  ownerType?: 'user';
+  /** Optional role name describing how the owner governs the entity. */
+  ownershipRole?: string;
+  /** Timestamp recording when ownership was last transferred. */
+  ownershipTransferredAt?: string;
+  /** Current page number (1-based). */
+  page: number;
+  /** Number of items displayed per page. */
+  pageSize: number;
+  /** Hint copy surfaced in form fields when the label is empty. */
+  placeholder?: string;
+  /** Whether the search input is currently focused or has a non-empty query. */
+  searchActive?: boolean;
+  /** The current search query string entered by the user. */
+  searchQuery?: string;
+  /** Computed number of tags assigned to the entity. */
+  tagCount: number;
+  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and
+tracks provenance and usage for taxonomy health monitoring.
+
+Entry structure:
+  - tag: string (the tag value, matches entry in tags array)
+  - created_at: ISO 8601 datetime
+  - created_by: string (user ID or "system" for allow-list tags)
+  - usage_count: number (how many entities use this tag, computed)
+  - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)
+  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)
+ */
+  tagMetadata?: Record<string, unknown>[];
+  /** Ordered list of tags assigned to the entity. */
+  tags?: string[];
+  /** Total number of items across all pages. Used to compute total page count. */
+  totalItems?: number;
+  /** Computed total number of pages (ceil(totalItems / pageSize)). */
+  totalPages?: number;
+  /** Updated at. */
+  updatedAt: string;
+}
+
+type BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;
+type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
+type CheckboxProps = React.ComponentPropsWithoutRef<typeof Checkbox>;
+type FormLabelGroupProps = React.ComponentPropsWithoutRef<typeof FormLabelGroup>;
+type InputProps = React.ComponentPropsWithoutRef<typeof Input>;
+type SelectProps = React.ComponentPropsWithoutRef<typeof Select>;
+type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
+type TagInputProps = React.ComponentPropsWithoutRef<typeof TagInput>;
+
+export const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, activeFilters, createdAt, description, filterCount, filters, id, itemCount, items, label, lastEvent, lastEventAt, name, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, placeholder, searchActive, searchQuery, tagCount, tagMetadata, tags, totalItems, totalPages, updatedAt }) => {
+  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSubmit') || typeof actions.handleSubmit !== 'function') { throw new Error('GeneratedUI requires actions.handleSubmit.'); }
+
+  const [handleChange_created_atState, setHandleChange_created_atState] = React.useState<string>(String(createdAt ?? ''));
+  /* @oods-local-binding handleChange_created_at */ const handleChange_created_at = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_created_atState(event.currentTarget.value); };
+  const [handleChange_labelState, setHandleChange_labelState] = React.useState<string>(String(label ?? ''));
+  /* @oods-local-binding handleChange_label */ const handleChange_label = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_labelState(event.currentTarget.value); };
+  const [handleChange_last_eventState, setHandleChange_last_eventState] = React.useState<string>(String(lastEvent ?? ''));
+  /* @oods-local-binding handleChange_last_event */ const handleChange_last_event = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_last_eventState(event.currentTarget.value); };
+  const [handleChange_owner_idState, setHandleChange_owner_idState] = React.useState<string>(String(ownerId ?? ''));
+  /* @oods-local-binding handleChange_owner_id */ const handleChange_owner_id = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_owner_idState(event.currentTarget.value); };
+  const [handleChange_owner_typeState, setHandleChange_owner_typeState] = React.useState<string>(String(ownerType ?? ''));
+  /* @oods-local-binding handleChange_owner_type */ const handleChange_owner_type = (event: React.ChangeEvent<HTMLSelectElement>) => { setHandleChange_owner_typeState(event.currentTarget.value); };
+  const [handleChange_pageState, setHandleChange_pageState] = React.useState<string>(String(page ?? ''));
+  /* @oods-local-binding handleChange_page */ const handleChange_page = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_pageState(event.currentTarget.value); };
+  const [handleChange_pageSizeState, setHandleChange_pageSizeState] = React.useState<string>(String(pageSize ?? ''));
+  /* @oods-local-binding handleChange_pageSize */ const handleChange_pageSize = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_pageSizeState(event.currentTarget.value); };
+  const [handleChange_placeholderState, setHandleChange_placeholderState] = React.useState<string>(String(placeholder ?? ''));
+  /* @oods-local-binding handleChange_placeholder */ const handleChange_placeholder = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_placeholderState(event.currentTarget.value); };
+  const [handleChange_searchActiveState, setHandleChange_searchActiveState] = React.useState<boolean>(searchActive ?? false);
+  /* @oods-local-binding handleChange_searchActive */ const handleChange_searchActive = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_searchActiveState(event.currentTarget.checked); };
+  const [handleChange_tag_countState, setHandleChange_tag_countState] = React.useState<string>(String(tagCount ?? ''));
+  /* @oods-local-binding handleChange_tag_count */ const handleChange_tag_count = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_tag_countState(event.currentTarget.value); };
+  const [handleChange_tagsState, setHandleChange_tagsState] = React.useState<string>('');
+  /* @oods-local-binding handleChange_tags */ const handleChange_tags = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_tagsState(event.currentTarget.value); };
+  /* @oods-domain-binding handleSubmit */ const handleSubmit = () => { actions.handleSubmit(); };
+
+  return (
+    <>
+      <Stack id="form-screen" data-oods-component="Stack">
+            {uiState === 'loading' && (
+              <Banner id="form-loading" data-oods-component="Banner" data-oods-state="loading" content="Loading your records." title="Loading" />
+            )}
+            {uiState === 'empty' && (
+              <Banner id="form-empty" data-oods-component="Banner" data-oods-state="empty" content="Change the filters or add a record." title="No records found" />
+            )}
+            {uiState === 'error' && (
+              <Banner id="form-error" data-oods-component="Banner" data-oods-state="error" content="Try again or choose another record." title="Unable to load records" />
+            )}
+            {uiState === 'success' && (
+              <Stack id="form-screen-form-11" data-oods-component="Stack" data-oods-state="success" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)', padding: 'var(--ref-space-inset-default)' }}>
+                      <Stack id="form-form-title-1" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
+                                <FormLabelGroup id="form-ve-title-26" data-oods-component="FormLabelGroup" label={label} description={description} placeholder={placeholder} />
+                                <TagInput id="form-ve-title-27" data-oods-component="TagInput" label="Tags" placeholder="Enter tags" value={handleChange_tagsState} onChange={handleChange_tags} tags={tags} />
+                              </Stack>
+                      <Stack id="form-form-fields-8" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
+                                <Stack id="form-form-field-group-2" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-0-3" data-oods-component="Input" help="Name shown for this record." label="Label" placeholder="Display projection of name; retain the complete source field." required value={handleChange_labelState} onChange={handleChange_label} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-4" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-1-5" data-oods-component="Input" help="Created at." label="Created at" placeholder="Created at." required type="datetime-local" value={handleChange_created_atState} onChange={handleChange_created_at} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-6" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Select id="form-slot-field-2-7" data-oods-component="Select" help="Choose the kind of owner." label="Owner type" options={[{"value":"user","label":"user"}]} placeholder="Enter owner type" value={handleChange_owner_typeState} onChange={handleChange_owner_type} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-12" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-3-13" data-oods-component="Input" help="Number of tags assigned to this record." label="Tag count" placeholder="Enter tag count" required type="number" value={handleChange_tag_countState} onChange={handleChange_tag_count} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-14" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Checkbox id="form-slot-field-4-15" data-oods-component="Checkbox" help="Whether the search input is currently focused or has a non-empty query." label="Search Active" checked={handleChange_searchActiveState} onChange={handleChange_searchActive} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-16" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-5-17" data-oods-component="Input" help="Shown when the label is empty." label="Placeholder" placeholder="Enter placeholder" value={handleChange_placeholderState} onChange={handleChange_placeholder} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-18" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-6-19" data-oods-component="Input" help="Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event." label="Last event" placeholder="Enter last event" value={handleChange_last_eventState} onChange={handleChange_last_event} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-20" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-7-21" data-oods-component="Input" help="Identifier of the owner." label="Owner id" placeholder="Enter owner id" value={handleChange_owner_idState} onChange={handleChange_owner_id} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-22" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-8-23" data-oods-component="Input" help="Current page number (1-based)." label="Page" placeholder="Enter page" required type="number" value={handleChange_pageState} onChange={handleChange_page} />
+                                          </Stack>
+                                <Stack id="form-form-field-group-24" data-oods-component="Stack" data-layout="stack" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>
+                                            <Input id="form-slot-field-9-25" data-oods-component="Input" help="Number of items displayed per page." label="Page Size" placeholder="Enter pageSize" required type="number" value={handleChange_pageSizeState} onChange={handleChange_pageSize} />
+                                          </Stack>
+                              </Stack>
+                      <Stack id="form-form-actions-9" data-oods-component="Stack" data-layout="inline" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: 'var(--ref-space-inset-default)' }}>
+                                <Button id="form-form-submit-10" data-oods-component="Button" content="Save" type="submit" />
+                              </Stack>
+                    </Stack>
+            )}
+          </Stack>
+    </>
+  );
+};

@@ -68,8 +68,15 @@ describe('Sprint 188 remaining trait placement obligations', () => {
     const current = await compose({ object: 'Article', context: 'detail' });
     expect(nodes(historical.rows.find(row => row.object === 'Article' && row.context === 'detail')!.schema).find(node => node.id === expected.id)).toEqual(expected);
     const group = nodes(current.schema).find(node => node.meta?.notes === 'pattern-group:status-timeline')!;
-    expect(group).toMatchObject({ component: 'Stack', props: { patternComponent: 'StatusTimeline', fields: ['status', 'allowed_transitions'] } });
-    expect(group.children?.map(node => node.props?.field)).toEqual(['status', 'allowed_transitions']);
+    // The declared StatusTimeline owns status; navigation stays a read-only row
+    // instead of presenting the scalar group as a second history log.
+    expect(group.component).toBe('Stack');
+    expect(group.props).toBeUndefined();
+    expect(group.children?.map(node => node.children?.find(child => child.meta?.intent === 'read-only-field')?.props?.field)).toEqual(['allowed_transitions']);
+    const timelines = nodes(current.schema).filter(node => node.component === 'StatusTimeline');
+    expect(timelines).toHaveLength(1);
+    expect(timelines[0].props).toMatchObject({ field: 'status', historyField: 'state_history' });
+    expect(nodes({ ...current.schema, screens: [group] }).filter(node => node.component === 'StatusTimeline')).toEqual([]);
   });
   it('leaves an unroutable generic main extension unplaced, with the existing warning and no timeline fallback', async () => {
     const catalog = await loadCatalog();
@@ -87,7 +94,13 @@ describe('Sprint 188 remaining trait placement obligations', () => {
       const current = await compose({ object: row.object, context: row.context });
       const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
       expect(retained.schema, `${row.object}/${row.context} historical placement diff changed`).toEqual(expectedSchema(row));
-      expect(current.schema.objectSchema).toEqual(row.schema.objectSchema);
+      // s198 adds seed/form metadata without changing the retained field contract.
+      expect(Object.keys(current.schema.objectSchema!)).toEqual(Object.keys(row.schema.objectSchema!));
+      for (const [name, original] of Object.entries(row.schema.objectSchema!)) {
+        const field = current.schema.objectSchema![name];
+        expect(Object.fromEntries(Object.keys(original).map(key => [key, field[key]]))).toEqual(original);
+        expect(Object.keys(field).filter(key => !Object.hasOwn(original, key)).every(key => ['enum', 'default', 'examples'].includes(key))).toBe(true);
+      }
       if (JSON.stringify(retained.schema) === JSON.stringify(row.schema)) unchanged++;
       const plan = collectViewExtensions(composeObject(loadObject(row.object)), row.context).plan;
       for (const node of nodes(current.schema).filter((node) => families.includes(node.component))) {

@@ -34,7 +34,7 @@ Accessible name: `label` strategy targeting `textarea`.
 
 ### Compatibility
 
-Mirrors renderPreferenceEditor over renderFormContainer with data-form-type=preference-editor: title aliases title/label/heading/name (default Preference Editor), subtitle aliases description/subtitle/hint, a Namespace select over namespaces (default: default) selecting namespace, and a Preference Document textarea prefilled from document/json/value; authored children replace the generated body. namespacesField lowers to namespaces; documentField is consumed unbound because the field is an object while the textarea shows scalar text; registryNamespaceParameter is consumed. The controls are unwired and submitting is a no-op.
+Mirrors renderPreferenceEditor over renderFormContainer with data-form-type=preference-editor: title aliases title/label/heading/name (default Preference Editor), subtitle aliases description/subtitle/hint, a Namespace select over namespaces (default: default) selecting namespace, and a Preference Document textarea prefilled from document/json/value; authored children replace the generated body. namespacesField lowers to namespaces; documentField lowers to a JSON-serialized document string so the textarea retains the structured preference value; registryNamespaceParameter is consumed. The controls are unwired and submitting is a no-op.
 
 ## Capability evidence
 

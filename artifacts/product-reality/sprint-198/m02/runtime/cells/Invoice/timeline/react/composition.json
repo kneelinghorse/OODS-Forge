@@ -1,0 +1,555 @@
+{
+  "status": "ok",
+  "layout": "timeline",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-timeline-14",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "timeline-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "timeline-header-1-title",
+                "component": "Text",
+                "props": {
+                  "field": "invoice_id"
+                }
+              }
+            ]
+          },
+          {
+            "id": "timeline-entries-13",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "timeline-entries-13-entry",
+                "component": "Card",
+                "collectionControl": "event",
+                "children": []
+              },
+              {
+                "id": "timeline-entries-13-empty",
+                "component": "Banner",
+                "props": {
+                  "message": "No events yet."
+                },
+                "collectionControl": "empty"
+              }
+            ],
+            "collection": {
+              "source": "events",
+              "keyField": "id",
+              "labelField": "title"
+            }
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "invoice_number": {
+        "type": "string",
+        "required": true,
+        "description": "Human readable invoice identifier presented to customers.",
+        "semanticType": "billing.invoice.number"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical invoice status after provider mapping.",
+        "semanticType": "billing.invoice.status"
+      },
+      "provider_status": {
+        "type": "string",
+        "required": false,
+        "description": "Original provider reported status or badge.",
+        "semanticType": "billing.invoice.provider_status"
+      },
+      "issued_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp when the invoice was finalized or posted.",
+        "semanticType": "billing.invoice.issued_at"
+      },
+      "due_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Payment due timestamp derived from payment terms.",
+        "semanticType": "billing.invoice.due_at"
+      },
+      "paid_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when full payment cleared.",
+        "semanticType": "billing.invoice.paid_at"
+      },
+      "total_minor": {
+        "type": "integer",
+        "required": true,
+        "description": "Total amount due expressed in minor currency units.",
+        "semanticType": "billing.invoice.total_minor"
+      },
+      "balance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Remaining amount outstanding in minor units.",
+        "semanticType": "billing.invoice.balance_minor"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency for the invoice.",
+        "semanticType": "billing.invoice.currency"
+      },
+      "payment_terms": {
+        "type": "string",
+        "required": false,
+        "description": "Payment term label describing when payment is expected.",
+        "semanticType": "billing.invoice.payment_terms"
+      },
+      "collection_state": {
+        "type": "string",
+        "required": false,
+        "description": "Dunning phase or retry program detail presented to success teams.",
+        "semanticType": "billing.invoice.collection_state"
+      },
+      "last_reminder_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp of most recent payment reminder issued to customer.",
+        "semanticType": "billing.invoice.last_reminder_at"
+      },
+      "aging_bucket_days": {
+        "type": "integer",
+        "required": false,
+        "description": "Number of days outstanding grouped for aging reports.",
+        "semanticType": "billing.invoice.aging_bucket_days"
+      },
+      "attempt_count": {
+        "type": "integer",
+        "required": false,
+        "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+        "semanticType": "billing.invoice.attempt_count"
+      },
+      "next_payment_attempt": {
+        "type": "datetime",
+        "required": false,
+        "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+        "semanticType": "billing.invoice.next_payment_attempt"
+      },
+      "memo": {
+        "type": "string",
+        "required": false,
+        "description": "Internal finance note or customer visible memo.",
+        "semanticType": "billing.invoice.memo"
+      },
+      "refundable_until": {
+        "type": "datetime",
+        "required": false,
+        "description": "Date when refund eligibility window ends for this record.",
+        "semanticType": "billing.refund.window_end"
+      },
+      "refund_policy_url": {
+        "type": "string",
+        "required": false,
+        "description": "Link to customer facing refund or cancellation policy.",
+        "semanticType": "billing.refund.policy_link"
+      },
+      "total_refunded_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cumulative amount refunded in minor currency units.",
+        "semanticType": "billing.refund.total_minor"
+      },
+      "credit_memo_balance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Remaining credit memo balance that can be applied to invoices.",
+        "semanticType": "billing.refund.credit_memo_balance_minor"
+      },
+      "credit_memo_type": {
+        "type": "string",
+        "required": false,
+        "description": "Category of credit memo tied to business justification.",
+        "semanticType": "billing.refund.credit_memo_type"
+      },
+      "last_refund_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the most recent refund was issued.",
+        "semanticType": "billing.refund.last_refund_at"
+      },
+      "requires_manager_approval": {
+        "type": "boolean",
+        "required": false,
+        "description": "Indicates if finance manager approval is required before issuing refund.",
+        "semanticType": "billing.refund.requires_manager_approval"
+      },
+      "notes": {
+        "type": "string",
+        "required": false,
+        "description": "Internal commentary about refund actions or policy exceptions.",
+        "semanticType": "billing.refund.notes"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "invoice_id": {
+        "type": "string",
+        "required": true,
+        "description": "Primary identifier for the invoice inside the billing domain.",
+        "semanticType": "billing.invoice.id"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Subscription identifier this invoice is associated with.",
+        "semanticType": "billing.invoice.subscription_id"
+      },
+      "provider": {
+        "type": "string",
+        "required": true,
+        "description": "Source system providing invoice data.",
+        "semanticType": "billing.invoice.provider"
+      },
+      "provider_invoice_id": {
+        "type": "string",
+        "required": false,
+        "description": "Native provider identifier retained for audit trails.",
+        "semanticType": "billing.invoice.provider_id"
+      },
+      "billing_contact_name": {
+        "type": "string",
+        "required": false,
+        "description": "Customer billing contact receiving the invoice.",
+        "semanticType": "billing.invoice.billing_contact_name"
+      },
+      "billing_contact_email": {
+        "type": "email",
+        "required": false,
+        "description": "Email address for the billing contact.",
+        "semanticType": "billing.invoice.billing_contact_email"
+      },
+      "tax_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Tax amount collected on the invoice in minor currency units.",
+        "semanticType": "billing.invoice.tax_minor"
+      },
+      "discount_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Total discounts applied to the invoice in minor units.",
+        "semanticType": "billing.invoice.discount_minor"
+      },
+      "subtotal_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Subtotal before discounts and tax in minor units.",
+        "semanticType": "billing.invoice.subtotal_minor"
+      },
+      "line_items": {
+        "type": "InvoiceLineItem[]",
+        "required": false,
+        "description": "Normalized line items with quantity, amount_minor, and description fields.",
+        "semanticType": "billing.invoice.line_items"
+      },
+      "attachments": {
+        "type": "AssetReference[]",
+        "required": false,
+        "description": "Supporting documents or credit memos associated with the invoice.",
+        "semanticType": "billing.invoice.attachments"
+      },
+      "portal_url": {
+        "type": "string",
+        "required": false,
+        "description": "Link to the hosted invoice or customer billing portal.",
+        "semanticType": "billing.invoice.portal_url"
+      },
+      "dunning_step": {
+        "type": "string",
+        "required": false,
+        "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+        "semanticType": "billing.invoice.dunning_step"
+      },
+      "payment_source": {
+        "type": "string",
+        "required": false,
+        "description": "Payment method used or expected (card, ach, wire).",
+        "semanticType": "billing.invoice.payment_source"
+      }
+    }
+  },
+  "schemaRef": "compose-e1001e28",
+  "schemaRefCreatedAt": "2026-09-13T22:53:46.090Z",
+  "schemaRefExpiresAt": "2026-09-13T23:23:46.090Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "Text",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"header\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "entry-0",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "entry-1",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-2",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-3",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "entry-4",
+      "intent": "timeline-entry",
+      "selectedComponent": "Stack",
+      "confidence": 0.74,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.86,
+          "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "AuditTimeline",
+          "confidence": 0.5,
+          "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Invoice' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    }
+  ],
+  "objectUsed": {
+    "name": "Invoice",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingPayable",
+      "SaaSBillingRefundable",
+      "lifecycle/Timestampable",
+      "viz/MarkBar"
+    ],
+    "fieldsComposed": 42,
+    "viewExtensionsApplied": {
+      "detail": 2,
+      "timeline": 1,
+      "list": 1,
+      "dashboard": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Invoice timeline view",
+    "layoutDetected": "context-inferred: timeline (from context=\"timeline\")",
+    "slotCount": 6,
+    "nodeCount": 6,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Invoice' has maturity 'beta' — composed output may change.",
+      "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+    ],
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.66
+    }
+  }
+}

@@ -1,0 +1,64 @@
+- main:
+  - paragraph: PLAN WORKSPACE
+  - heading "Cedar Plan" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Plan screen":
+    - text: Unit label
+    - textbox "Unit label": seats
+    - text: Label for display, defaults to the unit parameter. Owner id
+    - textbox "Owner id": owner-003
+    - text: Identifier of the owning principal scoped by owner_type. Product family
+    - textbox "Product family": Product Family
+    - text: High level product family grouping for analytics and reporting. Plan name
+    - textbox "Plan name":
+      - /placeholder: Human readable plan label rendered in list and detail contexts.
+      - text: Cedar Plan
+    - paragraph: Human readable plan label rendered in list and detail contexts.
+    - text: Plan name
+    - textbox "Plan name":
+      - /placeholder: Human readable plan label rendered in list and detail contexts.
+      - text: Cedar Plan
+    - paragraph: Human readable plan label rendered in list and detail contexts.
+    - text: Interval count
+    - spinbutton "Interval count": "1"
+    - paragraph: "Multiplier for interval (ex: 12 with monthly => yearly cadence)."
+    - text: Currency
+    - textbox "Currency":
+      - /placeholder: Enter currency
+      - text: usd
+    - paragraph: ISO 4217 currency for the plan price.
+    - text: Period start
+    - textbox "Period start": 2026-09-01
+    - paragraph: Date the usage accumulation window began.
+    - text: Ownership role
+    - textbox "Ownership role":
+      - /placeholder: Enter ownership role
+    - paragraph: Optional role name describing how the owner governs the entity.
+    - text: Meter name
+    - textbox "Meter name":
+      - /placeholder: Enter meter name
+      - text: Meter Name
+    - paragraph: "Friendly metered feature name shown in UI (ex: Analytics Seats)."
+    - text: Plan code
+    - textbox "Plan code":
+      - /placeholder: Enter plan code
+      - text: cedar_003
+    - paragraph: Provider specific identifier for the plan or price.
+    - text: Billing interval
+    - combobox "Billing interval":
+      - option "Monthly"
+      - option "Quarterly"
+      - option "Annual" [selected]
+    - paragraph: Billing cadence name selected from supportedIntervals.
+    - text: Amount minor
+    - spinbutton "Amount minor": "9900"
+    - paragraph: Contract value expressed in minor currency units.
+    - text: Trial period days
+    - spinbutton "Trial period days": "0"
+    - paragraph: Length of introductory trial period in days.
+    - button "Save"
+  - status

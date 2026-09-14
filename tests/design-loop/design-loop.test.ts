@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -13,7 +13,7 @@ import { status } from '../../scripts/design-loop/status.js';
 
 const temporary: string[] = [];
 async function temp() { const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-loop-spec-')); temporary.push(directory); return directory; }
-afterEach(async () => { await Promise.all(temporary.splice(0).map(directory => fs.rm(directory, { recursive: true, force: true }))); });
+afterEach(async () => { vi.unstubAllGlobals(); await Promise.all(temporary.splice(0).map(directory => fs.rm(directory, { recursive: true, force: true }))); });
 const hash = `sha256:${'a'.repeat(64)}`;
 function receipt() {
   return { version: '1.0', framework: 'react', compose: { object: 'Subscription', context: 'list' }, schemaHash: hash, artifactContentHash: hash,
@@ -25,6 +25,34 @@ function receipt() {
 }
 
 describe('Design-loop observations remain evidence rather than repaired output', () => {
+  it('seeds standalone lists from the workflow policy with truthful counts and preserves explicit empty input', async () => {
+    const requests: CaptureRequest[] = [];
+    vi.stubGlobal('fetch', async (_url: string, options: RequestInit) => {
+      if (options.body) requests.push(JSON.parse(String(options.body)));
+      return new Response(JSON.stringify(options.body ? receipt() : { running: true }));
+    });
+    const output = await temp();
+    await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output });
+    const model = requests[0]!.model;
+    const rows = model.rows as Array<Record<string, unknown>>;
+    expect(rows).toHaveLength(9);
+    expect(model.collectionQuery).toEqual({ page: 1, pageSize: 10, total: rows.length });
+    expect(new Set(rows.map(row => row.subscriptionId)).size).toBe(rows.length);
+    expect(rows.every(row => !row.isArchived && / Plan$/.test(String(row.planName)))).toBe(true);
+    for (const context of ['form', 'detail', 'timeline'] as const) {
+      await render({ compose: { object: 'Subscription', context }, framework: 'react', output });
+      expect(requests.at(-1)!.model.planName).toBe(rows[2]!.planName);
+      expect(requests.at(-1)!.model.amount).toBe(rows[2]!.amount);
+      expect(requests.at(-1)!.model.cancellationRequestedAt).toBeUndefined();
+      expect(requests.at(-1)!.model.archivedAt).toBeUndefined();
+      if (context === 'timeline') expect((requests.at(-1)!.model.events as Array<{ title: string }>).some(event => event.title === 'Last payment')).toBe(true);
+    }
+    await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output, model: { rows: [], collectionQuery: { total: 0 }, uiState: 'empty' } });
+    expect(requests.at(-1)!.model.rows).toEqual([]);
+    expect(requests.at(-1)!.model.collectionQuery).toEqual({ total: 0 });
+    await render({ compose: { object: 'Mission', context: 'detail' }, framework: 'react', output, model: { cancellationRequestedAt: '2026-09-08T11:00:00Z' } });
+    expect(requests.at(-1)!.model.cancellationRequestedAt).toBe('2026-09-08T11:00:00Z');
+  });
   it('retains actual browser graphics descendants instead of guessing from authored DOM roles', async () => {
     const replies: Record<string, unknown> = {
       'DOM.getDocument': { root: { nodeId: 1 } }, 'DOM.querySelector': { nodeId: 2 },

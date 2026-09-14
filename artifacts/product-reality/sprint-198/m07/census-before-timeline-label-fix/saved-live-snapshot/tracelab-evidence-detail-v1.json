@@ -1,0 +1,454 @@
+{
+  "name": "tracelab-evidence-detail-v1",
+  "schemaRef": "compose-78119b44",
+  "schema": {
+    "version": "2026.02",
+    "theme": "light",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "props": {
+                      "titleField": "label",
+                      "subtitleField": "description",
+                      "headingLevel": 1
+                    }
+                  },
+                  {
+                    "id": "ve-header-26",
+                    "component": "SearchInput",
+                    "props": {
+                      "field": "searchQuery",
+                      "placeholderParameter": "placeholder",
+                      "clearableParameter": "clearable",
+                      "label": "Search Query",
+                      "placeholder": "Enter searchQuery"
+                    },
+                    "bindings": {
+                      "onUpdate": "handleUpdate_searchQuery"
+                    }
+                  },
+                  {
+                    "id": "ve-header-28",
+                    "component": "OwnershipSummary",
+                    "props": {
+                      "ownerIdField": "owner_id",
+                      "ownerTypeField": "owner_type",
+                      "roleField": "ownership_role",
+                      "transferredAtField": "ownership_transferred_at",
+                      "allowTransferParameter": "allowTransfer"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "sidebar",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tab-panel-5",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-1-6",
+                        "component": "Text",
+                        "meta": {
+                          "intent": "slot:tab-1",
+                          "label": "tab-1",
+                          "confidence": 0.76,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "claim",
+                          "label": "Claim"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              },
+              {
+                "id": "detail-meta-11",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "meta": {
+                      "intent": "slot:metadata",
+                      "label": "metadata"
+                    },
+                    "children": [
+                      {
+                        "id": "ve-metadata-25",
+                        "component": "ClassificationPanel",
+                        "props": {
+                          "categoriesField": "categories",
+                          "tagsField": "tags",
+                          "metadataField": "classification_metadata",
+                          "modeParameter": "classification_mode"
+                        }
+                      },
+                      {
+                        "id": "ve-metadata-27",
+                        "component": "FilterPanel",
+                        "props": {
+                          "field": "filters",
+                          "activeField": "activeFilters",
+                          "modeParameter": "filterMode",
+                          "collapsibleParameter": "collapsible"
+                        }
+                      }
+                    ],
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onViewTimeline": "handleViewTimeline"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of claim; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Display projection of summary; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Present in this response.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": true,
+        "description": "One fixed category with id and label derived from disposition; no inferred taxonomy.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": true,
+        "description": "Exact disposition; classification dimension, never a lifecycle state.",
+        "enum": [
+          "supporting",
+          "contradicting",
+          "rejected",
+          "background"
+        ],
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "string[]",
+        "required": true,
+        "description": "Tags.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.evidence.id"
+      },
+      "project_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Project id.",
+        "semanticType": "research.evidence.project_id"
+      },
+      "mission_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Mission id.",
+        "semanticType": "research.evidence.mission_id"
+      },
+      "session_key": {
+        "type": "string",
+        "required": true,
+        "description": "Session key.",
+        "semanticType": "research.evidence.session_key"
+      },
+      "origin": {
+        "type": "string",
+        "required": true,
+        "description": "Origin.",
+        "enum": [
+          "mcp-agent",
+          "deepsearch-worker"
+        ],
+        "semanticType": "research.evidence.origin"
+      },
+      "claim": {
+        "type": "string",
+        "required": true,
+        "description": "Claim.",
+        "semanticType": "text.label"
+      },
+      "summary": {
+        "type": "string",
+        "required": false,
+        "description": "Summary.",
+        "semanticType": "research.evidence.summary"
+      },
+      "source_url": {
+        "type": "string",
+        "required": true,
+        "description": "Source url.",
+        "semanticType": "research.evidence.source_url"
+      },
+      "source_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Source id.",
+        "semanticType": "research.evidence.source_id"
+      },
+      "source_sighting_count": {
+        "type": "number",
+        "required": true,
+        "description": "Source sighting count.",
+        "semanticType": "research.evidence.source_sighting_count"
+      },
+      "snippet": {
+        "type": "string",
+        "required": false,
+        "description": "Snippet.",
+        "semanticType": "research.evidence.snippet"
+      },
+      "query": {
+        "type": "string",
+        "required": false,
+        "description": "Query.",
+        "semanticType": "research.evidence.query"
+      },
+      "disposition": {
+        "type": "string",
+        "required": true,
+        "description": "Disposition.",
+        "enum": [
+          "supporting",
+          "contradicting",
+          "rejected",
+          "background"
+        ],
+        "semanticType": "research.evidence.disposition"
+      },
+      "workspace_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Workspace id.",
+        "semanticType": "research.evidence.workspace_id"
+      }
+    }
+  },
+  "object": "Evidence",
+  "version": 2,
+  "author": "TraceLab UX-1",
+  "createdAt": "2026-09-12T23:09:15.312Z",
+  "updatedAt": "2026-09-12T23:38:44.806Z",
+  "tags": [
+    "tracelab",
+    "research",
+    "ux-1",
+    "detail"
+  ]
+}

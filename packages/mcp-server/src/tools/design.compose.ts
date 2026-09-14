@@ -1897,7 +1897,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
 
   // 3b. Populate object schema, field→component wiring, and bindings for codegen
   if (composed) {
-    populateObjectSchema(schema, composed.schema, composed.semantics);
+    populateObjectSchema(schema, composed.schema, composed.semantics, composed.traits);
     if (layoutType === 'form' && formFieldGroups) {
       applyFormFieldBindingsFromGroups(
         schema,

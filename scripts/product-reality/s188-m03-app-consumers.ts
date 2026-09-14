@@ -22,11 +22,19 @@ import {
 } from './s184-m06-live-consumers.js';
 
 type Framework = 'react' | 'vue';
+export type WorkflowCheckpoint = (name: string) => Promise<void>;
 type Row = { name: string; status: 'passed' | 'failed' | 'unproven'; detail?: unknown; error?: string };
 const contexts = ['list', 'detail', 'form', 'timeline'] as const;
 const digest = (contents: string | Buffer) => `sha256:${createHash('sha256').update(contents).digest('hex')}`;
 async function json(file: string, value: unknown) { await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, JSON.stringify(value, null, 2) + '\n'); }
 async function writeFiles(root: string, files: Record<string, string>) { for (const [name, contents] of Object.entries(files)) { await fs.mkdir(path.dirname(path.join(root, name)), { recursive: true }); await fs.writeFile(path.join(root, name), contents); } }
+async function observeCheckpoint(rows: Row[], name: string, action: () => Promise<unknown>, checkpoint?: WorkflowCheckpoint) {
+  await observe(rows, name, async () => {
+    const detail = await action();
+    await checkpoint?.(name);
+    return detail;
+  });
+}
 async function observe(rows: Row[], name: string, action: () => Promise<unknown>) {
   try { const detail = await action(); rows.push({ name, status: 'passed', detail }); }
   catch (error) { rows.push({ name, status: 'failed', error: error instanceof Error ? error.message : String(error) }); throw error; }
@@ -38,14 +46,18 @@ async function go(page: Page, context: string) {
   await page.getByRole('navigation', { name: 'Workflow screens' }).getByRole('button', { name: label, exact: true }).click();
 }
 
-async function selectPaymentTab(page: Page) {
-  if (await page.locator('[data-oods-component="PaymentTimeline"]').isVisible()) return;
-  const tab = page.getByRole('tab', { name: 'Status & History', exact: true });
+async function selectDetailTab(page: Page, name: string) {
+  const tab = page.getByRole('tab', { name, exact: true });
   if (await tab.isVisible()) await tab.click();
   else {
     await page.getByRole('button', { name: 'More tabs', exact: true }).click();
-    await page.getByRole('menuitem', { name: 'Status & History', exact: true }).click();
+    await page.getByRole('menuitem', { name, exact: true }).click();
   }
+}
+
+async function selectPaymentTab(page: Page) {
+  if (await page.locator('[data-oods-component="PaymentTimeline"]').isVisible()) return;
+  await selectDetailTab(page, 'Billing');
   await page.locator('[data-oods-component="PaymentTimeline"]').waitFor({ state: 'visible' });
 }
 
@@ -65,14 +77,20 @@ export function workflowEditProbe(schema: UiSchema) {
     .map(node => String(node.props?.field)).filter(field => fields[field]?.type === 'string' && !fields[field]?.enum?.length);
   // The application also emits required string fields omitted by its form screen.
   const supplementalTitle = titleField !== schema.workflow!.data.idField && fields[titleField]!.required && fields[titleField]!.type === 'string' && !fields[titleField]!.enum?.length;
-  const field = editable.includes(titleField) || supplementalTitle ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0];
+  const selectable = schemaNodes(schema).filter(node => node.component === 'Select' && node.bindings?.onChange)
+    .map(node => String(node.props?.field)).filter(field => fields[field]?.enum && fields[field]!.enum!.length > 1);
+  const field = editable.includes(titleField) || supplementalTitle ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0] ?? selectable.find(name => name === 'currency') ?? selectable[0];
   assert(field, 'Workflow must declare a writable text field for persistence proof');
   const nodes = schemaNodes(schema);
-  const timelineEmpty = !nodes.some(node => node.collection?.historyField || node.component === 'PaymentEventTimeline');
+  const timelineEmpty = !nodes.some(node => node.collection?.historyField || node.component === 'PaymentEventTimeline')
+    && !['created_at', 'last_event_at', 'issued_at', 'period_start', 'ownership_transferred_at'].some(field => fields[field]);
   const states = schema.workflow!.data.lifecycleStates ?? [];
   const immediateCancellation = states.includes('cancelled') && !states.includes('pending_cancellation');
   const samples = workflowSampleRecords(schema);
-  return { field, titleField, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved: field === 'currency' ? 'EUR' : 'Team annual', timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
+  const kind = selectable.includes(field) ? 'select' as const : 'text' as const;
+  const saved = kind === 'select' ? String(fields[field]!.enum!.find(value => value !== samples[2]![field])) : field === 'currency' ? 'EUR' : 'Team annual';
+  const archivable = schema.workflow!.data.traits.some(name => name.split('/').pop() === 'Archivable');
+  return { field, titleField, kind, archivable, immediateCancellation, seeded: String(samples[2]![field] ?? ''), saved, timelineEmpty, archivedLabel: `Archived: ${samples[9]![titleField]}` };
 }
 
 export function expectedWorkflowFlow(schema: UiSchema): string[] {
@@ -92,12 +110,15 @@ export function assertWorkflowFlow(rows: Row[], expected: readonly string[]) {
   assert.ok(rows.every(row => row.status === 'passed'), JSON.stringify(rows));
 }
 
-export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name', editProbe?: ReturnType<typeof workflowEditProbe>): Promise<Row[]> {
+export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name', editProbe?: ReturnType<typeof workflowEditProbe>, checkpoint?: WorkflowCheckpoint): Promise<Row[]> {
   const rows: Row[] = [];
+  const observe = async (rows: Row[], name: string, action: () => Promise<unknown>) => {
+    await observeCheckpoint(rows, name, action, checkpoint);
+  };
   const selectedId = `${object.toLowerCase()}-003`;
   const edit = editProbe ?? { field: titleField, titleField, seeded: `${object} 03`, saved: 'Team annual' };
   const cancellationStatus = editProbe?.immediateCancellation ? /cancelled/i : /pending[ _]cancellation/i;
-  const titleInput = () => page.getByRole('textbox', { name: fieldLabel(edit.field), exact: true });
+  const titleInput = () => page.getByRole(editProbe?.kind === 'select' ? 'combobox' : 'textbox', { name: fieldLabel(edit.field), exact: true });
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
     await ready(page, 'list');
@@ -113,6 +134,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       } else if (await page.getByRole('button', { name: 'Archived', exact: true }).count()) await page.getByRole('button', { name: 'Archived', exact: true }).click();
       else { assert.equal(active.length, 10); return { active, archived: [], total: 10, disposition: 'ten active records; object has no Archivable trait' }; }
       await ready(page, 'list');
+      await checkpoint?.('archived');
       const archived = await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id]').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-record-id')));
       assert.equal(active.length, 9); assert.equal(archived.length, 1); assert.equal(new Set([...active, ...archived]).size, 10);
       const mounts = await mountedRecipes(page);
@@ -137,6 +159,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click();
       await ready(page, 'detail');
       assert.equal(await screen(page).getAttribute('data-selected-id'), selectedId);
+      if (editProbe && !editProbe.archivable) assert.equal(await page.locator('[data-oods-action="handleDelete"]').count(), 0, 'An app without Archivable must not expose its archive action');
+      if (requireBillingViews) await selectDetailTab(page, 'Billing');
       const cycle = page.locator('[data-oods-component="CycleProgressCard"]');
       const payments = page.locator('[data-oods-component="PaymentTimeline"]');
       const mounts = await mountedRecipes(page);
@@ -176,7 +200,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       return { options, amount: await amount.inputValue(), interval: await interval.inputValue(), invalidSaveStayedOnForm: true };
     });
     await observe(rows, titleField === 'plan_name' ? 'save-plan-name' : edit.field === titleField ? 'save-record-title' : 'save-record-field', async () => {
-      await titleInput().fill(edit.saved);
+      if (editProbe?.kind === 'select') await titleInput().selectOption(edit.saved);
+      else await titleInput().fill(edit.saved);
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'detail');
       assert.equal(await page.locator('.workflow-heading h1').innerText(), edit.field === titleField ? edit.saved : selectedId);
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');
@@ -202,6 +227,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       assert.equal(await editor.getByRole('textbox', { name: 'City', exact: true }).inputValue(), 'Springfield');
       await editor.getByRole('textbox', { name: 'Street', exact: true }).fill('42 Lake Road');
       await editor.getByRole('textbox', { name: 'City', exact: true }).fill('Madison');
+      await checkpoint?.('address-edited');
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'detail');
       const panel = page.locator('[data-oods-component="AddressCollectionPanel"]');
       if (!await panel.isVisible()) {
@@ -230,6 +256,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         const periodEnd = page.locator('input[name="cancel_at_period_end"]');
         if (editProbe?.immediateCancellation) assert.equal(await periodEnd.count(), 0, 'Immediate cancellation must not expose a billing-period control');
         else await periodEnd.check();
+        await checkpoint?.('cancellation-form');
         await page.getByRole('button', { name: 'Confirm cancellation', exact: true }).click();
       } else {
         await page.locator('input[name="cancellation_reason"]').fill('Budget changed for next year');
@@ -310,14 +337,35 @@ async function observeStates(page: Page, url: string, framework: Framework) {
   return rows;
 }
 
+/** Independently order the declared record titles; realistic names need not follow IDs. */
+export function expectedCollectionOrder(schema: UiSchema, status?: string): string[] {
+  const fields = schema.objectSchema!;
+  const title = ['plan_name', 'name', 'title', 'display_name', 'label'].find(field => fields[field]) ?? schema.workflow!.data.idField;
+  const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter');
+  const statusField = String(filter?.props?.field ?? 'status');
+  return workflowSampleRecords(schema).filter(record => !record.is_archived && (!status || record[statusField] === status))
+    .sort((a, b) => String(a[title]).localeCompare(String(b[title])))
+    .map(record => String(record[schema.workflow!.data.idField]));
+}
+
+export type AppInspection = (input: {
+  page: Page; url: string; output: string; framework: Framework; artifact: GeneratedArtifact;
+  schema: UiSchema; object: string; requireBillingViews: boolean; titleField: string;
+  requiredFlow: string[]; editProbe: ReturnType<typeof workflowEditProbe>;
+}) => Promise<void>;
+
 /** Query controls stay usable through empty results; a refresh must not steal typing focus. */
-export async function observeCollectionControls(page: Page, url: string, object = 'Subscription', schema?: UiSchema) {
+export async function observeCollectionControls(page: Page, url: string, object = 'Subscription', schema?: UiSchema, checkpoint?: WorkflowCheckpoint) {
   await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
   await ready(page, 'list');
   if (!await page.locator('[data-oods-collection="rows"]').count()) return [];
   const rows: Row[] = [];
   const records = page.locator('[data-oods-collection="rows"] [data-record-id]');
   const total = await records.count();
+  const observe = async (rows: Row[], name: string, action: () => Promise<unknown>) => {
+    await observeCheckpoint(rows, name, action, checkpoint);
+  };
+  const expectedOrder = schema ? expectedCollectionOrder(schema) : undefined;
   const filter = schema ? schemaNodes(schema).find(node => node.collectionControl === 'filter') : undefined;
   const filterField = String(filter?.props?.field ?? 'status');
   const statusControl = page.getByRole('combobox', { name: String(filter?.props?.label ?? 'Status'), exact: true });
@@ -326,18 +374,30 @@ export async function observeCollectionControls(page: Page, url: string, object 
   if (schema) {
     const declaredOptions = (filter?.props?.options as Array<{ value: string }>).map(option => option.value);
     const states = schema.workflow!.data.lifecycleStates;
-    const expectedOptions = schema.objectSchema!.status && declaredOptions.length === 1 && states.length ? ['', ...states] : declaredOptions;
-    assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum or workflow lifecycle states');
+    const observedStates = [...new Set(workflowSampleRecords(schema).filter(record => !record.is_archived).map(record => String(record[filterField] ?? '')).filter(Boolean))].sort();
+    const expectedOptions = declaredOptions.length > 1 ? declaredOptions
+      : schema.objectSchema!.status && states.length ? ['', ...states] : ['', ...observedStates];
+    assert.deepEqual(options, expectedOptions, 'Filter choices must match the declared enum, workflow lifecycle states, or actual loaded records');
   } else assert.ok(selectedStatus, 'The declared status filter must offer an actual lifecycle state');
-  const expectedIds = schema ? workflowSampleRecords(schema).filter(record => !record.is_archived && record[filterField] === selectedStatus).map(record => String(record[schema.workflow!.data.idField]))
+  const expectedIds = schema ? expectedCollectionOrder(schema, selectedStatus)
     : await records.evaluateAll((nodes, status) => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === status).map(node => node.getAttribute('data-record-id')), selectedStatus);
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
+  await observe(rows, 'search-bound-record', async () => {
+    const id = `${object.toLowerCase()}-003`;
+    await search.fill(id);
+    assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), [id]);
+    await checkpoint?.('search-result');
+    await search.fill('');
+    assert.equal(await records.count(), total);
+    return { query: id, exactIds: [id], restoredCount: total };
+  });
   await observe(rows, 'type-through-empty-results', async () => {
     await search.focus(); await search.pressSequentially('not-a-record');
     assert.equal(await search.inputValue(), 'not-a-record');
     assert.equal(await search.evaluate(element => document.activeElement === element), true);
     assert.equal(await records.count(), 0);
     await ready(page, 'list', 'empty');
+    await checkpoint?.('search-empty');
     await page.getByRole('button', { name: 'Clear search', exact: true }).click();
     assert.equal(await search.inputValue(), ''); assert.equal(await records.count(), total);
     return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
@@ -346,21 +406,27 @@ export async function observeCollectionControls(page: Page, url: string, object 
     await statusControl.selectOption(selectedStatus);
     assert.equal(await records.count(), expectedIds.length);
     assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), expectedIds);
+    await checkpoint?.('filtered-records');
     await statusControl.selectOption('');
     assert.equal(await records.count(), total);
     return { selectedStatus, selectedCount: expectedIds.length, expectedIds, restoredCount: total };
   });
-  else await observe(rows, 'filter-has-no-declared-enum', async () => {
+  else await observe(rows, 'filter-has-no-values', async () => {
     assert.deepEqual(options, ['']);
     assert.equal(await records.count(), total);
-    return { options, reason: 'The public schema declares no status enum values; only All states is available. Filtering by a status is not proven.' };
+    return { options, reason: 'Neither the public schema nor loaded records provide filter values; only All states is available. Filtering by a status is not proven.' };
   });
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
-    assert.equal(await records.first().getAttribute('data-record-id'), `${object.toLowerCase()}-${String(total).padStart(3, '0')}`);
+    const actualDescending = await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id')));
+    if (expectedOrder) assert.deepEqual(actualDescending, [...expectedOrder].reverse(), 'Every row must follow the declared display-field sort');
+    else assert.equal(actualDescending[0], `${object.toLowerCase()}-${String(total).padStart(3, '0')}`);
+    await checkpoint?.('sorted-descending');
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('asc');
-    assert.equal(await records.first().getAttribute('data-record-id'), `${object.toLowerCase()}-001`);
-    return { descendingFirst: `${object.toLowerCase()}-${String(total).padStart(3, '0')}`, ascendingFirst: `${object.toLowerCase()}-001` };
+    const actualAscending = await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id')));
+    if (expectedOrder) assert.deepEqual(actualAscending, expectedOrder);
+    else assert.equal(actualAscending[0], `${object.toLowerCase()}-001`);
+    return { actualDescending, actualAscending };
   });
   await observe(rows, 'pagination-uses-real-boundaries', async () => {
     const pagination = page.getByRole('navigation', { name: 'Pagination', exact: true });
@@ -412,7 +478,7 @@ export async function screenshots(page: Page, url: string, output: string, frame
   return rows;
 }
 
-export async function runAppConsumers(output: string, mission = 's188-m03', object = 'Subscription', packedPackages?: PackedPackageRecord[], tools = { compose, generate }, sourceHead?: string) {
+export async function runAppConsumers(output: string, mission = 's188-m03', object = 'Subscription', packedPackages?: PackedPackageRecord[], tools = { compose, generate }, sourceHead?: string, inspection?: AppInspection) {
   await fs.mkdir(output, { recursive: true });
   const composition = await tools.compose({ object, context: 'workflow' });
   assert.equal(composition.status, 'ok');
@@ -539,6 +605,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
           await json(path.join(cellRoot, 'collection-controls.json'), collectionControls);
           assert.ok(collectionControls.every(row => row.status === 'passed'), JSON.stringify(collectionControls));
           const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField, requiredFlow, editProbe); allScreenshots.push(...images);
+          await inspection?.({ page, url, output, framework, artifact, schema: composition.schema, object, requireBillingViews, titleField, requiredFlow, editProbe });
           assert.deepEqual(errors, []);
           pass(activeGate, { flowRows: flow.length, stateObservations: states.length, screenshots: images.length, errors });
           await page.close();

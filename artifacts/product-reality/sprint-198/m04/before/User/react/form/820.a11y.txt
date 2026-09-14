@@ -1,0 +1,93 @@
+- main:
+  - paragraph: USER WORKSPACE
+  - heading "User 03" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "User screen":
+    - text: Status
+    - combobox "Status":
+      - option "invited"
+      - option "active"
+      - option "suspended" [selected]
+      - option "deactivated"
+    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+    - group "Tags":
+      - text: Tags Tag
+      - textbox "Tag":
+        - /placeholder: Enter tags
+    - heading "Addresses" [level=3]
+    - text: Street
+    - textbox "Street": 102 Main Street
+    - text: City
+    - textbox "City": Springfield
+    - text: Region
+    - textbox "Region": IL
+    - text: Postal Code
+    - textbox "Postal Code": "62701"
+    - heading "Preference Editor" [level=3]
+    - text: Namespace
+    - combobox "Namespace":
+      - option "Select..." [selected]
+    - text: Preference Document
+    - textbox "Preference Document"
+    - heading "Role Assignment" [level=3]
+    - text: Role
+    - combobox "Role":
+      - option "Select..." [selected]
+    - text: Assignee
+    - textbox "Assignee"
+    - group "Template Picker":
+      - text: Template Picker Template
+      - combobox "Template":
+        - option "Select..." [selected]
+      - text: Channel
+      - combobox "Channel":
+        - option "Select..." [selected]
+    - text: Created at
+    - textbox "Created at":
+      - /placeholder: Timestamp recording when the entity was first created.
+      - text: 2026-09-01T12:00
+    - paragraph: Timestamp recording when the entity was first created.
+    - text: Timezone
+    - textbox "Timezone"
+    - paragraph: Preferred timezone applied when rendering timestamps.
+    - text: Role
+    - combobox "Role":
+      - option "Enter role" [disabled]
+      - option "end_user"
+      - option "admin"
+      - option "owner" [selected]
+      - option "billing"
+    - paragraph: Highest privilege role currently granted to the user.
+    - text: Name
+    - textbox "Name": User 03
+    - paragraph: Human-friendly name rendered in headers and list contexts.
+    - text: Primary email
+    - textbox "Primary email":
+      - /placeholder: Enter primary email
+      - text: customer3@example.com
+    - paragraph: Canonical login email address for the user.
+    - text: Last event
+    - textbox "Last event":
+      - /placeholder: Enter last event
+      - text: created
+    - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+    - text: Preference version
+    - textbox "Preference version":
+      - /placeholder: Enter preference version
+      - text: preference-version sample 3
+    - paragraph: SemVer mirror of preference_document.version for indexing and analytics.
+    - text: Preference mutations
+    - spinbutton "Preference mutations": "0"
+    - paragraph: Monotonic counter incremented whenever preferences mutate (invalidates caches).
+    - text: User id
+    - textbox "User id":
+      - /placeholder: Enter user id
+      - text: user-003
+    - paragraph: Primary identifier used to correlate identity across services.
+    - button "Save"
+  - status

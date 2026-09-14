@@ -28,7 +28,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
     ?? Object.keys(fields).find(name => name === `${objectName.toLowerCase()}_id`)
     ?? Object.keys(fields).find(name => name.endsWith('_id'))
     ?? Object.keys(fields)[0]!;
-  const labelField = ['plan_name', 'name', 'title', 'display_name'].find(name => fields[name]) ?? keyField;
+  const labelField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? keyField;
   for (const screen of schema.screens) {
     const nodes = walk([screen]);
     if (context === 'list') {
@@ -42,7 +42,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const overlay = rowNodes.find(node => node.component === 'ArchivedRowOverlay');
       const billing = nodes.find(node => node.component === 'BillingSummaryBadge');
       const content: UiElement[] = [
-        { id: `${items.id}-title`, component: 'Text', props: { field: labelField } },
+        ...(rowNodes.some(node => node.component === 'LabelCell' && node.props?.field === labelField) ? [] : [{ id: `${items.id}-title`, component: 'Text', props: { field: labelField } }]),
         ...rowNodes.filter(node => node !== overlay),
         ...(billing && !rowNodes.includes(billing) ? [billing] : []),
       ];
@@ -55,7 +55,8 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       items.collection = { source: 'rows', keyField, labelField };
       items.children = [overlay ?? row, { id: `${items.id}-empty`, component: 'Banner', props: { message: 'No records found.' }, collectionControl: 'empty' }];
       const searchSlot = toolbar.children?.find(node => node.meta?.intent === 'slot:search');
-      const search = searchSlot ? walk([searchSlot]).find(node => node.component === 'SearchInput') : undefined;
+      const search = (searchSlot ? walk([searchSlot]).find(node => node.component === 'SearchInput') : undefined)
+        ?? { id: `${toolbar.id}-search`, component: 'SearchInput' };
       const filter = toolbar.children?.find(node => node.meta?.intent === 'slot:filters');
       const filterField = fields.status ? 'status' : Object.keys(fields).find(name => fields[name]!.enum?.length);
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: 'Search records', clearable: true }; }
@@ -87,12 +88,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const payment = nodes.find(node => node.component === 'PaymentEventTimeline');
       const label = nodes.find(node => node.component === 'TimelineEntryLabel');
       const traitEvents = nodes.filter(node => ['ArchiveEvent', 'CancellationEvent', 'StateTransitionEvent'].includes(node.component));
-      header.children = [{ id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
+      // Preserve the declared identity recipe once, outside the repeated event rows.
+      header.children = [label ?? { id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };
       if (payment) payment.collectionControl = 'payment-event';
       entries.children = [
-        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(label ? [label] : []), ...(payment ? [payment] : [])] },
+        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(payment ? [payment] : [])] },
         { id: `${entries.id}-empty`, component: 'Banner', props: { message: 'No events yet.' }, collectionControl: 'empty' },
       ];
       // These recipes read the selected object's fields/history, not one generic

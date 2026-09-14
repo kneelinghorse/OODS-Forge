@@ -85,13 +85,31 @@ describe('Decision 1822 bounded recipe composition', () => {
       expect(result.status).toBe('ok');
       const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
       expect(retained.schema, `${row.object}/${row.context} historical recipe diff changed`).toEqual(expectedSchema(row));
-      expect(result.schema.objectSchema).toEqual(row.schema.objectSchema);
+      // s198 adds seed/form metadata without changing the retained field contract.
+      expect(Object.keys(result.schema.objectSchema!)).toEqual(Object.keys(row.schema.objectSchema!));
+      for (const [name, original] of Object.entries(row.schema.objectSchema!)) {
+        const current = result.schema.objectSchema![name];
+        expect(Object.fromEntries(Object.keys(original).map(key => [key, current[key]]))).toEqual(original);
+        expect(Object.keys(current).filter(key => !Object.hasOwn(original, key)).every(key => ['enum', 'default', 'examples'].includes(key))).toBe(true);
+      }
       if (JSON.stringify(retained.schema) === JSON.stringify(row.schema)) unchanged++;
       const composed = composeObject(loadObject(row.object));
       const plan = collectViewExtensions(composed, row.context).plan;
       for (const node of nodes(result.schema).filter((node) => families.includes(node.component))) {
         const declaration = plan.find((entry) => entry.component === node.component)!;
         if (!declaration) {
+          // s198 detail summaries format declared minor-unit fields as currency.
+          // They do not create editable billing controls or recurrence labels.
+          if (row.context === 'detail') {
+            expect(node.component).toBe('BillingSummaryBadge');
+            expect(node.meta?.intent).toBe('read-only-field');
+            const amountField = String(node.props?.amountField);
+            expect(amountField).toMatch(/_minor$/);
+            expect(result.schema.objectSchema![amountField].type).toMatch(/^(integer|number)$/);
+            expect(result.schema.objectSchema!.currency).toBeDefined();
+            expect(node.props).toEqual({ amountField, currencyField: 'currency', minorUnits: 100, showInterval: false });
+            continue;
+          }
           // Decision 1832 adds an explicit monetary header to timeline collections.
           expect(row.context).toBe('timeline'); expect(node.component).toBe('BillingSummaryBadge');
           expect(node.props).toEqual({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits: 100 });

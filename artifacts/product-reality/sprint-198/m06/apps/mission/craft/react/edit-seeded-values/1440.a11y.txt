@@ -1,0 +1,78 @@
+- main:
+  - paragraph: MISSION WORKSPACE
+  - heading "Cedar Workspace" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Mission screen":
+    - text: Description
+    - textbox "Description"
+    - text: Display projection of objective; never truncates persisted content. Mission id
+    - textbox "Mission id": mission-003
+    - text: Human-readable mission identifier (e.g., B16.1) Title
+    - textbox "Title": Cedar Workspace
+    - text: Mission title Objective
+    - textbox "Objective": Verify source provenance for the proposed conclusion.
+    - text: What this mission aims to achieve (minimum 10 characters) Label Description Status
+    - combobox "Status":
+      - option "Draft"
+      - option "Queued"
+      - option "In Progress" [selected]
+      - option "Completed"
+      - option "Blocked"
+      - option "Cancelled"
+      - option "Validation Failed"
+    - paragraph: Choose the current status.
+    - group "Tags":
+      - text: Tags Tag
+      - textbox "Tag":
+        - /placeholder: Enter tags
+    - group:
+      - heading "Cancellation Form" [level=3]
+      - text: Reason Code
+      - textbox "Reason Code"
+      - paragraph: Structured reason code chosen from the allowedReasons parameter.
+      - text: Reason
+      - textbox "Reason"
+      - paragraph: Free-form detail describing why cancellation occurred.
+    - text: Label
+    - textbox "Label":
+      - /placeholder: Display projection of title; retain the complete source field.
+    - paragraph: Name shown for this record.
+    - text: Created at
+    - textbox "Created at":
+      - /placeholder: Created at.
+      - text: 2026-09-01T12:00
+    - paragraph: Created at.
+    - text: Ownership role
+    - textbox "Ownership role":
+      - /placeholder: Enter ownership role
+    - paragraph: Optional role name describing how the owner governs the entity.
+    - text: Tag count
+    - spinbutton "Tag count": "0"
+    - paragraph: Number of tags assigned to this record.
+    - checkbox "Search Active"
+    - text: Search Active
+    - paragraph: Whether the search input is currently focused or has a non-empty query.
+    - text: Placeholder
+    - textbox "Placeholder":
+      - /placeholder: Enter placeholder
+    - paragraph: Shown when the label is empty.
+    - text: Last event
+    - textbox "Last event":
+      - /placeholder: Enter last event
+      - text: created
+    - paragraph: Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.
+    - text: Owner id
+    - textbox "Owner id":
+      - /placeholder: Enter owner id
+      - text: 00000000-0000-4000-8000-000000000003
+    - paragraph: Identifier of the owner.
+    - text: Page
+    - spinbutton "Page": "1"
+    - paragraph: Current page number (1-based).
+    - button "Save"
+  - status

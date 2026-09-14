@@ -28,11 +28,11 @@ describe('component token-resolution contract (#1884)', () => {
     expect(report.rows[0].counts.reachableSystemColourFallbacks).toBe(0);
   });
 
-  it('deleting an authored Card token makes the contract fail at the affected rule', () => {
+  it('deleting both the Card alias and its semantic fallback fails at the affected rule', () => {
     const scopes = structuredClone(cssVariablesByScope);
-    for (const themes of Object.values(scopes)) for (const tokens of Object.values(themes)) delete tokens['--oods-cmp-surface-panel'];
+    for (const themes of Object.values(scopes)) for (const tokens of Object.values(themes)) { delete tokens['--oods-cmp-surface-panel']; delete tokens['--oods-sys-surface-raised']; delete tokens['--sys-surface-raised']; }
     const failures = contractFailures(census({ scopes }), 14);
-    expect(failures.some(failure => failure.includes('.oods-card') && failure.includes('--cmp-surface-panel') && failure.includes('system-colour fallback'))).toBe(true);
+    expect(failures.some(failure => failure.includes('.oods-card') && failure.includes('--sys-surface-raised'))).toBe(true);
   });
 
   it('authors component defaults as aliases of semantic tokens', () => {

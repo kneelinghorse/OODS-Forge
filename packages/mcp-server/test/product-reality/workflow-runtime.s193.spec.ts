@@ -71,7 +71,9 @@ describe('current workflow runtime accountability', () => {
     if (object === 'Plan' || object === 'Subscription') expect(probe.field).toBe('plan_name');
     if (object === 'Transaction') {
       expect(probe.archivedLabel).toBe('Archived: transaction-010');
-      expect(probe.field).toBe('currency'); expect(probe.saved).toBe('EUR');
+      expect(probe.field).toBe('currency'); expect(probe.kind).toBe('select');
+      expect(result.schema.objectSchema!.currency!.enum).toContain(probe.saved);
+      expect(probe.saved).not.toBe(probe.seeded); // Save must change the bound value, including a seeded EUR record.
       expect(workflowSampleRecords(result.schema)[2]!.user_id).toBe('00000000-0000-4000-8000-000000000003');
     }
   });

@@ -34,7 +34,7 @@ describe('s191 craft values agree across render targets', () => {
     const schema: UiSchema = { version: '2026.02', objectSchema: { audit_log: { type: 'object[]' }, amount: { type: 'integer', description: 'Minor units.' } }, screens: [{ id: 'root', component: 'Stack', children: [{ id: 'real', component: 'AuditTimeline', props: { auditLogField: 'audit_log' } }, { id: 'missing', component: 'AuditTimeline', props: { auditLogField: 'state_history' } }, { id: 'unbound', component: 'AuditTimeline' }] }] };
     const composed = { traits: [] } as unknown as ComposedObject;
     reconcileFormDetail(schema, 'detail', composed);
-    expect(schema.screens[0]!.children!.map(node => node.id)).toEqual(['real']);
+    expect(walk(schema.screens).filter(node => node.component === 'AuditTimeline').map(node => node.id)).toEqual(['real']);
     schema.screens = [{ id: 'amount', component: 'BillingAmountInput', props: { amountField: 'amount', currency: 'eur' } }];
     reconcileFormDetail(schema, 'form', composed);
     expect(schema.screens[0]!.props!.help).toBe('Amount in EUR');

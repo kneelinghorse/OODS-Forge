@@ -1,0 +1,108 @@
+{
+  "status": "passed",
+  "skipped": 0,
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/readiness.log",
+        "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+      }
+    },
+    {
+      "name": "palette",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/tokens/generate-palette.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/palette.log",
+        "sha256": "b2f1f902c2355e047fc84897846b84e868bd874ad73acfdf629e71e607f61a88"
+      }
+    },
+    {
+      "name": "tokens",
+      "command": [
+        "pnpm",
+        "check:tokens"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/tokens.log",
+        "sha256": "7b2c168f73a6521a9deebe0cce6833a3ca577ad315b0bfc7d71312c15ee0e9e5"
+      }
+    },
+    {
+      "name": "tool-truth",
+      "command": [
+        "node",
+        "scripts/product-reality/s193-tool-truth.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/tool-truth.log",
+        "sha256": "27a344ba9b6739b36d010a09cb32653a1237798ffe1b45e03316a566d3dc4e72"
+      }
+    },
+    {
+      "name": "docs",
+      "command": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/docs.log",
+        "sha256": "c3bc14d3c2829efb345e3c510c4f75613c6f8d83d8d0e3ace02f2d82409df241"
+      }
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--project=core",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "tests/governance-gates/a11y-guardrail-dataset.s198.test.ts",
+        "tests/tokens/canonical-guardrails.s198.test.ts",
+        "packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts",
+        "packages/mcp-server/test/product-reality/closeout.s197.spec.ts",
+        "packages/mcp-server/test/product-reality/closeout.s198.spec.ts",
+        "packages/mcp-server/test/product-reality/closeout.s190.spec.ts",
+        "packages/mcp-server/test/product-reality/closeout.s191.spec.ts",
+        "packages/mcp-server/test/product-reality/runtime-cells.s193.spec.ts",
+        "tests/verification/how-forge-works.contract.test.ts"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-plan-fix/contracts.log",
+        "sha256": "aec555fec243c459684e02648910b2a031b8eb574ecfa31a2878e8f58a887e53"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

@@ -8,9 +8,9 @@ export function assertTraitRecipeScenario(id: string, root: Element) {
       expect(Array.from(root.querySelectorAll('time')).map(node => node.getAttribute('datetime'))).toEqual(['2026-09-01T12:00:00Z', '2026-09-02T12:00:00Z']);
       expect(text).toContain('Actor: operator-1'); expect(text).toContain('Reason: Duplicate record'); break;
     case 'CancellationEvent':
-      expect(text).toContain('Cancellation requested'); expect(text).toContain('Reason: Customer request'); expect(text).toContain('Code: customer_request'); break;
+      expect(text).toContain('Cancellation requested'); expect(text).toContain('Reason: Customer request'); expect(text).toContain('Code: Customer Request'); break;
     case 'StateTransitionEvent':
-      expect(text).toContain('draft → active'); expect(text).toContain('Actor: operator-1'); expect(text).toContain('Reason: Approved'); break;
+      expect(text).toContain('Draft → Active'); expect(text).toContain('Actor: operator-1'); expect(text).toContain('Reason: Approved'); break;
     case 'CommunicationDetailPanel':
       for (const value of ['Email', 'Welcome', 'Retry once', 'Support: delivered']) expect(text).toContain(value);
       expect(root.querySelector('[role="status"]')?.getAttribute('aria-live')).toBe('polite'); break;

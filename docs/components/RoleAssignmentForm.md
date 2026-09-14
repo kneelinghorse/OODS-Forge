@@ -34,7 +34,7 @@ Accessible name: `label` strategy targeting `input[name="assignee"]`.
 
 ### Compatibility
 
-Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles, selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.
+Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles (record labels use label, then name; IDs remain values), selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.
 
 ## Capability evidence
 

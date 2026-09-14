@@ -93,6 +93,7 @@ const PreferenceableTrait = {
       description: 'Tracks schema version, lastUpdated timestamp, migration records, and source.',
     },
     preference_version: {
+      defaultFromParameter: 'schemaVersion',
       type: 'string',
       required: true,
       description: 'SemVer mirror of preference_document.version for indexing and analytics.',
@@ -101,6 +102,7 @@ const PreferenceableTrait = {
       },
     },
     preference_namespaces: {
+      defaultFromParameter: 'namespaces',
       type: 'string[]',
       required: true,
       description: 'Materialized namespace list resolved from parameters/registry for auditing.',

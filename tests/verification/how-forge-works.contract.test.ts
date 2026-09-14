@@ -159,8 +159,10 @@ describe("how Forge works narrative truth", () => {
     expect(html).not.toContain("MarkHeatmap");
     const descriptions = JSON.parse(read("packages/mcp-adapter/tool-descriptions.json"));
     expect(descriptions["code.generate"]).toContain("Bound record-array charts");
-    expect(descriptions["code.generate"]).toContain("full Invoice/Usage detail HTML retains OODS-V007");
-    expect(html).toContain("full Invoice/Usage detail HTML retains OODS-V007");
+    expect(descriptions["code.generate"]).toContain("Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit");
+    expect(html).toContain("Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit");
+    expect(html).toContain("Static HTML tab panel trees preserve nested content and layout");
+    expect(html).not.toContain("existing Tabs normalization limit");
   });
 
   it("pins the taxonomy sentence to classified identities without claiming every pattern has public pixels", () => {

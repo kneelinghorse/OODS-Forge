@@ -27,6 +27,7 @@ export interface FieldDefinition {
   description: string;
   default?: unknown;
   defaultFromParameter?: string;
+  examples?: readonly unknown[];
   validation?: FieldValidation;
 }
 

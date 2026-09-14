@@ -1,0 +1,73 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Cedar Plan" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - text: Plan name
+    - textbox "Plan name": Cedar Plan
+    - text: Human-readable plan label shown in headers. Status
+    - combobox "Status":
+      - option "Future"
+      - option "Trialing"
+      - option "Active" [selected]
+      - option "Paused"
+      - option "Pending Cancellation"
+      - option "Past Due"
+      - option "Unpaid"
+      - option "Terminated"
+    - paragraph: Current lifecycle status of the subscription.
+    - group:
+      - heading "Cancellation Form" [level=3]
+      - text: Reason Code
+      - textbox "Reason Code"
+      - paragraph: Structured reason code chosen from the allowedReasons parameter.
+      - text: Reason
+      - textbox "Reason"
+      - paragraph: Free-form explanation captured during cancellation workflows.
+    - text: Billing interval
+    - combobox "Billing interval":
+      - option "monthly" [selected]
+      - option "yearly"
+    - paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).
+    - text: Billing amount USD
+    - textbox "Billing amount": "99"
+    - paragraph: Amount in USD
+    - checkbox "Cancel at period end"
+    - text: Cancel at period end
+    - paragraph: Whether the subscription will cancel at the natural billing period end.
+    - text: Cancellation requested at
+    - textbox "Cancellation requested at":
+      - /placeholder: Timestamp when cancellation was initiated.
+    - paragraph: Timestamp when cancellation was initiated.
+    - text: Currency
+    - textbox "Currency":
+      - /placeholder: Enter currency
+      - text: usd
+    - paragraph: ISO 4217 currency code used for billing.
+    - text: Payment method type
+    - combobox "Payment method type":
+      - option "Enter payment method type" [disabled]
+      - option "card"
+      - option "ach"
+      - option "wire" [selected]
+      - option "invoice"
+      - option "other"
+    - paragraph: Payment instrument category used for collection.
+    - text: Customer email
+    - textbox "Customer email":
+      - /placeholder: Enter customer email
+      - text: sunny.rivera@example.com
+    - paragraph: Billing contact email address.
+    - text: Last event
+    - combobox "Last event":
+      - option "Billing Cycle Started" [selected]
+      - option "Billing Cycle Completed"
+      - option "Payment Received"
+      - option "Cancellation Requested"
+    - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+    - button "Save"
+  - status

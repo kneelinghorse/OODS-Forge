@@ -21,6 +21,12 @@ describe('retained declared trait recipes and Invoice writer ownership', () => {
   it.each([['detail', 'AuditSummaryCard'], ['list', 'SortIndicator'], ['timeline', 'TimelineEntryLabel']] as const)('places the declared %s recipe and emits both governed targets', async (context, component) => {
     const result = await compose({ object: 'S192AuditSort', context }); expect(result.status).toBe('ok');
     const placed = nodes(result.schema.screens).filter(node => node.component === component); expect(placed).toHaveLength(1);
+    if (component === 'TimelineEntryLabel') {
+      const header = nodes(result.schema.screens).find(node => node.id.startsWith('timeline-header-'))!;
+      const events = nodes(result.schema.screens).find(node => node.collection?.source === 'events')!;
+      expect(nodes(header.children ?? []).filter(node => node.component === component)).toEqual(placed);
+      expect(nodes(events.children ?? []).filter(node => node.component === component)).toEqual([]);
+    }
     if (component === 'SortIndicator') {
       expect(placed[0].props).toMatchObject({ sortableFields: ['name'], triStateSort: true, defaultSortField: 'name' });
       expect(placed[0].bindings).toEqual({ onChange: 'handleSortChange' });

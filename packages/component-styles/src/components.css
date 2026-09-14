@@ -168,10 +168,10 @@
 
 :where(.oods-card, [data-oods-component='Card']) {
   padding: var(--cmp-spacing-inset-default, 1rem);
-  border: 1px solid var(--cmp-border-default, currentColor);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
   border-radius: var(--cmp-input-radius, 0.5rem);
-  background: var(--cmp-surface-panel, Canvas);
-  color: var(--cmp-text-body, CanvasText);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
 }
 
 :where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
@@ -1256,10 +1256,19 @@
 
 /* Generated collection screens share one row/event presentation in both frameworks. */
 .oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
+[data-oods-collection-toolbar] { flex-wrap: wrap; min-width: 0; }
+[data-oods-collection-toolbar] > [data-oods-component='SearchInput'],
+[data-oods-collection-toolbar] > [data-oods-component='Select'],
+[data-oods-collection-toolbar] > .oods-field:has(select),
+.workflow-content [data-oods-collection-toolbar] > [data-oods-component='SearchInput'],
+.workflow-content [data-oods-collection-toolbar] > [data-oods-component='Select'],
+.workflow-content [data-oods-collection-toolbar] > .oods-field:has(select) { flex: 1 1 180px; min-width: min(180px, 100%); }
+[data-oods-collection-toolbar] select { width: 100%; box-sizing: border-box; }
+[data-oods-component='Stack']:has(> [data-oods-collection-toolbar]) { font-family: system-ui, sans-serif; }
 .oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
 [data-theme='hc'] .oods-collection-row:not(:disabled) { background: var(--sys-surface-raised); color: var(--sys-text-primary); }
 .oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: 600; }
-.oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
+.oods-collection-row .oods-badge { max-width: 100%; width: fit-content; flex: 0 0 auto; text-transform: none; letter-spacing: normal; }
 [data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
 .oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
 @media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
@@ -1280,3 +1289,41 @@
 .oods-geo-resolution, :where([data-oods-component='GeoResolutionBadge'], [data-oods-component='VizEncodingBadge'], [data-oods-component='VizRoleBadge']) { color: var(--cmp-text-body); }
 
 .oods-viz-swatches { display: flex; flex-wrap: wrap; gap: var(--cmp-spacing-inline-sm) var(--cmp-spacing-inset-default); }
+
+/* Producer-owned read fields stay labelled and readable in every context. */
+[data-oods-component='Stack'][id$='-read-field'] { gap: 0.25rem; min-width: 0; }
+[data-oods-component='Stack'][id$='-read-fields'] { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1.25rem; }
+[data-oods-component='Stack'][id$='-read-fields'] > :not([id$='-read-field']) { grid-column: 1 / -1; }
+[data-oods-component='Stack'][id$='-read-field'] > :first-child { color: var(--sys-text-secondary); }
+[data-oods-component='Stack'][id$='-read-field'] > :last-child { overflow-wrap: anywhere; }
+[data-oods-component='StatusBadge'] { text-transform: none; letter-spacing: normal; width: fit-content; }
+
+/* Keep the frozen ported block intact; current recipe roles follow semantic fallbacks. */
+:where([data-oods-component='CancellationSummary']) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}
+
+/* Form labels and required marks share one line in both framework field frames. */
+.form-field__label,
+.oods-field > .oods-field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.oods-field.oods-checkbox,
+div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-columns: minmax(0, 1fr); }
+.oods-field.oods-checkbox > label,
+.oods-field > label.oods-checkbox { display: flex; align-items: center; gap: 0.5rem; }
+.oods-field :is(input[type='checkbox'], .form-field__checkbox) { margin: 0; flex: 0 0 auto; }
+.workflow-field > input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; }
+
+/* Catalog choices may have long labels; form grids must shrink with their screen. */
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) { min-inline-size: 0; max-inline-size: 100%; box-sizing: border-box; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is([data-form-content], [data-form-control]) { min-inline-size: 0; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is(select, input, textarea) { min-inline-size: 0; inline-size: 100%; max-inline-size: 100%; box-sizing: border-box; }

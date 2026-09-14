@@ -11,6 +11,7 @@
  */
 
 import type { UiElement, UiSchema, FieldSchemaEntry } from '../schemas/generated.js';
+import type { ResolvedTrait } from '../objects/trait-composer.js';
 import type { FieldDefinition, SemanticMapping } from '../objects/types.js';
 import type { TemplateResult } from './templates/types.js';
 import { isSlotElement, uid } from './templates/types.js';
@@ -459,6 +460,7 @@ export function populateObjectSchema(
   schema: UiSchema,
   fieldSchema: Record<string, FieldDefinition>,
   semantics?: Record<string, SemanticMapping>,
+  traits: ResolvedTrait[] = [],
 ): void {
   const objectSchema: Record<string, FieldSchemaEntry> = {};
 
@@ -468,9 +470,21 @@ export function populateObjectSchema(
       required: fieldDef.required,
     };
 
+    const owner = traits.find(trait => trait.definition.schema[fieldName] === fieldDef);
+    const parameter = fieldDef.defaultFromParameter;
+    const declaredDefault = parameter && owner
+      ? owner.ref.parameters?.[parameter] ?? owner.definition.parameters.find(entry => entry.name === parameter)?.default ?? fieldDef.default
+      : fieldDef.default;
+    if (declaredDefault !== undefined) entry.default = structuredClone(declaredDefault);
+    if (fieldDef.examples?.length) entry.examples = structuredClone([...fieldDef.examples]);
+
     if (fieldDef.description) {
       entry.description = fieldDef.description;
     }
+
+    const enumParameter = fieldDef.validation?.enumFromParameter;
+    const parameterValues = enumParameter && owner ? owner.ref.parameters?.[enumParameter] ?? owner.definition.parameters.find(entry => entry.name === enumParameter)?.default : undefined;
+    if (Array.isArray(parameterValues)) entry.enum = parameterValues.map(String);
 
     if (fieldDef.validation?.enum && fieldDef.validation.enum.length > 0) {
       entry.enum = fieldDef.validation.enum;

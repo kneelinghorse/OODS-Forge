@@ -21,6 +21,7 @@ const CLAIM_KEYS: Record<string, string[]> = {
     'accuracy-rule-count', 'certify-scope', 'token-contrast', 'browser-viewports', 'operating-roster', 'tool-roster', 'safety-model',
     'generation-targets', 'native-token-scope', 'footer', 'reference-label', 'state-machine-cardinality', 'stateful-extension-example',
     'source-example-6', 'source-example-5', 'source-example-4', 'source-example-3', 'source-example-2', 'source-example-1',
+    'release-evidence-limit', 'object-chart-runtime-limit',
   ],
   'docs/mcp/Connections.md': ['adapter-environment', 'adapter-features', 'fresh-install-count', 'bridge-default', 'smoke-tool-count', 'bridge-profile-3', 'bridge-port', 'bridge-api-url', 'smoke-defaults', 'smoke-timeout'],
   'docs/README.md': ['subscription-example', 'canonical-regions', 'context-inventory', 'token-architecture', 'quintet-example'],
@@ -76,10 +77,10 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
     expect(String(facts.objectRows).match(/<tr><td>/g)).toHaveLength(19);
   });
 
-  it('pins the actually executed Product example instead of the stale 31-node prose', () => {
+  it('pins the Product example including its s198 read-only field summaries', () => {
     // This operand is intentionally fixed: changing its output changes the public tutorial.
-    expect(facts).toMatchObject({ productNodes: 18, productSlots: 10, productTabs: 8, productFields: 38 });
-    expect(documents['docs/how-forge-works.html']).toContain('18-node tree with 10 filled slots and 8 tabs expanded from Product\'s 38 fields');
+    expect(facts).toMatchObject({ productNodes: 55, productSlots: 10, productTabs: 8, productFields: 38 });
+    expect(documents['docs/how-forge-works.html']).toContain('55-node tree with 10 filled slots and 8 tabs expanded from Product\'s 38 fields');
     expect(documents['docs/how-forge-works.html']).not.toContain('31-node tree');
     expect(String(facts.productSlotRoster).split('; ')).toHaveLength(10);
     const example = yaml(String(facts.subscriptionExample)) as { traits: Array<{ name: string }> };

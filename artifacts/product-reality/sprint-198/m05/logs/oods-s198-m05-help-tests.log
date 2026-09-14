@@ -1,0 +1,50 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ✓ test/codegen/form-seeds.s198.spec.ts (29 tests) 12123ms
+   ✓ s198 form craft and one attributable seed policy > Organization retains trait catalog examples and preference parameters in both frameworks  5315ms
+   ✓ s198 form craft and one attributable seed policy > User retains trait catalog examples and preference parameters in both frameworks  4882ms
+ ✓ test/codegen/form-detail.s189.spec.ts (8 tests) 5854ms
+   ✓ form and detail reconcile their declared semantics > react workflow compiles its on-demand cancellation and native form  1911ms
+   ✓ form and detail reconcile their declared semantics > vue workflow compiles its on-demand cancellation and native form  3786ms
+ ✓ test/product-reality/workflow-runtime.s193.spec.ts (20 tests) 1667ms
+ ❯ test/product-reality/application-craft.s198.spec.ts (6 tests | 1 failed) 508ms
+   × s198 application proof follows object declarations and real record titles > keeps implementation descriptions available in schema metadata but gives shared form fields useful help 83ms
+     → expected undefined to be 'Version of this record’s preferences.' // Object.is equality
+   ✓ s198 application proof follows object declarations and real record titles > filters preserve title ordering rather than accidentally assuming ID order 152ms
+   ✓ s198 application proof follows object declarations and real record titles > Organization requires save, address persistence and populated timeline without inventing cancellation 75ms
+   ✓ s198 application proof follows object declarations and real record titles > User requires save, address persistence and populated timeline without inventing cancellation 61ms
+   ✓ s198 application proof follows object declarations and real record titles > timestamp-backed Plan history remains a required populated timeline 63ms
+   ✓ s198 application proof follows object declarations and real record titles > Subscription retains cancellation, billing edit persistence and actual archive membership 73ms
+ ✓ test/product-reality/release-limit.s198.spec.ts (2 tests) 116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/application-craft.s198.spec.ts > s198 application proof follows object declarations and real record titles > keeps implementation descriptions available in schema metadata but gives shared form fields useful help
+AssertionError: expected undefined to be 'Version of this record’s preferences.' // Object.is equality
+
+- Expected: 
+"Version of this record’s preferences."
+
++ Received: 
+undefined
+
+ ❯ test/product-reality/application-craft.s198.spec.ts:13:89
+     11|     const nodes = walk(schema.screens);
+     12|     expect(nodes.find(node => node.component === 'StatusSelector')?.pr…
+     13|     expect(nodes.find(node => node.props?.field === 'preference_versio…
+       |                                                                                         ^
+     14|     expect(nodes.find(node => node.props?.field === 'owner_type')?.pro…
+     15|     expect(fieldHelp('domain', 'Verified email domain.')).toBe('Verifi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 64 passed (65)
+   Start at  20:08:30
+   Duration  25.55s (transform 1.04s, setup 28ms, collect 4.40s, tests 20.27s, environment 0ms, prepare 233ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/application-craft.s198.spec.ts test/product-reality/release-limit.s198.spec.ts test/codegen/form-detail.s189.spec.ts test/codegen/form-seeds.s198.spec.ts test/product-reality/workflow-runtime.s193.spec.ts

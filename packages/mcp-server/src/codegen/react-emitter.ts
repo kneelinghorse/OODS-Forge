@@ -23,6 +23,7 @@ import {
   resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
   resolveFieldProps,
+  hasReadOnlyFields,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
 import {
@@ -395,6 +396,10 @@ function reactFieldExpression(
   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
     return `String(${fieldName})`;
   }
+  if (node.component === 'Text' && isChildren && entry && node.meta?.intent === 'read-only-field') {
+    const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
+    return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code})`;
+  }
   if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
     return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
   }
@@ -494,6 +499,7 @@ function emitNode(
 
   // data-oods-component for runtime identification
   attrParts.push(`data-oods-component="${tag}"`);
+  if (node.children?.some(child => child.collectionControl === 'search')) attrParts.push('data-oods-collection-toolbar="true"');
   if (node.state !== undefined) {
     attrParts.push(node.state === 'success' && collectionSources([node]).has('rows') ? `data-oods-state={uiState === 'success' ? 'success' : undefined}` : `data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
   }
@@ -1099,7 +1105,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   // Build the complete file
   const importBlock = buildImportBlock(components, tailwindVariants.size > 0);
   const imports = buildImportList(components, tailwindVariants.size > 0);
-  if (collectionSources(ctx.tree).has('events')) imports.push('@oods/component-contracts');
+  if (collectionSources(ctx.tree).has('events') || hasReadOnlyFields(ctx.tree)) imports.push('@oods/component-contracts');
 
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
   const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
@@ -1138,6 +1144,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const lines: string[] = [
     importBlock,
+    ...(hasReadOnlyFields(ctx.tree) ? ["import { formatReadOnlyValue } from '@oods/component-contracts';"] : []),
     ...(collectionSources(ctx.tree).has('events') ? [`import { chronologicalEvents, formatDateTime${options.typescript ? ', type CollectionEvent' : ''} } from '@oods/component-contracts';`] : []),
     '',
   ];

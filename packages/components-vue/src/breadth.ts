@@ -626,7 +626,7 @@ export const AuditEvent = defineComponent({
 
 type SelectChoice = { value: string; label: string };
 
-// Mirrors the HTML renderer's normalizeSelectOptions (records read value/id/label, scalars render as text).
+// Mirrors the HTML renderer's normalizeSelectOptions (records retain value/id and display label/name, scalars render as text).
 function normalizeSelectOptions(raw: unknown): SelectChoice[] {
   if (!Array.isArray(raw)) return [];
   const choices: SelectChoice[] = [];
@@ -634,7 +634,7 @@ function normalizeSelectOptions(raw: unknown): SelectChoice[] {
     if (isRecord(entry)) {
       const text = (key: string) => (typeof entry[key] === 'string' && (entry[key] as string).length > 0 ? entry[key] as string : undefined);
       const value = text('value') ?? text('id') ?? text('label') ?? '';
-      const label = text('label') ?? value;
+      const label = text('label') ?? text('name') ?? value;
       if (!value && !label) continue;
       choices.push({ value, label });
       continue;
@@ -725,7 +725,7 @@ export const PreferenceEditor = defineComponent({
       const title = firstText(props.title, props.label, props.heading, props.name) ?? 'Preference Editor';
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const choices = normalizeSelectOptions(Array.isArray(props.namespaces) ? props.namespaces : ['default']);
-      const selected = firstText(props.namespace);
+      const selected = firstText(props.namespace) ?? choices[0]?.value;
       return h('form', {
         class: 'oods-preference-editor',
         'data-oods-component': 'PreferenceEditor',
@@ -755,7 +755,7 @@ export const RoleAssignmentForm = defineComponent({
       const title = firstText(props.title, props.label, props.heading, props.name) ?? 'Role Assignment';
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const choices = normalizeSelectOptions(props.roles ?? props.availableRoles ?? []);
-      const selected = firstText(props.role, props.defaultRoleId);
+      const selected = firstText(props.role, props.defaultRoleId) ?? choices[0]?.value;
       return h('form', {
         class: 'oods-role-assignment-form',
         'data-oods-component': 'RoleAssignmentForm',
@@ -857,8 +857,8 @@ export const TemplatePicker = defineComponent({
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const templateChoices = normalizeSelectOptions(props.templates ?? props.options ?? []);
       const channelChoices = normalizeSelectOptions(props.channels ?? ['email', 'sms', 'in_app']);
-      const selectedTemplate = firstText(props.templateId, props.value);
-      const selectedChannel = firstText(props.channel);
+      const selectedTemplate = firstText(props.templateId, props.value) ?? templateChoices[0]?.value;
+      const selectedChannel = firstText(props.channel) ?? channelChoices[0]?.value;
       return h('fieldset', {
         class: 'oods-template-picker',
         'data-oods-component': 'TemplatePicker',
@@ -937,12 +937,13 @@ export const ClassificationEditor = defineComponent({
       const content = authoredContent(slots.default?.());
       const tagText = typeof props.tags === 'string' ? props.tags : props.tags === undefined ? '' : JSON.stringify(props.tags);
       const choices = normalizeSelectOptions(Array.isArray(props.modes) ? props.modes : ['strict', 'flexible']);
+      const selected = firstText(props.mode, props.classificationMode) ?? choices[0]?.value;
       return h('form', { class: 'oods-classification-editor', 'data-oods-component': 'ClassificationEditor', 'data-form-type': 'classification-editor', onSubmit: (event: Event) => event.preventDefault() }, [
         formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Classification Editor', firstText(props.description, props.subtitle, props.hint)),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
           h('label', { 'data-form-control': 'input' }, [h('span', 'Category'), h('input', { type: 'text', name: 'category', value: firstText(props.category, props.primaryCategory) ?? '' })]),
           h('label', { 'data-form-control': 'input' }, [h('span', 'Tags'), h('input', { type: 'text', name: 'tags', placeholder: 'tag-1, tag-2', value: tagText })]),
-          h('label', { 'data-form-control': 'select' }, [h('span', 'Mode'), h('select', { name: 'mode', value: firstText(props.mode, props.classificationMode) }, selectOptionNodes(choices, firstText(props.mode, props.classificationMode)))]),
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Mode'), h('select', { name: 'mode', value: selected }, selectOptionNodes(choices, selected))]),
         ]),
       ]);
     };

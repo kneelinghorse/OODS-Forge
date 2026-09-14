@@ -33,7 +33,7 @@ Accessible name: `label` strategy targeting `select`.
 
 ### Compatibility
 
-Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options, selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.
+Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options (record labels use label, then name; IDs remain values), selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.
 
 ## Capability evidence
 

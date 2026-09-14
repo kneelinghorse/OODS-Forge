@@ -38,8 +38,8 @@ describe('Subscription payment chart is an actual public render', () => {
     expect(first.status, JSON.stringify(first.errors)).toBe('ok');
     expect(rendered).toHaveBeenCalledTimes(schema.workflow!.data.sampleCount);
     const requests = rendered.mock.calls.map(([input]) => input);
-    // s191-m03 B7: a recorded payment series replaces the two identical scheduled samples.
-    expect(requests[2]).toMatchObject({ chartType: 'area', name: 'Payment amounts', theme: 'dark', brand: 'B', rows: [{ date: '2026-06-01T12:00:00.000Z', amount: 45.6 }, { date: '2026-07-01T12:00:00.000Z', amount: 62.7 }, { date: '2026-08-01T12:00:00.000Z', amount: 51.3 }, { date: '2026-09-01T12:00:00.000Z', amount: 57 }] });
+    // The s198 $99 price retains the recorded 0.8/1.1/0.9/1 payment series and minor-unit conversion.
+    expect(requests[2]).toMatchObject({ chartType: 'area', name: 'Payment amounts', theme: 'dark', brand: 'B', rows: [{ date: '2026-06-01T12:00:00.000Z', amount: 79.2 }, { date: '2026-07-01T12:00:00.000Z', amount: 108.9 }, { date: '2026-08-01T12:00:00.000Z', amount: 89.1 }, { date: '2026-09-01T12:00:00.000Z', amount: 99 }] });
     for (const request of requests) {
       expect(request.rows).toHaveLength(4);
       expect(new Set(request.rows!.map(row => row.amount)).size).toBeGreaterThanOrEqual(3);

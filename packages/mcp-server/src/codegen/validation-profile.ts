@@ -10,6 +10,8 @@ import type {
   CodegenValidationReceipt,
 } from './types.js';
 
+export const RELEASE_EVIDENCE_LIMIT = 'References are format-checked and hash-bound, not re-executed.';
+
 export const RELEASE_EVIDENCE_CLASSES = [
   'rendered',
   'interaction',
@@ -196,7 +198,7 @@ export function bindReleaseEvidence(
   if (missing.length > 0) {
     errors.push({
       code: 'OODS-V162',
-      message: `Release profile is missing required evidence: ${missing.join(', ')}. References are format-checked and hash-bound, not re-executed.`,
+      message: `Release profile is missing required evidence: ${missing.join(', ')}. ${RELEASE_EVIDENCE_LIMIT}`,
     });
   }
   if (mismatched.length > 0) {
@@ -204,7 +206,7 @@ export function bindReleaseEvidence(
       code: 'OODS-V163',
       message:
         `Release evidence is not bound to generated artifact ${artifactContentHash}: `
-        + `${mismatched.join(', ')}. References are format-checked and hash-bound, not re-executed.`,
+        + `${mismatched.join(', ')}. ${RELEASE_EVIDENCE_LIMIT}`,
     });
   }
 

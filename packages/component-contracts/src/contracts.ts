@@ -112,10 +112,10 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
   },
   BillingSummaryBadge: {
     id: 'BillingSummaryBadge', version: COMPONENT_CONTRACT_VERSION,
-    props: ['amount', 'currency', 'minorUnits', 'interval'], slots: [], events: [],
+    props: ['amount', 'currency', 'minorUnits', 'interval', 'showInterval'], slots: [], events: [],
     states: ['populated', 'empty', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'billing.interval.text'],
     accessibility: ['Amount, currency and interval form one noninteractive announced phrase'],
-    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.',
+    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. showInterval defaults true; false formats a plain currency amount without a cadence term. Invalid amount/currency is named explicitly.',
   },
   Button: {
     id: 'Button', version: COMPONENT_CONTRACT_VERSION,
@@ -355,7 +355,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'namespaces', 'namespace', 'document', 'json', 'value'], slots: ['default'], events: [],
     states: ['editing'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['A real h3 heading names the form', 'Namespace is a labelled select and Preference Document a labelled textarea'],
-    compatibility: 'Mirrors renderPreferenceEditor over renderFormContainer with data-form-type=preference-editor: title aliases title/label/heading/name (default Preference Editor), subtitle aliases description/subtitle/hint, a Namespace select over namespaces (default: default) selecting namespace, and a Preference Document textarea prefilled from document/json/value; authored children replace the generated body. namespacesField lowers to namespaces; documentField is consumed unbound because the field is an object while the textarea shows scalar text; registryNamespaceParameter is consumed. The controls are unwired and submitting is a no-op.',
+    compatibility: 'Mirrors renderPreferenceEditor over renderFormContainer with data-form-type=preference-editor: title aliases title/label/heading/name (default Preference Editor), subtitle aliases description/subtitle/hint, a Namespace select over namespaces (default: default) selecting namespace, and a Preference Document textarea prefilled from document/json/value; authored children replace the generated body. namespacesField lowers to namespaces; documentField lowers to a JSON-serialized document string so the textarea retains the structured preference value; registryNamespaceParameter is consumed. The controls are unwired and submitting is a no-op.',
   },
   PreferencePanel: {
     id: 'PreferencePanel', version: COMPONENT_CONTRACT_VERSION,
@@ -420,7 +420,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'roles', 'availableRoles', 'role', 'defaultRoleId', 'assignee', 'member'], slots: ['default'], events: [],
     states: ['editing'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['A real h3 heading names the form', 'Role is a labelled select and Assignee a labelled text input'],
-    compatibility: 'Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles, selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.',
+    compatibility: 'Mirrors renderRoleAssignmentForm over renderFormContainer with data-form-type=role-assignment: title aliases title/label/heading/name (default Role Assignment), subtitle aliases description/subtitle/hint, a Role select over roles, then availableRoles (record labels use label, then name; IDs remain values), selecting role, then defaultRoleId, and an Assignee input prefilled from assignee/member; authored children replace the generated body. availableRolesField lowers to availableRoles; membershipField is consumed unbound; defaultRoleParameter is consumed. The controls are unwired and submitting is a no-op.',
   },
   RoleBadgeList: {
     id: 'RoleBadgeList', version: COMPONENT_CONTRACT_VERSION,
@@ -534,7 +534,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'templates', 'options', 'templateId', 'value', 'channels', 'channel'], slots: ['default'], events: [],
     states: ['editing'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['A fieldset whose legend is the title', 'Template and Channel are labelled selects'],
-    compatibility: 'Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options, selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.',
+    compatibility: 'Mirrors renderTemplatePicker over renderFormContainer with data-form-type=template-picker as a fieldset: the legend reads title/label/heading/name (default Template Picker), subtitle aliases description/subtitle/hint, a Template select over templates, then options (record labels use label, then name; IDs remain values), selecting templateId, then value, and a Channel select over channels (default email/sms/in_app) selecting channel; authored children replace the generated body. templatesField lowers to templates and channelsField to channels. The controls are unwired.',
   },
   Text: {
     id: 'Text', version: COMPONENT_CONTRACT_VERSION_1_1,

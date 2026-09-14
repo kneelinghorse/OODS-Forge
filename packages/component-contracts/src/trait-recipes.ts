@@ -1,4 +1,4 @@
-import { formatDateTime } from './date-time.js';
+import { formatDateTime, formatReadOnlyValue } from './date-time.js';
 
 export interface TraitEventValues {
   archivedAt?: string | null; restoredAt?: string | null; archivedBy?: string | null; reason?: string | null;
@@ -17,13 +17,15 @@ export function traitEventRows(kind: TraitEventKind, values: TraitEventValues) {
       ? values.timestamp || values.reason || values.code ? [{ title: 'Cancellation requested', at: values.timestamp, reason: values.reason, code: values.code }] : []
       : (values.history ?? []).map(value => {
         const row = record(value);
-        const from = text(row.from_state); const to = text(row.to_state) ?? values.status ?? 'State changed';
-        return { title: from ? `${from} → ${to}` : to, at: text(row.transitioned_at ?? row.timestamp ?? row.at), actor: text(row.actor_id ?? row.actor), reason: text(row.reason) };
+        const from = text(row.from_state ?? row.from); const to = text(row.to_state ?? row.to) ?? values.status ?? 'State changed';
+        const transition = from ? `${formatReadOnlyValue(from, 'string', true)} → ${formatReadOnlyValue(to, 'string', true)}` : formatReadOnlyValue(to, 'string', true);
+        const title = text(row.title ?? row.label);
+        return { title: title && title !== transition ? `${title} · ${transition}` : title ?? transition, at: text(row.transitioned_at ?? row.timestamp ?? row.at), actor: text(row.actor_id ?? row.actor), reason: text(row.reason) };
       });
   return rows.map(value => {
     const row = value as { title: string; at?: string; actor?: string; reason?: string; code?: string };
     const at = row.at && formatDateTime(row.at) ? row.at : undefined;
-    return { ...row, at, time: at ? formatDateTime(at) : 'Time not recorded', actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
+    return { ...row, code: row.code ? formatReadOnlyValue(row.code, 'string', true) : undefined, at, time: at ? formatDateTime(at) : 'Time not recorded', actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
   });
 }
 

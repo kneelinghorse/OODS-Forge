@@ -65,6 +65,8 @@ export async function assembleWorkflow(
         { ...source, state: 'success', bindings: undefined },
       ],
     };
+    // The generated Delete action archives. Only Archivable objects can execute it.
+    if (!workflow.data.traits.some(name => name.split('/').pop() === 'Archivable') && screen.bindings?.onDelete === 'handleDelete') delete screen.bindings.onDelete;
     screens.push(screen);
     for (const action of Object.values(screen.bindings ?? {})) {
       const destination = {

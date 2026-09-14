@@ -1,0 +1,1650 @@
+{
+  "name": "tracelab-mission-workflow-v1",
+  "schemaRef": "compose-c95c87c9",
+  "schema": {
+    "version": "2026.02",
+    "theme": "light",
+    "screens": [
+      {
+        "id": "list-screen",
+        "component": "Stack",
+        "route": "/",
+        "bindings": {
+          "onRowClick": "handleRowClick",
+          "onSort": "handleSort",
+          "onFilter": "handleFilter",
+          "onPageChange": "handlePageChange"
+        },
+        "children": [
+          {
+            "id": "list-screen-list-9-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "list-screen-list-9-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "list-screen-list-9-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "list-screen-list-9-success",
+            "component": "Stack",
+            "state": "success",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "list-list-toolbar-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "list-slot-search-1",
+                    "component": "SearchInput",
+                    "meta": {
+                      "intent": "slot:search",
+                      "label": "search"
+                    },
+                    "props": {
+                      "label": "Search",
+                      "placeholder": "Search records",
+                      "clearable": true
+                    },
+                    "collectionControl": "search"
+                  },
+                  {
+                    "id": "list-slot-filters-2",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:filters",
+                      "label": "filters"
+                    },
+                    "props": {
+                      "label": "Status",
+                      "options": [
+                        {
+                          "value": "",
+                          "label": "All states"
+                        },
+                        {
+                          "value": "draft",
+                          "label": "draft"
+                        },
+                        {
+                          "value": "queued",
+                          "label": "queued"
+                        },
+                        {
+                          "value": "in_progress",
+                          "label": "in progress"
+                        },
+                        {
+                          "value": "completed",
+                          "label": "completed"
+                        },
+                        {
+                          "value": "blocked",
+                          "label": "blocked"
+                        },
+                        {
+                          "value": "cancelled",
+                          "label": "cancelled"
+                        },
+                        {
+                          "value": "validation_failed",
+                          "label": "validation failed"
+                        }
+                      ]
+                    },
+                    "collectionControl": "filter"
+                  },
+                  {
+                    "id": "list-list-toolbar-4-sort",
+                    "component": "Select",
+                    "collectionControl": "sort",
+                    "props": {
+                      "field": "title",
+                      "label": "Sort",
+                      "options": [
+                        {
+                          "value": "asc",
+                          "label": "Name A–Z"
+                        },
+                        {
+                          "value": "desc",
+                          "label": "Name Z–A"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "list-list-items-5",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "list-list-items-5-row",
+                    "component": "Button",
+                    "collectionControl": "open",
+                    "props": {
+                      "field": "id"
+                    },
+                    "layout": {
+                      "type": "inline",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-list-items-5-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "title"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-10",
+                        "component": "LabelCell",
+                        "props": {
+                          "field": "label",
+                          "descriptionField": "description",
+                          "truncate": true,
+                          "maxLengthParameter": "maxLabelLength",
+                          "label": "Label"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-14",
+                        "component": "StatusBadge",
+                        "props": {
+                          "tone": "lifecycle",
+                          "statusField": "status"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-15",
+                        "component": "RelativeTimestamp",
+                        "props": {
+                          "field": "updated_at",
+                          "fallbackField": "created_at",
+                          "timezoneParameter": "timezone"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-16",
+                        "component": "OwnerBadge",
+                        "props": {
+                          "ownerIdField": "owner_id",
+                          "ownerTypeField": "owner_type"
+                        }
+                      },
+                      {
+                        "id": "list-ve-items-17",
+                        "component": "TagPills",
+                        "props": {
+                          "field": "tags",
+                          "maxVisible": 3,
+                          "overflowLabel": "+{{ tag_count }}",
+                          "label": "Tags"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-list-items-5-empty",
+                    "component": "Banner",
+                    "props": {
+                      "message": "No records found."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "rows",
+                  "keyField": "id",
+                  "labelField": "title"
+                }
+              },
+              {
+                "id": "list-list-pagination-7",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "center"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "list-slot-pagination-8",
+                    "component": "PaginationBar",
+                    "meta": {
+                      "intent": "slot:pagination",
+                      "label": "pagination",
+                      "confidence": 0.77,
+                      "confidenceLevel": "low"
+                    },
+                    "collectionControl": "page",
+                    "props": {
+                      "showItemRange": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "detail-screen",
+        "component": "Stack",
+        "route": "/:id",
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onCancel": "handleCancel",
+          "onViewTimeline": "handleViewTimeline"
+        },
+        "children": [
+          {
+            "id": "detail-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "detail-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "detail-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "detail-screen-detail-13",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-detail-header-1",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "detail-slot-header-2",
+                    "component": "Stack",
+                    "meta": {
+                      "intent": "slot:header",
+                      "label": "header"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-ve-header-24",
+                        "component": "DetailHeader",
+                        "props": {
+                          "titleField": "label",
+                          "subtitleField": "description",
+                          "headingLevel": 1
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-25",
+                        "component": "StatusTimeline",
+                        "props": {
+                          "field": "status",
+                          "historyField": "state_history",
+                          "statesParameter": "states",
+                          "showActorId": true,
+                          "showReason": true
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-26",
+                        "component": "SearchInput",
+                        "props": {
+                          "field": "searchQuery",
+                          "placeholderParameter": "placeholder",
+                          "clearableParameter": "clearable",
+                          "label": "Search Query",
+                          "placeholder": "Enter searchQuery"
+                        },
+                        "bindings": {
+                          "onUpdate": "handleUpdate_searchQuery"
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-28",
+                        "component": "OwnershipSummary",
+                        "props": {
+                          "ownerIdField": "owner_id",
+                          "ownerTypeField": "owner_type",
+                          "roleField": "ownership_role",
+                          "transferredAtField": "ownership_transferred_at",
+                          "allowTransferParameter": "allowTransfer"
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-29",
+                        "component": "TagSummary",
+                        "props": {
+                          "field": "tags",
+                          "countField": "tag_count",
+                          "label": "Tags"
+                        }
+                      },
+                      {
+                        "id": "detail-ve-header-30",
+                        "component": "CancellationEvent",
+                        "props": {
+                          "title": "Cancellation",
+                          "timestampField": "cancellation_requested_at",
+                          "labelField": "cancellation_reason",
+                          "codeField": "cancellation_reason_code"
+                        }
+                      }
+                    ],
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "detail-detail-body-10",
+                "component": "Card",
+                "layout": {
+                  "type": "sidebar",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "detail-detail-tabs-9",
+                    "component": "Tabs",
+                    "children": [
+                      {
+                        "id": "detail-detail-tab-panel-3",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-default"
+                        },
+                        "props": {
+                          "label": "Details"
+                        },
+                        "children": [
+                          {
+                            "id": "detail-slot-tab-0-4",
+                            "component": "Stack",
+                            "meta": {
+                              "intent": "slot:tab-0",
+                              "label": "tab-0",
+                              "notes": "pattern-group:status-timeline"
+                            },
+                            "props": {
+                              "patternComponent": "StatusTimeline",
+                              "fields": [
+                                "status",
+                                "allowed_transitions"
+                              ]
+                            },
+                            "layout": {
+                              "type": "stack",
+                              "gapToken": "cluster-tight"
+                            },
+                            "children": [
+                              {
+                                "id": "detail-pg-status-timeline-32",
+                                "component": "Text",
+                                "props": {
+                                  "field": "status",
+                                  "label": "Status"
+                                }
+                              },
+                              {
+                                "id": "detail-pg-status-timeline-33",
+                                "component": "Text",
+                                "props": {
+                                  "field": "allowed_transitions",
+                                  "label": "Allowed transitions"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-slot-tab-2-8",
+                            "component": "Text",
+                            "meta": {
+                              "intent": "slot:tab-2",
+                              "label": "tab-2",
+                              "confidence": 0.76,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "created_at",
+                              "label": "Created at"
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "props": {
+                      "ariaLabel": "Record details"
+                    }
+                  },
+                  {
+                    "id": "detail-detail-meta-11",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-slot-metadata-12",
+                        "component": "FilterPanel",
+                        "meta": {
+                          "intent": "slot:metadata",
+                          "label": "metadata"
+                        },
+                        "props": {
+                          "field": "filters",
+                          "activeField": "activeFilters",
+                          "modeParameter": "filterMode",
+                          "collapsibleParameter": "collapsible"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "state": "success"
+          }
+        ]
+      },
+      {
+        "id": "form-screen",
+        "component": "Stack",
+        "route": "/:id/edit",
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        },
+        "children": [
+          {
+            "id": "form-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "form-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "form-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "form-screen-form-11",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-form-title-1",
+                "component": "Stack",
+                "props": {
+                  "as": "h1"
+                },
+                "meta": {
+                  "intent": "slot:title",
+                  "label": "title"
+                },
+                "children": [
+                  {
+                    "id": "form-ve-title-26",
+                    "component": "FormLabelGroup",
+                    "props": {
+                      "labelField": "label",
+                      "descriptionField": "description",
+                      "placeholderField": "placeholder",
+                      "maxLabelLengthParameter": "maxLabelLength",
+                      "maxDescriptionLengthParameter": "maxDescriptionLength",
+                      "requireDescriptionParameter": "requireDescription"
+                    }
+                  },
+                  {
+                    "id": "form-ve-title-27",
+                    "component": "StatusSelector",
+                    "props": {
+                      "field": "status",
+                      "optionsParameter": "states",
+                      "initialParameter": "initialState",
+                      "allowedTransitionsField": "allowed_transitions",
+                      "requireReasonParameter": "requireTransitionReason",
+                      "label": "Status",
+                      "help": "Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    }
+                  },
+                  {
+                    "id": "form-ve-title-28",
+                    "component": "TagInput",
+                    "props": {
+                      "field": "tags",
+                      "maxTagsParameter": "maxTags",
+                      "allowCustomParameter": "allowCustomTags",
+                      "allowListParameter": "allowedTags",
+                      "minLengthParameter": "tagMinLength",
+                      "maxLengthParameter": "tagMaxLength",
+                      "synonymParameter": "synonymResolution",
+                      "label": "Tags",
+                      "placeholder": "Enter tags"
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_tags"
+                    }
+                  },
+                  {
+                    "id": "form-ve-title-29",
+                    "component": "CancellationForm",
+                    "props": {
+                      "reasonField": "cancellation_reason",
+                      "codeField": "cancellation_reason_code",
+                      "requireReasonParameter": "requireReason",
+                      "allowedReasonsParameter": "allowedReasons",
+                      "windowParameter": "cancellationWindowHours",
+                      "reasonHelp": "Free-form detail describing why cancellation occurred.",
+                      "codeHelp": "Structured reason code chosen from the allowedReasons parameter.",
+                      "embedded": true,
+                      "allowedReasons": []
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              },
+              {
+                "id": "form-form-fields-8",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "form-form-field-group-2",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-0-3",
+                        "component": "Textarea",
+                        "meta": {
+                          "intent": "slot:field-0",
+                          "label": "field-0"
+                        },
+                        "props": {
+                          "field": "label",
+                          "label": "Label",
+                          "help": "Display projection of title; retain the complete source field."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_label"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-4",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": []
+                  },
+                  {
+                    "id": "form-form-field-group-6",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-2-7",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-2",
+                          "label": "field-2",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "created_at",
+                          "label": "Created at",
+                          "help": "Created at.",
+                          "type": "datetime-local"
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_created_at"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-12",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-3-13",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-3",
+                          "label": "field-3",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "ownership_role",
+                          "label": "Ownership role",
+                          "placeholder": "Enter ownership role",
+                          "help": "Optional role name describing how the owner governs the entity."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_ownership_role"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-14",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-4-15",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-4",
+                          "label": "field-4",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "tag_count",
+                          "label": "Tag count",
+                          "placeholder": "Enter tag count",
+                          "type": "number",
+                          "help": "Computed number of tags assigned to the entity."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_tag_count"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-16",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-5-17",
+                        "component": "Checkbox",
+                        "meta": {
+                          "intent": "slot:field-5",
+                          "label": "field-5",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "searchActive",
+                          "label": "Search Active",
+                          "help": "Whether the search input is currently focused or has a non-empty query."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_searchActive"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-18",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-6-19",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-6",
+                          "label": "field-6",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "placeholder",
+                          "label": "Placeholder",
+                          "placeholder": "Enter placeholder",
+                          "help": "Hint copy surfaced in form fields when the label is empty."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_placeholder"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-20",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-7-21",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-7",
+                          "label": "field-7",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "last_event",
+                          "label": "Last event",
+                          "placeholder": "Enter last event",
+                          "help": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_last_event"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-22",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-8-23",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-8",
+                          "label": "field-8",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "owner_id",
+                          "label": "Owner id",
+                          "placeholder": "Enter owner id",
+                          "help": "Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_owner_id"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-field-group-24",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-tight"
+                    },
+                    "children": [
+                      {
+                        "id": "form-slot-field-9-25",
+                        "component": "Input",
+                        "meta": {
+                          "intent": "slot:field-9",
+                          "label": "field-9",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "field": "page",
+                          "label": "Page",
+                          "placeholder": "Enter page",
+                          "type": "number",
+                          "help": "Current page number (1-based)."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_page"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "form-form-actions-9",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "end"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "form-form-submit-10",
+                    "component": "Button",
+                    "props": {
+                      "label": "Save",
+                      "type": "submit"
+                    }
+                  }
+                ]
+              }
+            ],
+            "state": "success"
+          }
+        ]
+      },
+      {
+        "id": "timeline-screen",
+        "component": "Stack",
+        "route": "/:id/timeline",
+        "children": [
+          {
+            "id": "timeline-loading",
+            "component": "Banner",
+            "state": "loading",
+            "props": {
+              "title": "Loading",
+              "message": "Loading your records."
+            }
+          },
+          {
+            "id": "timeline-empty",
+            "component": "Banner",
+            "state": "empty",
+            "props": {
+              "title": "No records found",
+              "message": "Change the filters or add a record."
+            }
+          },
+          {
+            "id": "timeline-error",
+            "component": "Banner",
+            "state": "error",
+            "props": {
+              "title": "Unable to load records",
+              "message": "Try again or choose another record."
+            }
+          },
+          {
+            "id": "timeline-screen-timeline-14",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "timeline-timeline-header-1",
+                "component": "Stack",
+                "layout": {
+                  "type": "inline",
+                  "align": "space-between"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "timeline-timeline-header-1-title",
+                    "component": "Text",
+                    "props": {
+                      "field": "title"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "timeline-timeline-entries-13",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "timeline-timeline-entries-13-entry",
+                    "component": "Card",
+                    "collectionControl": "event",
+                    "children": [
+                      {
+                        "id": "timeline-ve-entry-0-15",
+                        "component": "TimelineEntryLabel",
+                        "props": {
+                          "field": "label",
+                          "compact": true,
+                          "label": "Label"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "timeline-timeline-entries-13-empty",
+                    "component": "Banner",
+                    "props": {
+                      "message": "No events yet."
+                    },
+                    "collectionControl": "empty"
+                  }
+                ],
+                "collection": {
+                  "source": "events",
+                  "keyField": "id",
+                  "labelField": "title",
+                  "historyField": "state_history"
+                }
+              },
+              {
+                "id": "timeline-timeline-entries-13-trait-events",
+                "component": "Stack",
+                "children": [
+                  {
+                    "id": "timeline-ve-entry-0-16",
+                    "component": "StateTransitionEvent",
+                    "props": {
+                      "historyField": "state_history",
+                      "labelField": "status",
+                      "showActor": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "timeline-ve-entry-0-17",
+                    "component": "CancellationEvent",
+                    "props": {
+                      "timestampField": "cancellation_requested_at",
+                      "labelField": "cancellation_reason",
+                      "codeField": "cancellation_reason_code"
+                    }
+                  }
+                ]
+              }
+            ],
+            "state": "success"
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of title; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of objective; never truncates persisted content.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical research lifecycle. The API remains authoritative; do not coerce an unknown server value.",
+        "enum": [
+          "draft",
+          "queued",
+          "in_progress",
+          "completed",
+          "blocked",
+          "cancelled",
+          "validation_failed"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Updated at.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": false,
+        "description": "Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "owner_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner.",
+        "semanticType": "ownership.owner.id"
+      },
+      "owner_type": {
+        "type": "string",
+        "required": false,
+        "description": "user only when an authoritative owner_id is present.",
+        "enum": [
+          "user"
+        ],
+        "semanticType": "ownership.owner.type"
+      },
+      "ownership_role": {
+        "type": "string",
+        "required": false,
+        "description": "Optional role name describing how the owner governs the entity.",
+        "semanticType": "ownership.owner.role"
+      },
+      "ownership_transferred_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp recording when ownership was last transferred.",
+        "semanticType": "ownership.owner.transferred_at"
+      },
+      "tags": {
+        "type": "string[]",
+        "required": false,
+        "description": "Tags.",
+        "semanticType": "taxonomy.tag.collection"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": true,
+        "description": "Computed number of tags assigned to the entity.",
+        "semanticType": "metric.collection.count"
+      },
+      "tag_metadata": {
+        "type": "object[]",
+        "required": false,
+        "description": "Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n",
+        "semanticType": "taxonomy.tag.governance"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": false,
+        "description": "TraceLab cancellation is immediate; no billing period exists. Period-end controls must not be used.",
+        "semanticType": "status.cancel.deferred"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form detail describing why cancellation occurred.",
+        "semanticType": "status.cancel.reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp capturing when the cancellation workflow was initiated.",
+        "semanticType": "status.cancel.timestamp"
+      },
+      "searchQuery": {
+        "type": "string",
+        "required": false,
+        "description": "The current search query string entered by the user.",
+        "semanticType": "input.search.query"
+      },
+      "searchActive": {
+        "type": "boolean",
+        "required": false,
+        "description": "Whether the search input is currently focused or has a non-empty query.",
+        "semanticType": "state.search.active"
+      },
+      "filters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n",
+        "semanticType": "input.filter.descriptors"
+      },
+      "activeFilters": {
+        "type": "object[]",
+        "required": false,
+        "description": "Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n",
+        "semanticType": "state.filter.active"
+      },
+      "filterCount": {
+        "type": "number",
+        "required": true,
+        "description": "Computed count of currently active filters.",
+        "semanticType": "metric.filter.count"
+      },
+      "page": {
+        "type": "number",
+        "required": true,
+        "description": "Current page number (1-based).",
+        "semanticType": "state.pagination.page"
+      },
+      "pageSize": {
+        "type": "number",
+        "required": true,
+        "description": "Number of items displayed per page.",
+        "semanticType": "state.pagination.pageSize"
+      },
+      "totalItems": {
+        "type": "number",
+        "required": false,
+        "description": "Total number of items across all pages. Used to compute total page count.",
+        "semanticType": "metric.pagination.totalItems"
+      },
+      "totalPages": {
+        "type": "number",
+        "required": false,
+        "description": "Computed total number of pages (ceil(totalItems / pageSize)).",
+        "semanticType": "metric.pagination.totalPages"
+      },
+      "mission_id": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable mission identifier (e.g., B16.1)",
+        "semanticType": "research.mission.mission_id"
+      },
+      "title": {
+        "type": "string",
+        "required": true,
+        "description": "Mission title",
+        "semanticType": "text.label"
+      },
+      "objective": {
+        "type": "string",
+        "required": true,
+        "description": "What this mission aims to achieve (minimum 10 characters)",
+        "semanticType": "research.mission.objective"
+      },
+      "success_criteria": {
+        "type": "string[]",
+        "required": true,
+        "description": "Array of measurable success conditions",
+        "semanticType": "research.mission.success_criteria"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.mission.id"
+      },
+      "project_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Project id.",
+        "semanticType": "research.mission.project_id"
+      },
+      "project_name": {
+        "type": "string",
+        "required": false,
+        "description": "Name of the associated project",
+        "semanticType": "research.mission.project_name"
+      },
+      "context": {
+        "type": "object",
+        "required": false,
+        "description": "Context.",
+        "semanticType": "research.mission.context"
+      },
+      "deliverables": {
+        "type": "string[]",
+        "required": false,
+        "description": "Deliverables.",
+        "semanticType": "research.mission.deliverables"
+      },
+      "research_phases": {
+        "type": "object",
+        "required": false,
+        "description": "Research phases.",
+        "semanticType": "research.mission.research_phases"
+      },
+      "metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata.",
+        "semanticType": "research.mission.metadata"
+      },
+      "background": {
+        "type": "string",
+        "required": false,
+        "description": "Background.",
+        "semanticType": "research.mission.background"
+      },
+      "focus": {
+        "type": "string",
+        "required": false,
+        "description": "Focus.",
+        "semanticType": "research.mission.focus"
+      },
+      "references": {
+        "type": "object[]",
+        "required": false,
+        "description": "References.",
+        "semanticType": "research.mission.references"
+      },
+      "required_entities": {
+        "type": "string[]",
+        "required": false,
+        "description": "Required entities.",
+        "semanticType": "research.mission.required_entities"
+      },
+      "excluded_entities": {
+        "type": "string[]",
+        "required": false,
+        "description": "Excluded entities.",
+        "semanticType": "research.mission.excluded_entities"
+      },
+      "expected_output_schema": {
+        "type": "object",
+        "required": false,
+        "description": "Expected output schema.",
+        "semanticType": "research.mission.expected_output_schema"
+      },
+      "coverage_thresholds": {
+        "type": "object",
+        "required": false,
+        "description": "Coverage thresholds.",
+        "semanticType": "research.mission.coverage_thresholds"
+      },
+      "validation_thresholds": {
+        "type": "object",
+        "required": false,
+        "description": "Validation thresholds.",
+        "semanticType": "research.mission.validation_thresholds"
+      },
+      "deliverable_format": {
+        "type": "string",
+        "required": false,
+        "description": "Deliverable format.",
+        "semanticType": "research.mission.deliverable_format"
+      },
+      "max_loops": {
+        "type": "number",
+        "required": false,
+        "description": "Max loops.",
+        "semanticType": "research.mission.max_loops"
+      },
+      "min_loops": {
+        "type": "number",
+        "required": false,
+        "description": "Min loops.",
+        "semanticType": "research.mission.min_loops"
+      },
+      "constraints": {
+        "type": "string[]",
+        "required": false,
+        "description": "Constraints.",
+        "semanticType": "research.mission.constraints"
+      },
+      "queued_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Queued at.",
+        "semanticType": "research.mission.queued_at"
+      },
+      "started_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Started at.",
+        "semanticType": "research.mission.started_at"
+      },
+      "completed_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Completed at.",
+        "semanticType": "research.mission.completed_at"
+      },
+      "deepsearch_job_id": {
+        "type": "string",
+        "required": false,
+        "description": "Deepsearch job id.",
+        "semanticType": "research.mission.deepsearch_job_id"
+      },
+      "execution_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Execution metadata.",
+        "semanticType": "research.mission.execution_metadata"
+      },
+      "result_document_ids": {
+        "type": "uuid[]",
+        "required": false,
+        "description": "Result document ids.",
+        "semanticType": "research.mission.result_document_ids"
+      },
+      "result_report_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Result report id.",
+        "semanticType": "research.mission.result_report_id"
+      },
+      "result_markdown": {
+        "type": "string",
+        "required": false,
+        "description": "Result markdown.",
+        "semanticType": "research.mission.result_markdown"
+      },
+      "result_protocol": {
+        "type": "object",
+        "required": false,
+        "description": "Result protocol.",
+        "semanticType": "research.mission.result_protocol"
+      },
+      "error_message": {
+        "type": "string",
+        "required": false,
+        "description": "Error message.",
+        "semanticType": "research.mission.error_message"
+      },
+      "created_by": {
+        "type": "string",
+        "required": false,
+        "description": "Created by.",
+        "semanticType": "research.mission.created_by"
+      },
+      "progress_percent": {
+        "type": "number",
+        "required": false,
+        "description": "Progress percent.",
+        "semanticType": "research.mission.progress_percent"
+      },
+      "current_phase": {
+        "type": "string",
+        "required": false,
+        "description": "Current phase.",
+        "semanticType": "research.mission.current_phase"
+      },
+      "deepsearch_attempt_count": {
+        "type": "number",
+        "required": false,
+        "description": "Deepsearch attempt count.",
+        "semanticType": "research.mission.deepsearch_attempt_count"
+      },
+      "lease_expires_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Lease expires at.",
+        "semanticType": "research.mission.lease_expires_at"
+      },
+      "materialization_pending": {
+        "type": "boolean",
+        "required": true,
+        "description": "Materialization pending.",
+        "semanticType": "research.mission.materialization_pending"
+      },
+      "materialization_status": {
+        "type": "string",
+        "required": false,
+        "description": "Materialization status.",
+        "semanticType": "research.mission.materialization_status"
+      },
+      "materialization_attempt_count": {
+        "type": "number",
+        "required": false,
+        "description": "Materialization attempt count.",
+        "semanticType": "research.mission.materialization_attempt_count"
+      },
+      "materialization_error": {
+        "type": "string",
+        "required": false,
+        "description": "Materialization error.",
+        "semanticType": "research.mission.materialization_error"
+      },
+      "search_ready": {
+        "type": "boolean",
+        "required": true,
+        "description": "Search ready.",
+        "semanticType": "research.mission.search_ready"
+      }
+    },
+    "workflow": {
+      "object": "Mission",
+      "screens": [
+        {
+          "id": "list-screen",
+          "context": "list",
+          "route": "/"
+        },
+        {
+          "id": "detail-screen",
+          "context": "detail",
+          "route": "/:id"
+        },
+        {
+          "id": "form-screen",
+          "context": "form",
+          "route": "/:id/edit"
+        },
+        {
+          "id": "timeline-screen",
+          "context": "timeline",
+          "route": "/:id/timeline"
+        }
+      ],
+      "transitions": [
+        {
+          "action": "handleRowClick",
+          "from": "list",
+          "to": "detail",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleEdit",
+          "from": "detail",
+          "to": "form",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleDelete",
+          "from": "detail",
+          "to": "list",
+          "effect": "archive"
+        },
+        {
+          "action": "handleCancel",
+          "from": "detail",
+          "to": "detail",
+          "effect": "save"
+        },
+        {
+          "action": "handleViewTimeline",
+          "from": "detail",
+          "to": "timeline",
+          "effect": "navigate"
+        },
+        {
+          "action": "handleSubmit",
+          "from": "form",
+          "to": "detail",
+          "effect": "save"
+        }
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "success"
+      ],
+      "data": {
+        "idField": "id",
+        "traits": [
+          "content/Labelled",
+          "lifecycle/Stateful",
+          "lifecycle/Timestampable",
+          "structural/Ownerable",
+          "behavioral/Taggable",
+          "lifecycle/Cancellable",
+          "behavioral/Searchable",
+          "behavioral/Filterable",
+          "behavioral/Pageable"
+        ],
+        "sampleCount": 10,
+        "recordedEvents": [
+          "created",
+          "queued",
+          "started",
+          "completed",
+          "updated"
+        ],
+        "cancellationRequiresReason": false,
+        "cancellationReasonCodes": [],
+        "lifecycleStates": [
+          "draft",
+          "queued",
+          "in_progress",
+          "completed",
+          "blocked",
+          "cancelled",
+          "validation_failed"
+        ],
+        "billingIntervals": [],
+        "currency": "usd",
+        "minorUnits": 100
+      }
+    }
+  },
+  "object": "Mission",
+  "context": "timeline",
+  "version": 2,
+  "author": "TraceLab UX-1",
+  "createdAt": "2026-09-12T23:09:15.206Z",
+  "updatedAt": "2026-09-12T23:38:44.742Z",
+  "tags": [
+    "tracelab",
+    "research",
+    "ux-1",
+    "workflow"
+  ]
+}

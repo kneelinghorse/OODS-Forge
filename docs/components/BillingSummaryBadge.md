@@ -12,7 +12,7 @@ Source: [packages/component-contracts/src/contracts.ts#BillingSummaryBadge](../.
 
 | Field | Declared names |
 | --- | --- |
-| `props` | `amount`, `currency`, `minorUnits`, `interval` |
+| `props` | `amount`, `currency`, `minorUnits`, `interval`, `showInterval` |
 | `slots` | None declared |
 | `events` | None declared |
 | `states` | `populated`, `empty`, `invalid` |
@@ -32,7 +32,7 @@ Accessible name: `none` strategy targeting `:root`.
 
 ### Compatibility
 
-Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.
+Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. showInterval defaults true; false formats a plain currency amount without a cadence term. Invalid amount/currency is named explicitly.
 
 ## Capability evidence
 

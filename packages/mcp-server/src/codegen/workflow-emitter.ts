@@ -1,7 +1,7 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult, Emitter, GeneratedArtifactAction } from './types.js';
 import { generatedActionContractDigest, generatedActionSourceDigest, generatedActionTypeSignature } from './artifact-envelope.js';
-import { fieldLabel } from '../compose/label-generator.js';
+import { fieldLabel, fieldHelp } from '../compose/label-generator.js';
 import { workflowDataFiles } from './workflow-data-emitter.js';
 
 const CONTEXTS = ['list', 'detail', 'form', 'timeline'] as const;
@@ -125,7 +125,7 @@ export const deferredCancellation = ${JSON.stringify(!schema.workflow.data.lifec
 export const objectLabel = ${JSON.stringify(schema.workflow.object.toLowerCase())};
 export const statuses = ${JSON.stringify(schema.workflow.data.lifecycleStates)};
 export const archivePresentation = ${JSON.stringify({ archivedField: archiveOverlay?.props?.archivedField ?? 'is_archived', showBadge: archiveOverlay?.props?.showBadge ?? true, separateTab: archiveOverlay?.props?.separateTab ?? true, tabLabel: archiveOverlay?.props?.tabLabel ?? 'Archived' })};
-export const supplementalFields: Array<{ name: string; label: string; help: string }> = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: field.description ?? '' })))};
+export const supplementalFields: Array<{ name: string; label: string; help: string }> = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: fieldHelp(name, field.description) ?? '' })))};
 export const cancellationFormProps = ${JSON.stringify({ allowedReasons: schema.workflow.data.cancellationReasonCodes, reasonHelp: cancellationForm?.props?.reasonHelp, codeHelp: cancellationForm?.props?.codeHelp })};
 const fieldByNodeId: Record<string, string> = ${JSON.stringify(fieldByNodeId)};
 export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number; cancelOpen: boolean }
@@ -311,7 +311,7 @@ body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-p
 .workflow-app button:disabled { opacity: .5; cursor: default; }
 .workflow-app button[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }
 .workflow-app :focus-visible { outline: 3px solid var(--sys-focus-ring-outer); outline-offset: 3px; }
-.workflow-app label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.workflow-app label { font-size: 13px; }
 .workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid var(--sys-border-strong); border-radius: 5px; padding: 10px; color: inherit; background: var(--sys-surface-raised); }
 .workflow-content { padding: 24px; border: 1px solid var(--sys-border-subtle); border-radius: 12px; background: var(--sys-surface-raised); min-width: 0; overflow-wrap: anywhere; }
 .workflow-app label:has(input[type="checkbox"]) { display: flex; flex-direction: row; align-items: center; }

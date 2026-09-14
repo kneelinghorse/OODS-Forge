@@ -572,7 +572,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
   PaymentEventTimeline: { lastPayment: STRING_VALUE, nextPayment: STRING_VALUE, paymentStatus: STRING_VALUE, amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), title: STRING_VALUE },
   BillingCardMeta: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), interval: STRING_VALUE },
   ArchivedRowOverlay: { isArchived: BOOLEAN_VALUE, showBadge: BOOLEAN_VALUE, separateTab: BOOLEAN_VALUE, tabLabel: STRING_VALUE, label: STRING_VALUE, style: valueContract('grayed', (value) => value === 'grayed') },
-  BillingSummaryBadge: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), interval: STRING_VALUE },
+  BillingSummaryBadge: { showInterval: BOOLEAN_VALUE, amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), interval: STRING_VALUE },
   BillingAmountInput: { help: STRING_VALUE, amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
   BillingIntervalSelector: { help: STRING_VALUE, interval: STRING_VALUE, intervals: NON_EMPTY_STRING_ARRAY_VALUE, label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
   PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
@@ -1191,7 +1191,6 @@ export function preflightTargetContracts(
     }
 
     const childrenUseTabsPanelSlot = node.component === 'Tabs'
-      && (framework === 'react' || framework === 'vue')
       && contract.slots.includes('panel');
     if (node.children?.length && !contract.slots.includes('default') && !childrenUseTabsPanelSlot) {
       issues.push(issue(

@@ -19,7 +19,7 @@ export type PaginationItem = {
 type StatusMetadata = {
   description: string;
   tone: ComponentTone;
-  icon: string;
+  icon?: string;
 };
 
 export type StatusPresentation = StatusMetadata & {
@@ -134,7 +134,6 @@ export function getPortedStatusPresentation(domain: string, status: string): Sta
       label: statusLabel(status || 'Unknown'),
       description: 'Status not found in registry; falling back to the requested token set.',
       tone: 'neutral',
-      icon: '•',
     };
   }
   return { ...metadata, label: statusLabel(status) };
@@ -171,7 +170,7 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
         ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined)
         ?? 'Event',
       timestamp: firstText(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
-      detail: firstText(entry, ['detail', 'description', 'message', 'from', 'to']),
+      detail: firstText(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined),
       actorId: firstText(entry, ['actorId', 'actor_id', 'actor']),
       reason: firstText(entry, ['reason']),
     });

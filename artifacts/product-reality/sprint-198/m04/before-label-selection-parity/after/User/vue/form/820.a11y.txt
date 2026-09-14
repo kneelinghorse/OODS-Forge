@@ -1,0 +1,109 @@
+- main:
+  - paragraph: USER WORKSPACE
+  - heading "Sunny Rivera" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "User screen":
+    - text: Status
+    - combobox "Status":
+      - option "Invited"
+      - option "Active"
+      - option "Suspended" [selected]
+      - option "Deactivated"
+    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
+    - group "Tags":
+      - text: Tags Tag
+      - textbox "Tag":
+        - /placeholder: Enter tags
+    - heading "Addresses" [level=3]
+    - text: Street
+    - textbox "Street": 102 Main Street
+    - text: City
+    - textbox "City": Springfield
+    - text: Region
+    - textbox "Region": IL
+    - text: Postal Code
+    - textbox "Postal Code": "62701"
+    - heading "Preference Editor" [level=3]
+    - text: Namespace
+    - combobox "Namespace":
+      - option "theme"
+      - option "notifications"
+      - option "display"
+      - option "privacy"
+    - text: Preference Document
+    - textbox "Preference Document": "{ \"version\": \"2.0.0\", \"preferences\": { \"theme\": { \"mode\": \"system\" }, \"notifications\": { \"mention\": { \"email\": true, \"push\": true } }, \"display\": {}, \"privacy\": {} }, \"metadata\": { \"schemaVersion\": \"2.0.0\", \"lastUpdated\": \"2026-09-01T12:00:00.000Z\", \"source\": \"system\", \"migrationApplied\": [] } }"
+    - heading "Role Assignment" [level=3]
+    - text: Role
+    - combobox "Role":
+      - option "Owner"
+      - option "Approver"
+      - option "Editor"
+    - text: Assignee
+    - textbox "Assignee"
+    - group "Template Picker":
+      - text: Template Picker Template
+      - combobox "Template":
+        - option "Welcome Email"
+        - option "Password Reset Email"
+        - option "In-App Notification"
+      - text: Channel
+      - combobox "Channel":
+        - option "Primary Email (SMTP)"
+        - option "Twilio SMS"
+        - option "FCM Push"
+        - option "Realtime In-App"
+    - text: Created at
+    - textbox "Created at":
+      - /placeholder: Timestamp recording when the entity was first created.
+      - text: 2026-09-01T12:00
+    - paragraph: Timestamp recording when the entity was first created.
+    - text: Timezone
+    - textbox "Timezone":
+      - /placeholder: Preferred timezone applied when rendering timestamps.
+      - text: UTC
+    - paragraph: Preferred timezone applied when rendering timestamps.
+    - text: Role
+    - combobox "Role":
+      - option "Enter role" [disabled]
+      - option "end_user"
+      - option "admin"
+      - option "owner" [selected]
+      - option "billing"
+    - paragraph: Highest privilege role currently granted to the user.
+    - text: Name
+    - textbox "Name":
+      - /placeholder: Human-friendly name rendered in headers and list contexts.
+      - text: Sunny Rivera
+    - paragraph: Human-friendly name rendered in headers and list contexts.
+    - text: Primary email
+    - textbox "Primary email":
+      - /placeholder: Enter primary email
+      - text: sunny.rivera@example.com
+    - paragraph: Canonical login email address for the user.
+    - text: Last event
+    - combobox "Last event":
+      - option "Created" [selected]
+      - option "Profile Updated"
+      - option "Status Changed"
+      - option "Role Updated"
+    - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+    - text: Preference version
+    - textbox "Preference version":
+      - /placeholder: Enter preference version
+      - text: 2.0.0
+    - paragraph: SemVer mirror of preference_document.version for indexing and analytics.
+    - text: Preference mutations
+    - spinbutton "Preference mutations": "0"
+    - paragraph: Monotonic counter incremented whenever preferences mutate (invalidates caches).
+    - text: User id
+    - textbox "User id":
+      - /placeholder: Enter user id
+      - text: user-003
+    - paragraph: Primary identifier used to correlate identity across services.
+    - button "Save"
+  - status
