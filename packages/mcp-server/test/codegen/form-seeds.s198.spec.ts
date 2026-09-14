@@ -61,6 +61,7 @@ describe('s198 form craft and one attributable seed policy', () => {
     for (const framework of ['react', 'vue'] as const) {
       const generated = await generate({ schema, framework, profile: 'build' });
       expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+      expect(generated.artifact!.files.find(file => file.path === 'src/app.css')!.contents).toContain('.workflow-app label { font-size: 13px; }');
       const form = generated.artifact!.files.find(file => file.path.startsWith('src/screens/Form.'))!.contents;
       for (const field of ['preferenceNamespaces', 'roleCatalog', 'templateCatalog', 'channelCatalog']) expect(form).toContain(field);
       const checked = typecheckWorkflow(generated.artifact!);

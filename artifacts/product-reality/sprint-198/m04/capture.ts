@@ -30,7 +30,11 @@ try {
           const view = await observeView(page, width, output);
           const craft = await page.evaluate(() => {
             const visible = (node: Element) => node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden';
-            return { headings: [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(node => node.textContent),
+            return { requiredMarks: [...document.querySelectorAll('.oods-field-required')].filter(visible).map(mark => {
+                const label = mark.closest('label')!; const text = label.querySelector('.oods-field-label')?.firstChild ?? label.firstChild;
+                const range = document.createRange(); range.selectNode(text!); const labelBox = range.getBoundingClientRect(); const markBox = mark.getBoundingClientRect();
+                return { label: label.textContent, sameLine: Math.abs(markBox.top - labelBox.top) < Math.max(markBox.height, labelBox.height) / 2 };
+              }), headings: [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(node => node.textContent),
               actions: [...document.querySelectorAll('button')].filter(visible).map(node => ({ text: node.textContent, type: node.getAttribute('type') })),
               inputs: [...document.querySelectorAll('input,select,textarea')].filter(visible).map(element => { const node = element as HTMLInputElement; return { id: node.id, type: node.type, value: node.value, checked: node.checked, required: node.required, label: [...node.labels ?? []].map(label => label.textContent).join(' '), component: node.closest('[data-oods-component]')?.getAttribute('data-oods-component'), width: node.getBoundingClientRect().width, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth, options: node.tagName === 'SELECT' ? [...(element as HTMLSelectElement).options].map(option => ({ value: option.value, label: option.label })) : undefined }; }) };
           });

@@ -725,7 +725,7 @@ export const PreferenceEditor = defineComponent({
       const title = firstText(props.title, props.label, props.heading, props.name) ?? 'Preference Editor';
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const choices = normalizeSelectOptions(Array.isArray(props.namespaces) ? props.namespaces : ['default']);
-      const selected = firstText(props.namespace);
+      const selected = firstText(props.namespace) ?? choices[0]?.value;
       return h('form', {
         class: 'oods-preference-editor',
         'data-oods-component': 'PreferenceEditor',
@@ -755,7 +755,7 @@ export const RoleAssignmentForm = defineComponent({
       const title = firstText(props.title, props.label, props.heading, props.name) ?? 'Role Assignment';
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const choices = normalizeSelectOptions(props.roles ?? props.availableRoles ?? []);
-      const selected = firstText(props.role, props.defaultRoleId);
+      const selected = firstText(props.role, props.defaultRoleId) ?? choices[0]?.value;
       return h('form', {
         class: 'oods-role-assignment-form',
         'data-oods-component': 'RoleAssignmentForm',
@@ -857,8 +857,8 @@ export const TemplatePicker = defineComponent({
       const subtitle = firstText(props.description, props.subtitle, props.hint);
       const templateChoices = normalizeSelectOptions(props.templates ?? props.options ?? []);
       const channelChoices = normalizeSelectOptions(props.channels ?? ['email', 'sms', 'in_app']);
-      const selectedTemplate = firstText(props.templateId, props.value);
-      const selectedChannel = firstText(props.channel);
+      const selectedTemplate = firstText(props.templateId, props.value) ?? templateChoices[0]?.value;
+      const selectedChannel = firstText(props.channel) ?? channelChoices[0]?.value;
       return h('fieldset', {
         class: 'oods-template-picker',
         'data-oods-component': 'TemplatePicker',

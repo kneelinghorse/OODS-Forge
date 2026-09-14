@@ -311,7 +311,7 @@ body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-p
 .workflow-app button:disabled { opacity: .5; cursor: default; }
 .workflow-app button[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }
 .workflow-app :focus-visible { outline: 3px solid var(--sys-focus-ring-outer); outline-offset: 3px; }
-.workflow-app label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.workflow-app label { font-size: 13px; }
 .workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid var(--sys-border-strong); border-radius: 5px; padding: 10px; color: inherit; background: var(--sys-surface-raised); }
 .workflow-content { padding: 24px; border: 1px solid var(--sys-border-subtle); border-radius: 12px; background: var(--sys-surface-raised); min-width: 0; overflow-wrap: anywhere; }
 .workflow-app label:has(input[type="checkbox"]) { display: flex; flex-direction: row; align-items: center; }
