@@ -1,0 +1,56 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/workflow-runtime.s193.spec.ts (20 tests | 1 failed) 1328ms
+   ✓ current workflow runtime accountability > health and catalog serve the same measured 240-cell ratio without approving classifications 73ms
+   ✓ current workflow runtime accountability > missing, failed, duplicated, or historical cells cannot be served as a healthy ratio 78ms
+   ✓ current workflow runtime accountability > Article persistence probe targets a declared editable field, never a read-only ID 92ms
+   ✓ current workflow runtime accountability > Collection persistence probe targets a declared editable field, never a read-only ID 60ms
+   ✓ current workflow runtime accountability > Document persistence probe targets a declared editable field, never a read-only ID 63ms
+   ✓ current workflow runtime accountability > Evidence persistence probe targets a declared editable field, never a read-only ID 61ms
+   ✓ current workflow runtime accountability > Invoice persistence probe targets a declared editable field, never a read-only ID 67ms
+   ✓ current workflow runtime accountability > Media persistence probe targets a declared editable field, never a read-only ID 54ms
+   ✓ current workflow runtime accountability > Mission persistence probe targets a declared editable field, never a read-only ID 64ms
+   ✓ current workflow runtime accountability > Organization persistence probe targets a declared editable field, never a read-only ID 59ms
+   ✓ current workflow runtime accountability > Plan persistence probe targets a declared editable field, never a read-only ID 63ms
+   ✓ current workflow runtime accountability > Product persistence probe targets a declared editable field, never a read-only ID 66ms
+   ✓ current workflow runtime accountability > Project persistence probe targets a declared editable field, never a read-only ID 61ms
+   ✓ current workflow runtime accountability > Relationship persistence probe targets a declared editable field, never a read-only ID 57ms
+   ✓ current workflow runtime accountability > Report persistence probe targets a declared editable field, never a read-only ID 61ms
+   ✓ current workflow runtime accountability > Subscription persistence probe targets a declared editable field, never a read-only ID 73ms
+   × current workflow runtime accountability > Transaction persistence probe targets a declared editable field, never a read-only ID 61ms
+     → Workflow must declare a writable text field for persistence proof
+   ✓ current workflow runtime accountability > Usage persistence probe targets a declared editable field, never a read-only ID 58ms
+   ✓ current workflow runtime accountability > User persistence probe targets a declared editable field, never a read-only ID 55ms
+   ✓ current workflow runtime accountability > the retained complete population proves every workflow state and retains design-loop inspection images 103ms
+ ✓ src/codegen/validation-profile.test.ts (8 tests) 14ms
+ ✓ test/product-reality/release-limit.s198.spec.ts (2 tests) 97ms
+ ✓ test/product-reality/application-craft.s198.spec.ts (5 tests) 373ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/workflow-runtime.s193.spec.ts > current workflow runtime accountability > Transaction persistence probe targets a declared editable field, never a read-only ID
+AssertionError: Workflow must declare a writable text field for persistence proof
+
+simple
+
+ ❯ workflowEditProbe ../../scripts/product-reality/s188-m03-app-consumers.ts:74:3
+     72|   const supplementalTitle = titleField !== schema.workflow!.data.idFie…
+     73|   const field = editable.includes(titleField) || supplementalTitle ? t…
+     74|   assert(field, 'Workflow must declare a writable text field for persi…
+       |   ^
+     75|   const nodes = schemaNodes(schema);
+     76|   const timelineEmpty = !nodes.some(node => node.collection?.historyFi…
+ ❯ test/product-reality/workflow-runtime.s193.spec.ts:65:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 34 passed (35)
+   Start at  20:00:25
+   Duration  5.37s (transform 815ms, setup 20ms, collect 2.96s, tests 1.81s, environment 0ms, prepare 189ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/application-craft.s198.spec.ts test/product-reality/release-limit.s198.spec.ts src/codegen/validation-profile.test.ts test/product-reality/workflow-runtime.s193.spec.ts

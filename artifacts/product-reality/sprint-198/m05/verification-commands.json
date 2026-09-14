@@ -1,0 +1,95 @@
+{
+  "commands": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/application-craft.s198.spec.ts test/product-reality/release-limit.s198.spec.ts src/codegen/validation-profile.test.ts test/product-reality/workflow-runtime.s193.spec.ts",
+      "log": "logs/oods-s198-m05-focused-final.log",
+      "exitCode": 0,
+      "tests": 35,
+      "qualification": "Before panel follow-up; release boundary/runtime unchanged afterward.",
+      "sha256": "sha256:f22070fe26f8d56a87d8f181a45a049a82fd33accb621b4627d1dcb362f0eea4"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/application-craft.s198.spec.ts test/codegen/form-detail.s189.spec.ts test/codegen/detail-craft.s198.spec.ts test/product-reality/workflow-runtime.s193.spec.ts",
+      "log": "logs/oods-s198-m05-action-panel-tests.log",
+      "exitCode": 0,
+      "tests": 60,
+      "sha256": "sha256:32c5a2263a0e7524542261c586e92deeb1247806acc544cc910ba006a9aeb422"
+    },
+    {
+      "command": "pnpm --filter @oods/component-contracts test",
+      "log": "logs/oods-s198-m05-contracts.log",
+      "exitCode": 0,
+      "tests": 147,
+      "sha256": "sha256:35d7ea304035d8f0ab67993a5d461ce22684b217ced29eec8b32def2225a7b2b"
+    },
+    {
+      "command": "pnpm typecheck",
+      "log": "logs/oods-s198-m05-panel-root-types.log",
+      "exitCode": 0,
+      "sha256": "sha256:8c1347545723af0b84155e78f68f37f61623049f66e9046b02b01105bb0ae01f"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false",
+      "log": "logs/oods-s198-m05-panel-mcp-types.log",
+      "exitCode": 0,
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "pnpm docs:check",
+      "log": "logs/oods-s198-m05-panel-docs-check.log",
+      "exitCode": 0,
+      "sha256": "sha256:c3bc14d3c2829efb345e3c510c4f75613c6f8d83d8d0e3ace02f2d82409df241"
+    },
+    {
+      "command": "OODS_PLAYWRIGHT_WS_ENDPOINT=ws://127.0.0.1:4788/ pnpm exec tsx artifacts/product-reality/sprint-198/m05/capture-apps.ts artifacts/product-reality/sprint-198/m05/accepted Subscription",
+      "log": "logs/oods-s198-m05-capture-subscription-final.log",
+      "exitCode": 0,
+      "sourceHead": "25830723e15b5fd8f237b62949acfe7c3379cc49",
+      "sha256": "sha256:c7851711a14c1ef3035ab64d82c9dee476d37ceaa16054ad0cbcd7e51d0cdde6"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/codegen/form-seeds.s198.spec.ts test/product-reality/application-craft.s198.spec.ts",
+      "log": "logs/oods-s198-m05-archive-seed-tests.log",
+      "sha256": "sha256:83f61940c3d84b2291771fff69a7d4d01b86c80acc685d58f1bc7b6c548cb07b",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm typecheck",
+      "log": "logs/oods-s198-m05-archive-root-types.log",
+      "sha256": "sha256:8c1347545723af0b84155e78f68f37f61623049f66e9046b02b01105bb0ae01f",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false",
+      "log": "logs/oods-s198-m05-archive-mcp-types.log",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx artifacts/product-reality/sprint-198/m05/verify-equivalence.ts",
+      "log": "logs/oods-s198-m05-equivalence.log",
+      "sha256": "sha256:36a57f6f7d0bbf0e5884565d3c5ef9a8404d7f71b4c256534e5da19bfefffe06",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec tsx artifacts/product-reality/sprint-198/m05/seed-tables.ts",
+      "log": "logs/oods-s198-m05-final-seed-tables.log",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm docs:check",
+      "log": "logs/oods-s198-m05-close-docs-check.log",
+      "sha256": "sha256:c3bc14d3c2829efb345e3c510c4f75613c6f8d83d8d0e3ace02f2d82409df241",
+      "exitCode": 0
+    },
+    {
+      "command": "OODS_PLAYWRIGHT_WS_ENDPOINT=ws://127.0.0.1:4788/ pnpm exec tsx artifacts/product-reality/sprint-198/m05/check-gallery.ts",
+      "log": "logs/oods-s198-m05-gallery-check.log",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0
+    }
+  ],
+  "historicalFailures": "All other m05 logs remain retained. Initial ordering assumption, enum probe/seed assumption, output-directory setup, frozen-clock event suppression, supplemental-field test scope and initial-tab probe failures are excluded from acceptance. No timeout increase or waived assertion was used.",
+  "builderSelfCertified": false
+}
