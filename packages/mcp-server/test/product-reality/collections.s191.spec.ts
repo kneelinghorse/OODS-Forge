@@ -42,7 +42,7 @@ describe('workflow collection domain ownership (s191)', () => {
     expect(result.errors).toEqual(expect.arrayContaining([expect.objectContaining({ code: 'OODS-N016', message: expect.stringContaining('handleChange_display_name') })]));
   });
 
-  it('upserts by the declared default-role field, preserves other entries and metadata, and persists only on Save', async () => {
+  it('replaces the displayed entry when the declared default role is missing, preserves metadata, and persists only on Save', async () => {
     const { schema } = await compose({ object: 'User', context: 'workflow' });
     // A second collection name proves this is not a name-keyed addresses implementation.
     schema.objectSchema!.locations = schema.objectSchema!.addresses!;
@@ -73,6 +73,8 @@ describe('workflow collection domain ownership (s191)', () => {
         if (field.type === 'string' && field.required) expect(String(record[name]).trim(), `Required seed ${name} must permit saving an unrelated address edit`).not.toBe('');
       }
       const other = structuredClone(seed[0].locations[0]);
+      const unrelated = { ...structuredClone(other), role: 'work', metadata: { source: 'import' } };
+      seed[0].locations.push(unrelated);
       seed[0].preferred_role = 'shipping';
       const app = createWorkflow({ seed, latency: 0, now: () => '2026-09-10T12:00:00.000Z' });
       // Select the configured fixture explicitly; display-name sorting need not select seed[0].
@@ -80,22 +82,24 @@ describe('workflow collection domain ownership (s191)', () => {
       expect(collectionAddress(app.snapshot().draft.locations).street).toBe('100 Main Street');
       app.actions.handleChange_locations({ street: '8 Lake Road', city: 'Madison', region: 'WI', postalCode: '53703' });
       expect(app.snapshot().draft.locations).toHaveLength(2);
-      expect(app.snapshot().draft.locations[0]).toEqual(other);
+      expect(app.snapshot().draft.locations[0].role).toBe(other.role);
+      expect(app.snapshot().draft.locations[1]).toEqual(unrelated);
       expect(collectionAddress(app.snapshot().draft.locations, 'shipping').city).toBe('Madison');
       await app.navigate('form');
-      expect(app.snapshot().draft.locations).toHaveLength(1); // navigation discards unsaved edits
+      expect(app.snapshot().draft.locations).toHaveLength(2); // navigation discards unsaved edits
       app.actions.handleChange_locations({ street: '8 Lake Road', city: 'Madison', region: 'WI', postalCode: '53703' });
       app.actions.handleSubmit();
       await new Promise(resolve => setTimeout(resolve, 30));
       expect(app.snapshot().screen).toBe('detail');
-      expect(collectionSummary(app.snapshot().draft.locations)).toContain('shipping, 8 Lake Road, Madison');
-      const saved = app.snapshot().draft.locations[1];
+      expect(collectionSummary(app.snapshot().draft.locations)).toContain('home, 8 Lake Road, Madison');
+      const saved = app.snapshot().draft.locations[0];
       saved.metadata = { validationStatus: 'verified' };
       app.actions.handleChange_locations({ street: '9 Lake Road', city: 'Madison', region: 'WI', postalCode: '53703' });
       expect(app.snapshot().draft.locations).toHaveLength(2);
-      expect(app.snapshot().draft.locations[1].metadata).toEqual({ validationStatus: 'verified' });
-      expect(app.snapshot().draft.locations[1].address.countryCode).toBe('US');
-      expect(app.snapshot().draft.locations[0]).toEqual(other);
+      expect(app.snapshot().draft.locations[0].metadata).toEqual({ validationStatus: 'verified' });
+      expect(app.snapshot().draft.locations[0].address.countryCode).toBe('US');
+      expect(app.snapshot().draft.locations[0].role).toBe(other.role);
+      expect(app.snapshot().draft.locations[1]).toEqual(unrelated);
       app.dispose();
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });

@@ -31,6 +31,9 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       if (declaredChart?.source === 'record-array') return value(declaredChart.sampleRows, 'authored chart rows');
       if (field.examples?.length) return value(field.examples[index % field.examples.length], 'authored field example');
       if (name === idField) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key');
+      if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');
+      if (name === 'default_address_role') return value(workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', 'declared address role');
+      if (name === 'address_roles') return value([workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'], 'declared address role');
       if (field.enum?.length) return value(field.enum[index % field.enum.length], 'declared field enum');
       if (name === 'status' && lifecycleStates.length) return value(lifecycleStates[index % lifecycleStates.length], 'declared lifecycle state');
       if (name === 'billing_interval' && billingIntervals.length) return value(billingIntervals[index % billingIntervals.length], 'declared billing interval');
@@ -38,9 +41,6 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       if (name === 'is_archived') return value(index === sampleCount - 1, 'last record exercises archive view');
       if (name === titleField || /^(?:name|display_name|billing_contact_name)$/.test(name)) return value(/name/.test(name) && name !== 'plan_name' ? names[index % names.length] : `${label} ${/plan/.test(name) ? 'Plan' : 'Workspace'}`, 'deterministic display name');
       if (name === 'amount' || name.endsWith('_minor')) return value([19, 49, 99, 149, 249][index % 5]! * (workflow.data.minorUnits ?? 100), 'tier price in declared minor units');
-      if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');
-      if (name === 'default_address_role') return value(workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', 'declared address role');
-      if (name === 'address_roles') return value([workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'], 'declared address role');
       if (field.default !== undefined) return value(field.default, 'declared field or trait parameter default');
       if (type === 'uuid') return value(`00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, 'deterministic UUID reference');
       if (type.endsWith('[]') || type === 'array') return value([], 'empty optional collection without authored examples');
@@ -64,6 +64,12 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       return value(field.type.endsWith('?') ? null : '', 'optional absent value');
     };
     const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field)]));
+    for (const name of ['label', 'description']) {
+      if (fields[name] && !fields[name].examples?.length && fields[name].default === undefined && name !== titleField) {
+        record[name] = record[titleField];
+        rules[name] = 'record title projection without placeholder text';
+      }
+    }
     const ended = ['ended', 'terminated', 'cancelled', 'canceled'].includes(String(record.status));
     const cancelling = ended || record.status === 'pending_cancellation';
     const interval = String(record.billing_interval ?? 'monthly');
@@ -160,8 +166,12 @@ ${types}
 ${chartNodes(schema.screens).some(node => node.chart?.source === 'payment-events') ? '  payment_history: Array<{ at: string; amount: number }>;\n' : ''}};
 ${Object.values(fields).some(field => field.type === 'AddressableEntry[]') ? `
 const asRecord = (value: unknown): Record<string, unknown> => value && typeof value === 'object' ? value as Record<string, unknown> : {};
+export function collectionAddressIndex(entries: unknown[] | undefined, role?: string): number {
+  const index = entries?.findIndex(value => asRecord(value).role === role) ?? -1;
+  return index >= 0 ? index : entries?.length ? 0 : -1;
+}
 export function collectionAddress(entries: unknown[] | undefined, role?: string) {
-  const entry = asRecord(entries?.find(value => asRecord(value).role === role) ?? entries?.[0]);
+  const entry = asRecord(entries?.[collectionAddressIndex(entries, role)]);
   const address = asRecord(entry.address);
   return { street: Array.isArray(address.addressLines) ? address.addressLines.map(String).join(', ') : '', city: String(address.locality ?? ''), region: String(address.administrativeArea ?? ''), postalCode: String(address.postalCode ?? '') };
 }

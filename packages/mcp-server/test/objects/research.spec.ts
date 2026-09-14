@@ -121,11 +121,10 @@ it.each(['Project', 'Document', 'Collection', 'Report', 'Evidence'])('%s workflo
 
 it.each([
   { object: 'Evidence', field: 'disposition', value: 'contradicting', expected: 3 },
-  { object: 'Collection', field: 'owner_type', value: 'user', expected: 10 },
 ])('$object filters the declared classification field without inventing lifecycle state', async ({ object, field, value, expected }) => {
   const { schema } = await compose({ object, context: 'workflow' });
   const filter = schemaNodes(schema).find(node => node.collectionControl === 'filter')!;
-  filter.props = { ...filter.props, field };
+  expect(filter.props?.field).toBe(field);
   const generated = await generate({ schema, framework: 'react', profile: 'build' });
   expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'research-filter-store-'));

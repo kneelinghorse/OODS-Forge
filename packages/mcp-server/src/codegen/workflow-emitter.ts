@@ -96,9 +96,10 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     const addressable = schema.objectSchema[field]!.type === 'AddressableEntry[]';
     implementations[action.name] = `(${parameter}) => {
       const entries = state.draft[${JSON.stringify(field)}] ?? [];
-      const role = String(value(${JSON.stringify(defaultRoleField)}) || ${JSON.stringify(fallbackRole)});
-      const index = entries.findIndex(entry => !!entry && typeof entry === 'object' && 'role' in entry && entry.role === role);
+      const requestedRole = String(value(${JSON.stringify(defaultRoleField)}) || ${JSON.stringify(fallbackRole)});
+      const index = ${addressable ? 'collectionAddressIndex(entries, requestedRole)' : "entries.findIndex(entry => !!entry && typeof entry === 'object' && 'role' in entry && entry.role === requestedRole)"};
       const previous = index < 0 ? {} : entries[index] as Record<string, unknown>;
+      const role = String(previous.role ?? requestedRole);
       const entry = { ...previous, role, ${addressable ? `address: { ...((previous.address ?? {}) as Record<string, unknown>), countryCode: ((previous.address ?? {}) as Record<string, unknown>).countryCode ?? 'US', addressLines: [String(${parameter}.street ?? '')], locality: String(${parameter}.city ?? ''), administrativeArea: String(${parameter}.region ?? ''), postalCode: String(${parameter}.postalCode ?? '') }, isDefault: true, updatedAt: (options.now ?? (() => new Date().toISOString()))()` : `...${parameter}`} };
       const next = [...entries]; if (index < 0) next.push(entry); else next[index] = entry;
       publish({ draft: { ...state.draft, [${JSON.stringify(field)}]: next }, notice: 'Unsaved changes' });
@@ -113,7 +114,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
   const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && field.required && field.type === 'string' && !field.enum);
   files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
-import { createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';
+import { ${Object.values(schema.objectSchema).some(field => field.type === 'AddressableEntry[]') ? 'collectionAddressIndex, ' : ''}createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';
 import { sampleData } from './sample-data';
 import type { WorkflowActions } from './actions';
 export { idField, titleField, screenProps, history, collectionEvents };

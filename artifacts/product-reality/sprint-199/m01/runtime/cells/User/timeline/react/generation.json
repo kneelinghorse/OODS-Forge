@@ -1,0 +1,103 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Banner, Card, Stack, StateTransitionEvent, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Ordered list of roles that currently have address entries. */\n  addressRoles: string[];\n  /** Collection of { role, address, metadata } entries keyed by role. */\n  addresses?: unknown[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Provider configuration for each channel (SMTP/Twilio/FCM/Webhook). */\n  channelCatalog: unknown[];\n  /** Multi-party threaded conversations with membership metadata (R20.6 Part 3.3). */\n  conversations?: unknown[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Role surfaced in UI contexts when one address must be highlighted. */\n  defaultAddressRole?: 'home' | 'billing' | 'shipping';\n  /** Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle). */\n  deliveryPolicies: unknown[];\n  /** Supporting summary rendered in detail and card contexts. */\n  description?: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'profile_updated' | 'status_changed' | 'role_updated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4). */\n  membershipRecords: unknown[];\n  /** Delivery state machine transitions (queued → sent → delivered → failed → retried → read). */\n  messageStatuses?: unknown[];\n  /** Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives). */\n  messages?: unknown[];\n  /** Human-friendly name rendered in headers and list contexts. */\n  name: string;\n  /** Atomic permissions following resource:action notation (TABLE 2). */\n  permissionCatalog: unknown[];\n  /** Normalized preference payload captured by PreferenceStore (version, preferences map, metadata). */\n  preferenceDocument: unknown;\n  /** Tracks schema version, lastUpdated timestamp, migration records, and source. */\n  preferenceMetadata: unknown;\n  /** Monotonic counter incremented whenever preferences mutate (invalidates caches). */\n  preferenceMutations?: number;\n  /** Materialized namespace list resolved from parameters/registry for auditing. */\n  preferenceNamespaces: string[];\n  /** SemVer mirror of preference_document.version for indexing and analytics. */\n  preferenceVersion: string;\n  /** Preferred display name surfaced in collaborative tooling. */\n  preferredName?: string;\n  /** Canonical login email address for the user. */\n  primaryEmail: string;\n  /** Highest privilege role currently granted to the user. */\n  role: 'end_user' | 'admin' | 'owner' | 'billing';\n  /** Canonical RBAC roles (R21.2 Part 4.2 TABLE 1). */\n  roleCatalog: unknown[];\n  /** Parent→child adjacency list for hierarchical RBAC (Part 3.1). */\n  roleHierarchyEdges?: unknown[];\n  /** Junction map for role→permission edges (TABLE 3). */\n  rolePermissions: unknown;\n  /** Materialized roles granted within the current session/token exchange. */\n  sessionRoles?: string[];\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'invited' | 'active' | 'suspended' | 'deactivated';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Localized template definitions with declared variables per R20.1 Part 2.3. */\n  templateCatalog: unknown[];\n  /** Preferred timezone applied when rendering timestamps. */\n  timezone?: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Primary identifier used to correlate identity across services. */\n  userId: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StateTransitionEventProps = React.ComponentPropsWithoutRef<typeof StateTransitionEvent>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addressRoles, addresses, allowedTransitions, channelCatalog, conversations, createdAt, defaultAddressRole, deliveryPolicies, description, lastEvent, lastEventAt, membershipRecords, messageStatuses, messages, name, permissionCatalog, preferenceDocument, preferenceMetadata, preferenceMutations, preferenceNamespaces, preferenceVersion, preferredName, primaryEmail, role, roleCatalog, roleHierarchyEdges, rolePermissions, sessionRoles, stateHistory, status, tagCount, tagMetadata, tags, templateCatalog, timezone, updatedAt, userId, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{name}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n            <Stack id=\"timeline-entries-13-trait-events\" data-oods-component=\"Stack\">\n                    <StateTransitionEvent id=\"slot-entry-0-4\" data-oods-component=\"StateTransitionEvent\" showActor showReason history={stateHistory} status={status} />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:59f090d022e87501b40d901760568cf3be38f4b16481c1937508d32d3d4e56ad"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:cd3182c68914698dd8f7607aa63008f246b9534a1aff8ff87d82198a57e2a9ce"
+  },
+  "code": "import React from 'react';\nimport { Banner, Card, Stack, StateTransitionEvent, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  /** Ordered list of roles that currently have address entries. */\n  addressRoles: string[];\n  /** Collection of { role, address, metadata } entries keyed by role. */\n  addresses?: unknown[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Provider configuration for each channel (SMTP/Twilio/FCM/Webhook). */\n  channelCatalog: unknown[];\n  /** Multi-party threaded conversations with membership metadata (R20.6 Part 3.3). */\n  conversations?: unknown[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Role surfaced in UI contexts when one address must be highlighted. */\n  defaultAddressRole?: 'home' | 'billing' | 'shipping';\n  /** Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle). */\n  deliveryPolicies: unknown[];\n  /** Supporting summary rendered in detail and card contexts. */\n  description?: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'profile_updated' | 'status_changed' | 'role_updated';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4). */\n  membershipRecords: unknown[];\n  /** Delivery state machine transitions (queued → sent → delivered → failed → retried → read). */\n  messageStatuses?: unknown[];\n  /** Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives). */\n  messages?: unknown[];\n  /** Human-friendly name rendered in headers and list contexts. */\n  name: string;\n  /** Atomic permissions following resource:action notation (TABLE 2). */\n  permissionCatalog: unknown[];\n  /** Normalized preference payload captured by PreferenceStore (version, preferences map, metadata). */\n  preferenceDocument: unknown;\n  /** Tracks schema version, lastUpdated timestamp, migration records, and source. */\n  preferenceMetadata: unknown;\n  /** Monotonic counter incremented whenever preferences mutate (invalidates caches). */\n  preferenceMutations?: number;\n  /** Materialized namespace list resolved from parameters/registry for auditing. */\n  preferenceNamespaces: string[];\n  /** SemVer mirror of preference_document.version for indexing and analytics. */\n  preferenceVersion: string;\n  /** Preferred display name surfaced in collaborative tooling. */\n  preferredName?: string;\n  /** Canonical login email address for the user. */\n  primaryEmail: string;\n  /** Highest privilege role currently granted to the user. */\n  role: 'end_user' | 'admin' | 'owner' | 'billing';\n  /** Canonical RBAC roles (R21.2 Part 4.2 TABLE 1). */\n  roleCatalog: unknown[];\n  /** Parent→child adjacency list for hierarchical RBAC (Part 3.1). */\n  roleHierarchyEdges?: unknown[];\n  /** Junction map for role→permission edges (TABLE 3). */\n  rolePermissions: unknown;\n  /** Materialized roles granted within the current session/token exchange. */\n  sessionRoles?: string[];\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: 'invited' | 'active' | 'suspended' | 'deactivated';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Localized template definitions with declared variables per R20.1 Part 2.3. */\n  templateCatalog: unknown[];\n  /** Preferred timezone applied when rendering timestamps. */\n  timezone?: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Primary identifier used to correlate identity across services. */\n  userId: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StateTransitionEventProps = React.ComponentPropsWithoutRef<typeof StateTransitionEvent>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ addressRoles, addresses, allowedTransitions, channelCatalog, conversations, createdAt, defaultAddressRole, deliveryPolicies, description, lastEvent, lastEventAt, membershipRecords, messageStatuses, messages, name, permissionCatalog, preferenceDocument, preferenceMetadata, preferenceMutations, preferenceNamespaces, preferenceVersion, preferredName, primaryEmail, role, roleCatalog, roleHierarchyEdges, rolePermissions, sessionRoles, stateHistory, status, tagCount, tagMetadata, tags, templateCatalog, timezone, updatedAt, userId, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{name}</Text>\n                  </Stack>\n            <section id=\"timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-entries-13-entry-' + collectionIndex}><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></Card></li>)}</ol>)}</section>\n            <Stack id=\"timeline-entries-13-trait-events\" data-oods-component=\"Stack\">\n                    <StateTransitionEvent id=\"slot-entry-0-4\" data-oods-component=\"StateTransitionEvent\" showActor showReason history={stateHistory} status={status} />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css",
+    "@oods/component-contracts"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:cd3182c68914698dd8f7607aa63008f246b9534a1aff8ff87d82198a57e2a9ce"
+    }
+  },
+  "meta": {
+    "nodeCount": 8,
+    "componentCount": 5
+  }
+}
