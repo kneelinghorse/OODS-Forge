@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-198",
+  "missionId": "s198-m07",
+  "captureLabel": "closeout",
+  "kind": "four-suite-clean-tree-baseline",
+  "suiteSelection": "all",
+  "namedRetry": false,
+  "measuredHead": "45cfea986fcc23730032a0a0bda087f67cc09d1e",
+  "workspace": "/Users/systemsystems/.codex/worktrees/s198/OODS-Forge",
+  "exclusiveWorktree": true,
+  "suiteConcurrency": "sequential; no concurrent suite jobs",
+  "configuredTestTimeoutMs": 60000,
+  "fileScheduling": "serial; maxWorkers=1",
+  "host": {
+    "hostname": "Mac",
+    "platform": "darwin",
+    "release": "25.3.0",
+    "architecture": "arm64",
+    "cpuModel": "Apple M2",
+    "cpuCount": 8,
+    "totalMemoryBytes": 17179869184,
+    "node": "v24.6.0",
+    "v8": "13.6.233.10-node.24",
+    "pnpm": "9.12.2",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0",
+    "swVers": "ProductName:\t\tmacOS\nProductVersion:\t\t26.3.1\nProductVersionExtra:\t(a)\nBuildVersion:\t\t25D771280a"
+  },
+  "retryProtocol": {
+    "initialFailureRetention": "An initial red remains a red receipt; an isolated retry may diagnose it but never replaces it.",
+    "isolatedRetry": "Re-run each failed file once in isolation, then record any later full-suite run as a separate numbered attempt.",
+    "acceptance": "Every numbered full-suite run (1) must exit zero and leave the proof worktree clean; isolated green is diagnostic only."
+  },
+  "carriedDisclosure": {
+    "name": "load-sensitive Vue compiler rows can exceed the configured vitest timeout",
+    "origin": "Disclosed by the Sprint 183 independent review and re-measured in Sprint 184 m01; see artifacts/product-reality/sprint-184/m01/four-suite-baseline/four-suite-baseline.json#knownLimitation for the prior host numbers.",
+    "rule": "A timeout on a Vue compiler row is reported as the red it is; an isolated re-run is diagnostic and is recorded as a named retry, never substituted for the full-suite receipt."
+  },
+  "setup": [
+    {
+      "id": "install",
+      "executedCommand": "pnpm install --frozen-lockfile",
+      "exitCode": 0,
+      "startedAt": "2026-09-14T03:55:23.416Z",
+      "endedAt": "2026-09-14T03:55:24.394Z",
+      "durationMs": 977.143459,
+      "loadAverageBefore": [
+        3.701171875,
+        9.51123046875,
+        12.32421875
+      ],
+      "loadAverageAfter": [
+        3.701171875,
+        9.51123046875,
+        12.32421875
+      ],
+      "log": {
+        "path": "five-suite-closeout/setup/install.log",
+        "bytes": 716,
+        "sha256": "1c1c735d3e039782ad222ea5b42c1ed60dea8113700a8203cde70971336b950c"
+      }
+    },
+    {
+      "id": "build-tokens",
+      "executedCommand": "pnpm run build:tokens",
+      "exitCode": 0,
+      "startedAt": "2026-09-14T03:55:24.395Z",
+      "endedAt": "2026-09-14T03:55:26.760Z",
+      "durationMs": 2365.129959,
+      "loadAverageBefore": [
+        3.701171875,
+        9.51123046875,
+        12.32421875
+      ],
+      "loadAverageAfter": [
+        3.80517578125,
+        9.43603515625,
+        12.28125
+      ],
+      "log": {
+        "path": "five-suite-closeout/setup/build-tokens.log",
+        "bytes": 2714,
+        "sha256": "0bc2ae3aa17b186c653eed29a922bf1875c51745f7caa2603188c2058e6218b4"
+      }
+    },
+    {
+      "id": "build-packages",
+      "executedCommand": "pnpm run build:packages",
+      "exitCode": 0,
+      "startedAt": "2026-09-14T03:55:26.761Z",
+      "endedAt": "2026-09-14T03:55:46.274Z",
+      "durationMs": 19513.315333,
+      "loadAverageBefore": [
+        3.80517578125,
+        9.43603515625,
+        12.28125
+      ],
+      "loadAverageAfter": [
+        5.89404296875,
+        9.5517578125,
+        12.25634765625
+      ],
+      "log": {
+        "path": "five-suite-closeout/setup/build-packages.log",
+        "bytes": 20390,
+        "sha256": "632e887e7ab7769c1d657129b1fd8267c20595044a99f2580e772bab4d05a662"
+      }
+    },
+    {
+      "id": "build-publishable-package",
+      "executedCommand": "pnpm run pkg:build",
+      "exitCode": 0,
+      "startedAt": "2026-09-14T03:55:46.275Z",
+      "endedAt": "2026-09-14T03:55:54.134Z",
+      "durationMs": 7859.144375,
+      "loadAverageBefore": [
+        5.89404296875,
+        9.5517578125,
+        12.25634765625
+      ],
+      "loadAverageAfter": [
+        5.58203125,
+        9.42626953125,
+        12.19580078125
+      ],
+      "log": {
+        "path": "five-suite-closeout/setup/build-publishable-package.log",
+        "bytes": 1124,
+        "sha256": "4a29a4bc7ff91bac6ea9fd96f05f7142fc18c1831c3b83b47ea259236b5e4306"
+      }
+    }
+  ],
+  "cleanBeforeSetup": {
+    "porcelain": [],
+    "statusExitCode": 0,
+    "unstagedDiffExitCode": 0,
+    "stagedDiffExitCode": 0,
+    "untracked": [],
+    "untrackedExitCode": 0,
+    "forbiddenLeaks": [],
+    "clean": true
+  },
+  "cleanAfterSetup": {
+    "porcelain": [
+      "?? artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-packages.log",
+      "?? artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-publishable-package.log",
+      "?? artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-tokens.log",
+      "?? artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/install.log"
+    ],
+    "statusExitCode": 0,
+    "unstagedDiffExitCode": 0,
+    "stagedDiffExitCode": 0,
+    "untracked": [
+      "artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-packages.log",
+      "artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-publishable-package.log",
+      "artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/build-tokens.log",
+      "artifacts/product-reality/sprint-198/m07/five-suite-closeout/setup/install.log"
+    ],
+    "untrackedExitCode": 0,
+    "forbiddenLeaks": [],
+    "clean": false
+  },
+  "runs": [],
+  "status": "failed",
+  "outputRoot": "five-suite-closeout"
+}
