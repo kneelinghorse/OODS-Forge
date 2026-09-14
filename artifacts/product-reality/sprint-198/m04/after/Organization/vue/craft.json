@@ -1,0 +1,2569 @@
+{
+  "phase": "after",
+  "object": "Organization",
+  "framework": "vue",
+  "errors": [],
+  "views": [
+    {
+      "context": "form",
+      "output": "Organization/vue/form",
+      "width": 390,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Preference version\n    - textbox \"Preference version\": 2.0.0\n    - text: SemVer mirror of preference_document.version for indexing and analytics. Domain\n    - textbox \"Domain\": cedar.example.com\n    - text: Verified root domain associated with the organization. Cedar Workspace Status\n    - combobox \"Status\":\n      - option \"Prospect\"\n      - option \"Onboarding\"\n      - option \"Active\" [selected]\n      - option \"Churned\"\n    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n    - group \"Tags\":\n      - text: Tags Tag\n      - textbox \"Tag\":\n        - /placeholder: Enter tags\n    - heading \"Addresses\" [level=3]\n    - text: Street\n    - textbox \"Street\": 102 Main Street\n    - text: City\n    - textbox \"City\": Springfield\n    - text: Region\n    - textbox \"Region\": IL\n    - text: Postal Code\n    - textbox \"Postal Code\": \"62701\"\n    - heading \"Preference Editor\" [level=3]\n    - text: Namespace\n    - combobox \"Namespace\":\n      - option \"notifications\" [selected]\n      - option \"display\"\n      - option \"privacy\"\n    - text: Preference Document\n    - textbox \"Preference Document\": \"{ \\\"version\\\": \\\"2.0.0\\\", \\\"preferences\\\": { \\\"notifications\\\": { \\\"mention\\\": { \\\"email\\\": true, \\\"push\\\": true } }, \\\"display\\\": {}, \\\"privacy\\\": {} }, \\\"metadata\\\": { \\\"schemaVersion\\\": \\\"2.0.0\\\", \\\"lastUpdated\\\": \\\"2026-09-01T12:00:00.000Z\\\", \\\"source\\\": \\\"system\\\", \\\"migrationApplied\\\": [] } }\"\n    - heading \"Role Assignment\" [level=3]\n    - text: Role\n    - combobox \"Role\":\n      - option \"Owner\" [selected]\n      - option \"Approver\"\n      - option \"Editor\"\n    - text: Assignee\n    - textbox \"Assignee\"\n    - group \"Template Picker\":\n      - text: Template Picker Template\n      - combobox \"Template\":\n        - option \"Welcome Email\" [selected]\n        - option \"Password Reset Email\"\n        - option \"In-App Notification\"\n      - text: Channel\n      - combobox \"Channel\":\n        - option \"Primary Email (SMTP)\" [selected]\n        - option \"Twilio SMS\"\n        - option \"FCM Push\"\n        - option \"Realtime In-App\"\n    - text: Plan tier\n    - combobox \"Plan tier\":\n      - option \"Enter plan tier\" [disabled]\n      - option \"free\"\n      - option \"growth\"\n      - option \"enterprise\" [selected]\n    - paragraph: Billing plan currently assigned to the organization.\n    - text: Ownership transferred at\n    - textbox \"Ownership transferred at\":\n      - /placeholder: Timestamp recording when ownership was last transferred.\n      - text: 2026-09-01T12:00\n    - paragraph: Timestamp recording when ownership was last transferred.\n    - text: Tag count\n    - spinbutton \"Tag count\": \"0\"\n    - paragraph: Computed number of tags assigned to the entity.\n    - text: Billing contact email\n    - textbox \"Billing contact email\":\n      - /placeholder: Enter billing contact email\n      - text: sunny.rivera@example.com\n    - paragraph: Primary contact email for invoicing and finance escalations.\n    - text: Label\n    - textbox \"Label\":\n      - /placeholder: Enter label\n      - text: Cedar Workspace\n    - paragraph: Human-readable display name rendered in primary surfaces.\n    - text: Placeholder\n    - textbox \"Placeholder\":\n      - /placeholder: Enter placeholder\n    - paragraph: Hint copy surfaced in form fields when the label is empty.\n    - text: Owner id\n    - textbox \"Owner id\":\n      - /placeholder: Enter owner id\n      - text: owner-003\n    - paragraph: Identifier of the owning principal scoped by owner_type.\n    - text: Owner type\n    - combobox \"Owner type\":\n      - option \"Parent Organization\"\n      - option \"Reseller\"\n      - option \"Platform\" [selected]\n    - paragraph: Categorical owner type sourced from the ownerTypes parameter.\n    - button \"Save\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nList\nDetail\nEdit\nTimeline\nPreference version\nSemVer mirror of preference_document.version for indexing and analytics.\nDomain\nVerified root domain associated with the organization.\nCedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "elementCount": 134,
+        "overflow": [],
+        "glyphWraps": [
+          {
+            "element": "preference_version-help",
+            "text": "SemVer mirror of preference_document.version for indexing and analytics.",
+            "lines": [
+              "SemVer mirror of preference_document.version",
+              "for indexing and analytics."
+            ]
+          },
+          {
+            "element": "domain-help",
+            "text": "Verified root domain associated with the organization.",
+            "lines": [
+              "Verified root domain associated with the",
+              "organization."
+            ]
+          },
+          {
+            "element": "p",
+            "text": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.",
+            "lines": [
+              "Canonical lifecycle state derived from the",
+              "states parameter. This is the single source",
+              "of truth for the entity's current lifecycle",
+              "position. Consumed by Colorized to",
+              "resolve\nvisual tokens, and by view",
+              "extensions to render StatusBadge and",
+              "StatusTimeline."
+            ]
+          },
+          {
+            "element": "form-slot-field-2-7-help",
+            "text": "Billing plan currently assigned to the organization.",
+            "lines": [
+              "Billing plan currently assigned to the",
+              "organization."
+            ]
+          },
+          {
+            "element": "form-slot-field-3-13-help",
+            "text": "Timestamp recording when ownership was last transferred.",
+            "lines": [
+              "Timestamp recording when ownership was",
+              "last transferred."
+            ]
+          },
+          {
+            "element": "form-slot-field-4-15-help",
+            "text": "Computed number of tags assigned to the entity.",
+            "lines": [
+              "Computed number of tags assigned to the",
+              "entity."
+            ]
+          },
+          {
+            "element": "form-slot-field-5-17-help",
+            "text": "Primary contact email for invoicing and finance escalations.",
+            "lines": [
+              "Primary contact email for invoicing and",
+              "finance escalations."
+            ]
+          },
+          {
+            "element": "form-slot-field-6-19-help",
+            "text": "Human-readable display name rendered in primary surfaces.",
+            "lines": [
+              "Human-readable display name rendered in",
+              "primary surfaces."
+            ]
+          },
+          {
+            "element": "form-slot-field-7-21-help",
+            "text": "Hint copy surfaced in form fields when the label is empty.",
+            "lines": [
+              "Hint copy surfaced in form fields when the",
+              "label is empty."
+            ]
+          },
+          {
+            "element": "form-slot-field-8-23-help",
+            "text": "Identifier of the owning principal scoped by owner_type.",
+            "lines": [
+              "Identifier of the owning principal scoped",
+              "by owner_type."
+            ]
+          },
+          {
+            "element": "form-slot-field-9-25-help",
+            "text": "Categorical owner type sourced from the ownerTypes parameter.",
+            "lines": [
+              "Categorical owner type sourced from the",
+              "ownerTypes parameter."
+            ]
+          }
+        ]
+      },
+      "values": [
+        {
+          "element": "preference_version",
+          "name": "Preference version",
+          "value": "2.0.0",
+          "checked": false
+        },
+        {
+          "element": "domain",
+          "name": "Domain",
+          "value": "cedar.example.com",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusProspectOnboardingActiveChurned",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Tag",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Street",
+          "value": "102 Main Street",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "City",
+          "value": "Springfield",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Region",
+          "value": "IL",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Postal Code",
+          "value": "62701",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "Namespacenotificationsdisplayprivacy",
+          "value": "notifications",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Preference Document",
+          "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "RoleOwnerApproverEditor",
+          "value": "11111111-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Assignee",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+          "value": "88888888-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+          "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-2-7",
+          "name": "Plan tier*",
+          "value": "enterprise",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Ownership transferred at",
+          "value": "2026-09-01T12:00",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Tag count*",
+          "value": "0",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Billing contact email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Label*",
+          "value": "Cedar Workspace",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Placeholder",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-8-23",
+          "name": "Owner id*",
+          "value": "owner-003",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-9-25",
+          "name": "Owner type*",
+          "value": "platform",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-ve-title-26",
+          "component": "FormLabelGroup",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "form-ve-title-27",
+          "component": "StatusSelector",
+          "text": "Status\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "TagInput",
+          "text": "Tags\nTag"
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "AddressEditor",
+          "text": "Addresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-ve-field-0-30",
+          "component": "PreferenceEditor",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document"
+        },
+        {
+          "id": "form-ve-field-0-31",
+          "component": "RoleAssignmentForm",
+          "text": "Role Assignment\nRole\nOwner\nApprover\nEditor\nAssignee"
+        },
+        {
+          "id": "form-ve-field-0-32",
+          "component": "TemplatePicker",
+          "text": "Template Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "390.png",
+      "screenshotHash": "sha256:2ec9bab487b3b33046db2108e24b5ae9b025c2bd316d28a62faee70b9c09f1d1",
+      "dump": "390.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Plan tier*",
+            "sameLine": true
+          },
+          {
+            "label": "Tag count*",
+            "sameLine": true
+          },
+          {
+            "label": "Label*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner id*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner type*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Workspace",
+          "Addresses",
+          "Preference Editor",
+          "Role Assignment"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "preference_version",
+            "type": "text",
+            "value": "2.0.0",
+            "checked": false,
+            "required": false,
+            "label": "Preference version",
+            "width": 324,
+            "scrollWidth": 322,
+            "clientWidth": 322
+          },
+          {
+            "id": "domain",
+            "type": "text",
+            "value": "cedar.example.com",
+            "checked": false,
+            "required": false,
+            "label": "Domain",
+            "width": 324,
+            "scrollWidth": 322,
+            "clientWidth": 322
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusProspectOnboardingActiveChurned",
+            "component": "StatusSelector",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "prospect",
+                "label": "Prospect"
+              },
+              {
+                "value": "onboarding",
+                "label": "Onboarding"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "churned",
+                "label": "Churned"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Tag",
+            "component": "TagInput",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "102 Main Street",
+            "checked": false,
+            "required": false,
+            "label": "Street",
+            "component": "AddressEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "Springfield",
+            "checked": false,
+            "required": false,
+            "label": "City",
+            "component": "AddressEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "IL",
+            "checked": false,
+            "required": false,
+            "label": "Region",
+            "component": "AddressEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "62701",
+            "checked": false,
+            "required": false,
+            "label": "Postal Code",
+            "component": "AddressEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "notifications",
+            "required": false,
+            "label": "Namespacenotificationsdisplayprivacy",
+            "component": "PreferenceEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240,
+            "options": [
+              {
+                "value": "notifications",
+                "label": "notifications"
+              },
+              {
+                "value": "display",
+                "label": "display"
+              },
+              {
+                "value": "privacy",
+                "label": "privacy"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+            "required": false,
+            "label": "Preference Document",
+            "component": "PreferenceEditor",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "11111111-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "RoleOwnerApproverEditor",
+            "component": "RoleAssignmentForm",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240,
+            "options": [
+              {
+                "value": "11111111-1111-4111-8111-111111111111",
+                "label": "Owner"
+              },
+              {
+                "value": "22222222-2222-4222-8222-222222222222",
+                "label": "Approver"
+              },
+              {
+                "value": "33333333-3333-4333-8333-333333333333",
+                "label": "Editor"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Assignee",
+            "component": "RoleAssignmentForm",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "88888888-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+            "component": "TemplatePicker",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240,
+            "options": [
+              {
+                "value": "88888888-1111-4111-8111-111111111111",
+                "label": "Welcome Email"
+              },
+              {
+                "value": "99999999-2222-4222-8222-222222222222",
+                "label": "Password Reset Email"
+              },
+              {
+                "value": "aaaaaaa1-3333-4333-8333-333333333333",
+                "label": "In-App Notification"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+            "required": false,
+            "label": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+            "component": "TemplatePicker",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240,
+            "options": [
+              {
+                "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+                "label": "Primary Email (SMTP)"
+              },
+              {
+                "value": "55555555-eeee-4eee-8eee-eeeeeeeeeeee",
+                "label": "Twilio SMS"
+              },
+              {
+                "value": "66666666-ffff-4fff-8fff-ffffffffffff",
+                "label": "FCM Push"
+              },
+              {
+                "value": "77777777-0000-4000-8000-000000000000",
+                "label": "Realtime In-App"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-2-7",
+            "type": "select-one",
+            "value": "enterprise",
+            "required": true,
+            "label": "Plan tier*",
+            "component": "Select",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter plan tier"
+              },
+              {
+                "value": "free",
+                "label": "free"
+              },
+              {
+                "value": "growth",
+                "label": "growth"
+              },
+              {
+                "value": "enterprise",
+                "label": "enterprise"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "2026-09-01T12:00",
+            "checked": false,
+            "required": false,
+            "label": "Ownership transferred at",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "number",
+            "value": "0",
+            "checked": false,
+            "required": true,
+            "label": "Tag count*",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Billing contact email",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "text",
+            "value": "Cedar Workspace",
+            "checked": false,
+            "required": true,
+            "label": "Label*",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Placeholder",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-8-23",
+            "type": "text",
+            "value": "owner-003",
+            "checked": false,
+            "required": true,
+            "label": "Owner id*",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-9-25",
+            "type": "select-one",
+            "value": "platform",
+            "required": true,
+            "label": "Owner type*",
+            "component": "Select",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "parent_organization",
+                "label": "Parent Organization"
+              },
+              {
+                "value": "reseller",
+                "label": "Reseller"
+              },
+              {
+                "value": "platform",
+                "label": "Platform"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "form",
+      "output": "Organization/vue/form",
+      "width": 820,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Preference version\n    - textbox \"Preference version\": 2.0.0\n    - text: SemVer mirror of preference_document.version for indexing and analytics. Domain\n    - textbox \"Domain\": cedar.example.com\n    - text: Verified root domain associated with the organization. Cedar Workspace Status\n    - combobox \"Status\":\n      - option \"Prospect\"\n      - option \"Onboarding\"\n      - option \"Active\" [selected]\n      - option \"Churned\"\n    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n    - group \"Tags\":\n      - text: Tags Tag\n      - textbox \"Tag\":\n        - /placeholder: Enter tags\n    - heading \"Addresses\" [level=3]\n    - text: Street\n    - textbox \"Street\": 102 Main Street\n    - text: City\n    - textbox \"City\": Springfield\n    - text: Region\n    - textbox \"Region\": IL\n    - text: Postal Code\n    - textbox \"Postal Code\": \"62701\"\n    - heading \"Preference Editor\" [level=3]\n    - text: Namespace\n    - combobox \"Namespace\":\n      - option \"notifications\" [selected]\n      - option \"display\"\n      - option \"privacy\"\n    - text: Preference Document\n    - textbox \"Preference Document\": \"{ \\\"version\\\": \\\"2.0.0\\\", \\\"preferences\\\": { \\\"notifications\\\": { \\\"mention\\\": { \\\"email\\\": true, \\\"push\\\": true } }, \\\"display\\\": {}, \\\"privacy\\\": {} }, \\\"metadata\\\": { \\\"schemaVersion\\\": \\\"2.0.0\\\", \\\"lastUpdated\\\": \\\"2026-09-01T12:00:00.000Z\\\", \\\"source\\\": \\\"system\\\", \\\"migrationApplied\\\": [] } }\"\n    - heading \"Role Assignment\" [level=3]\n    - text: Role\n    - combobox \"Role\":\n      - option \"Owner\" [selected]\n      - option \"Approver\"\n      - option \"Editor\"\n    - text: Assignee\n    - textbox \"Assignee\"\n    - group \"Template Picker\":\n      - text: Template Picker Template\n      - combobox \"Template\":\n        - option \"Welcome Email\" [selected]\n        - option \"Password Reset Email\"\n        - option \"In-App Notification\"\n      - text: Channel\n      - combobox \"Channel\":\n        - option \"Primary Email (SMTP)\" [selected]\n        - option \"Twilio SMS\"\n        - option \"FCM Push\"\n        - option \"Realtime In-App\"\n    - text: Plan tier\n    - combobox \"Plan tier\":\n      - option \"Enter plan tier\" [disabled]\n      - option \"free\"\n      - option \"growth\"\n      - option \"enterprise\" [selected]\n    - paragraph: Billing plan currently assigned to the organization.\n    - text: Ownership transferred at\n    - textbox \"Ownership transferred at\":\n      - /placeholder: Timestamp recording when ownership was last transferred.\n      - text: 2026-09-01T12:00\n    - paragraph: Timestamp recording when ownership was last transferred.\n    - text: Tag count\n    - spinbutton \"Tag count\": \"0\"\n    - paragraph: Computed number of tags assigned to the entity.\n    - text: Billing contact email\n    - textbox \"Billing contact email\":\n      - /placeholder: Enter billing contact email\n      - text: sunny.rivera@example.com\n    - paragraph: Primary contact email for invoicing and finance escalations.\n    - text: Label\n    - textbox \"Label\":\n      - /placeholder: Enter label\n      - text: Cedar Workspace\n    - paragraph: Human-readable display name rendered in primary surfaces.\n    - text: Placeholder\n    - textbox \"Placeholder\":\n      - /placeholder: Enter placeholder\n    - paragraph: Hint copy surfaced in form fields when the label is empty.\n    - text: Owner id\n    - textbox \"Owner id\":\n      - /placeholder: Enter owner id\n      - text: owner-003\n    - paragraph: Identifier of the owning principal scoped by owner_type.\n    - text: Owner type\n    - combobox \"Owner type\":\n      - option \"Parent Organization\"\n      - option \"Reseller\"\n      - option \"Platform\" [selected]\n    - paragraph: Categorical owner type sourced from the ownerTypes parameter.\n    - button \"Save\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nLocal workspace\nList\nDetail\nEdit\nTimeline\nPreference version\nSemVer mirror of preference_document.version for indexing and analytics.\nDomain\nVerified root domain associated with the organization.\nCedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "elementCount": 135,
+        "overflow": [],
+        "glyphWraps": [
+          {
+            "element": "p",
+            "text": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.",
+            "lines": [
+              "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the",
+              "entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view",
+              "extensions to render StatusBadge and StatusTimeline."
+            ]
+          }
+        ]
+      },
+      "values": [
+        {
+          "element": "preference_version",
+          "name": "Preference version",
+          "value": "2.0.0",
+          "checked": false
+        },
+        {
+          "element": "domain",
+          "name": "Domain",
+          "value": "cedar.example.com",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusProspectOnboardingActiveChurned",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Tag",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Street",
+          "value": "102 Main Street",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "City",
+          "value": "Springfield",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Region",
+          "value": "IL",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Postal Code",
+          "value": "62701",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "Namespacenotificationsdisplayprivacy",
+          "value": "notifications",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Preference Document",
+          "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "RoleOwnerApproverEditor",
+          "value": "11111111-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Assignee",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+          "value": "88888888-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+          "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-2-7",
+          "name": "Plan tier*",
+          "value": "enterprise",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Ownership transferred at",
+          "value": "2026-09-01T12:00",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Tag count*",
+          "value": "0",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Billing contact email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Label*",
+          "value": "Cedar Workspace",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Placeholder",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-8-23",
+          "name": "Owner id*",
+          "value": "owner-003",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-9-25",
+          "name": "Owner type*",
+          "value": "platform",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-ve-title-26",
+          "component": "FormLabelGroup",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "form-ve-title-27",
+          "component": "StatusSelector",
+          "text": "Status\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "TagInput",
+          "text": "Tags\nTag"
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "AddressEditor",
+          "text": "Addresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-ve-field-0-30",
+          "component": "PreferenceEditor",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document"
+        },
+        {
+          "id": "form-ve-field-0-31",
+          "component": "RoleAssignmentForm",
+          "text": "Role Assignment\nRole\nOwner\nApprover\nEditor\nAssignee"
+        },
+        {
+          "id": "form-ve-field-0-32",
+          "component": "TemplatePicker",
+          "text": "Template Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "820.png",
+      "screenshotHash": "sha256:af273eaa345b1ab6b1eef82fba906023f230e3ba800b1ce09a3cb271afeca279",
+      "dump": "820.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Plan tier*",
+            "sameLine": true
+          },
+          {
+            "label": "Tag count*",
+            "sameLine": true
+          },
+          {
+            "label": "Label*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner id*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner type*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Workspace",
+          "Addresses",
+          "Preference Editor",
+          "Role Assignment"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "preference_version",
+            "type": "text",
+            "value": "2.0.0",
+            "checked": false,
+            "required": false,
+            "label": "Preference version",
+            "width": 714,
+            "scrollWidth": 712,
+            "clientWidth": 712
+          },
+          {
+            "id": "domain",
+            "type": "text",
+            "value": "cedar.example.com",
+            "checked": false,
+            "required": false,
+            "label": "Domain",
+            "width": 714,
+            "scrollWidth": 712,
+            "clientWidth": 712
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusProspectOnboardingActiveChurned",
+            "component": "StatusSelector",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "prospect",
+                "label": "Prospect"
+              },
+              {
+                "value": "onboarding",
+                "label": "Onboarding"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "churned",
+                "label": "Churned"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Tag",
+            "component": "TagInput",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "102 Main Street",
+            "checked": false,
+            "required": false,
+            "label": "Street",
+            "component": "AddressEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "Springfield",
+            "checked": false,
+            "required": false,
+            "label": "City",
+            "component": "AddressEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "IL",
+            "checked": false,
+            "required": false,
+            "label": "Region",
+            "component": "AddressEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "62701",
+            "checked": false,
+            "required": false,
+            "label": "Postal Code",
+            "component": "AddressEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "notifications",
+            "required": false,
+            "label": "Namespacenotificationsdisplayprivacy",
+            "component": "PreferenceEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630,
+            "options": [
+              {
+                "value": "notifications",
+                "label": "notifications"
+              },
+              {
+                "value": "display",
+                "label": "display"
+              },
+              {
+                "value": "privacy",
+                "label": "privacy"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+            "required": false,
+            "label": "Preference Document",
+            "component": "PreferenceEditor",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "11111111-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "RoleOwnerApproverEditor",
+            "component": "RoleAssignmentForm",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630,
+            "options": [
+              {
+                "value": "11111111-1111-4111-8111-111111111111",
+                "label": "Owner"
+              },
+              {
+                "value": "22222222-2222-4222-8222-222222222222",
+                "label": "Approver"
+              },
+              {
+                "value": "33333333-3333-4333-8333-333333333333",
+                "label": "Editor"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Assignee",
+            "component": "RoleAssignmentForm",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "88888888-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+            "component": "TemplatePicker",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630,
+            "options": [
+              {
+                "value": "88888888-1111-4111-8111-111111111111",
+                "label": "Welcome Email"
+              },
+              {
+                "value": "99999999-2222-4222-8222-222222222222",
+                "label": "Password Reset Email"
+              },
+              {
+                "value": "aaaaaaa1-3333-4333-8333-333333333333",
+                "label": "In-App Notification"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+            "required": false,
+            "label": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+            "component": "TemplatePicker",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630,
+            "options": [
+              {
+                "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+                "label": "Primary Email (SMTP)"
+              },
+              {
+                "value": "55555555-eeee-4eee-8eee-eeeeeeeeeeee",
+                "label": "Twilio SMS"
+              },
+              {
+                "value": "66666666-ffff-4fff-8fff-ffffffffffff",
+                "label": "FCM Push"
+              },
+              {
+                "value": "77777777-0000-4000-8000-000000000000",
+                "label": "Realtime In-App"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-2-7",
+            "type": "select-one",
+            "value": "enterprise",
+            "required": true,
+            "label": "Plan tier*",
+            "component": "Select",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter plan tier"
+              },
+              {
+                "value": "free",
+                "label": "free"
+              },
+              {
+                "value": "growth",
+                "label": "growth"
+              },
+              {
+                "value": "enterprise",
+                "label": "enterprise"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "2026-09-01T12:00",
+            "checked": false,
+            "required": false,
+            "label": "Ownership transferred at",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "number",
+            "value": "0",
+            "checked": false,
+            "required": true,
+            "label": "Tag count*",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Billing contact email",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "text",
+            "value": "Cedar Workspace",
+            "checked": false,
+            "required": true,
+            "label": "Label*",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Placeholder",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-8-23",
+            "type": "text",
+            "value": "owner-003",
+            "checked": false,
+            "required": true,
+            "label": "Owner id*",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-9-25",
+            "type": "select-one",
+            "value": "platform",
+            "required": true,
+            "label": "Owner type*",
+            "component": "Select",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "parent_organization",
+                "label": "Parent Organization"
+              },
+              {
+                "value": "reseller",
+                "label": "Reseller"
+              },
+              {
+                "value": "platform",
+                "label": "Platform"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "form",
+      "output": "Organization/vue/form",
+      "width": 1440,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Preference version\n    - textbox \"Preference version\": 2.0.0\n    - text: SemVer mirror of preference_document.version for indexing and analytics. Domain\n    - textbox \"Domain\": cedar.example.com\n    - text: Verified root domain associated with the organization. Cedar Workspace Status\n    - combobox \"Status\":\n      - option \"Prospect\"\n      - option \"Onboarding\"\n      - option \"Active\" [selected]\n      - option \"Churned\"\n    - paragraph: Canonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n    - group \"Tags\":\n      - text: Tags Tag\n      - textbox \"Tag\":\n        - /placeholder: Enter tags\n    - heading \"Addresses\" [level=3]\n    - text: Street\n    - textbox \"Street\": 102 Main Street\n    - text: City\n    - textbox \"City\": Springfield\n    - text: Region\n    - textbox \"Region\": IL\n    - text: Postal Code\n    - textbox \"Postal Code\": \"62701\"\n    - heading \"Preference Editor\" [level=3]\n    - text: Namespace\n    - combobox \"Namespace\":\n      - option \"notifications\" [selected]\n      - option \"display\"\n      - option \"privacy\"\n    - text: Preference Document\n    - textbox \"Preference Document\": \"{ \\\"version\\\": \\\"2.0.0\\\", \\\"preferences\\\": { \\\"notifications\\\": { \\\"mention\\\": { \\\"email\\\": true, \\\"push\\\": true } }, \\\"display\\\": {}, \\\"privacy\\\": {} }, \\\"metadata\\\": { \\\"schemaVersion\\\": \\\"2.0.0\\\", \\\"lastUpdated\\\": \\\"2026-09-01T12:00:00.000Z\\\", \\\"source\\\": \\\"system\\\", \\\"migrationApplied\\\": [] } }\"\n    - heading \"Role Assignment\" [level=3]\n    - text: Role\n    - combobox \"Role\":\n      - option \"Owner\" [selected]\n      - option \"Approver\"\n      - option \"Editor\"\n    - text: Assignee\n    - textbox \"Assignee\"\n    - group \"Template Picker\":\n      - text: Template Picker Template\n      - combobox \"Template\":\n        - option \"Welcome Email\" [selected]\n        - option \"Password Reset Email\"\n        - option \"In-App Notification\"\n      - text: Channel\n      - combobox \"Channel\":\n        - option \"Primary Email (SMTP)\" [selected]\n        - option \"Twilio SMS\"\n        - option \"FCM Push\"\n        - option \"Realtime In-App\"\n    - text: Plan tier\n    - combobox \"Plan tier\":\n      - option \"Enter plan tier\" [disabled]\n      - option \"free\"\n      - option \"growth\"\n      - option \"enterprise\" [selected]\n    - paragraph: Billing plan currently assigned to the organization.\n    - text: Ownership transferred at\n    - textbox \"Ownership transferred at\":\n      - /placeholder: Timestamp recording when ownership was last transferred.\n      - text: 2026-09-01T12:00\n    - paragraph: Timestamp recording when ownership was last transferred.\n    - text: Tag count\n    - spinbutton \"Tag count\": \"0\"\n    - paragraph: Computed number of tags assigned to the entity.\n    - text: Billing contact email\n    - textbox \"Billing contact email\":\n      - /placeholder: Enter billing contact email\n      - text: sunny.rivera@example.com\n    - paragraph: Primary contact email for invoicing and finance escalations.\n    - text: Label\n    - textbox \"Label\":\n      - /placeholder: Enter label\n      - text: Cedar Workspace\n    - paragraph: Human-readable display name rendered in primary surfaces.\n    - text: Placeholder\n    - textbox \"Placeholder\":\n      - /placeholder: Enter placeholder\n    - paragraph: Hint copy surfaced in form fields when the label is empty.\n    - text: Owner id\n    - textbox \"Owner id\":\n      - /placeholder: Enter owner id\n      - text: owner-003\n    - paragraph: Identifier of the owning principal scoped by owner_type.\n    - text: Owner type\n    - combobox \"Owner type\":\n      - option \"Parent Organization\"\n      - option \"Reseller\"\n      - option \"Platform\" [selected]\n    - paragraph: Categorical owner type sourced from the ownerTypes parameter.\n    - button \"Save\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nLocal workspace\nList\nDetail\nEdit\nTimeline\nPreference version\nSemVer mirror of preference_document.version for indexing and analytics.\nDomain\nVerified root domain associated with the organization.\nCedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "elementCount": 135,
+        "overflow": [],
+        "glyphWraps": [
+          {
+            "element": "p",
+            "text": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.",
+            "lines": [
+              "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed",
+              "by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline."
+            ]
+          }
+        ]
+      },
+      "values": [
+        {
+          "element": "preference_version",
+          "name": "Preference version",
+          "value": "2.0.0",
+          "checked": false
+        },
+        {
+          "element": "domain",
+          "name": "Domain",
+          "value": "cedar.example.com",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusProspectOnboardingActiveChurned",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Tag",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Street",
+          "value": "102 Main Street",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "City",
+          "value": "Springfield",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Region",
+          "value": "IL",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Postal Code",
+          "value": "62701",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "Namespacenotificationsdisplayprivacy",
+          "value": "notifications",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Preference Document",
+          "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "RoleOwnerApproverEditor",
+          "value": "11111111-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Assignee",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+          "value": "88888888-1111-4111-8111-111111111111",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+          "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-2-7",
+          "name": "Plan tier*",
+          "value": "enterprise",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Ownership transferred at",
+          "value": "2026-09-01T12:00",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Tag count*",
+          "value": "0",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Billing contact email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Label*",
+          "value": "Cedar Workspace",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Placeholder",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-8-23",
+          "name": "Owner id*",
+          "value": "owner-003",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-9-25",
+          "name": "Owner type*",
+          "value": "platform",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code\nPreference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Cedar Workspace\nStatus\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\nTags\nTag\nAddresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-ve-title-26",
+          "component": "FormLabelGroup",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "form-ve-title-27",
+          "component": "StatusSelector",
+          "text": "Status\nProspect\nOnboarding\nActive\nChurned\n\nCanonical lifecycle state derived from the states parameter. This is the single source of truth for the entity's current lifecycle position. Consumed by Colorized to resolve visual tokens, and by view extensions to render StatusBadge and StatusTimeline."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "TagInput",
+          "text": "Tags\nTag"
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "AddressEditor",
+          "text": "Addresses\nStreet\nCity\nRegion\nPostal Code"
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App\nPlan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization.\n\nOwnership transferred at\n\nTimestamp recording when ownership was last transferred.\n\nTag count\n*\n\nComputed number of tags assigned to the entity.\n\nBilling contact email\n\nPrimary contact email for invoicing and finance escalations.\n\nLabel\n*\n\nHuman-readable display name rendered in primary surfaces.\n\nPlaceholder\n\nHint copy surfaced in form fields when the label is empty.\n\nOwner id\n*\n\nIdentifier of the owning principal scoped by owner_type.\n\nOwner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document\nRole Assignment\nRole\nOwner\nApprover\nEditor\nAssignee\nTemplate Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-ve-field-0-30",
+          "component": "PreferenceEditor",
+          "text": "Preference Editor\nNamespace\nnotifications\ndisplay\nprivacy\nPreference Document"
+        },
+        {
+          "id": "form-ve-field-0-31",
+          "component": "RoleAssignmentForm",
+          "text": "Role Assignment\nRole\nOwner\nApprover\nEditor\nAssignee"
+        },
+        {
+          "id": "form-ve-field-0-32",
+          "component": "TemplatePicker",
+          "text": "Template Picker\nTemplate\nWelcome Email\nPassword Reset Email\nIn-App Notification\nChannel\nPrimary Email (SMTP)\nTwilio SMS\nFCM Push\nRealtime In-App"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Plan tier\n*\nEnter plan tier\nfree\ngrowth\nenterprise\n\nBilling plan currently assigned to the organization."
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Ownership transferred at\n\nTimestamp recording when ownership was last transferred."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Tag count\n*\n\nComputed number of tags assigned to the entity."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Billing contact email\n\nPrimary contact email for invoicing and finance escalations."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Label\n*\n\nHuman-readable display name rendered in primary surfaces."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Placeholder\n\nHint copy surfaced in form fields when the label is empty."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Owner id\n*\n\nIdentifier of the owning principal scoped by owner_type."
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Owner type\n*\nParent Organization\nReseller\nPlatform\n\nCategorical owner type sourced from the ownerTypes parameter."
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "1440.png",
+      "screenshotHash": "sha256:f50ca9161529660d0b4e7fe8ce468e79ea39120d9be0f936ab95ea076c28706e",
+      "dump": "1440.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Plan tier*",
+            "sameLine": true
+          },
+          {
+            "label": "Tag count*",
+            "sameLine": true
+          },
+          {
+            "label": "Label*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner id*",
+            "sameLine": true
+          },
+          {
+            "label": "Owner type*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Workspace",
+          "Addresses",
+          "Preference Editor",
+          "Role Assignment"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "preference_version",
+            "type": "text",
+            "value": "2.0.0",
+            "checked": false,
+            "required": false,
+            "label": "Preference version",
+            "width": 994,
+            "scrollWidth": 992,
+            "clientWidth": 992
+          },
+          {
+            "id": "domain",
+            "type": "text",
+            "value": "cedar.example.com",
+            "checked": false,
+            "required": false,
+            "label": "Domain",
+            "width": 994,
+            "scrollWidth": 992,
+            "clientWidth": 992
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusProspectOnboardingActiveChurned",
+            "component": "StatusSelector",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "prospect",
+                "label": "Prospect"
+              },
+              {
+                "value": "onboarding",
+                "label": "Onboarding"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "churned",
+                "label": "Churned"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Tag",
+            "component": "TagInput",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "102 Main Street",
+            "checked": false,
+            "required": false,
+            "label": "Street",
+            "component": "AddressEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "Springfield",
+            "checked": false,
+            "required": false,
+            "label": "City",
+            "component": "AddressEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "IL",
+            "checked": false,
+            "required": false,
+            "label": "Region",
+            "component": "AddressEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "62701",
+            "checked": false,
+            "required": false,
+            "label": "Postal Code",
+            "component": "AddressEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "notifications",
+            "required": false,
+            "label": "Namespacenotificationsdisplayprivacy",
+            "component": "PreferenceEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910,
+            "options": [
+              {
+                "value": "notifications",
+                "label": "notifications"
+              },
+              {
+                "value": "display",
+                "label": "display"
+              },
+              {
+                "value": "privacy",
+                "label": "privacy"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "{\n  \"version\": \"2.0.0\",\n  \"preferences\": {\n    \"notifications\": {\n      \"mention\": {\n        \"email\": true,\n        \"push\": true\n      }\n    },\n    \"display\": {},\n    \"privacy\": {}\n  },\n  \"metadata\": {\n    \"schemaVersion\": \"2.0.0\",\n    \"lastUpdated\": \"2026-09-01T12:00:00.000Z\",\n    \"source\": \"system\",\n    \"migrationApplied\": []\n  }\n}",
+            "required": false,
+            "label": "Preference Document",
+            "component": "PreferenceEditor",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "11111111-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "RoleOwnerApproverEditor",
+            "component": "RoleAssignmentForm",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910,
+            "options": [
+              {
+                "value": "11111111-1111-4111-8111-111111111111",
+                "label": "Owner"
+              },
+              {
+                "value": "22222222-2222-4222-8222-222222222222",
+                "label": "Approver"
+              },
+              {
+                "value": "33333333-3333-4333-8333-333333333333",
+                "label": "Editor"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Assignee",
+            "component": "RoleAssignmentForm",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "88888888-1111-4111-8111-111111111111",
+            "required": false,
+            "label": "TemplateWelcome EmailPassword Reset EmailIn-App Notification",
+            "component": "TemplatePicker",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910,
+            "options": [
+              {
+                "value": "88888888-1111-4111-8111-111111111111",
+                "label": "Welcome Email"
+              },
+              {
+                "value": "99999999-2222-4222-8222-222222222222",
+                "label": "Password Reset Email"
+              },
+              {
+                "value": "aaaaaaa1-3333-4333-8333-333333333333",
+                "label": "In-App Notification"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+            "required": false,
+            "label": "ChannelPrimary Email (SMTP)Twilio SMSFCM PushRealtime In-App",
+            "component": "TemplatePicker",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910,
+            "options": [
+              {
+                "value": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+                "label": "Primary Email (SMTP)"
+              },
+              {
+                "value": "55555555-eeee-4eee-8eee-eeeeeeeeeeee",
+                "label": "Twilio SMS"
+              },
+              {
+                "value": "66666666-ffff-4fff-8fff-ffffffffffff",
+                "label": "FCM Push"
+              },
+              {
+                "value": "77777777-0000-4000-8000-000000000000",
+                "label": "Realtime In-App"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-2-7",
+            "type": "select-one",
+            "value": "enterprise",
+            "required": true,
+            "label": "Plan tier*",
+            "component": "Select",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter plan tier"
+              },
+              {
+                "value": "free",
+                "label": "free"
+              },
+              {
+                "value": "growth",
+                "label": "growth"
+              },
+              {
+                "value": "enterprise",
+                "label": "enterprise"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "2026-09-01T12:00",
+            "checked": false,
+            "required": false,
+            "label": "Ownership transferred at",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "number",
+            "value": "0",
+            "checked": false,
+            "required": true,
+            "label": "Tag count*",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Billing contact email",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "text",
+            "value": "Cedar Workspace",
+            "checked": false,
+            "required": true,
+            "label": "Label*",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Placeholder",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-8-23",
+            "type": "text",
+            "value": "owner-003",
+            "checked": false,
+            "required": true,
+            "label": "Owner id*",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-9-25",
+            "type": "select-one",
+            "value": "platform",
+            "required": true,
+            "label": "Owner type*",
+            "component": "Select",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "parent_organization",
+                "label": "Parent Organization"
+              },
+              {
+                "value": "reseller",
+                "label": "Reseller"
+              },
+              {
+                "value": "platform",
+                "label": "Platform"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Organization/vue/timeline",
+      "width": 390,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Cedar Workspace\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Created\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Created · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nList\nDetail\nEdit\nTimeline\nCedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "elementCount": 33,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Created\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        }
+      ],
+      "screenshot": "390.png",
+      "screenshotHash": "sha256:bf9a5c5510ca26ba1c3b223cf890f5dbc707256850ab0f7b0c88f85963942aaf",
+      "dump": "390.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Workspace",
+          "State transitions"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Organization/vue/timeline",
+      "width": 820,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Cedar Workspace\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Created\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Created · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "elementCount": 34,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Created\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        }
+      ],
+      "screenshot": "820.png",
+      "screenshotHash": "sha256:f574e92012f97df9d56e82e5b5bdfdc8560bba7252ec2b74aac5925002f9c26c",
+      "dump": "820.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Workspace",
+          "State transitions"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Organization/vue/timeline",
+      "width": 1440,
+      "accessibility": "- main:\n  - paragraph: ORGANIZATION WORKSPACE\n  - heading \"Cedar Workspace\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Organization screen\":\n    - text: Cedar Workspace\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Created\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Created · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n  - status",
+      "visibleText": "ORGANIZATION WORKSPACE\n\nCedar Workspace\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "elementCount": 34,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Workspace\nCreated\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nState transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Workspace"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Created\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nCreated · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        }
+      ],
+      "screenshot": "1440.png",
+      "screenshotHash": "sha256:63424f0e7c48c90a440c156d85a2c3ed4300ec4d22bea022cf240550f00b8a3b",
+      "dump": "1440.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Workspace",
+          "State transitions"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    }
+  ]
+}

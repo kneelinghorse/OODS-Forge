@@ -1,0 +1,1921 @@
+{
+  "phase": "after",
+  "object": "Subscription",
+  "framework": "vue",
+  "errors": [],
+  "views": [
+    {
+      "context": "form",
+      "output": "Subscription/vue/form",
+      "width": 390,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Plan name\n    - textbox \"Plan name\": Cedar Plan\n    - text: Human-readable plan label shown in headers. Status\n    - combobox \"Status\":\n      - option \"Future\"\n      - option \"Trialing\"\n      - option \"Active\" [selected]\n      - option \"Paused\"\n      - option \"Pending Cancellation\"\n      - option \"Past Due\"\n      - option \"Unpaid\"\n      - option \"Terminated\"\n    - paragraph: Current lifecycle status of the subscription.\n    - group:\n      - heading \"Cancellation Form\" [level=3]\n      - text: Reason Code\n      - textbox \"Reason Code\"\n      - paragraph: Structured reason code chosen from the allowedReasons parameter.\n      - text: Reason\n      - textbox \"Reason\"\n      - paragraph: Free-form explanation captured during cancellation workflows.\n    - text: Billing interval\n    - combobox \"Billing interval\":\n      - option \"monthly\" [selected]\n      - option \"yearly\"\n    - paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n    - text: Billing amount USD\n    - textbox \"Billing amount\": \"99\"\n    - paragraph: Amount in USD\n    - checkbox \"Cancel at period end\"\n    - text: Cancel at period end\n    - paragraph: Whether the subscription will cancel at the natural billing period end.\n    - text: Cancellation requested at\n    - textbox \"Cancellation requested at\":\n      - /placeholder: Timestamp when cancellation was initiated.\n    - paragraph: Timestamp when cancellation was initiated.\n    - text: Currency\n    - textbox \"Currency\":\n      - /placeholder: Enter currency\n      - text: usd\n    - paragraph: ISO 4217 currency code used for billing.\n    - text: Payment method type\n    - combobox \"Payment method type\":\n      - option \"Enter payment method type\" [disabled]\n      - option \"card\"\n      - option \"ach\"\n      - option \"wire\" [selected]\n      - option \"invoice\"\n      - option \"other\"\n    - paragraph: Payment instrument category used for collection.\n    - text: Customer email\n    - textbox \"Customer email\":\n      - /placeholder: Enter customer email\n      - text: sunny.rivera@example.com\n    - paragraph: Billing contact email address.\n    - text: Last event\n    - combobox \"Last event\":\n      - option \"Billing Cycle Started\" [selected]\n      - option \"Billing Cycle Completed\"\n      - option \"Payment Received\"\n      - option \"Cancellation Requested\"\n    - paragraph: Lifecycle event associated with the most recent timestamp mutation.\n    - button \"Save\"\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nList\nDetail\nEdit\nTimeline\nPlan name\nHuman-readable plan label shown in headers.\nStatus\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "elementCount": 88,
+        "overflow": [],
+        "glyphWraps": [
+          {
+            "element": "p",
+            "text": "Current lifecycle status of the subscription.",
+            "lines": [
+              "Current lifecycle status of the",
+              "subscription."
+            ]
+          },
+          {
+            "element": "p",
+            "text": "Structured reason code chosen from the allowedReasons parameter.",
+            "lines": [
+              "Structured reason code chosen from",
+              "the allowedReasons parameter."
+            ]
+          },
+          {
+            "element": "p",
+            "text": "Free-form explanation captured during cancellation workflows.",
+            "lines": [
+              "Free-form explanation captured",
+              "during cancellation workflows."
+            ]
+          },
+          {
+            "element": "p",
+            "text": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+            "lines": [
+              "Recurrence cadence (monthly, yearly,",
+              "quarterly, etc.)."
+            ]
+          },
+          {
+            "element": "form-slot-field-1-5-help",
+            "text": "Whether the subscription will cancel at the natural billing period end.",
+            "lines": [
+              "Whether the subscription will cancel at the",
+              "natural billing period end."
+            ]
+          },
+          {
+            "element": "form-slot-field-3-13-help",
+            "text": "Timestamp when cancellation was initiated.",
+            "lines": [
+              "Timestamp when cancellation was",
+              "initiated."
+            ]
+          },
+          {
+            "element": "form-slot-field-5-17-help",
+            "text": "Payment instrument category used for collection.",
+            "lines": [
+              "Payment instrument category used for",
+              "collection."
+            ]
+          },
+          {
+            "element": "form-slot-field-7-21-help",
+            "text": "Lifecycle event associated with the most recent timestamp mutation.",
+            "lines": [
+              "Lifecycle event associated with the most",
+              "recent timestamp mutation."
+            ]
+          }
+        ]
+      },
+      "values": [
+        {
+          "element": "plan_name",
+          "name": "Plan name",
+          "value": "Cedar Plan",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Reason",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-27",
+          "name": "Billing amount",
+          "value": "99",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Payment method type",
+          "value": "wire",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Customer email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Last event*",
+          "value": "billing_cycle_started",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "",
+          "component": "Checkbox",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "390.png",
+      "screenshotHash": "sha256:f61d52f19906f40d603ea3af038658880de5fda31c69fbe18fa670a3566d758e",
+      "dump": "390.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Currency*",
+            "sameLine": true
+          },
+          {
+            "label": "Last event*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Plan",
+          "Cancellation Form"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "plan_name",
+            "type": "text",
+            "value": "Cedar Plan",
+            "checked": false,
+            "required": false,
+            "label": "Plan name",
+            "width": 324,
+            "scrollWidth": 322,
+            "clientWidth": 322
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+            "component": "StatusSelector",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "future",
+                "label": "Future"
+              },
+              {
+                "value": "trialing",
+                "label": "Trialing"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "paused",
+                "label": "Paused"
+              },
+              {
+                "value": "pending_cancellation",
+                "label": "Pending Cancellation"
+              },
+              {
+                "value": "past_due",
+                "label": "Past Due"
+              },
+              {
+                "value": "unpaid",
+                "label": "Unpaid"
+              },
+              {
+                "value": "terminated",
+                "label": "Terminated"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Reason Code",
+            "component": "CancellationForm",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "",
+            "required": false,
+            "label": "Reason",
+            "component": "CancellationForm",
+            "width": 242,
+            "scrollWidth": 240,
+            "clientWidth": 240
+          },
+          {
+            "id": "form-ve-field-0-26",
+            "type": "select-one",
+            "value": "monthly",
+            "required": false,
+            "label": "Billing interval",
+            "component": "BillingIntervalSelector",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "monthly",
+                "label": "monthly"
+              },
+              {
+                "value": "yearly",
+                "label": "yearly"
+              }
+            ]
+          },
+          {
+            "id": "form-ve-field-0-27",
+            "type": "text",
+            "value": "99",
+            "checked": false,
+            "required": false,
+            "label": "Billing amount",
+            "component": "BillingAmountInput",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-1-5",
+            "type": "checkbox",
+            "value": "on",
+            "checked": false,
+            "required": false,
+            "label": "Cancel at period end",
+            "component": "Checkbox",
+            "width": 13,
+            "scrollWidth": 13,
+            "clientWidth": 13
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Cancellation requested at",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "text",
+            "value": "usd",
+            "checked": false,
+            "required": true,
+            "label": "Currency*",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "select-one",
+            "value": "wire",
+            "required": false,
+            "label": "Payment method type",
+            "component": "Select",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter payment method type"
+              },
+              {
+                "value": "card",
+                "label": "card"
+              },
+              {
+                "value": "ach",
+                "label": "ach"
+              },
+              {
+                "value": "wire",
+                "label": "wire"
+              },
+              {
+                "value": "invoice",
+                "label": "invoice"
+              },
+              {
+                "value": "other",
+                "label": "other"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Customer email",
+            "component": "Input",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "select-one",
+            "value": "billing_cycle_started",
+            "required": true,
+            "label": "Last event*",
+            "component": "Select",
+            "width": 276,
+            "scrollWidth": 274,
+            "clientWidth": 274,
+            "options": [
+              {
+                "value": "billing_cycle_started",
+                "label": "Billing Cycle Started"
+              },
+              {
+                "value": "billing_cycle_completed",
+                "label": "Billing Cycle Completed"
+              },
+              {
+                "value": "payment_received",
+                "label": "Payment Received"
+              },
+              {
+                "value": "cancellation_requested",
+                "label": "Cancellation Requested"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "form",
+      "output": "Subscription/vue/form",
+      "width": 820,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Plan name\n    - textbox \"Plan name\": Cedar Plan\n    - text: Human-readable plan label shown in headers. Status\n    - combobox \"Status\":\n      - option \"Future\"\n      - option \"Trialing\"\n      - option \"Active\" [selected]\n      - option \"Paused\"\n      - option \"Pending Cancellation\"\n      - option \"Past Due\"\n      - option \"Unpaid\"\n      - option \"Terminated\"\n    - paragraph: Current lifecycle status of the subscription.\n    - group:\n      - heading \"Cancellation Form\" [level=3]\n      - text: Reason Code\n      - textbox \"Reason Code\"\n      - paragraph: Structured reason code chosen from the allowedReasons parameter.\n      - text: Reason\n      - textbox \"Reason\"\n      - paragraph: Free-form explanation captured during cancellation workflows.\n    - text: Billing interval\n    - combobox \"Billing interval\":\n      - option \"monthly\" [selected]\n      - option \"yearly\"\n    - paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n    - text: Billing amount USD\n    - textbox \"Billing amount\": \"99\"\n    - paragraph: Amount in USD\n    - checkbox \"Cancel at period end\"\n    - text: Cancel at period end\n    - paragraph: Whether the subscription will cancel at the natural billing period end.\n    - text: Cancellation requested at\n    - textbox \"Cancellation requested at\":\n      - /placeholder: Timestamp when cancellation was initiated.\n    - paragraph: Timestamp when cancellation was initiated.\n    - text: Currency\n    - textbox \"Currency\":\n      - /placeholder: Enter currency\n      - text: usd\n    - paragraph: ISO 4217 currency code used for billing.\n    - text: Payment method type\n    - combobox \"Payment method type\":\n      - option \"Enter payment method type\" [disabled]\n      - option \"card\"\n      - option \"ach\"\n      - option \"wire\" [selected]\n      - option \"invoice\"\n      - option \"other\"\n    - paragraph: Payment instrument category used for collection.\n    - text: Customer email\n    - textbox \"Customer email\":\n      - /placeholder: Enter customer email\n      - text: sunny.rivera@example.com\n    - paragraph: Billing contact email address.\n    - text: Last event\n    - combobox \"Last event\":\n      - option \"Billing Cycle Started\" [selected]\n      - option \"Billing Cycle Completed\"\n      - option \"Payment Received\"\n      - option \"Cancellation Requested\"\n    - paragraph: Lifecycle event associated with the most recent timestamp mutation.\n    - button \"Save\"\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nLocal workspace\nList\nDetail\nEdit\nTimeline\nPlan name\nHuman-readable plan label shown in headers.\nStatus\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "elementCount": 89,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [
+        {
+          "element": "plan_name",
+          "name": "Plan name",
+          "value": "Cedar Plan",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Reason",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-27",
+          "name": "Billing amount",
+          "value": "99",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Payment method type",
+          "value": "wire",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Customer email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Last event*",
+          "value": "billing_cycle_started",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "",
+          "component": "Checkbox",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "820.png",
+      "screenshotHash": "sha256:781363ec670b1e4e858111b32a28922d4290a273751f5c2cb64fe4717f83c3f7",
+      "dump": "820.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Currency*",
+            "sameLine": true
+          },
+          {
+            "label": "Last event*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Plan",
+          "Cancellation Form"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "plan_name",
+            "type": "text",
+            "value": "Cedar Plan",
+            "checked": false,
+            "required": false,
+            "label": "Plan name",
+            "width": 714,
+            "scrollWidth": 712,
+            "clientWidth": 712
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+            "component": "StatusSelector",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "future",
+                "label": "Future"
+              },
+              {
+                "value": "trialing",
+                "label": "Trialing"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "paused",
+                "label": "Paused"
+              },
+              {
+                "value": "pending_cancellation",
+                "label": "Pending Cancellation"
+              },
+              {
+                "value": "past_due",
+                "label": "Past Due"
+              },
+              {
+                "value": "unpaid",
+                "label": "Unpaid"
+              },
+              {
+                "value": "terminated",
+                "label": "Terminated"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Reason Code",
+            "component": "CancellationForm",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "",
+            "required": false,
+            "label": "Reason",
+            "component": "CancellationForm",
+            "width": 632,
+            "scrollWidth": 630,
+            "clientWidth": 630
+          },
+          {
+            "id": "form-ve-field-0-26",
+            "type": "select-one",
+            "value": "monthly",
+            "required": false,
+            "label": "Billing interval",
+            "component": "BillingIntervalSelector",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "monthly",
+                "label": "monthly"
+              },
+              {
+                "value": "yearly",
+                "label": "yearly"
+              }
+            ]
+          },
+          {
+            "id": "form-ve-field-0-27",
+            "type": "text",
+            "value": "99",
+            "checked": false,
+            "required": false,
+            "label": "Billing amount",
+            "component": "BillingAmountInput",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-1-5",
+            "type": "checkbox",
+            "value": "on",
+            "checked": false,
+            "required": false,
+            "label": "Cancel at period end",
+            "component": "Checkbox",
+            "width": 13,
+            "scrollWidth": 13,
+            "clientWidth": 13
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Cancellation requested at",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "text",
+            "value": "usd",
+            "checked": false,
+            "required": true,
+            "label": "Currency*",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "select-one",
+            "value": "wire",
+            "required": false,
+            "label": "Payment method type",
+            "component": "Select",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter payment method type"
+              },
+              {
+                "value": "card",
+                "label": "card"
+              },
+              {
+                "value": "ach",
+                "label": "ach"
+              },
+              {
+                "value": "wire",
+                "label": "wire"
+              },
+              {
+                "value": "invoice",
+                "label": "invoice"
+              },
+              {
+                "value": "other",
+                "label": "other"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Customer email",
+            "component": "Input",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "select-one",
+            "value": "billing_cycle_started",
+            "required": true,
+            "label": "Last event*",
+            "component": "Select",
+            "width": 666,
+            "scrollWidth": 664,
+            "clientWidth": 664,
+            "options": [
+              {
+                "value": "billing_cycle_started",
+                "label": "Billing Cycle Started"
+              },
+              {
+                "value": "billing_cycle_completed",
+                "label": "Billing Cycle Completed"
+              },
+              {
+                "value": "payment_received",
+                "label": "Payment Received"
+              },
+              {
+                "value": "cancellation_requested",
+                "label": "Cancellation Requested"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "form",
+      "output": "Subscription/vue/form",
+      "width": 1440,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Plan name\n    - textbox \"Plan name\": Cedar Plan\n    - text: Human-readable plan label shown in headers. Status\n    - combobox \"Status\":\n      - option \"Future\"\n      - option \"Trialing\"\n      - option \"Active\" [selected]\n      - option \"Paused\"\n      - option \"Pending Cancellation\"\n      - option \"Past Due\"\n      - option \"Unpaid\"\n      - option \"Terminated\"\n    - paragraph: Current lifecycle status of the subscription.\n    - group:\n      - heading \"Cancellation Form\" [level=3]\n      - text: Reason Code\n      - textbox \"Reason Code\"\n      - paragraph: Structured reason code chosen from the allowedReasons parameter.\n      - text: Reason\n      - textbox \"Reason\"\n      - paragraph: Free-form explanation captured during cancellation workflows.\n    - text: Billing interval\n    - combobox \"Billing interval\":\n      - option \"monthly\" [selected]\n      - option \"yearly\"\n    - paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n    - text: Billing amount USD\n    - textbox \"Billing amount\": \"99\"\n    - paragraph: Amount in USD\n    - checkbox \"Cancel at period end\"\n    - text: Cancel at period end\n    - paragraph: Whether the subscription will cancel at the natural billing period end.\n    - text: Cancellation requested at\n    - textbox \"Cancellation requested at\":\n      - /placeholder: Timestamp when cancellation was initiated.\n    - paragraph: Timestamp when cancellation was initiated.\n    - text: Currency\n    - textbox \"Currency\":\n      - /placeholder: Enter currency\n      - text: usd\n    - paragraph: ISO 4217 currency code used for billing.\n    - text: Payment method type\n    - combobox \"Payment method type\":\n      - option \"Enter payment method type\" [disabled]\n      - option \"card\"\n      - option \"ach\"\n      - option \"wire\" [selected]\n      - option \"invoice\"\n      - option \"other\"\n    - paragraph: Payment instrument category used for collection.\n    - text: Customer email\n    - textbox \"Customer email\":\n      - /placeholder: Enter customer email\n      - text: sunny.rivera@example.com\n    - paragraph: Billing contact email address.\n    - text: Last event\n    - combobox \"Last event\":\n      - option \"Billing Cycle Started\" [selected]\n      - option \"Billing Cycle Completed\"\n      - option \"Payment Received\"\n      - option \"Cancellation Requested\"\n    - paragraph: Lifecycle event associated with the most recent timestamp mutation.\n    - button \"Save\"\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nLocal workspace\nList\nDetail\nEdit\nTimeline\nPlan name\nHuman-readable plan label shown in headers.\nStatus\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "elementCount": 89,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [
+        {
+          "element": "plan_name",
+          "name": "Plan name",
+          "value": "Cedar Plan",
+          "checked": false
+        },
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "active",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "Reason",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "form-ve-field-0-27",
+          "name": "Billing amount",
+          "value": "99",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-5-17",
+          "name": "Payment method type",
+          "value": "wire",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-6-19",
+          "name": "Customer email",
+          "value": "sunny.rivera@example.com",
+          "checked": false
+        },
+        {
+          "element": "form-slot-field-7-21",
+          "name": "Last event*",
+          "value": "billing_cycle_started",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "form-screen",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "form-ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "",
+          "component": "Checkbox",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "form-form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "form-form-field-group-14",
+          "component": "Stack",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Currency\n*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "form-form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "form-form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "",
+          "component": "Input",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "form-form-field-group-20",
+          "component": "Stack",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "",
+          "component": "Select",
+          "text": "Last event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "1440.png",
+      "screenshotHash": "sha256:0d31ad6ebbc19907372809a7eddb09f2a70f61906e73b06260e793395afb68e1",
+      "dump": "1440.a11y.txt",
+      "craft": {
+        "requiredMarks": [
+          {
+            "label": "Currency*",
+            "sameLine": true
+          },
+          {
+            "label": "Last event*",
+            "sameLine": true
+          }
+        ],
+        "headings": [
+          "Cedar Plan",
+          "Cancellation Form"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          },
+          {
+            "text": "Save",
+            "type": "submit"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "plan_name",
+            "type": "text",
+            "value": "Cedar Plan",
+            "checked": false,
+            "required": false,
+            "label": "Plan name",
+            "width": 994,
+            "scrollWidth": 992,
+            "clientWidth": 992
+          },
+          {
+            "id": "",
+            "type": "select-one",
+            "value": "active",
+            "required": false,
+            "label": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+            "component": "StatusSelector",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "future",
+                "label": "Future"
+              },
+              {
+                "value": "trialing",
+                "label": "Trialing"
+              },
+              {
+                "value": "active",
+                "label": "Active"
+              },
+              {
+                "value": "paused",
+                "label": "Paused"
+              },
+              {
+                "value": "pending_cancellation",
+                "label": "Pending Cancellation"
+              },
+              {
+                "value": "past_due",
+                "label": "Past Due"
+              },
+              {
+                "value": "unpaid",
+                "label": "Unpaid"
+              },
+              {
+                "value": "terminated",
+                "label": "Terminated"
+              }
+            ]
+          },
+          {
+            "id": "",
+            "type": "text",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Reason Code",
+            "component": "CancellationForm",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "",
+            "type": "textarea",
+            "value": "",
+            "required": false,
+            "label": "Reason",
+            "component": "CancellationForm",
+            "width": 912,
+            "scrollWidth": 910,
+            "clientWidth": 910
+          },
+          {
+            "id": "form-ve-field-0-26",
+            "type": "select-one",
+            "value": "monthly",
+            "required": false,
+            "label": "Billing interval",
+            "component": "BillingIntervalSelector",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "monthly",
+                "label": "monthly"
+              },
+              {
+                "value": "yearly",
+                "label": "yearly"
+              }
+            ]
+          },
+          {
+            "id": "form-ve-field-0-27",
+            "type": "text",
+            "value": "99",
+            "checked": false,
+            "required": false,
+            "label": "Billing amount",
+            "component": "BillingAmountInput",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-1-5",
+            "type": "checkbox",
+            "value": "on",
+            "checked": false,
+            "required": false,
+            "label": "Cancel at period end",
+            "component": "Checkbox",
+            "width": 13,
+            "scrollWidth": 13,
+            "clientWidth": 13
+          },
+          {
+            "id": "form-slot-field-3-13",
+            "type": "datetime-local",
+            "value": "",
+            "checked": false,
+            "required": false,
+            "label": "Cancellation requested at",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-4-15",
+            "type": "text",
+            "value": "usd",
+            "checked": false,
+            "required": true,
+            "label": "Currency*",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-5-17",
+            "type": "select-one",
+            "value": "wire",
+            "required": false,
+            "label": "Payment method type",
+            "component": "Select",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "",
+                "label": "Enter payment method type"
+              },
+              {
+                "value": "card",
+                "label": "card"
+              },
+              {
+                "value": "ach",
+                "label": "ach"
+              },
+              {
+                "value": "wire",
+                "label": "wire"
+              },
+              {
+                "value": "invoice",
+                "label": "invoice"
+              },
+              {
+                "value": "other",
+                "label": "other"
+              }
+            ]
+          },
+          {
+            "id": "form-slot-field-6-19",
+            "type": "email",
+            "value": "sunny.rivera@example.com",
+            "checked": false,
+            "required": false,
+            "label": "Customer email",
+            "component": "Input",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944
+          },
+          {
+            "id": "form-slot-field-7-21",
+            "type": "select-one",
+            "value": "billing_cycle_started",
+            "required": true,
+            "label": "Last event*",
+            "component": "Select",
+            "width": 946,
+            "scrollWidth": 944,
+            "clientWidth": 944,
+            "options": [
+              {
+                "value": "billing_cycle_started",
+                "label": "Billing Cycle Started"
+              },
+              {
+                "value": "billing_cycle_completed",
+                "label": "Billing Cycle Completed"
+              },
+              {
+                "value": "payment_received",
+                "label": "Payment Received"
+              },
+              {
+                "value": "cancellation_requested",
+                "label": "Cancellation Requested"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Subscription/vue/timeline",
+      "width": 390,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Cedar Plan $99.00 · monthly\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Billing Cycle Started\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n      - listitem:\n        - region \"Payment event\":\n          - strong: Last payment\n          - time: Sep 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n      - listitem:\n        - region \"Payment event\":\n          - strong: Next payment\n          - time: Oct 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Billing Cycle Started · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n    - article \"Cancellation event\":\n      - heading \"Cancellation event\" [level=3]\n      - paragraph: No events recorded.\n    - article \"Archive events\":\n      - heading \"Archive events\" [level=3]\n      - list:\n        - listitem:\n          - strong: Archived\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n        - listitem:\n          - strong: Restored\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nList\nDetail\nEdit\nTimeline\nCedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "elementCount": 60,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Plan"
+        },
+        {
+          "id": "timeline-timeline-header-1-billing",
+          "component": "BillingSummaryBadge",
+          "text": "$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Billing Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-1",
+          "component": "Card",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-1",
+          "component": "PaymentEventTimeline",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-2",
+          "component": "Card",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-2",
+          "component": "PaymentEventTimeline",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-ve-entry-0-15",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "CancellationEvent",
+          "text": "Cancellation event\n\nNo events recorded."
+        },
+        {
+          "id": "timeline-ve-entry-0-18",
+          "component": "ArchiveEvent",
+          "text": "Archive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        }
+      ],
+      "screenshot": "390.png",
+      "screenshotHash": "sha256:72cf9fa6a72d829fc51b93e4abce63923daabb6e80ff34ffbf32dac1c17cff6b",
+      "dump": "390.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Plan",
+          "State transitions",
+          "Cancellation event",
+          "Archive events"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Subscription/vue/timeline",
+      "width": 820,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Cedar Plan $99.00 · monthly\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Billing Cycle Started\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n      - listitem:\n        - region \"Payment event\":\n          - strong: Last payment\n          - time: Sep 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n      - listitem:\n        - region \"Payment event\":\n          - strong: Next payment\n          - time: Oct 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Billing Cycle Started · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n    - article \"Cancellation event\":\n      - heading \"Cancellation event\" [level=3]\n      - paragraph: No events recorded.\n    - article \"Archive events\":\n      - heading \"Archive events\" [level=3]\n      - list:\n        - listitem:\n          - strong: Archived\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n        - listitem:\n          - strong: Restored\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "elementCount": 61,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Plan"
+        },
+        {
+          "id": "timeline-timeline-header-1-billing",
+          "component": "BillingSummaryBadge",
+          "text": "$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Billing Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-1",
+          "component": "Card",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-1",
+          "component": "PaymentEventTimeline",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-2",
+          "component": "Card",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-2",
+          "component": "PaymentEventTimeline",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-ve-entry-0-15",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "CancellationEvent",
+          "text": "Cancellation event\n\nNo events recorded."
+        },
+        {
+          "id": "timeline-ve-entry-0-18",
+          "component": "ArchiveEvent",
+          "text": "Archive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        }
+      ],
+      "screenshot": "820.png",
+      "screenshotHash": "sha256:9ec239a853e601927f34203b916424becb2a6ccd5b82625b94d3bf3cf7559882",
+      "dump": "820.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Plan",
+          "State transitions",
+          "Cancellation event",
+          "Archive events"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    },
+    {
+      "context": "timeline",
+      "output": "Subscription/vue/timeline",
+      "width": 1440,
+      "accessibility": "- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Cedar Plan\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - text: Cedar Plan $99.00 · monthly\n    - list \"Lifecycle history\":\n      - listitem:\n        - strong: Billing Cycle Started\n        - time: Sep 1, 2026, 12:00 PM\n        - paragraph: Record created\n      - listitem:\n        - region \"Payment event\":\n          - strong: Last payment\n          - time: Sep 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n      - listitem:\n        - region \"Payment event\":\n          - strong: Next payment\n          - time: Oct 1, 2026, 12:00 PM\n          - paragraph: $99.00 · monthly\n    - article \"State transitions\":\n      - heading \"State transitions\" [level=3]\n      - list:\n        - listitem:\n          - strong: Billing Cycle Started · Active\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n          - paragraph: \"Reason: Record created\"\n    - article \"Cancellation event\":\n      - heading \"Cancellation event\" [level=3]\n      - paragraph: No events recorded.\n    - article \"Archive events\":\n      - heading \"Archive events\" [level=3]\n      - list:\n        - listitem:\n          - strong: Archived\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n        - listitem:\n          - strong: Restored\n          - paragraph:\n            - time: Sep 1, 2026, 12:00 PM\n  - status",
+      "visibleText": "SUBSCRIPTION WORKSPACE\n\nCedar Plan\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM",
+      "measurements": {
+        "bodyBackground": "oklch(0.985 0.002339 265)",
+        "chartCanvasFills": [],
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "elementCount": 61,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [],
+      "regions": [
+        {
+          "id": "timeline-screen",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-screen-timeline-14",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly\n\nState transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-timeline-header-1",
+          "component": "Stack",
+          "text": "Cedar Plan\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-header-1-title",
+          "component": "Text",
+          "text": "Cedar Plan"
+        },
+        {
+          "id": "timeline-timeline-header-1-billing",
+          "component": "BillingSummaryBadge",
+          "text": "$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-0",
+          "component": "Card",
+          "text": "Billing Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-1",
+          "component": "Card",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-1",
+          "component": "PaymentEventTimeline",
+          "text": "Last payment\nSep 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-entry-2",
+          "component": "Card",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-ve-entry-0-17-2",
+          "component": "PaymentEventTimeline",
+          "text": "Next payment\nOct 1, 2026, 12:00 PM\n\n$99.00 · monthly"
+        },
+        {
+          "id": "timeline-timeline-entries-13-trait-events",
+          "component": "Stack",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        },
+        {
+          "id": "timeline-ve-entry-0-15",
+          "component": "StateTransitionEvent",
+          "text": "State transitions\nBilling Cycle Started · Active\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created"
+        },
+        {
+          "id": "timeline-ve-entry-0-16",
+          "component": "CancellationEvent",
+          "text": "Cancellation event\n\nNo events recorded."
+        },
+        {
+          "id": "timeline-ve-entry-0-18",
+          "component": "ArchiveEvent",
+          "text": "Archive events\nArchived\n\nSep 1, 2026, 12:00 PM\n\nRestored\n\nSep 1, 2026, 12:00 PM"
+        }
+      ],
+      "screenshot": "1440.png",
+      "screenshotHash": "sha256:983c9d275362303055449da85f09b3bf093ad66c08d8e12db0c93ddeacdc433c",
+      "dump": "1440.a11y.txt",
+      "craft": {
+        "requiredMarks": [],
+        "headings": [
+          "Cedar Plan",
+          "State transitions",
+          "Cancellation event",
+          "Archive events"
+        ],
+        "actions": [
+          {
+            "text": "List",
+            "type": "button"
+          },
+          {
+            "text": "Detail",
+            "type": "button"
+          },
+          {
+            "text": "Edit",
+            "type": "button"
+          },
+          {
+            "text": "Timeline",
+            "type": "button"
+          }
+        ],
+        "inputs": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "acceptedSource": "5d3a2f4d3794fa03c3eeff8589f9b0cfc289679b",
+  "builderSelfCertified": false,
+  "note": "Source identifiers name the implementation checkpoint represented by each test; tests ran before those source commits. Later changes reran affected suites, and accepted browser proofs use the final source.",
+  "tests": [
+    {
+      "suite": "focused MCP",
+      "log": "logs/oods-s198-m04-mcp-final.log",
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "d897fa33",
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/codegen/form-seeds.s198.spec.ts test/codegen/form-detail.s189.spec.ts test/codegen/detail-craft.s198.spec.ts test/codegen/list-craft.s198.spec.ts test/codegen/collections.s189.spec.ts"
+    },
+    {
+      "suite": "final affected forms",
+      "log": "logs/oods-s198-m04-form-final.log",
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "5d3a2f4d3794fa03c3eeff8589f9b0cfc289679b",
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/codegen/form-seeds.s198.spec.ts"
+    },
+    {
+      "suite": "React",
+      "log": "logs/oods-s198-m04-react-tests.log",
+      "passed": 635,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "d897fa33",
+      "command": "pnpm --filter @oods/components-react test"
+    },
+    {
+      "suite": "Vue final",
+      "log": "logs/oods-s198-m04-vue-final.log",
+      "passed": 620,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "5d3a2f4d3794fa03c3eeff8589f9b0cfc289679b",
+      "command": "pnpm --filter @oods/components-vue test"
+    },
+    {
+      "suite": "contracts",
+      "log": "logs/oods-s198-m04-contract-tests-final.log",
+      "passed": 145,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "040682eb",
+      "command": "pnpm --filter @oods/component-contracts test"
+    },
+    {
+      "suite": "styles",
+      "log": "logs/oods-s198-m04-style-final.log",
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "d897fa33",
+      "command": "pnpm --filter @oods/component-styles test"
+    },
+    {
+      "suite": "design-loop",
+      "log": "logs/oods-s198-m04-design-loop-tests-final.log",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "040682eb",
+      "command": "pnpm exec vitest run tests/design-loop"
+    },
+    {
+      "suite": "parsers/traits",
+      "log": "logs/oods-s198-m04-trait-tests.log",
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0,
+      "sourceCheckpoint": "040682eb",
+      "command": "pnpm exec vitest run tests/parsers tests/traits/authable.test.ts tests/traits/preferenceable.test.ts tests/traits/communication/communication-trait.test.ts"
+    }
+  ],
+  "checks": [
+    {
+      "name": "root types",
+      "exitCode": 0,
+      "log": "logs/oods-s198-m04-root-types-accepted.log"
+    },
+    {
+      "name": "MCP types",
+      "exitCode": 0,
+      "log": "logs/oods-s198-m04-types-accepted.log"
+    },
+    {
+      "name": "schema generation",
+      "exitCode": 0,
+      "log": "logs/oods-s198-m04-schema-check.log"
+    },
+    {
+      "name": "docs check",
+      "exitCode": 0,
+      "log": "logs/oods-s198-m04-docs-check-accepted.log"
+    },
+    {
+      "name": "browser verifier",
+      "exitCode": 0,
+      "log": "logs/oods-s198-m04-verification-accepted.log"
+    },
+    {
+      "name": "all timeline-capable seeded records",
+      "exitCode": 0,
+      "objects": 17,
+      "records": 170,
+      "emptyEvents": 0,
+      "log": "logs/oods-s198-m04-timeline-seeds.log"
+    }
+  ]
+}
