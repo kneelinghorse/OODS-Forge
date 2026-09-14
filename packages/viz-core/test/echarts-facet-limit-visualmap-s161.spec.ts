@@ -41,11 +41,11 @@ function limitedFacetHeatmap(layout: Record<string, unknown>): NormalizedVizSpec
 // The ECharts-drawn cells: base dataset rows whose site is referenced by a rendered panel filter.
 function echartsDrawnMax(spec: NormalizedVizSpec): number {
   const o = toEChartsOption(spec) as {
-    dataset: { source?: Record<string, unknown>[]; fromDatasetId?: string; transform?: { config: { value: unknown } }[] }[];
+    dataset: { source?: Record<string, unknown>[]; fromDatasetId?: string; transform?: { config: { dimension: string; eq: unknown } }[] }[];
   };
   const panelSites = o.dataset
     .filter((d) => d.fromDatasetId !== undefined)
-    .flatMap((p) => (p.transform ?? []).map((t) => t.config.value));
+    .flatMap((p) => (p.transform ?? []).filter((t) => t.config.dimension === 'site').map((t) => t.config.eq));
   const source = o.dataset[0].source ?? [];
   const drawn = source.filter((r) => panelSites.includes(r.site));
   return Math.max(...drawn.map((r) => Number(r.temp)));

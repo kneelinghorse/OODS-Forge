@@ -37,7 +37,7 @@
 export type ColorScaleType = 'quantize' | 'quantile' | 'threshold' | 'linear' | 'ordinal' | 'diverging';
 
 /** Size scale types for symbol encoding. */
-export type SizeScaleType = 'linear' | 'sqrt' | 'log';
+export type SizeScaleType = 'linear' | 'sqrt' | 'log' | 'area';
 
 /** Symbol shape types. */
 export type SymbolShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'cross';

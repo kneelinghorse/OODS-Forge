@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildBubbleSeries } from '../adapters/spatial/echarts-bubble-adapter.js';
 import { buildFlowLineSeries } from '../adapters/spatial/echarts-flow-line-adapter.js';
-import type { SpatialSpec, SymbolLayer, RouteLayer } from '../spec/spatial.js';
+import type { SizeScaleType, SpatialSpec, SymbolLayer, RouteLayer } from '../spec/spatial.js';
 import { ECHARTS_ACCURACY_RULES, evaluateEChartsAccuracyRules, echartsAccuracyRulesFor } from './echarts-index.js';
 import type { EChartsAccuracyChartType, EChartsAccuracyOperand } from './echarts-types.js';
 
@@ -41,35 +41,51 @@ describe.each([
   });
 });
 
-describe('OODS-V169 public bubble radius scaling', () => {
-  it('distinguishes varying data from its one-property constant-domain twin', () => {
-    expect(check('OODS-V169', 'bubble_map', bubble([point(1), point(4, 3)]))).toMatchObject({ evaluated: true, message: expect.stringContaining('linear symbol diameter') });
-    expect(check('OODS-V169', 'bubble_map', bubble([point(1), point(1, 3)]))).toEqual({ evaluated: true });
+function drawnBubbles(rows: Row[], scale: SizeScaleType = 'area'): EChartsAccuracyOperand {
+  const layer: SymbolLayer = { type: 'symbol', encoding: { longitude: { field: 'lng' }, latitude: { field: 'lat' }, size: { field: 'size', scale } } };
+  const spec: SpatialSpec = { id: 'accuracy-bubbles', type: 'spatial', data: { values: [] }, layers: [layer], a11y: { description: 'Magnitude is encoded by area.' } };
+  return { chartType: 'bubble_map', branchData: bubble(rows), option: { series: [buildBubbleSeries(spec, layer, rows, undefined).series] } };
+}
+const areaRule = (operand: EChartsAccuracyOperand) => ECHARTS_ACCURACY_RULES.find((rule) => rule.code === 'OODS-V169')!.evaluate(operand);
+
+describe('OODS-V169 measures public bubble areas from the built option', () => {
+  it.each([[0, 1, 4], [874, 646], [4], [0, 0], [4, 4], [0.3, 0.1 + 0.2], [1e-12, 4e-12], [1e12, 4e12]])('preserves magnitude ratios for %j', (...values) => {
+    expect(areaRule(drawnBubbles(values.map((value, index) => point(value, index))))).toEqual({ evaluated: true });
   });
-  it('includes zero in a varying domain; one point and a constant zero domain have no size contrast', () => {
-    expect(check('OODS-V169', 'bubble_map', bubble([point(0), point(4, 3)]))).toHaveProperty('message');
-    expect(check('OODS-V169', 'bubble_map', bubble([point(4)]))).toEqual({ evaluated: true });
-    expect(check('OODS-V169', 'bubble_map', bubble([point(0), point(0, 3)]))).toEqual({ evaluated: true });
+  it.each(['linear', 'sqrt'] as const)('mutation: reverting the actual adapter to %s and its minimum anchor/floor fires V169', (scale) => {
+    const rows = [point(1), point(2.5, 3), point(4, 5)];
+    expect(areaRule(drawnBubbles(rows, scale))).toMatchObject({ evaluated: true, message: expect.stringContaining('drawn symbol diameters') });
+    expect(areaRule(drawnBubbles(rows))).toEqual({ evaluated: true });
   });
-  it('requires resolved non-negative values; no data means no inferred scale pass', () => {
-    for (const input of [{}, bubble([]), bubble([point(-1), point(-4)]), bubble([point(1), point(undefined)])]) {
-      expect(check('OODS-V169', 'bubble_map', input)).toMatchObject({ evaluated: false, note: expect.any(String) });
+  it('pins zero area, proportional areas and the maximum diameter from actual emitted numbers', () => {
+    const operand = drawnBubbles([point(0), point(1, 3), point(4, 5)]);
+    const data = (operand.option as any).series[0].data;
+    expect(data.map((item: any) => item.symbolSize)).toEqual([0, 14, 28]);
+    data[1].symbolSize = 6;
+    expect(areaRule(operand)).toHaveProperty('message');
+  });
+  it('a zero-only domain cannot draw a nonzero magnitude', () => {
+    const operand = drawnBubbles([point(0)]);
+    (operand.option as any).series[0].data[0].symbolSize = 17;
+    expect(areaRule(operand)).toHaveProperty('message');
+  });
+  it('requires data, the built option, row correspondence and numeric circular diameters', () => {
+    const valid = drawnBubbles([point(1), point(4, 3)]);
+    for (const operand of [{ ...valid, option: undefined }, { ...valid, branchData: {} }, { ...valid, option: { series: [] } }]) {
+      expect(areaRule(operand)).toMatchObject({ evaluated: false, note: expect.any(String) });
     }
-  });
-  it('ignores an unsupported sizeScale property just as the public builder does', () => {
-    expect(check('OODS-V169', 'bubble_map', { ...bubble([point(1), point(4, 3)]), sizeScale: 'sqrt' })).toHaveProperty('message');
-  });
-  it('does not hide tiny source differences that the adapter expands to its full diameter range', () => {
-    expect(check('OODS-V169', 'bubble_map', bubble([point(100), point(100 + 5e-8, 3)]))).toHaveProperty('message');
-    expect(check('OODS-V169', 'bubble_map', bubble([point(0.3), point(0.1 + 0.2, 3)]))).toHaveProperty('message');
-  });
-  it('pins the actual public-shaped adapter diameter interpolation without changing its pixels', () => {
-    const layer: SymbolLayer = { type: 'symbol', encoding: { longitude: { field: 'lng' }, latitude: { field: 'lat' }, size: { field: 'size' } } };
-    const spec: SpatialSpec = { id: 'accuracy-bubbles', type: 'spatial', data: { values: [] }, layers: [layer], a11y: { description: 'Sizes 1, 2.5 and 4.' } };
-    const data = buildBubbleSeries(spec, layer, [point(1), point(2.5, 3), point(4, 5)], undefined).series.data as unknown as Array<{ symbolSize: number }>;
-    expect(data.map((datum) => datum.symbolSize)).toEqual([6, 17, 28]);
-    // Value increments are equal, area increments are not: this is the actual distortion.
-    expect(17 ** 2 - 6 ** 2).not.toBe(28 ** 2 - 17 ** 2);
+    for (const mutation of [
+      (data: any[]) => { data.pop(); },
+      (data: any[]) => { data.reverse(); },
+      (data: any[]) => { delete data[0].symbolSize; },
+      (data: any[]) => { data[0].symbolSize = [14, 28]; },
+      (data: any[]) => { data[0].symbolSize = () => 14; },
+    ]) {
+      const operand = JSON.parse(JSON.stringify(valid)) as EChartsAccuracyOperand;
+      mutation((operand.option as any).series[0].data);
+      expect(areaRule(operand)).toMatchObject({ evaluated: false, note: expect.any(String) });
+    }
+    for (const rows of [[], [point(-1)], [point(undefined)]]) expect(areaRule(drawnBubbles(rows))).toHaveProperty('evaluated', false);
   });
 });
 
@@ -160,7 +176,7 @@ describe('OODS-V173 public graph relationship multiplicity', () => {
 describe('s195 accuracy mutation discriminators and purity', () => {
   const red: Array<[string, EChartsAccuracyOperand]> = [
     ['OODS-V168', { chartType: 'bubble_map', branchData: bubble([point(-1)]) }],
-    ['OODS-V169', { chartType: 'bubble_map', branchData: bubble([point(1), point(4, 3)]) }],
+    ['OODS-V169', drawnBubbles([point(1), point(4, 3)], 'linear')],
     ['OODS-V170', { chartType: 'bubble_map', branchData: bubble([point(1), point(2)]) }],
     ['OODS-V171', { chartType: 'flow_map', branchData: flow([route(-1)]) }],
     ['OODS-V172', { chartType: 'flow_map', branchData: flow([route(), route()]) }],

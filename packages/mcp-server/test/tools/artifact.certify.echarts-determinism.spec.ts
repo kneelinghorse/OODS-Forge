@@ -88,18 +88,17 @@ describe('artifact.certify — the ECharts determinism verdict SHAPE (s172 m02)'
     async (_label, operand) => {
       const { certified } = await renderThenCertify(operand);
       expect(certified.coverage).toBe('certified');
-      expect(certified.conformant).toBe(operand.chartType !== 'bubble_map');
-      const accuracyFindings = operand.chartType === 'bubble_map'
-        ? [{ code: 'OODS-V169', severity: 'error' }] : [];
+      expect(certified.conformant).toBe(true);
+      const accuracyFindings: Array<{ code: string; severity: string }> = [];
       expect(certified.findings?.map((f) => ({ code: f.code, severity: f.severity }))).toEqual(
         [...accuracyFindings, ...RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType]],
       );
       expect(certified.pillars).toEqual({
         a11yEquivalence: 'pass', determinism: 'pass',
         contrast: operand.branch === 'geo' ? 'exempt' : 'pass',
-        accuracy: operand.chartType === 'bubble_map' ? 'fail' : 'pass',
+        accuracy: 'pass',
       });
-      expect(certified.accuracySummary?.failing).toBe(operand.chartType === 'bubble_map' ? 1 : 0);
+      expect(certified.accuracySummary?.failing).toBe(0);
     },
   );
 

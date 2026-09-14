@@ -1,4 +1,6 @@
 import type { TokenScope } from '../echarts/token-resolver.js';
+// Sprint-199 adds the public zero-anchored area scale. The src/viz browser copy
+// remains unchanged; its legacy size scales and browser closure are outside this headless contract.
 // Bubble-map (symbol) ECharts adapter (sprint-112 m01 port).
 // Ported from src/viz/adapters/spatial/echarts-bubble-adapter.ts; only the imports
 // are repointed (slim spatial spec + local tooltip config) and echarts is a
@@ -132,6 +134,17 @@ export function buildSizeFunction(
 ): (value: unknown) => number {
   const [minValue, maxValue] = domain;
   const [minSize, maxSize] = range;
+
+  // s199: circle area is proportional to magnitude, anchored at zero. A singleton
+  // positive domain uses maxSize; an all-zero domain draws no magnitude.
+  if (scale === 'area') {
+    return (value: unknown): number => {
+      const numeric = Array.isArray(value) ? coerceNumber(value[2]) : coerceNumber(value);
+      return numeric !== null && numeric > 0 && maxValue > 0
+        ? maxSize * Math.sqrt(Math.min(numeric / maxValue, 1))
+        : 0;
+    };
+  }
 
   if (minValue === maxValue) {
     const size = (minSize + maxSize) / 2;

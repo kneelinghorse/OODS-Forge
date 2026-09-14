@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { globSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { assertRendererFidelity } from './renderer-fidelity.js';
 import { assertNormalizedVizSpec } from '@oods/viz-core';
 
 // ============================================================================
 // Sprint-156 m07 — the KEYSTONE anti-rot gate (band-fork M4, SSOT memo §3 m07).
-// Two invariants that a live-schema change (or a hand-edited fixture) must never
+// Three invariants that a live-schema change (or a hand-edited fixture) must never
 // silently break:
 //   (1) every canonical example fixture validates against the LIVE runtime schema
 //       (assertNormalizedVizSpec) — so a fixture rots loudly, at CI, not in a demo;
@@ -14,6 +16,8 @@ import { assertNormalizedVizSpec } from '@oods/viz-core';
 //       runtime AJV copy (packages/viz-core/src/spec) and the Generator-B type-gen
 //       source (schemas/viz) — so they can never drift (the s156 diverging/y2 work
 //       edited both copies by hand; this pins that discipline).
+//   (3) every selected renderer preserves each declared mark channel; ECharts
+//       bands also preserve the actual endpoint values (s199).
 //
 // SCOPE (Derek-ratified 2026-07-20, AskUserQuestion): the CANONICAL corpus —
 // examples/viz/patterns-v2 + examples/viz/patterns (32 fixtures, all valid after
@@ -28,9 +32,12 @@ import { assertNormalizedVizSpec } from '@oods/viz-core';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, '../../..');
 
+// Optional immutable Git corpus is used only to retain the before-fix red proof.
+const FIXTURE_REF = process.env.OODS_EXAMPLES_REF;
 const CANONICAL_GLOBS = ['examples/viz/patterns-v2/**/*.spec.json', 'examples/viz/patterns/**/*.spec.json'];
 
 function canonicalFixtures(): string[] {
+  if (FIXTURE_REF) return execFileSync('git', ['ls-tree', '-r', '--name-only', FIXTURE_REF, '--', 'examples/viz/patterns-v2', 'examples/viz/patterns'], { cwd: REPO_ROOT, encoding: 'utf8' }).trim().split('\n').filter((file) => file.endsWith('.spec.json')).map((file) => path.join(REPO_ROOT, file));
   const files = CANONICAL_GLOBS.flatMap((pattern) => globSync(path.join(REPO_ROOT, pattern)));
   // Deterministic order so a failure names a stable file across machines.
   return [...new Set(files)].sort();
@@ -47,11 +54,12 @@ describe('s156 m07 — canonical example fixtures validate against the live sche
 
   for (const file of fixtures) {
     const rel = path.relative(REPO_ROOT, file);
-    it(`${rel} is a valid NormalizedVizSpec`, () => {
-      const spec = JSON.parse(readFileSync(file, 'utf8'));
+    it(`${rel} is valid and preserves selected-renderer channels`, () => {
+      const spec = JSON.parse(FIXTURE_REF ? execFileSync('git', ['show', `${FIXTURE_REF}:${rel}`], { cwd: REPO_ROOT, encoding: 'utf8' }) : readFileSync(file, 'utf8'));
       // The fixtures are top-level NormalizedVizSpec objects (no `.spec` wrapper) — feed the
       // whole parsed JSON directly. Throws NormalizedVizSpecError with per-path AJV errors on rot.
       expect(() => assertNormalizedVizSpec(spec)).not.toThrow();
+      assertRendererFidelity(spec);
     });
   }
 });

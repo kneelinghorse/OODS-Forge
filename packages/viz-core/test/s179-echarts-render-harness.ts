@@ -306,7 +306,7 @@ function buildGeoOption(
         encoding: {
           longitude: { field: geo.longitudeField },
           latitude: { field: geo.latitudeField },
-          ...(geo.sizeField ? { size: { field: geo.sizeField } } : {}),
+          ...(geo.sizeField ? { size: { field: geo.sizeField, scale: 'area' } } : {}),
           ...(geo.colorField
             ? {
                 color: {

@@ -70,33 +70,43 @@ export function evaluateBubbleNegativeSize(operand: EChartsAccuracyOperand): Acc
   return magnitude(operand, 'sizeField');
 }
 
-/**
- * OODS-V169 — the public builder passes size:{field}, without a scale. The adapter
- * consequently interpolates DIAMETER linearly across the value domain; visible area
- * squares that interpolation. A constant finite domain has no relative size contrast
- * to distort. Missing/invalid magnitudes do not establish this precondition (V168
- * owns invalid values). An unrecognized sizeScale property cannot bypass this rule:
- * the public builder does not consume it either.
- */
+/** OODS-V169 — independently measure the emitted circular diameters, never the scale factory. */
 export function evaluateBubbleRadiusScaling(operand: EChartsAccuracyOperand): AccuracyRuleOutcome {
   const branch = branchOf(operand);
   const rows = rowsOf(branch);
   const field = fieldOf(branch, 'sizeField');
-  if (!rows || !field) return unresolved('The bubble size scale and values');
+  if (!rows || !field) return unresolved('The bubble size field and rows');
   const values = rows.map((row) => numeric(row[field]));
-  const finite = values.filter((value): value is number => value !== undefined && value >= 0);
-  const first = finite[0];
-  // The adapter's degenerate-domain check is exact. Even an epsilon-sized source
-  // difference expands to its full diameter range, so tolerance here would hide
-  // precisely the most exaggerated size contrast.
-  if (first !== undefined && finite.some((value) => first !== value)) {
-    return {
-      evaluated: true,
-      message: `artifact.certify: bubble_map encodes varying "${field}" values with the public renderer's default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override.`,
-    };
+  if (!values.every((value): value is number => value !== undefined && value >= 0)) {
+    return unresolved(`Some bubble size values in "${field}"`);
   }
-  if (finite.length !== rows.length) return unresolved(`Some bubble size values in "${field}"`);
-  return { evaluated: true };
+  const option = record(operand.option) ? operand.option : undefined;
+  const series = option && Array.isArray(option.series)
+    ? option.series.filter((entry) => record(entry) && entry.type === 'scatter' && entry.coordinateSystem === 'geo')
+    : [];
+  if (series.length !== 1 || !record(series[0])) return unresolved('The built bubble scatter series');
+  const scatter = series[0];
+  if (!Array.isArray(scatter.data) || scatter.data.length !== rows.length) return unresolved('The built bubble rows');
+  const diameters: number[] = [];
+  for (let index = 0; index < rows.length; index++) {
+    const item = scatter.data[index];
+    if (!record(item) || !Array.isArray(item.value) || numeric(item.value[2]) !== values[index]) {
+      return unresolved('The correspondence between input and built bubble rows');
+    }
+    const size = item.symbolSize ?? scatter.symbolSize;
+    // The public adapter emits scalar circular diameters, not callbacks or ellipses.
+    if (typeof size !== 'number' || !Number.isFinite(size) || size < 0) return unresolved('The drawn bubble diameters');
+    diameters.push(size);
+  }
+  const maxValue = Math.max(...values);
+  const maxDiameter = Math.max(...diameters);
+  const distorted = maxValue === 0 ? diameters.some((diameter) => diameter !== 0)
+    : maxDiameter === 0 || values.some((value, index) =>
+      differsBeyondTolerance((diameters[index] / maxDiameter) ** 2, value / maxValue));
+  return distorted ? {
+    evaluated: true,
+    message: `artifact.certify: bubble_map drawn symbol diameters do not preserve area ratios for "${field}". Squared diameter ratios must equal magnitude ratios, and zero values must draw zero area.`,
+  } : { evaluated: true };
 }
 
 function coordinates(row: Row, fields: readonly string[]): number[] | undefined {

@@ -16,7 +16,7 @@
 // POSITIVE detection. An operand it cannot resolve is `evaluated:false` with a note —
 // never a pass, never a finding.
 //
-// WHY THE RULES READ THE BRANCH AND NOT THE EMITTED OPTION: for several of these the
+// WHY MOST RULES READ THE BRANCH: for several of these the
 // distortion's PROVENANCE is erased by emission. A sankey node with an explicit `value`
 // and one whose value was computed from its links are indistinguishable in the option —
 // both are just `{name, value}`. Only the branch says which it was.
@@ -50,13 +50,15 @@ export type EChartsAccuracyChartType =
   | 'flow_map';
 
 /**
- * The operand: which chart type, and the tool-input data branch for it. This is the whole
- * of what an ECharts-side rule may read — plus nothing else. No render step, no rebuild
+ * The operand: which chart type, and the tool-input data branch for it. The optional built
+ * option allows size rules to measure actual drawing operands. No render step, no rebuild
  * (#110 holds on this side too).
  */
 export interface EChartsAccuracyOperand {
   readonly chartType: EChartsAccuracyChartType;
   readonly branchData: unknown;
+  /** Already-built, projected drawing operand; rules never rebuild it. */
+  readonly option?: unknown;
 }
 
 export interface EChartsAccuracyRule {
