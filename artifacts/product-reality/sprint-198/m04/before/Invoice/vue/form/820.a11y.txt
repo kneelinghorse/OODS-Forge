@@ -1,0 +1,59 @@
+- main:
+  - paragraph: INVOICE WORKSPACE
+  - heading "invoice-003" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Invoice screen":
+    - text: Last event
+    - textbox "Last event": created
+    - text: Lifecycle event associated with the most recent timestamp mutation. Subscription id
+    - textbox "Subscription id": subscription-id sample 3
+    - text: Subscription identifier this invoice is associated with. Provider
+    - textbox "Provider": provider sample 3
+    - text: Source system providing invoice data.
+    - heading "Billing contact name" [level=1]
+    - text: Status
+    - textbox "Status":
+      - /placeholder: Enter status
+      - text: status sample 3
+    - paragraph: Canonical invoice status after provider mapping.
+    - text: Issued at
+    - textbox "Issued at":
+      - /placeholder: Timestamp when the invoice was finalized or posted.
+      - text: 2026-01-01T00:00
+    - paragraph: Timestamp when the invoice was finalized or posted.
+    - text: Currency
+    - textbox "Currency":
+      - /placeholder: Enter currency
+      - text: usd
+    - paragraph: ISO 4217 currency for the invoice.
+    - text: Collection state
+    - textbox "Collection state"
+    - paragraph: Dunning phase or retry program detail presented to success teams.
+    - text: Attempt count
+    - spinbutton "Attempt count": "0"
+    - paragraph: "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries."
+    - text: Aging bucket days
+    - spinbutton "Aging bucket days": "0"
+    - paragraph: Number of days outstanding grouped for aging reports.
+    - text: Refund policy url
+    - textbox "Refund policy url":
+      - /placeholder: Enter refund policy url
+    - paragraph: Link to customer facing refund or cancellation policy.
+    - text: Invoice number
+    - textbox "Invoice number":
+      - /placeholder: Enter invoice number
+      - text: invoice-number sample 3
+    - paragraph: Human readable invoice identifier presented to customers.
+    - text: Total minor
+    - spinbutton "Total minor": "0"
+    - paragraph: Total amount due expressed in minor currency units.
+    - text: Balance minor
+    - spinbutton "Balance minor": "0"
+    - paragraph: Remaining amount outstanding in minor units.
+    - button "Save"
+  - status

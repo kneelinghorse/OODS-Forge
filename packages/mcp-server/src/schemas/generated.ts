@@ -308,6 +308,14 @@ export namespace A11yScanInputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
 }
 export type A11yScanInput = A11yScanInputSchema.A11YScanInput;
@@ -1645,6 +1653,14 @@ export namespace CodeGenerateInputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   export interface ReleaseEvidenceItem {
     status: 'passed';
@@ -3515,6 +3531,14 @@ export namespace DesignComposeOutputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   export interface SlotSelection {
     slotName: string;
@@ -6229,6 +6253,14 @@ export namespace ReplOutputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   /**
    * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
@@ -6619,6 +6651,14 @@ export namespace ReplRenderInputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   /**
    * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
@@ -6971,6 +7011,14 @@ export namespace ReplRenderOutputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   /**
    * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
@@ -7241,6 +7289,14 @@ export namespace UiSchemaSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
 }
 export type UiSchema = UiSchemaSchema.UiSchema;
@@ -7526,6 +7582,14 @@ export namespace ReplValidateInputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   /**
    * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
@@ -7858,6 +7922,14 @@ export namespace ReplValidateOutputSchema {
      * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
      */
     semanticType?: string;
+    /**
+     * Declared field default, with trait parameter defaults resolved during composition.
+     */
+    default?: unknown;
+    /**
+     * Authored example values for deterministic previews; does not change the production default.
+     */
+    examples?: unknown[];
   }
   /**
    * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.

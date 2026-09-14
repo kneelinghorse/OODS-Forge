@@ -40,6 +40,8 @@ export interface SchemaField {
   default?: unknown;
   description?: string;
   validation?: Record<string, unknown>;
+  examples?: readonly unknown[];
+  defaultFromParameter?: string;
 }
 
 /**

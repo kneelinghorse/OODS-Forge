@@ -15,6 +15,7 @@ const walk = (node: UiElement, visit: (node: UiElement) => void): void => { visi
 /** Reconcile the public form/detail trees after trait placement and field wiring. */
 export function reconcileFormDetail(schema: UiSchema, context: string, composed: ComposedObject, tabLabels?: string[]): void {
   if (context === 'form') {
+    const fields = schema.objectSchema ?? {};
     const owned = new Set<string>();
     for (const screen of schema.screens) walk(screen, node => {
       for (const directive of owners[node.component] ?? []) {
@@ -23,10 +24,22 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       }
     });
     for (const screen of schema.screens) walk(screen, node => {
+      // A field wired into a title slot is still editable data, not the form heading.
+      const titleField = node.props?.field;
+      if (node.component === 'DetailHeader' && typeof titleField === 'string' && fields[titleField]) {
+        node.component = 'Input';
+        node.props = { field: titleField };
+      }
       node.children = node.children?.filter(child => !(controls.has(child.component) && !owners[child.component] && owned.has(String(child.props?.field))));
       const field = node.props?.field;
       const entry = typeof field === 'string' ? schema.objectSchema?.[field] : undefined;
       if (entry && controls.has(node.component)) {
+        const type = entry.type.replace(/\?$/, '');
+        // Selector heuristics must not turn names/status codes into paragraphs,
+        // or a timezone/period label into a native date input.
+        if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions/.test(String(field))) node.component = 'Input';
+        if (node.component === 'DatePicker' && !['date', 'datetime'].includes(type)) node.component = 'Input';
+        if (entry.enum?.length && ['Input', 'Textarea'].includes(node.component)) { node.component = 'Select'; node.props = { field }; }
         node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label ? fieldLabel(field as string) : node.props.label, ...(entry.description ? { help: entry.description } : {}) };
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
           node.component = 'Input'; node.props.type = 'datetime-local';

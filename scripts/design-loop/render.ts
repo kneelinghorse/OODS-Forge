@@ -5,6 +5,8 @@ import { handle as generate } from '../../packages/mcp-server/src/tools/code.gen
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { deriveConsumerModel } from '../product-reality/s185-m04-consumer-contract.js';
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
+import type { UiElement } from '../../packages/mcp-server/src/schemas/generated.js';
+import { recordCollectionEvents } from '@oods/component-contracts';
 import { snakeToCamel } from '../../packages/mcp-server/src/codegen/binding-utils.js';
 import { DEFAULT_PORT, ROOT, digest, loopRequest, outputDirectory, validateReceipt, verifyTheme, writeJson, type RenderInput } from './common.js';
 
@@ -25,14 +27,24 @@ export async function render(input: RenderInput) {
   const schemaHash = digest(JSON.stringify(composition.schema));
   const model = deriveConsumerModel(composition.schema, input.model);
   if (Array.isArray(input.model?.rows)) model.collectionQuery = { page: 1, pageSize: Math.max(10, input.model.rows.length), total: input.model.rows.length };
-  if (input.compose.context === 'list' && input.compose.object && !Object.hasOwn(input.model ?? {}, 'rows')) {
+  if (input.compose.context !== 'workflow' && input.compose.object && input.compose.object !== 'Chunk') {
     // The preview uses the same object/trait seed policy as its workflow app.
     // Generated standalone components still receive rows through their public API.
     const workflow = await compose({ ...input.compose, context: 'workflow' });
     if (workflow.status !== 'ok') throw new Error(`List seed composition failed: ${JSON.stringify(workflow.errors)}`);
     const records = workflowSampleRecords(workflow.schema).filter(record => !record.is_archived);
-    model.rows = records.map(record => Object.fromEntries(Object.entries(record).map(([key, value]) => [snakeToCamel(key), value])));
-    model.collectionQuery = { page: 1, pageSize: 10, total: records.length };
+    const rows = records.map(record => Object.fromEntries(Object.entries(record).map(([key, value]) => [snakeToCamel(key), value])));
+    Object.assign(model, rows[2] ?? rows[0], input.model);
+    if (input.compose.context === 'timeline' && !Object.hasOwn(input.model ?? {}, 'events')) {
+      const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
+      const payment = nodes(composition.schema.screens).find(node => node.component === 'PaymentEventTimeline');
+      const payments = payment ? [{ field: payment.props?.lastPaymentField, title: 'Last payment' }, { field: payment.props?.nextPaymentField, title: 'Next payment' }].filter((entry): entry is { field: string; title: string } => typeof entry.field === 'string') : [];
+      model.events = recordCollectionEvents(records[2] ?? records[0]!, { payments, minorUnits: workflow.schema.workflow?.data.minorUnits });
+    }
+    if (input.compose.context === 'list' && !Object.hasOwn(input.model ?? {}, 'rows')) {
+      model.rows = rows;
+      model.collectionQuery = { page: 1, pageSize: 10, total: records.length };
+    }
   }
   const sourceHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
   const receipts = [];

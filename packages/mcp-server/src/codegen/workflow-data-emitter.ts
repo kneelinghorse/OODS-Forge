@@ -2,100 +2,124 @@ import { chartNodes } from './chart-declaration.js';
 import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
 
-/** Seed every declared field; enum values and trait parameters remain the authority. */
-export function workflowSampleRecords(schema: UiSchema): Array<Record<string, unknown>> {
+/** One deterministic preview policy. Authored examples/defaults and enums own domain values. */
+export function workflowSampleData(schema: UiSchema): { records: Array<Record<string, unknown>>; seedTable: Array<{ recordId: string; field: string; value: unknown; rule: string }> } {
   const fields = schema.objectSchema ?? {};
   const workflow = schema.workflow ?? {
     object: 'Record',
-    data: {
-      idField: Object.keys(fields).find(name => name.endsWith('_id')) ?? 'id',
-      lifecycleStates: fields.status?.enum ?? [],
-      billingIntervals: fields.billing_interval?.enum ?? ['monthly'],
-      currency: 'USD',
-      sampleCount: 1,
-      recordedEvents: [],
-      addressRoles: [] as string[],
-      defaultAddressRole: 'primary',
-      cancellationReasonCodes: [],
-    },
+    data: { idField: Object.keys(fields).find(name => name.endsWith('_id')) ?? 'id', lifecycleStates: fields.status?.enum ?? [], billingIntervals: fields.billing_interval?.enum ?? ['monthly'], currency: 'USD', sampleCount: 1, recordedEvents: [], addressRoles: [] as string[], defaultAddressRole: 'primary', cancellationReasonCodes: [], minorUnits: 100 },
   };
   const { idField, lifecycleStates, billingIntervals, currency, sampleCount } = workflow.data;
-  const charts = chartNodes(schema.screens).map(node => node.chart!);
-  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
-  const seedValue = (name: string, field: FieldSchemaEntry, index: number): unknown => {
-    const chart = charts.find(chart => chart.source === 'record-array' && chart.dataField === name);
-    if (chart?.source === 'record-array') return structuredClone(chart.sampleRows);
-    if (name === idField) return `${workflow.object.toLowerCase()}-${String(index + 1).padStart(3, '0')}`;
-    if (name === titleField) return `${workflow.object} ${String(index + 1).padStart(2, '0')}`;
-    if (name === 'status' && lifecycleStates.length) return lifecycleStates[index % lifecycleStates.length];
-    if (name === 'billing_interval' && billingIntervals.length) return billingIntervals[index % billingIntervals.length];
-    if (name === 'last_event') return workflow.data.recordedEvents?.[index % Math.max(1, workflow.data.recordedEvents.length)] ?? 'created';
-    if (name === 'currency') return currency;
-    if (name === 'amount') return (index + 1) * 1900;
-    if (name === 'is_archived') return index === sampleCount - 1;
-    if (name === 'state_history') return [{ from: null, to: lifecycleStates[index % Math.max(1, lifecycleStates.length)] ?? 'created', at: '2026-01-01T00:00:00.000Z', reason: 'Sample record created' }];
-    if (field.type === 'AddressableEntry[]') return [{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: '2026-09-01T12:00:00.000Z' }];
-    if (schema.workflow && name === 'default_address_role') return workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary';
-    if (schema.workflow && name === 'address_roles') return [workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'];
-    if (field.enum?.length) return field.enum[index % field.enum.length];
-    if (field.type === 'uuid') return `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`;
-    if (field.type.endsWith('[]') || field.type === 'array') return [];
-    if (field.type === 'object') return {};
-    if (field.type === 'boolean') return false;
-    if (field.type === 'integer' || field.type === 'number') return 0;
-    if (/email/.test(name + field.type)) return `customer${index + 1}@example.com`;
-    if (/(_at|_start|_end)$/.test(name) || /date|time/.test(field.type)) {
-      if (name === 'archived_at') return index === sampleCount - 1 ? '2026-01-15T00:00:00.000Z' : null;
-      return name.endsWith('_end') ? '2026-02-01T00:00:00.000Z' : '2026-01-01T00:00:00.000Z';
-    }
-    if (field.required && field.type === 'string') return `${name.replace(/_/g, '-')} sample ${index + 1}`;
-    return field.type.endsWith('?') ? null : '';
-  };
   const seedAt = '2026-09-08T12:00:00.000Z';
+  const charts = chartNodes(schema.screens).map(node => node.chart!);
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? idField;
   const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+  const labels = ['Northstar', 'Harbor', 'Cedar', 'Summit', 'Orchard', 'Willow', 'Atlas', 'Meadow', 'Juniper', 'Brook'];
+  const names = ['Anika Bhatt', 'Milo Chen', 'Sunny Rivera', 'Ada Morgan', 'Theo Reed', 'Lena Park', 'Sam Brooks', 'Nora Patel', 'Eli Stone', 'Maya Silva'];
+  const seedTable: Array<{ recordId: string; field: string; value: unknown; rule: string }> = [];
   const chart = charts.find(chart => chart.source === 'payment-events');
-  const creationEvent = workflow.data.recordedEvents?.find(event => /creat|start/.test(event)) ?? workflow.data.recordedEvents?.[0] ?? 'created';
+  const eventNames = workflow.data.recordedEvents?.length ? workflow.data.recordedEvents : fields.last_event?.enum ?? [];
+  const creationEvent = eventNames.find(event => /creat|start/.test(event)) ?? eventNames[0] ?? 'created';
   const records = Array.from({ length: sampleCount }, (_, index) => {
-    const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]));
+    const rules: Record<string, string> = {};
+    const label = labels[index % labels.length]!;
+    const suffix = String(index + 1).padStart(3, '0');
+    const seedValue = (name: string, field: FieldSchemaEntry): unknown => {
+      const value = (result: unknown, rule: string) => { rules[name] = rule; return structuredClone(result); };
+      const type = field.type.replace(/\?$/, '');
+      const declaredChart = charts.find(chart => chart.source === 'record-array' && chart.dataField === name);
+      if (declaredChart?.source === 'record-array') return value(declaredChart.sampleRows, 'authored chart rows');
+      if (field.examples?.length) return value(field.examples[index % field.examples.length], 'authored field example');
+      if (name === idField) return value(`${workflow.object.toLowerCase()}-${suffix}`, 'stable object record key');
+      if (field.enum?.length) return value(field.enum[index % field.enum.length], 'declared field enum');
+      if (name === 'status' && lifecycleStates.length) return value(lifecycleStates[index % lifecycleStates.length], 'declared lifecycle state');
+      if (name === 'billing_interval' && billingIntervals.length) return value(billingIntervals[index % billingIntervals.length], 'declared billing interval');
+      if (name === 'currency') return value(currency, 'declared billing currency');
+      if (name === 'is_archived') return value(index === sampleCount - 1, 'last record exercises archive view');
+      if (name === titleField || /^(?:name|display_name|billing_contact_name)$/.test(name)) return value(/name/.test(name) && name !== 'plan_name' ? names[index % names.length] : `${label} ${/plan/.test(name) ? 'Plan' : 'Workspace'}`, 'deterministic display name');
+      if (name === 'amount' || name.endsWith('_minor')) return value([19, 49, 99, 149, 249][index % 5]! * (workflow.data.minorUnits ?? 100), 'tier price in declared minor units');
+      if (type === 'AddressableEntry[]') return value([{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: seedAt }], 'declared address role and deterministic postal address');
+      if (name === 'default_address_role') return value(workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', 'declared address role');
+      if (name === 'address_roles') return value([workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'], 'declared address role');
+      if (field.default !== undefined) return value(field.default, 'declared field or trait parameter default');
+      if (type === 'uuid') return value(`00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, 'deterministic UUID reference');
+      if (type.endsWith('[]') || type === 'array') return value([], 'empty optional collection without authored examples');
+      if (type === 'object' || type.startsWith('Record<') || /^[A-Z]/.test(type)) return value({}, 'structured document without authored default');
+      if (type === 'boolean') return value(false, 'boolean default');
+      if (type === 'integer' || type === 'number') return value(/count$/.test(name) ? index + 1 : 0, 'deterministic count or zero metric');
+      if (/email/.test(name + type)) return value(`${names[index % names.length]!.toLowerCase().replaceAll(' ', '.')}@example.com`, 'reserved example email');
+      if (name === 'timezone') return value('UTC', 'preview timezone');
+      if (name === 'domain') return value(`${label.toLowerCase()}.example.com`, 'reserved example domain');
+      if (type === 'url' || name.endsWith('_url')) return value(`https://${label.toLowerCase()}.example.com/${name.replace(/_url$/, '').replaceAll('_', '-')}`, 'reserved example URL');
+      if (type === 'date' || type === 'datetime' || /(?:_at|_start|_end)$/.test(name)) return value(type === 'date' ? '2026-09-01' : name.endsWith('_end') ? '2026-10-01T12:00:00.000Z' : '2026-09-01T12:00:00.000Z', 'shared September preview period');
+      if (name.endsWith('_id')) return value(`${name.replace(/_id$/, '').replaceAll('_', '-')}-${suffix}`, 'stable related-record key');
+      if (name.endsWith('_number')) return value(`${name.replace(/_number$/, '').toUpperCase()}-2026-${suffix}`, 'readable sequential document number');
+      if (name === 'status') return value('active', 'open status vocabulary preview');
+      if (name === 'provider') return value('Internal billing', 'provider display name');
+      if (name === 'billing_interval') return value('monthly', 'monthly cadence fallback');
+      if (name.endsWith('_code')) return value(`${label.toLowerCase()}_${suffix}`, 'stable display code');
+      if (name === 'unit_label') return value('seat', 'unit display label');
+      if (name === 'collection_state') return value('Current', 'collection progress label');
+      if (field.required) return value(humanize(name), 'human-readable required field fallback');
+      return value(field.type.endsWith('?') ? null : '', 'optional absent value');
+    };
+    const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field)]));
     const ended = ['ended', 'terminated', 'cancelled', 'canceled'].includes(String(record.status));
     const cancelling = ended || record.status === 'pending_cancellation';
     const interval = String(record.billing_interval ?? 'monthly');
     const months = interval === 'yearly' ? 12 : interval === 'quarterly' ? 3 : 1;
     const start = new Date(interval === 'yearly' ? '2026-03-01T12:00:00Z' : interval === 'quarterly' ? '2026-08-01T12:00:00Z' : '2026-09-01T12:00:00Z');
     if (ended) start.setUTCMonth(start.getUTCMonth() - months);
-    const end = new Date(start);
-    end.setUTCMonth(end.getUTCMonth() + months);
+    const end = new Date(start); end.setUTCMonth(end.getUTCMonth() + months);
     const startAt = start.toISOString(), endAt = end.toISOString();
-    const assign = (name: string, value: unknown) => { if (Object.hasOwn(fields, name)) record[name] = value; };
-    assign('created_at', startAt);
-    assign('updated_at', startAt);
-    assign('last_event_at', startAt);
+    const assign = (name: string, value: unknown, rule = 'record lifecycle and billing period at fixed seed date') => { if (Object.hasOwn(fields, name)) { record[name] = value; rules[name] = rule; } };
+    for (const name of ['created_at', 'updated_at', 'last_event_at', 'last_payment_at']) assign(name, startAt);
     assign('last_event', creationEvent);
-    assign('last_payment_at', startAt);
     assign('next_payment_due_at', endAt);
-    assign('current_period_start', startAt);
-    assign('current_period_end', endAt);
+    assign('current_period_start', startAt); assign('current_period_end', endAt);
     assign('current_period_progress', ended ? 1 : (Date.parse(seedAt) - start.getTime()) / (end.getTime() - start.getTime()));
-    assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, title: humanize(creationEvent), reason: 'Sample record created' }]);
+    assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, title: humanize(creationEvent), reason: 'Record created' }]);
     assign('cancel_at_period_end', record.status === 'pending_cancellation');
     for (const name of Object.keys(fields).filter(name => name.startsWith('cancellation_'))) delete record[name];
     if (cancelling) {
-      assign('cancellation_reason', 'Subscription no longer needed');
+      assign('cancellation_reason', 'Service no longer needed');
       assign('cancellation_reason_code', workflow.data.cancellationReasonCodes?.[0] ?? 'customer_request');
       assign('cancellation_requested_at', ended ? endAt : startAt);
     }
+    // Line-item prices are authoritative when an object authors a chart dataset.
+    const items = Array.isArray(record.line_items) ? record.line_items as Array<Record<string, unknown>> : [];
+    const subtotal = items.length ? items.reduce((sum, item) => sum + Number(item.amount_minor ?? 0), 0) : Number(record.amount_minor ?? record.amount ?? record.subtotal_minor ?? record.total_minor ?? 0);
+    if (fields.total_minor) {
+      assign('subtotal_minor', subtotal, 'sum of authored line amounts or record price');
+      assign('discount_minor', 0, 'no preview discount');
+      assign('tax_minor', 0, 'no preview tax');
+      assign('total_minor', subtotal, 'subtotal minus discount plus tax');
+      assign('balance_minor', record.status === 'paid' ? 0 : subtotal, 'unpaid remainder of total');
+    }
     if (record.is_archived) assign('archived_at', '2026-09-07T12:00:00.000Z');
+    if (fields.preference_document) {
+      const namespaces = Array.isArray(record.preference_namespaces) ? record.preference_namespaces.map(String) : [];
+      const document = record.preference_document && typeof record.preference_document === 'object' ? record.preference_document as Record<string, unknown> : {};
+      const preferences = document.preferences && typeof document.preferences === 'object' ? document.preferences as Record<string, unknown> : {};
+      const metadata = { schemaVersion: record.preference_version ?? '1.0.0', lastUpdated: startAt, source: 'system', migrationApplied: [] };
+      assign('preference_document', { version: metadata.schemaVersion, preferences: Object.fromEntries(namespaces.map(namespace => [namespace, preferences[namespace] ?? {}])), metadata }, 'declared preference namespaces/version with shared timestamp');
+      assign('preference_metadata', metadata, 'preference document metadata');
+    }
     if (chart?.source === 'payment-events') {
-      // Four recorded payments, in minor units, ending at the last payment date.
       record.payment_history = [0.8, 1.1, 0.9, 1].map((factor, paymentIndex) => {
-        const at = new Date(String(record[chart.dateFields[0]!]));
-        at.setUTCMonth(at.getUTCMonth() - (3 - paymentIndex));
+        const at = new Date(String(record[chart.dateFields[0]!])); at.setUTCMonth(at.getUTCMonth() - (3 - paymentIndex));
         return { at: at.toISOString(), amount: Math.round(Number(record[chart.amountField]) * factor) };
       });
+      rules.payment_history = 'four recorded payments proportional to record price';
     }
+    for (const [field, value] of Object.entries(record)) seedTable.push({ recordId: String(record[idField]), field, value: structuredClone(value), rule: rules[field]! });
     return record;
   });
-  return records;
+  return { records, seedTable };
+}
+
+export function workflowSampleRecords(schema: UiSchema): Array<Record<string, unknown>> {
+  return workflowSampleData(schema).records;
 }
 
 export function workflowDataFiles(schema: UiSchema): Array<{ path: string; contents: string }> {
@@ -119,7 +143,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const camelProps = Object.keys(fields).map((name) => `  ${snakeToCamel(name)}: record[${JSON.stringify(name)}],`).join('\n');
   return [
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
-    { path: 'src/store.ts', contents: `import { chronologicalEvents, billingSummary, type CollectionEvent } from '@oods/component-contracts';
+    { path: 'src/store.ts', contents: `import { recordCollectionEvents, type CollectionEvent } from '@oods/component-contracts';
 import { sampleData } from './sample-data';
 ${chartNodes(schema.screens).length ? "import { chartSvgByRecord } from './chart-assets';" : ''}
 
@@ -155,17 +179,7 @@ export function history(record: DomainRecord): HistoryEntry[] {
   return Array.isArray(value) ? value.filter((entry): entry is HistoryEntry => !!entry && typeof entry === 'object' && typeof entry.to === 'string' && typeof entry.at === 'string') : [];
 }
 export function collectionEvents(record: DomainRecord): CollectionEvent[] {
-  const values = record as Record<string, unknown>;
-  const source = values[${JSON.stringify(eventCollection?.historyField ?? '')}];
-  const events: CollectionEvent[] = Array.isArray(source) ? source.flatMap((entry, index) => {
-    if (!entry || typeof entry !== 'object' || typeof entry.at !== 'string' || typeof entry.to !== 'string') return [];
-    return [{ id: 'state-' + index, title: entry.title ?? entry.to.split(/[_-]/).filter(Boolean).map((part: string) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '), at: entry.at, description: String(entry.reason ?? ''), kind: 'state' as const }];
-  }) : [];
-  for (const source of ${JSON.stringify(paymentSources)} as Array<{ field: string; title: string }>) {
-    const at = values[source.field];
-    if (typeof at === 'string') events.push({ id: 'payment-' + source.field, title: source.title, at, description: billingSummary(Number(values.amount), String(values.currency), ${workflow.data.minorUnits}, String(values.billing_interval)), kind: 'payment' });
-  }
-  return chronologicalEvents(events);
+  return recordCollectionEvents(record, ${JSON.stringify({ historyField: eventCollection?.historyField, payments: paymentSources, minorUnits: workflow.data.minorUnits })});
 }
 export function createStore(options: StoreOptions = {}) {
   let records = structuredClone(options.seed ?? (options.empty ? [] : sampleData));

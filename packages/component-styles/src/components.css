@@ -1308,3 +1308,17 @@
   background: var(--cmp-surface-panel, var(--sys-surface-raised));
   color: var(--cmp-text-body, var(--sys-text-primary));
 }
+
+/* Form labels and required marks share one line in both framework field frames. */
+.form-field__label,
+.oods-field > .oods-field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.oods-field.oods-checkbox,
+div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-columns: minmax(0, 1fr); }
+.oods-field.oods-checkbox > label,
+.oods-field > label.oods-checkbox { display: flex; align-items: center; gap: 0.5rem; }
+.oods-field :is(input[type='checkbox'], .form-field__checkbox) { margin: 0; flex: 0 0 auto; }
+.workflow-field > input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; }

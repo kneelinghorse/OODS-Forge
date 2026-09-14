@@ -38,10 +38,16 @@ describe('Design-loop observations remain evidence rather than repaired output',
     expect(rows).toHaveLength(9);
     expect(model.collectionQuery).toEqual({ page: 1, pageSize: 10, total: rows.length });
     expect(new Set(rows.map(row => row.subscriptionId)).size).toBe(rows.length);
-    expect(rows.every(row => !row.isArchived && String(row.planName).startsWith('Subscription '))).toBe(true);
+    expect(rows.every(row => !row.isArchived && / Plan$/.test(String(row.planName)))).toBe(true);
+    for (const context of ['form', 'detail', 'timeline'] as const) {
+      await render({ compose: { object: 'Subscription', context }, framework: 'react', output });
+      expect(requests.at(-1)!.model.planName).toBe(rows[2]!.planName);
+      expect(requests.at(-1)!.model.amount).toBe(rows[2]!.amount);
+      if (context === 'timeline') expect((requests.at(-1)!.model.events as Array<{ title: string }>).some(event => event.title === 'Last payment')).toBe(true);
+    }
     await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output, model: { rows: [], collectionQuery: { total: 0 }, uiState: 'empty' } });
-    expect(requests[1]!.model.rows).toEqual([]);
-    expect(requests[1]!.model.collectionQuery).toEqual({ total: 0 });
+    expect(requests.at(-1)!.model.rows).toEqual([]);
+    expect(requests.at(-1)!.model.collectionQuery).toEqual({ total: 0 });
   });
   it('retains actual browser graphics descendants instead of guessing from authored DOM roles', async () => {
     const replies: Record<string, unknown> = {

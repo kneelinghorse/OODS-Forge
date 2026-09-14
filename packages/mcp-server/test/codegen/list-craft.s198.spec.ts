@@ -36,6 +36,9 @@ describe('s198 standalone list craft stays at the producer boundary', () => {
   });
   it.each(['react', 'vue'] as const)('%s derives open string status choices from actual rows', async framework => {
     const { schema } = await compose({ object: 'User', context: 'list' });
+    // User now resolves Stateful's declared enum; explicitly exercise an open vocabulary.
+    delete schema.objectSchema!.status!.enum;
+    walk(schema.screens).find(node => node.collectionControl === 'filter')!.props!.options = [{ value: '', label: 'All states' }];
     const result = await generate({ schema, framework, profile: 'build' });
     expect(result.code).toContain("rows.map(function(row) { return String(row.status ?? ''); })");
     expect(result.code).toContain("collectionQuery.status ?? ''");

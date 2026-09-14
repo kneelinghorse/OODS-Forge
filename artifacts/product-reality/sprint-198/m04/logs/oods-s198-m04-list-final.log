@@ -1,0 +1,69 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/list-craft.s198.spec.ts (23 tests | 1 failed) 73965ms
+   ✓ s198 standalone list craft stays at the producer boundary > Article has one working search, row and paginator, without duplicate action buttons 260ms
+   ✓ s198 standalone list craft stays at the producer boundary > Collection has one working search, row and paginator, without duplicate action buttons 53ms
+   ✓ s198 standalone list craft stays at the producer boundary > Document has one working search, row and paginator, without duplicate action buttons 48ms
+   ✓ s198 standalone list craft stays at the producer boundary > Evidence has one working search, row and paginator, without duplicate action buttons 53ms
+   ✓ s198 standalone list craft stays at the producer boundary > Invoice has one working search, row and paginator, without duplicate action buttons 50ms
+   ✓ s198 standalone list craft stays at the producer boundary > Media has one working search, row and paginator, without duplicate action buttons 47ms
+   ✓ s198 standalone list craft stays at the producer boundary > Mission has one working search, row and paginator, without duplicate action buttons 47ms
+   ✓ s198 standalone list craft stays at the producer boundary > Organization has one working search, row and paginator, without duplicate action buttons 47ms
+   ✓ s198 standalone list craft stays at the producer boundary > Plan has one working search, row and paginator, without duplicate action buttons 46ms
+   ✓ s198 standalone list craft stays at the producer boundary > Product has one working search, row and paginator, without duplicate action buttons 50ms
+   ✓ s198 standalone list craft stays at the producer boundary > Project has one working search, row and paginator, without duplicate action buttons 46ms
+   ✓ s198 standalone list craft stays at the producer boundary > Relationship has one working search, row and paginator, without duplicate action buttons 46ms
+   ✓ s198 standalone list craft stays at the producer boundary > Report has one working search, row and paginator, without duplicate action buttons 43ms
+   ✓ s198 standalone list craft stays at the producer boundary > Subscription has one working search, row and paginator, without duplicate action buttons 44ms
+   ✓ s198 standalone list craft stays at the producer boundary > Transaction has one working search, row and paginator, without duplicate action buttons 39ms
+   ✓ s198 standalone list craft stays at the producer boundary > Usage has one working search, row and paginator, without duplicate action buttons 51ms
+   ✓ s198 standalone list craft stays at the producer boundary > User has one working search, row and paginator, without duplicate action buttons 45ms
+   ✓ s198 standalone list craft stays at the producer boundary > uses Organization label once and sorts that displayed value instead of its internal ID 32ms
+   ✓ s198 standalone list craft stays at the producer boundary > react derives open string status choices from actual rows 33ms
+   ✓ s198 standalone list craft stays at the producer boundary > vue derives open string status choices from actual rows 40ms
+   ✓ s198 standalone list craft stays at the producer boundary > react compiles the string-status lists with strict public props  11846ms
+   × s198 standalone list craft stays at the producer boundary > vue compiles the string-status lists with strict public props 60512ms
+     → Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ list badge fallback parity > preserves authored casing and omits invented icons for unregistered statuses in both frameworks  484ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/list-craft.s198.spec.ts > s198 standalone list craft stays at the producer boundary > vue compiles the string-status lists with strict public props
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/codegen/list-craft.s198.spec.ts:46:36
+     44|     expect(result.code).toContain("collectionQuery.status ?? ''");
+     45|   });
+     46|   it.each(['react', 'vue'] as const)('%s compiles the string-status li…
+       |                                    ^
+     47|     for (const object of ['Organization', 'User']) {
+     48|       const { schema } = await compose({ object, context: 'list' });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError ../../node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout ../../node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ processTimers node:internal/timers:543:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+     Errors  1 error
+   Start at  19:29:22
+   Duration  79.36s (transform 3.08s, setup 41ms, collect 5.05s, tests 73.97s, environment 0ms, prepare 88ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/list-craft.s198.spec.ts

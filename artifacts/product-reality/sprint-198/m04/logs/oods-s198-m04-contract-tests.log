@@ -1,0 +1,58 @@
+
+> @oods/component-contracts@0.1.0 test /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-contracts
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-contracts
+
+ ✓ test/trait-recipes.spec.ts (3 tests) 24ms
+ ✓ test/contracts.spec.ts (7 tests) 21ms
+ ✓ test/disputed.spec.ts (3 tests) 38ms
+ ✓ test/breadth-contracts.s186.spec.ts (48 tests) 59ms
+ ✓ test/measured-contracts.s192.spec.ts (3 tests) 10ms
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 10ms
+ ❯ test/record-events.s198.spec.ts (3 tests | 1 failed) 26ms
+   ✓ record event projection shared by preview and workflow > retains real history instead of fabricating creation from a timestamp 4ms
+   ✓ record event projection shared by preview and workflow > uses a declared period when no creation/history exists, and skips invalid timestamps 0ms
+   × record event projection shared by preview and workflow > honors alternate history vocabulary and sorts payment projections at the record price 20ms
+     → expected '$49.00 · monthly' to be '$49.00 / monthly' // Object.is equality
+ ✓ test/viz-controls.spec.ts (6 tests) 7ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 15ms
+ ✓ test/static-svg.spec.ts (19 tests) 10ms
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 10ms
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 20ms
+ ✓ test/breadth-contracts.s187.spec.ts (15 tests) 17ms
+ ✓ test/measured-ledger.s192.spec.ts (2 tests) 2066ms
+   ✓ Sprint 192 evidence-derived ledger and pending classification > retains historical bytes while exposing the new, still-unapproved proposal  1989ms
+ ✓ test/readiness-measurements.s192.spec.ts (4 tests) 3251ms
+   ✓ readiness publishes measured semantics > react: theme claims require measured roots in all six cells  2176ms
+   ✓ readiness publishes measured semantics > vue: theme claims require measured roots in all six cells  1028ms
+ ✓ test/baseline-fold.s185.spec.ts (9 tests) 629ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/record-events.s198.spec.ts > record event projection shared by preview and workflow > honors alternate history vocabulary and sorts payment projections at the record price
+AssertionError: expected '$49.00 · monthly' to be '$49.00 / monthly' // Object.is equality
+
+Expected: "$49.00 / monthly"
+Received: "$49.00 · monthly"
+
+ ❯ test/record-events.s198.spec.ts:18:36
+     16|     const events = recordCollectionEvents(record, { historyField: 'aud…
+     17|     expect(events.map(event => event.title)).toEqual(['Payment receive…
+     18|     expect(events[0]!.description).toBe('$49.00 / monthly');
+       |                                    ^
+     19|   });
+     20| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 15 passed (16)
+      Tests  1 failed | 144 passed (145)
+   Start at  19:27:12
+   Duration  8.70s (transform 1.79s, setup 0ms, collect 13.13s, tests 6.21s, environment 2ms, prepare 2.46s)
+
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-contracts@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

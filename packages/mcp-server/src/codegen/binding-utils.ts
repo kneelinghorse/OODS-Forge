@@ -1088,6 +1088,7 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
   },
   PreferenceEditor: {
     namespacesField: 'namespaces',
+    documentField: 'document',
   },
   PreferenceSummaryBadge: {
     versionField: 'version',
@@ -1208,7 +1209,6 @@ export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[
   ClassificationPanel: ['categoriesField', 'tagsField', 'metadataField'],
   MembershipPanel: ['membershipsField', 'hierarchyField', 'roleField', 'permissionField'],
   MessageStatusBadge: ['statusesField'],
-  PreferenceEditor: ['documentField'],
   PreferencePanel: ['preferencesField', 'metadataField', 'namespaceField'],
   PreferenceSummaryBadge: ['namespacesField'],
   RoleAssignmentForm: ['membershipField'],
@@ -1267,7 +1267,7 @@ export function resolveFrameworkRecipeProps(
     bindings.push({
       sourceProp,
       targetProp,
-      expression: snakeToCamel(sourceField),
+      expression: node.component === 'PreferenceEditor' && sourceProp === 'documentField' ? `JSON.stringify(${snakeToCamel(sourceField)} ?? {}, null, 2)` : snakeToCamel(sourceField),
     });
     boundTargets.add(targetProp);
   }
