@@ -1,8 +1,8 @@
 # Forge Roadmap — the phases after the Product Reality Program
 
-**Status:** ACTIVE. Written 2026-09-12 in planning session `PS-2026-09-13-002`, after the Sprint 196 review closed Increment 15 (decision `#1977`) and Derek's direction reset (decision `#1979`). This document replaces the near roadmap. Updated 2026-09-13 by the Sprint 197 review (`PS-2026-09-13-010`): Sprint 197 certified and closed (`#2009`), Sprint 198 locked. Every remaining item from that roadmap is placed in section 10; the roadmap it replaces is retained verbatim below the divider at the end of this file because several closeout checks read it.
+**Status:** ACTIVE. Written 2026-09-12 in planning session `PS-2026-09-13-002`, after the Sprint 196 review closed Increment 15 (decision `#1977`) and Derek's direction reset (decision `#1979`). This document replaces the near roadmap. Updated 2026-09-13 by the Sprint 197 review (`PS-2026-09-13-010`): Sprint 197 certified and closed (`#2009`), Sprint 198 locked. Updated 2026-09-14 by the Sprint 198 review and closeout (`PS-2026-09-14-001`, `PS-2026-09-14-002`): Sprint 198 closed with carries (`#2046`), GitHub CI turned off, Sprint 199 locked. Every remaining item from that roadmap is placed in section 10; the roadmap it replaces is retained verbatim below the divider at the end of this file because several closeout checks read it.
 
-**Live bridge:** serves `2ea59fe9` (OODS-pro after PR #107, the Sprint 197 palette) since 2026-09-13 18:13Z, 19 tools, runtime ledger 240/240 across 18 objects.
+**Live bridge:** serves `b7a96ab0f` (OODS-pro after PR #109, Sprint 198 application craft) since 2026-09-14 05:10Z, 19 tools, runtime ledger 240/240 across 18 objects.
 
 **Inputs:** Derek's words on 2026-09-12 (below), the Sprint 196 review and its carries, the remaining-work phase map of 2026-09-11, the Meridian design-platform vision v0.2 (a directional work in progress, not a plan) and the article "Design systems were already broken", the state of TraceLab (Sprint 50, redesign), Stage1 (Sprint 81 complete, awaiting close) and CMOS (3.0.0).
 
@@ -10,12 +10,12 @@
 
 ## 1. Where we are, in plain words
 
-**What works today.** Forge is a design-system engine an agent drives over MCP. It has 109 components implemented in React and Vue, each measured for accessibility, theme and interaction in both frameworks. It has 18 objects (the original 11, plus the seven research objects TraceLab needed this week: Project, Document, Collection, Mission, Report, Evidence, Chunk) and seven contexts; every object composes into list, detail, form, timeline, card, dashboard and workflow screens, and all 240 generated screens build and run from the portable bundle in both frameworks. All 19 tools are proven at the MCP boundary and called from the bundle. Thirteen chart types render public SVG in light and dark for both brands, and 56 of the 60 rendered chart scopes are certified. Component docs, tool specs and public claims are generated from ledgers and fail a check when they drift. A browser design loop exists and runs locally. Three reference apps (Subscription, Organization, User) generate, build and run from the release bundle. Since Sprint 197 (closed 2026-09-13) the palette is generated from seeds: coherent ramps, a dark theme designed as its own set, chart colors whose weakest pair sits at ΔE00 16.5 light and 20.1 dark under color-vision simulation, and a decided high-contrast paint scope, with every semantic token name unchanged.
+**What works today.** Forge is a design-system engine an agent drives over MCP. It has 109 components implemented in React and Vue, each measured for accessibility, theme and interaction in both frameworks. It has 18 objects (the original 11, plus the seven research objects TraceLab needed this week: Project, Document, Collection, Mission, Report, Evidence, Chunk) and seven contexts; every object composes into list, detail, form, timeline, card, dashboard and workflow screens, and all 240 generated screens build and run from the portable bundle in both frameworks. All 19 tools are proven at the MCP boundary and called from the bundle. Thirteen chart types render public SVG in light and dark for both brands, and 56 of the 60 rendered chart scopes are certified. Component docs, tool specs and public claims are generated from ledgers and fail a check when they drift. A browser design loop exists and runs locally. Three reference apps (Subscription, Organization, User) generate, build and run from the release bundle. Since Sprint 197 (closed 2026-09-13) the palette is generated from seeds: coherent ramps, a dark theme designed as its own set, chart colors whose weakest pair sits at ΔE00 16.5 light and 20.1 dark under color-vision simulation, and a decided high-contrast paint scope, with every semantic token name unchanged. Since Sprint 198 (closed 2026-09-14) the list, detail, form and timeline screens of every object read as designed output with plausible sample data, and the CI failures Sprint 197 left are fixed.
 
 **What does not work, or is not good.**
 
-- Only the Subscription app is certified usable. Organization and User generate and pass their gates but read as sample output: raw seeded strings, unseeded composite editors, unlabeled numbers, raw timestamps in places.
-- The palette residue from Sprint 197: three system-scope token pairs still fail contrast (accent text 3.59 of 4.5, accent icon 2.31 of 3, text on the primary interactive surface 4.48 of 4.5), the dark hover and pressed states are too subtle to read as states, the accessibility CI job cannot parse the new guardrail rows, and two gates read different token trees. TraceLab still ships on the old palette until it applies the prepared re-pin.
+- Only the Subscription app is certified usable. Organization and User now read well on every screen, but saving an edited address adds a second address instead of replacing the one shown, so they stay uncertified until Sprint 199's first mission fixes it. TraceLab's Evidence list filters on a field that has one value, and Mission's timeline header shows a placeholder word.
+- GitHub CI is off (2026-09-14: out of credits, runs over an hour). Every gate is a local command; Sprint 199 adds a chart gate that runs in minutes. TraceLab still ships on the old palette until it applies the prepared re-pin.
 - Nine chart types have no high-contrast pixels; the high-contrast paint scope is now decided by census (Sprint 197) and the pixels are Sprint 199 work. Seven chart cells are typed gaps. Thirteen of 21 chart patterns are authoring-only. Four bubble-map scopes fail their accuracy rule.
 - Brand authoring works on this machine but not from the bundle: the bundle ships no brand source, so `brand.apply` is a typed limit there. The browser preview needs the local design-loop server, so it is a typed limit from the bundle too.
 - The brownfield path is narrowed: `map` records mappings that nothing downstream consumes.
@@ -40,8 +40,8 @@ Derek, 2026-09-12, in substance:
 | Phase | Sprint | What ships | Done when |
 |---|---|---|---|
 | **B. Look like a design system** | 197 — **CERTIFIED AND CLOSED 2026-09-13** (`#2009`; [memo](../../planning/forge-s197-palette-decision-memo.md), [handoff](../../planning/forge-s197-build-handoff.md), CMOS `sprint-197`, missions m01–m07) | A new palette for Brand A and the dark theme, a decided high-contrast paint scope, re-derived chart colors, Brand B rebuilt by the same method; type/spacing/radius pass if it fits | Side-by-side renders of the Subscription and Organization screens and three TraceLab pages, light and dark, look better to an independent reviewer; every color gate green; the TraceLab re-pin prepared and verified |
-| **A1. Finish: application craft** | 198 — **LOCKED 2026-09-13** ([memo](../../planning/forge-s198-craft-decision-memo.md), [handoff](../../planning/forge-s198-build-handoff.md), CMOS `sprint-198`, missions m01–m07) | The Sprint 197 CI carries closed first (the a11y-contract parser, three system-scope contrast pairs, six interaction-state rows, one token provenance for every gate, the migration-spec timeout); then the composer templates fixed so Organization and User reach Subscription's bar; the TraceLab research objects compose at that bar | Every CI job green at the PR head; Organization and User certified usable in React and Vue; a TraceLab Evidence and Mission screen composes without hand edits |
-| **A2. Finish: charts** | 199 | The seven typed chart gaps and 13 authoring-only patterns born or retired; bubble-map fixed; high-contrast pixels rendered on the palette from 197; ECharts object placement authored; the soak and timezone carries decided | 20/20 core chart cells surface-complete or retired with reasons; 78/78 scopes rendered; certification breadth stated in one table |
+| **A1. Finish: application craft** | 198 — **CLOSED WITH CARRIES 2026-09-14** (`#2046`; [memo](../../planning/forge-s198-craft-decision-memo.md), [handoff](../../planning/forge-s198-build-handoff.md), CMOS `sprint-198`, missions m01–m07) | The Sprint 197 CI carries closed first (the a11y-contract parser, three system-scope contrast pairs, six interaction-state rows, one token provenance for every gate, the migration-spec timeout); then the composer templates fixed so Organization and User reach Subscription's bar; the TraceLab research objects compose at that bar | Every CI job green at the PR head; Organization and User certified usable in React and Vue; a TraceLab Evidence and Mission screen composes without hand edits |
+| **A2. Finish: charts** | 199 — **LOCKED 2026-09-14** ([memo](../../planning/forge-s199-charts-decision-memo.md), [handoff](../../planning/forge-s199-build-handoff.md), CMOS `sprint-199`, missions m01–m07) | The Sprint 198 carries first (address save, Evidence filter, Mission header) with a local chart gate; then the seven typed chart gaps and 13 authoring-only patterns born or retired; bubble-map fixed; high-contrast pixels rendered on the palette from 197; ECharts object placement authored; the soak and timezone carries decided | 20/20 core chart cells surface-complete or retired with reasons; 78/78 scopes rendered or retired with a measured reason; certification breadth stated in one table; every check local |
 | **C. Available to individuals** | 200 | License and contributor terms in the repo; brand source in the bundle; a GitHub Release of the bundle with install steps; a README that explains Forge to a newcomer; feedback path | A person with the link installs the bundle in Claude Desktop, Claude Code or Cursor in under ten minutes and files feedback |
 | **D. See the work** | 201–202 | The design loop as a first-class surface served by the bridge (201), then the same preview inside Claude and Cursor as an MCP Apps resource (202) | Derek composes, previews, compares two alternatives, and accepts one without leaving the conversation |
 | **E. Toward the design platform** | 203+ | Forge's slices of the vision: objects born from use, context beside the design, lineage of compositions, observation against intent with Stage1, decisions checked against compositions | Each slice proven on Derek's own products first |
@@ -53,7 +53,9 @@ Sprint numbers after 199 shift if a sprint splits. Each sprint is locked in its 
 
 ## 4. Phase A — finish what the last roadmap started
 
-### Sprint 198 — Application craft — LOCKED 2026-09-13
+### Sprint 198 — Application craft — CLOSED WITH CARRIES 2026-09-14 (`#2046`)
+
+Closed 2026-09-14 by review `PS-2026-09-14-001` and closeout `PS-2026-09-14-002`. PR #109 merged at `b7a96ab0f` (tree identical to implementation `2b095b157`); CI run 34803731947 at that head was green on every job before GitHub CI was turned off; the five-suite capture at `45cfea986` passed 17,504 executions with 0 failures; runtime 240/240 and component cells 1,308; no threshold loosened and no chart golden moved. The bridge serves `b7a96ab0f`. The builder's closeout evidence (censuses, capture, handoff) is on branch `codex/sprint-198-closeout-evidence`, not merged. Not certified, carried to Sprint 199 m01: saving an edited address on Organization and User adds a second address with a role the person never chose instead of replacing the one shown, so Organization and User are not certified usable; Evidence's only list filter binds a field that is the same on every record; Mission's timeline header reads "Label" from placeholder seeds. Craft carries for a later pass: field-name chips on list rows, internal fields in forms, saves not updating history, duplicate Role fields on User, doubled empty states, the 390 paginator split, lowercase filter options, and Subscription detail's payment chart, tab order and billing-cycle contradiction.
 
 Locked memo: [forge-s198-craft-decision-memo.md](../../planning/forge-s198-craft-decision-memo.md); build handoff: [forge-s198-build-handoff.md](../../planning/forge-s198-build-handoff.md); CMOS `sprint-198`, seven serial missions. Base `2ea59fe9` on `OODS-pro` (the Sprint 197 merge; the bridge serves it since 2026-09-13; no delivery mission). m01 makes CI green before any craft work: the Sprint 197 carries named in §5 and in decision `#2009`. Then m02 list screens, m03 detail and timeline screens with the Tabs limit, m04 forms and sample data, m05 Organization and User certified usable in both frameworks plus the release-profile check, m06 TraceLab Evidence and Mission composed and inspected at the same bar (the deferred chrome pass only if room remains), m07 closeout. Status moves to BUILT, REVIEW PENDING at the m07 closeout and to CERTIFIED AND CLOSED after independent review.
 
@@ -70,7 +72,9 @@ Also in this sprint: compose TraceLab's Evidence (list, detail, timeline) and Mi
 
 Exit: Organization and User certified usable in both frameworks by independent review of the screenshots; the TraceLab compositions inspected; the ranked lists closed or carried with a reason each.
 
-### Sprint 199 — Charts, finished
+### Sprint 199 — Charts, finished — LOCKED 2026-09-14
+
+Locked memo: [forge-s199-charts-decision-memo.md](../../planning/forge-s199-charts-decision-memo.md); build handoff: [forge-s199-build-handoff.md](../../planning/forge-s199-build-handoff.md); CMOS `sprint-199`, seven serial missions on `codex/sprint-199-charts` from `b7a96ab0f`. m01 fixes the three Sprint 198 carries and adds a local chart gate; m02 removes the unused ScaleTemporal timezone field, retires the strict soak assertion with its measurements kept, and builds the one certification table; m03 publishes the authoring-only patterns and settles the Core Analytics Profile (waterfall and histogram built as patterns; candlestick, box and contour retired with reasons); m04 fixes bubble-map sizing, the ECharts band and adds the per-renderer fidelity check; m05 renders high-contrast pixels for the nine types; m06 places the force graph on Relationship; m07 closes out locally. GitHub CI is off; every gate is local.
 
 Everything the visualization reviews carried (`#1860`, `#1881`, `#1951`, `#1978`), on the palette from Sprint 197:
 
@@ -219,22 +223,22 @@ Every open item from the near roadmap, its carries and the phase map, and where 
 
 | Item | Source | Lands |
 |---|---|---|
-| Application craft: ranked list/detail/form/timeline/sample-data defects | `#1832`, `#1881`, `#1845`, `#1915` | Sprint 198 |
-| Organization and User certified usable | exit criterion 8 | Sprint 198 |
-| Tabs normalization limit in full Invoice/Usage detail HTML (OODS-V007) | `#1951`, `#1978` | Sprint 198 |
-| Release profile executes its own evidence | exit criterion 6, phase map | Sprint 198 (check and fix) |
-| TraceLab research objects compose at the craft bar | TraceLab UX-1, PR #105 | Sprint 198 |
+| Application craft: ranked list/detail/form/timeline/sample-data defects | `#1832`, `#1881`, `#1845`, `#1915` | Sprint 198 — closed; the residual craft list carries to the next craft pass (`#2046`) |
+| Organization and User certified usable | exit criterion 8 | Sprint 199 m01 (address save), then review |
+| Tabs normalization limit in full Invoice/Usage detail HTML (OODS-V007) | `#1951`, `#1978` | Sprint 198 — typed limit with an owner |
+| Release profile executes its own evidence | exit criterion 6, phase map | Sprint 198 — claim narrowed to "format-checked and hash-bound, not re-executed" |
+| TraceLab research objects compose at the craft bar | TraceLab UX-1, PR #105 | Sprint 198 — composed; Evidence filter and Mission header carry to Sprint 199 m01 |
 | Palette: dark categorical set, Role-A separation, tooltip chrome, border-strong token, hue revision | `#1860`, `#1881`, next-step 831 | Sprint 197 — closed (`#2009`) |
-| Sprint 197 residue: a11y-contract parser, three system-scope contrast pairs, six interaction-state guardrail rows, one token provenance for every gate, palette-golden-migration spec timeout, readiness `--check` in the verifier pass, token-change label at PR open | `#2009` | Sprint 198 m01 |
-| Type scale, spacing, radius, elevation and focus-ring pass on component chrome and the app shell | Sprint 197 memo rung 1, deferred | Sprint 198 if m01–m06 finish with room; otherwise Sprint 200's first half |
-| High-contrast chart pixels (nine types, 18 scopes) | `#1851`, `#1951` | Paint scope decided in 197 (closed), rendered 199 |
-| Seven typed core-profile chart gaps; 13 authoring-only patterns | `#1951`, `#1978` | Sprint 199 |
-| Bubble-map radius scaling (four scopes) | `#1951` | Sprint 199 |
-| ECharts object placement | `#1944` | Sprint 199 |
-| ECharts dual-axis band rendering, per-renderer fidelity assertion | next-step 982 | Sprint 199 |
-| ScaleTemporal timezone metadata | `#1969` | Sprint 199 (decide) |
-| ECharts server-side line rendering limitation | `#1971` | Documented limit, stays |
-| Strict soak heap slope | `#1442`, `#1946` | Sprint 199 (decide) |
+| Sprint 197 residue: a11y-contract parser, three system-scope contrast pairs, six interaction-state guardrail rows, one token provenance for every gate, palette-golden-migration spec timeout, readiness `--check` in the verifier pass, token-change label at PR open | `#2009` | Sprint 198 m01 — closed |
+| Type scale, spacing, radius, elevation and focus-ring pass on component chrome and the app shell | Sprint 197 memo rung 1, deferred | Sprint 200's first half (not taken in Sprint 198) |
+| High-contrast chart pixels (nine types, 18 scopes) | `#1851`, `#1951` | Paint scope decided in 197 (closed), rendered Sprint 199 m05 |
+| Seven typed core-profile chart gaps; 13 authoring-only patterns | `#1951`, `#1978` | Sprint 199 m03 |
+| Bubble-map radius scaling (four scopes) | `#1951` | Sprint 199 m04 |
+| ECharts object placement | `#1944` | Sprint 199 m06 |
+| ECharts dual-axis band rendering, per-renderer fidelity assertion | next-step 982 | Sprint 199 m04 |
+| ScaleTemporal timezone metadata | `#1969` | Sprint 199 m02 (field removed) |
+| ECharts server-side line rendering limitation | `#1971` | Documented limit, stays; written into the public `viz.render` description in Sprint 199 m02 |
+| Strict soak heap slope | `#1442`, `#1946` | Sprint 199 m02 (strict assertion retired, measurements kept) |
 | `brand.apply` typed limit from the bundle (no brand source) | OODS-N020, `#1978` | Sprint 200 |
 | `design.preview` typed limit from the bundle (local server) | OODS-N019, `#1978` | Sprint 201 |
 | Alias retirement (`/ported`, `/readiness-ported`, `/css-ported`) | `#1382`, `#1385` | Sprint 200 |
@@ -243,21 +247,22 @@ Every open item from the near roadmap, its carries and the phase map, and where 
 | Brownfield `map` consumption | phase map | Phase E slice 3; the claim stays narrowed until then |
 | Classification approval, `approvedRuntimeCensus` | `#1438` | Closed as an agenda item by `#1979`; labels stay proposed; nothing depends on it |
 | Nine disputed catalog rows, two alias/merge proposals | `#1421`, `#1881` | Implementation closed by 109/109 in Sprint 193; the labeling question closes with the line above |
-| Accessibility/theme/interaction maturity beyond measurement | `#1881`, roadmap parks | Sprint 198 (interaction states in m01 and the craft review; chrome and focus if room), else Sprint 200 |
-| CI-14 power floor re-ratification | next-step 1300 | Trigger-based; unchanged |
+| Accessibility/theme/interaction maturity beyond measurement | `#1881`, roadmap parks | Interaction states closed in Sprint 198 m01; chrome and focus in Sprint 200 |
+| CI-14 power floor re-ratification | next-step 1300 | Dropped 2026-09-14: GitHub CI is off, so the trigger cannot fire |
 | Parts Town: brand seed, collisions, stage1 re-extraction, PT questions, easing emission, strain ledger | next-steps 881, 1122, 1123, 1128, 1149, 1189, 1196, 1213, 1262 | Parked, carried with no target |
 | Shopify-Forge enterprise walk | strategic direction | Phase F, Derek's pull |
 | Consumer reconnect notices, gate-2 decision packet | `#1979` | Removed; never again |
 | Derek's git housekeeping (branch protection, dead `main`, tracked scratch files) | next-steps 1150, 1225 | Not roadmap work; dropped from the list |
 
-The Product Reality Program's ten exit criteria, for the record: 1–2 (classification) closed as not needed; 3, 4, 5, 10 met; 6 checked in Sprint 198; 7 completed in Sprints 197 and 199; 8 completed in Sprint 198; 9 (design-surface writes) is Phase D.
+The Product Reality Program's ten exit criteria, for the record: 1–2 (classification) closed as not needed; 3, 4, 5, 10 met; 6 closed in Sprint 198 through the narrowed claim; 7 completed in Sprints 197 and 199; 8 pending the Sprint 199 m01 address fix and review; 9 (design-surface writes) is Phase D.
 
 ## 11. How sprints run from here
 
 - One short locked memo per sprint: what ships, what proves it, the descope ladder. No decision packets.
 - Build in an isolated worktree on a `codex/sprint-NNN-*` branch, PR into `OODS-pro`; the primary checkout is the served bridge checkout, rebuilt and restarted by the agent after each merge.
 - Ship first, verify with the suites the change touches, one full capture at sprint close. No per-mission baselines.
-- Independent review in a separate session; it opens by saying where we are in plain words: what works, what does not, what Derek can do with it today. Sprint complete is the agent's call once the review certifies.
+- GitHub CI is off (2026-09-14). Every gate is a local command that runs in minutes; nothing waits on a hosted workflow.
+- Independent review in a separate session; it opens by saying where we are in plain words: what works, what does not, what Derek can do with it today. The review always closes the sprint: what it cannot certify becomes a named carry for the next sprint's first mission, and no missions are added to a sprint under review.
 - No consumer notices, ever. TraceLab, cmos-dashboard, forge-demos and aquex-mcp are Derek's projects.
 - Next work comes from this roadmap or Derek's own list, never from lists created during a session. Residue found at review is recorded and folded into the next sprint that touches the surface.
 - Research runs on non-Fable agents when usage is tight.
