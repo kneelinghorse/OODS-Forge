@@ -1,0 +1,39 @@
+- main:
+  - paragraph: MISSION WORKSPACE
+  - heading "Missions" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Mission screen":
+    - status:
+      - strong: No records found
+      - paragraph: Change the filters or add a record.
+    - search "Search":
+      - text: Search
+      - searchbox "Search": not-a-record
+      - button "Clear search": ×
+    - text: Status
+    - combobox "Status":
+      - option "All states" [selected]
+      - option "draft"
+      - option "queued"
+      - option "in progress"
+      - option "completed"
+      - option "blocked"
+      - option "cancelled"
+      - option "validation failed"
+    - text: Sort
+    - combobox "Sort":
+      - option "Name A–Z" [selected]
+      - option "Name Z–A"
+    - status:
+      - paragraph: No records found.
+    - navigation "Pagination":
+      - text: 0 records
+      - button "Previous page" [disabled]: ‹
+      - list
+      - button "Next page" [disabled]: ›
+      - text: Page 1 of 1
+  - status

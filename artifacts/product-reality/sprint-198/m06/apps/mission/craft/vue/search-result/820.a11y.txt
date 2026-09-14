@@ -1,0 +1,45 @@
+- main:
+  - paragraph: MISSION WORKSPACE
+  - heading "Missions" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Mission screen":
+    - search "Search":
+      - text: Search
+      - searchbox "Search": mission-003
+      - button "Clear search": ×
+    - text: Status
+    - combobox "Status":
+      - option "All states" [selected]
+      - option "draft"
+      - option "queued"
+      - option "in progress"
+      - option "completed"
+      - option "blocked"
+      - option "cancelled"
+      - option "validation failed"
+    - text: Sort
+    - combobox "Sort":
+      - option "Name A–Z" [selected]
+      - option "Name Z–A"
+    - list "Records":
+      - listitem:
+        - 'button "Cedar Workspace Label Description Status: In Progress Sep 1, 2026, 12:00 PM 00000000-0000-4000-8000-000000000003"':
+          - text: Cedar Workspace Label Description In Progress
+          - time: Sep 1, 2026, 12:00 PM
+          - text: 00000000-0000-4000-8000-000000000003
+    - navigation "Pagination":
+      - text: 1 record Showing 1–1 of 1
+      - list:
+        - listitem:
+          - button "Previous page" [disabled]: ‹
+        - listitem:
+          - button "Page 1": "1"
+        - listitem:
+          - button "Next page" [disabled]: ›
+      - text: Page 1 of 1
+  - status

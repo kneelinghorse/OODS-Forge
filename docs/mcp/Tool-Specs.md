@@ -19,7 +19,7 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"cee67678cd35e6bfc3035def408dee6ed11b7ddf"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"baabf2e3f2d5d5d6017561f304eefc4cca45324a"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
