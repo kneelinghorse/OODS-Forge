@@ -17,13 +17,17 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   if (context === 'form') {
     const fields = schema.objectSchema ?? {};
     const owned = new Set<string>();
+    const fieldEditors = new Set<string>();
     for (const screen of schema.screens) walk(screen, node => {
+      if (controls.has(node.component) && typeof node.props?.field === 'string') fieldEditors.add(node.props.field);
       for (const directive of owners[node.component] ?? []) {
         const field = node.props?.[directive];
         if (typeof field === 'string') owned.add(field);
       }
     });
     for (const screen of schema.screens) walk(screen, node => {
+      // Keep the declared field editor when the title slot points at that same value.
+      node.children = node.children?.filter(child => !(child.component === 'DetailHeader' && fieldEditors.has(String(child.props?.field))));
       // A field wired into a title slot is still editable data, not the form heading.
       const titleField = node.props?.field;
       if (node.component === 'DetailHeader' && typeof titleField === 'string' && fields[titleField]) {

@@ -1,0 +1,90 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/form-seeds.s198.spec.ts (47 tests | 1 failed | 30 skipped) 1311ms
+   ✓ s198 form craft and one attributable seed policy > Article exposes one editor per simple form field so Save has an unambiguous value 157ms
+   ✓ s198 form craft and one attributable seed policy > Collection exposes one editor per simple form field so Save has an unambiguous value 80ms
+   ✓ s198 form craft and one attributable seed policy > Document exposes one editor per simple form field so Save has an unambiguous value 69ms
+   ✓ s198 form craft and one attributable seed policy > Evidence exposes one editor per simple form field so Save has an unambiguous value 69ms
+   ✓ s198 form craft and one attributable seed policy > Invoice exposes one editor per simple form field so Save has an unambiguous value 78ms
+   ✓ s198 form craft and one attributable seed policy > Media exposes one editor per simple form field so Save has an unambiguous value 68ms
+   ✓ s198 form craft and one attributable seed policy > Mission exposes one editor per simple form field so Save has an unambiguous value 75ms
+   ✓ s198 form craft and one attributable seed policy > Organization exposes one editor per simple form field so Save has an unambiguous value 70ms
+   × s198 form craft and one attributable seed policy > Plan exposes one editor per simple form field so Save has an unambiguous value 18ms
+     → Plan/form must not duplicate a title-slot editor in its field slot: expected [ 'plan_name', 'plan_name', …(9) ] to deeply equal [ 'plan_name', 'interval_count', …(8) ]
+   ✓ s198 form craft and one attributable seed policy > Product exposes one editor per simple form field so Save has an unambiguous value 75ms
+   ✓ s198 form craft and one attributable seed policy > Project exposes one editor per simple form field so Save has an unambiguous value 69ms
+   ✓ s198 form craft and one attributable seed policy > Relationship exposes one editor per simple form field so Save has an unambiguous value 69ms
+   ✓ s198 form craft and one attributable seed policy > Report exposes one editor per simple form field so Save has an unambiguous value 73ms
+   ✓ s198 form craft and one attributable seed policy > Subscription exposes one editor per simple form field so Save has an unambiguous value 139ms
+   ✓ s198 form craft and one attributable seed policy > Transaction exposes one editor per simple form field so Save has an unambiguous value 65ms
+   ✓ s198 form craft and one attributable seed policy > Usage exposes one editor per simple form field so Save has an unambiguous value 68ms
+   ✓ s198 form craft and one attributable seed policy > User exposes one editor per simple form field so Save has an unambiguous value 67ms
+   ↓ s198 form craft and one attributable seed policy > active samples never claim archive/restore events that did not happen
+   ↓ s198 form craft and one attributable seed policy > HTML uses catalog names for labels while retaining stored role/template IDs
+   ↓ s198 form craft and one attributable seed policy > keeps authored trait examples tied to canonical role and communication catalogs
+   ↓ s198 form craft and one attributable seed policy > Article has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Chunk has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Collection has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Document has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Evidence has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Invoice has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Media has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Mission has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Organization has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Plan has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Product has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Project has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Relationship has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Report has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Subscription has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Transaction has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Usage has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > User has deterministic, declared enum values and no placeholder strings
+   ↓ s198 form craft and one attributable seed policy > Organization retains trait catalog examples and preference parameters in both frameworks
+   ↓ s198 form craft and one attributable seed policy > User retains trait catalog examples and preference parameters in both frameworks
+   ↓ s198 form craft and one attributable seed policy > Subscription uses controls for field titles, compact strings and valid date input types
+   ↓ s198 form craft and one attributable seed policy > Invoice uses controls for field titles, compact strings and valid date input types
+   ↓ s198 form craft and one attributable seed policy > Plan uses controls for field titles, compact strings and valid date input types
+   ↓ s198 form craft and one attributable seed policy > keeps example precedence and data isolated, without turning preview examples into production defaults
+   ↓ s198 form craft and one attributable seed policy > keeps price-derived payments and active periods coherent at the fixed preview date
+   ↓ s198 form craft and one attributable seed policy > Invoice exposes its timestamped creation in the timeline even without Stateful
+   ↓ s198 form craft and one attributable seed policy > Plan exposes its timestamped creation in the timeline even without Stateful
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/form-seeds.s198.spec.ts > s198 form craft and one attributable seed policy > Plan exposes one editor per simple form field so Save has an unambiguous value
+AssertionError: Plan/form must not duplicate a title-slot editor in its field slot: expected [ 'plan_name', 'plan_name', …(9) ] to deeply equal [ 'plan_name', 'interval_count', …(8) ]
+
+- Expected
++ Received
+
+@@ -1,7 +1,8 @@
+  [
+    "plan_name",
++   "plan_name",
+    "interval_count",
+    "currency",
+    "period_start",
+    "ownership_role",
+    "meter_name",
+
+ ❯ test/codegen/form-seeds.s198.spec.ts:26:103
+     24|         .map(node => String(node.props!.field));
+     25|       expect(fields.length).toBeGreaterThan(0);
+     26|       expect(fields, `${object}/${context} must not duplicate a title-…
+       |                                                                                                       ^
+     27|       if (object === 'Plan') expect(fields.filter(field => field === '…
+     28|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed | 30 skipped (47)
+   Start at  21:27:18
+   Duration  2.77s (transform 651ms, setup 16ms, collect 1.23s, tests 1.31s, environment 0ms, prepare 94ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/form-seeds.s198.spec.ts --testNamePattern=exposes one editor --reporter=default

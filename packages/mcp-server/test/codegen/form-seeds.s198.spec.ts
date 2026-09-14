@@ -15,6 +15,18 @@ import { loadTrait } from '../../src/objects/trait-loader.js';
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 
 describe('s198 form craft and one attributable seed policy', () => {
+  it.each(OBJECTS.filter(supportsWorkflow))('%s exposes one editor per simple form field so Save has an unambiguous value', async object => {
+    for (const context of ['form', 'workflow']) {
+      const { schema } = await compose({ object, context });
+      const forms = context === 'form' ? schema.screens : schema.screens.filter(screen => screen.id.startsWith('form-'));
+      expect(forms).toHaveLength(1);
+      const fields = walk(forms).filter(node => ['Input', 'Textarea', 'Select', 'DatePicker', 'Checkbox', 'Switch'].includes(node.component) && node.props?.field)
+        .map(node => String(node.props!.field));
+      expect(fields.length).toBeGreaterThan(0);
+      expect(fields, `${object}/${context} must not duplicate a title-slot editor in its field slot`).toEqual([...new Set(fields)]);
+      if (object === 'Plan') expect(fields.filter(field => field === 'plan_name')).toHaveLength(1);
+    }
+  });
   it('active samples never claim archive/restore events that did not happen', async () => {
     const { schema } = await compose({ object: 'Subscription', context: 'workflow' });
     const records = workflowSampleRecords(schema);
