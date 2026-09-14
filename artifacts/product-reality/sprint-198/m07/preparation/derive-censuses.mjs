@@ -1,0 +1,65 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+const root = process.cwd(), out = 'artifacts/product-reality/sprint-198/m07';
+const baseline = '2ea59fe9cf7f3d0fbfa05ee50ef920815defe1bb';
+const head = process.argv[2]; assert(/^[a-f0-9]{40}$/.test(head));
+const read = file => fs.readFileSync(path.join(root, file));
+const json = file => JSON.parse(read(file));
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const git = args => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024 });
+const write = (file, value) => { fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true }); fs.writeFileSync(path.join(root, file), JSON.stringify(value, null, 2) + '\n'); };
+const ref = file => ({ path: file, sha256: hash(read(file)) });
+const census = json(`${out}/component-census/report.json`);
+assert.equal(census.head, head); assert.equal(census.greenTotalSchemas, 77); assert.equal(census.greenTotalCells, 154);
+assert.equal(census.objects.length, 11); assert.equal(census.availableObjects.length, 18);
+const previous = json('artifacts/product-reality/sprint-197/m07/component-census/report.json');
+const normalize = schema => {
+  const nodes = []; const walk = node => { nodes.push(node); (node.children ?? []).forEach(walk); }; schema.screens.forEach(walk);
+  const ids = new Map(nodes.map((node, index) => [node.id, `node-${index}`]));
+  const clean = value => Array.isArray(value) ? value.map(clean) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, clean(value[key])])) : typeof value === 'string' ? (ids.get(value) ?? value) : value;
+  return clean(schema);
+};
+const changedPaths = (a, b, at = '') => {
+  if (JSON.stringify(a) === JSON.stringify(b)) return [];
+  if (a && b && typeof a === 'object' && typeof b === 'object' && Array.isArray(a) === Array.isArray(b)) return [...new Set([...Object.keys(a), ...Object.keys(b)])].sort().flatMap(key => changedPaths(a[key], b[key], `${at}/${key}`));
+  return [at];
+};
+const rows = census.allRows.map(row => {
+  const old = previous.allRows.find(candidate => JSON.stringify(candidate.input) === JSON.stringify(row.input)); assert(old);
+  const before = normalize(json(old.composition.path).schema), after = normalize(json(row.composition.path).schema);
+  return { input: row.input, before: old.composition, after: row.composition, beforeNormalizedHash: hash(JSON.stringify(before)), afterNormalizedHash: hash(JSON.stringify(after)), changedPaths: changedPaths(before, after) };
+});
+const changed = rows.filter(row => row.beforeNormalizedHash !== row.afterNormalizedHash);
+const attribution = changed.map(row => {
+  const context = row.input.context;
+  const missions = context === 'list' ? ['s198-m02','s198-m04'] : context === 'detail' ? ['s198-m03','s198-m04','s198-m05','s198-m06'] : context === 'form' ? ['s198-m04','s198-m05'] : context === 'timeline' ? ['s198-m03','s198-m04'] : context === 'workflow' ? ['s198-m02','s198-m03','s198-m04','s198-m05','s198-m06'] : ['s198-m04'];
+  assert(row.changedPaths.every(value => /^\/(?:screens|objectSchema|workflow|metadata|meta|warnings|tokens|version|components|capabilities|object)(?:\/|$)/.test(value)), `Unattributed schema field: ${JSON.stringify(row)}`);
+  return { ...row.input, missions, reason: `Shared ${context} producer reconciliation and parameter/example/default metadata; exact normalized field changes retained.`, changedPaths: row.changedPaths };
+});
+write(`${out}/schema-movement.json`, { baselineHead: previous.head, head, executionHead: head, changedSchemas: changed.length, unchangedSchemas: rows.length - changed.length, allRows: rows, attribution, unattributedChanges: [], builderSelfCertified: false });
+const oldStores = json('artifacts/product-reality/sprint-197/m07/saved-compatibility.json');
+const live = '/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/.oods/schemas';
+const storeHashes = () => Object.fromEntries(fs.readdirSync(live).filter(name => name.endsWith('.json')).sort().map(name => [name, hash(fs.readFileSync(path.join(live, name)))]));
+const beforeHashes = storeHashes(); assert.deepEqual(beforeHashes, oldStores.liveStore.hashes, 'Read-only saved-store hashes changed since the retained snapshot.');
+const snapshotRoot = `${out}/saved-live-snapshot`; fs.mkdirSync(path.join(root, snapshotRoot), { recursive: true });
+for (const name of Object.keys(beforeHashes)) fs.copyFileSync(path.join(live, name), path.join(root, snapshotRoot, name));
+assert.deepEqual(storeHashes(), beforeHashes);
+for (const [name, expected] of Object.entries(oldStores.cohortStore.hashes)) assert.equal(hash(read(`${oldStores.cohortStore.path}/${name}`)), expected);
+const index = json(`${snapshotRoot}/_index.json`);
+write(`${out}/saved-compatibility.json`, { ...oldStores, missionId: 's198-m07', head, snapshotRoot, liveStore: { path: live, hashes: beforeHashes }, preExistingIndexExpansion: { ...oldStores.preExistingIndexExpansion, updatedAt: index.updatedAt }, readOnly: true, changedLiveFiles: 0, changedCohortFiles: 0, builderSelfCertified: false });
+const prefixes = ['packages/component-contracts', 'packages/component-styles', 'packages/components-react', 'packages/components-vue', 'packages/tokens/src', 'packages/mcp-server/src', 'objects', 'traits', 'domains/saas-billing', 'scripts/tokens', 'scripts/design-loop', 'scripts/product-reality/s188-m03-app-consumers.ts'];
+const files = git(['ls-tree', '-r', '--name-only', '-z', head, '--', ...prefixes]).toString().split('\0').filter(Boolean).sort();
+const references = files.map(file => { const frozen = git(['show', `${head}:${file}`]); assert(read(file).equals(frozen), `Source changed after the freeze: ${file}`); return { path: file, bytes: frozen.length, sha256: hash(frozen) }; });
+write(`${out}/source-proof.json`, { head, references, builderSelfCertified: false });
+const migration = json('artifacts/product-reality/sprint-198/m01/golden-migration/attribution.json');
+const goldens = migration.files.filter(row => !row.file.startsWith('artifacts/')).map(row => {
+  const beforeSha256 = hash(git(['show', `${baseline}:${row.file}`])), afterSha256 = hash(read(row.file));
+  assert.equal(afterSha256, row.afterSha256, `Golden changed after m01 attribution: ${row.file}`);
+  return { ...row, beforeSha256, afterSha256, missionId: 's198-m01' };
+});
+assert(goldens.length > 0);
+write(`${out}/golden-attribution.json`, { missionId: 's198-m07', beforeHead: baseline, head, files: goldens, originalAttribution: ref('artifacts/product-reality/sprint-198/m01/golden-migration/attribution.json'), builderSelfCertified: false });
+console.log(JSON.stringify({ head, retainedSchemas: rows.length, changedSchemas: changed.length, canonicalObjects: census.availableObjects.length, savedCohort: Object.keys(oldStores.cohortStore.hashes).length, liveHashes: Object.keys(beforeHashes).length, sourceFiles: references.length, goldenFiles: goldens.length }));

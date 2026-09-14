@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { measurePatternCensus, writePatternOutputs } from '../../../../../scripts/product-reality/s195-pattern-census.js';
+const output = 'artifacts/product-reality/sprint-198/m07/patterns';
+const observations = await measurePatternCensus({});
+writePatternOutputs(observations, { check: true });
+assert.equal(observations.cells.length, 84);
+await fs.mkdir(output, { recursive: true });
+await fs.writeFile(`${output}/pattern-observations.json`, JSON.stringify(observations, null, 2) + '\n');
+console.log('84 pattern cells; canonical registry and documentation unchanged');
