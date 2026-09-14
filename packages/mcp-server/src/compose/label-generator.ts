@@ -17,6 +17,20 @@ export function fieldLabel(name: string, _description?: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+/** Shared fields explain user choices without exposing trait implementation notes. */
+export function fieldHelp(name: string, description?: string): string | undefined {
+  const help: Record<string, string> = {
+    status: 'Choose the current status.',
+    preference_version: 'Version of this record’s preferences.',
+    owner_type: 'Choose the kind of owner.',
+    owner_id: 'Identifier of the owner.',
+    label: 'Name shown for this record.',
+    placeholder: 'Shown when the label is empty.',
+    tag_count: 'Number of tags assigned to this record.',
+  };
+  return description ? help[name] ?? description : undefined;
+}
+
 /** Resolve anonymous form-slot labels before framework normalization can emit Field N. */
 export function populateFieldLabels(schema: UiSchema): void {
   const visit = (node: UiElement): void => {

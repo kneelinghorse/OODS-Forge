@@ -1,7 +1,7 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult, Emitter, GeneratedArtifactAction } from './types.js';
 import { generatedActionContractDigest, generatedActionSourceDigest, generatedActionTypeSignature } from './artifact-envelope.js';
-import { fieldLabel } from '../compose/label-generator.js';
+import { fieldLabel, fieldHelp } from '../compose/label-generator.js';
 import { workflowDataFiles } from './workflow-data-emitter.js';
 
 const CONTEXTS = ['list', 'detail', 'form', 'timeline'] as const;
@@ -125,7 +125,7 @@ export const deferredCancellation = ${JSON.stringify(!schema.workflow.data.lifec
 export const objectLabel = ${JSON.stringify(schema.workflow.object.toLowerCase())};
 export const statuses = ${JSON.stringify(schema.workflow.data.lifecycleStates)};
 export const archivePresentation = ${JSON.stringify({ archivedField: archiveOverlay?.props?.archivedField ?? 'is_archived', showBadge: archiveOverlay?.props?.showBadge ?? true, separateTab: archiveOverlay?.props?.separateTab ?? true, tabLabel: archiveOverlay?.props?.tabLabel ?? 'Archived' })};
-export const supplementalFields: Array<{ name: string; label: string; help: string }> = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: field.description ?? '' })))};
+export const supplementalFields: Array<{ name: string; label: string; help: string }> = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: fieldHelp(name, field.description) ?? '' })))};
 export const cancellationFormProps = ${JSON.stringify({ allowedReasons: schema.workflow.data.cancellationReasonCodes, reasonHelp: cancellationForm?.props?.reasonHelp, codeHelp: cancellationForm?.props?.codeHelp })};
 const fieldByNodeId: Record<string, string> = ${JSON.stringify(fieldByNodeId)};
 export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number; cancelOpen: boolean }

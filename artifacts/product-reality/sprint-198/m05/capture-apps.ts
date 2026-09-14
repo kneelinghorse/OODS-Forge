@@ -19,9 +19,10 @@ const inspect: AppInspection = async ({ page, url, output, framework, artifact, 
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  // Fix Date only; timers and asynchronous state transitions still run normally.
-  await page.clock.setFixedTime(new Date('2026-09-08T12:00:00.000Z'));
+  // Advance Date with timers: Vue ignores bubbled events at their listener attachment timestamp.
+  await page.clock.install({ time: new Date('2026-09-08T12:00:00.000Z') });
   for (const width of [390, 820, 1440]) {
+    await page.clock.setSystemTime(new Date('2026-09-08T12:00:00.000Z'));
     await page.setViewportSize({ width, height: 1000 });
     const checkpoint = async (name: string) => {
       const relative = `craft/${framework}/${name}/${width}`;

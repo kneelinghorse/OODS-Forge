@@ -1,6 +1,6 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
-import { fieldLabel } from './label-generator.js';
+import { fieldLabel, fieldHelp } from './label-generator.js';
 import { VIZ_CONTROL_IDS } from '@oods/component-contracts';
 
 const controls = new Set(['Input', 'Select', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector', 'CancellationForm', 'BillingAmountInput', 'BillingIntervalSelector']);
@@ -40,7 +40,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions/.test(String(field))) node.component = 'Input';
         if (node.component === 'DatePicker' && !['date', 'datetime'].includes(type)) node.component = 'Input';
         if (entry.enum?.length && ['Input', 'Textarea'].includes(node.component)) { node.component = 'Select'; node.props = { field }; }
-        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label ? fieldLabel(field as string) : node.props.label, ...(entry.description ? { help: entry.description } : {}) };
+        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label ? fieldLabel(field as string) : node.props.label, ...(entry.description ? { help: fieldHelp(field as string, entry.description) } : {}) };
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
           node.component = 'Input'; node.props.type = 'datetime-local';
         }
@@ -51,7 +51,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         for (const directive of fields) {
           const name = node.props[directive];
           const description = typeof name === 'string' ? schema.objectSchema?.[name]?.description : undefined;
-          if (description) node.props[node.component === 'CancellationForm' ? directive === 'codeField' ? 'codeHelp' : 'reasonHelp' : 'help'] = description;
+          if (description) node.props[node.component === 'CancellationForm' ? directive === 'codeField' ? 'codeHelp' : 'reasonHelp' : 'help'] = fieldHelp(String(name), description);
         }
       }
       if (node.component === 'BillingAmountInput') node.props = { ...node.props, help: `Amount in ${String(node.props?.currency ?? schema.workflow?.data.currency ?? schema.objectSchema?.[String(node.props?.currencyField)]?.enum?.[0] ?? 'USD').toUpperCase()}` };

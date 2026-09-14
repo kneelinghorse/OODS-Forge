@@ -23,7 +23,9 @@ describe('form and detail reconcile their declared semantics', () => {
     for (const node of walk(schema.screens).filter(node => ['Input', 'Select', 'Checkbox', 'StatusSelector'].includes(node.component))) {
       expect(String(node.props?.label)).not.toMatch(/[.!?]|^Field \d+$/);
       expect(String(node.props?.label).length).toBeLessThanOrEqual(40);
-      expect(node.props?.help).toBe(schema.objectSchema![String(node.props?.field)].description);
+      const field = String(node.props?.field);
+      const sharedHelp: Record<string, string> = { status: 'Choose the current status.', label: 'Name shown for this record.', owner_id: 'Identifier of the owner.', owner_type: 'Choose the kind of owner.', placeholder: 'Shown when the label is empty.', tag_count: 'Number of tags assigned to this record.' };
+      expect(node.props?.help).toBe(sharedHelp[field] ?? schema.objectSchema![field].description);
     }
     const date = walk(schema.screens).find(node => node.props?.field === 'cancellation_requested_at');
     expect(date?.component).toBe('Input'); expect(date?.props?.type).toBe('datetime-local');
