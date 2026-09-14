@@ -25,7 +25,7 @@ const CLAIM_KEYS: Record<string, string[]> = {
   ],
   'docs/mcp/Connections.md': ['adapter-environment', 'adapter-features', 'fresh-install-count', 'bridge-default', 'smoke-tool-count', 'bridge-profile-3', 'bridge-port', 'bridge-api-url', 'smoke-defaults', 'smoke-timeout'],
   'docs/README.md': ['subscription-example', 'canonical-regions', 'context-inventory', 'token-architecture', 'quintet-example'],
-  'README.md': ['tool-surface', 'schema-ttl'],
+  'README.md': ['what-forge-is', 'three-words', 'generates-and-certifies', 'first-run-health', 'schema-ttl', 'tool-surface'],
   'packages/mcp-server/README.md': ['$document'],
   'packages/mcp-bridge/README.md': ['$document'],
 };
