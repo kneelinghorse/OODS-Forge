@@ -26,6 +26,9 @@ describe('canonical payment-chart trait projection', () => {
     const publicDeclaration = read('packages/mcp-server/src/schemas/repl.ui.schema.json').$defs.chartDeclaration;
     const areaDeclaration = structuredClone(publicDeclaration);
     areaDeclaration.title = 'MarkAreaChartDeclaration';
+    // The graph-only edge source must never become a valid area declaration.
+    areaDeclaration.oneOf = areaDeclaration.oneOf.filter((branch: any) => branch.properties.source.const !== 'edge-array');
+    expect(areaDeclaration.oneOf.map((branch: any) => branch.properties.source.const)).toEqual(['payment-events', 'record-array']);
     for (const branch of areaDeclaration.oneOf) branch.properties.chartType = { const: 'area' };
     expect(read('schemas/traits/mark-area.parameters.schema.json').properties.chart).toEqual(areaDeclaration);
     await expect(resolver().resolveReferences([{ name: 'viz/MarkArea', parameters: { chart: { ...chart, minorUnits: 0 } } }])).rejects.toThrow('TE-0203: must be > 0');

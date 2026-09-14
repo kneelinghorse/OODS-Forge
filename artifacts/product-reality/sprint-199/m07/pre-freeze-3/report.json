@@ -1,0 +1,76 @@
+{
+  "status": "incomplete",
+  "commandsNotRun": 2,
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 492,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-3/readiness.log",
+        "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+      }
+    },
+    {
+      "name": "registry",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "--project=core",
+        "tests/registry",
+        "tests/integration/object-registry.test.ts"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 2854,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-3/registry.log",
+        "sha256": "c867f6827d16612f1d7924a5fec12632b6e7278b07ebc70e14c18446679cc1ec"
+      }
+    },
+    {
+      "name": "near-contracts",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@oods/mcp-server",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "test/product-reality/closeout.s190.spec.ts",
+        "test/product-reality/closeout.s191.spec.ts",
+        "test/product-reality/closeout.s196.spec.ts",
+        "test/product-reality/closeout.s197.spec.ts",
+        "test/product-reality/closeout.s198.spec.ts",
+        "test/product-reality/public-head-equivalence.s185.spec.ts",
+        "test/product-reality/release-readiness.s196.spec.ts"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "wallMs": 14332,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-3/near-contracts.log",
+        "sha256": "e03851f952f3d139d34bda38d443b63a216b7e5b544fad0773d92332d83238f2"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { deriveRange, deriveMovers, S191_PUBLIC_RUNTIME_SCOPE } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
@@ -27,8 +28,8 @@ describe('Sprint 191 bounded closeout',()=>{
     expect(()=>assertEvidenceOnlyHeadChanges([{status:'A',path:file}],'sprint-191')).not.toThrow();
     for(const row of [{status:'M',path:file},{status:'A',path:'scripts/runtime/new.mjs'},{status:'M',path:'artifacts/product-reality/sprint-191/m01/README.md'}]) expect(()=>assertEvidenceOnlyHeadChanges([row],'sprint-191')).toThrow();
   });
-  it('current capability prose derives scope counts from the registry and keeps historical review separate',()=>{
-    const registry=JSON.parse(read('packages/viz-core/src/registry/viz-recipes.v1.json'));
+  it('retained capability prose derives scope counts from its recorded registry and keeps historical review separate',()=>{
+    const registry=JSON.parse(execFileSync('git', ['show', 'b7a96ab0f:packages/viz-core/src/registry/viz-recipes.v1.json'], { cwd: root, encoding: 'utf8' }));
     // The program table retains the Sprint 191 contrast snapshot.
     for(const filename of ['product-reality-program.md']) {
       const prose=read('cmos/foundational-docs/roadmap/'+filename);

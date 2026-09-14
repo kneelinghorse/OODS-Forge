@@ -1,0 +1,52 @@
+............F...E.....F...
+======================================================================
+ERROR: test_live_refresh_matches_current_capabilities_and_recorded_timestamp (test_refresh_structured_data.RefreshStructuredDataTest.test_live_refresh_matches_current_capabilities_and_recorded_timestamp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/forge-s199-export-baseline/cmos/tests/test_refresh_structured_data.py", line 429, in test_live_refresh_matches_current_capabilities_and_recorded_timestamp
+    current_components, current_tokens = generate_structured_payloads(
+                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        generated_at=expected_components["generatedAt"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        runtime_cells_path=CMOS_ROOT.parent / "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/private/tmp/forge-s199-export-baseline/cmos/scripts/refresh_structured_data.py", line 1087, in generate_structured_payloads
+    capabilities_by_id = project_runtime_surfaces(capabilities_by_id, load_json(runtime_cells_path), reference)
+  File "/private/tmp/forge-s199-export-baseline/cmos/scripts/refresh_structured_data.py", line 1030, in project_runtime_surfaces
+    raise ValueError("Runtime projection requires the complete distinct current population")
+ValueError: Runtime projection requires the complete distinct current population
+
+======================================================================
+FAIL: test_etags_are_stable (test_refresh_structured_data.RefreshStructuredDataTest.test_etags_are_stable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/forge-s199-export-baseline/cmos/tests/test_refresh_structured_data.py", line 437, in test_etags_are_stable
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        compute_etag(self.components_payload),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: '96e612149916cad1e51045fede6babe1c15a400e5f0c53f11f876026e05e14fe' != '94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b'
+- 96e612149916cad1e51045fede6babe1c15a400e5f0c53f11f876026e05e14fe
++ 94b6a29dc9602c6c32bf8b13cafe0a4233e9731cbf651b14b05d29fb3847671b
+
+
+======================================================================
+FAIL: test_structured_payloads_match_snapshot (test_refresh_structured_data.RefreshStructuredDataTest.test_structured_payloads_match_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/forge-s199-export-baseline/cmos/tests/test_refresh_structured_data.py", line 423, in test_structured_payloads_match_snapshot
+    self.assertEqual(historical_projection, expected_components)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'$sc[135 chars]t': 19, 'domainCount': 1, 'patternCount': 2}, [475343 chars]]}]}} != {'$sc[135 chars]t': 12, 'domainCount': 1, 'patternCount': 2}, [445500 chars]]}]}}
+Diff is 1131237 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 26 tests in 5.176s
+
+FAILED (failures=2, errors=1)

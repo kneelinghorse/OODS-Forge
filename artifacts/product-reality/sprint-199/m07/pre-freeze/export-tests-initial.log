@@ -1,0 +1,29 @@
+E
+======================================================================
+ERROR: setUpClass (test_refresh_structured_data.RefreshStructuredDataTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 48, in setUpClass
+    cls.components_payload, cls.tokens_payload = generate_structured_payloads(
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        generated_at=EXPECTED_GENERATED_AT,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/cmos/scripts/refresh_structured_data.py", line 1090, in generate_structured_payloads
+    capabilities_by_id = load_component_capabilities(
+        canonical_ids,
+        component_capabilities_path=component_capabilities_path,
+    )
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/cmos/scripts/refresh_structured_data.py", line 285, in load_component_capabilities
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: component capability IDs must exactly match canonical intake membership; missing=['VizGraphPreview'], extra=[]
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.005s
+
+FAILED (errors=1)

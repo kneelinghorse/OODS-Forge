@@ -1,0 +1,166 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge
+
+ ✓ |core| tests/verification/forge-claims-source-pins.s196.test.ts (11 tests) 178ms
+ ✓ |core| tests/verification/component-docs.contract.test.ts (18 tests) 2010ms
+   ✓ governed component documentation derives its claims from four agreeing sources (s196 m04) > loads all four sources through the pnpm separator and returns a failing CLI exit status for stale documentation  1524ms
+ ✓ |core| tests/verification/how-forge-works.contract.test.ts (16 tests) 37ms
+ ✓ |core| tests/verification/closeout-checklist.contract.test.ts (8 tests) 5ms
+ ❯ |core| tests/verification/forge-claims.contract.test.ts (10 tests | 2 failed) 4263ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > pins every claim key and the entire text of every marked span and generated README 2ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > detects an independently edited claim for every marker, including seemingly small count and roster edits 17ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > refuses removed, duplicated, unknown, mismatched and nested markers instead of dropping coverage 1ms
+   × generated Forge claims remain tied to their measured sources (s196) > distinguishes definitions from public identities and includes the formerly missing visualization traits 6ms
+     → expected { …(123) } to match object { traits: 45, vizTraits: 20, …(2) }
+(119 matching properties omitted from actual)
+   ✓ generated Forge claims remain tied to their measured sources (s196) > pins the Product example including its s198 read-only field summaries 1ms
+   × generated Forge claims remain tied to their measured sources (s196) > derives portable outcomes from rows and keeps reference-app coverage separate 1ms
+     → expected { …(123) } to match object { portablePass: 17, …(4) }
+(118 matching properties omitted from actual)
+   ✓ generated Forge claims remain tied to their measured sources (s196) > ties source numeric defaults to the generated operating instructions 0ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > runs --check without rewriting any governed document 47ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > rejects misspelled check switches and incomplete roots before a write mode can start 0ms
+   ✓ generated Forge claims remain tied to their measured sources (s196) > --root imports the target copy: mutating its Product source changes its generated field count only  4055ms
+ ✓ |core| tests/verification/s177-prose-carriers.contract.test.ts (6 tests) 7ms
+ ✓ |core| tests/verification/s178-viz-twin-retirement.contract.test.ts (3 tests) 4192ms
+   ✓ Sprint 178 viz twin retirement rung 1 > rejects external import/export/require/vi.mock references to retired paths  4189ms
+ ✓ |core| tests/verification/release-publish-shape.s196.test.ts (11 tests) 355ms
+   ✓ Gate-2 preparation changes no publish shape without a named decision (s196 m06) > pins every root/workspace baseline to clean Git bytes and permits only the approved root hygiene change  329ms
+ ✓ |core| tests/verification/gate2-decision-packet.s196.test.ts (5 tests) 5ms
+ ✓ |core| tests/verification/agent-docs-registry.contract.test.ts (5 tests) 4ms
+ ✓ |core| tests/verification/compositor.contract.test.ts (4 tests) 7ms
+ ✓ |core| tests/verification/purity.contract.test.ts (4 tests) 486ms
+   ✓ B3.3 — Purity Harness > enforces the oods/no-hooks-in-modifiers ESLint rule for modifier modules  471ms
+ ✓ |core| tests/verification/runtime-placement-ci.s195.test.ts (3 tests) 2ms
+ ✓ |core| tests/verification/contexts.contract.test.tsx (16 tests) 11ms
+ ❯ |core| tests/verification/viz-coverage-table.s199.test.ts (2 tests | 2 failed) 195ms
+   × the chart table distinguishes declared scopes, coverage and conformance > generates all thirteen identities with six scope states, a conformant denominator and reasons 174ms
+     → expected '| bubble_map | echarts | true | certi…' to contain 'typed-deferred (OODS-V165)'
+   × the chart table distinguishes declared scopes, coverage and conformance > fails before writing docs when a deferred scope lacks its typed reason code, then passes on restoration 20ms
+     → Cannot read properties of undefined (reading 'renderScopes')
+ ✓ |core| tests/verification/standing-rules.contract.test.ts (4 tests) 3ms
+ ✓ |core| tests/verification/regions.contract.test.ts (3 tests) 2ms
+ ✓ |core| tests/verification/ci-token-governance-event.contract.test.ts (2 tests) 2ms
+ ❯ |core| tests/verification/generated-docs-ci.s196.test.ts (2 tests | 1 failed) 6ms
+   × generated documentation cannot silently lose its CI gate > checks all six generated surfaces without regenerating their evidence 5ms
+     → expected [ …(6) ] to deeply equal [ …(6) ]
+   ✓ generated documentation cannot silently lose its CI gate > runs the aggregate gate once after its token and package inputs are built 1ms
+ ✓ |core| tests/verification/forge-claims-behavior.s196.test.ts (1 test) 15ms
+ ✓ |core| tests/verification/runtime-executable-boundary.s191.test.ts (7 tests) 1ms
+ ✓ |core| tests/verification/pkg-compat-workflow.contract.test.ts (2 tests) 2ms
+ ✓ |core| tests/verification/docs.contract.test.ts (2 tests) 1ms
+
+ Test Files  3 failed | 20 passed (23)
+      Tests  5 failed | 140 passed (145)
+   Start at  04:25:13
+   Duration  17.25s (transform 1.07s, setup 0ms, collect 2.80s, tests 11.79s, environment 2ms, prepare 726ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/verification/forge-claims.contract.test.ts > generated Forge claims remain tied to their measured sources (s196) > distinguishes definitions from public identities and includes the formerly missing visualization traits
+AssertionError: expected { …(123) } to match object { traits: 45, vizTraits: 20, …(2) }
+(119 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "objectDefinitions": 19,
+    "objectNames": 18,
+-   "traits": 45,
+-   "vizTraits": 20,
++   "traits": 46,
++   "vizTraits": 21,
+  }
+
+ ❯ tests/verification/forge-claims.contract.test.ts:69:19
+     67| 
+     68|   it('distinguishes definitions from public identities and includes th…
+     69|     expect(facts).toMatchObject({ traits: 45, vizTraits: 20, objectDef…
+       |                   ^
+     70|     const html = documents['docs/how-forge-works.html'];
+     71|     for (const name of ['EncodingOpacity', 'EncodingShape', 'ScatterPl…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  |core| tests/verification/forge-claims.contract.test.ts > generated Forge claims remain tied to their measured sources (s196) > derives portable outcomes from rows and keeps reference-app coverage separate
+AssertionError: expected { …(123) } to match object { portablePass: 17, …(4) }
+(118 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "portablePass": 17,
+    "portableTyped": 2,
+    "releaseCells": 42,
+    "releaseEqual": 42,
+-   "scenarios": 109,
++   "scenarios": 110,
+  }
+
+ ❯ tests/verification/forge-claims.contract.test.ts:96:19
+     94|     const portable = ledger.rows.filter((row: { portableOutcome?: unkn…
+     95|     expect(facts.portableTools).toBe(portable.length);
+     96|     expect(facts).toMatchObject({ portablePass: 17, portableTyped: 2, …
+       |                   ^
+     97|     for (const file of ['docs/how-forge-works.html', 'packages/mcp-ser…
+     98|       expect(documents[file]).toContain('brand.apply (OODS-N020) and d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  |core| tests/verification/generated-docs-ci.s196.test.ts > generated documentation cannot silently lose its CI gate > checks all six generated surfaces without regenerating their evidence
+AssertionError: expected [ …(6) ] to deeply equal [ …(6) ]
+
+- Expected
++ Received
+
+  [
+    "tsx scripts/docs/generate-api-reference.ts --check",
+    "tsx scripts/product-reality/s195-viz-taxonomy.ts --check",
+-   "tsx scripts/product-reality/s195-pattern-census.ts --check",
++   "tsx scripts/product-reality/s195-pattern-census.ts --check --observations artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json",
+    "tsx scripts/docs/generate-component-docs.ts --check",
+    "tsx scripts/docs/generate-tool-specs.ts --check",
+    "tsx scripts/docs/generate-forge-claims.ts --check",
+  ]
+
+ ❯ tests/verification/generated-docs-ci.s196.test.ts:23:22
+     21|       "scripts/docs/generate-forge-claims.ts",
+     22|     ];
+     23|     expect(commands).toEqual(generators.map(generator => `tsx ${genera…
+       |                      ^
+     24|     expect(scripts["docs:check"]).not.toContain("--measure");
+     25|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  |core| tests/verification/viz-coverage-table.s199.test.ts > the chart table distinguishes declared scopes, coverage and conformance > generates all thirteen identities with six scope states, a conformant denominator and reasons
+AssertionError: expected '| bubble_map | echarts | true | certi…' to contain 'typed-deferred (OODS-V165)'
+
+Expected: "typed-deferred (OODS-V165)"
+Received: "| bubble_map | echarts | true | certified | rendered | rendered | rendered | rendered | rendered | rendered | 6/6 | none (exempt) | not-placed | HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence. Contrast verdict exempt; no categorical canvas-ratio measurement claimed. Not placed: bubble_map requires inline geometry and size-bound point values; no public object declares that operand. |"
+
+ ❯ tests/verification/viz-coverage-table.s199.test.ts:35:20
+     33|     for (const row of recipes) expect(doc.split('\n').filter(line => l…
+     34|     const bubble = doc.split('\n').find(line => line.startsWith('| bub…
+     35|     expect(bubble).toContain('typed-deferred (OODS-V165)');
+       |                    ^
+     36|     expect(bubble).toContain('| 0/6 |');
+     37|     expect(bubble).toContain('SVG rendering failed');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  |core| tests/verification/viz-coverage-table.s199.test.ts > the chart table distinguishes declared scopes, coverage and conformance > fails before writing docs when a deferred scope lacks its typed reason code, then passes on restoration
+TypeError: Cannot read properties of undefined (reading 'renderScopes')
+ ❯ tests/verification/viz-coverage-table.s199.test.ts:45:111
+     43|     const file = join(directory, registry), original = readFileSync(fi…
+     44|     const recipes = JSON.parse(original);
+     45|     delete recipes.find((row: any) => row.renderScopes.some((scope: an…
+       |                                                                                                               ^
+     46|     writeFileSync(file, JSON.stringify(recipes, null, 2) + '\n');
+     47|     const red = run(directory);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

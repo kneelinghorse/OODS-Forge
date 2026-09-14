@@ -1,0 +1,47 @@
+{
+  "status": "incomplete",
+  "commandsNotRun": 3,
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "wallMs": 417,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-2/readiness.log",
+        "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+      }
+    },
+    {
+      "name": "registry",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--no-file-parallelism",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--coverage.enabled=false",
+        "--project=core",
+        "tests/registry",
+        "tests/integration/object-registry.test.ts"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "wallMs": 2887,
+      "log": {
+        "path": "artifacts/product-reality/sprint-199/m07/pre-freeze-2/registry.log",
+        "sha256": "8a0b356c17f48b9ca8d19f39907177afc01f51e0965874b9889a7bfb0d0438a7"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

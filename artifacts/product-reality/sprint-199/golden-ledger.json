@@ -2917,6 +2917,14 @@
       "after": 110,
       "mission": "s199-m06",
       "reason": "Added the declared Relationship force_graph preview: its first public sample SVG is new; canonical intake/catalog/framework/docs counts grow 109 to 110, static interaction rows 69 to 70, and measured generatedConsumer rows 66 to 67. Existing chart and pattern pins remain unchanged (decision #2054)."
+    },
+    {
+      "file": "tests/verification/forge-claims.contract.test.ts",
+      "pin": "count/expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength",
+      "before": 45,
+      "after": 46,
+      "mission": "s199-m07",
+      "reason": "Closeout prose census follows the m06 explicit MarkGraph addition: one new trait, one new scenario; no SVG moved"
     }
   ],
   "additionalBeforePlan": [
@@ -3066,6 +3074,24 @@
       },
       "reason": "S199 m06 explicitly adds VizGraphPreview: current canonical intake, readiness and catalog rows become 110 while the historical 109 baseline remains sealed (decision #2054).",
       "source": "b7a96ab0f:tests/verification/component-docs.contract.test.ts"
+    },
+    {
+      "file": "tests/verification/forge-claims.contract.test.ts",
+      "beforeSha256": "77abffd9187cb7312639289b9eba53bcf550c6473fa5a377247b4bcc18362cf3",
+      "pins": {
+        "count/expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength": 45,
+        "count/expect(String(facts.objectRows).match(/<tr><td>/g)).toHaveLength": 19,
+        "count/expect(String(facts.productSlotRoster).split('; ')).toHaveLength": 10,
+        "count/expect(example.traits).toHaveLength": 6,
+        "count/expect(initial.status, initial.stderr).toBe": 0,
+        "count/expect(stale.status, stale.stderr).toBe": 1,
+        "count/expect(generated.status, generated.stderr).toBe": 0,
+        "count/expect(run('--check').status).toBe": 0
+      },
+      "reason": "m07 prefreeze catches the explicit MarkGraph trait/scenario census in a prose contract; original numeric pin is frozen before migration",
+      "source": "b7a96ab0f:tests/verification/forge-claims.contract.test.ts"
     }
-  ]
+  ],
+  "verifiedHead": "2a8b0a50ed151e046afbf5a5e0fedfe969b90850",
+  "verifiedEntries": 301
 }

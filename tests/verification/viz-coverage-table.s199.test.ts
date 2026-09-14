@@ -32,9 +32,9 @@ describe('the chart table distinguishes declared scopes, coverage and conformanc
     expect(recipes).toHaveLength(13);
     for (const row of recipes) expect(doc.split('\n').filter(line => line.startsWith(`| ${row.chartType} |`))).toHaveLength(1);
     const bubble = doc.split('\n').find(line => line.startsWith('| bubble_map |'))!;
-    expect(bubble).toContain('typed-deferred (OODS-V165)');
-    expect(bubble).toContain('| 0/6 |');
-    expect(bubble).toContain('SVG rendering failed');
+    expect(bubble).toContain('| 6/6 |');
+    expect(bubble).not.toContain('typed-deferred');
+    expect(bubble).not.toContain('SVG rendering failed');
     expect(run(directory, true).status).toBe(0);
   });
 
@@ -42,7 +42,9 @@ describe('the chart table distinguishes declared scopes, coverage and conformanc
     const directory = fixture();
     const file = join(directory, registry), original = readFileSync(file, 'utf8');
     const recipes = JSON.parse(original);
-    delete recipes.find((row: any) => row.renderScopes.some((scope: any) => scope.status === 'typed-deferred')).renderScopes.find((scope: any) => scope.status === 'typed-deferred').errors[0].code;
+    // All shipped scopes now render; inject an unsupported scope to keep the
+    // fail-closed reason boundary exercised when no live deferral exists.
+    recipes[0].renderScopes[0] = { theme: 'light', brand: 'A', status: 'typed-deferred', errors: [{ message: 'Unsupported fixture scope' }] };
     writeFileSync(file, JSON.stringify(recipes, null, 2) + '\n');
     const red = run(directory);
     expect(red.status).not.toBe(0);

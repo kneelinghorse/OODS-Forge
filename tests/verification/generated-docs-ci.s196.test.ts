@@ -20,7 +20,7 @@ describe("generated documentation cannot silently lose its CI gate", () => {
       "scripts/docs/generate-tool-specs.ts",
       "scripts/docs/generate-forge-claims.ts",
     ];
-    expect(commands).toEqual(generators.map(generator => `tsx ${generator} --check`));
+    expect(commands).toEqual(generators.map(generator => `tsx ${generator} --check${generator.endsWith("s195-pattern-census.ts") ? " --observations artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json" : ""}`));
     expect(scripts["docs:check"]).not.toContain("--measure");
   });
 
