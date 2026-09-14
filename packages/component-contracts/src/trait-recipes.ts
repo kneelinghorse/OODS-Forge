@@ -18,7 +18,9 @@ export function traitEventRows(kind: TraitEventKind, values: TraitEventValues) {
       : (values.history ?? []).map(value => {
         const row = record(value);
         const from = text(row.from_state ?? row.from); const to = text(row.to_state ?? row.to) ?? values.status ?? 'State changed';
-        return { title: text(row.title ?? row.label) ?? (from ? `${formatReadOnlyValue(from, 'string', true)} → ${formatReadOnlyValue(to, 'string', true)}` : formatReadOnlyValue(to, 'string', true)), at: text(row.transitioned_at ?? row.timestamp ?? row.at), actor: text(row.actor_id ?? row.actor), reason: text(row.reason) };
+        const transition = from ? `${formatReadOnlyValue(from, 'string', true)} → ${formatReadOnlyValue(to, 'string', true)}` : formatReadOnlyValue(to, 'string', true);
+        const title = text(row.title ?? row.label);
+        return { title: title && title !== transition ? `${title} · ${transition}` : title ?? transition, at: text(row.transitioned_at ?? row.timestamp ?? row.at), actor: text(row.actor_id ?? row.actor), reason: text(row.reason) };
       });
   return rows.map(value => {
     const row = value as { title: string; at?: string; actor?: string; reason?: string; code?: string };

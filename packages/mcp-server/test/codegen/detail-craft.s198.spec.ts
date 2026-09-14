@@ -65,7 +65,7 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
       { from: 'trialing', to: 'pending_cancellation', at: '2026-09-01T12:00:00Z' },
       { from_state: 'pending_cancellation', to_state: 'cancelled', transitioned_at: '2026-09-02T12:00:00Z', title: 'Customer closed account' },
     ] });
-    expect(rows.map(row => row.title)).toEqual(['Trialing → Pending Cancellation', 'Customer closed account']);
+    expect(rows.map(row => row.title)).toEqual(['Trialing → Pending Cancellation', 'Customer closed account · Pending Cancellation → Cancelled']);
     expect(rows.map(row => row.time)).toEqual(['Sep 1, 2026, 12:00 PM', 'Sep 2, 2026, 12:00 PM']);
   });
   it('preserves HTML tab panel content and layout while continuing to reject discarded application actions', async () => {
