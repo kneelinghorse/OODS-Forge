@@ -58,7 +58,12 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const search = (searchSlot ? walk([searchSlot]).find(node => node.component === 'SearchInput') : undefined)
         ?? { id: `${toolbar.id}-search`, component: 'SearchInput' };
       const filter = toolbar.children?.find(node => node.meta?.intent === 'slot:filters');
-      const filterField = fields.status ? 'status' : Object.keys(fields).find(name => fields[name]!.enum?.length);
+      const enums = Object.keys(fields).filter(name => new Set(fields[name]!.examples?.length ? fields[name]!.examples!.slice(0, 10) : fields[name]!.enum?.slice(0, 10)).size > 1 && fields[name]!.enum?.length);
+      // Classifiable may project a domain enum into primary_category_id. Keep the
+      // domain field as the filter when it declares the same vocabulary.
+      const classification = enums.find(name => name !== 'primary_category_id' && fields.primary_category_id?.enum?.length && JSON.stringify(fields[name]!.enum) === JSON.stringify(fields.primary_category_id.enum))
+        ?? (enums.includes('primary_category_id') ? 'primary_category_id' : undefined);
+      const filterField = classification ?? (enums.includes('status') ? 'status' : enums[0]);
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
@@ -89,6 +94,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const label = nodes.find(node => node.component === 'TimelineEntryLabel');
       const traitEvents = nodes.filter(node => ['ArchiveEvent', 'CancellationEvent', 'StateTransitionEvent'].includes(node.component));
       // Preserve the declared identity recipe once, outside the repeated event rows.
+      if (label) { label.props = { ...label.props, field: labelField }; delete label.props.label; }
       header.children = [label ?? { id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };

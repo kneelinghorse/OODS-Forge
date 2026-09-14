@@ -171,9 +171,9 @@ export async function runVizThemeProof({ cases, output, chromium, mission = 's19
             const canvasRect = svg.querySelector(':scope > rect');
             const paints = [...svg.querySelectorAll('path,rect,line,circle,polygon,text')].map(element => {
               const style = getComputedStyle(element); const rect = element.getBoundingClientRect();
-              return { tag: element.tagName, mark: Boolean(element.closest('.role-mark')), text: element.textContent?.trim() || null,
+              return { tag: element.tagName, mark: Boolean(element.closest('.role-mark')) || (element.getAttribute('ecmeta_ssr_type') === 'chart' && element.hasAttribute('ecmeta_series_index') && element.hasAttribute('ecmeta_data_index')), text: element.textContent?.trim() || null,
                 fill: style.fill, stroke: style.stroke, color: style.color, background: style.backgroundColor,
-                fillOpacity: style.fillOpacity, strokeOpacity: style.strokeOpacity, opacity: style.opacity,
+                fillOpacity: style.fillOpacity, strokeOpacity: style.strokeOpacity, strokeWidth: style.strokeWidth, opacity: style.opacity,
                 width: rect.width, height: rect.height, visibility: style.visibility,
                 declaredFill: element.getAttribute('fill'), declaredStroke: element.getAttribute('stroke') };
             });
@@ -194,7 +194,7 @@ export async function runVizThemeProof({ cases, output, chromium, mission = 's19
         check(proof.placeholders === 0, 'A chart placeholder replaced the public SVG');
         const visiblePaint = (paint, canvas) => paint.visibility === 'visible' && Number(paint.opacity) > 0
           && ((paint.fill !== 'none' && paint.fill !== canvas && Number(paint.fillOpacity) > 0)
-            || (paint.stroke !== 'none' && paint.stroke !== canvas && Number(paint.strokeOpacity) > 0));
+            || (paint.stroke !== 'none' && paint.stroke !== canvas && Number(paint.strokeOpacity) > 0 && Number.parseFloat(paint.strokeWidth) > 0));
         for (const chart of proof.charts) {
           check(chart.width > 0 && chart.height > 0, 'Chart has no visible bounds');
           if (specimen.expectedSvg) check(chart.matchesPublicSvg, 'Mounted chart differs from the public SVG');

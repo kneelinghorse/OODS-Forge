@@ -1,0 +1,73 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts (16 tests | 5 failed) 304ms
+   ✓ edge arrays preserve graph meaning > bidirectional=false controls exactly the reverse link 2ms
+   ✓ edge arrays preserve graph meaning > bidirectional=true controls exactly the reverse link 0ms
+   ✓ edge arrays preserve graph meaning > keeps authored link order, deduplicates symmetric pairs and avoids delimiter collisions 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields (%j) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields (null) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","both":false}) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"","to":"b","both":false}) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":2,"both":false}) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":"b"}) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":"b","both":"true"}) 0ms
+   ✓ edge arrays preserve graph meaning > an omitted bidirectional field is directed and a symmetric self-link is emitted only once 0ms
+   × Relationship graph at the public generated-app boundary > declares an optional neighborhood and labels its examples synthetic, only on Relationship 119ms
+     → expected [] to have a length of 1 but got +0
+   × Relationship graph at the public generated-app boundary > detail/react renders exact record operands into named, stable public SVG assets 24ms
+     → expected [] to have a length of 1 but got +0
+   × Relationship graph at the public generated-app boundary > detail/vue renders exact record operands into named, stable public SVG assets 16ms
+     → expected [] to have a length of 1 but got +0
+   × Relationship graph at the public generated-app boundary > workflow/react renders exact record operands into named, stable public SVG assets 82ms
+     → expected [] to have a length of 1 but got +0
+   × Relationship graph at the public generated-app boundary > workflow/vue renders exact record operands into named, stable public SVG assets 59ms
+     → expected [] to have a length of 1 but got +0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > declares an optional neighborhood and labels its examples synthetic, only on Relationship
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:64:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > detail/react renders exact record operands into named, stable public SVG assets
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > detail/vue renders exact record operands into named, stable public SVG assets
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > workflow/react renders exact record operands into named, stable public SVG assets
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > workflow/vue renders exact record operands into named, stable public SVG assets
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:80:21
+     78|       expect(composition.status, JSON.stringify(composition.errors)).t…
+     79|       const nodes = chartNodes(composition.schema.screens);
+     80|       expect(nodes).toHaveLength(1);
+       |                     ^
+     81|       const node = nodes[0]!, chart = node.chart!;
+     82|       expect(chart.source).toBe('edge-array');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 11 passed (16)
+   Start at  03:49:58
+   Duration  1.82s (transform 750ms, setup 14ms, collect 1.32s, tests 304ms, environment 0ms, prepare 66ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/graph-placement-codegen.s199.spec.ts

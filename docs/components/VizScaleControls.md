@@ -57,7 +57,7 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../../artifacts/structured-data/oods-components-2026-09-11-s193-m07.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m07.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m07.json).
 
 | Field | Values |
 | --- | --- |
@@ -71,7 +71,7 @@ Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../
 | Trait | Category | Context | Position | Priority | Props | Source |
 | --- | --- | --- | --- | --- | --- | --- |
 | `ScaleLinear` | `viz.scale` | `form` | `top` | Not recorded | `{"intentParameter":"renderIntent","type":"linear","domainMinField":"viz_scale_linear_domain_min","domainMaxField":"viz_scale_linear_domain_max","rangeMinField":"viz_scale_linear_range_min","rangeMaxField":"viz_scale_linear_range_max","zeroField":"viz_scale_linear_zero_baseline","modeField":"viz_scale_linear_mode"}` | [traits/viz/scale-linear.trait.yaml](../../traits/viz/scale-linear.trait.yaml) |
-| `ScaleTemporal` | `viz.scale` | `form` | `top` | Not recorded | `{"intentParameter":"renderIntent","type":"temporal","domainMinField":"viz_scale_temporal_domain_start","domainMaxField":"viz_scale_temporal_domain_end","rangeMinField":"viz_scale_temporal_range_min","rangeMaxField":"viz_scale_temporal_range_max","timezoneField":"viz_scale_temporal_timezone","niceField":"viz_scale_temporal_nice","formatField":"viz_scale_temporal_output_format"}` | [traits/viz/scale-temporal.trait.yaml](../../traits/viz/scale-temporal.trait.yaml) |
+| `ScaleTemporal` | `viz.scale` | `form` | `top` | Not recorded | `{"intentParameter":"renderIntent","type":"temporal","domainMinField":"viz_scale_temporal_domain_start","domainMaxField":"viz_scale_temporal_domain_end","rangeMinField":"viz_scale_temporal_range_min","rangeMaxField":"viz_scale_temporal_range_max","niceField":"viz_scale_temporal_nice","formatField":"viz_scale_temporal_output_format"}` | [traits/viz/scale-temporal.trait.yaml](../../traits/viz/scale-temporal.trait.yaml) |
 
 Source files:
 

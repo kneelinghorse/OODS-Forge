@@ -95,19 +95,19 @@ describe('catalog.list', () => {
     })).toBe(109);
 
     const output = await handle({});
-    expect(output.totalCount).toBe(109);
-    expect(output.stats.componentCount).toBe(109);
+    expect(output.totalCount).toBe(110);
+    expect(output.stats.componentCount).toBe(110);
   });
 
-  it('exposes accepted retain-109 scope without turning historical proposals into exclusions', async () => {
+  it('exposes accepted retained scope plus the declared graph addition without turning historical proposals into exclusions', async () => {
     const output = await handle({ detail: 'summary', pageSize: 200 });
     const data = readComponentsDataset<{ generatedAt: string; components: Array<{ id: string }>; obligationScope: unknown }>();
     expect(output.generatedAt).toBe(data.generatedAt);
     expect(output.components.map((row) => row.name).sort()).toEqual(data.components.map((row) => row.id).sort());
-    expect(new Set(output.components.map((row) => row.name)).size).toBe(109);
+    expect(new Set(output.components.map((row) => row.name)).size).toBe(110);
     expect(output.obligationScope).toMatchObject(data.obligationScope as object);
     expect(output.obligationScope?.runtimeEvidence).toMatch(/packed runtime gates|runtime proof is unavailable/);
-    expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'proposed-awaiting-derek-approval' });
+    expect(output.obligationScope).toMatchObject({ decisionId: 2054, disposition: 'retain-all-obligations', controllingObligationDenominator: 110, approvedRuntimeCensus: null, classificationStatus: 'proposed-awaiting-derek-approval' });
     expect(validateOutput(output)).toBe(true);
     expect(validateOutput({ ...output, obligationScope: { ...output.obligationScope, approvedRuntimeCensus: 98 } })).toBe(false);
     // Measured implementation changes the proposal, never the approved denominator.
@@ -536,12 +536,12 @@ describe('catalog.list', () => {
     }
   });
 
-  it('keeps the legacy status census scoped to the 109 mapped / 0 fallback HTML surface after the three disputed roots', async () => {
+  it('keeps the legacy status census scoped to the 110 mapped / 0 fallback HTML surface after the three disputed roots', async () => {
     const stable = await handle({ status: 'stable' });
     const planned = await handle({ status: 'planned' });
     const beta = await handle({ status: 'beta' });
 
-    expect(stable.totalCount).toBe(109);
+    expect(stable.totalCount).toBe(110);
     expect(planned.totalCount).toBe(0);
     expect(beta.totalCount).toBe(0);
   });

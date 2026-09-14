@@ -67,6 +67,21 @@ describe('s196 release readiness derives facts without making Gate 2 decisions',
     expect(collectReleaseReadiness(directory)).toEqual(facts);
   });
 
+  it('writes selectable current facts while refusing every sealed Sprint 195–198 output', () => {
+    const directory = fixture();
+    const output = 'artifacts/product-reality/sprint-199/m01/readiness-test.json';
+    expect(generateReleaseReadiness(directory, false, output)).toEqual(facts);
+    expect(() => generateReleaseReadiness(directory, true, output)).not.toThrow();
+    expect(fs.readFileSync(path.join(directory, PACKET_PATH), 'utf8')).toContain(output);
+    for (const sprint of [195, 196, 197, 198]) {
+      const sealed = `artifacts/product-reality/sprint-${sprint}/m06/release-readiness-facts.json`;
+      expect(() => generateReleaseReadiness(directory, false, sealed)).toThrow('sealed Sprint 195–198 receipts');
+      expect(fs.existsSync(path.join(directory, sealed))).toBe(false);
+    }
+    expect(parseReadinessArgs(['--facts', output, '--check'])).toMatchObject({ factsPath: output, check: true });
+    expect(() => parseReadinessArgs(['--facts'])).toThrow('Missing value');
+  });
+
   it.each(['private', 'license', 'publishConfig', 'files', 'exports', 'version'])('detects actual package %s movement and regenerates from the isolated root', field => {
     const directory = fixture();
     edit(directory, 'tools/agents-smoke/package.json', manifest => { manifest[field] = field === 'private' ? false : field === 'version' ? '9.0.0' : field === 'files' ? ['alternate'] : field === 'exports' ? { '.': './other.js' } : field === 'publishConfig' ? { access: 'restricted' } : 'UNLICENSED'; });

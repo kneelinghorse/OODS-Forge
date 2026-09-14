@@ -17,11 +17,12 @@ import type { VizRenderInput, DashboardRenderInput } from '../../packages/mcp-se
 
 const root = resolve(process.env.OODS_VIZ_CENSUS_ROOT ?? resolve(dirname(fileURLToPath(import.meta.url)), '../..'));
 const args = process.argv.slice(2);
-assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && ['s196', 's197-m03', 's197-m05'].includes(args[1])), 'Supported option: --mode s196|s197-m03|s197-m05');
+assert(args.length === 0 || (args.length === 2 && args[0] === '--mode' && ['s196', 's197-m03', 's197-m05', 's199'].includes(args[1])), 'Supported option: --mode s196|s197-m03|s197-m05|s199');
+const chartsMigration = args[1] === 's199';
 const darkMission = args[1] === 's197-m03';
 const paletteMigration = args[1] === 's197-m05';
-const sprint = darkMission || paletteMigration ? 197 : args[1] === 's196' ? 196 : 195;
-const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/${darkMission ? 'm03' : paletteMigration ? 'm05' : 'm05/golden-migration'}/matrix`) + '/');
+const sprint = chartsMigration ? 199 : darkMission || paletteMigration ? 197 : args[1] === 's196' ? 196 : 195;
+const out = pathToFileURL(resolve(root, `artifacts/product-reality/sprint-${sprint}/${darkMission ? 'm03' : paletteMigration || chartsMigration ? 'm05' : 'm05/golden-migration'}/matrix`) + '/');
 const inputs = [
   ...CASES.map(({ chartType, encodings }) => ({ chartType, rows: [...SALES], encodings })),
   ...ECHARTS_OPERAND_CASES.map(renderInputFor),
@@ -85,8 +86,8 @@ for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] a
   const file = `dashboard-${brand}-${theme}.html`; await fs.writeFile(new URL(file, out), first.html!);
   dashboards.push({ brand, theme, file, svgCount: 11, canvasChecks: 11, expectedCanvas, outputHtmlHash: first.outputHtmlHash, secondHash: second.outputHtmlHash });
 }
-const head = darkMission || paletteMigration ? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim() : sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
-const sourceState = paletteMigration ? 's197-m05 complete palette migration over recorded HEAD; prior identities and token bindings are pinned in golden-attribution.before.json.' : darkMission ? 's197-m03 generated dark palette over recorded HEAD; palette source bytes are pinned in the elevation receipt. Golden registry pins remain untouched until m05.' : sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
+const head = darkMission || paletteMigration || chartsMigration ? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim() : sprint === 196 ? '944f4dda5f784e266310978b31f65b3d452e6387' : '9c75a1dbb495ca26c16f2f75ce52095e72adb16e';
+const sourceState = chartsMigration ? 's199-m05 combined m04 bubble-area and m05 paint migration over recorded HEAD; per-pin attribution lives in sprint-199/golden-ledger.json (decision #2052).' : paletteMigration ? 's197-m05 complete palette migration over recorded HEAD; prior identities and token bindings are pinned in golden-attribution.before.json.' : darkMission ? 's197-m03 generated dark palette over recorded HEAD; palette source bytes are pinned in the elevation receipt. Golden registry pins remain untouched until m05.' : sprint === 196 ? 's196-m05 UTC migration over recorded base; current bytes are pinned by the migration receipt' : 's195-m05 palette migration over recorded base; current bytes are pinned by the migration receipt';
 await fs.writeFile(new URL('matrix.json', out), JSON.stringify({ head, sourceState, builderSelfCertified: false, highContrast: 'This legacy operand matrix retains light/dark identity; the separate public census measures all 78 light/dark/hc cells.', table, dashboards }, null, 2) + '\n');
 console.log(JSON.stringify({ publicSvg: table.length, canvasChecks: table.length, omittedScopeIdentities: 13, dashboardScopes: dashboards.length, dashboardDrawnPerScope: 11 }));
 

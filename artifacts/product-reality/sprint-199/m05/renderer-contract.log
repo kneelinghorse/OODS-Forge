@@ -1,0 +1,36 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-render
+
+ ❯ test/hc-renderer-contract.s199.spec.ts (3 tests | 1 failed) 498ms
+   ✓ native renderer paint boundaries (s199) > restores only requested quantized symbol legends and retains unrelated gradients 1ms
+   × native renderer paint boundaries (s199) > quantized colors render discrete symbols instead of the native fallback gradient border 34ms
+     → expected '<svg xmlns="http://www.w3.org/2000/sv…' not to contain 'stroke="#ddd"'
+   ✓ native renderer paint boundaries (s199) > native chord preserves the source ribbon fill and suppresses only its meaningless zero-width stroke  462ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/hc-renderer-contract.s199.spec.ts > native renderer paint boundaries (s199) > quantized colors render discrete symbols instead of the native fallback gradient border
+AssertionError: expected '<svg xmlns="http://www.w3.org/2000/sv…' not to contain 'stroke="#ddd"'
+
+Expected: "stroke="#ddd""
+Received: "<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="139" height="60" viewBox="0 0 139 60"><rect width="139" height="60" fill="white"/><g fill="none" stroke-miterlimit="10" transform="translate(20,5)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0.5,0.5h40v20h-40Z" stroke="#ddd"/><g><g class="mark-rect role-mark marks" role="graphics-object" aria-roledescription="rect mark container"><path aria-label="category: A; amount: 2" role="graphics-symbol" aria-roledescription="rect mark" d="M0,0h20v20h-20Z" fill="Canvas"/><path aria-label="category: B; amount: 8" role="graphics-symbol" aria-roledescription="rect mark" d="M20,0h20v20h-20Z" fill="CanvasText"/></g><g class="mark-group role-legend" role="graphics-symbol" aria-roledescription="legend" aria-label="Symbol legend titled 'amount' for fill color with 1 boundary: 5.0"><g transform="translate(58,0)"><path class="background" aria-hidden="true" d="M0,0h56v45h-56Z" pointer-events="none"/><g><g class="mark-group role-legend-entry"><g transform="translate(0,16)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-group role-scope" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h56v12.5h-56Z" pointer-events="none" opacity="1"/><g><g class="mark-symbol role-legend-symbol" pointer-events="none"><path transform="translate(6,6)" d="M-5,-5h10v10h-10Z" fill="Canvas" stroke="CanvasText" stroke-width="1.5" opacity="1"/></g><g class="mark-text role-legend-label" pointer-events="none"><text text-anchor="start" transform="translate(16,9)" font-family="sans-serif" font-size="10px" fill="#000" opacity="1">&lt; 5.0</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g><g transform="translate(0,16)"><path class="background" aria-hidden="true" d="M0,0h56v12.5h-56Z" pointer-events="none" opacity="1"/><g><g class="mark-symbol role-legend-symbol" pointer-events="none"><path transform="translate(6,6)" d="M-5,-5h10v10h-10Z" fill="CanvasText" stroke="CanvasText" stroke-width="1.5" opacity="1"/></g><g class="mark-text role-legend-label" pointer-events="none"><text text-anchor="start" transform="translate(16,9)" font-family="sans-serif" font-size="10px" fill="#000" opacity="1">≥ 5.0</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-text role-legend-title" pointer-events="none"><text text-anchor="start" transform="translate(0,9)" font-family="sans-serif" font-size="11px" font-weight="bold" fill="#000" opacity="1">amount</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'category' for a discrete scale with 2 values: A, B"><g transform="translate(0.5,20.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(10,0)" x2="0" y2="5" stroke="#888" stroke-width="1" opacity="1"/><line transform="translate(30,0)" x2="0" y2="5" stroke="#888" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(9.5,7) rotate(270) translate(0,3)" font-family="sans-serif" font-size="10px" fill="#000" opacity="1">A</text><text text-anchor="end" transform="translate(29.5,7) rotate(270) translate(0,3)" font-family="sans-serif" font-size="10px" fill="#000" opacity="1">B</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="40" y2="0" stroke="#888" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(20,28)" font-family="sans-serif" font-size="11px" font-weight="bold" fill="#000" opacity="1">category</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg>"
+
+ ❯ test/hc-renderer-contract.s199.spec.ts:22:21
+     20|     expect(svg).toContain('role-legend-symbol');
+     21|     expect(svg).not.toContain('role-legend-band');
+     22|     expect(svg).not.toContain('stroke="#ddd"');
+       |                     ^
+     23|   });
+     24|   it('native chord preserves the source ribbon fill and suppresses onl…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  03:23:51
+   Duration  1.09s (transform 51ms, setup 0ms, collect 322ms, tests 498ms, environment 0ms, prepare 52ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-render:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/hc-renderer-contract.s199.spec.ts --coverage.enabled=false

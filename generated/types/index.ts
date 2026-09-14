@@ -28,6 +28,7 @@ export * from './traits/layout-facet.parameters';
 export * from './traits/layout-layer.parameters';
 export * from './traits/mark-area.parameters';
 export * from './traits/mark-bar.parameters';
+export * from './traits/mark-graph.parameters';
 export * from './traits/mark-line.parameters';
 export * from './traits/mark-point.parameters';
 export * from './traits/mark-rect.parameters';

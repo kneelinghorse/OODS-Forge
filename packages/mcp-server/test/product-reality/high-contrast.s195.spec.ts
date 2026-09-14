@@ -34,33 +34,19 @@ describe('HC scope at the public wire (s195-m05)', () => {
       const request = wire('viz.render', 'input', { ...input, theme: 'hc', brand, output: { svg: true, includeNormalizedSpec: true, includeA11y: true } });
       const result = wire('viz.render', 'output', await render(request as never));
       retain(`${input.chartType}-${brand}`, { request, result });
-      const supported = ['bar', 'line', 'area', 'scatter'].includes(input.chartType!);
       const repeated = wire('viz.render', 'output', await render(request as never));
-      if (supported) {
-        expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-        expect(result.svg).toContain('Canvas');
-        expect(repeated.svg).toBe(result.svg);
-      } else {
-        expect(result.status).toBe('error');
-        expect(result.errors).toEqual([expect.objectContaining({ code: 'OODS-V165', message: expect.stringContaining('outside the declared') })]);
-        expect(repeated.errors).toEqual(result.errors);
-        expect(result).not.toHaveProperty('svg');
-        expect(result).not.toHaveProperty('svgRef');
-      }
+      expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+      expect(result.svg).toContain('Canvas');
+      expect(repeated.svg).toBe(result.svg);
       const declared = wire('viz.render', 'output', await render({ ...request, output: { includeNormalizedSpec: true } } as never));
       expect(declared.status).toBe('ok');
-      const paints = supported ? [...new Set([...result.svg!.matchAll(/\b(?:fill|stroke|stop-color)="([^"]+)"/g)].map(match => match[1]))] : [];
-      const values = new Set(Object.values(tokens.cssVariablesByScope[brand].hc));
-      expect(paints.filter(paint => paint !== 'none' && !values.has(paint!))).toEqual([]);
+      const paints = [...new Set([...result.svg!.matchAll(/\b(?:fill|stroke|stop-color)="([^"]+)"/g)].map(match => match[1]))];
+      expect(assertHcSvgPaints(result.svg!, { theme: 'hc', brand })).toBe(result.svg);
       const operand = ECHARTS_OPERAND_CASES.find(item => item.chartType === input.chartType);
       const certification = wire('artifact.certify', 'output', await certify(wire('artifact.certify', 'input', { spec: declared.normalizedSpec, theme: 'hc', brand, ...(operand ? { data: { [operand.branch]: operand.branchData } } : {}) }) as never));
       retain(`${input.chartType}-${brand}`, { request, result, certification, paints });
-      expect(certification.pillars?.determinism).toBe(supported ? 'pass' : 'fail');
-      if (!supported) {
-        expect(certification.conformant).toBe(false);
-        expect(JSON.stringify(certification.notes)).toContain('outside the declared');
-        expect(JSON.stringify(certification.notes)).not.toContain('contrast is ungradeable');
-      }
+      expect(certification.pillars?.determinism).toBe('pass');
+      expect(certification.conformant).toBe(true);
       expect(certification).toMatchObject({ status: 'ok', pillars: { contrast: 'exempt' }, contrastResults: [{ theme: 'hc', brand, verdict: 'exempt', measured: false, reason: 'forced-colors' }] });
       const light = await certify({ spec: declared.normalizedSpec!, theme: 'light', brand, ...(operand ? { data: { [operand.branch]: operand.branchData } } : {}) } as never);
       expect(certification.pillars?.accuracy).toBe(light.pillars?.accuracy);
@@ -84,19 +70,14 @@ describe('HC scope at the public wire (s195-m05)', () => {
     expect(result.a11yContrast?.summary).toEqual({ failing: 0, gradedPairs: 0 });
   });
 
-  it.each(['placeholder', 'omit'] as const)('dashboard HC %s keeps supported pixels and typed failed panels', async onPanelError => {
+  it.each(['placeholder', 'omit'] as const)('dashboard HC %s retains all eleven supported panels without fallback', async onPanelError => {
     const panels = inputs.filter(item => !['chord', 'flow_map'].includes(item.chartType!)).map(({ rows, output, name, ...item }: any) => ({ ...item, ...(name ? { title: name } : {}), id: item.chartType, kind: 'chart', ...(rows ? { datasetId: 'sales' } : {}) }));
     const request = { schemaVersion: 'v0.1', theme: 'hc', datasets: [{ id: 'sales', rows: SALES }], panels, onPanelError, a11y: { description: 'Measured HC render coverage.' }, output: { html: true } };
     const result = wire('dashboard.render', 'output', await dashboard(wire('dashboard.render', 'input', request) as never));
-    expect(result.html?.match(/<svg\b/g)).toHaveLength(4);
-    if (onPanelError === 'placeholder') {
-      const failed = result.panels.filter(panel => panel.kind === 'error');
-      expect(failed).toHaveLength(7);
-      expect(failed.every(panel => panel.kind === 'error' && panel.error.code === 'OODS-V165')).toBe(true);
-    } else {
-      expect(result.panels).toHaveLength(4);
-      expect(result.warnings.filter(issue => issue.code === 'OODS-V165')).toHaveLength(7);
-    }
+    expect(result.html?.match(/<svg\b/g)).toHaveLength(11);
+    expect(result.panels).toHaveLength(11);
+    expect(result.panels.filter(panel => panel.kind === 'error')).toEqual([]);
+    expect(result.warnings.filter(issue => issue.code === 'OODS-V165')).toEqual([]);
     retain(`dashboard-${onPanelError}`, { request, result });
   });
 

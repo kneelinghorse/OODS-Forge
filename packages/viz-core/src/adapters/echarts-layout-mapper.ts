@@ -170,6 +170,8 @@ function expandSeries(series: readonly EChartsSeries[], panels: PanelDescriptor[
       clones.push({
         ...entry,
         datasetId: panel.datasetId,
+        // ECharts groups stacks across series globally, even on different axes.
+        stack: entry.stack ? `${entry.stack}::${panel.datasetId}` : undefined,
         xAxisIndex: panelIndex,
         yAxisIndex: panelIndex,
         name: entry.name ? `${entry.name} (${panel.label})` : panel.label,
@@ -231,14 +233,19 @@ function buildDatasetTransforms(filters: SectionFilter[]): readonly EChartsDatas
     return undefined;
   }
 
-  return filters.map((filter) => ({
-    type: 'filter',
-    config: {
-      field: filter.field,
-      operator: filter.operator,
-      value: filter.value,
-    },
-  }));
+  return filters.map((filter) => {
+    const dimension = filter.field;
+    let config: Record<string, unknown>;
+    if (filter.operator === 'in' || filter.operator === 'not_in') {
+      const values = Array.isArray(filter.value) ? filter.value : [filter.value];
+      const membership = values.length ? { or: values.map((value) => ({ dimension, eq: value })) } : { and: [false] };
+      config = filter.operator === 'not_in' ? { not: membership } : membership;
+    } else {
+      const operator = filter.operator === '==' ? 'eq' : filter.operator === '!=' ? 'ne' : filter.operator;
+      config = { dimension, [operator]: filter.value };
+    }
+    return { type: 'filter', config };
+  });
 }
 
 function getBaseDataset(datasets?: readonly EChartsDataset[]): EChartsDataset | undefined {

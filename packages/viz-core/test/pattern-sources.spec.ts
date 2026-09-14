@@ -13,17 +13,19 @@ describe('generated authored pattern bundle (s195-m03)', () => {
     const expected = readFileSync(path.join(ROOT, PATTERN_SOURCES_PATH), 'utf8');
     expect(serializePatternSources(derivePatternSources(source))).toBe(expected);
     expect(serializePatternSources(derivePatternSources(source.reverse()))).toBe(expected);
-    expect(generatePatternSources({ check: true })).toHaveLength(21);
+    expect(generatePatternSources({ check: true })).toHaveLength(23);
   });
 
-  it('rejects identity aliases, duplicates and uncatalogued sources rather than inventing base types', () => {
+  it('rejects aliases, duplicates and unsupported base marks while allowing explicit-only authored patterns', () => {
     const source = readSources()[0]!;
     expect(() => derivePatternSources([source, source])).toThrow('Duplicate pattern identity');
     const spec = JSON.parse(source.bytes);
     spec.id = 'bubble-distribution';
     expect(() => derivePatternSources([{ ...source, bytes: JSON.stringify(spec) }])).toThrow('Invalid pattern identity');
     spec.id = 'pattern:viz:uncatalogued';
-    expect(() => derivePatternSources([{ specPath: `${PATTERN_DIRECTORY}/uncatalogued.spec.json`, bytes: JSON.stringify(spec) }])).toThrow('one catalog base type');
+    expect(derivePatternSources([{ specPath: `${PATTERN_DIRECTORY}/uncatalogued.spec.json`, bytes: JSON.stringify(spec) }])[0].baseChartType).toBe('scatter');
+    spec.marks[0].trait = 'MarkUnknown';
+    expect(() => derivePatternSources([{ specPath: `${PATTERN_DIRECTORY}/uncatalogued.spec.json`, bytes: JSON.stringify(spec) }])).toThrow('supported Cartesian base mark');
     expect(() => derivePatternSources([{ specPath: source.specPath, bytes: JSON.stringify(spec) }])).toThrow('Pattern path differs from identity');
   });
 

@@ -111,7 +111,7 @@
           }
         },
         "viz": {
-          "description": "Generated visualization taxonomy and Core Analytics Profile census. Surface-complete cells have public SVG backing; typed gaps retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.",
+          "description": "Generated visualization taxonomy and Core Analytics Profile census. Surface-complete cells have public SVG backing; typed gaps and retired cells retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.",
           "type": [
             "object",
             "null"
@@ -124,7 +124,8 @@
             "classified",
             "coreCells",
             "coreSurfaceComplete",
-            "typedGaps"
+            "typedGaps",
+            "retiredCells"
           ],
           "properties": {
             "types": {
@@ -152,6 +153,10 @@
               "minimum": 0
             },
             "typedGaps": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retiredCells": {
               "type": "integer",
               "minimum": 0
             }

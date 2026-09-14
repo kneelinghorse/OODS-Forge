@@ -26,7 +26,7 @@ import type { SankeyInput, SankeyLink, SankeyNode } from '../../spec/network-flo
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 
@@ -119,7 +119,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput,
 
     // Ribbons inherit the SOURCE arc's colour (native default) + a curved bow.
     lineStyle: {
-      color: 'source' as const,
+      color: 'source',
       curveness: chordSpec.encoding?.link?.curveness ?? DEFAULT_CURVENESS,
       opacity: DEFAULT_LINK_OPACITY,
     },
@@ -133,6 +133,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput,
     // Highlight a node + its ribbons on hover.
     emphasis: {
       focus: 'adjacency' as const,
+      ...(scope.theme === 'hc' ? { disabled: true } : {}),
     },
 
     // Dimensions (provenance-only; the client sizes the canvas).
@@ -140,7 +141,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput,
     height: dimensions.height,
   }) as ChordSeriesOption;
 
-  return pruneUndefined({
+  return applyHcEchartsChrome(pruneUndefined({
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
@@ -160,7 +161,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput,
         a11y: chordSpec.a11y,
       }),
     },
-  }) as unknown as EChartsOption;
+  }), chrome, scope) as unknown as EChartsOption;
 }
 
 // Ring nodes keyed by NAME; each arc coloured by its index in the palette. A chord

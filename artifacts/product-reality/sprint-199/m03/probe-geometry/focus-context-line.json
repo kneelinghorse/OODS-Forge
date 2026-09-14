@@ -1,0 +1,553 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "line",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Revenue focus + context",
+      "description": "The Americas line stays well above other regions and accelerates sharply in week four",
+      "data": {
+        "values": [
+          {
+            "week": "2025-W01",
+            "region": "Amer",
+            "revenue": 1.2
+          },
+          {
+            "week": "2025-W02",
+            "region": "Amer",
+            "revenue": 1.26
+          },
+          {
+            "week": "2025-W03",
+            "region": "Amer",
+            "revenue": 1.33
+          },
+          {
+            "week": "2025-W01",
+            "region": "EMEA",
+            "revenue": 0.9
+          },
+          {
+            "week": "2025-W02",
+            "region": "EMEA",
+            "revenue": 0.96
+          },
+          {
+            "week": "2025-W03",
+            "region": "EMEA",
+            "revenue": 0.99
+          },
+          {
+            "week": "2025-W01",
+            "region": "APAC",
+            "revenue": 0.7
+          },
+          {
+            "week": "2025-W02",
+            "region": "APAC",
+            "revenue": 0.74
+          },
+          {
+            "week": "2025-W03",
+            "region": "APAC",
+            "revenue": 0.78
+          },
+          {
+            "week": "2025-W04",
+            "region": "Amer",
+            "revenue": 1.39
+          },
+          {
+            "week": "2025-W04",
+            "region": "EMEA",
+            "revenue": 1.02
+          },
+          {
+            "week": "2025-W04",
+            "region": "APAC",
+            "revenue": 0.8
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "hover-sync",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "region",
+              "week",
+              "revenue"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:focus-context-line",
+          "name": "Revenue focus + context",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "preferredRenderer": "echarts",
+            "tableColumnOrder": [
+              "week",
+              "region",
+              "revenue"
+            ]
+          },
+          "a11y": {
+            "ariaLabel": "Focus+context line chart showing Americas zoomed below all regions",
+            "description": "The Americas line stays well above other regions and accelerates sharply in week four",
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Weekly revenue by region"
+            }
+          }
+        }
+      },
+      "vconcat": [
+        {
+          "mark": {
+            "type": "line"
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "ordinal",
+              "scale": {
+                "type": "point"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "revenue",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Revenue ($M)"
+            },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Region",
+              "legend": {
+                "title": "Region"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "region"
+              },
+              {
+                "field": "week"
+              },
+              {
+                "field": "revenue"
+              }
+            ]
+          },
+          "width": 720,
+          "height": 480,
+          "padding": 20,
+          "title": "All regions",
+          "description": "Context view with synchronized axes"
+        },
+        {
+          "mark": {
+            "type": "line"
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "ordinal",
+              "scale": {
+                "type": "point"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "revenue",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Revenue ($M)"
+            },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Region",
+              "legend": {
+                "title": "Region"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "region"
+              },
+              {
+                "field": "week"
+              },
+              {
+                "field": "revenue"
+              }
+            ]
+          },
+          "width": 720,
+          "height": 480,
+          "padding": 20,
+          "transform": [
+            {
+              "filter": "datum[\"region\"] === \"Amer\""
+            }
+          ],
+          "title": "Amer focus",
+          "description": "Zoomed panel filtered to Americas"
+        }
+      ],
+      "spacing": 12,
+      "resolve": {
+        "scale": {
+          "x": "shared",
+          "y": "independent"
+        }
+      }
+    },
+    "a11yDescription": "The Americas line stays well above other regions and accelerates sharply in week four",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkLine",
+      "rowCount": 12,
+      "fields": [
+        "week",
+        "region",
+        "revenue"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:focus-context-line",
+      "name": "Revenue focus + context",
+      "data": {
+        "values": [
+          {
+            "week": "2025-W01",
+            "region": "Amer",
+            "revenue": 1.2
+          },
+          {
+            "week": "2025-W02",
+            "region": "Amer",
+            "revenue": 1.26
+          },
+          {
+            "week": "2025-W03",
+            "region": "Amer",
+            "revenue": 1.33
+          },
+          {
+            "week": "2025-W01",
+            "region": "EMEA",
+            "revenue": 0.9
+          },
+          {
+            "week": "2025-W02",
+            "region": "EMEA",
+            "revenue": 0.96
+          },
+          {
+            "week": "2025-W03",
+            "region": "EMEA",
+            "revenue": 0.99
+          },
+          {
+            "week": "2025-W01",
+            "region": "APAC",
+            "revenue": 0.7
+          },
+          {
+            "week": "2025-W02",
+            "region": "APAC",
+            "revenue": 0.74
+          },
+          {
+            "week": "2025-W03",
+            "region": "APAC",
+            "revenue": 0.78
+          },
+          {
+            "week": "2025-W04",
+            "region": "Amer",
+            "revenue": 1.39
+          },
+          {
+            "week": "2025-W04",
+            "region": "EMEA",
+            "revenue": 1.02
+          },
+          {
+            "week": "2025-W04",
+            "region": "APAC",
+            "revenue": 0.8
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "revenue",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Revenue ($M)"
+            },
+            "color": {
+              "field": "region",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Region"
+              },
+              "title": "Region"
+            }
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "point",
+          "title": "Week"
+        },
+        "y": {
+          "field": "revenue",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Revenue"
+        },
+        "color": {
+          "field": "region",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "title": "Region"
+        }
+      },
+      "layout": {
+        "trait": "LayoutConcat",
+        "direction": "vertical",
+        "gap": 12,
+        "sections": [
+          {
+            "id": "overview",
+            "title": "All regions",
+            "description": "Context view with synchronized axes"
+          },
+          {
+            "id": "focus",
+            "title": "Amer focus",
+            "description": "Zoomed panel filtered to Americas",
+            "filters": [
+              {
+                "field": "region",
+                "operator": "==",
+                "value": "Amer"
+              }
+            ]
+          }
+        ],
+        "sharedScales": {
+          "x": "shared",
+          "y": "independent"
+        }
+      },
+      "interactions": [
+        {
+          "id": "hover-sync",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "region",
+              "week",
+              "revenue"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "region",
+              "week",
+              "revenue"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 720,
+          "height": 480,
+          "padding": 20
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Focus+context line chart showing Americas zoomed below all regions",
+        "description": "The Americas line stays well above other regions and accelerates sharply in week four",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Weekly revenue by region"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "preferredRenderer": "echarts",
+        "tableColumnOrder": [
+          "week",
+          "region",
+          "revenue"
+        ]
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-c44529ed",
+    "specRefCreatedAt": "2026-09-14T07:19:06.169Z",
+    "specRefExpiresAt": "2026-09-14T07:49:06.169Z",
+    "contentHash": "49bff3e92221ecefd671d1ad85716ce6bb02bb00d643f57de6ef40513b93c9de",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"846\" height=\"1248\" viewBox=\"0 0 846 1248\"><rect width=\"846\" height=\"1248\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(51,66)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v0h-720Z\"/><g><g class=\"mark-group role-scope concat_0_group\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g aria-label=\"Context view with synchronized axes\" role=\"graphics-object\" aria-roledescription=\"group mark\" transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,446)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,411)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,377)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,309)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,274)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,171)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,137)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,103)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 4 values: 2025-W01, 2025-W02, 2025-W03, 2025-W04\"><g transform=\"translate(0.5,480.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(90,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(270,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(450,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(630,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(90,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W01</text><text text-anchor=\"end\" transform=\"translate(270,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W02</text><text text-anchor=\"end\" transform=\"translate(450,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W03</text><text text-anchor=\"end\" transform=\"translate(630,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W04</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,84)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue ($M)' for a linear scale with values from 0.0 to 1.4\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,446)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,411)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,377)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,309)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,274)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,171)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,137)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,103)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,483)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,448.7142857142857)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.1</text><text text-anchor=\"end\" transform=\"translate(-7,414.4285714285714)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.2</text><text text-anchor=\"end\" transform=\"translate(-7,380.1428571428571)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.3</text><text text-anchor=\"end\" transform=\"translate(-7,345.85714285714283)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.4</text><text text-anchor=\"end\" transform=\"translate(-7,311.57142857142856)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,277.2857142857143)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.6</text><text text-anchor=\"end\" transform=\"translate(-7,243)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.7</text><text text-anchor=\"end\" transform=\"translate(-7,208.71428571428567)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.8</text><text text-anchor=\"end\" transform=\"translate(-7,174.42857142857142)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.9</text><text text-anchor=\"end\" transform=\"translate(-7,140.14285714285714)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,105.8571428571428)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.1</text><text text-anchor=\"end\" transform=\"translate(-7,71.57142857142854)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.2</text><text text-anchor=\"end\" transform=\"translate(-7,37.28571428571422)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.3</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.4</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"0\" y2=\"-480\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,240) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Revenue ($M)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope concat_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-line role-mark concat_0_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Revenue ($M): 1.2; Region: Amer; region: Amer; week: 2025-W01; revenue: 1.2\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M90,68.571L270,48L450,24L630,3.429\" stroke=\"#A97500\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-line role-mark concat_0_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Revenue ($M): 0.9; Region: EMEA; region: EMEA; week: 2025-W01; revenue: 0.9\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M90,171.429L270,150.857L450,140.571L630,130.286\" stroke=\"#788E70\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-line role-mark concat_0_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Revenue ($M): 0.7; Region: APAC; region: APAC; week: 2025-W01; revenue: 0.7\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M90,240L270,226.286L450,212.571L630,205.714\" stroke=\"#580918\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'All regions'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">All regions</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope concat_1_group\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g aria-label=\"Zoomed panel filtered to Americas\" role=\"graphics-object\" aria-roledescription=\"group mark\" transform=\"translate(0,611)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,446)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,411)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,377)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,309)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,274)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,171)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,137)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,103)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 4 values: 2025-W01, 2025-W02, 2025-W03, 2025-W04\"><g transform=\"translate(0.5,480.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(90,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(270,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(450,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(630,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(90,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W01</text><text text-anchor=\"end\" transform=\"translate(270,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W02</text><text text-anchor=\"end\" transform=\"translate(450,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W03</text><text text-anchor=\"end\" transform=\"translate(630,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W04</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,84)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Revenue ($M)' for a linear scale with values from 0.0 to 1.4\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,446)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,411)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,377)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,343)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,309)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,274)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,206)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,171)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,137)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,103)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,69)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,483)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,448.7142857142857)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.1</text><text text-anchor=\"end\" transform=\"translate(-7,414.4285714285714)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.2</text><text text-anchor=\"end\" transform=\"translate(-7,380.1428571428571)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.3</text><text text-anchor=\"end\" transform=\"translate(-7,345.85714285714283)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.4</text><text text-anchor=\"end\" transform=\"translate(-7,311.57142857142856)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,277.2857142857143)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.6</text><text text-anchor=\"end\" transform=\"translate(-7,243)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.7</text><text text-anchor=\"end\" transform=\"translate(-7,208.71428571428567)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.8</text><text text-anchor=\"end\" transform=\"translate(-7,174.42857142857142)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.9</text><text text-anchor=\"end\" transform=\"translate(-7,140.14285714285714)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,105.8571428571428)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.1</text><text text-anchor=\"end\" transform=\"translate(-7,71.57142857142854)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.2</text><text text-anchor=\"end\" transform=\"translate(-7,37.28571428571422)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.3</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.4</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,480)\" x2=\"0\" y2=\"-480\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,240) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Revenue ($M)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope concat_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v480h-720Z\"/><g><g class=\"mark-line role-mark concat_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Revenue ($M): 1.2; Region: Amer; region: Amer; week: 2025-W01; revenue: 1.2\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M90,68.571L270,48L450,24L630,3.429\" stroke=\"#A97500\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Amer focus'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Amer focus</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Region' for stroke color with 3 values: APAC, Amer, EMEA\"><g transform=\"translate(738,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h52v53h-52Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h48v11h-48Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">APAC</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h48v11h-48Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Amer</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,26)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h48v11h-48Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#788E70\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">EMEA</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-61)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Revenue focus + context'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Revenue focus + context</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "d826145a6bc352d3bbcd005893195a1c6a26e212344a18742678e6850d20a0d7",
+    "svgBytes": 27134,
+    "svgRef": "viz.render-5b8659ef",
+    "render": {
+      "engine": "vega-lite",
+      "width": 846,
+      "height": 1248,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "49bff3e92221ecefd671d1ad85716ce6bb02bb00d643f57de6ef40513b93c9de",
+      "renderHash": "d826145a6bc352d3bbcd005893195a1c6a26e212344a18742678e6850d20a0d7"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 export type VizPatternScope = {
   theme: 'light' | 'dark';
   brand: 'A' | 'B';
-  status: 'public' | 'authoring-only';
+  status: 'public' | 'authoring-only' | 'retired';
   svgHash?: string;
   normalizedSpecSha256?: string;
   a11yDescription?: string;
@@ -22,7 +22,7 @@ export type VizPatternCapability = {
   specSha256: string;
   portability: unknown;
   publicSvg: boolean;
-  status: 'public' | 'authoring-only';
+  status: 'public' | 'authoring-only' | 'retired';
   reasons?: string[];
   scopes: VizPatternScope[];
 };
@@ -60,11 +60,12 @@ export function validateVizPatternRegistry(
     if (JSON.stringify(scopeIds) !== JSON.stringify(['dark/A', 'dark/B', 'light/A', 'light/B'])) reject(`${row.id}: exact light/dark and A/B scopes required`);
     const allPublic = row.scopes.every(scope => scope.status === 'public');
     const allAuthoring = row.scopes.every(scope => scope.status === 'authoring-only');
-    if ((!allPublic && !allAuthoring) || row.publicSvg !== allPublic || row.status !== (allPublic ? 'public' : 'authoring-only')) reject(`${row.id}: status differs from scope proof`);
+    const allRetired = row.scopes.every(scope => scope.status === 'retired');
+    if ((!allPublic && !allAuthoring && !allRetired) || row.publicSvg !== allPublic || row.status !== (allPublic ? 'public' : allRetired ? 'retired' : 'authoring-only')) reject(`${row.id}: status differs from scope proof`);
     if (allPublic && row.reasons !== undefined) reject(`${row.id}: public identity cannot retain an authoring-only reason`);
     const measuredReasons = [...new Set(row.scopes.flatMap(scope => scope.errors?.map(error => error.message) ?? []))];
-    if (allAuthoring && (!Array.isArray(row.reasons) || !row.reasons.length || row.reasons.some(reason => !text(reason))
-      || canonicalPatternValue(row.reasons) !== canonicalPatternValue(measuredReasons))) reject(`${row.id}: exact measured authoring-only reasons required`);
+    if ((allAuthoring || allRetired) && (!Array.isArray(row.reasons) || !row.reasons.length || row.reasons.some(reason => !text(reason))
+      || canonicalPatternValue(row.reasons) !== canonicalPatternValue(measuredReasons))) reject(`${row.id}: exact measured unavailable reasons required`);
     for (const scope of row.scopes) {
       if (scope.status === 'public') {
         const grade = scope.certify;
@@ -74,7 +75,7 @@ export function validateVizPatternRegistry(
         if (!grade.pillars || !['pass', 'fail', 'unchecked'].includes(grade.pillars.a11yEquivalence)
           || grade.pillars.determinism !== 'pass' || !['pass', 'fail', 'exempt', 'ungradeable', 'unchecked'].includes(grade.pillars.contrast)
           || !['pass', 'fail', 'ungradeable', 'unchecked'].includes(grade.pillars.accuracy)) reject(`${row.id}: invalid certification pillars`);
-      } else if (!Array.isArray(scope.errors) || !scope.errors.length || scope.errors.some(error => error.code !== 'OODS-V167' || !text(error.message))
+      } else if (!Array.isArray(scope.errors) || !scope.errors.length || scope.errors.some(error => error.code !== (scope.status === 'retired' ? 'OODS-V174' : 'OODS-V167') || !text(error.message))
         || scope.svgHash !== undefined || scope.normalizedSpecSha256 !== undefined || scope.certify !== undefined || scope.a11yDescription !== undefined) {
         reject(`${row.id}: authoring-only scope lacks its public rejection`);
       }

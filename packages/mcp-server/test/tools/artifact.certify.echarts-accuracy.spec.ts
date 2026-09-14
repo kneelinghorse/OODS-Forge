@@ -47,8 +47,8 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
       };
       const expected = EXPECTED_RULES[operand.chartType];
       expect(out.accuracySummary?.rulesEvaluated).toBe(expected);
-      expect(out.accuracySummary?.failing).toBe(operand.chartType === 'bubble_map' ? 1 : 0);
-      expect(out.pillars?.accuracy).toBe(operand.chartType === 'bubble_map' ? 'fail' : 'pass');
+      expect(out.accuracySummary?.failing).toBe(0);
+      expect(out.pillars?.accuracy).toBe('pass');
       // DECLARED MOVER (s174 m01). The clean-operand verdict carries ZERO accuracy findings
       // — the claim this line was making — but findings[] is no longer accuracy-only: the
       // warn-first a11y engine now writes into it. Both halves are pinned exactly.
@@ -57,7 +57,7 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
         RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType],
       );
       expect((out.findings ?? []).length).toBe(
-        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType].length + (operand.chartType === 'bubble_map' ? 1 : 0),
+        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType].length,
       );
       expect(validateOutput(out)).toBe(true);
     },

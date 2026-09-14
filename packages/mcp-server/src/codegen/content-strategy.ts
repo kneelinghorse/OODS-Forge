@@ -121,6 +121,7 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
   VizAreaPreview: 'none',
   VizLineControls: 'none',
   VizLinePreview: 'none',
+  VizGraphPreview: 'none',
   VizMarkControls: 'none',
   VizMarkPreview: 'none',
   VizPointControls: 'none',

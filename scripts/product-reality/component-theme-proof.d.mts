@@ -32,3 +32,18 @@ export function runVizThemeProof(options: {
 }): Promise<VizThemeReport>;
 
 export const runVizForcedColourProof: typeof runVizThemeProof;
+
+/** Executes the governed component roster, preserving the complete root set. */
+export function runComponentThemeProof(options: {
+  framework: string;
+  packageRoot: string;
+  canonicalIds: readonly string[];
+  supportedCells: ReadonlyArray<{ brand: string; theme: string }>;
+  contracts: Record<string, unknown>;
+  createServer: (options: unknown) => Promise<{
+    listen(): Promise<unknown>;
+    httpServer: { address(): { port: number } };
+    close(): Promise<void>;
+  }>;
+  chromium: typeof chromium;
+}): Promise<void>;

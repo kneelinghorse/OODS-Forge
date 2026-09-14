@@ -8,7 +8,7 @@ import type { EChartsOption, SunburstSeriesOption } from 'echarts';
 
 import type { HierarchyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
-import { resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
@@ -59,12 +59,12 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
       borderWidth: 2,
       borderColor: chrome.surfaceFill,
     },
-    levels: buildSunburstLevels(chrome.tileBorder),
+    levels: buildSunburstLevels(scope.theme === 'hc' ? chrome.background : chrome.tileBorder),
     width: dimensions.width,
     height: dimensions.height,
   }) as SunburstSeriesOption;
 
-  return pruneUndefined({
+  return applyHcEchartsChrome(pruneUndefined({
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
@@ -81,7 +81,7 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
         a11y: spec.a11y,
       }),
     },
-  }) as unknown as EChartsOption;
+  }), chrome, scope) as unknown as EChartsOption;
 }
 
 function buildPalette(scope: TokenScope): readonly string[] {

@@ -1,0 +1,509 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "line",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Weekly Active Users by Plan",
+      "description": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+      "data": {
+        "values": [
+          {
+            "week": "2025-09-01",
+            "plan": "Starter",
+            "wau": 3200
+          },
+          {
+            "week": "2025-09-01",
+            "plan": "Growth",
+            "wau": 5400
+          },
+          {
+            "week": "2025-09-01",
+            "plan": "Enterprise",
+            "wau": 1800
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Starter",
+            "wau": 3300
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Growth",
+            "wau": 5600
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Enterprise",
+            "wau": 2100
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Starter",
+            "wau": 3500
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Growth",
+            "wau": 5900
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Enterprise",
+            "wau": 2300
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Starter",
+            "wau": 3600
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Growth",
+            "wau": 6200
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Enterprise",
+            "wau": 2500
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "plan-highlight",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "plan"
+            ]
+          }
+        },
+        {
+          "name": "plan-tooltip",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "week",
+              "plan",
+              "wau"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:multi-series-line",
+          "name": "Weekly Active Users by Plan",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "week",
+              "plan",
+              "wau"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "ariaLabel": "Weekly active users multi-line chart",
+            "description": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+            "narrative": {
+              "summary": "All plans trend upward; Growth remains 2× Starter, Enterprise narrows the gap.",
+              "keyFindings": [
+                "Growth adds 800 WAU over the period",
+                "Enterprise crosses 2.5k WAU by 9/22"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Weekly active users by plan"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone"
+      },
+      "encoding": {
+        "x": {
+          "field": "week",
+          "type": "temporal",
+          "scale": {
+            "type": "utc"
+          },
+          "title": "Week"
+        },
+        "y": {
+          "field": "wau",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Weekly Active Users"
+        },
+        "color": {
+          "field": "plan",
+          "type": "nominal",
+          "scale": {
+            "range": [
+              "#580918",
+              "#A97500",
+              "#788E70",
+              "#00A0A3",
+              "#0050AD",
+              "#360643"
+            ]
+          },
+          "title": "Plan",
+          "legend": {
+            "title": "Plan"
+          }
+        },
+        "strokeWidth": {
+          "condition": {
+            "param": "plan-highlight",
+            "empty": false,
+            "value": 3
+          },
+          "value": 1.5
+        },
+        "tooltip": [
+          {
+            "field": "week"
+          },
+          {
+            "field": "plan"
+          },
+          {
+            "field": "wau"
+          }
+        ]
+      },
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    },
+    "a11yDescription": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkLine",
+      "rowCount": 12,
+      "fields": [
+        "week",
+        "plan",
+        "wau"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:multi-series-line",
+      "name": "Weekly Active Users by Plan",
+      "data": {
+        "values": [
+          {
+            "week": "2025-09-01",
+            "plan": "Starter",
+            "wau": 3200
+          },
+          {
+            "week": "2025-09-01",
+            "plan": "Growth",
+            "wau": 5400
+          },
+          {
+            "week": "2025-09-01",
+            "plan": "Enterprise",
+            "wau": 1800
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Starter",
+            "wau": 3300
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Growth",
+            "wau": 5600
+          },
+          {
+            "week": "2025-09-08",
+            "plan": "Enterprise",
+            "wau": 2100
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Starter",
+            "wau": 3500
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Growth",
+            "wau": 5900
+          },
+          {
+            "week": "2025-09-15",
+            "plan": "Enterprise",
+            "wau": 2300
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Starter",
+            "wau": 3600
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Growth",
+            "wau": 6200
+          },
+          {
+            "week": "2025-09-22",
+            "plan": "Enterprise",
+            "wau": 2500
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "temporal",
+              "title": "Week"
+            },
+            "y": {
+              "field": "wau",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Weekly Active Users"
+            },
+            "color": {
+              "field": "plan",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Plan"
+              },
+              "title": "Plan"
+            }
+          },
+          "options": {
+            "curve": "monotone"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "temporal",
+          "title": "Week"
+        },
+        "y": {
+          "field": "wau",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Weekly Active Users"
+        },
+        "color": {
+          "field": "plan",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": {
+            "title": "Plan"
+          },
+          "title": "Plan"
+        }
+      },
+      "interactions": [
+        {
+          "id": "plan-highlight",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "plan"
+            ]
+          },
+          "rule": {
+            "bindTo": "visual",
+            "property": "strokeWidth",
+            "condition": {
+              "value": 3
+            },
+            "else": {
+              "value": 1.5
+            }
+          }
+        },
+        {
+          "id": "plan-tooltip",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "week",
+              "plan",
+              "wau"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "week",
+              "plan",
+              "wau"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Weekly active users multi-line chart",
+        "description": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+        "narrative": {
+          "summary": "All plans trend upward; Growth remains 2× Starter, Enterprise narrows the gap.",
+          "keyFindings": [
+            "Growth adds 800 WAU over the period",
+            "Enterprise crosses 2.5k WAU by 9/22"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Weekly active users by plan"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "week",
+          "plan",
+          "wau"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-560df812",
+    "specRefCreatedAt": "2026-09-14T07:11:19.899Z",
+    "specRefExpiresAt": "2026-09-14T07:41:19.899Z",
+    "contentHash": "26d72e2efca22ece1e7bf85c9729dadd2315a863adf372814320eff182a75eaf",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"946\" height=\"468\" viewBox=\"0 0 946 468\"><rect width=\"946\" height=\"468\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(86,52)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,305)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,249)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,194)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,138)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,83)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,28)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a utc scale with values from Monday, 01 September 2025, 12:00:00 AM UTC to Monday, 22 September 2025, 12:00:00 AM UTC\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(34,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(69,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(103,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(137,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(171,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(206,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(240,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(274,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(309,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(343,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(377,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(411,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(446,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(514,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(549,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(583,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(617,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(651,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(686,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(720,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">September</text><text text-anchor=\"middle\" transform=\"translate(34.285714285714285,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Tue 02</text><text text-anchor=\"middle\" transform=\"translate(68.57142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Wed 03</text><text text-anchor=\"middle\" transform=\"translate(102.85714285714285,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Thu 04</text><text text-anchor=\"middle\" transform=\"translate(137.14285714285714,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Fri 05</text><text text-anchor=\"middle\" transform=\"translate(171.42857142857142,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Sat 06</text><text text-anchor=\"middle\" transform=\"translate(205.7142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Sep 07</text><text text-anchor=\"middle\" transform=\"translate(240,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Mon 08</text><text text-anchor=\"middle\" transform=\"translate(274.2857142857143,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Tue 09</text><text text-anchor=\"middle\" transform=\"translate(308.57142857142856,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Wed 10</text><text text-anchor=\"middle\" transform=\"translate(342.85714285714283,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Thu 11</text><text text-anchor=\"middle\" transform=\"translate(377.14285714285717,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Fri 12</text><text text-anchor=\"middle\" transform=\"translate(411.4285714285714,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Sat 13</text><text text-anchor=\"middle\" transform=\"translate(445.7142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Sep 14</text><text text-anchor=\"middle\" transform=\"translate(480,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Mon 15</text><text text-anchor=\"middle\" transform=\"translate(514.2857142857143,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Tue 16</text><text text-anchor=\"middle\" transform=\"translate(548.5714285714286,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Wed 17</text><text text-anchor=\"middle\" transform=\"translate(582.8571428571429,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Thu 18</text><text text-anchor=\"middle\" transform=\"translate(617.1428571428571,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Fri 19</text><text text-anchor=\"middle\" transform=\"translate(651.4285714285714,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Sat 20</text><text text-anchor=\"middle\" transform=\"translate(685.7142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Sep 21</text><text text-anchor=\"end\" transform=\"translate(720,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Mon 22</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Weekly Active Users' for a linear scale with values from 0 to 6,500\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,305)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,249)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,194)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,83)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,28)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,307.6153846153846)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1,000</text><text text-anchor=\"end\" transform=\"translate(-7,252.23076923076923)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2,000</text><text text-anchor=\"end\" transform=\"translate(-7,196.84615384615384)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3,000</text><text text-anchor=\"end\" transform=\"translate(-7,141.46153846153845)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4,000</text><text text-anchor=\"end\" transform=\"translate(-7,86.07692307692307)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5,000</text><text text-anchor=\"end\" transform=\"translate(-7,30.692307692307672)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">6,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-51,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Weekly Active Users</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: Sep 01, 2025; Weekly Active Users: 3200; Plan: Starter; week: 1756684800000; plan: Starter; wau: 3200\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,182.769C80,181.385,160,180,240,177.231C320,174.462,400,168.923,480,166.154C560,163.385,640,162,720,160.615\" stroke=\"#788E70\" stroke-width=\"1.5\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: Sep 01, 2025; Weekly Active Users: 5400; Plan: Growth; week: 1756684800000; plan: Growth; wau: 5400\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,60.923C80,57.692,160,54.462,240,49.846C320,45.231,400,38.769,480,33.231C560,27.692,640,22.154,720,16.615\" stroke=\"#A97500\" stroke-width=\"1.5\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: Sep 01, 2025; Weekly Active Users: 1800; Plan: Enterprise; week: 1756684800000; plan: Enterprise; wau: 1800\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,260.308C80,254.308,160,248.308,240,243.692C320,239.077,400,236.308,480,232.615C560,228.923,640,225.231,720,221.538\" stroke=\"#580918\" stroke-width=\"1.5\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Plan' for stroke color with 3 values: Enterprise, Growth, Starter\"><g transform=\"translate(740,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v53h-96Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v11h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Enterprise</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v11h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Growth</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,26)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h96v11h-96Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#788E70\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Starter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Plan</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-62,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Weekly Active Users by Plan'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Weekly Active Users by Plan</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "2d940745f345e6946256fd38eeff38ab7eeb3a2092a315995bcbaa0037b2ff9e",
+    "svgBytes": 17648,
+    "svgRef": "viz.render-292ca30f",
+    "render": {
+      "engine": "vega-lite",
+      "width": 946,
+      "height": 468,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "26d72e2efca22ece1e7bf85c9729dadd2315a863adf372814320eff182a75eaf",
+      "renderHash": "2d940745f345e6946256fd38eeff38ab7eeb3a2092a315995bcbaa0037b2ff9e"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

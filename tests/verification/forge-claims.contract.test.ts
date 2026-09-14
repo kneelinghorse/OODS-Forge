@@ -66,14 +66,14 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
   });
 
   it('distinguishes definitions from public identities and includes the formerly missing visualization traits', () => {
-    expect(facts).toMatchObject({ traits: 45, vizTraits: 20, objectDefinitions: 19, objectNames: 18 });
+    expect(facts).toMatchObject({ traits: 46, vizTraits: 21, objectDefinitions: 19, objectNames: 18 });
     const html = documents['docs/how-forge-works.html'];
-    for (const name of ['EncodingOpacity', 'EncodingShape', 'ScatterPlot', 'Geocodable']) expect(String(facts.traitRows)).toContain(`<td>${name} `);
+    for (const name of ['EncodingOpacity', 'EncodingShape', 'ScatterPlot', 'Geocodable', 'MarkGraph']) expect(String(facts.traitRows)).toContain(`<td>${name} `);
     expect(String(facts.objectRows)).toContain('objects/core/Subscription.object.yaml');
     expect(String(facts.objectRows)).toContain('domains/saas-billing/objects/Subscription.object.yaml');
     expect(html).toContain('19 object definitions / 18 unique names');
     expect(html).not.toContain('~100 catalogued components');
-    expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength(45);
+    expect(String(facts.traitRows).match(/<tr><td>/g)).toHaveLength(46);
     expect(String(facts.objectRows).match(/<tr><td>/g)).toHaveLength(19);
   });
 
@@ -93,7 +93,7 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
     const ledger = JSON.parse(read('packages/mcp-server/registry/tool-capability-ledger.v1.json'));
     const portable = ledger.rows.filter((row: { portableOutcome?: unknown }) => row.portableOutcome);
     expect(facts.portableTools).toBe(portable.length);
-    expect(facts).toMatchObject({ portablePass: 17, portableTyped: 2, releaseCells: 42, releaseEqual: 42, scenarios: 109 });
+    expect(facts).toMatchObject({ portablePass: 17, portableTyped: 2, releaseCells: 42, releaseEqual: 42, scenarios: 110 });
     for (const file of ['docs/how-forge-works.html', 'packages/mcp-server/README.md', 'packages/mcp-bridge/README.md']) {
       expect(documents[file]).toContain('brand.apply (OODS-N020) and design.preview (OODS-N019)');
       expect(documents[file]).toContain('42');

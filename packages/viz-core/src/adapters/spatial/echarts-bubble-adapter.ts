@@ -1,4 +1,6 @@
 import type { TokenScope } from '../echarts/token-resolver.js';
+// Sprint-199 adds the public zero-anchored area scale. The src/viz browser copy
+// remains unchanged; its legacy size scales and browser closure are outside this headless contract.
 // Bubble-map (symbol) ECharts adapter (sprint-112 m01 port).
 // Ported from src/viz/adapters/spatial/echarts-bubble-adapter.ts; only the imports
 // are repointed (slim spatial spec + local tooltip config) and echarts is a
@@ -44,7 +46,7 @@ import { registerGeoJson, type GeoRegistration } from './echarts-geo-registratio
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
 import type { DataRecord } from './geo-data-joiner.js';
-import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_BUBBLE_RANGE: [number, number] = [6, 28];
@@ -116,6 +118,7 @@ function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): G
       areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope),
       borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
+    emphasis: { itemStyle: { areaColor: resolveColor(scope.theme === 'hc' ? '--oods-sys-surface-canvas' : DEFAULT_AREA_COLOR, scope) } },
   });
 }
 
@@ -132,6 +135,17 @@ export function buildSizeFunction(
 ): (value: unknown) => number {
   const [minValue, maxValue] = domain;
   const [minSize, maxSize] = range;
+
+  // s199: circle area is proportional to magnitude, anchored at zero. A singleton
+  // positive domain uses maxSize; an all-zero domain draws no magnitude.
+  if (scale === 'area') {
+    return (value: unknown): number => {
+      const numeric = Array.isArray(value) ? coerceNumber(value[2]) : coerceNumber(value);
+      return numeric !== null && numeric > 0 && maxValue > 0
+        ? maxSize * Math.sqrt(Math.min(numeric / maxValue, 1))
+        : 0;
+    };
+  }
 
   if (minValue === maxValue) {
     const size = (minSize + maxSize) / 2;
@@ -340,7 +354,7 @@ export function adaptBubbleToECharts(
     (option as Record<string, unknown>).__registration = result.registration;
   }
 
-  return option;
+  return applyHcEchartsChrome(option, chrome, scope);
 }
 
 export type { BubbleBuildResult };

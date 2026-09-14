@@ -57,6 +57,7 @@ export const VizSizeSummary = summary('VizSizeSummary');
 export const VizEncodingBadge = summary('VizEncodingBadge');
 export const VizRoleBadge = summary('VizRoleBadge');
 export const VizHeatmapPreview = preview('VizHeatmapPreview', 'heatmap');
+export const VizGraphPreview = preview('VizGraphPreview', 'force_graph');
 export const VizLinePreview = preview('VizLinePreview', 'line');
 export const VizMarkPreview = preview('VizMarkPreview', 'bar');
 export const VizPointPreview = preview('VizPointPreview', 'scatter');

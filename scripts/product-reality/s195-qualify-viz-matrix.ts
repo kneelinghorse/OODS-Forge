@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -118,9 +118,10 @@ function epochPayload(matrix: any): string {
 
 const args = process.argv.slice(2);
 const modeIndex = args.indexOf('--mode');
-const s197 = modeIndex >= 0 && args[modeIndex + 1] === 's197';
-assert(args.every((arg, i) => arg === '--check' || arg === '--mode' || (i === modeIndex + 1 && s197)), 'Supported options: --check --mode s197');
-const receiptDirectory = s197 ? 'artifacts/product-reality/sprint-197/m05' : 'artifacts/product-reality/sprint-195/m05/golden-migration';
+const mode = modeIndex >= 0 ? args[modeIndex + 1] : 's195';
+assert(['s195', 's197', 's199'].includes(mode!), 'Supported modes: s195, s197, s199');
+assert(args.every((arg, i) => arg === '--check' || arg === '--mode' || (modeIndex >= 0 && i === modeIndex + 1)), 'Supported options: --check --mode <s195|s197|s199>');
+const receiptDirectory = mode === 's199' ? 'artifacts/product-reality/sprint-199/m05' : mode === 's197' ? 'artifacts/product-reality/sprint-197/m05' : 'artifacts/product-reality/sprint-195/m05/golden-migration';
 const matrixPath = resolve(root, 'packages/viz-render/certified-matrix.json');
 const matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
 const changes = [];
@@ -131,13 +132,14 @@ for (const family of MATRIX_FAMILIES) {
  const option = matrixOption(family), first = await renderEChartsToSvg(option), second = await renderEChartsToSvg(option);
  assert.equal(first, second);
  const next = sha256(first), previous = matrix.normalizedSvgHashes[family];
- if (previous !== next) changes.push({ family, before: previous, after: next, reason: `${s197 ? 's197' : 's195'}-m05 generated palette revision; normalized-SVG contract and authored inputs unchanged` });
+ if (previous !== next) changes.push({ family, before: previous, after: next, reason: `${mode}-m05 measured chart qualification; see the sprint golden ledger for the attributed producer changes` });
  matrix.normalizedSvgHashes[family] = next;
 }
 matrix.renderHashEpoch = 'sha256:' + sha256(epochPayload(matrix));
 if (process.argv.includes('--check')) {
  assert.equal(changes.length, 0, 'Measured certified SVG hashes differ from the qualified matrix');
 } else {
+mkdirSync(resolve(root, receiptDirectory), { recursive: true });
 writeFileSync(matrixPath, JSON.stringify(matrix,null,2)+'\n');
 writeFileSync(resolve(root, `${receiptDirectory}/certified-matrix-attribution.json`), JSON.stringify({changes,renderHashEpoch:matrix.renderHashEpoch},null,2)+'\n');
 }

@@ -1,0 +1,100 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts (16 tests | 4 failed) 461ms
+   ✓ edge arrays preserve graph meaning > bidirectional=false controls exactly the reverse link 18ms
+   ✓ edge arrays preserve graph meaning > bidirectional=true controls exactly the reverse link 0ms
+   ✓ edge arrays preserve graph meaning > keeps authored link order, deduplicates symmetric pairs and avoids delimiter collisions 17ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields (%j) 1ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields (null) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","both":false}) 1ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"","to":"b","both":false}) 1ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":2,"both":false}) 0ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":"b"}) 1ms
+   ✓ edge arrays preserve graph meaning > fails closed for missing or malformed fields ({"from":"a","to":"b","both":"true"}) 0ms
+   ✓ edge arrays preserve graph meaning > an omitted bidirectional field is directed and a symmetric self-link is emitted only once 0ms
+   ✓ Relationship graph at the public generated-app boundary > declares an optional neighborhood and labels its examples synthetic, only on Relationship 221ms
+   × Relationship graph at the public generated-app boundary > detail/react renders exact record operands into named, stable public SVG assets 55ms
+     → [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for react; evidence state: unavailable.","nodeId":"ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+   × Relationship graph at the public generated-app boundary > detail/vue renders exact record operands into named, stable public SVG assets 16ms
+     → [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for vue; evidence state: unavailable.","nodeId":"ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+   × Relationship graph at the public generated-app boundary > workflow/react renders exact record operands into named, stable public SVG assets 68ms
+     → [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for react; evidence state: unavailable.","nodeId":"detail-ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+   × Relationship graph at the public generated-app boundary > workflow/vue renders exact record operands into named, stable public SVG assets 62ms
+     → [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for vue; evidence state: unavailable.","nodeId":"detail-ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > detail/react renders exact record operands into named, stable public SVG assets
+AssertionError: [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for react; evidence state: unavailable.","nodeId":"ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:88:60
+     86|       const request = wire<CodeGenerateInput>('code.generate', 'input'…
+     87|       const result = wire('code.generate', 'output', await generate(re…
+     88|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     89|       expect(rendered).toHaveBeenCalledTimes(records.length);
+     90|       const assets = result.artifact!.files.filter(file => file.path.e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > detail/vue renders exact record operands into named, stable public SVG assets
+AssertionError: [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for vue; evidence state: unavailable.","nodeId":"ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:88:60
+     86|       const request = wire<CodeGenerateInput>('code.generate', 'input'…
+     87|       const result = wire('code.generate', 'output', await generate(re…
+     88|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     89|       expect(rendered).toHaveBeenCalledTimes(records.length);
+     90|       const assets = result.artifact!.files.filter(file => file.path.e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > workflow/react renders exact record operands into named, stable public SVG assets
+AssertionError: [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for react; evidence state: unavailable.","nodeId":"detail-ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:88:60
+     86|       const request = wire<CodeGenerateInput>('code.generate', 'input'…
+     87|       const result = wire('code.generate', 'output', await generate(re…
+     88|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     89|       expect(rendered).toHaveBeenCalledTimes(records.length);
+     90|       const assets = result.artifact!.files.filter(file => file.path.e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  test/product-reality/graph-placement-codegen.s199.spec.ts > Relationship graph at the public generated-app boundary > workflow/vue renders exact record operands into named, stable public SVG assets
+AssertionError: [{"code":"OODS-N015","message":"Component VizGraphPreview is not emission-eligible for vue; evidence state: unavailable.","nodeId":"detail-ve-header-23","component":"VizGraphPreview"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/graph-placement-codegen.s199.spec.ts:88:60
+     86|       const request = wire<CodeGenerateInput>('code.generate', 'input'…
+     87|       const result = wire('code.generate', 'output', await generate(re…
+     88|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     89|       expect(rendered).toHaveBeenCalledTimes(records.length);
+     90|       const assets = result.artifact!.files.filter(file => file.path.e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 12 passed (16)
+   Start at  03:59:56
+   Duration  2.03s (transform 760ms, setup 14ms, collect 1.30s, tests 461ms, environment 0ms, prepare 46ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/graph-placement-codegen.s199.spec.ts

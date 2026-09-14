@@ -1,0 +1,48 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/carries.s199.spec.ts (19 tests | 1 failed) 1401ms
+   ✓ s199 carry producers prevent misleading generated app state > Article seeds one coherent address role and no label/description placeholders 221ms
+   ✓ s199 carry producers prevent misleading generated app state > Collection seeds one coherent address role and no label/description placeholders 122ms
+   ✓ s199 carry producers prevent misleading generated app state > Document seeds one coherent address role and no label/description placeholders 67ms
+   ✓ s199 carry producers prevent misleading generated app state > Evidence seeds one coherent address role and no label/description placeholders 61ms
+   ✓ s199 carry producers prevent misleading generated app state > Invoice seeds one coherent address role and no label/description placeholders 68ms
+   ✓ s199 carry producers prevent misleading generated app state > Media seeds one coherent address role and no label/description placeholders 58ms
+   ✓ s199 carry producers prevent misleading generated app state > Mission seeds one coherent address role and no label/description placeholders 62ms
+   ✓ s199 carry producers prevent misleading generated app state > Organization seeds one coherent address role and no label/description placeholders 71ms
+   ✓ s199 carry producers prevent misleading generated app state > Plan seeds one coherent address role and no label/description placeholders 64ms
+   ✓ s199 carry producers prevent misleading generated app state > Product seeds one coherent address role and no label/description placeholders 60ms
+   ✓ s199 carry producers prevent misleading generated app state > Project seeds one coherent address role and no label/description placeholders 65ms
+   ✓ s199 carry producers prevent misleading generated app state > Relationship seeds one coherent address role and no label/description placeholders 60ms
+   ✓ s199 carry producers prevent misleading generated app state > Report seeds one coherent address role and no label/description placeholders 62ms
+   ✓ s199 carry producers prevent misleading generated app state > Subscription seeds one coherent address role and no label/description placeholders 54ms
+   ✓ s199 carry producers prevent misleading generated app state > Transaction seeds one coherent address role and no label/description placeholders 60ms
+   ✓ s199 carry producers prevent misleading generated app state > Usage seeds one coherent address role and no label/description placeholders 61ms
+   ✓ s199 carry producers prevent misleading generated app state > User seeds one coherent address role and no label/description placeholders 82ms
+   × s199 carry producers prevent misleading generated app state > binds the Mission timeline identity to title instead of its generic label projection 100ms
+     → Cannot read properties of undefined (reading 'children')
+   ✓ s199 carry producers prevent misleading generated app state > prefers a domain classification over status and ignores an enum whose authored preview is constant 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/carries.s199.spec.ts > s199 carry producers prevent misleading generated app state > binds the Mission timeline identity to title instead of its generic label projection
+TypeError: Cannot read properties of undefined (reading 'children')
+ ❯ test/codegen/carries.s199.spec.ts:29:21
+     27|       const { schema } = await compose({ object: 'Mission', context });
+     28|       const header = walk(schema.screens).find(node => node.id.startsW…
+     29|       expect(header.children?.[0]?.props?.field).toBe('title');
+       |                     ^
+     30|     }
+     31|     const { schema } = await compose({ object: 'Mission', context: 'wo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+   Start at  01:27:02
+   Duration  2.24s (transform 378ms, setup 16ms, collect 551ms, tests 1.40s, environment 0ms, prepare 49ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/carries.s199.spec.ts --no-file-parallelism --maxWorkers=1

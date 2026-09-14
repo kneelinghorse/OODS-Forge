@@ -133,6 +133,15 @@ export function createVisualMapForScale(params: {
   const palette = hasRange ? (params.range as readonly string[]) : DEFAULT_CONTINUOUS_COLORS;
   const { scale } = params;
 
+  // HC literals must never enter continuous interpolation (ECharts cannot parse oklch).
+  // Each numeric bin receives a declared paint verbatim; no replacement palette.
+  if (params.scope?.theme === 'hc') {
+    const bounds = scale === 'diverging' ? symmetrizeDivergingDomain(domain) : domain;
+    const colors = scale === 'diverging' && !hasRange ? DEFAULT_DIVERGING_COLORS : palette;
+    const pieces = interpolatePieces(bounds, colors.length);
+    return createPiecewiseVisualMap(pieces, colors, colors.length, params.scope);
+  }
+
   // sprint-156 m04: diverging is a CONTINUOUS scale — a caller-supplied range wins, else
   // the OODS diverging default. Grouped with linear so a diverging heatmap/geo layer emits
   // one continuous visualMap (never binned pieces). s157 m03 (B2): center the domain at 0

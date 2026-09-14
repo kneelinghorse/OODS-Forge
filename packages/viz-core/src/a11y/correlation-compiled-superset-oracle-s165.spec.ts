@@ -134,7 +134,7 @@ const CORPUS = [...new Set(specJsonFilesUnder(path.join(REPO_ROOT, 'examples/viz
 
 describe('s165 m3 §4 — separableFields ⊇ compiledSplitFields over the shipped corpus', () => {
   it('the corpus is non-empty (a corpus move cannot hollow this gate)', () => {
-    expect(CORPUS.length).toBe(42);
+    expect(CORPUS.length).toBe(44);
   });
 
   it('every IN-DOMAIN corpus spec satisfies the superset relation, and the skips are COUNTED', () => {
@@ -158,7 +158,7 @@ describe('s165 m3 §4 — separableFields ⊇ compiledSplitFields over the shipp
     // quietly. MEASURED TRUTH: the shipped corpus has ZERO out-of-domain fixtures, so the skip-counting
     // machinery is INERT here — the domain gap is real but is proven only by the dedicated throw test
     // below, never by a corpus instance. Stated rather than left to look like coverage.
-    expect(checked).toBe(42);
+    expect(checked).toBe(44);
     expect(skipped).toBe(0);
     expect([...skippedTraits]).toEqual([]);
   });

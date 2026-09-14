@@ -3,8 +3,8 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const ScaleTemporalTrait = {
   trait: {
     name: 'ScaleTemporal',
-    version: '0.1.0',
-    description: 'Temporal scale metadata with UTC rendering and display-layer timezone declarations.',
+    version: '0.3.0',
+    description: 'Temporal scale metadata with UTC rendering. Version 0.3.0 removes the unused timezone parameter (breaking).',
     category: 'viz.scale',
     tags: ['viz', 'scale', 'temporal'],
   },
@@ -39,13 +39,6 @@ const ScaleTemporalTrait = {
       required: true,
       description: 'Normalized upper range bound (0-1).',
       default: 1,
-    },
-    {
-      name: 'timezone',
-      type: 'string',
-      required: false,
-      description: 'Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.',
-      default: 'UTC',
     },
     {
       name: 'nice',
@@ -91,12 +84,6 @@ const ScaleTemporalTrait = {
       description: 'Normalized upper range bound.',
       default: 1,
     },
-    viz_scale_temporal_timezone: {
-      type: 'string',
-      required: false,
-      description: 'Display-layer timezone metadata only; it does not override UTC rendering.',
-      default: 'UTC',
-    },
     viz_scale_temporal_nice: {
       type: 'string',
       required: false,
@@ -116,7 +103,7 @@ const ScaleTemporalTrait = {
       type: 'string',
       required: false,
       description: 'Narrative summary for fallback contexts.',
-      default: 'Temporal scale rendered in UTC; timezone is display-layer metadata.',
+      default: 'Temporal scale rendered in UTC.',
     },
   },
 
@@ -133,13 +120,6 @@ const ScaleTemporalTrait = {
       token_mapping: 'tokenMap(viz.scale.domain)',
       ui_hints: {
         component: 'TimestampPreview',
-      },
-    },
-    viz_scale_temporal_timezone: {
-      semantic_type: 'viz.scale.timezone',
-      token_mapping: 'tokenMap(viz.scale.timezone)',
-      ui_hints: {
-        component: 'TextBadge',
       },
     },
     viz_scale_temporal_nice: {
@@ -161,7 +141,6 @@ const ScaleTemporalTrait = {
           type: 'temporal',
           domainMinField: 'viz_scale_temporal_domain_start',
           domainMaxField: 'viz_scale_temporal_domain_end',
-          timezoneField: 'viz_scale_temporal_timezone',
           niceField: 'viz_scale_temporal_nice',
         },
       },
@@ -177,7 +156,6 @@ const ScaleTemporalTrait = {
           domainMaxField: 'viz_scale_temporal_domain_end',
           rangeMinField: 'viz_scale_temporal_range_min',
           rangeMaxField: 'viz_scale_temporal_range_max',
-          timezoneField: 'viz_scale_temporal_timezone',
           niceField: 'viz_scale_temporal_nice',
           formatField: 'viz_scale_temporal_output_format',
         },

@@ -27,9 +27,8 @@ const ROWS = [
 
 /** The documented curve, written out here so the oracle does not reuse the implementation. */
 const RANGE: [number, number] = [6, 28];
-function expectedLinearSize(value: number, min: number, max: number): number {
-  const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
-  return RANGE[0] + (RANGE[1] - RANGE[0]) * ratio;
+function expectedAreaSize(value: number, max: number): number {
+  return RANGE[1] * Math.sqrt(value / max);
 }
 
 async function servedBubbleSeries(sizeField?: string): Promise<Record<string, unknown>> {
@@ -65,14 +64,13 @@ describe('viz.render bubble_map — the declared size scale reaches the wire (s1
     const series = await servedBubbleSeries('pop');
     const data = series.data as Array<Record<string, unknown>>;
     const pops = ROWS.map((row) => row.pop);
-    const min = Math.min(...pops);
     const max = Math.max(...pops);
     const observed = data.map((datum) => datum.symbolSize as number);
-    const expected = ROWS.map((row) => expectedLinearSize(row.pop, min, max));
+    const expected = ROWS.map((row) => expectedAreaSize(row.pop, max));
     observed.forEach((size, index) => expect(size).toBeCloseTo(expected[index], 12));
     // Concretely, and in row order: the largest city is the largest bubble.
     expect(observed[0]).toBe(28);
-    expect(observed[2]).toBe(6);
+    expect(observed[2] ** 2 / observed[0] ** 2).toBeCloseTo(ROWS[2].pop / ROWS[0].pop, 12);
     expect(observed[1]).toBeGreaterThan(observed[2]);
     expect(observed[1]).toBeLessThan(observed[0]);
   });

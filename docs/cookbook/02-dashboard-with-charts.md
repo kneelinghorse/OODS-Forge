@@ -158,5 +158,7 @@ independent artifacts you assemble at the rendering layer.
   `chartType` for recommender-driven suggest mode.
 - Responses are compact by default (`tokenCssRef` instead of inlined token CSS);
   opt into ECharts with `output.echarts: true`.
-- `viz.render` is spec-only (no SSR) — the consumer draws the chart and lays it
-  into a `design.compose` dashboard shell.
+- Request `output.svg: true` for server-rendered SVG. ECharts server-side rendering
+  accepts treemap, sunburst, sankey, chord, graph, map, scatter, and lines series;
+  unsupported series return `ECHARTS_UNSUPPORTED_OPTION`. ECharts Cartesian
+  line/bar/area output remains spec-only and uncertified.

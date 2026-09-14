@@ -341,7 +341,7 @@ export function fillSlotsWithObject(
     if (!filledSlots.has(slot.name)) continue;
     // A new domain chart supplements the record identity; its top position
     // must not consume the required header's fallback component.
-    const chartHeader = slot.name === 'header' && slotChildren.get(slot.name)?.some(child => child.chart?.source === 'record-array');
+    const chartHeader = slot.name === 'header' && slotChildren.get(slot.name)?.some(child => child.chart?.source === 'record-array' || child.chart?.source === 'edge-array');
     if (!PRIMARY_SLOT_INTENTS.has(slot.intent) && !chartHeader) continue;
     // Optional action-or-metadata slots already have their authored content.
     // Adding a default button here invents an empty, unbound action.

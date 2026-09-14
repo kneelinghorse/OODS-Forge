@@ -1,0 +1,66 @@
+{
+  "builderSelfCertified": false,
+  "correctiveExecutionHead": "d28add31bc7726a153c7e6062ff408acdb41aa3b",
+  "testOnlyHead": "c28e50e3bf3b16e9a043bb2a8a0ab2b95708dba6",
+  "productImplementationHead": "65d1f0a70de517d9e581e7c9b90ba5d08c0035c4",
+  "postImplementationChangedPaths": [
+    "artifacts/product-reality/sprint-199/golden-ledger.json",
+    "tests/viz/mark-options-schema-validity-s167.test.ts"
+  ],
+  "initialCaptureAddendum": {
+    "reason": "Original failure-attribution.json counts failed assertions; it omitted this zero-test collection failure. Raw initial receipts remain unchanged.",
+    "uncollectedFiles": [
+      {
+        "suite": "root-core",
+        "path": "tests/viz/mark-options-schema-validity-s167.test.ts",
+        "status": "failed",
+        "durationMs": 0,
+        "tests": {
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      }
+    ],
+    "failedTestFileExecutions": 23
+  },
+  "correctiveCapture": {
+    "passedAssertions": 17583,
+    "failedAssertions": 0,
+    "failedFiles": 2,
+    "skippedAssertions": 36,
+    "uncollectedTestFiles": 1,
+    "distinctOptionalStage1Tests": 16,
+    "optionalStage1Executions": 32,
+    "extraSkippedSetupAssertions": 4,
+    "cleanlinessCheckpoints": 14,
+    "allCheckpointsClean": true
+  },
+  "failureAttribution": [
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts",
+      "failureKind": "beforeAll installation/setup",
+      "cause": "The isolated Vue npm install did not provide @rollup/rollup-darwin-arm64; production build could not load it.",
+      "introducedBy": "Dependency installation; the test and harness are byte-identical to b7a96ab0f. The file passed 4/4 in the first full capture.",
+      "decision": 2057,
+      "resolution": "One isolated diagnostic passed 4/4 at the unchanged d28add31b capture head; the full capture remains failed and four skipped assertions remain counted.",
+      "receipt": "consumer-supplement/result.json"
+    },
+    {
+      "suite": "root-core",
+      "file": "tests/viz/mark-options-schema-validity-s167.test.ts",
+      "failureKind": "collection: zero registered assertions",
+      "cause": "The declared-mark schema discovery did not classify new MarkGraph placement parameters.",
+      "introducedBy": "s199-m06 graph schema intake; missed by the initial assertion-only failure extraction.",
+      "decision": 2058,
+      "resolution": "Explicit closed graph placement classification and exact 44-source/16-exception reconciliation; 76/76 tests pass at the test-only c28e50e3b head. No runtime change.",
+      "receipt": "mark-options-receipt.json",
+      "additionalQualification": "Decision #2059 preserves histogram/waterfall raw Vega-Lite secondary-channel type defects as exact executable annotations. All prior negative controls remain."
+    }
+  ],
+  "unattributedFileFailures": 0,
+  "thirdFullCaptureRun": false
+}

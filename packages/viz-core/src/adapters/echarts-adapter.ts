@@ -178,11 +178,16 @@ export function toEChartsOption(spec: NormalizedVizSpec, scope: TokenScope = {})
   }
 
   const datasetId = deriveDatasetId(spec);
-  const dataset = convertDataset(spec, datasetId);
-  const linkedDatasets = convertLinkedDatasets(spec);
+  const bands = bandEncodings(spec, datasetId);
+  const dataset = convertDataset(spec, datasetId, bands);
+  const linkedDatasets = convertLinkedDatasets(spec, bands);
   const baseEncoding = convertEncodingMap(spec.encoding);
   const axisEncoding = resolveAxisEncoding(baseEncoding, spec.marks);
-  const series = spec.marks.map((mark) => createSeries(mark, baseEncoding, datasetId));
+  const series = spec.marks.flatMap((mark, index) => {
+    const entry = createSeries(mark, baseEncoding, datasetId);
+    const band = bands.find((candidate) => candidate.markIndex === index);
+    return band ? createBandSeries(entry, band) : [entry];
+  });
   const xAxis = createAxis('x', axisEncoding.x);
   const yAxis = createAxis('y', axisEncoding.y);
   const legend = baseEncoding.color ? { show: true } : undefined;
@@ -224,11 +229,66 @@ function deriveDatasetId(spec: NormalizedVizSpec): string {
   return DEFAULT_DATASET_ID;
 }
 
-function convertDataset(spec: NormalizedVizSpec, datasetId: string): EChartsDataset {
+interface BandEncoding {
+  readonly markIndex: number;
+  readonly datasetId: string;
+  readonly axis: 'x' | 'y';
+  readonly first: string;
+  readonly second: string;
+  readonly difference: string;
+}
+
+function bandEncodings(spec: NormalizedVizSpec, datasetId: string): BandEncoding[] {
+  const occupied = new Set([...(spec.data.values ?? []), ...Object.values(spec.datasets ?? {}).flat()].flatMap(Object.keys));
+  return spec.marks.flatMap((mark, markIndex) => {
+    if (mark.trait !== 'MarkArea' && mark.trait !== 'MarkBar') return [];
+    const encoding = { ...spec.encoding, ...mark.encodings };
+    if (encoding.x2 && encoding.y2) throw new EChartsAdapterError('A ranged area/bar supports one secondary axis at a time.');
+    const axis = encoding.y2 ? 'y' : encoding.x2 ? 'x' : undefined;
+    if (!axis) return [];
+    const first = encoding[axis]?.field;
+    const second = encoding[axis === 'y' ? 'y2' : 'x2']?.field;
+    if (!first || !second) throw new EChartsAdapterError('A ranged area/bar requires both bound fields.');
+    let difference = `__oods_band_${markIndex}`;
+    while (occupied.has(difference)) difference += '_';
+    occupied.add(difference);
+    return [{ markIndex, datasetId: mark.from ?? datasetId, axis, first, second, difference }];
+  });
+}
+
+function bandRows(rows: readonly Record<string, unknown>[] | undefined, bands: readonly BandEncoding[], datasetId: string): typeof rows {
+  const selected = bands.filter((band) => band.datasetId === datasetId);
+  if (!rows || selected.length === 0) return rows;
+  return rows.map((row) => ({
+    ...row,
+    ...Object.fromEntries(selected.map((band) => [band.difference,
+      row[band.first] == null || row[band.second] == null ? null : Number(row[band.second]) - Number(row[band.first]),
+    ])),
+  }));
+}
+
+function createBandSeries(series: EChartsSeries, band: BandEncoding): EChartsSeries[] {
+  const stack = `__oods_band_stack_${band.markIndex}`;
+  const tooltip = [...new Set([...(series.encode.tooltip ?? []), band.first, band.second])];
+  const common = { ...series, stack, stackStrategy: 'all', showSymbol: false };
+  return [
+    {
+      ...common, id: `${series.id ?? stack}:base`, silent: true,
+      encode: { ...series.encode, [band.axis]: band.first, tooltip: [] },
+      itemStyle: { color: 'transparent', opacity: 0 },
+      lineStyle: { color: 'transparent', opacity: 0 },
+      areaStyle: series.areaStyle ? { color: 'transparent', opacity: 0 } : undefined,
+      tooltip: { show: false }, emphasis: { disabled: true },
+    },
+    { ...common, encode: { ...series.encode, [band.axis]: band.difference, tooltip } },
+  ];
+}
+
+function convertDataset(spec: NormalizedVizSpec, datasetId: string, bands: readonly BandEncoding[]): EChartsDataset {
   // s159 m5: a MarkRect heatmap with a declared color aggregate DRAWS one aggregated cell per (x,y),
   // so the dataset source is the aggregated cells (not the raw multi-row source) — render == narrative.
   // undefined for every other spec → byte-identical.
-  const source = aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : undefined);
+  const source = bandRows(aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : undefined), bands, datasetId);
   const dimensions = source ? inferDimensions(source) : undefined;
 
   return removeUndefined({
@@ -246,12 +306,12 @@ function convertDataset(spec: NormalizedVizSpec, datasetId: string): EChartsData
 // spec.datasets is absent the map is empty → the spread contributes nothing → the option
 // is byte-identical to pre-#16 (the gate). A `from` naming a missing key still dangles
 // (left as a consumer error — the honest-fail WARN is a separate future item, #110).
-function convertLinkedDatasets(spec: NormalizedVizSpec): readonly EChartsDataset[] {
+function convertLinkedDatasets(spec: NormalizedVizSpec, bands: readonly BandEncoding[]): readonly EChartsDataset[] {
   return Object.entries(spec.datasets ?? {}).map(([id, rows]) =>
     removeUndefined({
       id,
-      source: rows,
-      dimensions: inferDimensions(rows),
+      source: bandRows(rows, bands, id),
+      dimensions: inferDimensions(bandRows(rows, bands, id) ?? []),
     })
   );
 }

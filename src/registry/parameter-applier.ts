@@ -40,6 +40,7 @@ const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; componen
   MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
   MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
   MarkLine: { chartType: 'line', component: 'VizLinePreview' },
+  MarkGraph: { chartType: 'force_graph', component: 'VizGraphPreview' },
   MarkPoint: { chartType: 'scatter', component: 'VizPointPreview' },
   MarkRect: { chartType: 'heatmap', component: 'VizHeatmapPreview' },
 };

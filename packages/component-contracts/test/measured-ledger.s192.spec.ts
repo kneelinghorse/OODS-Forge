@@ -13,11 +13,11 @@ const manifest = read('artifacts/structured-data/manifest.json');
 const exported = read(manifest.artifacts.find((row: { name: string }) => row.name === 'components').path);
 
 describe('Sprint 192 evidence-derived ledger and pending classification', () => {
-  it('serves one current ledger through the existing package API and all 109 exported surface rows', () => {
+  it('serves one current ledger through the existing package API and all 110 exported surface rows', () => {
     const ledgerPath = require.resolve('@oods/component-contracts/registry/capabilities');
     expect(ledgerPath).toContain('/component-capability-ledger.v1.json');
     expect(JSON.parse(readFileSync(ledgerPath, 'utf8'))).toEqual(componentCapabilityBaseline);
-    expect(componentCapabilityBaseline.rows).toHaveLength(109);
+    expect(componentCapabilityBaseline.rows).toHaveLength(110);
     expect(manifest.artifacts.find((row: { name: string }) => row.name === 'components').path).toBe(`artifacts/structured-data/oods-components-${manifest.version}.json`);
     expect(exported.obligationScope.approvedRuntimeCensus).toBeNull();
     for (const row of componentCapabilityBaseline.rows) {
@@ -41,9 +41,10 @@ describe('Sprint 192 evidence-derived ledger and pending classification', () => 
     expect(proposal.approvedRuntimeCensus).toBeNull();
     expect(proposal.rows.map(row => row.id)).toEqual(componentCapabilityBaseline.rows.map(row => row.id));
     const previous = read('packages/component-contracts/registry/component-reconciliation.proposed.v1.json');
-    const changes = proposal.rows.filter(row => previous.rows.find((before: { id: string }) => before.id === row.id).proposedClassification !== row.proposedClassification);
+    const changes = proposal.rows.filter(row => previous.rows.some((before: { id: string; proposedClassification: string }) => before.id === row.id && before.proposedClassification !== row.proposedClassification));
     expect(changes.map(row => row.id)).toEqual(read('artifacts/product-reality/sprint-192/m06/classification-changes.json').changes.map((row: { id: string }) => row.id));
     expect(changes).toHaveLength(11);
+    expect(proposal.rows.filter(row => !previous.rows.some((before: { id: string }) => before.id === row.id)).map(row => row.id)).toEqual(['VizGraphPreview']);
     for (const row of proposal.rows) {
       expect(row.approvalState).toBe('pending-derek-approval');
       expect(row.compatibilityNote.length).toBeGreaterThan(0);

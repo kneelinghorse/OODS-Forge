@@ -1,0 +1,66 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core
+
+ ❯ src/adapters/echarts-adapter.spec.ts (22 tests | 4 failed) 55ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > builds a multi-dataset array so a from-referenced series datasetId resolves (fails at HEAD: single dataset) 2ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > binds a from-referenced series by field NAME, not column order (dimensions preserve names + encode references names) 0ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > primary (inline) series is byte-UNCHANGED by the datasets slot (mixed-spec contract) 0ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > OMITS the extra datasets when spec.datasets is absent → byte-identical single-dataset array (gate-leak guard) 0ms
+   ✓ echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > emits a log y-axis when the binding co-declares type:quantitative AND scale:log (fails at HEAD: value) 0ms
+   ✓ echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > matches Vega parity — the same spec compiles to encoding.y.scale.type:log in Vega 1ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > emits a continuous visualMap for a MarkRect measure heatmap (fails at HEAD: no visualMap) 1ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the OODS sequential range (resolved colors) as inRange.color 1ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the visualMap tick label onto chrome (textStyle.color = chrome.visualMapLabel) 0ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > OMITS the visualMap for a non-heatmap (bar) spec — gate-leak guard 0ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > centers a diverging heatmap visualMap at 0 (symmetric domain == Vega domainMid) 0ms
+   ✓ echarts-adapter — s159 m5 aggregated heatmap dual-output parity > visualMap extent + dataset == AGGREGATED cells == narrative (not the raw color extent) 2ms
+   ✓ echarts-adapter — s159 m5 aggregated heatmap dual-output parity > a single-row-per-cell heatmap (no multi-row) is byte-unchanged (extent == the cell values) 0ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > FACETED aggregated heatmap: cells stay per-panel, carry the facet field, and panel filters match 1ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > DETAIL-grouped aggregated heatmap: per-group cells survive (visualMap == narrative, not 40/40) 0ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > multi-row-per-(x,y,detail) discriminator: cells re-reduce PER GROUP (the fail-safe posture stays dishonest here — full spine does not) 0ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > LOCK: a plain (no facet/detail/size) aggregated heatmap emits cells with EXACTLY the [x,y,measure] shape 0ms
+   × s199 ranged areas and bars preserve both bounds > MarkArea x2 stacks a difference above negative lower bounds in every facet 28ms
+     → expected 1 to be -2 // Object.is equality
+   × s199 ranged areas and bars preserve both bounds > MarkArea y2 stacks a difference above negative lower bounds in every facet 6ms
+     → expected 1 to be -2 // Object.is equality
+   × s199 ranged areas and bars preserve both bounds > MarkBar x2 stacks a difference above negative lower bounds in every facet 7ms
+     → expected 1 to be -2 // Object.is equality
+   × s199 ranged areas and bars preserve both bounds > MarkBar y2 stacks a difference above negative lower bounds in every facet 4ms
+     → expected 1 to be -2 // Object.is equality
+   ✓ s199 band fields cannot overwrite authored or linked dataset columns 0ms
+ ✓ test/echarts-facet-limit-visualmap-s161.spec.ts (6 tests) 6ms
+ ✓ test/examples-conformance.spec.ts (37 tests) 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkArea x2 stacks a difference above negative lower bounds in every facet
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkArea y2 stacks a difference above negative lower bounds in every facet
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkBar x2 stacks a difference above negative lower bounds in every facet
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkBar y2 stacks a difference above negative lower bounds in every facet
+AssertionError: expected 1 to be -2 // Object.is equality
+
+- Expected
++ Received
+
+- -2
++ 1
+
+ ❯ src/adapters/echarts-adapter.spec.ts:587:82
+    585|           for (const [index, upper] of [[1, 3], [3, -2]]) {
+    586|             const data = models[index].getData();
+    587|             expect(data.get(data.getCalculationInfo('stackResultDimens…
+       |                                                                                  ^
+    588|           }
+    589|         } finally { chart.dispose(); }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 failed | 61 passed (65)
+   Start at  02:48:13
+   Duration  811ms (transform 360ms, setup 0ms, collect 1.51s, tests 86ms, environment 0ms, prepare 192ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/adapters/echarts-adapter.spec.ts test/examples-conformance.spec.ts test/echarts-facet-limit-visualmap-s161.spec.ts --coverage.enabled=false

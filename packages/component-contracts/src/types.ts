@@ -100,6 +100,7 @@ export const NUCLEUS_COMPONENT_IDS = [
   'VizColorControls',
   'VizColorLegendConfig',
   'VizEncodingBadge',
+  'VizGraphPreview',
   'VizHeatmapControls',
   'VizHeatmapPreview',
   'VizLineControls',

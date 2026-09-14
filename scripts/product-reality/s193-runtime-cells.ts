@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from 'playwright';
 import { handle as listObjects } from '../../packages/mcp-server/src/tools/object.list.js';
+import { edgeArrayToNetwork } from '../../packages/mcp-server/src/codegen/chart-assets.js';
 import { workflowSampleRecords } from '../../packages/mcp-server/src/codegen/workflow-data-emitter.js';
 import { runVizThemeProof } from './component-theme-proof.mjs';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
@@ -218,12 +219,11 @@ async function runCell(output: string, object: string, context: Context, framewo
         assert.deepEqual(errors, []);
       } finally { await page.close(); }
     });
-    const chartNode = schemaNodes(schema).find(node => node.chart?.source === 'record-array');
-    if (context === 'detail' && chartNode?.chart?.source === 'record-array') {
+    const chartNode = schemaNodes(schema).find(node => node.chart?.source === 'record-array' || node.chart?.source === 'edge-array');
+    if (context === 'detail' && (chartNode?.chart?.source === 'record-array' || chartNode?.chart?.source === 'edge-array')) {
       await gate('chart-theme-scopes', async () => {
         const chart = chartNode.chart!;
-        assert.equal(chart.source, 'record-array');
-        if (chart.source !== 'record-array') throw new Error('Expected the declared record-array chart');
+        if (chart.source !== 'record-array' && chart.source !== 'edge-array') throw new Error('Expected a declared array chart');
         const themedOutput = path.join(cellRoot, 'chart-themes');
         const cases = [];
         for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark', 'hc'] as const) {
@@ -233,20 +233,26 @@ async function runCell(output: string, object: string, context: Context, framewo
           await write(path.join(themedOutput, `${id}-generation.json`), { request, response: generated });
           assert.equal(generated.status, 'ok', JSON.stringify(generated.errors));
           const rows = workflowSampleRecords(schema)[0]![chart.dataField] as [Record<string, unknown>, ...Record<string, unknown>[]];
-          const renderRequest = { chartType: chart.chartType, rows, encodings: chart.encodings, brand, theme,
+          const renderRequest = { chartType: chart.chartType, ...(chart.source === 'edge-array' ? { network: edgeArrayToNetwork(rows, chart.edges) } : { rows, encodings: chart.encodings }), brand, theme,
             name: String(chartNode.props?.title ?? `${chart.chartType} chart`),
             ...(typeof chartNode.props?.description === 'string' ? { description: chartNode.props.description } : {}),
             output: { svg: true, width: 360, height: 200, includeNormalizedSpec: true } };
           const rendered = await renderChart(renderRequest);
           assert.equal(rendered.status, 'ok', JSON.stringify(rendered.errors));
           assert.equal(generated.artifact!.files.find(file => file.path.endsWith('.svg'))?.contents, rendered.svg, 'The consumer must carry the actual public SVG');
-          const certification = await certifyChart({ spec: rendered.normalizedSpec!, brand, theme });
+          const certification = await certifyChart({ spec: rendered.normalizedSpec!, brand, theme, ...('network' in renderRequest ? { data: { network: renderRequest.network } } : {}) });
           await write(path.join(themedOutput, `${id}-certification.json`), { renderRequest, rendered, certification });
-          assert.equal(certification.conformant, true, JSON.stringify(certification));
+          if (chart.source === 'edge-array') {
+            // The declared ungrouped relationship operand has no categorical
+            // metadata. Keep that measured limit; never invent a group to pass.
+            assert.deepEqual(certification.pillars, { a11yEquivalence: 'pass', determinism: 'pass', contrast: theme === 'hc' ? 'exempt' : 'ungradeable', accuracy: 'pass' });
+            assert.equal(certification.conformant, theme === 'hc');
+            if (theme !== 'hc') assert.match(certification.contrastNote ?? '', /missing-semantic-metadata/);
+          } else assert.equal(certification.conformant, true, JSON.stringify(certification));
           cases.push({ id, brand, theme, svgCount: 1, expectedSvg: rendered.svg, accessibleName: chartNode.props?.title,
             selector: `[data-oods-component="${chartNode.component}"] svg`, mount: async (page: Page) => {
             const themedFiles = createConsumerFiles({ framework, source: generated.code, actions: generated.artifact!.actions,
-              schemaName: `fresh-${object}-${context}`, model, mission: 's195-m06' });
+              schemaName: `fresh-${object}-${context}`, model, mission: process.env.OODS_PROOF_MISSION ?? 's195-m06' });
             mountEntry(framework, themedFiles);
             themedFiles['index.html'] = themedFiles['index.html']!.replace('data-brand="A" data-theme="dark"', `data-brand="${brand}" data-theme="${theme}"`);
             for (const [name, content] of Object.entries(themedFiles)) await fs.writeFile(path.join(consumer!, name), content);
@@ -259,7 +265,7 @@ async function runCell(output: string, object: string, context: Context, framewo
             });
           } });
         }
-        const report = await runVizThemeProof({ cases, output: themedOutput, chromium, mission: 's195-m06' });
+        const report = await runVizThemeProof({ cases, output: themedOutput, chromium, mission: process.env.OODS_PROOF_MISSION ?? 's195-m06' });
         return { cells: report.selected, failed: report.failed, skipped: report.skipped, report: `${relative}/chart-themes/report.json`, reusedSweepTarballs: true };
       });
     }

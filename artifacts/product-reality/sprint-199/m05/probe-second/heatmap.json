@@ -1,0 +1,374 @@
+{
+  "request": {
+    "chartType": "heatmap",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "region",
+        "scale": "band"
+      },
+      "y": {
+        "field": "quarter",
+        "scale": "band"
+      },
+      "color": {
+        "field": "revenue",
+        "scale": "linear"
+      }
+    },
+    "theme": "hc",
+    "brand": "A",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "heatmap",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Heatmap",
+      "description": "Heatmap of quarter by region, split by revenue.",
+      "data": {
+        "values": [
+          {
+            "region": "North",
+            "quarter": "2024-01",
+            "revenue": 120000,
+            "units": 340
+          },
+          {
+            "region": "South",
+            "quarter": "2024-01",
+            "revenue": 135000,
+            "units": 410
+          },
+          {
+            "region": "North",
+            "quarter": "2024-02",
+            "revenue": 128000,
+            "units": 360
+          },
+          {
+            "region": "South",
+            "quarter": "2024-02",
+            "revenue": 142000,
+            "units": 430
+          },
+          {
+            "region": "North",
+            "quarter": "2024-03",
+            "revenue": 131000,
+            "units": 372
+          },
+          {
+            "region": "South",
+            "quarter": "2024-03",
+            "revenue": 150000,
+            "units": 455
+          }
+        ]
+      },
+      "config": {
+        "background": "Canvas",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "CanvasText",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "CanvasText",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "CanvasText",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "CanvasText",
+          "domainColor": "CanvasText",
+          "tickColor": "CanvasText"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": false
+        },
+        "legend": {
+          "titleColor": "CanvasText",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "CanvasText",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:heatmap",
+          "name": "Heatmap",
+          "portability": {
+            "tableColumnOrder": [
+              "region",
+              "quarter",
+              "revenue",
+              "units"
+            ]
+          },
+          "a11y": {
+            "description": "Heatmap of quarter by region, split by revenue.",
+            "ariaLabel": "Heatmap of Quarter by Region"
+          }
+        }
+      },
+      "mark": {
+        "type": "rect"
+      },
+      "encoding": {
+        "x": {
+          "field": "region",
+          "type": "ordinal",
+          "scale": {
+            "type": "band"
+          },
+          "title": "Region"
+        },
+        "y": {
+          "field": "quarter",
+          "type": "ordinal",
+          "scale": {
+            "type": "band"
+          },
+          "title": "Quarter"
+        },
+        "color": {
+          "field": "revenue",
+          "type": "quantitative",
+          "scale": {
+            "type": "quantize",
+            "range": [
+              "oklch(0.94 0 265)",
+              "oklch(0.84 0 265)",
+              "oklch(0.74 0 265)",
+              "oklch(0.64 0 265)",
+              "oklch(0.54 0 265)",
+              "oklch(0.44 0 265)",
+              "oklch(0.34 0 265)",
+              "oklch(0.24 0 265)",
+              "oklch(0.14 0 265)"
+            ]
+          },
+          "title": "Revenue",
+          "legend": {
+            "type": "symbol",
+            "symbolStrokeColor": "CanvasText"
+          }
+        }
+      }
+    },
+    "a11yDescription": "Heatmap of quarter by region, split by revenue.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkRect",
+      "rowCount": 6,
+      "fields": [
+        "region",
+        "quarter",
+        "revenue",
+        "units"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:heatmap",
+      "name": "Heatmap",
+      "data": {
+        "values": [
+          {
+            "region": "North",
+            "quarter": "2024-01",
+            "revenue": 120000,
+            "units": 340
+          },
+          {
+            "region": "South",
+            "quarter": "2024-01",
+            "revenue": 135000,
+            "units": 410
+          },
+          {
+            "region": "North",
+            "quarter": "2024-02",
+            "revenue": 128000,
+            "units": 360
+          },
+          {
+            "region": "South",
+            "quarter": "2024-02",
+            "revenue": 142000,
+            "units": 430
+          },
+          {
+            "region": "North",
+            "quarter": "2024-03",
+            "revenue": 131000,
+            "units": 372
+          },
+          {
+            "region": "South",
+            "quarter": "2024-03",
+            "revenue": 150000,
+            "units": 455
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkRect",
+          "options": {
+            "colorScheme": "sequential"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "region",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "band",
+          "title": "Region"
+        },
+        "y": {
+          "field": "quarter",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "band",
+          "title": "Quarter"
+        },
+        "color": {
+          "field": "revenue",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "scale": "linear",
+          "title": "Revenue"
+        }
+      },
+      "a11y": {
+        "description": "Heatmap of quarter by region, split by revenue.",
+        "ariaLabel": "Heatmap of Quarter by Region"
+      },
+      "portability": {
+        "tableColumnOrder": [
+          "region",
+          "quarter",
+          "revenue",
+          "units"
+        ]
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-6a0b1fed",
+    "specRefCreatedAt": "2026-09-14T08:20:40.238Z",
+    "specRefExpiresAt": "2026-09-14T08:50:40.238Z",
+    "contentHash": "a4f1123a290344735d05815fd42112cb8d5ed5d4d6725fdd84ef05538a66a0ca",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"298\" height=\"196\" viewBox=\"0 0 298 196\"><rect width=\"298\" height=\"196\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,34)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h40v60h-40Z\"/><g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Region: North; Quarter: 2024-01; Revenue: 120000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M0,0h20v20h-20Z\" fill=\"oklch(0.94 0 265)\"/><path aria-label=\"Region: South; Quarter: 2024-01; Revenue: 135000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M20,0h20v20h-20Z\" fill=\"oklch(0.54 0 265)\"/><path aria-label=\"Region: North; Quarter: 2024-02; Revenue: 128000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M0,20h20v20h-20Z\" fill=\"oklch(0.74 0 265)\"/><path aria-label=\"Region: South; Quarter: 2024-02; Revenue: 142000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M20,20h20v20h-20Z\" fill=\"oklch(0.34 0 265)\"/><path aria-label=\"Region: North; Quarter: 2024-03; Revenue: 131000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M0,40h20v20h-20Z\" fill=\"oklch(0.64 0 265)\"/><path aria-label=\"Region: South; Quarter: 2024-03; Revenue: 150000\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M20,40h20v20h-20Z\" fill=\"oklch(0.14 0 265)\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Revenue' for fill color with 8 boundaries: 123,333, 126,667, 130,000, 133,333, 136,667, 140,000, 143,333, 146,667\"><g transform=\"translate(58,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v157h-152Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.94 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">&lt; 123,333</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.84 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">123,333 – 126,667</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,32)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.74 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">126,667 – 130,000</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,48)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.64 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">130,000 – 133,333</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,64)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.54 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">133,333 – 136,667</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,80)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.44 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">136,667 – 140,000</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,96)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.34 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">140,000 – 143,333</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,112)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.24 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">143,333 – 146,667</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,128)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h152v12.5h-152Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"oklch(0.14 0 265)\" stroke=\"CanvasText\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">≥ 146,667</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Revenue</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-78,-28.500000000000004)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Heatmap'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Heatmap</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Region' for a discrete scale with 2 values: North, South\"><g transform=\"translate(0.5,60.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(10,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(30,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(9.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">North</text><text text-anchor=\"end\" transform=\"translate(29.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">South</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"40\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(20,60)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Region</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Quarter' for a discrete scale with 3 values: 2024-01, 2024-02, 2024-03\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,10)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,50)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,12.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">2024-01</text><text text-anchor=\"end\" transform=\"translate(-7,32.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">2024-02</text><text text-anchor=\"end\" transform=\"translate(-7,52.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">2024-03</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"60\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,30) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Quarter</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "9c56e4b76ebf1c57f4051966b145d693f1941925cfc2de72775d730d25c0b5a1",
+    "svgBytes": 13069,
+    "svgRef": "viz.render-3a1b31e0",
+    "render": {
+      "engine": "vega-lite",
+      "width": 298,
+      "height": 196,
+      "theme": "hc",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "a4f1123a290344735d05815fd42112cb8d5ed5d4d6725fdd84ef05538a66a0ca",
+      "renderHash": "9c56e4b76ebf1c57f4051966b145d693f1941925cfc2de72775d730d25c0b5a1"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  }
+}

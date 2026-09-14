@@ -113,7 +113,7 @@ const V168: EChartsAccuracyRule = {
 const V169: EChartsAccuracyRule = {
   id: 'bubble-radius-scaling',
   code: 'OODS-V169',
-  summary: 'The public bubble renderer uses default linear symbol diameter, not area. Varying non-negative magnitudes expose this scale distortion; a constant domain does not.',
+  summary: 'Drawn bubble diameter ratios squared must equal non-negative magnitude ratios, anchored at zero. Reads the built option independently; missing rows or sizes are unresolved.',
   evaluate: evaluateBubbleRadiusScaling,
 };
 

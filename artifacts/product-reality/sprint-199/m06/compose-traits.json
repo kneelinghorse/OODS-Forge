@@ -1,0 +1,88 @@
+{
+  "extensions": [
+    {
+      "component": "DetailHeader",
+      "position": "top",
+      "priority": 100,
+      "props": {
+        "titleField": "label",
+        "subtitleField": "description",
+        "headingLevel": 1
+      }
+    },
+    {
+      "component": "VizGraphPreview",
+      "position": "top",
+      "priority": 55,
+      "props": {
+        "chart": {
+          "chartType": "force_graph",
+          "source": "edge-array",
+          "dataField": "neighborhood",
+          "edges": {
+            "source": "source_id",
+            "target": "target_id",
+            "bidirectionalField": "is_bidirectional"
+          },
+          "sampleRows": [
+            {
+              "source_id": "example-team",
+              "target_id": "example-project",
+              "is_bidirectional": false
+            },
+            {
+              "source_id": "example-project",
+              "target_id": "example-document",
+              "is_bidirectional": true
+            }
+          ]
+        },
+        "title": "Example connected relationships",
+        "description": "Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data."
+      }
+    },
+    {
+      "component": "StatusTimeline",
+      "position": "top",
+      "priority": 40,
+      "props": {
+        "field": "status",
+        "historyField": "state_history",
+        "statesParameter": "states",
+        "showActorId": true,
+        "showReason": true
+      }
+    },
+    {
+      "component": "AuditTimeline",
+      "position": "bottom",
+      "props": {
+        "createdField": "created_at",
+        "updatedField": "updated_at",
+        "eventField": "last_event",
+        "eventTimestampField": "last_event_at",
+        "eventOptionsParameter": "recordedEvents"
+      }
+    },
+    {
+      "component": "OwnershipSummary",
+      "position": "top",
+      "props": {
+        "ownerIdField": "owner_id",
+        "ownerTypeField": "owner_type",
+        "roleField": "ownership_role",
+        "transferredAtField": "ownership_transferred_at",
+        "allowTransferParameter": "allowTransfer"
+      }
+    },
+    {
+      "component": "TagSummary",
+      "position": "top",
+      "props": {
+        "field": "tags",
+        "countField": "tag_count"
+      }
+    }
+  ],
+  "warnings": []
+}

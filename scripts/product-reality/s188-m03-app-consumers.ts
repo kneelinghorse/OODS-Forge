@@ -235,6 +235,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       }
       assert.equal(await panel.isVisible(), true);
       const text = await panel.innerText(); assert.match(text, /42 Lake Road, Madison/);
+      assert.doesNotMatch(text, /102 Main Street/, 'Save must replace the address the editor displayed');
+      assert.equal(text.split(';').length, 1, 'Save must preserve the seeded address count');
       await go(page, 'form'); await ready(page, 'form');
       assert.equal(await editor.getByRole('textbox', { name: 'Street', exact: true }).inputValue(), '42 Lake Road');
       assert.equal(await editor.getByRole('textbox', { name: 'City', exact: true }).inputValue(), 'Madison');

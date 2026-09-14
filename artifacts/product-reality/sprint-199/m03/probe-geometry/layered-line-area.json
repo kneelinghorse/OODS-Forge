@@ -1,0 +1,604 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "area",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Net retention vs objective",
+      "description": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+      "data": {
+        "values": [
+          {
+            "week": "2025-W01",
+            "actual": 0.96,
+            "target": 0.94,
+            "capacity": 0.92,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W02",
+            "actual": 0.97,
+            "target": 0.945,
+            "capacity": 0.92,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W03",
+            "actual": 0.975,
+            "target": 0.95,
+            "capacity": 0.93,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W04",
+            "actual": 0.979,
+            "target": 0.952,
+            "capacity": 0.93,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W05",
+            "actual": 0.982,
+            "target": 0.955,
+            "capacity": 0.94,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          }
+        ]
+      },
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:layered-line-area",
+          "name": "Net retention vs objective",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "preferredRenderer": "echarts",
+            "tableColumnOrder": [
+              "week",
+              "actual",
+              "target",
+              "capacity"
+            ]
+          },
+          "a11y": {
+            "ariaLabel": "Layered area chart showing actual net retention against target and capacity bands",
+            "description": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Net retention per week"
+            }
+          }
+        }
+      },
+      "layer": [
+        {
+          "params": [
+            {
+              "name": "delta-tooltip",
+              "select": {
+                "type": "point",
+                "on": "hover",
+                "fields": [
+                  "week",
+                  "actual",
+                  "target"
+                ]
+              }
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "fillOpacity": 0.35
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "ordinal",
+              "scale": {
+                "type": "point"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "actual",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Actual"
+            },
+            "color": {
+              "field": "actualSeries",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Actual Series",
+              "legend": {
+                "title": "Series"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "week"
+              },
+              {
+                "field": "actual"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "line",
+            "strokeWidth": 2
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "ordinal",
+              "scale": {
+                "type": "point"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "target",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Target"
+            },
+            "color": {
+              "field": "targetSeries",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Target Series"
+            },
+            "tooltip": [
+              {
+                "field": "week"
+              },
+              {
+                "field": "actual"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "line",
+            "strokeDash": [
+              4,
+              4
+            ]
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "ordinal",
+              "scale": {
+                "type": "point"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "capacity",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Capacity"
+            },
+            "color": {
+              "field": "capacitySeries",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Capacity Series"
+            },
+            "tooltip": [
+              {
+                "field": "week"
+              },
+              {
+                "field": "actual"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          }
+        }
+      ],
+      "width": 720,
+      "height": 360,
+      "padding": 20,
+      "resolve": {
+        "scale": {
+          "x": "shared",
+          "y": "shared"
+        }
+      }
+    },
+    "a11yDescription": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkArea",
+      "rowCount": 5,
+      "fields": [
+        "week",
+        "actual",
+        "target",
+        "capacity",
+        "actualSeries",
+        "targetSeries",
+        "capacitySeries"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:layered-line-area",
+      "name": "Net retention vs objective",
+      "data": {
+        "values": [
+          {
+            "week": "2025-W01",
+            "actual": 0.96,
+            "target": 0.94,
+            "capacity": 0.92,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W02",
+            "actual": 0.97,
+            "target": 0.945,
+            "capacity": 0.92,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W03",
+            "actual": 0.975,
+            "target": 0.95,
+            "capacity": 0.93,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W04",
+            "actual": 0.979,
+            "target": 0.952,
+            "capacity": 0.93,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          },
+          {
+            "week": "2025-W05",
+            "actual": 0.982,
+            "target": 0.955,
+            "capacity": 0.94,
+            "actualSeries": "Actual",
+            "targetSeries": "Target",
+            "capacitySeries": "Capacity"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkArea",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "actual",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Actual"
+            },
+            "color": {
+              "field": "actualSeries",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Series"
+              },
+              "title": "Actual Series"
+            }
+          },
+          "options": {
+            "fillOpacity": 0.35
+          }
+        },
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "target",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Target"
+            },
+            "color": {
+              "field": "targetSeries",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "title": "Target Series"
+            }
+          },
+          "options": {
+            "strokeWidth": 2
+          }
+        },
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "point",
+              "title": "Week"
+            },
+            "y": {
+              "field": "capacity",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Capacity"
+            },
+            "color": {
+              "field": "capacitySeries",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "title": "Capacity Series"
+            }
+          },
+          "options": {
+            "strokeDash": [
+              4,
+              4
+            ]
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "point",
+          "title": "Week"
+        },
+        "y": {
+          "field": "actual",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Actual"
+        }
+      },
+      "layout": {
+        "trait": "LayoutLayer",
+        "sharedScales": {
+          "x": "shared",
+          "y": "shared"
+        },
+        "blendMode": "normal"
+      },
+      "interactions": [
+        {
+          "id": "delta-tooltip",
+          "select": {
+            "type": "point",
+            "on": "hover",
+            "fields": [
+              "week",
+              "actual",
+              "target"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "week",
+              "actual",
+              "target"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 20
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Layered area chart showing actual net retention against target and capacity bands",
+        "description": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Net retention per week"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "preferredRenderer": "echarts",
+        "tableColumnOrder": [
+          "week",
+          "actual",
+          "target",
+          "capacity"
+        ]
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-3ecad7c4",
+    "specRefCreatedAt": "2026-09-14T07:19:06.227Z",
+    "specRefExpiresAt": "2026-09-14T07:49:06.227Z",
+    "contentHash": "020a43489ea63bafc67cba82c79cef65e661e6e4d9646fb31068787f8f53f9e7",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"1000\" height=\"519\" viewBox=\"0 0 1000 519\"><rect width=\"1000\" height=\"519\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(66,53)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,324)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,252)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,216)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,144)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,72)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,36)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a discrete scale with 5 values: 2025-W01, 2025-W02, 2025-W03, 2025-W04, 2025-W05\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(72,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(216,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(360,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(504,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(648,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(72,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W01</text><text text-anchor=\"end\" transform=\"translate(216,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W02</text><text text-anchor=\"end\" transform=\"translate(360,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W03</text><text text-anchor=\"end\" transform=\"translate(504,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W04</text><text text-anchor=\"end\" transform=\"translate(648,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2025-W05</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,84)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Actual, Target, Capacity' for a linear scale with values from 0.0 to 1.0\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,324)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,288)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,252)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,216)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,144)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,108)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,72)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,36)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,327)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.1</text><text text-anchor=\"end\" transform=\"translate(-7,291)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.2</text><text text-anchor=\"end\" transform=\"translate(-7,254.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.3</text><text text-anchor=\"end\" transform=\"translate(-7,219)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.4</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,147)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.6</text><text text-anchor=\"end\" transform=\"translate(-7,111.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.7</text><text text-anchor=\"end\" transform=\"translate(-7,74.99999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.8</text><text text-anchor=\"end\" transform=\"translate(-7,38.99999999999999)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.9</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Actual, Target, Capacity</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope layer_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-area role-mark layer_0_marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Week: 2025-W01; Actual: 0.96; Actual Series: Actual; week: 2025-W01; actual: 0.96; target: 0.94\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M72,14.4L216,10.8L360,9L504,7.56L648,6.48L648,360L504,360L360,360L216,360L72,360Z\" fill=\"#580918\" fill-opacity=\"0.35\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope layer_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark layer_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Target: 0.94; Target Series: Target; week: 2025-W01; actual: 0.96; target: 0.94\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M72,21.6L216,19.8L360,18L504,17.28L648,16.2\" stroke=\"#788E70\" stroke-width=\"2\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope layer_2_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark layer_2_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: 2025-W01; Capacity: 0.92; Capacity Series: Capacity; week: 2025-W01; actual: 0.96; target: 0.94\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M72,28.8L216,28.8L360,25.2L504,25.2L648,21.6\" stroke=\"#A97500\" stroke-width=\"2\" stroke-dasharray=\"4,4\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Series, Target Series, Capacity Series' for fill color and stroke color with 3 values: Actual, Capacity, Target\"><g transform=\"translate(738,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h176v61h-176Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h80v12.5h-80Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#580918\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Actual</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h80v12.5h-80Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#A97500\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Capacity</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,32)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h80v12.5h-80Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#788E70\" stroke=\"#788E70\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Target</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Series, Target Seri…</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Net retention vs objective'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Net retention vs objective</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "ed80e87fa43e8f61c55952391b8fe5609dc70765089c2f7d4f5d51660181ea0f",
+    "svgBytes": 14434,
+    "svgRef": "viz.render-ae423ed1",
+    "render": {
+      "engine": "vega-lite",
+      "width": 1000,
+      "height": 519,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "020a43489ea63bafc67cba82c79cef65e661e6e4d9646fb31068787f8f53f9e7",
+      "renderHash": "ed80e87fa43e8f61c55952391b8fe5609dc70765089c2f7d4f5d51660181ea0f"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

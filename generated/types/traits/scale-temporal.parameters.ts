@@ -18,10 +18,6 @@ export interface ScaleTemporalTraitParameters {
    */
   rangeMax: number;
   /**
-   * Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.
-   */
-  timezone?: string;
-  /**
    * Interval used when rounding ticks.
    */
   nice?: 'day' | 'week' | 'month' | 'quarter' | 'year';

@@ -535,11 +535,11 @@
   {
     "id": "pattern:viz:detail-overview-bar",
     "specPath": "examples/viz/patterns-v2/detail-overview-bar.spec.json",
-    "specSha256": "9b02134e38e9d1a60568d5a1607fbdb3cf27aec1ae0d6aa5a891e828d1f76157",
+    "specSha256": "850233b42888afba55b3752b717196917705a39defc4deff681db3825c59ecbd",
     "baseChartType": "bar",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "product",
         "segment",
@@ -710,7 +710,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "product",
           "segment",
@@ -853,11 +853,11 @@
   {
     "id": "pattern:viz:drilldown-stacked-bar",
     "specPath": "examples/viz/patterns-v2/drilldown-stacked-bar.spec.json",
-    "specSha256": "59eed94ecba9949dc26feb408f2147628504afb009bc646287db70cc8e51fe65",
+    "specSha256": "846995e6f54e7210597ca038ea38c7c6404a72d3ec9391a57cd1f94ff2cca9df",
     "baseChartType": "bar",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "region",
         "quarter",
@@ -1056,7 +1056,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "region",
           "quarter",
@@ -1069,11 +1069,11 @@
   {
     "id": "pattern:viz:facet-small-multiples-line",
     "specPath": "examples/viz/patterns-v2/facet-small-multiples-line.spec.json",
-    "specSha256": "06222751ee509e51cc6cba1df58c9dc0f48d38564854436c8148b5c622d0051d",
+    "specSha256": "b7bde266c83c658ea707fdb98a6afdc42b9f81122ac265f8c14545a7ced116ff",
     "baseChartType": "line",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "week",
         "region",
@@ -1269,7 +1269,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "week",
           "region",
@@ -1282,11 +1282,11 @@
   {
     "id": "pattern:viz:facet-target-band",
     "specPath": "examples/viz/patterns-v2/facet-target-band.spec.json",
-    "specSha256": "c609249e374ef54f67fad80f03b545f223d2ded05528aa7fe7d676c11ab21191",
+    "specSha256": "f18e0e28ee2975c3840bdb0cf9d2068148bc74d41929433f43094ce7ae9af8d5",
     "baseChartType": "line",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "region",
         "week",
@@ -1516,7 +1516,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "region",
           "week",
@@ -1530,11 +1530,11 @@
   {
     "id": "pattern:viz:focus-context-line",
     "specPath": "examples/viz/patterns-v2/focus-context-line.spec.json",
-    "specSha256": "955d2639b88670a84433d59202ff66a1f38b021d528ddac6c2283b4873ca47b4",
+    "specSha256": "e8de8400f7b67ae46c5ab502331933d2dc311a57ffd2c1acb1e458bfd5b7e902",
     "baseChartType": "line",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "week",
         "region",
@@ -1724,7 +1724,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "week",
           "region",
@@ -1937,6 +1937,126 @@
           "quarter",
           "segment",
           "coverage"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    }
+  },
+  {
+    "id": "pattern:viz:histogram",
+    "specPath": "examples/viz/patterns-v2/histogram.spec.json",
+    "specSha256": "e0ecc595526b4aa92f023cb3c4141f352cf64bf25cb15f2389543e02bc897358",
+    "baseChartType": "bar",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "binStart",
+        "binEnd",
+        "count"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:histogram",
+      "name": "Example pre-binned distribution",
+      "data": {
+        "values": [
+          {
+            "binStart": 0,
+            "binEnd": 10,
+            "count": 3
+          },
+          {
+            "binStart": 10,
+            "binEnd": 20,
+            "count": 8
+          },
+          {
+            "binStart": 20,
+            "binEnd": 30,
+            "count": 12
+          },
+          {
+            "binStart": 30,
+            "binEnd": 40,
+            "count": 6
+          },
+          {
+            "binStart": 40,
+            "binEnd": 50,
+            "count": 2
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar",
+          "encodings": {
+            "x": {
+              "field": "binStart",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "linear"
+            },
+            "x2": {
+              "field": "binEnd",
+              "trait": "EncodingPositionX",
+              "channel": "x2"
+            },
+            "y": {
+              "field": "count",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear"
+            }
+          },
+          "options": {
+            "orientation": "vertical",
+            "baseline": "zero"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "binStart",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear"
+        },
+        "x2": {
+          "field": "binEnd",
+          "trait": "EncodingPositionX",
+          "channel": "x2"
+        },
+        "y": {
+          "field": "count",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear"
+        }
+      },
+      "config": {
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Example pre-binned distribution",
+        "description": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Example pre-binned distribution"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "binStart",
+          "binEnd",
+          "count"
         ],
         "preferredRenderer": "vega-lite"
       }
@@ -2813,11 +2933,11 @@
   {
     "id": "pattern:viz:sparkline-grid",
     "specPath": "examples/viz/patterns-v2/sparkline-grid.spec.json",
-    "specSha256": "471971910a2cfb1960283f941d5f6a4a199392027f933f7bde9840404957f401",
+    "specSha256": "b925a6d3c1db84969efd92a8877d3f848d2a9363cea6dc1cb4789884dafc7924",
     "baseChartType": "line",
     "portability": {
       "fallbackType": "table",
-      "preferredRenderer": "echarts",
+      "preferredRenderer": "vega-lite",
       "tableColumnOrder": [
         "metric",
         "week",
@@ -8608,14 +8728,6 @@
               "channel": "y",
               "scale": "linear",
               "title": "Score"
-            },
-            "color": {
-              "field": "metric",
-              "trait": "EncodingColor",
-              "channel": "color",
-              "legend": {
-                "title": "Metric"
-              }
             }
           }
         }
@@ -8630,11 +8742,6 @@
           "field": "value",
           "trait": "EncodingPositionY",
           "channel": "y"
-        },
-        "color": {
-          "field": "metric",
-          "trait": "EncodingColor",
-          "channel": "color"
         }
       },
       "layout": {
@@ -8695,7 +8802,7 @@
       },
       "portability": {
         "fallbackType": "table",
-        "preferredRenderer": "echarts",
+        "preferredRenderer": "vega-lite",
         "tableColumnOrder": [
           "metric",
           "week",
@@ -9588,6 +9695,135 @@
           "day",
           "hour",
           "tickets"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    }
+  },
+  {
+    "id": "pattern:viz:waterfall",
+    "specPath": "examples/viz/patterns-v2/waterfall.spec.json",
+    "specSha256": "072d8a310a14bc8e015118918681ece7a47f70d0e9d8c20286675af9aaa38b7b",
+    "baseChartType": "bar",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "step",
+        "start",
+        "end",
+        "kind"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "spec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:waterfall",
+      "name": "Example quarterly balance bridge",
+      "data": {
+        "values": [
+          {
+            "step": "1. Opening",
+            "start": 0,
+            "end": 100,
+            "kind": "Balance"
+          },
+          {
+            "step": "2. Revenue",
+            "start": 100,
+            "end": 160,
+            "kind": "Increase"
+          },
+          {
+            "step": "3. Costs",
+            "start": 160,
+            "end": 125,
+            "kind": "Decrease"
+          },
+          {
+            "step": "4. Closing",
+            "start": 0,
+            "end": 125,
+            "kind": "Balance"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar",
+          "encodings": {
+            "x": {
+              "field": "step",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "band",
+              "sort": "ascending"
+            },
+            "y": {
+              "field": "start",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear"
+            },
+            "y2": {
+              "field": "end",
+              "trait": "EncodingPositionY",
+              "channel": "y2"
+            },
+            "color": {
+              "field": "kind",
+              "trait": "EncodingColor",
+              "channel": "color"
+            }
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "step",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "band",
+          "sort": "ascending"
+        },
+        "y": {
+          "field": "start",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear"
+        },
+        "y2": {
+          "field": "end",
+          "trait": "EncodingPositionY",
+          "channel": "y2"
+        },
+        "color": {
+          "field": "kind",
+          "trait": "EncodingColor",
+          "channel": "color"
+        }
+      },
+      "config": {
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Example quarterly balance bridge",
+        "description": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Example quarterly balance bridge"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "step",
+          "start",
+          "end",
+          "kind"
         ],
         "preferredRenderer": "vega-lite"
       }

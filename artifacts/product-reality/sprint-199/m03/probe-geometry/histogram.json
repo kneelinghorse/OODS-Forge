@@ -1,0 +1,313 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "bar",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Example pre-binned distribution",
+      "description": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+      "data": {
+        "values": [
+          {
+            "binStart": 0,
+            "binEnd": 10,
+            "count": 3
+          },
+          {
+            "binStart": 10,
+            "binEnd": 20,
+            "count": 8
+          },
+          {
+            "binStart": 20,
+            "binEnd": 30,
+            "count": 12
+          },
+          {
+            "binStart": 30,
+            "binEnd": 40,
+            "count": 6
+          },
+          {
+            "binStart": 40,
+            "binEnd": 50,
+            "count": 2
+          }
+        ]
+      },
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:histogram",
+          "name": "Example pre-binned distribution",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "binStart",
+              "binEnd",
+              "count"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "ariaLabel": "Example pre-binned distribution",
+            "description": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Example pre-binned distribution"
+            }
+          }
+        }
+      },
+      "mark": {
+        "type": "bar",
+        "orient": "vertical",
+        "color": "#580918"
+      },
+      "encoding": {
+        "x": {
+          "field": "binStart",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear"
+          },
+          "title": "Bin Start"
+        },
+        "x2": {
+          "field": "binEnd",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "count",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear",
+            "zero": true
+          },
+          "title": "Count"
+        }
+      },
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    },
+    "a11yDescription": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkBar",
+      "rowCount": 5,
+      "fields": [
+        "binStart",
+        "binEnd",
+        "count"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:histogram",
+      "name": "Example pre-binned distribution",
+      "data": {
+        "values": [
+          {
+            "binStart": 0,
+            "binEnd": 10,
+            "count": 3
+          },
+          {
+            "binStart": 10,
+            "binEnd": 20,
+            "count": 8
+          },
+          {
+            "binStart": 20,
+            "binEnd": 30,
+            "count": 12
+          },
+          {
+            "binStart": 30,
+            "binEnd": 40,
+            "count": 6
+          },
+          {
+            "binStart": 40,
+            "binEnd": 50,
+            "count": 2
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar",
+          "encodings": {
+            "x": {
+              "field": "binStart",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "linear",
+              "title": "Bin Start"
+            },
+            "x2": {
+              "field": "binEnd",
+              "trait": "EncodingPositionX",
+              "channel": "x2"
+            },
+            "y": {
+              "field": "count",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Count"
+            }
+          },
+          "options": {
+            "orientation": "vertical",
+            "baseline": "zero"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "binStart",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear",
+          "title": "Bin Start"
+        },
+        "x2": {
+          "field": "binEnd",
+          "trait": "EncodingPositionX",
+          "channel": "x2"
+        },
+        "y": {
+          "field": "count",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Count"
+        }
+      },
+      "config": {
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Example pre-binned distribution",
+        "description": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Example pre-binned distribution"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "binStart",
+          "binEnd",
+          "count"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-c811fd80",
+    "specRefCreatedAt": "2026-09-14T07:19:06.216Z",
+    "specRefExpiresAt": "2026-09-14T07:49:06.216Z",
+    "contentHash": "08cf4f07707ebffeccde30b7c85b16447a82ef6ebe9b6417e642d14d93c593cb",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"807\" height=\"473\" viewBox=\"0 0 807 473\"><rect width=\"807\" height=\"473\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(62,57)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Bin Start' for a linear scale with values from −5 to 55\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(60,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(180,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(240,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(300,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(360,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(420,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(540,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(600,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(660,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(720,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">−5</text><text text-anchor=\"middle\" transform=\"translate(60,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(120,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5</text><text text-anchor=\"middle\" transform=\"translate(180,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">10</text><text text-anchor=\"middle\" transform=\"translate(240,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">15</text><text text-anchor=\"middle\" transform=\"translate(300,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">20</text><text text-anchor=\"middle\" transform=\"translate(360,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">25</text><text text-anchor=\"middle\" transform=\"translate(420,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">30</text><text text-anchor=\"middle\" transform=\"translate(480,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">35</text><text text-anchor=\"middle\" transform=\"translate(540,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">40</text><text text-anchor=\"middle\" transform=\"translate(600,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">45</text><text text-anchor=\"middle\" transform=\"translate(660,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">50</text><text text-anchor=\"end\" transform=\"translate(720,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">55</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Bin Start</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Count' for a linear scale with values from 0 to 12\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1</text><text text-anchor=\"end\" transform=\"translate(-7,303)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2</text><text text-anchor=\"end\" transform=\"translate(-7,273)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3</text><text text-anchor=\"end\" transform=\"translate(-7,243.00000000000003)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4</text><text text-anchor=\"end\" transform=\"translate(-7,212.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">6</text><text text-anchor=\"end\" transform=\"translate(-7,153)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">7</text><text text-anchor=\"end\" transform=\"translate(-7,123.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">8</text><text text-anchor=\"end\" transform=\"translate(-7,93)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">9</text><text text-anchor=\"end\" transform=\"translate(-7,62.999999999999986)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,33.000000000000014)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">11</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">12</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Count</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Bin Start: 0; Count: 3; binEnd: 10\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M60,270h120v90h-120Z\" fill=\"#580918\"/><path aria-label=\"Bin Start: 10; Count: 8; binEnd: 20\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M180,120.00000000000001h120v240h-120Z\" fill=\"#580918\"/><path aria-label=\"Bin Start: 20; Count: 12; binEnd: 30\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M300,0h120v360h-120Z\" fill=\"#580918\"/><path aria-label=\"Bin Start: 30; Count: 6; binEnd: 40\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M420,180h120v180h-120Z\" fill=\"#580918\"/><path aria-label=\"Bin Start: 40; Count: 2; binEnd: 50\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M540,300h120v60h-120Z\" fill=\"#580918\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Example pre-binned distribution'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Example pre-binned distribution</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "bc7336edaf3c972e03a1619db58f68735504f2247fce5ab038023414de465ea2",
+    "svgBytes": 12834,
+    "svgRef": "viz.render-22d61913",
+    "render": {
+      "engine": "vega-lite",
+      "width": 807,
+      "height": 473,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "08cf4f07707ebffeccde30b7c85b16447a82ef6ebe9b6417e642d14d93c593cb",
+      "renderHash": "bc7336edaf3c972e03a1619db58f68735504f2247fce5ab038023414de465ea2"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

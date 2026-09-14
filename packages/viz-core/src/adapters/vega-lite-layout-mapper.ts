@@ -66,6 +66,43 @@ function buildFacetSpec(
   resolve?: { scale: Record<string, 'shared' | 'independent'> }
 ): VegaLiteAdapterSpec {
   const facet: Record<string, unknown> = {};
+  const values = outer.data?.values as Array<Record<string, unknown>> | undefined;
+  const fields = [layout.rows, layout.columns].filter((field): field is NonNullable<typeof field> => Boolean(field?.field));
+  if (values && fields.length && (layout.wrap || layout.rows?.field === layout.columns?.field)) {
+    const uniqueFields = fields.filter((field, index) => fields.findIndex(other => other.field === field.field) === index);
+    const allowed = uniqueFields.map(field => {
+      const entries = [...new Set(values.map(row => row[field.field]))];
+      if (field.sort === 'ascending' || field.sort === 'descending') entries.sort((a, b) => String(a).localeCompare(String(b)) * (field.sort === 'descending' ? -1 : 1));
+      return entries.slice(0, field.limit ?? entries.length);
+    });
+    const key = (row: Record<string, unknown>) => JSON.stringify(uniqueFields.map(field => row[field.field]));
+    const eligible = values.filter(row => uniqueFields.every((field, index) => allowed[index].includes(row[field.field])));
+    const panelKeys = [...new Set(eligible.map(key))].slice(0, layout.maxPanels ?? Infinity);
+    const panelSet = new Set(panelKeys);
+    let facetKey = '__oods_facet';
+    while (values.some(row => Object.hasOwn(row, facetKey))) facetKey += '_';
+    const labels = new Map(panelKeys.map(tuple => [tuple, (JSON.parse(tuple) as unknown[]).join(' / ')]));
+    const rows = eligible.filter(row => panelSet.has(key(row))).map(row => {
+      const tuple = key(row), label = labels.get(tuple)!;
+      const duplicates = [...labels.values()].filter(value => value === label).length;
+      return { ...row, [facetKey]: duplicates > 1 ? `${label} (${tuple})` : label };
+    });
+    const columns = Math.max(1, Math.min(panelKeys.length, layout.columns?.limit ?? Math.ceil(Math.sqrt(panelKeys.length))));
+    const gap = layout.gap ?? 16;
+    const totalWidth = typeof primitive.width === 'number' ? primitive.width : undefined;
+    const totalHeight = typeof primitive.height === 'number' ? primitive.height : undefined;
+    const panelRows = Math.max(1, Math.ceil(panelKeys.length / columns));
+    return omitUndefined({
+      ...outer,
+      data: { ...outer.data, values: rows },
+      config: { ...outer.config, axisX: { ...(outer.config?.axisX as Record<string, unknown> | undefined), labelOverlap: true } },
+      facet: { field: facetKey, type: 'nominal', title: uniqueFields.map(field => field.title ?? field.field).join(' / '), sort: [...new Set(rows.map(row => row[facetKey]))] },
+      columns,
+      spec: { ...primitive, ...(totalWidth ? { width: Math.max(1, (totalWidth - gap * (columns - 1)) / columns) } : {}), ...(totalHeight ? { height: Math.max(1, (totalHeight - gap * (panelRows - 1)) / panelRows) } : {}) },
+      spacing: gap,
+      resolve,
+    }) as unknown as VegaLiteAdapterSpec;
+  }
 
   const row = convertFacetField(layout.rows);
   const column = convertFacetField(layout.columns);

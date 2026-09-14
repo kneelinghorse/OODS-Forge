@@ -175,7 +175,7 @@ export async function renderEChartsInWorker(
             "ECharts returned output that is not an SVG document.",
           );
         }
-        return normalizeEChartsSvg(rawSvg);
+        return normalizeEChartsSvg(suppressZeroWidthChordStroke(rawSvg));
       } finally {
         Math.random = originalRandom;
         metrics.randomRestored = Math.random === originalRandom;
@@ -437,4 +437,14 @@ function asSeriesArray(value: unknown): Array<Record<string, unknown>> {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/** Native chord source/target paints name a fill rule, not a CSS stroke color.
+ * ECharts 6 serializes the rule as a stroke even when its width is zero.
+ * Suppress only that invisible stroke; preserve the resolved ribbon fill. */
+export function suppressZeroWidthChordStroke(svg: string): string {
+  return svg.replace(/<path\b[^>]*>/g, tag =>
+    /\bstroke-width="0"/.test(tag)
+      ? tag.replace(/\bstroke="(?:source|target)"/, 'stroke="none"')
+      : tag);
 }

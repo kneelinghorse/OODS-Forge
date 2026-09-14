@@ -1,0 +1,572 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "bar",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Detail-overview bookings",
+      "description": "Core outperforms targets across all segments while Plus trails only in SMB",
+      "data": {
+        "values": [
+          {
+            "product": "Core",
+            "segment": "Enterprise",
+            "bookings": 3.6,
+            "target": 3.2
+          },
+          {
+            "product": "Core",
+            "segment": "Growth",
+            "bookings": 1.8,
+            "target": 1.7
+          },
+          {
+            "product": "Core",
+            "segment": "SMB",
+            "bookings": 0.9,
+            "target": 0.8
+          },
+          {
+            "product": "Plus",
+            "segment": "Enterprise",
+            "bookings": 2.4,
+            "target": 2.1
+          },
+          {
+            "product": "Plus",
+            "segment": "Growth",
+            "bookings": 1.4,
+            "target": 1.2
+          },
+          {
+            "product": "Plus",
+            "segment": "SMB",
+            "bookings": 0.7,
+            "target": 0.6
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "segment-drill",
+          "select": {
+            "type": "point",
+            "on": "click",
+            "fields": [
+              "segment",
+              "product"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:detail-overview-bar",
+          "name": "Detail-overview bookings",
+          "theme": "brand-a",
+          "portability": {
+            "fallbackType": "table",
+            "preferredRenderer": "echarts",
+            "tableColumnOrder": [
+              "product",
+              "segment",
+              "bookings",
+              "target"
+            ]
+          },
+          "a11y": {
+            "ariaLabel": "Detail-overview concat showing bookings across products and segments",
+            "description": "Core outperforms targets across all segments while Plus trails only in SMB",
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Bookings vs target by product and segment"
+            }
+          }
+        }
+      },
+      "hconcat": [
+        {
+          "mark": {
+            "type": "bar"
+          },
+          "encoding": {
+            "x": {
+              "field": "segment",
+              "type": "ordinal",
+              "scale": {
+                "type": "band"
+              },
+              "title": "Segment"
+            },
+            "y": {
+              "field": "bookings",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Bookings ($M)"
+            },
+            "color": {
+              "field": "product",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Product",
+              "legend": {
+                "title": "Product"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "product"
+              },
+              {
+                "field": "segment"
+              },
+              {
+                "field": "bookings"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          },
+          "width": 960,
+          "height": 360,
+          "padding": 20,
+          "title": "All products"
+        },
+        {
+          "mark": {
+            "type": "bar"
+          },
+          "encoding": {
+            "x": {
+              "field": "segment",
+              "type": "ordinal",
+              "scale": {
+                "type": "band"
+              },
+              "title": "Segment"
+            },
+            "y": {
+              "field": "bookings",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Bookings ($M)"
+            },
+            "color": {
+              "field": "product",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Product",
+              "legend": {
+                "title": "Product"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "product"
+              },
+              {
+                "field": "segment"
+              },
+              {
+                "field": "bookings"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          },
+          "width": 960,
+          "height": 360,
+          "padding": 20,
+          "transform": [
+            {
+              "filter": "datum[\"product\"] === \"Core\""
+            }
+          ],
+          "title": "Core detail"
+        },
+        {
+          "mark": {
+            "type": "bar"
+          },
+          "encoding": {
+            "x": {
+              "field": "segment",
+              "type": "ordinal",
+              "scale": {
+                "type": "band"
+              },
+              "title": "Segment"
+            },
+            "y": {
+              "field": "bookings",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Bookings ($M)"
+            },
+            "color": {
+              "field": "product",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Product",
+              "legend": {
+                "title": "Product"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "product"
+              },
+              {
+                "field": "segment"
+              },
+              {
+                "field": "bookings"
+              },
+              {
+                "field": "target"
+              }
+            ]
+          },
+          "width": 960,
+          "height": 360,
+          "padding": 20,
+          "transform": [
+            {
+              "filter": "datum[\"product\"] === \"Plus\""
+            }
+          ],
+          "title": "Plus detail"
+        }
+      ],
+      "spacing": 16
+    },
+    "a11yDescription": "Core outperforms targets across all segments while Plus trails only in SMB",
+    "warnings": [
+      {
+        "code": "OODS-V175",
+        "message": "Static SVG shows the default selection state; interactive behavior requires a client renderer.",
+        "severity": "warning"
+      }
+    ],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkBar",
+      "rowCount": 6,
+      "fields": [
+        "product",
+        "segment",
+        "bookings",
+        "target"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:detail-overview-bar",
+      "name": "Detail-overview bookings",
+      "data": {
+        "values": [
+          {
+            "product": "Core",
+            "segment": "Enterprise",
+            "bookings": 3.6,
+            "target": 3.2
+          },
+          {
+            "product": "Core",
+            "segment": "Growth",
+            "bookings": 1.8,
+            "target": 1.7
+          },
+          {
+            "product": "Core",
+            "segment": "SMB",
+            "bookings": 0.9,
+            "target": 0.8
+          },
+          {
+            "product": "Plus",
+            "segment": "Enterprise",
+            "bookings": 2.4,
+            "target": 2.1
+          },
+          {
+            "product": "Plus",
+            "segment": "Growth",
+            "bookings": 1.4,
+            "target": 1.2
+          },
+          {
+            "product": "Plus",
+            "segment": "SMB",
+            "bookings": 0.7,
+            "target": 0.6
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar",
+          "encodings": {
+            "x": {
+              "field": "segment",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "title": "Segment",
+              "scale": "band"
+            },
+            "y": {
+              "field": "bookings",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Bookings ($M)"
+            },
+            "color": {
+              "field": "product",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": "Product"
+              },
+              "title": "Product"
+            }
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "segment",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "title": "Segment"
+        },
+        "y": {
+          "field": "bookings",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "title": "Bookings"
+        },
+        "color": {
+          "field": "product",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "title": "Product"
+        }
+      },
+      "layout": {
+        "trait": "LayoutConcat",
+        "direction": "horizontal",
+        "gap": 16,
+        "sections": [
+          {
+            "id": "overview",
+            "title": "All products"
+          },
+          {
+            "id": "detail-core",
+            "title": "Core detail",
+            "filters": [
+              {
+                "field": "product",
+                "operator": "==",
+                "value": "Core"
+              }
+            ]
+          },
+          {
+            "id": "detail-plus",
+            "title": "Plus detail",
+            "filters": [
+              {
+                "field": "product",
+                "operator": "==",
+                "value": "Plus"
+              }
+            ]
+          }
+        ]
+      },
+      "interactions": [
+        {
+          "id": "segment-drill",
+          "select": {
+            "type": "point",
+            "on": "click",
+            "fields": [
+              "segment",
+              "product"
+            ]
+          },
+          "rule": {
+            "bindTo": "tooltip",
+            "fields": [
+              "product",
+              "segment",
+              "bookings",
+              "target"
+            ]
+          }
+        }
+      ],
+      "config": {
+        "theme": "brand-a",
+        "layout": {
+          "width": 960,
+          "height": 360,
+          "padding": 20
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Detail-overview concat showing bookings across products and segments",
+        "description": "Core outperforms targets across all segments while Plus trails only in SMB",
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Bookings vs target by product and segment"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "preferredRenderer": "echarts",
+        "tableColumnOrder": [
+          "product",
+          "segment",
+          "bookings",
+          "target"
+        ]
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-08361a7d",
+    "specRefCreatedAt": "2026-09-14T07:07:54.148Z",
+    "specRefExpiresAt": "2026-09-14T07:37:54.148Z",
+    "contentHash": "f60b071852ff2d1ff6274d36b86ceb4bbfe80a2323fa17327e8de4b1ee2208e3",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"3139\" height=\"533\" viewBox=\"0 0 3139 533\"><rect width=\"3139\" height=\"533\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(51,66)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v360h0Z\"/><g><g class=\"mark-group role-scope concat_0_group\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h960v360h-960Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Segment' for a discrete scale with 3 values: Enterprise, Growth, SMB\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(160,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(800,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(159.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Enterprise</text><text text-anchor=\"end\" transform=\"translate(479.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Growth</text><text text-anchor=\"end\" transform=\"translate(799.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">SMB</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(480,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Segment</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Bookings ($M)' for a linear scale with values from 0 to 6\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,303)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,273)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.5</text><text text-anchor=\"end\" transform=\"translate(-7,243.00000000000003)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.0</text><text text-anchor=\"end\" transform=\"translate(-7,212.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.5</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.0</text><text text-anchor=\"end\" transform=\"translate(-7,153)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.5</text><text text-anchor=\"end\" transform=\"translate(-7,123.00000000000001)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.0</text><text text-anchor=\"end\" transform=\"translate(-7,93)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.5</text><text text-anchor=\"end\" transform=\"translate(-7,62.999999999999986)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5.0</text><text text-anchor=\"end\" transform=\"translate(-7,33.000000000000014)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5.5</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">6.0</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Bookings ($M)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark concat_0_marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Segment: Enterprise; Bookings ($M): 3.6; Product: Core; product: Core; segment: Enterprise; bookings: 3.6; target: 3.2\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M16,0h288v216.00000000000003h-288Z\" fill=\"#580918\"/><path aria-label=\"Segment: Growth; Bookings ($M): 1.8; Product: Core; product: Core; segment: Growth; bookings: 1.8; target: 1.7\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M336,168h288v108h-288Z\" fill=\"#580918\"/><path aria-label=\"Segment: SMB; Bookings ($M): 0.9; Product: Core; product: Core; segment: SMB; bookings: 0.9; target: 0.8\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M656,264h288v54h-288Z\" fill=\"#580918\"/><path aria-label=\"Segment: Enterprise; Bookings ($M): 2.4; Product: Plus; product: Plus; segment: Enterprise; bookings: 2.4; target: 2.1\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M16,216.00000000000003h288v143.99999999999997h-288Z\" fill=\"#A97500\"/><path aria-label=\"Segment: Growth; Bookings ($M): 1.4; Product: Plus; product: Plus; segment: Growth; bookings: 1.4; target: 1.2\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M336,276h288v84h-288Z\" fill=\"#A97500\"/><path aria-label=\"Segment: SMB; Bookings ($M): 0.7; Product: Plus; product: Plus; segment: SMB; bookings: 0.7; target: 0.6\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M656,318h288v42h-288Z\" fill=\"#A97500\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'All products'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">All products</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope concat_1_group\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(1022,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h960v360h-960Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,135)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Segment' for a discrete scale with 3 values: Enterprise, Growth, SMB\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(160,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(800,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(159.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Enterprise</text><text text-anchor=\"end\" transform=\"translate(479.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Growth</text><text text-anchor=\"end\" transform=\"translate(799.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">SMB</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(480,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Segment</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Bookings ($M)' for a linear scale with values from 0 to 4\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,315)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,225)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,45)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,318)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.5</text><text text-anchor=\"end\" transform=\"translate(-7,273)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,228)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.5</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.0</text><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.5</text><text text-anchor=\"end\" transform=\"translate(-7,93)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.0</text><text text-anchor=\"end\" transform=\"translate(-7,48)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3.5</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4.0</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Bookings ($M)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark concat_1_marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Segment: Enterprise; Bookings ($M): 3.6; Product: Core; product: Core; segment: Enterprise; bookings: 3.6; target: 3.2\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M16,35.99999999999999h288v324h-288Z\" fill=\"#580918\"/><path aria-label=\"Segment: Growth; Bookings ($M): 1.8; Product: Core; product: Core; segment: Growth; bookings: 1.8; target: 1.7\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M336,198.00000000000003h288v161.99999999999997h-288Z\" fill=\"#580918\"/><path aria-label=\"Segment: SMB; Bookings ($M): 0.9; Product: Core; product: Core; segment: SMB; bookings: 0.9; target: 0.8\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M656,279h288v81h-288Z\" fill=\"#580918\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Core detail'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Core detail</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope concat_2_group\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(2044,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h960v360h-960Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Segment' for a discrete scale with 3 values: Enterprise, Growth, SMB\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(160,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(480,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(800,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(159.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Enterprise</text><text text-anchor=\"end\" transform=\"translate(479.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Growth</text><text text-anchor=\"end\" transform=\"translate(799.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">SMB</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"960\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(480,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Segment</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Bookings ($M)' for a linear scale with values from 0.0 to 2.4\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,330)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,300)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,270)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,240)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,210)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,180)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,150)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,120)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,90)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,60)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.0</text><text text-anchor=\"end\" transform=\"translate(-7,333)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.2</text><text text-anchor=\"end\" transform=\"translate(-7,303)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.4</text><text text-anchor=\"end\" transform=\"translate(-7,273)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.6</text><text text-anchor=\"end\" transform=\"translate(-7,243)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0.8</text><text text-anchor=\"end\" transform=\"translate(-7,212.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.0</text><text text-anchor=\"end\" transform=\"translate(-7,183)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.2</text><text text-anchor=\"end\" transform=\"translate(-7,153)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.4</text><text text-anchor=\"end\" transform=\"translate(-7,122.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.6</text><text text-anchor=\"end\" transform=\"translate(-7,93)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1.8</text><text text-anchor=\"end\" transform=\"translate(-7,62.999999999999986)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.0</text><text text-anchor=\"end\" transform=\"translate(-7,32.99999999999997)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.2</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2.4</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-35,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Bookings ($M)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark concat_2_marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Segment: Enterprise; Bookings ($M): 2.4; Product: Plus; product: Plus; segment: Enterprise; bookings: 2.4; target: 2.1\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M16,0h288v360h-288Z\" fill=\"#A97500\"/><path aria-label=\"Segment: Growth; Bookings ($M): 1.4; Product: Plus; product: Plus; segment: Growth; bookings: 1.4; target: 1.2\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M336,150h288v210h-288Z\" fill=\"#A97500\"/><path aria-label=\"Segment: SMB; Bookings ($M): 0.7; Product: Plus; product: Plus; segment: SMB; bookings: 0.7; target: 0.6\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M656,254.99999999999997h288v105.00000000000003h-288Z\" fill=\"#A97500\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Plus detail'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Plus detail</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Product' for fill color with 2 values: Core, Plus\"><g transform=\"translate(3022,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h61v40h-61Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h48v11h-48Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"#580918\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Core</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h48v11h-48Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,-5h10v10h-10Z\" fill=\"#A97500\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Plus</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Product</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-46,-61)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Detail-overview bookings'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Detail-overview bookings</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "96c436b09f756d3d4589f231b0efd567e0f45e01557d88915f2d9f80fe76108e",
+    "svgBytes": 32162,
+    "svgRef": "viz.render-4cf7a444",
+    "render": {
+      "engine": "vega-lite",
+      "width": 3139,
+      "height": 533,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "f60b071852ff2d1ff6274d36b86ceb4bbfe80a2323fa17327e8de4b1ee2208e3",
+      "renderHash": "96c436b09f756d3d4589f231b0efd567e0f45e01557d88915f2d9f80fe76108e"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

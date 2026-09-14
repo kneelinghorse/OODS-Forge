@@ -56,19 +56,20 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../../artifacts/structured-data/oods-components-2026-09-11-s193-m07.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m07.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m07.json).
 
 | Field | Values |
 | --- | --- |
 | `categories` | `viz.mark` |
 | `tags` | `bar`, `comparison`, `mark`, `viz` |
-| `contexts` | `detail` |
-| `regions` | `detail`, `form`, `list` |
+| `contexts` | `dashboard`, `detail` |
+| `regions` | `dashboard`, `detail`, `form`, `list` |
 
 ### Trait usages
 
 | Trait | Category | Context | Position | Priority | Props | Source |
 | --- | --- | --- | --- | --- | --- | --- |
+| `MarkBar` | `viz.mark` | `dashboard` | `top` | 60 | `{"svgParameter":"previewSvg","typeField":"viz_mark_type","orientationField":"viz_mark_orientation","stackingField":"viz_mark_stacking"}` | [traits/viz/mark-bar.trait.yaml](../../traits/viz/mark-bar.trait.yaml) |
 | `MarkBar` | `viz.mark` | `detail` | `top` | 60 | `{"svgParameter":"previewSvg","typeField":"viz_mark_type","orientationField":"viz_mark_orientation","stackingField":"viz_mark_stacking"}` | [traits/viz/mark-bar.trait.yaml](../../traits/viz/mark-bar.trait.yaml) |
 
 Source files:

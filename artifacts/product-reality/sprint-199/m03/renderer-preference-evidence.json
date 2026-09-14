@@ -1,0 +1,1057 @@
+[
+  {
+    "id": "pattern:viz:detail-overview-bar",
+    "preferredRenderer": "echarts",
+    "layout": {
+      "trait": "LayoutConcat",
+      "direction": "horizontal",
+      "gap": 16,
+      "sections": [
+        {
+          "id": "overview",
+          "title": "All products"
+        },
+        {
+          "id": "detail-core",
+          "title": "Core detail",
+          "filters": [
+            {
+              "field": "product",
+              "operator": "==",
+              "value": "Core"
+            }
+          ]
+        },
+        {
+          "id": "detail-plus",
+          "title": "Plus detail",
+          "filters": [
+            {
+              "field": "product",
+              "operator": "==",
+              "value": "Plus"
+            }
+          ]
+        }
+      ]
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "product",
+          "operator": "==",
+          "value": "Core"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "product",
+          "operator": "==",
+          "value": "Plus"
+        }
+      }
+    ],
+    "missingDimensions": 2,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  },
+  {
+    "id": "pattern:viz:drilldown-stacked-bar",
+    "preferredRenderer": "echarts",
+    "layout": {
+      "trait": "LayoutFacet",
+      "rows": {
+        "field": "region",
+        "title": "Region",
+        "limit": 2
+      },
+      "columns": {
+        "field": "region",
+        "limit": 2
+      },
+      "wrap": "row",
+      "sharedScales": {
+        "x": "shared",
+        "y": "shared"
+      },
+      "gap": 14
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      }
+    ],
+    "missingDimensions": 8,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  },
+  {
+    "id": "pattern:viz:facet-small-multiples-line",
+    "preferredRenderer": "echarts",
+    "layout": {
+      "trait": "LayoutFacet",
+      "rows": {
+        "field": "region",
+        "title": "Region",
+        "limit": 4
+      },
+      "columns": {
+        "field": "segment",
+        "title": "Segment",
+        "limit": 3
+      },
+      "maxPanels": 12,
+      "wrap": "row",
+      "gap": 16,
+      "sharedScales": {
+        "x": "shared",
+        "y": "shared"
+      }
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "North"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "segment",
+          "operator": "==",
+          "value": "Enterprise"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "North"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "segment",
+          "operator": "==",
+          "value": "Growth"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "South"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "segment",
+          "operator": "==",
+          "value": "Enterprise"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "South"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "segment",
+          "operator": "==",
+          "value": "Growth"
+        }
+      }
+    ],
+    "missingDimensions": 8,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  },
+  {
+    "id": "pattern:viz:facet-target-band",
+    "preferredRenderer": "echarts",
+    "layout": {
+      "trait": "LayoutFacet",
+      "rows": {
+        "field": "region",
+        "title": "Region",
+        "limit": 3
+      },
+      "columns": {
+        "field": "region",
+        "limit": 3
+      },
+      "wrap": "row",
+      "gap": 12,
+      "sharedScales": {
+        "x": "shared",
+        "y": "shared"
+      }
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "EMEA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "APAC"
+        }
+      }
+    ],
+    "missingDimensions": 18,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  },
+  {
+    "id": "pattern:viz:focus-context-line",
+    "preferredRenderer": "echarts",
+    "layout": {
+      "trait": "LayoutConcat",
+      "direction": "vertical",
+      "gap": 12,
+      "sections": [
+        {
+          "id": "overview",
+          "title": "All regions",
+          "description": "Context view with synchronized axes"
+        },
+        {
+          "id": "focus",
+          "title": "Amer focus",
+          "description": "Zoomed panel filtered to Americas",
+          "filters": [
+            {
+              "field": "region",
+              "operator": "==",
+              "value": "Amer"
+            }
+          ]
+        }
+      ],
+      "sharedScales": {
+        "x": "shared",
+        "y": "independent"
+      }
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "region",
+          "operator": "==",
+          "value": "Amer"
+        }
+      }
+    ],
+    "missingDimensions": 1,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  },
+  {
+    "id": "pattern:viz:sparkline-grid",
+    "preferredRenderer": "vega-lite",
+    "layout": {
+      "trait": "LayoutFacet",
+      "rows": {
+        "field": "metric",
+        "title": "Metric",
+        "limit": 12
+      },
+      "columns": {
+        "field": "metric",
+        "limit": 3
+      },
+      "wrap": "column",
+      "gap": 12,
+      "sharedScales": {
+        "x": "shared",
+        "y": "independent"
+      }
+    },
+    "filters": [
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Weekly Active"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Weekly Active"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Weekly Active"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "MRR Growth"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "MRR Growth"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "MRR Growth"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Support Backlog"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Support Backlog"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Support Backlog"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Feature Adoption"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Feature Adoption"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Feature Adoption"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Churn Risk"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Churn Risk"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Churn Risk"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Expansion ARR"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Expansion ARR"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Expansion ARR"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Ticket SLA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Ticket SLA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Ticket SLA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "ARPA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "ARPA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "ARPA"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "NPS"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Activation Rate"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "NPS"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Trial Conversion"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "NPS"
+        }
+      },
+      {
+        "type": "filter",
+        "config": {
+          "field": "metric",
+          "operator": "==",
+          "value": "Net Dollar Retention"
+        }
+      }
+    ],
+    "missingDimensions": 72,
+    "decision": "Use Vega-Lite for the public authored layout; the current ECharts panel filter has no dimension and its facet mapper does not preserve wrapping."
+  }
+]

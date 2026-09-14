@@ -1,0 +1,120 @@
+{
+  "request": {
+    "chartType": "choropleth",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "state": "CA",
+          "sales": 580
+        },
+        {
+          "state": "NV",
+          "sales": 96
+        }
+      ],
+      "join": {
+        "dataKey": "state",
+        "featureProperty": "region"
+      },
+      "valueField": "sales",
+      "colorScale": "linear"
+    },
+    "name": "State sales",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true
+    },
+    "theme": "hc",
+    "brand": "A"
+  },
+  "result": {
+    "status": "error",
+    "spec": {},
+    "warnings": [],
+    "errors": [
+      {
+        "code": "OODS-V165",
+        "message": "SVG rendering failed: HC renderer emitted paints outside the declared A/hc token scope: rgba(0,0,0,0). Forced-colors rendering is deferred; no replacement palette was invented.",
+        "severity": "error"
+      }
+    ],
+    "output": {
+      "compact": true
+    }
+  }
+}

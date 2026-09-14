@@ -54,10 +54,9 @@ describe('artifact.certify declared ECharts operand profile (s195-m04)', () => {
     expect(result.findings?.filter(item => item.code.startsWith('OODS-A11Y-'))).toEqual([expect.objectContaining({ code: 'OODS-A11Y-A11Y-R-14', severity: 'warn' })]);
     expect(result.a11yNotApplicable!.length).toBeGreaterThan(0);
     expect(result.a11yNotApplicable!.every(item => item.preconditionAbsent.length > 0)).toBe(true);
-    // The existing public bubble adapter scales varying sizes as radii. Its
-    // measured distortion remains false; certification coverage does not hide it.
-    expect(result.conformant).toBe(chartType !== 'bubble_map');
-    if (chartType === 'bubble_map') expect(result.findings).toEqual(expect.arrayContaining([expect.objectContaining({ code: 'OODS-V169', severity: 'error' })]));
+    // The public bubble option now preserves magnitude by area, measured by V169.
+    expect(result.conformant).toBe(true);
+    expect(result.findings?.some(item => item.code === 'OODS-V169')).toBe(false);
     const specOnly = await grade({ spec: input.spec });
     expect(specOnly).toMatchObject({ coverage: 'uncertified', conformant: null, pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', accuracy: 'unchecked' } });
     expect(specOnly).not.toHaveProperty('determinism');

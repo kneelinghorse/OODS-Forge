@@ -1,0 +1,328 @@
+{
+  "spec": {
+    "$schema": "https://oods.dev/viz-spec/v1",
+    "id": "s199-MarkArea-x",
+    "name": "MarkArea x2 · negative bounds",
+    "data": {
+      "values": [
+        {
+          "category": "A",
+          "panel": "Crossing zero",
+          "lower": -5,
+          "upper": 3
+        },
+        {
+          "category": "B",
+          "panel": "Crossing zero",
+          "lower": -3,
+          "upper": 5
+        },
+        {
+          "category": "A",
+          "panel": "Below zero",
+          "lower": -8,
+          "upper": -2
+        },
+        {
+          "category": "B",
+          "panel": "Below zero",
+          "lower": -6,
+          "upper": -1
+        }
+      ]
+    },
+    "encoding": {
+      "y": {
+        "field": "category",
+        "trait": "EncodingX",
+        "type": "nominal"
+      },
+      "x": {
+        "field": "lower",
+        "trait": "EncodingY",
+        "type": "quantitative"
+      },
+      "x2": {
+        "field": "upper",
+        "trait": "EncodingY",
+        "type": "quantitative"
+      }
+    },
+    "marks": [
+      {
+        "trait": "MarkArea"
+      }
+    ],
+    "layout": {
+      "trait": "LayoutFacet",
+      "columns": {
+        "field": "panel"
+      }
+    },
+    "a11y": {
+      "description": "Two intervals crossing zero; two intervals wholly below zero."
+    }
+  },
+  "option": {
+    "dataset": [
+      {
+        "id": "s199-MarkArea-x:dataset",
+        "source": [
+          {
+            "category": "A",
+            "panel": "Crossing zero",
+            "lower": -5,
+            "upper": 3,
+            "__oods_band_0": 8
+          },
+          {
+            "category": "B",
+            "panel": "Crossing zero",
+            "lower": -3,
+            "upper": 5,
+            "__oods_band_0": 8
+          },
+          {
+            "category": "A",
+            "panel": "Below zero",
+            "lower": -8,
+            "upper": -2,
+            "__oods_band_0": 6
+          },
+          {
+            "category": "B",
+            "panel": "Below zero",
+            "lower": -6,
+            "upper": -1,
+            "__oods_band_0": 5
+          }
+        ],
+        "dimensions": [
+          "category",
+          "panel",
+          "lower",
+          "upper",
+          "__oods_band_0"
+        ]
+      },
+      {
+        "id": "s199-MarkArea-x:dataset:facet:1",
+        "fromDatasetId": "s199-MarkArea-x:dataset",
+        "transform": [
+          {
+            "type": "filter",
+            "config": {
+              "dimension": "panel",
+              "eq": "Crossing zero"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s199-MarkArea-x:dataset:facet:2",
+        "fromDatasetId": "s199-MarkArea-x:dataset",
+        "transform": [
+          {
+            "type": "filter",
+            "config": {
+              "dimension": "panel",
+              "eq": "Below zero"
+            }
+          }
+        ]
+      }
+    ],
+    "series": [
+      {
+        "type": "line",
+        "datasetId": "s199-MarkArea-x:dataset:facet:1",
+        "encode": {
+          "x": "lower",
+          "y": "category",
+          "tooltip": []
+        },
+        "areaStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "stack": "__oods_band_stack_0",
+        "stackStrategy": "all",
+        "showSymbol": false,
+        "id": "__oods_band_stack_0:base::__single__ · Crossing zero",
+        "silent": true,
+        "itemStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "lineStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "tooltip": {
+          "show": false
+        },
+        "emphasis": {
+          "disabled": true
+        },
+        "xAxisIndex": 0,
+        "yAxisIndex": 0,
+        "name": "__single__ · Crossing zero"
+      },
+      {
+        "type": "line",
+        "datasetId": "s199-MarkArea-x:dataset:facet:1",
+        "encode": {
+          "x": "__oods_band_0",
+          "y": "category",
+          "tooltip": [
+            "lower",
+            "category",
+            "upper"
+          ]
+        },
+        "areaStyle": {
+          "opacity": 0.3
+        },
+        "stack": "__oods_band_stack_0",
+        "stackStrategy": "all",
+        "showSymbol": false,
+        "xAxisIndex": 0,
+        "yAxisIndex": 0,
+        "name": "__single__ · Crossing zero"
+      },
+      {
+        "type": "line",
+        "datasetId": "s199-MarkArea-x:dataset:facet:2",
+        "encode": {
+          "x": "lower",
+          "y": "category",
+          "tooltip": []
+        },
+        "areaStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "stack": "__oods_band_stack_0",
+        "stackStrategy": "all",
+        "showSymbol": false,
+        "id": "__oods_band_stack_0:base::__single__ · Below zero",
+        "silent": true,
+        "itemStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "lineStyle": {
+          "color": "transparent",
+          "opacity": 0
+        },
+        "tooltip": {
+          "show": false
+        },
+        "emphasis": {
+          "disabled": true
+        },
+        "xAxisIndex": 1,
+        "yAxisIndex": 1,
+        "name": "__single__ · Below zero"
+      },
+      {
+        "type": "line",
+        "datasetId": "s199-MarkArea-x:dataset:facet:2",
+        "encode": {
+          "x": "__oods_band_0",
+          "y": "category",
+          "tooltip": [
+            "lower",
+            "category",
+            "upper"
+          ]
+        },
+        "areaStyle": {
+          "opacity": 0.3
+        },
+        "stack": "__oods_band_stack_0",
+        "stackStrategy": "all",
+        "showSymbol": false,
+        "xAxisIndex": 1,
+        "yAxisIndex": 1,
+        "name": "__single__ · Below zero"
+      }
+    ],
+    "xAxis": [
+      {
+        "type": "value",
+        "nameLocation": "end",
+        "gridIndex": 0
+      },
+      {
+        "type": "value",
+        "nameLocation": "end",
+        "gridIndex": 1
+      }
+    ],
+    "yAxis": [
+      {
+        "type": "category",
+        "nameLocation": "end",
+        "gridIndex": 0
+      },
+      {
+        "type": "category",
+        "nameLocation": "end",
+        "gridIndex": 1
+      }
+    ],
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "description": "Two intervals crossing zero; two intervals wholly below zero."
+    },
+    "title": {
+      "text": "MarkArea x2 · negative bounds"
+    },
+    "usermeta": {
+      "oods": {
+        "specId": "s199-MarkArea-x",
+        "name": "MarkArea x2 · negative bounds",
+        "a11y": {
+          "description": "Two intervals crossing zero; two intervals wholly below zero."
+        },
+        "layoutTrait": {
+          "trait": "LayoutFacet",
+          "columns": {
+            "field": "panel"
+          }
+        },
+        "layoutRuntime": {
+          "trait": "LayoutFacet",
+          "panelCount": 2,
+          "shareX": true,
+          "shareY": true,
+          "shareColor": true
+        }
+      }
+    },
+    "grid": [
+      {
+        "containLabel": true,
+        "left": "0%",
+        "top": "0%",
+        "width": "50%",
+        "height": "100%"
+      },
+      {
+        "containLabel": true,
+        "left": "50%",
+        "top": "0%",
+        "width": "50%",
+        "height": "100%"
+      }
+    ]
+  },
+  "note": "Direct ECharts adapter SVG proof; the public Cartesian ECharts path remains spec-only and uncertified."
+}

@@ -1598,6 +1598,10 @@ function renderVizLineControls(node: UiElement, childrenHtml = ''): string {
   });
 }
 
+function renderVizGraphPreview(node: UiElement, childrenHtml = ''): string {
+  return renderVizPreview(node, childrenHtml, 'force_graph', 'Graph');
+}
+
 function renderVizLinePreview(node: UiElement, childrenHtml = ''): string {
   return renderVizPreview(node, childrenHtml, 'line', 'Line');
 }
@@ -2123,6 +2127,7 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   VizMarkPreview: renderVizMarkPreview,
   VizLineControls: renderVizLineControls,
   VizLinePreview: renderVizLinePreview,
+  VizGraphPreview: renderVizGraphPreview,
   VizPointControls: renderVizPointControls,
   VizPointPreview: renderVizPointPreview,
   VizScatterControls: renderVizScatterControls,

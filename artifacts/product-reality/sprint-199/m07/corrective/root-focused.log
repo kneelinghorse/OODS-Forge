@@ -1,0 +1,36 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge
+
+ ✓ |core| tests/integration/universal-quintet-objects.integration.test.ts (6 tests) 117ms
+ ❯ |core| tests/viz/adapters/layout-adapter.test.ts (2 tests | 1 failed) 10ms
+   × Layout adapters > maps LayoutFacet metadata to Vega-Lite facet specifications 8ms
+     → expected 112 to be 109.33333333333333 // Object.is equality
+   ✓ Layout adapters > creates multi-grid ECharts options with derived datasets for each facet cell 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/viz/adapters/layout-adapter.test.ts > Layout adapters > maps LayoutFacet metadata to Vega-Lite facet specifications
+AssertionError: expected 112 to be 109.33333333333333 // Object.is equality
+
+- Expected
++ Received
+
+- 109.33333333333333
++ 112
+
+ ❯ tests/viz/adapters/layout-adapter.test.ts:33:30
+     31| 
+     32|     const innerSpec = (vlSpec as { spec?: { width?: number; height?: n…
+     33|     expect(innerSpec?.width).toBe((360 - 16 * 2) / 3);
+       |                              ^
+     34|     expect(innerSpec?.height).toBe((260 - 16) / 2);
+     35|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  07:31:10
+   Duration  1.10s (transform 436ms, setup 0ms, collect 686ms, tests 128ms, environment 0ms, prepare 72ms)
+

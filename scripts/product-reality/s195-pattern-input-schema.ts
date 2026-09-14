@@ -11,15 +11,15 @@ const ids = fs.readdirSync(directory).filter(file => file.endsWith('.spec.json')
   if (spec.id !== `pattern:viz:${file.slice(0, -'.spec.json'.length)}`) throw new Error(`Pattern spec identity mismatch: ${file}`);
   return spec.id as string;
 }).sort();
-if (ids.length !== 21 || new Set(ids).size !== ids.length) throw new Error('Exactly 21 distinct pattern source identities required');
+if (ids.length !== 23 || new Set(ids).size !== ids.length) throw new Error('Exactly 23 distinct pattern source identities required');
 const target = path.join(root, 'packages/mcp-server/src/schemas/viz.render.input.json');
 const before = fs.readFileSync(target, 'utf8');
 const schema = JSON.parse(before);
-schema.description = 'Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Authoring-only patterns return OODS-V167 with their structural limits; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.';
+schema.description = 'Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Retired patterns return OODS-V174 with reasons; structurally unsupported patterns return OODS-V167; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.';
 schema.properties.pattern = {
   type: 'string',
   enum: ids,
-  description: 'Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Authoring-only identities return OODS-V167 with reasons. Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166).',
+  description: 'Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Retired identities return OODS-V174 with reasons. Structurally unsupported scenes return OODS-V167. Static SVG shows the default selection state (OODS-V175). Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166).',
 };
 if (!schema.$defs.nonPatternInput) {
   schema.$defs.nonPatternInput = { oneOf: schema.oneOf, allOf: schema.allOf };

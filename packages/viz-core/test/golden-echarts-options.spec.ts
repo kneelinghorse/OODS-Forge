@@ -144,7 +144,7 @@ function bubbleSpec(): SpatialSpec {
         encoding: {
           longitude: { field: 'lng' },
           latitude: { field: 'lat' },
-          size: { field: 'pop', scale: 'sqrt' },
+          size: { field: 'pop', scale: 'area' },
           color: { field: 'pop', scale: 'linear' },
         },
       },

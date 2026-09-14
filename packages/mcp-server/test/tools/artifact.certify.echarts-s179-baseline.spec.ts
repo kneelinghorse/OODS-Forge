@@ -99,18 +99,14 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
   BaselineCell
 >;
 
-// s197-m05: exact current hashes come from the real legacy operand matrix; the
+// s199-m05: exact current hashes come from the real legacy operand matrix; the
 // migration receipt retains every superseded s191 hash and the pristine fixture.
-const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-197/m05/matrix/matrix.json', import.meta.url), 'utf8'));
+const currentMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-199/m05/matrix/matrix.json', import.meta.url), 'utf8'));
 const scopedHash = (chartType: string): string => currentMatrix.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
 // s195 m04 declared movers over the immutable historical fixture: coverage/fold,
 // a11y pillar, newly offered rule counts, actual bubble V169, and path-specific prose.
 const M04_RULE_COUNTS: Record<string, number> = { treemap: 2, sunburst: 2, sankey: 3, chord: 1, force_graph: 1, choropleth: 1, bubble_map: 3, flow_map: 2 };
 const M04_OPERAND_NOTE = "The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.";
-const M04_BUBBLE_FINDING = {
-  code: 'OODS-V169', severity: 'error',
-  message: 'artifact.certify: bubble_map encodes varying "pop" values with the public renderer\'s default linear symbol diameter (and therefore radius), not an area scale. Circle area squares that interpolation, distorting magnitude comparisons. The public geo operand currently exposes no size-scale override.',
-};
 function expectedCurrentCell(chartType: string, contentHash: string): BaselineCell {
   const cell = baseline[chartType];
   const determinism = cell.certified.determinism as Record<string, unknown>;
@@ -123,10 +119,10 @@ function expectedCurrentCell(chartType: string, contentHash: string): BaselineCe
     certified: {
       ...cell.certified,
       coverage: 'certified',
-      conformant: chartType !== 'bubble_map',
-      findings: [...(chartType === 'bubble_map' ? [M04_BUBBLE_FINDING] : []), ...cell.certified.findings as unknown[]],
-      pillars: { ...cell.certified.pillars as Record<string, unknown>, a11yEquivalence: 'pass', accuracy: chartType === 'bubble_map' ? 'fail' : 'pass' },
-      accuracySummary: { rulesEvaluated: M04_RULE_COUNTS[chartType], failing: chartType === 'bubble_map' ? 1 : 0 },
+      conformant: true,
+      findings: cell.certified.findings,
+      pillars: { ...cell.certified.pillars as Record<string, unknown>, a11yEquivalence: 'pass', accuracy: 'pass' },
+      accuracySummary: { rulesEvaluated: M04_RULE_COUNTS[chartType], failing: 0 },
       determinism: {
         ...determinism,
         contentHash,
@@ -158,10 +154,11 @@ async function renderThenCertify(
 
 describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT}`, () => {
   it("the palette epoch carries an explicit before/after attribution for every legacy render identity", () => {
+    const historicalMatrix = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-197/m05/matrix/matrix.json', import.meta.url), 'utf8'));
     const migration = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-197/m05/golden-attribution.json', import.meta.url), 'utf8'));
     for (const operand of ECHARTS_OPERAND_CASES) {
       const row = migration.matrixRows.find((entry: any) => entry.source === 'artifacts/product-reality/sprint-191/m01/matrix/matrix.json' && entry.identity === `${operand.chartType}/light/A`);
-      expect(row).toMatchObject({ class: 'public-chart-matrix', afterHash: scopedHash(operand.chartType) });
+      expect(row).toMatchObject({ class: 'public-chart-matrix', afterHash: historicalMatrix.table.find((cell: any) => cell.chartType === operand.chartType && cell.brand === 'A' && cell.theme === 'light').svgHash });
       expect(row.beforeHash).toMatch(/^[a-f0-9]{64}$/);
       expect(row.reason.length).toBeGreaterThan(0);
     }

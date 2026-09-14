@@ -1,0 +1,341 @@
+{
+  "status": "ok",
+  "chartType": "heatmap",
+  "mode": "explicit",
+  "spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "title": "Heatmap",
+    "description": "Heatmap of quarter by region, split by revenue.",
+    "data": {
+      "values": [
+        {
+          "region": "North",
+          "quarter": "2024-01",
+          "revenue": 120000,
+          "units": 340
+        },
+        {
+          "region": "South",
+          "quarter": "2024-01",
+          "revenue": 135000,
+          "units": 410
+        },
+        {
+          "region": "North",
+          "quarter": "2024-02",
+          "revenue": 128000,
+          "units": 360
+        },
+        {
+          "region": "South",
+          "quarter": "2024-02",
+          "revenue": 142000,
+          "units": 430
+        },
+        {
+          "region": "North",
+          "quarter": "2024-03",
+          "revenue": 131000,
+          "units": 372
+        },
+        {
+          "region": "South",
+          "quarter": "2024-03",
+          "revenue": 150000,
+          "units": 455
+        }
+      ]
+    },
+    "config": {
+      "background": "Canvas",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "title": {
+        "color": "CanvasText",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "fontSize": 24,
+        "fontWeight": 600,
+        "anchor": "start"
+      },
+      "axis": {
+        "titleColor": "CanvasText",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "labelColor": "CanvasText",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "gridColor": "CanvasText",
+        "domainColor": "CanvasText",
+        "tickColor": "CanvasText"
+      },
+      "axisX": {
+        "grid": false
+      },
+      "axisY": {
+        "grid": false
+      },
+      "legend": {
+        "titleColor": "CanvasText",
+        "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "labelColor": "CanvasText",
+        "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+      },
+      "view": {
+        "stroke": null
+      }
+    },
+    "usermeta": {
+      "oods": {
+        "specId": "viz:heatmap",
+        "name": "Heatmap",
+        "portability": {
+          "tableColumnOrder": [
+            "region",
+            "quarter",
+            "revenue",
+            "units"
+          ]
+        },
+        "a11y": {
+          "description": "Heatmap of quarter by region, split by revenue.",
+          "ariaLabel": "Heatmap of Quarter by Region"
+        }
+      }
+    },
+    "mark": {
+      "type": "rect"
+    },
+    "encoding": {
+      "x": {
+        "field": "region",
+        "type": "ordinal",
+        "scale": {
+          "type": "band"
+        },
+        "title": "Region"
+      },
+      "y": {
+        "field": "quarter",
+        "type": "ordinal",
+        "scale": {
+          "type": "band"
+        },
+        "title": "Quarter"
+      },
+      "color": {
+        "field": "revenue",
+        "type": "quantitative",
+        "scale": {
+          "type": "quantize",
+          "range": [
+            "oklch(0.94 0 265)",
+            "oklch(0.84 0 265)",
+            "oklch(0.74 0 265)",
+            "oklch(0.64 0 265)",
+            "oklch(0.54 0 265)",
+            "oklch(0.44 0 265)",
+            "oklch(0.34 0 265)",
+            "oklch(0.24 0 265)",
+            "oklch(0.14 0 265)"
+          ]
+        },
+        "title": "Revenue",
+        "legend": {
+          "type": "symbol",
+          "symbolStrokeColor": "CanvasText"
+        }
+      }
+    }
+  },
+  "a11yDescription": "Heatmap of quarter by region, split by revenue.",
+  "warnings": [],
+  "output": {
+    "compact": true,
+    "echarts": true
+  },
+  "meta": {
+    "renderer": "vega-lite",
+    "mark": "MarkRect",
+    "rowCount": 6,
+    "fields": [
+      "region",
+      "quarter",
+      "revenue",
+      "units"
+    ]
+  },
+  "echartsSpec": {
+    "dataset": [
+      {
+        "id": "viz:heatmap:dataset",
+        "source": [
+          {
+            "region": "North",
+            "quarter": "2024-01",
+            "revenue": 120000,
+            "units": 340
+          },
+          {
+            "region": "South",
+            "quarter": "2024-01",
+            "revenue": 135000,
+            "units": 410
+          },
+          {
+            "region": "North",
+            "quarter": "2024-02",
+            "revenue": 128000,
+            "units": 360
+          },
+          {
+            "region": "South",
+            "quarter": "2024-02",
+            "revenue": 142000,
+            "units": 430
+          },
+          {
+            "region": "North",
+            "quarter": "2024-03",
+            "revenue": 131000,
+            "units": 372
+          },
+          {
+            "region": "South",
+            "quarter": "2024-03",
+            "revenue": 150000,
+            "units": 455
+          }
+        ],
+        "dimensions": [
+          "region",
+          "quarter",
+          "revenue",
+          "units"
+        ]
+      }
+    ],
+    "series": [
+      {
+        "type": "heatmap",
+        "datasetId": "viz:heatmap:dataset",
+        "encode": {
+          "x": "region",
+          "y": "quarter",
+          "tooltip": [
+            "region",
+            "quarter",
+            "revenue"
+          ],
+          "value": "revenue"
+        },
+        "colorBy": "data"
+      }
+    ],
+    "xAxis": {
+      "type": "category",
+      "name": "Region",
+      "nameLocation": "end",
+      "boundaryGap": true
+    },
+    "yAxis": {
+      "type": "category",
+      "name": "Quarter",
+      "nameLocation": "end"
+    },
+    "legend": {
+      "show": true
+    },
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "visualMap": {
+      "type": "piecewise",
+      "splitNumber": 9,
+      "pieces": [
+        {
+          "min": 120000,
+          "max": 123333.33333333333,
+          "color": "oklch(0.94 0 265)"
+        },
+        {
+          "min": 123333.33333333333,
+          "max": 126666.66666666666,
+          "color": "oklch(0.84 0 265)"
+        },
+        {
+          "min": 126666.66666666666,
+          "max": 129999.99999999999,
+          "color": "oklch(0.74 0 265)"
+        },
+        {
+          "min": 129999.99999999999,
+          "max": 133333.3333333333,
+          "color": "oklch(0.64 0 265)"
+        },
+        {
+          "min": 133333.3333333333,
+          "max": 136666.66666666666,
+          "color": "oklch(0.54 0 265)"
+        },
+        {
+          "min": 136666.66666666666,
+          "max": 140000,
+          "color": "oklch(0.44 0 265)"
+        },
+        {
+          "min": 140000,
+          "max": 143333.33333333334,
+          "color": "oklch(0.34 0 265)"
+        },
+        {
+          "min": 143333.33333333334,
+          "max": 146666.6666666667,
+          "color": "oklch(0.24 0 265)"
+        },
+        {
+          "min": 146666.6666666667,
+          "max": 150000,
+          "color": "oklch(0.14 0 265)"
+        }
+      ],
+      "dimension": "revenue",
+      "textStyle": {
+        "color": "CanvasText"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "description": "Heatmap of quarter by region, split by revenue.",
+      "label": {
+        "enabled": true,
+        "description": "Heatmap of Quarter by Region"
+      }
+    },
+    "title": {
+      "text": "Heatmap"
+    },
+    "usermeta": {
+      "oods": {
+        "specId": "viz:heatmap",
+        "name": "Heatmap",
+        "a11y": {
+          "description": "Heatmap of quarter by region, split by revenue.",
+          "ariaLabel": "Heatmap of Quarter by Region"
+        },
+        "portability": {
+          "tableColumnOrder": [
+            "region",
+            "quarter",
+            "revenue",
+            "units"
+          ]
+        }
+      }
+    }
+  },
+  "tokenCssRef": "tokens.build",
+  "specRef": "viz.render-9a44c78e",
+  "specRefCreatedAt": "2026-09-14T08:24:18.905Z",
+  "specRefExpiresAt": "2026-09-14T08:54:18.905Z",
+  "contentHash": "a4f1123a290344735d05815fd42112cb8d5ed5d4d6725fdd84ef05538a66a0ca"
+}

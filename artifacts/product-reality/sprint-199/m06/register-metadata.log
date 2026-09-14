@@ -1,0 +1,48 @@
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/scripts/product-reality/s199-register-graph.py", line 113, in <module>
+    main()
+    ~~~~^^
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/scripts/product-reality/s199-register-graph.py", line 107, in main
+    components, _ = generate_structured_payloads(generated_at=read('cmos/planning/oods-components.json')['generatedAt'], component_capabilities_path=ROOT / PROOF / 'component-capabilities-input.json')
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/cmos/scripts/refresh_structured_data.py", line 1146, in generate_structured_payloads
+    validate(instance=components_payload, schema=schema)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/forge-s199-export/lib/python3.13/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: Additional properties are not allowed ('additions' was unexpected)
+
+Failed validating 'additionalProperties' in schema['properties']['obligationScope']:
+    {'type': 'object',
+     'description': 'Current accepted catalog scope ruling, independent of '
+                    'historical row classification proposals and target '
+                    'capability evidence. Retained obligations are not '
+                    'implementation or maturity claims.',
+     'required': ['schemaVersion',
+                  'decisionId',
+                  'disposition',
+                  'controllingObligationDenominator',
+                  'approvedRuntimeCensus',
+                  'classificationStatus'],
+     'properties': {'schemaVersion': {'type': 'string', 'minLength': 1},
+                    'decisionId': {'type': 'integer', 'minimum': 1},
+                    'disposition': {'type': 'string',
+                                    'enum': ['retain-all-obligations']},
+                    'controllingObligationDenominator': {'type': 'integer',
+                                                         'minimum': 1},
+                    'approvedRuntimeCensus': {'type': 'null'},
+                    'classificationStatus': {'type': 'string',
+                                             'enum': ['historical-proposals-unapproved',
+                                                      'proposed-awaiting-derek-approval']}},
+     'additionalProperties': False}
+
+On instance['obligationScope']:
+    {'schemaVersion': '1.0.0',
+     'decisionId': 1788,
+     'disposition': 'retain-all-obligations',
+     'controllingObligationDenominator': 110,
+     'approvedRuntimeCensus': None,
+     'classificationStatus': 'proposed-awaiting-derek-approval',
+     'additions': [{'missionId': 's199-m06',
+                    'decisionId': 2054,
+                    'ids': ['VizGraphPreview']}]}

@@ -56,7 +56,7 @@ Source: [packages/component-contracts/registry/component-capability-ledger.v1.js
 
 ## Catalog metadata
 
-Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../../artifacts/structured-data/oods-components-2026-09-11-s193-m07.json).
+Source: [artifacts/structured-data/oods-components-2026-09-14-s199-m07.json](../../artifacts/structured-data/oods-components-2026-09-14-s199-m07.json).
 
 | Field | Values |
 | --- | --- |
@@ -70,7 +70,7 @@ Source: [artifacts/structured-data/oods-components-2026-09-11-s193-m07.json](../
 | Trait | Category | Context | Position | Priority | Props | Source |
 | --- | --- | --- | --- | --- | --- | --- |
 | `ScaleLinear` | `viz.scale` | `detail` | `sidebar` | Not recorded | `{"intentParameter":"renderIntent","type":"linear","domainMinField":"viz_scale_linear_domain_min","domainMaxField":"viz_scale_linear_domain_max","modeField":"viz_scale_linear_mode","zeroField":"viz_scale_linear_zero_baseline"}` | [traits/viz/scale-linear.trait.yaml](../../traits/viz/scale-linear.trait.yaml) |
-| `ScaleTemporal` | `viz.scale` | `detail` | `sidebar` | Not recorded | `{"intentParameter":"renderIntent","type":"temporal","domainMinField":"viz_scale_temporal_domain_start","domainMaxField":"viz_scale_temporal_domain_end","timezoneField":"viz_scale_temporal_timezone","niceField":"viz_scale_temporal_nice"}` | [traits/viz/scale-temporal.trait.yaml](../../traits/viz/scale-temporal.trait.yaml) |
+| `ScaleTemporal` | `viz.scale` | `detail` | `sidebar` | Not recorded | `{"intentParameter":"renderIntent","type":"temporal","domainMinField":"viz_scale_temporal_domain_start","domainMaxField":"viz_scale_temporal_domain_end","niceField":"viz_scale_temporal_nice"}` | [traits/viz/scale-temporal.trait.yaml](../../traits/viz/scale-temporal.trait.yaml) |
 
 Source files:
 

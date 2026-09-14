@@ -236,8 +236,8 @@ def load_component_intake() -> List[Dict[str, Any]]:
             raise ValueError(f"canonical component intake row {index} must have a non-empty string ID")
         ids.append(component_id)
 
-    if len(ids) != 109 or len(set(ids)) != 109:
-        raise ValueError("canonical component intake must contain exactly 109 unique string IDs")
+    if len(ids) != 110 or len(set(ids)) != 110:
+        raise ValueError("canonical component intake must contain exactly 110 unique string IDs")
     if ids != sorted(ids):
         raise ValueError("canonical component intake IDs must be deterministically sorted")
     if payload.get("controllingObligationDenominator") != len(ids):
@@ -258,6 +258,10 @@ def load_component_capabilities(
     rows = payload.get("rows")
     if not isinstance(rows, list):
         raise ValueError("component capability rows must be an array")
+
+    if component_capabilities_path is None:
+        additions = load_json(REPO_ROOT / "packages/component-contracts/registry/component-capability-additions.v1.json")
+        rows = [*rows, *additions["rows"]]
 
     capabilities_by_id: Dict[str, Dict[str, Any]] = {}
     duplicate_ids: Set[str] = set()
@@ -901,7 +905,9 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
                                            f"{app_root}/{cell['report']}#/flow/{row_index}/detail/mounts/{index}"))
     for component_id in recipes:
         if component_id not in result:
-            raise ValueError(f"Recipe is outside the canonical catalog: {component_id}")
+            if component_id not in {row["id"] for row in load_component_intake()}:
+                raise ValueError(f"Recipe is outside the canonical catalog: {component_id}")
+            continue  # Historical baseline projections omit later, declared additions.
         surfaces = result[component_id]["surfaces"]
         for target, rows in targets.items():
             row = rows.get(component_id, {})
@@ -959,7 +965,7 @@ def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
             if hashlib.sha256(image.read_bytes()).hexdigest() != cell["screenshotSha256"]:
                 raise ValueError(f"Measured theme screenshot hash mismatch: {image}")
     proposal = load_json(REPO_ROOT / "packages/component-contracts/registry/component-reconciliation.proposed.v2.json")
-    if proposal.get("approvedRuntimeCensus") is not None or {row["id"] for row in proposal["rows"]} != set(result):
+    if proposal.get("approvedRuntimeCensus") is not None or {row["id"] for row in proposal["rows"]} != {row["id"] for row in load_component_intake()} or not set(result).issubset({row["id"] for row in proposal["rows"]}):
         raise ValueError("Classification proposal must retain all obligations without approval")
     proposed = {row["id"]: row for row in proposal["rows"]}
     for component_id, capability in result.items():
@@ -993,17 +999,22 @@ def project_measured_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
                 if classification == "not-applicable":
                     valid = valid and surface == "interaction" and bool(cell.get("reason"))
                     reasons.append(cell.get("reason", ""))
+                component_proof = rows[component_id].get("measurementRoot", proof_root)
                 if surface == "theme":
-                    report = themes[target]
+                    report = themes[target] if component_proof == proof_root else load_json(REPO_ROOT / f"{component_proof}/{target}-theme/report.json")
+                    for theme_cell in report["cells"]:
+                        image = REPO_ROOT / f"{component_proof}/{target}-theme/{theme_cell['screenshot']}"
+                        if hashlib.sha256(image.read_bytes()).hexdigest() != theme_cell["screenshotSha256"]:
+                            raise ValueError(f"Measured theme screenshot hash mismatch: {image}")
                     expected = {"A-light", "A-dark", "A-hc", "B-light", "B-dark", "B-hc"}
                     valid = valid and report.get("status") == "passed" and report.get("failed") == 0 and report.get("skipped") == 0 and len(report["cells"]) == 6 and {c["cell"] for c in report["cells"]} == expected and all(c.get("status") == "passed" and sum(r["componentId"] == component_id for r in c["rows"]) == 1 for c in report["cells"])
-                    refs.append(f"{proof_root}/{target}-theme/report.json#{component_id}")
+                    refs.append(f"{component_proof}/{target}-theme/report.json#{component_id}")
                 else:
-                    report = measurements[target]
+                    report = measurements[target] if component_proof == proof_root else load_json(REPO_ROOT / f"{component_proof}/{target}-measured.json")
                     filename = "accessibility.spec." if surface == "accessibility" else "scenario-interactions.spec."
                     tests = [test for file in report["testResults"] if filename in file["name"] for test in file["assertionResults"] if (f"for the {component_id} shared scenario" in test["fullName"] if surface == "accessibility" else f" {component_id}:" in test["fullName"])]
                     valid = valid and report.get("success") is True and report.get("numFailedTests") == 0 and report.get("numPendingTests") == 0 and bool(tests) and all(test["status"] == "passed" for test in tests)
-                    refs.append(f"{proof_root}/{target}-measured.json#{component_id}")
+                    refs.append(f"{component_proof}/{target}-measured.json#{component_id}")
             for ref in refs:
                 if not (REPO_ROOT / ref.split("#", 1)[0]).is_file():
                     raise ValueError(f"Missing measured evidence reference: {ref}")

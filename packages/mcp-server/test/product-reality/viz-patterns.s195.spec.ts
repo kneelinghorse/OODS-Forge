@@ -13,7 +13,8 @@ import { repositoryRoot, wire } from '../helpers/wire-boundary.js';
 const directory = path.join(repositoryRoot, 'examples/viz/patterns-v2');
 const sources = fs.readdirSync(directory).filter(file => file.endsWith('.spec.json')).sort().map(file => JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')));
 const supported = ['simple-bar', 'stacked-bar', 'stacked-100-bar', 'diverging-bar', 'running-total-area', 'correlation-scatter', 'time-grid-heatmap', 'correlation-matrix'].map(id => `pattern:viz:${id}`);
-const authoringOnly = sources.map(source => source.id as string).filter(id => !supported.includes(id));
+const retired = ['pattern:viz:linked-brush-scatter'];
+const scenes = sources.map(source => source.id as string).filter(id => !supported.includes(id) && !retired.includes(id));
 const inputSchema = JSON.parse(fs.readFileSync(path.join(repositoryRoot, 'packages/mcp-server/src/schemas/viz.render.input.json'), 'utf8'));
 const validate = getAjv().getSchema(inputSchema.$id) ?? getAjv().compile(inputSchema);
 const request = (pattern: string) => ({ pattern, output: { svg: true, includeNormalizedSpec: true, includeA11y: true } }) as VizRenderInput;
@@ -27,11 +28,11 @@ function retain(name: string, value: unknown): void {
 }
 
 describe('viz.render registered pattern wire boundary (s195-m03)', () => {
-  it('advertises the exact 21 source identities, including the thirteen structural limits', () => {
+  it('advertises the exact 23 source identities, including the served retirement', () => {
     expect(inputSchema.properties.pattern.enum).toEqual(sources.map(source => source.id).sort());
-    expect(sources).toHaveLength(21);
+    expect(sources).toHaveLength(23);
     expect(supported).toHaveLength(8);
-    expect(authoringOnly).toHaveLength(13);
+    expect(retired).toHaveLength(1);
   });
 
   it.each(supported)('%s renders source data and presentation into real pixels and certifiable IR', async id => {
@@ -82,17 +83,50 @@ describe('viz.render registered pattern wire boundary (s195-m03)', () => {
     retain(id.split(':').at(-1)!, { input, result, certify: grade });
   });
 
-  it.each(authoringOnly)('%s retains its exact structural limitation as V167 with no public pixels', async id => {
+  it.each(retired)('%s retains its exact retirement as V174 with no public pixels', async id => {
     const translated = translatePattern(id);
-    expect(translated.status).toBe('authoring-only');
-    if (translated.status !== 'authoring-only') throw new Error('Expected authoring-only source');
+    expect(translated.status).toBe('retired');
+    if (translated.status !== 'retired') throw new Error('Expected retired source');
     expect(translated.reasons.length).toBeGreaterThan(0);
     const result = wire('viz.render', 'output', await render(wire('viz.render', 'input', request(id))));
     expect(result.status).toBe('error');
-    expect(result.errors).toEqual([{ code: 'OODS-V167', message: `viz.render: pattern "${id}" is authoring-only: ${translated.reasons.join('; ')}`, severity: 'error' }]);
+    expect(result.errors).toEqual([{ code: 'OODS-V174', message: `viz.render: pattern "${id}" is retired: ${translated.reasons.join('; ')}`, severity: 'error' }]);
     for (const key of ['svg', 'svgHash', 'contentHash', 'normalizedSpec', 'specRef']) expect(result).not.toHaveProperty(key);
-    expect(getDefinition('OODS-V167')).toMatchObject({ category: 'validation', retryable: false });
+    expect(getDefinition('OODS-V174')).toMatchObject({ category: 'validation', retryable: false });
     retain(id.split(':').at(-1)!, { input: request(id), result });
+  });
+
+  it.each(scenes)('%s preserves the authored scene and certifies the same SVG operand', async id => {
+    const result = wire('viz.render', 'output', await render(wire('viz.render', 'input', request(id))));
+    const source = sourceFor(id), normalized = result.normalizedSpec as any;
+    expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+    expect(normalized.data.values).toEqual(source.data.values);
+    expect(normalized.layout).toEqual(source.layout);
+    expect(normalized.interactions).toEqual(source.interactions);
+    expect(normalized.marks).toHaveLength(source.marks.length);
+    for (const [index, mark] of source.marks.entries()) expect(normalized.marks[index]).toMatchObject(mark);
+    const grade = await certify({ spec: normalized });
+    expect(grade.conformant, JSON.stringify(grade)).toBe(true);
+    expect(grade.determinism?.renderHash).toBe(result.svgHash);
+    if (source.interactions?.length) expect(result.warnings).toContainEqual(expect.objectContaining({ code: 'OODS-V175' }));
+  });
+
+  it('draws histogram heights proportional to frequency rather than equal-height range ticks', async () => {
+    const result = await render(request('pattern:viz:histogram'));
+    const paths = [...result.svg!.matchAll(/<path[^>]*aria-roledescription="bar"[^>]*>/g)].map(match => match[0]);
+    const rows = sourceFor('pattern:viz:histogram').data.values;
+    expect(paths).toHaveLength(rows.length);
+    const geometry = paths.map(tag => {
+      const path = /d="M([\d.-]+),([\d.e+-]+)h([\d.e+-]+)v([\d.e+-]+)/.exec(tag)!;
+      expect(path, tag).not.toBeNull();
+      return { y: Number(path[2]), width: Number(path[3]), height: Number(path[4]) };
+    });
+    const maxHeight = Math.max(...geometry.map(rect => rect.height));
+    for (const [index, rect] of geometry.entries()) {
+      expect(rect.height / maxHeight).toBeCloseTo(rows[index].count / 12, 8);
+      expect(rect.y + rect.height).toBeCloseTo(360, 8);
+      expect(rect.width).toBeGreaterThan(0);
+    }
   });
 
   const conflictingFields: Array<[string, unknown]> = [
@@ -115,7 +149,7 @@ describe('viz.render registered pattern wire boundary (s195-m03)', () => {
   });
 
   it('reports every conflict even for an authoring-only identity without invoking another rendering mode', async () => {
-    const input = wire('viz.render', 'input', { ...request(authoringOnly[0]), rows: [{}], chartType: 'treemap', opacity: 0 });
+    const input = wire('viz.render', 'input', { ...request(retired[0]), rows: [{}], chartType: 'treemap', opacity: 0 });
     const result = wire('viz.render', 'output', await render(input));
     expect(result.errors?.[0]).toMatchObject({ code: 'OODS-V166', message: expect.stringContaining('chartType, rows, opacity') });
   });

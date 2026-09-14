@@ -602,6 +602,7 @@ async function evaluateEChartsOperand(
     const result = evaluateEChartsAccuracyRules({
       chartType: operand.chartType,
       branchData: operand.branchData,
+      option: outcome.firstProjected,
     });
     // 'pass' REQUIRES that at least one rule actually resolved its operand and ran. Zero
     // resolved rules is 'unchecked', not 'pass' — whether because the type offers none

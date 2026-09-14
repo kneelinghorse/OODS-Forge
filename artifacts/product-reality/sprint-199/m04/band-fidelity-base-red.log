@@ -1,0 +1,131 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core
+
+ ❯ src/adapters/echarts-adapter.spec.ts (21 tests | 4 failed) 18ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > builds a multi-dataset array so a from-referenced series datasetId resolves (fails at HEAD: single dataset) 3ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > binds a from-referenced series by field NAME, not column order (dimensions preserve names + encode references names) 0ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > primary (inline) series is byte-UNCHANGED by the datasets slot (mixed-spec contract) 0ms
+   ✓ echarts-adapter — item #16 datasets slot resolves Mark.from > OMITS the extra datasets when spec.datasets is absent → byte-identical single-dataset array (gate-leak guard) 0ms
+   ✓ echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > emits a log y-axis when the binding co-declares type:quantitative AND scale:log (fails at HEAD: value) 0ms
+   ✓ echarts-adapter — item s156-m02 explicit log scale wins over quantitative type > matches Vega parity — the same spec compiles to encoding.y.scale.type:log in Vega 1ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > emits a continuous visualMap for a MarkRect measure heatmap (fails at HEAD: no visualMap) 1ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the OODS sequential range (resolved colors) as inRange.color 0ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > bakes the visualMap tick label onto chrome (textStyle.color = chrome.visualMapLabel) 0ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > OMITS the visualMap for a non-heatmap (bar) spec — gate-leak guard 0ms
+   ✓ echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap > centers a diverging heatmap visualMap at 0 (symmetric domain == Vega domainMid) 0ms
+   ✓ echarts-adapter — s159 m5 aggregated heatmap dual-output parity > visualMap extent + dataset == AGGREGATED cells == narrative (not the raw color extent) 2ms
+   ✓ echarts-adapter — s159 m5 aggregated heatmap dual-output parity > a single-row-per-cell heatmap (no multi-row) is byte-unchanged (extent == the cell values) 0ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > FACETED aggregated heatmap: cells stay per-panel, carry the facet field, and panel filters match 1ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > DETAIL-grouped aggregated heatmap: per-group cells survive (visualMap == narrative, not 40/40) 1ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > multi-row-per-(x,y,detail) discriminator: cells re-reduce PER GROUP (the fail-safe posture stays dishonest here — full spine does not) 0ms
+   ✓ echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty > LOCK: a plain (no facet/detail/size) aggregated heatmap emits cells with EXACTLY the [x,y,measure] shape 0ms
+   × s199 ranged areas and bars preserve both bounds > MarkArea x2 stacks a difference above negative lower bounds in every facet 5ms
+     → expected [ { type: 'line', …(7) }, …(1) ] to have a length of 4 but got 2
+   × s199 ranged areas and bars preserve both bounds > MarkArea y2 stacks a difference above negative lower bounds in every facet 0ms
+     → expected [ { type: 'line', …(7) }, …(1) ] to have a length of 4 but got 2
+   × s199 ranged areas and bars preserve both bounds > MarkBar x2 stacks a difference above negative lower bounds in every facet 0ms
+     → expected [ { type: 'bar', …(6) }, …(1) ] to have a length of 4 but got 2
+   × s199 ranged areas and bars preserve both bounds > MarkBar y2 stacks a difference above negative lower bounds in every facet 0ms
+     → expected [ { type: 'bar', …(6) }, …(1) ] to have a length of 4 but got 2
+ ❯ test/examples-conformance.spec.ts (35 tests | 1 failed) 452ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > discovers the canonical corpus (guards against an empty-glob hollow gate) 1ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/bubble-distribution.spec.json is a valid NormalizedVizSpec 19ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/correlation-matrix.spec.json is a valid NormalizedVizSpec 14ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/correlation-scatter.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/detail-overview-bar.spec.json is a valid NormalizedVizSpec 15ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/diverging-bar.spec.json is a valid NormalizedVizSpec 16ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/drilldown-stacked-bar.spec.json is a valid NormalizedVizSpec 14ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/facet-small-multiples-line.spec.json is a valid NormalizedVizSpec 13ms
+   × s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/facet-target-band.spec.json is a valid NormalizedVizSpec 16ms
+     → pattern:viz:facet-target-band: ECharts dropped y2: expected 0 to be greater than 0
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/focus-context-line.spec.json is a valid NormalizedVizSpec 14ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/grouped-bar.spec.json is a valid NormalizedVizSpec 18ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/layered-line-area.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/linked-brush-scatter.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/multi-series-line.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/running-total-area.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/simple-bar.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/sparkline-grid.spec.json is a valid NormalizedVizSpec 14ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/stacked-100-bar.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/stacked-area-projection.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/stacked-bar.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/target-band-line.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/time-grid-heatmap.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/bubble-distribution.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/correlation-matrix.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/correlation-scatter.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/diverging-bar.spec.json is a valid NormalizedVizSpec 17ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/grouped-bar.spec.json is a valid NormalizedVizSpec 16ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/multi-series-line.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/running-total-area.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/stacked-100-bar.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/stacked-bar.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/target-band-line.spec.json is a valid NormalizedVizSpec 13ms
+   ✓ s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns/time-grid-heatmap.spec.json is a valid NormalizedVizSpec 14ms
+   ✓ s156 m07 — dual-maintained schema copies stay byte-identical (anti-drift gate) > normalized-viz-spec.schema.json: runtime AJV copy === Generator-B type-gen source 1ms
+   ✓ s156 m07 — dual-maintained schema copies stay byte-identical (anti-drift gate) > dashboard-spec.schema.json: runtime AJV copy === Generator-B type-gen source 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/examples-conformance.spec.ts > s156 m07 — canonical example fixtures validate against the live schema (anti-rot gate) > examples/viz/patterns-v2/facet-target-band.spec.json is a valid NormalizedVizSpec
+AssertionError: pattern:viz:facet-target-band: ECharts dropped y2: expected 0 to be greater than 0
+ ❯ assertRendererFidelity test/renderer-fidelity.ts:40:72
+     38|         const lower = map[axis]?.field;
+     39|         const pairs = option.series.filter((series) => series.stack &&…
+     40|         expect(pairs.length, `${spec.id}: ECharts dropped ${channel}`)…
+       |                                                                        ^
+     41|         for (const base of pairs) {
+     42|           const range = option.series.find((series) => series !== base…
+ ❯ test/examples-conformance.spec.ts:60:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkArea x2 stacks a difference above negative lower bounds in every facet
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkArea y2 stacks a difference above negative lower bounds in every facet
+AssertionError: expected [ { type: 'line', …(7) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ src/adapters/echarts-adapter.spec.ts:562:31
+    560|         } as NormalizedVizSpec;
+    561|         const option = toEChartsOption(spec);
+    562|         expect(option.series).toHaveLength(4);
+       |                               ^
+    563|         const source = option.dataset[0].source!;
+    564|         for (let panel = 0; panel < 2; panel++) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkBar x2 stacks a difference above negative lower bounds in every facet
+ FAIL  src/adapters/echarts-adapter.spec.ts > s199 ranged areas and bars preserve both bounds > MarkBar y2 stacks a difference above negative lower bounds in every facet
+AssertionError: expected [ { type: 'bar', …(6) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ src/adapters/echarts-adapter.spec.ts:562:31
+    560|         } as NormalizedVizSpec;
+    561|         const option = toEChartsOption(spec);
+    562|         expect(option.series).toHaveLength(4);
+       |                               ^
+    563|         const source = option.dataset[0].source!;
+    564|         for (let panel = 0; panel < 2; panel++) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  5 failed | 51 passed (56)
+   Start at  02:38:22
+   Duration  1.22s (transform 300ms, setup 0ms, collect 703ms, tests 470ms, environment 0ms, prepare 100ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s199/OODS-Forge/packages/viz-core:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/examples-conformance.spec.ts src/adapters/echarts-adapter.spec.ts --coverage.enabled=false

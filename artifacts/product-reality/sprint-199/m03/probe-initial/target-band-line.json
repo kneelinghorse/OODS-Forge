@@ -1,0 +1,494 @@
+{
+  "response": {
+    "status": "ok",
+    "chartType": "line",
+    "mode": "explicit",
+    "spec": {
+      "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+      "title": "Lead Time vs SLA Band",
+      "description": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+      "data": {
+        "values": [
+          {
+            "week": "2025-05-05",
+            "leadTime": 5.2,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-12",
+            "leadTime": 5.8,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-19",
+            "leadTime": 6.4,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-26",
+            "leadTime": 5.1,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-02",
+            "leadTime": 4.7,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-09",
+            "leadTime": 4.4,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-16",
+            "leadTime": 4.9,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          }
+        ]
+      },
+      "config": {
+        "background": "#F9FAFC",
+        "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        "title": {
+          "color": "#1A1D23",
+          "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "anchor": "start"
+        },
+        "axis": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "gridColor": "#CED1D6",
+          "domainColor": "#BABEC4",
+          "tickColor": "#BABEC4"
+        },
+        "axisX": {
+          "grid": false
+        },
+        "axisY": {
+          "grid": true
+        },
+        "legend": {
+          "titleColor": "#1A1D23",
+          "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          "labelColor": "#484D58",
+          "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        },
+        "view": {
+          "stroke": null
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "pattern:viz:target-band-line",
+          "name": "Lead Time vs SLA Band",
+          "theme": "brand-c",
+          "portability": {
+            "fallbackType": "table",
+            "tableColumnOrder": [
+              "week",
+              "leadTime",
+              "slaLow",
+              "slaHigh"
+            ],
+            "preferredRenderer": "vega-lite"
+          },
+          "a11y": {
+            "ariaLabel": "Lead time trend vs SLA band",
+            "description": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+            "narrative": {
+              "summary": "Only the week of May 19 breaches the SLA ceiling; subsequent weeks land comfortably under 5 days.",
+              "keyFindings": [
+                "SLA breach lasts one sprint",
+                "Steady improvement into June"
+              ]
+            },
+            "tableFallback": {
+              "enabled": true,
+              "caption": "Weekly lead time with SLA bounds"
+            }
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "area",
+            "opacity": 0.25
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "temporal",
+              "scale": {
+                "type": "utc"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "slaHigh",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Days"
+            },
+            "y2": {
+              "field": "slaLow",
+              "type": "ordinal"
+            },
+            "color": {
+              "field": "band",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Band",
+              "legend": {
+                "title": null
+              }
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3,
+            "interpolate": "monotone"
+          },
+          "encoding": {
+            "x": {
+              "field": "week",
+              "type": "temporal",
+              "scale": {
+                "type": "utc"
+              },
+              "title": "Week"
+            },
+            "y": {
+              "field": "leadTime",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear"
+              },
+              "title": "Lead Time (days)"
+            },
+            "color": {
+              "field": "series",
+              "type": "nominal",
+              "scale": {
+                "range": [
+                  "#580918",
+                  "#A97500",
+                  "#788E70",
+                  "#00A0A3",
+                  "#0050AD",
+                  "#360643"
+                ]
+              },
+              "title": "Series",
+              "legend": {
+                "title": null
+              }
+            }
+          }
+        }
+      ],
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    },
+    "a11yDescription": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "vega-lite",
+      "mark": "MarkArea",
+      "rowCount": 7,
+      "fields": [
+        "week",
+        "leadTime",
+        "slaLow",
+        "slaHigh",
+        "band",
+        "series"
+      ]
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "pattern:viz:target-band-line",
+      "name": "Lead Time vs SLA Band",
+      "data": {
+        "values": [
+          {
+            "week": "2025-05-05",
+            "leadTime": 5.2,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-12",
+            "leadTime": 5.8,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-19",
+            "leadTime": 6.4,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-05-26",
+            "leadTime": 5.1,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-02",
+            "leadTime": 4.7,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-09",
+            "leadTime": 4.4,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          },
+          {
+            "week": "2025-06-16",
+            "leadTime": 4.9,
+            "slaLow": 4,
+            "slaHigh": 6,
+            "band": "Target Range",
+            "series": "Lead Time"
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkArea",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "temporal",
+              "title": "Week"
+            },
+            "y": {
+              "field": "slaHigh",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Days"
+            },
+            "y2": {
+              "field": "slaLow",
+              "trait": "EncodingPositionY",
+              "channel": "y2"
+            },
+            "color": {
+              "field": "band",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": null
+              },
+              "title": "Band"
+            }
+          },
+          "options": {
+            "opacity": 0.25
+          }
+        },
+        {
+          "trait": "MarkLine",
+          "encodings": {
+            "x": {
+              "field": "week",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "scale": "temporal",
+              "title": "Week"
+            },
+            "y": {
+              "field": "leadTime",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "scale": "linear",
+              "title": "Lead Time (days)"
+            },
+            "color": {
+              "field": "series",
+              "trait": "EncodingColor",
+              "channel": "color",
+              "legend": {
+                "title": null
+              },
+              "title": "Series"
+            }
+          },
+          "options": {
+            "strokeWidth": 3,
+            "curve": "monotone"
+          }
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "temporal",
+          "title": "Week"
+        },
+        "y": {
+          "field": "leadTime",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Lead Time (days)"
+        }
+      },
+      "config": {
+        "theme": "brand-c",
+        "layout": {
+          "width": 720,
+          "height": 360,
+          "padding": 24
+        }
+      },
+      "a11y": {
+        "ariaLabel": "Lead time trend vs SLA band",
+        "description": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+        "narrative": {
+          "summary": "Only the week of May 19 breaches the SLA ceiling; subsequent weeks land comfortably under 5 days.",
+          "keyFindings": [
+            "SLA breach lasts one sprint",
+            "Steady improvement into June"
+          ]
+        },
+        "tableFallback": {
+          "enabled": true,
+          "caption": "Weekly lead time with SLA bounds"
+        }
+      },
+      "portability": {
+        "fallbackType": "table",
+        "tableColumnOrder": [
+          "week",
+          "leadTime",
+          "slaLow",
+          "slaHigh"
+        ],
+        "preferredRenderer": "vega-lite"
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-93a113fe",
+    "specRefCreatedAt": "2026-09-14T07:07:54.585Z",
+    "specRefExpiresAt": "2026-09-14T07:37:54.585Z",
+    "contentHash": "2ce844fa489cf52f6f821391543d560b841f11bc748a012aa29ff585ac9ab03a",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"931\" height=\"468\" viewBox=\"0 0 931 468\"><rect width=\"931\" height=\"468\" fill=\"#F9FAFC\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(54,52)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,305)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,249)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,194)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,138)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,83)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,28)\" x2=\"720\" y2=\"0\" stroke=\"#CED1D6\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Week' for a utc scale with values from Monday, 05 May 2025, 12:00:00 AM UTC to Monday, 16 June 2025, 12:00:00 AM UTC\"><g transform=\"translate(0.5,360.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(17,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(51,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(86,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(120,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(154,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(189,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(223,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(257,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(291,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(326,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(360,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(394,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(429,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(463,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(497,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(531,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(566,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(600,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(634,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(669,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(703,0)\" x2=\"0\" y2=\"5\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(17.142857142857142,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Tue 06</text><text text-anchor=\"middle\" transform=\"translate(51.42857142857142,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Thu 08</text><text text-anchor=\"middle\" transform=\"translate(85.71428571428571,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Sat 10</text><text text-anchor=\"middle\" transform=\"translate(120,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Mon 12</text><text text-anchor=\"middle\" transform=\"translate(154.28571428571428,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Wed 14</text><text text-anchor=\"middle\" transform=\"translate(188.57142857142858,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Fri 16</text><text text-anchor=\"middle\" transform=\"translate(222.85714285714286,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">May 18</text><text text-anchor=\"middle\" transform=\"translate(257.14285714285717,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Tue 20</text><text text-anchor=\"middle\" transform=\"translate(291.42857142857144,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Thu 22</text><text text-anchor=\"middle\" transform=\"translate(325.7142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Sat 24</text><text text-anchor=\"middle\" transform=\"translate(360,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Mon 26</text><text text-anchor=\"middle\" transform=\"translate(394.28571428571433,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Wed 28</text><text text-anchor=\"middle\" transform=\"translate(428.57142857142856,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Fri 30</text><text text-anchor=\"middle\" transform=\"translate(462.8571428571429,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">June</text><text text-anchor=\"middle\" transform=\"translate(497.1428571428571,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Tue 03</text><text text-anchor=\"middle\" transform=\"translate(531.4285714285714,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Thu 05</text><text text-anchor=\"middle\" transform=\"translate(565.7142857142857,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Sat 07</text><text text-anchor=\"middle\" transform=\"translate(600,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Mon 09</text><text text-anchor=\"middle\" transform=\"translate(634.2857142857142,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Wed 11</text><text text-anchor=\"middle\" transform=\"translate(668.5714285714286,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"0\">Fri 13</text><text text-anchor=\"middle\" transform=\"translate(702.8571428571429,15)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Jun 15</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"720\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(360,30)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Week</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Days, Lead Time (days)' for a linear scale with values from 0 to 7\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,305)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,249)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,194)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,138)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,83)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,28)\" x2=\"-5\" y2=\"0\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,363)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,307.6153846153846)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">1</text><text text-anchor=\"end\" transform=\"translate(-7,252.23076923076923)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">2</text><text text-anchor=\"end\" transform=\"translate(-7,196.84615384615384)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">3</text><text text-anchor=\"end\" transform=\"translate(-7,141.46153846153845)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">4</text><text text-anchor=\"end\" transform=\"translate(-7,86.07692307692307)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,30.692307692307672)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">6</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,360)\" x2=\"0\" y2=\"-360\" stroke=\"#BABEC4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-19,180) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#1A1D23\" opacity=\"1\">Days, Lead Time (days)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope layer_0_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-area role-mark layer_0_marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Week: May 05, 2025; Days: 6; slaLow: 4; Band: Target Range\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M0,27.692L120,27.692L240,27.692L360,27.692L480,27.692L600,27.692L720,27.692L720,138.462L600,138.462L480,138.462L360,138.462L240,138.462L120,138.462L0,138.462Z\" fill=\"#A97500\" opacity=\"0.25\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-scope layer_1_pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h720v360h-720Z\"/><g><g class=\"mark-line role-mark layer_1_marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Week: May 05, 2025; Lead Time (days): 5.2; Series: Lead Time\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M0,72C40,60.923,80,49.846,120,38.769C160,27.692,200,5.538,240,5.538C280,5.538,320,62.769,360,77.538C400,92.308,440,93.231,480,99.692C520,106.154,560,116.308,600,116.308C640,116.308,680,102.462,720,88.615\" stroke=\"#580918\" stroke-width=\"3\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend for fill color and stroke color with 2 values: Lead Time, Target Range\"><g transform=\"translate(741,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h112v29h-112Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h112v12.5h-112Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#580918\" stroke=\"#580918\" stroke-width=\"1.5\" opacity=\"0.25\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Lead Time</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h112v12.5h-112Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#A97500\" stroke=\"#A97500\" stroke-width=\"1.5\" opacity=\"0.25\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"#484D58\" opacity=\"1\">Target Range</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-30,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Lead Time vs SLA Band'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#1A1D23\" opacity=\"1\">Lead Time vs SLA Band</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+    "svgHash": "97943268d7805489f42afa7b8426ef5bf6238749f43f567f7b1ebb6c48039514",
+    "svgBytes": 16074,
+    "svgRef": "viz.render-71327496",
+    "render": {
+      "engine": "vega-lite",
+      "width": 931,
+      "height": 468,
+      "theme": "light",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "findings": [],
+    "determinism": {
+      "stable": true,
+      "contentHash": "2ce844fa489cf52f6f821391543d560b841f11bc748a012aa29ff585ac9ab03a",
+      "renderHash": "97943268d7805489f42afa7b8426ef5bf6238749f43f567f7b1ebb6c48039514"
+    },
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "pass",
+      "accuracy": "pass"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 4,
+      "failing": 0
+    },
+    "contrastNote": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A.",
+    "notes": [
+      "no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject"
+    ],
+    "contrastResults": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "verdict": "pass",
+        "measured": true,
+        "evidence": "render",
+        "note": "certify grades the series-to-paint assignment of the rendered chart (the compiled spec rendered through @oods/viz-render), against the requested CSS scope canvas. Scope: light/A."
+      }
+    ]
+  }
+}

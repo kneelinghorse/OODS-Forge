@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import * as echarts from 'echarts';
 import { toEChartsOption } from './echarts-adapter.js';
 import { toVegaLiteSpec } from './vega-lite-adapter.js';
 import { analyzeVizSpec } from '../a11y/data-analysis.js';
@@ -539,4 +540,73 @@ describe('echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty'
       expect(Object.keys(row).sort()).toEqual(['hour', 'region', 'temp']);
     }
   });
+});
+
+
+describe('s199 ranged areas and bars preserve both bounds', () => {
+  for (const trait of ['MarkArea', 'MarkBar']) {
+    for (const axis of ['x', 'y'] as const) {
+      it(`${trait} ${axis}2 stacks a difference above negative lower bounds in every facet`, () => {
+        const other = axis === 'x' ? 'y' : 'x';
+        const rows = [{ category: 'A', panel: 'one', lower: -5, upper: 3 }, { category: 'B', panel: 'two', lower: -8, upper: -2 }];
+        const spec = {
+          $schema: 'https://oods.dev/viz-spec/v1', id: 'negative-band',
+          data: { values: rows }, encoding: {
+            [other]: { field: 'category', trait: 'EncodingX', type: 'nominal' },
+            [axis]: { field: 'lower', trait: 'EncodingY', type: 'quantitative' },
+            // No binding.channel: the encoding KEY is the source of truth.
+            [`${axis}2`]: { field: 'upper', trait: 'EncodingY', type: 'quantitative' },
+          }, marks: [{ trait }], layout: { trait: 'LayoutFacet', columns: { field: 'panel' } },
+          a11y: { description: 'Intervals crossing zero and wholly below it.' },
+        } as NormalizedVizSpec;
+        const option = toEChartsOption(spec);
+        expect(option.series).toHaveLength(4);
+        const source = option.dataset[0].source!;
+        for (let panel = 0; panel < 2; panel++) {
+          const [base, range] = option.series.slice(panel * 2, panel * 2 + 2);
+          expect(base).toMatchObject({ stackStrategy: 'all', silent: true, itemStyle: { color: 'transparent' } });
+          expect(range.stack).toBe(base.stack);
+          expect(range.stackStrategy).toBe('all');
+          expect(range.datasetId).toBe(base.datasetId);
+          expect(base.encode[axis]).toBe('lower');
+          expect(range.encode.tooltip).toEqual(expect.arrayContaining(['lower', 'upper']));
+          expect(range.encode.tooltip).not.toContain(range.encode[axis]);
+          expect(source.map((row) => row[range.encode[axis] as string])).toEqual([8, 6]);
+          expect(source.map((row) => Number(row[base.encode[axis] as string]) + Number(row[range.encode[axis] as string]))).toEqual([3, -2]);
+          expect(option.dataset[panel + 1].transform?.[0].config).toHaveProperty('dimension', 'panel');
+        }
+        const chart = echarts.init(null, undefined, { renderer: 'svg', ssr: true, width: 600, height: 400 });
+        try {
+          chart.setOption({ ...option, animation: false } as echarts.EChartsOption);
+          const models = (chart as any).getModel().getSeries();
+          expect(models.map((model: any) => model.getData().count())).toEqual([1, 1, 1, 1]);
+          // ECharts' actual stack calculation must reach the authored second bound,
+          // including an opposite-sign difference. Merely storing fields is insufficient.
+          for (const [index, upper] of [[1, 3], [3, -2]]) {
+            const data = models[index].getData();
+            expect(data.get(data.getCalculationInfo('stackResultDimension'), 0)).toBe(upper);
+          }
+        } finally { chart.dispose(); }
+        expect(rows[0]).toEqual({ category: 'A', panel: 'one', lower: -5, upper: 3 });
+      });
+    }
+  }
+});
+
+
+it('s199 band fields cannot overwrite authored or linked dataset columns', () => {
+  const spec = ladderSpec(true);
+  spec.datasets = { intervals: [{ site: 'A', lower: -4, upper: 2, __oods_band_0: 'authored' }] };
+  spec.marks = [{ trait: 'MarkBar', from: 'intervals', encodings: {
+    x: { field: 'site', trait: 'EncodingX' }, y: { field: 'lower', trait: 'EncodingY' }, y2: { field: 'upper', trait: 'EncodingY' },
+  } }];
+  const option = toEChartsOption(spec);
+  const [base, range] = option.series;
+  const linked = option.dataset.find(dataset => dataset.id === 'intervals')!;
+  expect(base.datasetId).toBe('intervals');
+  expect(linked.source?.[0].__oods_band_0).toBe('authored');
+  expect(range.encode.y).not.toBe('__oods_band_0');
+  expect(linked.source?.[0][range.encode.y as string]).toBe(6);
+  expect(linked.dimensions).toContain(range.encode.y);
+  expect(option.dataset[0].source).toEqual(spec.data.values);
 });

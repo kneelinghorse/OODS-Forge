@@ -1,0 +1,498 @@
+{
+  "request": {
+    "chartType": "flow_map",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "from": "CA",
+          "to": "NV",
+          "oLng": -120,
+          "oLat": 37,
+          "dLng": -116,
+          "dLat": 39,
+          "volume": 540
+        },
+        {
+          "from": "NV",
+          "to": "CA",
+          "oLng": -116,
+          "oLat": 39,
+          "dLng": -120,
+          "dLat": 37,
+          "volume": 210
+        }
+      ],
+      "originLongitudeField": "oLng",
+      "originLatitudeField": "oLat",
+      "destinationLongitudeField": "dLng",
+      "destinationLatitudeField": "dLat",
+      "strengthField": "volume",
+      "curvature": 0.3
+    },
+    "name": "Trade corridors",
+    "output": {
+      "svg": true,
+      "includeNormalizedSpec": true
+    },
+    "theme": "hc",
+    "brand": "A"
+  },
+  "result": {
+    "status": "ok",
+    "chartType": "flow_map",
+    "mode": "explicit",
+    "echartsSpec": {
+      "backgroundColor": "Canvas",
+      "geo": {
+        "map": "map-viz:flow_map",
+        "roam": false,
+        "label": {
+          "show": false
+        },
+        "itemStyle": {
+          "areaColor": "Canvas",
+          "borderColor": "CanvasText"
+        },
+        "emphasis": {
+          "itemStyle": {
+            "areaColor": "Canvas"
+          }
+        }
+      },
+      "visualMap": {
+        "type": "continuous",
+        "min": 210,
+        "max": 540,
+        "calculable": true,
+        "show": false,
+        "seriesIndex": 0,
+        "inRange": {
+          "lineWidth": [
+            1,
+            6
+          ],
+          "color": []
+        },
+        "textStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        },
+        "backgroundColor": "transparent",
+        "borderColor": "CanvasText",
+        "selectedMode": false,
+        "hoverLink": false,
+        "contentColor": "Canvas",
+        "inactiveColor": "Canvas",
+        "outOfRange": {
+          "color": []
+        },
+        "handleStyle": {
+          "color": "CanvasText",
+          "borderColor": "CanvasText"
+        },
+        "indicatorStyle": {
+          "color": "CanvasText",
+          "borderColor": "CanvasText"
+        },
+        "controller": {
+          "inRange": {
+            "color": []
+          },
+          "outOfRange": {
+            "color": []
+          }
+        }
+      },
+      "series": [
+        {
+          "type": "lines",
+          "coordinateSystem": "geo",
+          "geoIndex": 0,
+          "polyline": false,
+          "name": "Trade corridors",
+          "data": [
+            {
+              "coords": [
+                [
+                  -120,
+                  37
+                ],
+                [
+                  -116,
+                  39
+                ]
+              ],
+              "value": 540,
+              "raw": {
+                "from": "CA",
+                "to": "NV",
+                "oLng": -120,
+                "oLat": 37,
+                "dLng": -116,
+                "dLat": 39,
+                "volume": 540
+              }
+            },
+            {
+              "coords": [
+                [
+                  -116,
+                  39
+                ],
+                [
+                  -120,
+                  37
+                ]
+              ],
+              "value": 210,
+              "raw": {
+                "from": "NV",
+                "to": "CA",
+                "oLng": -116,
+                "oLat": 39,
+                "dLng": -120,
+                "dLat": 37,
+                "volume": 210
+              }
+            }
+          ],
+          "lineStyle": {
+            "color": "CanvasText",
+            "curveness": 0.3,
+            "opacity": 0.6
+          },
+          "tooltip": {}
+        }
+      ],
+      "tooltip": {
+        "trigger": "item"
+      },
+      "aria": {
+        "enabled": true,
+        "description": "Flow map of Trade corridors."
+      },
+      "title": {
+        "text": "Trade corridors",
+        "backgroundColor": "transparent",
+        "borderColor": "CanvasText",
+        "textStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        },
+        "subtextStyle": {
+          "color": "CanvasText",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "textBorderColor": "transparent"
+        }
+      },
+      "usermeta": {
+        "oods": {
+          "specId": "viz:flow_map",
+          "name": "Trade corridors",
+          "a11y": {
+            "description": "Flow map of Trade corridors."
+          },
+          "dimensions": {
+            "width": 860,
+            "height": 520
+          }
+        }
+      },
+      "__registration": {
+        "name": "map-viz:flow_map",
+        "geoJson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "id": "CA",
+              "properties": {
+                "region": "CA",
+                "state_name": "California"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -124,
+                      32
+                    ],
+                    [
+                      -114,
+                      32
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -124,
+                      42
+                    ],
+                    [
+                      -124,
+                      32
+                    ]
+                  ]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "id": "NV",
+              "properties": {
+                "region": "NV",
+                "state_name": "Nevada"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -120,
+                      35
+                    ],
+                    [
+                      -114,
+                      35
+                    ],
+                    [
+                      -114,
+                      42
+                    ],
+                    [
+                      -120,
+                      42
+                    ],
+                    [
+                      -120,
+                      35
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "a11yDescription": "Flow map of Trade corridors.",
+    "warnings": [],
+    "output": {
+      "compact": true,
+      "echarts": true,
+      "reason": "echarts-primary-family",
+      "includeNormalizedSpec": true,
+      "svg": true
+    },
+    "meta": {
+      "renderer": "echarts",
+      "mark": "MarkFlow",
+      "rowCount": 2,
+      "fields": []
+    },
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:flow_map",
+      "name": "Trade corridors",
+      "data": {
+        "values": []
+      },
+      "marks": [
+        {
+          "trait": "MarkFlow"
+        }
+      ],
+      "encoding": {},
+      "a11y": {
+        "description": "Flow map of Trade corridors."
+      }
+    },
+    "tokenCssRef": "tokens.build",
+    "specRef": "viz.render-55e788c1",
+    "specRefCreatedAt": "2026-09-14T08:20:40.763Z",
+    "specRefExpiresAt": "2026-09-14T08:50:40.763Z",
+    "contentHash": "bcc85a8fd1faab8cfeb1ba63789101ad8cf495c539473504f2be45612cc66d77",
+    "svg": "<svg width=\"600\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 600 400\">\n<rect width=\"600\" height=\"400\" x=\"0\" y=\"0\" fill=\"Canvas\"></rect>\n<path d=\"M180 360L420 360L420 40L180 40L180 360Z\" fill=\"Canvas\" stroke=\"CanvasText\" stroke-width=\"0.5\" class=\"oods-zr-0\"></path>\n<path d=\"M276 264L420 264L420 40L276 40L276 264Z\" fill=\"Canvas\" stroke=\"CanvasText\" stroke-width=\"0.5\" class=\"oods-zr-0\"></path>\n<path d=\"M276 200Q304.8 139.2 372 136\" fill=\"none\" pointer-events=\"visible\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M372 136Q343.2 196.8 276 200\" fill=\"none\" pointer-events=\"visible\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M-66.1 -5l132.2 0l0 28l-132.2 0Z\" transform=\"translate(300 20)\" fill=\"none\" pointer-events=\"visible\" stroke=\"CanvasText\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:18px;font-family:sans-serif;font-weight:bold;\" xml:space=\"preserve\" y=\"9\" transform=\"translate(300 20)\" fill=\"CanvasText\">Trade corridors</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nfill:Canvas;\n}\n.oods-zr-1:hover {\ncursor:pointer;\n}\n.oods-zr-2:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+    "svgHash": "32e5e4048e3349fb79e1f2253e2d2211b5e8c442ec9addf4b1dd3fdbac1871cc",
+    "svgBytes": 1389,
+    "svgRef": "viz.render-c4c6d480",
+    "render": {
+      "engine": "echarts",
+      "width": 600,
+      "height": 400,
+      "theme": "hc",
+      "brand": "A"
+    }
+  },
+  "grade": {
+    "status": "ok",
+    "coverage": "certified",
+    "conformant": true,
+    "accuracyRules": [
+      "OODS-V171",
+      "OODS-V172"
+    ],
+    "findings": [
+      {
+        "code": "OODS-A11Y-A11Y-R-14",
+        "severity": "warn",
+        "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+      }
+    ],
+    "a11yNotApplicable": [
+      {
+        "rule": "A11Y-R-01",
+        "preconditionAbsent": "a color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-02",
+        "preconditionAbsent": "a size encoding binding"
+      },
+      {
+        "rule": "A11Y-R-04",
+        "preconditionAbsent": "a bar mark"
+      },
+      {
+        "rule": "A11Y-R-05",
+        "preconditionAbsent": "an x or y positional encoding binding"
+      },
+      {
+        "rule": "A11Y-R-06",
+        "preconditionAbsent": "an area mark"
+      },
+      {
+        "rule": "A11Y-R-10",
+        "preconditionAbsent": "a line or area mark"
+      },
+      {
+        "rule": "A11Y-R-11",
+        "preconditionAbsent": "at least 3 data rows"
+      },
+      {
+        "rule": "A11Y-R-12",
+        "preconditionAbsent": "an x, y or color encoding bound to a field"
+      },
+      {
+        "rule": "A11Y-R-13",
+        "preconditionAbsent": "more than 12 data rows"
+      },
+      {
+        "rule": "A11Y-R-16",
+        "preconditionAbsent": "a filter or zoom interaction"
+      }
+    ],
+    "pillars": {
+      "a11yEquivalence": "pass",
+      "determinism": "pass",
+      "contrast": "exempt",
+      "accuracy": "pass"
+    },
+    "determinism": {
+      "stable": true,
+      "contentHash": "bcc85a8fd1faab8cfeb1ba63789101ad8cf495c539473504f2be45612cc66d77",
+      "renderHash": "32e5e4048e3349fb79e1f2253e2d2211b5e8c442ec9addf4b1dd3fdbac1871cc"
+    },
+    "accuracySummary": {
+      "rulesEvaluated": 2,
+      "failing": 0
+    },
+    "notes": [
+      "MarkFlow is an ECharts-primary mark. The declared operand profile grades the 16 a11y-equivalence rules over the operand-built table and narrative. Error-severity failures or evaluation faults fail pillars.a11yEquivalence; warning findings retain their native severity without failing that pillar. Not-applicable rules appear in a11yNotApplicable[] with the absent precondition named. Conformance also requires stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule.",
+      "This determinism verdict covers the emitted ECharts option and the normalized SVG rendered from two independently emitted projected options. contentHash identifies the first projected option; renderHash identifies the first normalized SVG. Cross-process ECharts renderHash equality is certified only within the runtime axes recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, runtime, renderer/normalizer contract, token version, viewport, or snapshot policy requires requalification."
+    ],
+    "contrastNote": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+    "contrastResults": [
+      {
+        "theme": "hc",
+        "brand": "A",
+        "verdict": "exempt",
+        "measured": false,
+        "evidence": "render",
+        "note": "Contrast is exempt (forced-colors): HC paints retain the declared token scope, including CSS system colors resolved by the user agent. No numeric server-side contrast grade is claimed. Scope: hc/A.",
+        "reason": "forced-colors"
+      }
+    ]
+  }
+}

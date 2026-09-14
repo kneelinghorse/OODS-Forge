@@ -128,8 +128,8 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     }
     for (const retired of sources.ledger.retired) expect(document).toContain(retired.reason);
     expect(document.split('<!-- tool-retirements:start -->\n')[1].split('\n<!-- tool-retirements:end -->')[0]).toBe(renderRetiredTools(sources.ledger.retired));
-    expect(document).toContain('| `"react"` | `"implemented-evidence-complete"` | 109 |');
-    expect(document).toContain('| `"vue"` | `"implemented-evidence-complete"` | 109 |');
+    expect(document).toContain('| `"react"` | `"implemented-evidence-complete"` | 110 |');
+    expect(document).toContain('| `"vue"` | `"implemented-evidence-complete"` | 110 |');
     expect(document).toContain('approvedRuntimeCensus=`null`');
     expect(document).not.toContain('75 React/Vue implementations');
   });

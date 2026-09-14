@@ -7,12 +7,13 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { VIZ_PATTERN_SOURCES, VIZ_RECIPES } from '@oods/viz-core';
 import { canonicalPatternValue, validateVizPatternRegistry, type VizPatternCapability } from '../../../viz-core/src/registry/viz-patterns.js';
 import {
-  ROOT, PATTERN_DOC_PATH, PATTERN_OBSERVATIONS_PATH, PATTERN_REGISTRY_PATH,
+  ROOT, PATTERN_DOC_PATH, PATTERN_REGISTRY_PATH,
   derivePatternRegistry, measurePatternCensus, renderPatternLibrary, writePatternOutputs, type PatternCensusObservations,
 } from '../../../../scripts/product-reality/s195-pattern-census.js';
 
 const read = (file: string) => readFileSync(join(ROOT, file), 'utf8');
 const rows = (): VizPatternCapability[] => JSON.parse(read(PATTERN_REGISTRY_PATH));
+const PATTERN_OBSERVATIONS_PATH = 'artifacts/product-reality/sprint-199/m03/patterns/pattern-observations.json';
 const observations = (): PatternCensusObservations => JSON.parse(read(PATTERN_OBSERVATIONS_PATH));
 const classification = () => JSON.parse(read('packages/viz-core/src/registry/viz-classification.v1.json'));
 const validate = (value: unknown) => validateVizPatternRegistry(value, VIZ_PATTERN_SOURCES, classification().assignments, VIZ_RECIPES.map(recipe => recipe.chartType));
@@ -29,14 +30,14 @@ const freshRoot = () => {
 };
 
 describe('the generated pattern registry retains exact source identity and public pixel evidence (s195 m03)', () => {
-  it('contains exactly 21 classified source identities and four measured scopes per identity', () => {
+  it('contains exactly 23 classified source identities and four measured scopes per identity', () => {
     const registry = rows();
     expect(validate(registry)).toEqual(registry);
-    expect(registry).toHaveLength(21);
+    expect(registry).toHaveLength(23);
     expect(registry.map(row => row.id)).toEqual(VIZ_PATTERN_SOURCES.map(source => source.id));
-    expect(registry.flatMap(row => row.scopes)).toHaveLength(84);
-    expect(registry.filter(row => row.publicSvg)).toHaveLength(8);
-    expect(registry.filter(row => row.status === 'authoring-only')).toHaveLength(13);
+    expect(registry.flatMap(row => row.scopes)).toHaveLength(92);
+    expect(registry.filter(row => row.publicSvg)).toHaveLength(22);
+    expect(registry.filter(row => row.status === 'retired')).toHaveLength(1);
     for (const row of registry) {
       expect(row.family).toBe(classification().assignments.find((entry: any) => entry.id === row.id).family);
       expect(row.specSha256).toBe(createHash('sha256').update(read(row.specPath)).digest('hex'));
@@ -52,8 +53,8 @@ describe('the generated pattern registry retains exact source identity and publi
   it('reproduces registry and documentation from frozen observations with --check', () => {
     expect(JSON.stringify(derivePatternRegistry(observations()), null, 2) + '\n').toBe(read(PATTERN_REGISTRY_PATH));
     expect(renderPatternLibrary(rows())).toBe(read(PATTERN_DOC_PATH));
-    const result = execFileSync(process.execPath, ['--import', 'tsx', 'scripts/product-reality/s195-pattern-census.ts', '--check'], { cwd: ROOT, encoding: 'utf8' });
-    expect(JSON.parse(result)).toMatchObject({ identities: 21, cells: 84, public: 8, authoringOnly: 13 });
+    const result = execFileSync(process.execPath, ['--import', 'tsx', 'scripts/product-reality/s195-pattern-census.ts', '--check', '--observations', PATTERN_OBSERVATIONS_PATH], { cwd: ROOT, encoding: 'utf8' });
+    expect(JSON.parse(result)).toMatchObject({ identities: 23, cells: 92, public: 22, authoringOnly: 0, retired: 1 });
   });
 
   it.each(['missing-row', 'duplicate-row', 'source-hash', 'family', 'known-but-wrong-base-type', 'scope', 'missing-pixels', 'missing-normalized-hash', 'invented-public-status', 'different-certify-operand'])(

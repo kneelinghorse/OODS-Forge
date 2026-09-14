@@ -7,11 +7,11 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const target = path.join(root, 'packages/mcp-server/src/schemas/health.output.json');
 const before = fs.readFileSync(target, 'utf8');
 const schema = JSON.parse(before);
-const fields = ['types', 'patterns', 'families', 'classified', 'coreCells', 'coreSurfaceComplete', 'typedGaps'];
+const fields = ['types', 'patterns', 'families', 'classified', 'coreCells', 'coreSurfaceComplete', 'typedGaps', 'retiredCells'];
 const productReality = schema.properties.productReality;
 productReality.required = [...new Set([...productReality.required, 'viz'])];
 productReality.properties.viz = {
-  description: 'Generated visualization taxonomy and Core Analytics Profile census. Surface-complete cells have public SVG backing; typed gaps retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.',
+  description: 'Generated visualization taxonomy and Core Analytics Profile census. Surface-complete cells have public SVG backing; typed gaps and retired cells retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.',
   type: ['object', 'null'],
   additionalProperties: false,
   required: fields,

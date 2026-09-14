@@ -8,7 +8,7 @@ import type { EChartsOption, TreemapSeriesOption } from 'echarts';
 
 import type { HierarchyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
-import { resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+import { applyHcEchartsChrome, resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
@@ -56,7 +56,9 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
       itemStyle: {
         color: chrome.surfaceFill,
         borderColor: chrome.tileBorder,
+        textStyle: { color: chrome.labelOnCanvas },
       },
+      emphasis: { itemStyle: { color: chrome.surfaceFill, borderColor: chrome.tileBorder, textStyle: { color: chrome.labelOnCanvas } } },
       textStyle: { color: chrome.labelOnCanvas },
     },
     // Node + header labels sit ON the coloured tile → the legibility mechanism (§5), not
@@ -76,7 +78,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
       borderWidth: 1,
       gapWidth: 1,
     },
-    levels: buildTreemapLevels(chrome.tileBorder),
+    levels: buildTreemapLevels(scope.theme === 'hc' ? chrome.background : chrome.tileBorder, scope.theme === 'hc'),
     emphasis: {
       focus: 'ancestor',
       itemStyle: {
@@ -88,7 +90,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
     },
   }) as TreemapSeriesOption;
 
-  return pruneUndefined({
+  return applyHcEchartsChrome(pruneUndefined({
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
@@ -105,7 +107,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
         a11y: spec.a11y,
       }),
     },
-  }) as unknown as EChartsOption;
+  }), chrome, scope) as unknown as EChartsOption;
 }
 
 function buildPalette(scope: TokenScope): readonly string[] {
@@ -175,9 +177,11 @@ function extractInteractionFlags(spec: NormalizedVizSpec): InteractionFlags {
   };
 }
 
-function buildTreemapLevels(borderColor: OodsEchartsChrome['tileBorder']): TreemapSeriesOption['levels'] {
+function buildTreemapLevels(borderColor: OodsEchartsChrome['tileBorder'], hc = false): TreemapSeriesOption['levels'] {
   return [
     {
+      // Prevent native level-0 palette interpolation; nodes carry their own literals.
+      ...(hc ? { color: [] } : {}),
       itemStyle: { borderWidth: 0, gapWidth: 4 },
       upperLabel: { show: false },
     },

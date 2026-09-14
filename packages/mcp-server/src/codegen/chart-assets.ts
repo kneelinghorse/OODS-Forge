@@ -3,7 +3,7 @@ import { chartMatchesPreview, chartNodes } from './chart-declaration.js';
 import { handle as render } from '../tools/viz.render.js';
 import { assertStaticSvg } from '@oods/component-contracts';
 import { canonicalize } from '@oods/artifacts';
-import type { UiSchema, VizRenderInput } from '../schemas/generated.js';
+import type { UiElement, UiSchema, VizRenderInput } from '../schemas/generated.js';
 import { workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Render once at generation time; emitted consumers need no chart runtime. */
@@ -56,6 +56,13 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
         encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
         output: { svg: true, width: 360, height: 200 },
       };
+    } else if (chart.source === 'edge-array') {
+      request = {
+        chartType: 'force_graph', network: edgeArrayToNetwork(record[chart.dataField], chart.edges),
+        name: String(node.props?.title ?? 'Connected relationships'),
+        ...(typeof node.props?.description === 'string' ? { description: node.props.description } : {}),
+        theme, brand: options.brand ?? chart.brand ?? 'A', output: { svg: true, width: 360, height: 200 },
+      };
     } else {
       const rows = record[chart.dataField];
       if (!Array.isArray(rows) || !rows.length || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row))) {
@@ -88,4 +95,28 @@ export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenO
     files.push({ path: 'src/chart-assets.ts', contents: `// Static public viz.render output, keyed by the seed record identity.\nexport const chartSvgByRecord: Readonly<Record<string, string>> = ${JSON.stringify(byRecord, null, 2)};\n` });
   }
   return { schema, files };
+}
+
+/** Preserve authored direction/order; symmetric and repeated pairs share one link. */
+export function edgeArrayToNetwork(rows: unknown, edges: Extract<NonNullable<UiElement['chart']>, { source: 'edge-array' }>['edges']): NonNullable<VizRenderInput['network']> {
+  if (!Array.isArray(rows) || !rows.length) throw new Error('Graph requires non-empty edge-array rows.');
+  const ids = new Set<string>();
+  const seen = new Set<string>();
+  const links: Array<{ source: string; target: string }> = [];
+  const append = (source: string, target: string) => {
+    const key = JSON.stringify([source, target]);
+    if (!seen.has(key)) { seen.add(key); links.push({ source, target }); }
+  };
+  for (const row of rows) {
+    if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error('Graph requires object edge rows.');
+    for (const field of [edges.source, edges.target]) {
+      if (!Object.hasOwn(row, field) || typeof row[field] !== 'string' || !row[field].trim()) throw new Error(`Graph edge field '${field}' requires a non-empty string id.`);
+    }
+    if (edges.bidirectionalField && (!Object.hasOwn(row, edges.bidirectionalField) || typeof row[edges.bidirectionalField] !== 'boolean')) throw new Error(`Graph edge field '${edges.bidirectionalField}' requires a boolean.`);
+    const source = row[edges.source], target = row[edges.target];
+    ids.add(source); ids.add(target); append(source, target);
+    if (edges.bidirectionalField && row[edges.bidirectionalField]) append(target, source);
+  }
+  const nodes = [...ids].sort().map(id => ({ id }));
+  return { nodes: [nodes[0]!, ...nodes.slice(1)], links };
 }

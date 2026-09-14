@@ -15,7 +15,15 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.
 // closeout's generated claims. The fresh sweep is independently audited at close.
 const original = JSON.parse(execFileSync('git', ['show', `${S197_BASE}:packages/mcp-server/registry/runtime-cells.v1.json`], { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }));
 const runtimePath = `${original.receiptRoot}/runtime-cells.v1.json`;
-const raw = (file: string) => readFileSync(path.join(root, file));
+// These are Sprint 197 operands, bound to its recorded readiness correction.
+// Current readiness and package inputs have their own live contract tests.
+const historicalInputs = new Set(['package.json', 'pnpm-lock.yaml', 'cmos/planning/forge-gate2-decision-packet.md', 'scripts/product-reality/s196-release-readiness.ts', 'packages/mcp-server/test/product-reality/release-readiness.s196.spec.ts']);
+const historicalBytes = new Map<string, Buffer>();
+const raw = (file: string): Buffer => {
+  if (!historicalInputs.has(file)) return readFileSync(path.join(root, file));
+  if (!historicalBytes.has(file)) historicalBytes.set(file, execFileSync('git', ['show', `542f9ee6bfceb96e61c5b2b44c241c9375a8596f:${file}`], { cwd: root }));
+  return historicalBytes.get(file)!;
+};
 const readers = [
   ['producer', (runtime: any, read: typeof raw) => verifySprint197Runtime({ runtime, implementationHead: original.head, runtimePath, read })],
   ['independent auditor', (runtime: any, read: typeof raw) => auditSprint197Runtime({ runtime, head: original.head, runtimePath, readFrozen: read })],
