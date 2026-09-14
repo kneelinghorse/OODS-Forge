@@ -1,4 +1,4 @@
-import { assertStaticSvg } from '@oods/component-contracts';
+import { assertStaticSvg, svgCarriesTitle } from '@oods/component-contracts';
 import { formatDateTime, summaryValue } from '@oods/component-contracts';
 import {
   Comment,
@@ -173,8 +173,9 @@ export const VizAreaPreview = defineComponent({
         'data-viz-preview-type': 'area', 'data-viz-rendered': 'true',
         'data-viz-width': props.width, 'data-viz-height': props.height,
         role: 'img', 'aria-label': props.title ?? props.description ?? 'Payment amounts',
+        style: { '--oods-viz-width': `${props.width}px` },
       }, [
-        ...(props.title && !props.svg.includes('role-title-text') ? [h('figcaption', props.title)] : []),
+        ...(props.title && !svgCarriesTitle(props.svg, props.title) ? [h('figcaption', props.title)] : []),
         h('div', { 'data-viz-svg': 'true', innerHTML: assertStaticSvg(props.svg) }),
         ...(props.description ? [h('p', { 'data-viz-description': 'true' }, props.description)] : []),
       ]);

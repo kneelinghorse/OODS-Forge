@@ -8,7 +8,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--cmp-badge-gap, 0.25rem);
-  min-block-size: 1.5rem;
+  min-block-size: var(--cmp-badge-height, 1.5rem);
   box-sizing: border-box;
   padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
   border: 1px solid var(--cmp-badge-border, var(--cmp-border-default, currentColor));
@@ -17,7 +17,7 @@
   color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
   font-size: var(--cmp-badge-font-size, 0.875rem);
   font-weight: var(--cmp-badge-font-weight, 600);
-  line-height: 1.25;
+  line-height: var(--sys-text-line-height-tight, 1.2);
 }
 
 :where([data-oods-component='StatusBadge'])[data-status='active'],
@@ -57,14 +57,14 @@
   display: grid;
   gap: var(--cmp-spacing-stack-sm, 0.75rem);
   margin: 0;
-  padding-inline-start: 1.5rem;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
 }
 
 :where(
   [data-oods-component='StatusTimeline'],
   [data-oods-component='AuditTimeline']
 ) :where(article, li) {
-  border-inline-start: 2px solid var(--cmp-border-subtle, currentColor);
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-border-subtle, currentColor);
   padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
 }
 
@@ -86,7 +86,7 @@
 }
 
 :where([data-oods-component='CancellationSummary']) :where(dt, [data-summary-term]) {
-  font-weight: 600;
+  font-weight: var(--ref-typography-weights-semibold, 600);
 }
 
 :where([data-oods-component='CancellationSummary']) :where(dd, [data-summary-value]) {
@@ -104,7 +104,7 @@
   box-sizing: border-box;
   padding: var(--cmp-input-padding-block, 0.625rem) var(--cmp-input-padding-inline, 0.75rem);
   border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
-  border-radius: var(--cmp-input-radius, 0.375rem);
+  border-radius: var(--cmp-input-radius, 0.5rem);
   background: var(--cmp-input-background, Canvas);
   color: var(--cmp-input-text, CanvasText);
   font: inherit;
@@ -113,12 +113,12 @@
 :where([data-oods-component='SearchInput']) button,
 :where([data-oods-component='PaginationBar']) button {
   display: inline-flex;
-  min-inline-size: 2.5rem;
-  min-block-size: 2.5rem;
+  min-inline-size: var(--cmp-button-height, 2.5rem);
+  min-block-size: var(--cmp-button-height, 2.5rem);
   align-items: center;
   justify-content: center;
   border: 1px solid var(--cmp-button-border, var(--cmp-border-default, currentColor));
-  border-radius: var(--cmp-button-radius, 0.375rem);
+  border-radius: var(--cmp-button-radius, 0.5rem);
   background: var(--cmp-button-background, Canvas);
   color: var(--cmp-button-text, CanvasText);
   font: inherit;
@@ -142,14 +142,6 @@
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where(
-  [data-oods-component='SearchInput'] input,
-  [data-oods-component='SearchInput'] button,
-  [data-oods-component='PaginationBar'] button
-):focus-visible {
-  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, Highlight);
-  outline-offset: 2px;
-}
 
 @media (forced-colors: active) {
   :where(

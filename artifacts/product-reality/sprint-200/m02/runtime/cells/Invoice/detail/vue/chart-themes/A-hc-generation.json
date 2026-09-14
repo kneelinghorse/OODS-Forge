@@ -1,0 +1,1072 @@
+{
+  "request": {
+    "schema": {
+      "version": "2026.02",
+      "screens": [
+        {
+          "id": "screen-detail-13",
+          "component": "Stack",
+          "layout": {
+            "type": "stack",
+            "gapToken": "cluster-default"
+          },
+          "children": [
+            {
+              "id": "detail-header-1",
+              "component": "Stack",
+              "layout": {
+                "type": "stack",
+                "align": "space-between",
+                "gapToken": "stack-default"
+              },
+              "style": {
+                "spacingToken": "inset-default"
+              },
+              "children": [
+                {
+                  "id": "slot-header-2",
+                  "component": "Stack",
+                  "meta": {
+                    "intent": "slot:header",
+                    "label": "header"
+                  },
+                  "children": [
+                    {
+                      "id": "primary-header-25",
+                      "component": "DetailHeader",
+                      "props": {
+                        "titleField": "invoice_id",
+                        "headingLevel": 2
+                      }
+                    },
+                    {
+                      "id": "ve-header-24",
+                      "component": "VizMarkPreview",
+                      "props": {
+                        "title": "Invoice line item amounts",
+                        "description": "Line-item amounts in minor currency units; matching descriptions are summed."
+                      },
+                      "chart": {
+                        "chartType": "bar",
+                        "source": "record-array",
+                        "dataField": "line_items",
+                        "encodings": {
+                          "x": {
+                            "field": "description",
+                            "title": "Line item"
+                          },
+                          "y": {
+                            "field": "amount_minor",
+                            "aggregate": "sum",
+                            "title": "Amount (minor units)"
+                          }
+                        },
+                        "sampleRows": [
+                          {
+                            "description": "Scale plan",
+                            "quantity": 1,
+                            "amount_minor": 284000,
+                            "unit_amount_minor": 284000
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "layout": {
+                    "type": "stack",
+                    "gapToken": "cluster-default"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "detail-body-10",
+              "component": "Card",
+              "layout": {
+                "type": "stack",
+                "gapToken": "cluster-default"
+              },
+              "children": [
+                {
+                  "id": "detail-tabs-9",
+                  "component": "Tabs",
+                  "children": [
+                    {
+                      "id": "detail-tabs-9-read-fields",
+                      "component": "Stack",
+                      "props": {
+                        "label": "Details"
+                      },
+                      "children": [
+                        {
+                          "id": "detail-tabs-9-total_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-total_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Total"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-total_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "total_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-balance_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-balance_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Balance"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-balance_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "balance_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-total_refunded_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-total_refunded_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Total refunded"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-total_refunded_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "total_refunded_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-credit_memo_balance_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-credit_memo_balance_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Credit memo balance"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-credit_memo_balance_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "credit_memo_balance_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-last_event_at-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-last_event_at-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Last event at"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-last_event_at-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "last_event_at"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-subscription_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-subscription_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Subscription id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-subscription_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "subscription_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-provider-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-provider-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Provider"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-provider-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "provider"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-provider_invoice_id-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-provider_invoice_id-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Provider invoice id"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-provider_invoice_id-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "provider_invoice_id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-billing_contact_name-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-billing_contact_name-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Billing contact name"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-billing_contact_name-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "billing_contact_name"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-billing_contact_email-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-billing_contact_email-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Billing contact email"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-billing_contact_email-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "billing_contact_email"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-tax_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-tax_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Tax"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-tax_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "tax_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-discount_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-discount_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Discount"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-discount_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "discount_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-subtotal_minor-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-subtotal_minor-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Subtotal"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-subtotal_minor-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "BillingSummaryBadge",
+                              "props": {
+                                "amountField": "subtotal_minor",
+                                "currencyField": "currency",
+                                "minorUnits": 100,
+                                "showInterval": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-portal_url-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-portal_url-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Portal url"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-portal_url-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "portal_url"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-dunning_step-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-dunning_step-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Dunning step"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-dunning_step-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "dunning_step"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "detail-tabs-9-payment_source-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "detail-tabs-9-payment_source-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Payment source"
+                              }
+                            },
+                            {
+                              "id": "detail-tabs-9-payment_source-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "payment_source"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-0-4",
+                          "component": "Stack",
+                          "meta": {
+                            "intent": "slot:tab-0",
+                            "label": "tab-0",
+                            "notes": "pattern-group:status-timeline"
+                          },
+                          "layout": {
+                            "type": "stack",
+                            "gapToken": "cluster-tight"
+                          },
+                          "children": [
+                            {
+                              "id": "pg-status-timeline-27-read-field",
+                              "component": "Stack",
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-27-label",
+                                  "component": "Text",
+                                  "props": {
+                                    "as": "strong",
+                                    "content": "Status"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-27-value",
+                                  "meta": {
+                                    "intent": "read-only-field"
+                                  },
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "status"
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id": "pg-status-timeline-28-read-field",
+                              "component": "Stack",
+                              "children": [
+                                {
+                                  "id": "pg-status-timeline-28-label",
+                                  "component": "Text",
+                                  "props": {
+                                    "as": "strong",
+                                    "content": "Updated at"
+                                  }
+                                },
+                                {
+                                  "id": "pg-status-timeline-28-value",
+                                  "meta": {
+                                    "intent": "read-only-field"
+                                  },
+                                  "component": "Text",
+                                  "props": {
+                                    "field": "updated_at"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": "slot-tab-2-8-read-field",
+                          "component": "Stack",
+                          "children": [
+                            {
+                              "id": "slot-tab-2-8-label",
+                              "component": "Text",
+                              "props": {
+                                "as": "strong",
+                                "content": "Created at"
+                              }
+                            },
+                            {
+                              "id": "slot-tab-2-8-value",
+                              "meta": {
+                                "intent": "read-only-field"
+                              },
+                              "component": "Text",
+                              "props": {
+                                "field": "created_at"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "props": {
+                    "ariaLabel": "Record details"
+                  }
+                }
+              ]
+            }
+          ],
+          "bindings": {
+            "onEdit": "handleEdit",
+            "onDelete": "handleDelete",
+            "onViewTimeline": "handleViewTimeline"
+          }
+        }
+      ],
+      "objectSchema": {
+        "invoice_number": {
+          "type": "string",
+          "required": true,
+          "description": "Human readable invoice identifier presented to customers.",
+          "semanticType": "billing.invoice.number"
+        },
+        "status": {
+          "type": "string",
+          "required": true,
+          "description": "Canonical invoice status after provider mapping.",
+          "enum": [
+            "draft",
+            "posted",
+            "open",
+            "processing",
+            "past_due",
+            "paid",
+            "refunded",
+            "uncollectible",
+            "void"
+          ],
+          "semanticType": "billing.invoice.status"
+        },
+        "provider_status": {
+          "type": "string",
+          "required": false,
+          "description": "Original provider reported status or badge.",
+          "semanticType": "billing.invoice.provider_status"
+        },
+        "issued_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp when the invoice was finalized or posted.",
+          "semanticType": "billing.invoice.issued_at"
+        },
+        "due_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Payment due timestamp derived from payment terms.",
+          "semanticType": "billing.invoice.due_at"
+        },
+        "paid_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp when full payment cleared.",
+          "semanticType": "billing.invoice.paid_at"
+        },
+        "total_minor": {
+          "type": "integer",
+          "required": true,
+          "description": "Total amount due expressed in minor currency units.",
+          "semanticType": "billing.invoice.total_minor"
+        },
+        "balance_minor": {
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "description": "Remaining amount outstanding in minor units.",
+          "semanticType": "billing.invoice.balance_minor"
+        },
+        "currency": {
+          "type": "string",
+          "required": true,
+          "description": "ISO 4217 currency for the invoice.",
+          "semanticType": "billing.invoice.currency"
+        },
+        "payment_terms": {
+          "type": "string",
+          "required": false,
+          "description": "Payment term label describing when payment is expected.",
+          "enum": [
+            "due_upon_receipt",
+            "net_15",
+            "net_30",
+            "net_45"
+          ],
+          "semanticType": "billing.invoice.payment_terms"
+        },
+        "collection_state": {
+          "type": "string",
+          "required": false,
+          "description": "Dunning phase or retry program detail presented to success teams.",
+          "semanticType": "billing.invoice.collection_state"
+        },
+        "last_reminder_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp of most recent payment reminder issued to customer.",
+          "semanticType": "billing.invoice.last_reminder_at"
+        },
+        "aging_bucket_days": {
+          "type": "integer",
+          "required": false,
+          "description": "Number of days outstanding grouped for aging reports.",
+          "semanticType": "billing.invoice.aging_bucket_days"
+        },
+        "attempt_count": {
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "description": "Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+          "semanticType": "billing.invoice.attempt_count"
+        },
+        "next_payment_attempt": {
+          "type": "datetime",
+          "required": false,
+          "description": "When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.",
+          "semanticType": "billing.invoice.next_payment_attempt"
+        },
+        "memo": {
+          "type": "string",
+          "required": false,
+          "description": "Internal finance note or customer visible memo.",
+          "semanticType": "billing.invoice.memo"
+        },
+        "refundable_until": {
+          "type": "datetime",
+          "required": false,
+          "description": "Date when refund eligibility window ends for this record.",
+          "semanticType": "billing.refund.window_end"
+        },
+        "refund_policy_url": {
+          "type": "string",
+          "required": false,
+          "description": "Link to customer facing refund or cancellation policy.",
+          "semanticType": "billing.refund.policy_link"
+        },
+        "total_refunded_minor": {
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "description": "Cumulative amount refunded in minor currency units.",
+          "semanticType": "billing.refund.total_minor"
+        },
+        "credit_memo_balance_minor": {
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "description": "Remaining credit memo balance that can be applied to invoices.",
+          "semanticType": "billing.refund.credit_memo_balance_minor"
+        },
+        "credit_memo_type": {
+          "type": "string",
+          "required": false,
+          "description": "Category of credit memo tied to business justification.",
+          "enum": [
+            "service_failure",
+            "retention_incentive",
+            "goodwill"
+          ],
+          "semanticType": "billing.refund.credit_memo_type"
+        },
+        "last_refund_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp when the most recent refund was issued.",
+          "semanticType": "billing.refund.last_refund_at"
+        },
+        "requires_manager_approval": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Indicates if finance manager approval is required before issuing refund.",
+          "semanticType": "billing.refund.requires_manager_approval"
+        },
+        "notes": {
+          "type": "string",
+          "required": false,
+          "description": "Internal commentary about refund actions or policy exceptions.",
+          "semanticType": "billing.refund.notes"
+        },
+        "created_at": {
+          "type": "datetime",
+          "required": true,
+          "description": "Timestamp recording when the entity was first created.",
+          "semanticType": "audit.created_at"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the most recent modification, when available.",
+          "semanticType": "audit.updated_at"
+        },
+        "last_event": {
+          "type": "string",
+          "required": true,
+          "description": "Lifecycle event associated with the most recent timestamp mutation.",
+          "enum": [
+            "created",
+            "posted",
+            "payment_initiated",
+            "payment_cleared",
+            "payment_failed",
+            "voided",
+            "written_off"
+          ],
+          "semanticType": "audit.event.type"
+        },
+        "last_event_at": {
+          "type": "datetime",
+          "required": false,
+          "description": "Timestamp for the lifecycle event captured in last_event.",
+          "semanticType": "audit.event.timestamp"
+        },
+        "invoice_id": {
+          "type": "string",
+          "required": true,
+          "description": "Primary identifier for the invoice inside the billing domain.",
+          "semanticType": "billing.invoice.id"
+        },
+        "subscription_id": {
+          "type": "string",
+          "required": true,
+          "description": "Subscription identifier this invoice is associated with.",
+          "semanticType": "billing.invoice.subscription_id"
+        },
+        "provider": {
+          "type": "string",
+          "required": true,
+          "description": "Source system providing invoice data.",
+          "semanticType": "billing.invoice.provider"
+        },
+        "provider_invoice_id": {
+          "type": "string",
+          "required": false,
+          "description": "Native provider identifier retained for audit trails.",
+          "semanticType": "billing.invoice.provider_id"
+        },
+        "billing_contact_name": {
+          "type": "string",
+          "required": false,
+          "description": "Customer billing contact receiving the invoice.",
+          "semanticType": "billing.invoice.billing_contact_name"
+        },
+        "billing_contact_email": {
+          "type": "email",
+          "required": false,
+          "description": "Email address for the billing contact.",
+          "semanticType": "billing.invoice.billing_contact_email"
+        },
+        "tax_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Tax amount collected on the invoice in minor currency units.",
+          "semanticType": "billing.invoice.tax_minor"
+        },
+        "discount_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Total discounts applied to the invoice in minor units.",
+          "semanticType": "billing.invoice.discount_minor"
+        },
+        "subtotal_minor": {
+          "type": "integer",
+          "required": false,
+          "description": "Subtotal before discounts and tax in minor units.",
+          "semanticType": "billing.invoice.subtotal_minor"
+        },
+        "line_items": {
+          "type": "InvoiceLineItem[]",
+          "required": false,
+          "default": [],
+          "description": "Normalized line items with quantity, amount_minor, and description fields.",
+          "semanticType": "billing.invoice.line_items"
+        },
+        "attachments": {
+          "type": "AssetReference[]",
+          "required": false,
+          "default": [],
+          "description": "Supporting documents or credit memos associated with the invoice.",
+          "semanticType": "billing.invoice.attachments"
+        },
+        "portal_url": {
+          "type": "string",
+          "required": false,
+          "description": "Link to the hosted invoice or customer billing portal.",
+          "semanticType": "billing.invoice.portal_url"
+        },
+        "dunning_step": {
+          "type": "string",
+          "required": false,
+          "description": "Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name.",
+          "semanticType": "billing.invoice.dunning_step"
+        },
+        "payment_source": {
+          "type": "string",
+          "required": false,
+          "description": "Payment method used or expected (card, ach, wire).",
+          "semanticType": "billing.invoice.payment_source"
+        }
+      }
+    },
+    "framework": "vue",
+    "profile": "build",
+    "options": {
+      "styling": "tokens",
+      "typescript": true,
+      "brand": "A",
+      "theme": "hc"
+    }
+  },
+  "response": {
+    "status": "ok",
+    "framework": "vue",
+    "artifact": {
+      "schemaVersion": "1.0.0",
+      "framework": "vue",
+      "files": [
+        {
+          "path": "src/GeneratedUI.vue",
+          "contents": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"align-items: space-between; display: flex; flex-direction: column; gap: var(--ref-space-stack-default); padding: var(--ref-space-inset-default)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <DetailHeader id=\"primary-header-25\" data-oods-component=\"DetailHeader\" :title=\"invoiceId\" :level=\"2\" />\n                    <VizMarkPreview id=\"ve-header-24\" data-oods-component=\"VizMarkPreview\" :svg=\"svg ?? defaultChartSvg\" description=\"Line-item amounts in minor currency units; matching descriptions are summed.\" :height=\"400\" title=\"Invoice line item amounts\" :width=\"720\" />\n                  </Stack>\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n            <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" :items=\"[{'id':'detail-tabs-9-read-fields','label':'Details','panel':''}]\">\n                    <template #panel=\"{ item }\">\n                      <template v-if=\"item.id === 'detail-tabs-9-read-fields'\">\n                        <Stack id=\"detail-tabs-9-read-fields\" data-oods-component=\"Stack\">\n                          <Stack id=\"detail-tabs-9-total_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-total_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Total\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-total_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"totalMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-balance_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-balance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Balance\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-balance_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"balanceMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-total_refunded_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-total_refunded_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Total refunded\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-total_refunded_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"totalRefundedMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-credit_memo_balance_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-credit_memo_balance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Credit memo balance\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-credit_memo_balance_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"creditMemoBalanceMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                              <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(lastEvent, \"string\", true) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                              <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(lastEventAt, \"datetime\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-subscription_id-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-subscription_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subscription id\" />\n                              <Text id=\"detail-tabs-9-subscription_id-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(subscriptionId, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-provider-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-provider-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider\" />\n                              <Text id=\"detail-tabs-9-provider-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(provider, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-provider_invoice_id-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-provider_invoice_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider invoice id\" />\n                              <Text id=\"detail-tabs-9-provider_invoice_id-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(providerInvoiceId, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-billing_contact_name-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-billing_contact_name-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Billing contact name\" />\n                              <Text id=\"detail-tabs-9-billing_contact_name-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(billingContactName, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-billing_contact_email-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-billing_contact_email-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Billing contact email\" />\n                              <Text id=\"detail-tabs-9-billing_contact_email-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(billingContactEmail, \"email\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-tax_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-tax_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Tax\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-tax_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"taxMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-discount_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-discount_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Discount\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-discount_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"discountMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-subtotal_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-subtotal_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subtotal\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-subtotal_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"subtotalMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-portal_url-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-portal_url-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Portal url\" />\n                              <Text id=\"detail-tabs-9-portal_url-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(portalUrl, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-dunning_step-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-dunning_step-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Dunning step\" />\n                              <Text id=\"detail-tabs-9-dunning_step-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(dunningStep, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-payment_source-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-payment_source-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Payment source\" />\n                              <Text id=\"detail-tabs-9-payment_source-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(paymentSource, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n                              <Stack id=\"pg-status-timeline-27-read-field\" data-oods-component=\"Stack\">\n                                    <Text id=\"pg-status-timeline-27-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Status\" />\n                                    <Text id=\"pg-status-timeline-27-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(status, \"string\", true) }}</Text>\n                                  </Stack>\n                              <Stack id=\"pg-status-timeline-28-read-field\" data-oods-component=\"Stack\">\n                                    <Text id=\"pg-status-timeline-28-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                    <Text id=\"pg-status-timeline-28-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(updatedAt, \"datetime\", false) }}</Text>\n                                  </Stack>\n                            </Stack>\n                          <Stack id=\"slot-tab-2-8-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"slot-tab-2-8-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                              <Text id=\"slot-tab-2-8-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(createdAt, \"datetime\", false) }}</Text>\n                            </Stack>\n                        </Stack>\n                      </template>\n                    </template>\n                  </Tabs>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n    <button type=\"button\" data-oods-action=\"handleViewTimeline\" @click=\"handleViewTimeline()\">View timeline</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { formatReadOnlyValue } from '@oods/component-contracts';\nimport { BillingSummaryBadge, Card, DetailHeader, Stack, Tabs, Text, VizMarkPreview } from '@oods/components-vue';\nimport '@oods/component-styles/css';\nconst defaultChartSvg = \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"730\\\" height=\\\"410\\\" viewBox=\\\"0 0 730 410\\\"><rect width=\\\"730\\\" height=\\\"410\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(83,38)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h642v265h-642Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,177)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,88)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,221)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,133)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,44)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\\\"><g transform=\\\"translate(0.5,265.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(321,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(320.5,7) rotate(270) translate(0,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Scale plan</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(321,100)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Line item</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,177)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,88)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,221)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,133)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,44)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,268)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,179.66666666666669)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">100,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,91.33333333333334)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">200,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">300,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,223.83333333333334)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">50,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,135.5)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">150,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,47.16666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">250,000</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"0\\\" y2=\\\"-265\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-67,132.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Amount (minor units)</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-rect role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"rect mark container\\\"><path aria-label=\\\"Line item: Scale plan; Amount (minor units): 284000\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"bar\\\" d=\\\"M32.099999999999966,14.133333333333336h577.8000000000001v250.86666666666667h-577.8000000000001Z\\\" fill=\\\"CanvasText\\\"/></g><g class=\\\"mark-group role-title\\\"><g transform=\\\"translate(-78.00000000000001,-33)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-text role-title-text\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"title\\\" aria-label=\\\"Title text 'Invoice line item amounts'\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,19)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"24px\\\" font-weight=\\\"600\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Invoice line item amounts</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\";\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\ninterface Props {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: 'service_failure' | 'retention_incentive' | 'goodwill';\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'posted' | 'payment_initiated' | 'payment_cleared' | 'payment_failed' | 'voided' | 'written_off';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: 'due_upon_receipt' | 'net_15' | 'net_30' | 'net_45';\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: 'draft' | 'posted' | 'open' | 'processing' | 'past_due' | 'paid' | 'refunded' | 'uncollectible' | 'void';\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { actions, agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt, svg } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n/* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+          "contentHash": "sha256:062830b94e0f0c52176598958062410dc76dc0729a357aee72d7c36884d38acd"
+        },
+        {
+          "path": "src/charts/bar-001.svg",
+          "contents": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"730\" height=\"410\" viewBox=\"0 0 730 410\"><rect width=\"730\" height=\"410\" fill=\"Canvas\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(83,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h642v265h-642Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,265)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,177)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,88)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,221)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,133)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,44)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\"><g transform=\"translate(0.5,265.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(321,0)\" x2=\"0\" y2=\"5\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(320.5,7) rotate(270) translate(0,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">Scale plan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"642\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(321,100)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Line item</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,265)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,177)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,88)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,221)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,133)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,44)\" x2=\"-5\" y2=\"0\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,268)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,179.66666666666669)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">100,000</text><text text-anchor=\"end\" transform=\"translate(-7,91.33333333333334)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">200,000</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">300,000</text><text text-anchor=\"end\" transform=\"translate(-7,223.83333333333334)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">50,000</text><text text-anchor=\"end\" transform=\"translate(-7,135.5)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">150,000</text><text text-anchor=\"end\" transform=\"translate(-7,47.16666666666666)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"10px\" fill=\"CanvasText\" opacity=\"1\">250,000</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,265)\" x2=\"0\" y2=\"-265\" stroke=\"CanvasText\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-67,132.5) rotate(-90) translate(0,-2)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"CanvasText\" opacity=\"1\">Amount (minor units)</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Line item: Scale plan; Amount (minor units): 284000\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M32.099999999999966,14.133333333333336h577.8000000000001v250.86666666666667h-577.8000000000001Z\" fill=\"CanvasText\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-78.00000000000001,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Invoice line item amounts'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"CanvasText\" opacity=\"1\">Invoice line item amounts</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+          "contentHash": "sha256:1e768ac70798d81f44374a26e441e92aaa419da1494d6a8c4e56027c45131794"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "@oods/component-contracts",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/component-styles",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/components-vue",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "vue",
+          "version": "3.5.42",
+          "kind": "peerDependency"
+        }
+      ],
+      "actions": [
+        {
+          "name": "handleDelete",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onDelete"
+            }
+          ]
+        },
+        {
+          "name": "handleEdit",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onEdit"
+            }
+          ]
+        },
+        {
+          "name": "handleViewTimeline",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onViewTimeline"
+            }
+          ]
+        }
+      ],
+      "contentHash": "sha256:b119191d82e3c55716504d8f337df0e3b9f00b320f58a693c668466fee100c64"
+    },
+    "code": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"align-items: space-between; display: flex; flex-direction: column; gap: var(--ref-space-stack-default); padding: var(--ref-space-inset-default)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <DetailHeader id=\"primary-header-25\" data-oods-component=\"DetailHeader\" :title=\"invoiceId\" :level=\"2\" />\n                    <VizMarkPreview id=\"ve-header-24\" data-oods-component=\"VizMarkPreview\" :svg=\"svg ?? defaultChartSvg\" description=\"Line-item amounts in minor currency units; matching descriptions are summed.\" :height=\"400\" title=\"Invoice line item amounts\" :width=\"720\" />\n                  </Stack>\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n            <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" :items=\"[{'id':'detail-tabs-9-read-fields','label':'Details','panel':''}]\">\n                    <template #panel=\"{ item }\">\n                      <template v-if=\"item.id === 'detail-tabs-9-read-fields'\">\n                        <Stack id=\"detail-tabs-9-read-fields\" data-oods-component=\"Stack\">\n                          <Stack id=\"detail-tabs-9-total_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-total_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Total\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-total_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"totalMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-balance_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-balance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Balance\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-balance_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"balanceMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-total_refunded_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-total_refunded_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Total refunded\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-total_refunded_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"totalRefundedMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-credit_memo_balance_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-credit_memo_balance_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Credit memo balance\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-credit_memo_balance_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"creditMemoBalanceMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-last_event-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-last_event-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event\" />\n                              <Text id=\"detail-tabs-9-last_event-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(lastEvent, \"string\", true) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-last_event_at-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-last_event_at-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Last event at\" />\n                              <Text id=\"detail-tabs-9-last_event_at-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(lastEventAt, \"datetime\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-subscription_id-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-subscription_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subscription id\" />\n                              <Text id=\"detail-tabs-9-subscription_id-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(subscriptionId, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-provider-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-provider-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider\" />\n                              <Text id=\"detail-tabs-9-provider-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(provider, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-provider_invoice_id-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-provider_invoice_id-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Provider invoice id\" />\n                              <Text id=\"detail-tabs-9-provider_invoice_id-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(providerInvoiceId, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-billing_contact_name-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-billing_contact_name-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Billing contact name\" />\n                              <Text id=\"detail-tabs-9-billing_contact_name-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(billingContactName, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-billing_contact_email-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-billing_contact_email-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Billing contact email\" />\n                              <Text id=\"detail-tabs-9-billing_contact_email-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(billingContactEmail, \"email\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-tax_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-tax_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Tax\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-tax_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"taxMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-discount_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-discount_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Discount\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-discount_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"discountMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-subtotal_minor-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-subtotal_minor-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Subtotal\" />\n                              <BillingSummaryBadge id=\"detail-tabs-9-subtotal_minor-value\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :showInterval=\"false\" :amount=\"subtotalMinor\" :currency=\"currency\" />\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-portal_url-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-portal_url-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Portal url\" />\n                              <Text id=\"detail-tabs-9-portal_url-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(portalUrl, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-dunning_step-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-dunning_step-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Dunning step\" />\n                              <Text id=\"detail-tabs-9-dunning_step-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(dunningStep, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"detail-tabs-9-payment_source-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"detail-tabs-9-payment_source-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Payment source\" />\n                              <Text id=\"detail-tabs-9-payment_source-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(paymentSource, \"string\", false) }}</Text>\n                            </Stack>\n                          <Stack id=\"slot-tab-0-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n                              <Stack id=\"pg-status-timeline-27-read-field\" data-oods-component=\"Stack\">\n                                    <Text id=\"pg-status-timeline-27-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Status\" />\n                                    <Text id=\"pg-status-timeline-27-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(status, \"string\", true) }}</Text>\n                                  </Stack>\n                              <Stack id=\"pg-status-timeline-28-read-field\" data-oods-component=\"Stack\">\n                                    <Text id=\"pg-status-timeline-28-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Updated at\" />\n                                    <Text id=\"pg-status-timeline-28-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(updatedAt, \"datetime\", false) }}</Text>\n                                  </Stack>\n                            </Stack>\n                          <Stack id=\"slot-tab-2-8-read-field\" data-oods-component=\"Stack\">\n                              <Text id=\"slot-tab-2-8-label\" data-oods-component=\"Text\" as=\"strong\" content=\"Created at\" />\n                              <Text id=\"slot-tab-2-8-value\" data-oods-component=\"Text\">{{ formatReadOnlyValue(createdAt, \"datetime\", false) }}</Text>\n                            </Stack>\n                        </Stack>\n                      </template>\n                    </template>\n                  </Tabs>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n    <button type=\"button\" data-oods-action=\"handleViewTimeline\" @click=\"handleViewTimeline()\">View timeline</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { formatReadOnlyValue } from '@oods/component-contracts';\nimport { BillingSummaryBadge, Card, DetailHeader, Stack, Tabs, Text, VizMarkPreview } from '@oods/components-vue';\nimport '@oods/component-styles/css';\nconst defaultChartSvg = \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\" xmlns:xlink=\\\"http://www.w3.org/1999/xlink\\\" version=\\\"1.1\\\" class=\\\"marks\\\" width=\\\"730\\\" height=\\\"410\\\" viewBox=\\\"0 0 730 410\\\"><rect width=\\\"730\\\" height=\\\"410\\\" fill=\\\"Canvas\\\"/><g fill=\\\"none\\\" stroke-miterlimit=\\\"10\\\" transform=\\\"translate(83,38)\\\"><g class=\\\"mark-group role-frame root\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"group mark container\\\"><g transform=\\\"translate(0,0)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h642v265h-642Z\\\"/><g><g class=\\\"mark-group role-axis\\\" aria-hidden=\\\"true\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-grid\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,177)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,88)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,221)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,133)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,44)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"X-axis titled 'Line item' for a discrete scale with 1 value: Scale plan\\\"><g transform=\\\"translate(0.5,265.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(321,0)\\\" x2=\\\"0\\\" y2=\\\"5\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(320.5,7) rotate(270) translate(0,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Scale plan</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,0)\\\" x2=\\\"642\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(321,100)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Line item</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-group role-axis\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"axis\\\" aria-label=\\\"Y-axis titled 'Amount (minor units)' for a linear scale with values from 0 to 300,000\\\"><g transform=\\\"translate(0.5,0.5)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-rule role-axis-tick\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,177)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,88)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,0)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,221)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,133)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/><line transform=\\\"translate(0,44)\\\" x2=\\\"-5\\\" y2=\\\"0\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-label\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,268)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">0</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,179.66666666666669)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">100,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,91.33333333333334)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">200,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,3)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">300,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,223.83333333333334)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">50,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,135.5)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">150,000</text><text text-anchor=\\\"end\\\" transform=\\\"translate(-7,47.16666666666666)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"10px\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">250,000</text></g><g class=\\\"mark-rule role-axis-domain\\\" pointer-events=\\\"none\\\"><line transform=\\\"translate(0,265)\\\" x2=\\\"0\\\" y2=\\\"-265\\\" stroke=\\\"CanvasText\\\" stroke-width=\\\"1\\\" opacity=\\\"1\\\"/></g><g class=\\\"mark-text role-axis-title\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"middle\\\" transform=\\\"translate(-67,132.5) rotate(-90) translate(0,-2)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"11px\\\" font-weight=\\\"bold\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Amount (minor units)</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g><g class=\\\"mark-rect role-mark marks\\\" role=\\\"graphics-object\\\" aria-roledescription=\\\"rect mark container\\\"><path aria-label=\\\"Line item: Scale plan; Amount (minor units): 284000\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"bar\\\" d=\\\"M32.099999999999966,14.133333333333336h577.8000000000001v250.86666666666667h-577.8000000000001Z\\\" fill=\\\"CanvasText\\\"/></g><g class=\\\"mark-group role-title\\\"><g transform=\\\"translate(-78.00000000000001,-33)\\\"><path class=\\\"background\\\" aria-hidden=\\\"true\\\" d=\\\"M0,0h0v0h0Z\\\" pointer-events=\\\"none\\\"/><g><g class=\\\"mark-text role-title-text\\\" role=\\\"graphics-symbol\\\" aria-roledescription=\\\"title\\\" aria-label=\\\"Title text 'Invoice line item amounts'\\\" pointer-events=\\\"none\\\"><text text-anchor=\\\"start\\\" transform=\\\"translate(0,19)\\\" font-family=\\\"'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif\\\" font-size=\\\"24px\\\" font-weight=\\\"600\\\" fill=\\\"CanvasText\\\" opacity=\\\"1\\\">Invoice line item amounts</text></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" pointer-events=\\\"none\\\" display=\\\"none\\\"/></g></g></g><path class=\\\"foreground\\\" aria-hidden=\\\"true\\\" d=\\\"\\\" display=\\\"none\\\"/></g></g></g></svg>\";\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:71b845bd5c850e444bda9b61a19589b098d52255006045a1c1979efd3844a6b1 */\n  /* @oods-domain-source sha256:67df05e1fca7b25d68f0c064be69dd0ac5d61fc1682331b45d695c043e2a4dda */\n  handleViewTimeline: () => void;\n}\n\ninterface Props {\n  svg?: string;\n  actions: GeneratedUIActions;\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: 'service_failure' | 'retention_incentive' | 'goodwill';\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'created' | 'posted' | 'payment_initiated' | 'payment_cleared' | 'payment_failed' | 'voided' | 'written_off';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: 'due_upon_receipt' | 'net_15' | 'net_30' | 'net_45';\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: 'draft' | 'posted' | 'open' | 'processing' | 'past_due' | 'paid' | 'refunded' | 'uncollectible' | 'void';\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { actions, agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt, svg } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n/* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+    "fileExtension": ".vue",
+    "imports": [
+      "@oods/component-contracts",
+      "@oods/components-vue",
+      "@oods/component-styles/css"
+    ],
+    "warnings": [],
+    "validationReceipt": {
+      "profile": "build",
+      "defaulted": false,
+      "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+      "axes": {
+        "scope": "generated-artifact",
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "target": {
+          "requested": "vue",
+          "resolved": "vue",
+          "source": "explicit"
+        }
+      },
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "notChecked": [
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+        "performance-evidence",
+        "certification-evidence"
+      ],
+      "evidence": {
+        "required": [],
+        "provided": [],
+        "missing": [],
+        "mismatched": [],
+        "accepted": [],
+        "notApplicable": [],
+        "artifactContentHash": "sha256:b119191d82e3c55716504d8f337df0e3b9f00b320f58a693c668466fee100c64"
+      }
+    },
+    "meta": {
+      "nodeCount": 69,
+      "componentCount": 7
+    }
+  }
+}

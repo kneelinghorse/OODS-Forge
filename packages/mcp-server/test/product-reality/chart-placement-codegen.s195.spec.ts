@@ -163,7 +163,7 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
     expect(result.errors?.[0]?.message).toContain('OODS-V165');
   });
 
-  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes follow the recorded UTC and palette migrations', async framework => {
+  it.each(['react', 'vue'] as const)('legacy Subscription %s HC asset bytes follow the recorded UTC, palette and frame migrations', async framework => {
     const source = `artifacts/product-reality/sprint-195/m05/hc/boundary/codegen-${framework}.json`;
     const previousBytes = fs.readFileSync(path.join(repositoryRoot, source), 'utf8');
     const previous = JSON.parse(previousBytes);
@@ -187,7 +187,14 @@ describe('declared charts use actual records and public SVG (s195-m06)', () => {
       expect(moved).toMatchObject({ beforeHash: receipt.afterHash, sameOperand: true, source });
       const pixels = fs.readFileSync(path.join(repositoryRoot, paletteRoot, moved.raw), 'utf8');
       expect(moved.afterHash).toBe(`sha256:${sha256(pixels)}`);
-      expect(asset).toEqual({ ...prior, contents: pixels, contentHash: moved.afterHash });
+      // Sprint 200 m02: the placed frame grew to 720x400 once; the migration chains from the palette layer.
+      const resizedRoot = 'artifacts/product-reality/sprint-200/m02/placement';
+      const resized = JSON.parse(fs.readFileSync(path.join(repositoryRoot, resizedRoot, 'migration.json'), 'utf8'));
+      const grown = resized.placements.find((row: any) => row.case === `Subscription-detail-${framework}-hc` && row.path === asset.path);
+      expect(grown).toMatchObject({ beforeHash: moved.afterHash, sameOperand: true, chainedFrom: `${paletteRoot}/migration.json`, beforeWidth: 370, afterWidth: 730, changed: true });
+      const frame = fs.readFileSync(path.join(repositoryRoot, resizedRoot, grown.raw), 'utf8');
+      expect(grown.afterHash).toBe(`sha256:${sha256(frame)}`);
+      expect(asset).toEqual({ ...prior, contents: frame, contentHash: grown.afterHash });
     }
     retain(`legacy-${framework}`, { before, after, unchanged: false, migration: `${migrationRoot}/migration.json` });
   });

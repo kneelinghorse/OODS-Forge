@@ -5,8 +5,8 @@ const classes = (...values: Array<string | false | null | undefined>): string =>
   values.filter(Boolean).join(' ');
 
 const GAP_VALUES: Record<string, string> = {
-  xs: 'var(--cmp-spacing-inline-xs, 0.25rem)',
-  sm: 'var(--cmp-spacing-inline-sm, 0.5rem)',
+  xs: 'var(--cmp-spacing-inline-xs, 0.5rem)',
+  sm: 'var(--cmp-spacing-inline-sm, 0.75rem)',
   md: 'var(--cmp-spacing-stack-default, 1rem)',
   lg: 'var(--cmp-spacing-stack-lg, 1.5rem)',
   xl: 'var(--cmp-spacing-stack-xl, 2rem)',
