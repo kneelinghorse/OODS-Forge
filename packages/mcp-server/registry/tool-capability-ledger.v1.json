@@ -27,7 +27,7 @@
       "reason": "apply:false invokes package builds and prepack in canonical package directories; no honest dry-run. Earlier probe rebuilt workspace dist but created no tags or publications."
     }
   ],
-  "head": "5d3a2f4d3794fa03c3eeff8589f9b0cfc289679b",
+  "head": "bf11ae99d47794ce6946429ba7795ffc2e6ec287",
   "builderSelfCertified": false,
   "methodology": {
     "proofTier": "Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.",
@@ -525,10 +525,10 @@
       "name": "code.generate",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.",
+        "description": "Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. Select draft, build, or release validation; build is the default runnable-artifact gate, and every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition. Receipts produced after artifact construction also name that artifact's content hash. Release receipts retain accepted caller-supplied evidence references without claiming independent execution. The artifact includes exact dependencies and required consumer-supplied domain actions. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks. Application options.theme accepts light, dark and hc, with options.brand A or B, for both the shell and embedded chart assets. Subscription/detail HC area SVG assets pass through the same public viz.render boundary and remain verbatim in React and Vue. Bound record-array charts support bar, line, area, scatter and heatmap with explicit sampleRows; trait titles, descriptions and units accompany generated static SVG. Invoice bar and Usage line are authored in detail and dashboard layouts. React/Vue application output is supported. Static HTML tab panel trees preserve nested content and layout. Full Invoice/Usage detail HTML remains a typed OODS-V007 static-action limit: HTML has no runtime for domain actions such as Edit/Delete/View timeline. Owner: Forge code-generation maintainers, enforced by target-contracts.ts.",
         "inputSchemaDescription": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:2e55781081b125ebbd48c37a8fab472d8df99876b2733b435c57a300e1706527",
+      "claimHash": "sha256:202082f5280b4a50b517a9ccbfd6bd41c671ce7340ee69d6e24294ee60f0743f",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
       "inputSchemaHash": "sha256:102726ac977147a6cbdbcd39bae7974eb66a79b6b1aaade6a5391da26da687a5",
       "proofTier": "product-reality",
@@ -692,6 +692,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/release-limit.s198.spec.ts",
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -974,8 +979,8 @@
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
-          "reason": "Release validation checks caller-supplied evidence envelopes and artifact-hash consistency; it does not rerun the referenced external proof.",
-          "line": 299
+          "reason": "References are format-checked and hash-bound, not re-executed.",
+          "line": 301
         },
         {
           "kind": "documented-limit",
@@ -998,6 +1003,11 @@
       "proofTier": "product-reality",
       "testImports": {
         "product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/application-craft.s198.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
           {
             "path": "packages/mcp-server/test/product-reality/archive-workflow.s188.spec.ts",
             "line": 8,
@@ -1071,6 +1081,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts",
             "line": 9,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/release-limit.s198.spec.ts",
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -1401,10 +1416,10 @@
       "name": "pipeline",
       "registration": "auto",
       "advertisedClaim": {
-        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed: caller evidence references are format-checked and hash-bound to the artifact, not re-executed (OODS-V162 missing / OODS-V163 mismatch). Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks.",
+        "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. It forwards draft, build, or release generation validation without downgrade and always discloses the applied validationReceipt plus target resolution provenance. The code step carries the versioned artifact without flattening, including exact dependencies and required consumer-supplied domain actions. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes); use save to persist the schema. Release receipts explicitly report evidenceVerification:hash-bound-not-re-executed. References are format-checked and hash-bound, not re-executed. OODS-V162 reports missing evidence; OODS-V163 reports an artifact hash mismatch. Portable React/Vue generation uses an assembly-time readiness attestation bound to shipped package bytes and emits real artifacts without source or test files. Missing or tampered readiness evidence returns OODS-N015 without an artifact. Host repository generation retains direct readiness checks.",
         "inputSchemaDescription": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:f3aef88f80ba9bcd2b93b5f489c2937601fc527359226737c0b5a191f0fcad39",
+      "claimHash": "sha256:c36926a98697628e353e432f56ff45c49cb067b5817fbad64c94985f3531531e",
       "inputSchemaPath": "packages/mcp-server/src/schemas/pipeline.input.json",
       "inputSchemaHash": "sha256:e0eeb8d65a6decf167f743cae1651be1d6873c7db11a0781cb60b658e80cd6d3",
       "proofTier": "product-reality",
@@ -1423,6 +1438,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts",
             "line": 11,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/release-limit.s198.spec.ts",
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -1505,8 +1525,8 @@
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/codegen/validation-profile.ts",
-          "reason": "The generation release profile accepts caller evidence envelopes; format/hash checks do not independently execute their proof.",
-          "line": 299
+          "reason": "References are format-checked and hash-bound, not re-executed.",
+          "line": 301
         }
       ]
     },
