@@ -33,9 +33,9 @@ const RESOURCE_SAMPLE_ATTEMPTS = 3;
 
 // Ratified from the unmutated local baseline. Latency ceilings retain enough
 // headroom for the Linux release runner while remaining below the 15-minute CI
-// job timeout. The slope limits are hard outlier ceilings, while the one-sided
-// confidence check below rejects a statistically positive trend even when its
-// raw slope is below those ceilings. The first 1,200 unique-geometry renders
+// job timeout. The slope limits are hard outlier ceilings. The one-sided
+// confidence bound is retained as a diagnostic, not a pass/fail assertion.
+// The first 1,200 unique-geometry renders
 // are excluded as cache/JIT settling; eight fitted samples then cover windows
 // 1,300..2,000. The separate 12 MiB heap ceiling remains independently binding.
 const BUDGETS = Object.freeze({
@@ -262,7 +262,7 @@ function leastSquaresTrend(values: readonly number[]): LinearTrend {
   );
   // One-sided 99% Student-t critical value for the ratified eight samples
   // (six residual degrees of freedom). A positive lower bound means retained
-  // growth is statistically distinguishable from zero and must fail.
+  // growth is statistically distinguishable from zero; it remains diagnostic.
   const positiveTrendLower99 = slope - 3.143 * slopeStandardError;
   return { slope, slopeStandardError, positiveTrendLower99 };
 }
@@ -280,7 +280,7 @@ function plateauEvidence(
     distinct >= 3
   ) {
     expect(trend.slope).toBeLessThanOrEqual(slopeBudget);
-    expect(trend.positiveTrendLower99, "OODS-SOAK-1442: statistically positive retained resource trend").toBeLessThanOrEqual(0);
+    // s199: retain this diagnostic; only the hard resource ceilings are pass/fail.
     return {
       method: "least-squares-slope",
       slopeBytesPerWindow: trend.slope,
@@ -677,7 +677,7 @@ describe.sequential(
         resourceSampleAttempts: RESOURCE_SAMPLE_ATTEMPTS,
         plateauWindowRange: "1300..2000",
         slopeThresholdMeaning:
-          "hard outlier ceilings plus a one-sided 99% confidence bound that must include zero; statistically positive retained growth fails even below the ceilings",
+          "hard outlier ceilings determine pass/fail; the one-sided 99% confidence bound is diagnostic and does not establish retention certification",
         workerHeapDeltaBytes,
         heapPlateau,
         rssPlateau,

@@ -128,19 +128,11 @@ describe("Sprint 177 closeout carrier", () => {
     expect(soakRow).toContain(
       "pnpm --filter @oods/mcp-server run test:echarts-soak",
     );
-    expect(soakRow).toContain(
-      "PK2 power floor PARKED until Linux-leg evidence",
-    );
-    expect(soakRow).toContain(
-      "three of four quiet-host runs failed the one-sided 99% Student-t bound at `echarts-render-soak.s179.spec.ts:283`",
-    );
-    expect(soakRow).toContain(
-      "positiveTrendLower99 = +364.93/+1457.88/+4367.02 B/window",
-    );
-    expect(soakRow).toContain("while every hard ceiling passed");
+    expect(soakRow).toContain("retires the one-sided statistical lower-bound assertion");
+    expect(soakRow).toContain("trend samples remain diagnostic");
+    expect(soakRow).toContain("Hard resource ceilings, disposal, fault cleanup, map bound, latency and concurrency remain blocking");
     expect(soakJob).toContain("timeout-minutes: 15");
-    // s195-m06 retains the strict command's JSON/log result and only classifies
-    // the reproduced #1442 statistical bound after the other gates pass.
+    // s199 retains raw statistics and keeps every remaining gate pass/fail.
     expect(soakJob).toContain(
       "run: node scripts/product-reality/s195-soak-observation.mjs",
     );

@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ROOT = path.resolve(import.meta.dirname, '../..');
+const ROOT = path.resolve(process.env.OODS_API_DOCS_ROOT ?? path.resolve(import.meta.dirname, '../..'));
 const SCHEMAS_DIR = path.join(ROOT, 'packages/mcp-server/src/schemas');
 const DESCRIPTIONS_PATH = path.join(ROOT, 'packages/mcp-adapter/tool-descriptions.json');
 const REGISTRY_PATH = path.join(ROOT, 'packages/mcp-server/src/tools/registry.json');
@@ -280,7 +280,22 @@ function buildExampleBlock(inputSchema: JsonSchema): string {
 
 function visualizationCoverage(toolName: string): string {
   if (!['viz.render', 'dashboard.render', 'artifact.certify'].includes(toolName)) return '';
-  const recipes = readJson<Array<{ chartType: string; specEngine: string; publicSvg: boolean; dashboardDrawn: boolean | string; themes: Record<string, boolean>; brands: string[]; certifyCoverage: string; certifyScopes: Array<{ conformant: boolean | null }>; accuracyRules: string[]; contrastMeasured: string[]; chartInApp: string; notes: string[] }>>(VIZ_RECIPES_PATH);
+  const recipes = readJson<Array<{ chartType: string; specEngine: string; publicSvg: boolean; dashboardDrawn: boolean | string; themes: Record<string, boolean>; brands: string[]; certifyCoverage: string; certifyScopes: Array<{ theme: string; brand: string; conformant: boolean | null }>; accuracyRules: string[]; contrastMeasured: string[]; chartInApp: string; notes: string[]; renderScopes: Array<{ theme: string; brand: string; status: string; reason?: string; errors?: Array<{ code?: string; message?: string }> }> }>>(VIZ_RECIPES_PATH);
+  const scopeOrder = ['light', 'dark', 'hc'].flatMap(theme => ['A', 'B'].map(brand => ({ theme, brand })));
+  const tableText = (value: string) => value.replaceAll('|', '&#124;').replaceAll('\n', ' ');
+  const scopeState = (row: typeof recipes[number], theme: string, brand: string) => {
+    const scope = row.renderScopes.find(scope => scope.theme === theme && scope.brand === brand);
+    if (!scope) throw new Error(`${row.chartType}: missing declared scope ${theme}/${brand}`);
+    if (scope.status === 'rendered') return 'rendered';
+    if (scope.status === 'retired') {
+      if (!scope.reason?.trim()) throw new Error(`${row.chartType}/${theme}/${brand}: retired scope requires a reason`);
+      return `retired: ${tableText(scope.reason)}`;
+    }
+    if (scope.status !== 'typed-deferred' || !scope.errors?.length || scope.errors.some(error => !error.code?.trim())) {
+      throw new Error(`${row.chartType}/${theme}/${brand}: deferred scope requires an error code`);
+    }
+    return `typed-deferred (${[...new Set(scope.errors.map(error => error.code))].join(', ')})`;
+  };
   const count = (predicate: (row: typeof recipes[number]) => boolean) => recipes.filter(predicate).length;
   const scopes = recipes.flatMap(row => row.certifyScopes);
   const echartsRules = [...new Set(recipes.filter(row => row.specEngine === 'echarts').flatMap(row => row.accuracyRules))].sort();
@@ -291,9 +306,10 @@ function visualizationCoverage(toolName: string): string {
     `Measured scope verdicts: ${scopes.filter(scope => scope.conformant === true).length} conformant / ${scopes.filter(scope => scope.conformant === false).length} nonconformant / ${scopes.filter(scope => scope.conformant === null).length} uncertified. Types with a nonconformant scope: ${recipes.filter(row => row.certifyScopes.some(scope => scope.conformant === false)).map(row => row.chartType).join(', ') || 'none'}.`, '',
     `Theme parameters: light (${count(row => row.themes.light)}/${recipes.length}), dark (${count(row => row.themes.dark)}/${recipes.length}) and hc (${count(row => row.themes.hc)}/${recipes.length} with measured SVGs; ${count(row => !row.themes.hc)}/${recipes.length} typed-deferred). HC emits declared scope paints verbatim and contrast is forced-colors exempt; actual render failures still fail determinism. Brand parameters: ${[...new Set(recipes.flatMap(row => row.brands))].join(', ')}. Default scope is light/A.`, '',
     `Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four Cartesian accuracy rules remain a closed set (V150–V153). ECharts offered rules: ${echartsRules.join(', ')}; applicability and evaluated counts depend on the data operand.`, '',
-    '| Type | Engine | Dashboard | Certification | Contrast measured | Application |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...recipes.map(row => `| ${row.chartType} | ${row.specEngine} | ${row.dashboardDrawn} | ${row.certifyCoverage} | ${row.contrastMeasured.join(', ') || 'none (exempt)'} | ${row.chartInApp} |`), '',
+    'Certification describes profile coverage. Conformant / declared counts only passing verdicts across all six declared scopes; a deferred or retired scope is not a passing verdict. ECharts Cartesian line/bar/area calls are spec-only and uncertified.', '',
+    '| Type | Engine | Dashboard | Certification | Light A | Light B | Dark A | Dark B | HC A | HC B | Conformant / declared | Contrast measured | Application | Reason |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    ...recipes.map(row => `| ${row.chartType} | ${row.specEngine} | ${row.dashboardDrawn} | ${row.certifyCoverage} | ${scopeOrder.map(({ theme, brand }) => scopeState(row, theme, brand)).join(' | ')} | ${row.certifyScopes.filter(scope => scope.conformant === true && row.renderScopes.some(render => render.theme === scope.theme && render.brand === scope.brand && render.status === 'rendered')).length}/${scopeOrder.length} | ${row.contrastMeasured.join(', ') || 'none (exempt)'} | ${row.chartInApp} | ${tableText([...new Set([...row.renderScopes.flatMap(scope => scope.errors?.map(error => `${error.code}: ${error.message ?? ''}`) ?? []), ...row.notes])].join(' '))} |`), '',
     ...[...new Set(recipes.flatMap(row => row.notes))].map(note => `- ${note}`), '',
   ].join('\n');
 }

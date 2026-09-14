@@ -1012,10 +1012,10 @@ jobs:
       - name: Record certified runtime axes
         run: node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'
 
-      - name: Run strict ECharts soak and retain the typed resource observation
+      - name: Run ECharts soak with hard resource gates and diagnostic trends
         run: node scripts/product-reality/s195-soak-observation.mjs
 
-      - name: Retain strict soak result and resource samples
+      - name: Retain soak result and resource samples
         if: always()
         uses: actions/upload-artifact@v4
         with:

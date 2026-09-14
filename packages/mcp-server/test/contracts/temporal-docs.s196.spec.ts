@@ -21,13 +21,16 @@ describe('published temporal rendering claims describe the public handler (s196 
     expect(description).toContain('Temporal axes render in UTC in both Vega-Lite and ECharts');
     expect(description).toContain('independent of the host TZ');
     expect(description).toContain('caller-authored expressions retain their own semantics');
-    expect(description).toContain('display metadata, not a renderer timezone override');
+    expect(description).toContain('ScaleTemporal declares no timezone parameter');
     expect(description).toContain('en-US');
+    expect(description).toContain('ECHARTS_UNSUPPORTED_OPTION');
+    expect(description).toContain('treemap, sunburst, sankey, chord, graph, map, scatter, and lines');
+    expect(description).toContain('Cartesian line/bar/area output remains spec-only and uncertified');
     expect(read('docs/mcp/Tool-Specs.md')).toContain(description);
     const html = read('docs/how-forge-works.html');
     const claim = html.match(/<!-- forge-claim:viz-vocabulary -->([\s\S]*?)<!-- \/forge-claim:viz-vocabulary -->/)?.[1];
     expect(claim).toContain('Temporal axes and adapter-generated formatted date parsing use UTC');
-    expect(claim).toContain('display metadata, not a rendering override');
+    expect(claim).toContain('ScaleTemporal declares no timezone parameter');
     expect(claim).toContain('numeric tooltips use en-US');
   });
 });

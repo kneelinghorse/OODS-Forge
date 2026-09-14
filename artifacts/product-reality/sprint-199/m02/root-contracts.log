@@ -1,0 +1,44 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s199/OODS-Forge
+
+ ✓ |core| tests/verification/how-forge-works.contract.test.ts (16 tests) 55ms
+ ❯ |core| tests/verification/closeout-checklist.contract.test.ts (8 tests | 1 failed) 8ms
+   ✓ Sprint 177 closeout carrier > covers the exact current set of 19 CI job keys once 1ms
+   × Sprint 177 closeout carrier > keeps the historically dropped and commonly misstated CI operands visible 5ms
+     → expected [ …(2) ] to have a length of 3 but got 2
+   ✓ Sprint 177 closeout carrier > builds public-package declarations before the coverage contract reads them 0ms
+   ✓ Sprint 177 closeout carrier > serializes compiler and packaging proofs that can starve parallel readers 0ms
+   ✓ Sprint 177 closeout carrier > carries every closeout-only control and preserves the build-input run-last semantics 0ms
+   ✓ Sprint 177 closeout carrier > uses stable source blocks without prose shorthand 0ms
+   ✓ Sprint 177 closeout carrier > matches the eight lock-seeded s177-m07 success criteria byte for byte 0ms
+   ✓ Sprint 177 closeout carrier > wires all six quality-bar Application carriers to this checklist 0ms
+ ✓ |core| tests/traits/viz/scale-temporal.test.ts (6 tests) 36ms
+ ✓ |core| tests/verification/viz-coverage-table.s199.test.ts (2 tests) 565ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/verification/closeout-checklist.contract.test.ts > Sprint 177 closeout carrier > keeps the historically dropped and commonly misstated CI operands visible
+AssertionError: expected [ …(2) ] to have a length of 3 but got 2
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ tests/verification/closeout-checklist.contract.test.ts:165:40
+    163|     const runtimeProbe =
+    164|       "node -e 'console.log(JSON.stringify({node:process.version,v8:pr…
+    165|     expect(ciRows.split(runtimeProbe)).toHaveLength(3);
+       |                                        ^
+    166|     expect(vizJob).toContain(`run: ${runtimeProbe}`);
+    167|     expect(soakJob).toContain(`run: ${runtimeProbe}`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 31 passed (32)
+   Start at  01:50:41
+   Duration  1.99s (transform 425ms, setup 0ms, collect 836ms, tests 664ms, environment 0ms, prepare 137ms)
+

@@ -14,14 +14,15 @@ const traitDir = join(__dirname, '..', '..', '..', 'traits', 'viz');
 const yamlPath = join(traitDir, 'scale-temporal.trait.yaml');
 
 describe('ScaleTemporal trait', () => {
-  it('parses YAML definition with timezone semantics', async () => {
+  it('parses the breaking 0.3.0 YAML definition with UTC semantics', async () => {
     const result = await parseTrait(yamlPath);
 
     expect(result.success).toBe(true);
     const def = result.data!;
 
     expect(def.trait.name).toBe('ScaleTemporal');
-    expect(def.semantics?.viz_scale_temporal_timezone?.semantic_type).toBe('viz.scale.timezone');
+    expect(def.trait.version).toBe('0.3.0');
+    expect(def.semantics).not.toHaveProperty('viz_scale_temporal_timezone');
     expect(def.view_extensions?.detail?.[0]?.props?.type).toBe('temporal');
   });
 
@@ -37,7 +38,6 @@ describe('ScaleTemporal trait', () => {
       domainEnd: '2025-01-31T23:59:59Z',
       rangeMin: 0,
       rangeMax: 1,
-      timezone: 'America/New_York',
       nice: 'week',
       outputFormat: 'MMM d'
     });
@@ -59,23 +59,24 @@ describe('ScaleTemporal trait', () => {
     expect(result.issues[0]?.message).toMatch(/Value must be one of/);
   });
 
-  it('discloses the timezone boundary consistently in the parameter schema and both trait sources', async () => {
+  it('removes the unused parameter, field and bindings from both source contracts', async () => {
     const parameterSchema = JSON.parse(readFileSync(join(traitDir, '../../schemas/traits/scale-temporal.parameters.schema.json'), 'utf8'));
     const yaml = (await parseTrait(yamlPath)).data!;
-    const description = 'Display-layer timezone metadata only; viz.render does not consume this value and renders temporal axes in UTC.';
-    expect(parameterSchema.properties.timezone).toMatchObject({ type: 'string', default: 'UTC', description });
+    expect(parameterSchema.properties).not.toHaveProperty('timezone');
     for (const trait of [ScaleTemporalTrait, yaml]) {
-      expect(trait.parameters?.find(parameter => parameter.name === 'timezone')).toMatchObject({ default: 'UTC', description });
-      expect(trait.schema.viz_scale_temporal_timezone?.description).toBe('Display-layer timezone metadata only; it does not override UTC rendering.');
+      expect(trait.trait.version).toBe('0.3.0');
+      expect(trait.parameters?.some(parameter => parameter.name === 'timezone')).toBe(false);
+      expect(trait.schema).not.toHaveProperty('viz_scale_temporal_timezone');
+      expect(JSON.stringify(trait.view_extensions)).not.toContain('timezoneField');
     }
   });
 
-  it('keeps accepted authoring timezone metadata outside the renderer binding contract', () => {
+  it('rejects the removed timezone parameter while retaining UTC renderer behavior', () => {
     const validator = new ParameterValidator();
     expect(validator.validate('ScaleTemporal', {
       domainStart: '2026-01-01T00:00:00Z', domainEnd: '2026-12-31T23:59:59Z',
       rangeMin: 0, rangeMax: 1, timezone: 'America/New_York',
-    }).valid).toBe(true);
+    }).valid).toBe(false);
     const spec: NormalizedVizSpec = {
       data: { values: [{ date: '2026-03-08T07:30:00Z', value: 4 }] },
       marks: [{ trait: 'MarkLine' }],
