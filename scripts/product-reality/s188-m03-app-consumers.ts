@@ -57,12 +57,7 @@ async function selectDetailTab(page: Page, name: string) {
 
 async function selectPaymentTab(page: Page) {
   if (await page.locator('[data-oods-component="PaymentTimeline"]').isVisible()) return;
-  const tab = page.getByRole('tab', { name: 'Status & History', exact: true });
-  if (await tab.isVisible()) await tab.click();
-  else {
-    await page.getByRole('button', { name: 'More tabs', exact: true }).click();
-    await page.getByRole('menuitem', { name: 'Status & History', exact: true }).click();
-  }
+  await selectDetailTab(page, 'Billing');
   await page.locator('[data-oods-component="PaymentTimeline"]').waitFor({ state: 'visible' });
 }
 

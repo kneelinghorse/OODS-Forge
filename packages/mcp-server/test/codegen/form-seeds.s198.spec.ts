@@ -15,6 +15,17 @@ import { loadTrait } from '../../src/objects/trait-loader.js';
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 
 describe('s198 form craft and one attributable seed policy', () => {
+  it('active samples never claim archive/restore events that did not happen', async () => {
+    const { schema } = await compose({ object: 'Subscription', context: 'workflow' });
+    const records = workflowSampleRecords(schema);
+    for (const record of records.filter(record => !record.is_archived)) {
+      expect(record.archived_at).toBeUndefined();
+      expect(record.archive_reason).toBeUndefined();
+      expect(record.archived_by).toBeUndefined();
+    }
+    expect(records.every(record => record.restored_at === undefined)).toBe(true);
+    expect(records.find(record => record.is_archived)).toMatchObject({ archived_at: '2026-09-07T12:00:00.000Z', archive_reason: 'No longer in use', archived_by: 'system' });
+  });
   it('HTML uses catalog names for labels while retaining stored role/template IDs', () => {
     for (const [component, props, names] of [
       ['RoleAssignmentForm', { availableRoles: [{ id: 'role-001', name: 'Owner' }, { id: 'role-002', name: 'Editor', label: 'Content editor' }] }, ['Owner', 'Content editor']],

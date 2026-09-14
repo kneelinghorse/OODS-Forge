@@ -96,7 +96,15 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       assign('total_minor', subtotal, 'subtotal minus discount plus tax');
       assign('balance_minor', record.status === 'paid' ? 0 : subtotal, 'unpaid remainder of total');
     }
-    if (record.is_archived) assign('archived_at', '2026-09-07T12:00:00.000Z');
+    if (fields.is_archived) {
+      // These samples have no restoration history; active records were never archived.
+      for (const name of ['archived_at', 'restored_at', 'archive_reason', 'archived_by', 'archive_metadata', 'restoration_metadata']) delete record[name];
+      if (record.is_archived) {
+        assign('archived_at', '2026-09-07T12:00:00.000Z', 'last record entered archive');
+        assign('archive_reason', 'No longer in use', 'last record archive reason');
+        assign('archived_by', 'system', 'last record archive actor');
+      }
+    }
     if (fields.preference_document) {
       const namespaces = Array.isArray(record.preference_namespaces) ? record.preference_namespaces.map(String) : [];
       const document = record.preference_document && typeof record.preference_document === 'object' ? record.preference_document as Record<string, unknown> : {};
