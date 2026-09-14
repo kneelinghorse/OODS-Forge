@@ -36,7 +36,11 @@ try {
               const view = await observeView(page, width, output);
               const craft = await page.evaluate(() => {
                 const visible = (node: Element) => node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden';
-                return { tabs: [...document.querySelectorAll('[role="tab"]')].map(node => ({ text: node.textContent, selected: node.getAttribute('aria-selected') })),
+                const probe = document.createElement('div');
+                probe.style.cssText = 'background:var(--sys-surface-raised);color:var(--sys-text-primary);border:1px solid var(--sys-border-subtle)';
+                document.body.append(probe); const expected = getComputedStyle(probe);
+                const tokens = { surface: expected.backgroundColor, text: expected.color, border: expected.borderColor }; probe.remove();
+                return { tokens, tabs: [...document.querySelectorAll('[role="tab"]')].map(node => ({ text: node.textContent, selected: node.getAttribute('aria-selected') })),
                   headings: [...document.querySelectorAll('h1,h2,h3')].filter(visible).map(node => node.textContent),
                   surfaces: [...document.querySelectorAll('[data-oods-component="Card"],[data-oods-component="Tabs"],[data-oods-component$="Summary"]')].filter(visible).map(node => { const style = getComputedStyle(node); return { component: node.getAttribute('data-oods-component'), text: (node as HTMLElement).innerText, background: style.backgroundColor, color: style.color, border: style.borderColor }; }),
                   emptyCards: [...document.querySelectorAll('[data-oods-component="Card"]')].filter(visible).filter(node => !(node as HTMLElement).innerText.trim() && !node.querySelector('svg,img,input')).length,

@@ -1,0 +1,57 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server
+
+ ✓ test/codegen/list-craft.s198.spec.ts (23 tests) 10400ms
+   ✓ s198 standalone list craft stays at the producer boundary > react compiles the string-status lists with strict public props  3308ms
+   ✓ s198 standalone list craft stays at the producer boundary > vue compiles the string-status lists with strict public props  6327ms
+ ✓ test/codegen/cross-framework-parity.spec.ts (50 tests) 3424ms
+   ✓ Sprint 182 bounded framework normalization > lowers Tabs child panel subtrees onto each target panel surface  556ms
+   ✓ Sprint 182 bounded framework normalization > preserves normalized Card body and active state when deriving Tabs items  413ms
+   ✓ Sprint 182 bounded framework normalization > binds Badge and Button fields through their supported content prop  458ms
+   ✓ Sprint 182 bounded framework normalization > escapes React scalar props, ids, styles, and comments as source data  450ms
+   ✓ Sprint 182 bounded framework normalization > preserves Text and Input field bindings inside section wrappers  386ms
+   ✓ Sprint 182 bounded framework normalization > binds DatePicker, Textarea, and Checkbox through target-supported values  565ms
+   ✓ Sprint 182 bounded framework normalization > resolves the declared cva dependency for supported activated variants  350ms
+ ✓ test/product-reality/b2-legacy-inputs.s184.spec.ts (7 tests) 455ms
+ ✓ test/product-reality/validation-profiles.s183.spec.ts (77 tests) 223ms
+ ❯ test/codegen/craft.s191.spec.ts (6 tests | 1 failed) 152ms
+   ✓ s191 craft values agree across render targets > StatusTimeline humanizes domain codes and preserves authored titles in HTML, React and Vue 21ms
+   ✓ s191 craft values agree across render targets > AuditTimeline humanizes domain codes and preserves authored titles in HTML, React and Vue 4ms
+   × s191 craft values agree across render targets > keeps only a declared audit log and derives currency help from the converting control 6ms
+     → expected [ 'real', 'root-record-body' ] to deeply equal [ 'real' ]
+   ✓ s191 craft values agree across render targets > seeds human titles and four recorded payments without changing domain codes or adding form fields 115ms
+   ✓ s191 craft values agree across render targets > keeps one visible title when the static SVG already owns it, with a caption fallback otherwise 2ms
+   ✓ s191 craft values agree across render targets > shares the row button classes and leaves room for a nonshrinking billing amount 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/craft.s191.spec.ts > s191 craft values agree across render targets > keeps only a declared audit log and derives currency help from the converting control
+AssertionError: expected [ 'real', 'root-record-body' ] to deeply equal [ 'real' ]
+
+- Expected
++ Received
+
+  [
+    "real",
++   "root-record-body",
+  ]
+
+ ❯ test/codegen/craft.s191.spec.ts:37:63
+     35|     const composed = { traits: [] } as unknown as ComposedObject;
+     36|     reconcileFormDetail(schema, 'detail', composed);
+     37|     expect(schema.screens[0]!.children!.map(node => node.id)).toEqual(…
+       |                                                               ^
+     38|     schema.screens = [{ id: 'amount', component: 'BillingAmountInput',…
+     39|     reconcileFormDetail(schema, 'form', composed);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 162 passed (163)
+   Start at  18:51:45
+   Duration  18.54s (transform 896ms, setup 24ms, collect 3.05s, tests 14.65s, environment 0ms, prepare 229ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/list-craft.s198.spec.ts test/codegen/collections.s188.spec.ts test/codegen/cross-framework-parity.spec.ts test/product-reality/validation-profiles.s183.spec.ts test/product-reality/b2-legacy-inputs.s184.spec.ts test/codegen/craft.s191.spec.ts
