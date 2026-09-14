@@ -60,6 +60,6 @@ Final preflight passed readiness, registry, roadmap/prose contracts and all 11 v
 
 ## Integration
 
-Build branch `codex/sprint-199-charts`; requested base `OODS-pro`. Publication metadata will be added after the evidence commit is pushed.
+[PR #111 — Sprint 199 build](https://github.com/kneelinghorse/OODS-Forge/pull/111) is open against `OODS-pro`. The branch is pushed; [publication receipt](pull-request.json) records its creation head. No merge or delivery was performed.
 
 All seven hosted workflows were confirmed `disabled_manually` (the repository-level Actions permission remains enabled, while every workflow stays disabled); no workflow was enabled, invoked or awaited. No primary-checkout edit/build, PM2 restart, merge, deployment, reconnect or consumer message was performed. The reviewing session owns acceptance, any primary fast-forward, rebuild, bridge restart and health verification. The Sprint 198 closeout-evidence branch and other repositories were untouched. The task's browser container was cleaned up after proof completion; the Sprint 199 worktree is retained.
