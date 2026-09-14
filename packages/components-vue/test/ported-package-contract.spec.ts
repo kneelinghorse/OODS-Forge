@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
 import {
@@ -17,6 +18,14 @@ import * as sourcePorted from '../src/ported.js';
 const packageRoot = process.cwd();
 const repositoryRoot = resolve(packageRoot, '../..');
 const portedIds = [...PORTED_COMPONENT_IDS];
+const packageRequire = createRequire(`${packageRoot}/package.json`);
+// Sprint 200 m04 retired the compatibility subpaths with no migration window (#2062).
+const RETIRED_SUBPATHS = [
+  '@oods/components-vue/ported',
+  '@oods/components-vue/readiness-ported',
+  '@oods/component-styles/css-ported',
+  '@oods/component-styles/ported',
+];
 
 function readJson(path: string): Record<string, unknown> {
   return JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
@@ -60,32 +69,26 @@ describe('@oods/components-vue ported package contract', () => {
     expect(portedScenarios.map((scenario) => scenario.oodsComponentId)).toEqual(portedIds);
   });
 
-  it('dependency-closure exposes only built, package-local ported files', () => {
+  it('dependency-closure exposes only built, package-local files through the root subpaths', () => {
     const manifest = readJson(`${packageRoot}/package.json`) as {
       exports: Record<string, unknown>;
       dependencies: Record<string, string>;
       peerDependencies: Record<string, string>;
     };
-    expect(manifest.exports).toMatchObject({
-      './ported': {
-        types: './dist/index.d.ts',
-        import: './dist/index.js',
-        require: './dist/index.cjs',
-      },
-      './readiness-ported': { default: './evidence/vue-readiness.v1.json' },
-    });
+    expect(Object.keys(manifest.exports)).toEqual(['.', './readiness', './package.json']);
+    for (const specifier of RETIRED_SUBPATHS) {
+      expect(() => packageRequire.resolve(specifier), specifier).toThrow(/not defined by "exports"/);
+    }
     expect(manifest.dependencies).toEqual({
       '@oods/component-contracts': '0.1.0',
       '@oods/component-styles': '0.1.0',
     });
     expect(manifest.peerDependencies).toEqual({ vue: '^3.5.0' });
-    const portedCssSpecifier = '@oods/component-styles/css-ported';
     const stylesManifest = readJson(`${repositoryRoot}/packages/component-styles/package.json`) as {
       exports: Record<string, unknown>;
     };
-    expect(stylesManifest.exports[`./${portedCssSpecifier.split('/').at(-1)}`]).toEqual({
-      default: './dist/components.css',
-    });
+    expect(Object.keys(stylesManifest.exports)).toEqual(['.', './css', './package.json']);
+    expect(stylesManifest.exports['./css']).toEqual({ default: './dist/components.css' });
 
     const distributableText = [
       'dist/ported.js',

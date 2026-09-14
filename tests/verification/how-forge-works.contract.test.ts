@@ -202,10 +202,14 @@ describe("how Forge works narrative truth", () => {
     const receipt = JSON.parse(read(ledger.portableExecution.path));
     expect(portable).toContain(`${receipt.calls.primarySequenceCount} calls across all ${receipt.tools.count} advertised tools`);
     expect(portable).toContain(`${receipt.calls.totalAcrossProcesses} adapter calls across two processes`);
-    for (const tool of ["brand.apply", "design.preview"]) {
-      expect(receipt.calls.outcomes[tool].outcome).toBe("typed");
-      expect(portable).toContain(receipt.calls.outcomes[tool].code);
+    // s200-m04 ships the brand source: brand.apply executes from the archive; design.preview stays typed.
+    expect(receipt.calls.outcomes["brand.apply"].outcome).toBe("pass");
+    expect(receipt.calls.outcomes["design.preview"].outcome).toBe("typed");
+    for (const [tool, outcome] of Object.entries(receipt.calls.outcomes) as Array<[string, { outcome: string; code?: string }]>) {
+      if (outcome.outcome !== "typed") continue;
+      expect(portable, tool).toContain(outcome.code);
     }
+    expect(portable).toContain("brand.apply");
     expect(portable).toContain("the native code is preserved at `tools/call`");
   });
 

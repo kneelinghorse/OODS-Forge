@@ -17,9 +17,11 @@ import {
   RUNTIME_PACKAGES,
   RUNTIME_SBOM_FILE,
   sha256File,
+  TERMS_FILES,
   verifyEmbeddedManifest,
   walkTree,
 } from "./manifest.mjs";
+import { buildThirdPartyNotices, NOTICES_FILE } from "./third-party-notices.mjs";
 import {
   buildSbomLite,
   buildSbomLiteFromFile,
@@ -32,6 +34,9 @@ const PNPM_VERSION = "9.12.2";
 const DIST_PACKAGES = RUNTIME_PACKAGES.filter((name) => name !== "mcp-adapter");
 const PACKAGE_RUNTIME_DIRECTORIES = Object.freeze({
   "component-contracts": ["registry"],
+  // brand.apply reads only the per-brand DTCG documents; the rest of the token source,
+  // the palette generator and the build scripts stay in the repository.
+  tokens: ["src/tokens/brands"],
   "components-react": ["evidence"],
   "components-vue": ["evidence"],
 });
@@ -48,12 +53,14 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   domains: 15,
   // UX-1 adds seven research definitions and their authoring README.
   objects: 16,
-  schemas: 56,
-  traits: 76,
+  // Sprint 199 adds the mark-graph parameter schema beside its trait pair.
+  schemas: 57,
+  traits: 78,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
   // Sprint 193 retains the dated public/runtime-projected component/token refresh pairs.
-  "artifacts/structured-data": 37,
+  // Sprint 199 retains the m06 and m07 component/token snapshot pairs (four files).
+  "artifacts/structured-data": 41,
 });
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([
@@ -417,7 +424,7 @@ async function gitTrackedBoundaryFiles() {
   const pathspecs = [
     ...Object.keys(TRACKED_BOUNDARY_COUNTS),
     "docs/integration/stage1-entity-aliases.json",
-    "LICENSE",
+    ...TERMS_FILES,
   ];
   const output = await runCapture(
     "git",
@@ -439,7 +446,9 @@ async function gitTrackedBoundaryFiles() {
     files.includes("docs/integration/stage1-entity-aliases.json"),
     "stage1 entity aliases are not tracked",
   );
-  assert(files.includes("LICENSE"), "root LICENSE is not tracked");
+  for (const terms of TERMS_FILES) {
+    assert(files.includes(terms), `root ${terms} is not tracked`);
+  }
   assert(
     files.every((file) => file !== "cmos" && !file.startsWith("cmos/")),
     "cmos path entered tracked boundary",
@@ -548,7 +557,7 @@ function allowedCmosProvenance(relative) {
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
     relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||
-    /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}(?:-s193-m0[457])?|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
+    /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}(?:-s193-m0[457]|-s199-m0[67])?|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
       relative,
     ) ||
     /^traits\/viz\/layout-facet\.trait\.(?:ts|yaml)$/.test(relative)
@@ -811,6 +820,14 @@ async function main() {
   await fsp.mkdir(payloadRoot);
 
   const sbom = await buildSbomLite(REPO_ROOT);
+  const noticesPath = path.join(REPO_ROOT, NOTICES_FILE);
+  const noticesCurrent = fs.existsSync(noticesPath)
+    ? await fsp.readFile(noticesPath, "utf8")
+    : "";
+  assert(
+    noticesCurrent === (await buildThirdPartyNotices(REPO_ROOT, sbom)),
+    `${NOTICES_FILE} is stale; run node scripts/runtime/third-party-notices.mjs`,
+  );
   await copyWorkspaceInputs(builderRoot);
   await installProductionClosure(builderRoot);
   const installedSbom = await buildSbomLiteFromFile(
@@ -945,6 +962,8 @@ async function main() {
       sbomLite: path.join(args.outDir, RUNTIME_SBOM_FILE),
       payloadRoot,
       thirdPartyCount: closureCount,
+      terms: manifest.terms,
+      brandSourceTree: manifest.brandSourceTree,
       payloadEntryCount: finalScan.entryCount + 1,
       dirty: manifest.dirty,
       archivePacking: manifest.archivePacking,

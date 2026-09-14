@@ -17,8 +17,8 @@
     {
       "kind": "documented-limit",
       "file": "packages/mcp-server/src/tools/brand.apply.ts",
-      "anchor": "throw new ToolError('OODS-N020', 'brand.apply: canonical brand source",
-      "reason": "Portable bundle omits canonical brand source; even dry-run returns dependency-specific OODS-N020 at the adapter wire. Host mutation remains separately proven."
+      "anchor": "receipt.portable = { sourceWrites: 'skipped', tokenBuild: 'skipped'",
+      "reason": "The runtime bundle ships the brand source, so previews execute from the archive; apply:true there emits the review kit without writing source or running the token build, and the receipt records both steps as skipped. OODS-N020 is returned only when the brand source directory is missing."
     }
   ],
   "brand.intake": [

@@ -49,9 +49,10 @@ describe('s196 release readiness derives facts without making Gate 2 decisions',
     expect(baseline.packages.map((row: any) => row.path).sort()).toEqual(rows.map(row => row.path).sort());
     expect(baseline.packages.find((row: any) => row.path === 'package.json').shape).not.toHaveProperty('private');
     expect(rows[0].fields.private).toBe(true);
-    expect(rows.find(row => row.name === '@oods/mcp-server')!.fields).not.toHaveProperty('license');
+    // s200-m03 (#2061): every manifest declares the SPDX id; the field is present, never absent.
+    expect(rows.find(row => row.name === '@oods/mcp-server')!.fields.license).toBe('PolyForm-Noncommercial-1.0.0');
     expect(rows.find(row => row.name === '@oods/tokens')!.fields.private).toBe(true);
-    expect(facts.packageSummary).toEqual({ workspaces: 21, workspacePrivate: 21, workspaceWithoutLicenseField: 12, workspacePublishConfig: 0, workspaceLicenseFiles: 5, rootLicenseFiles: 1 });
+    expect(facts.packageSummary).toEqual({ workspaces: 21, workspacePrivate: 21, workspaceWithoutLicenseField: 0, workspacePublishConfig: 0, workspaceLicenseFiles: 5, rootLicenseFiles: 1 });
   });
 
   it('checks generated JSON and the marked facts block while preserving authored prose', () => {

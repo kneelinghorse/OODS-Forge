@@ -93,15 +93,19 @@ describe('generated Forge claims remain tied to their measured sources (s196)', 
     const ledger = JSON.parse(read('packages/mcp-server/registry/tool-capability-ledger.v1.json'));
     const portable = ledger.rows.filter((row: { portableOutcome?: unknown }) => row.portableOutcome);
     expect(facts.portableTools).toBe(portable.length);
-    expect(facts).toMatchObject({ portablePass: 17, portableTyped: 2, releaseCells: 42, releaseEqual: 42, scenarios: 110 });
+    const typedRows = portable.filter((row: { portableOutcome?: { outcome?: string } }) => row.portableOutcome?.outcome === 'typed');
+    expect(facts).toMatchObject({ portablePass: portable.length - typedRows.length, portableTyped: typedRows.length, releaseCells: 42, releaseEqual: 42, scenarios: 110 });
+    expect(facts).toMatchObject({ portablePass: 18, portableTyped: 1, portableLimits: 'design.preview (OODS-N019)' });
     for (const file of ['docs/how-forge-works.html', 'packages/mcp-server/README.md', 'packages/mcp-bridge/README.md']) {
-      expect(documents[file]).toContain('brand.apply (OODS-N020) and design.preview (OODS-N019)');
+      expect(documents[file]).toContain('design.preview (OODS-N019)');
+      expect(documents[file]).not.toContain('OODS-N020');
       expect(documents[file]).toContain('42');
       expect(documents[file]).not.toContain('loses the native error code');
       expect(documents[file]).not.toContain('readiness evidence files are omitted');
     }
-    const changed = renderDocuments({ ...facts, portablePass: 16, portableTyped: 3, releaseCells: 40 }, templates, documents);
+    const changed = renderDocuments({ ...facts, portablePass: 16, portableTyped: 3, portableTypedPhrase: 'retain typed dependency limits', releaseCells: 40 }, templates, documents);
     expect(changed['docs/how-forge-works.html']).toContain('16 return the exercised result and 3 retain typed dependency limits');
+    expect(documents['docs/how-forge-works.html']).toContain('18 return the exercised result and 1 retains a typed dependency limit');
     expect(changed['packages/mcp-server/README.md']).toContain('40 cells');
   });
 

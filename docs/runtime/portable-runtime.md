@@ -1,17 +1,38 @@
-# Portable runtime — Gate 1
+# Portable runtime
 
-Gate 1 is a private, non-hosted OODS Forge runtime bundle for named
-consumers. Forge builds the bundle and hands over a local tarball plus its
-verification files; the consumer runs it. This is not a public npm publish, a
-GitHub release, an OCI image, an MCPB package, or a registry listing. Those
-distribution choices remain Gate 2 work.
+The portable runtime is the OODS Forge bundle a GitHub Release carries: one
+archive with the MCP server, the stdio adapter, the HTTP bridge, the built token
+and component packages, the registry data and the production dependency
+closure, plus the files that verify it. Users install it by following
+[install.md](install.md). This page is the contract behind that page: how the
+archive is built and verified, what it contains and what it never contains, and
+how the runtime behaves once extracted. It is a source-available release under
+PolyForm Noncommercial 1.0.0; the license, the commercial path and the
+third-party notices travel inside the archive.
+
+## Release assets
+
+A release carries six files:
+
+- `forge-runtime.tar.gz`: the runtime archive.
+- `forge-runtime.tar.gz.sha256`: the detached SHA-256 of the archive.
+- `forge-runtime.manifest.json`: the inspection manifest (source commit, package
+  versions, Node floor, payload digests, terms and brand-source digests).
+- `runtime-sbom-lite.json`: the pnpm-lock-derived production closure with
+  integrity hashes.
+- `THIRD-PARTY-NOTICES.md`: the declared license and shipped license text of
+  every package in that closure.
+- `install.md`: the install steps for Claude Desktop, Claude Code and Cursor.
+
+A release is drafted from a frozen commit and published only by the repository
+owner. No npm package, `.mcpb` bundle or container image exists for this
+runtime.
 
 ## Build and verify
 
-CI uses Node 24 and pnpm 9.12.2. The supported runtime floor is Node
-`>=20.11.1`, which is the highest declared floor among the thirteen bundled
-workspaces. The portable-runtime CI job builds on Node 24 and runs the extracted
-E2E on Node 24 and Node 20.11.1 within its 15-minute budget.
+Every gate is local. The build machine runs Node 24; the runtime floor is Node
+`>=20.11.1`, the highest declared floor among the thirteen bundled workspaces,
+and the manifest records both.
 
 Build the repository before assembly:
 
@@ -21,6 +42,8 @@ pnpm run build:tokens
 pnpm run build:packages
 pnpm --filter @oods/mcp-server run build
 pnpm --filter @oods/mcp-bridge run build
+node scripts/runtime/third-party-notices.mjs --check
+node scripts/runtime/client-configs.mjs --check
 ```
 
 Assemble and verify from operating-system temporary directories, outside the
@@ -34,7 +57,8 @@ trap 'rm -rf "$forge_runtime_tmp" "$forge_extract_tmp"' EXIT
 
 node scripts/runtime/assemble.mjs \
   --out-dir "$forge_runtime_tmp/out" \
-  --work-dir "$forge_runtime_tmp/work"
+  --work-dir "$forge_runtime_tmp/work" \
+  --final
 
 tar -xzf "$forge_runtime_tmp/out/forge-runtime.tar.gz" \
   -C "$forge_extract_tmp"
@@ -44,16 +68,20 @@ node scripts/runtime/e2e.mjs \
   --repo-root "$forge_repo_root"
 ```
 
+`--final` rejects a dirty checkout, so a release archive always names a commit
+that exists. Omit it only for a development bundle; its manifest then records
+`dirty: true` and the hash of the working-tree status.
+
 `assemble.mjs` produces four inspection artifacts:
 
-- `forge-runtime.tar.gz` — the runtime archive. It is determinism-certified
-  only when `archivePacking.determinismCertified` is `true` in the manifest.
-- `forge-runtime.tar.gz.sha256` — the conventional detached archive-digest
+- `forge-runtime.tar.gz`: the runtime archive. It is determinism-certified only
+  when `archivePacking.determinismCertified` is `true` in the manifest.
+- `forge-runtime.tar.gz.sha256`: the conventional detached archive-digest
   sidecar.
-- `forge-runtime.manifest.json` — the detached inspection manifest. It retains
+- `forge-runtime.manifest.json`: the detached inspection manifest. It retains
   the embedded payload metadata and adds `archive {file, byteSize, sha256}`
   after packing.
-- `runtime-sbom-lite.json` — the pnpm-lock-derived production closure, also
+- `runtime-sbom-lite.json`: the pnpm-lock-derived production closure, also
   present at the bundle root.
 
 The embedded manifest cannot contain the digest of the archive that contains
@@ -63,16 +91,17 @@ the staged payload, and `archiveSha256File`, which points to
 `forge-runtime.tar.gz.sha256`. The detached manifest adds the archive filename,
 measured byte size and SHA-256; the embedded manifest retains only payload
 metadata. Their bytes therefore differ.
+
 The manifest also records the source commit and source commit date, package
-versions, registry and structured-data pins, token-tree pin, Node floor, CI
-Node version, package layout, and third-party closure count.
+versions, registry and structured-data pins, the built token-tree pin, the
+brand-source tree digest (`brandSourceTree`), the SHA-256 of each terms file
+(`terms`: `LICENSE`, `COMMERCIAL.md`, `THIRD-PARTY-NOTICES.md`), the Node
+floor, the package layout and the third-party closure count. Assembly refuses
+to run when `THIRD-PARTY-NOTICES.md` is stale against the lockfile.
 
-On Linux, verify the detached archive digest with:
-
-```sh
-cd "$forge_runtime_tmp/out"
-sha256sum --check forge-runtime.tar.gz.sha256
-```
+Verify the detached archive digest with `sha256sum --check
+forge-runtime.tar.gz.sha256` on Linux or `shasum -a 256 -c
+forge-runtime.tar.gz.sha256` on macOS.
 
 The assembler creates a synthetic workspace, preserves the repository's
 workspace-link policy, and performs its production-only install there with
@@ -80,16 +109,14 @@ workspace-link policy, and performs its production-only install there with
 synthetic importer is not the repository importer. Peer requirements are
 supplied by their consumers, so peer-only lockfile resolutions are excluded
 from the bundle SBOM. The current lock-derived third-party closure is 283
-packages, up from 245 before the bridge joined the bundle. Assembly derives this
-count once from the lock and requires the installed closure, SBOM and manifest
-to agree with that value. The repository install remains
-`pnpm install --frozen-lockfile`, and CI hashes `pnpm-lock.yaml` before and
-after both assemblies to prove the source lock did not move.
+packages. Assembly derives this count once from the lock and requires the
+installed closure, SBOM, notices and manifest to agree with that value. The
+repository install remains `pnpm install --frozen-lockfile`, and assembly
+hashes `pnpm-lock.yaml` before and after to prove the source lock did not
+move.
 
-CI assembles twice into distinct output and work directories, then compares
-the two detached sidecars. Both CI calls add `--final`, which rejects a dirty
-source checkout; omit that flag only for an explicitly dirty development
-bundle:
+Assembling twice into distinct output and work directories and comparing the
+two detached sidecars proves the archive reproduces:
 
 ```sh
 node scripts/runtime/assemble.mjs \
@@ -104,32 +131,14 @@ cmp "$forge_runtime_tmp/out-1/forge-runtime.tar.gz.sha256" \
   "$forge_runtime_tmp/out-2/forge-runtime.tar.gz.sha256"
 ```
 
-The deterministic archive step is Linux/GNU-tar certified. When GNU tar is
-unavailable, the assembler uses macOS bsdtar's restricted-pax format so local
-pack-twice checks remain stable without unrestricted-pax `ctime` headers.
-Its manifest still sets `archivePacking.determinismCertified` to `false`; that
-bundle can be extracted and exercised locally, but it is not the CI
-certification artifact.
+The deterministic archive step is certified with GNU tar (`gtar` on macOS,
+`tar` on Linux). When GNU tar is unavailable, the assembler uses bsdtar's
+restricted-pax format so local pack-twice checks remain stable without
+unrestricted-pax `ctime` headers. Its manifest then sets
+`archivePacking.determinismCertified` to `false`; that bundle can be extracted
+and exercised locally, but it is not a release artifact.
 
-## Accepted consumer requirements
-
-This is the Gate 1 disposition of the eight requirements accepted in request
-`f55e6865`.
-
-| Item                                              | Gate 1 disposition                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1. Pinned runtime artifact and software inventory | **Satisfied.** The private handoff includes the tarball, checked-out commit, detached SHA-256, root `LICENSE`, and `runtime-sbom-lite.json`. The SBOM-lite records the pnpm-lock v9 production closure used by this bundle; OCI is out of scope.                                                                                                                                                                                                   |
-| 2. Runtime version contract                       | **Satisfied.** The manifest declares `nodeFloor` `>=20.11.1` and `ciNode` 24. CI builds on Node 24 and exercises the extracted runtime on Node 24 and Node 20.11.1. pnpm is pinned to 9.12.2 for the build.                                                                                                                                                                                                                                                                  |
-| 3. Adapter-only operation                         | **Satisfied, with an optional bridge.** The adapter lazily starts the bundled native server over stdio. `mcp-bridge` is the thirteenth package; it can independently start the same bundled server over HTTP.                                                                                                                                                                                                                                                                        |
-| 4. Runtime data and planning/token assets         | **Satisfied under the publish boundary below.** Runtime registry data, built token output, and structured data ship. Planning means the relocated compiled component schema, not `cmos/`. Brand source, named fidelity fixtures, and stories do not ship.                                                                                                                                                                                          |
-| 5. Path portability                               | **Satisfied.** CI extracts below `$RUNNER_TEMP`, outside `$GITHUB_WORKSPACE`, starts from that arbitrary location, rejects developer absolute paths, and does not rely on Node walking up into the checkout for dependencies.                                                                                                                                                                                                                      |
-| 6. Consumer E2E                                   | **Satisfied and extended.** The primary adapter makes 29 calls across all 19 tools. Restart adds health, for 30 adapter calls. Outcomes are 17 executed passes and two typed limits. Separate bridge checks cover `/health`, `/tools`, `/run` render parity and clean shutdown. |
-| 7. Lifecycle, persistence, and environment        | **Satisfied with the corrections below.** Readiness is the first successful `health` `tools/call`, not `tools/list`. The E2E measures shutdown on stdin close and restart/termination behavior. Persistent writers and 26 documented operational environment variables are explicit below.                                                                                                                                                                |
-| 8. Freshness metadata                             | **Satisfied.** `forge-runtime.manifest.json` is a bundle-root file and an adjacent inspection copy. It is not a `health` response field. A future public distribution may expose a different Gate 2 freshness surface.                                                                                                                                                                                                                             |
-
-## Publish boundary
-
-The Gate 1 archive contains:
+## What the archive contains
 
 - The thirteen runtime workspaces with their `package.json` and built runtime
   output: `mcp-server`, `mcp-adapter`, `mcp-bridge`, `tokens`, `viz-core`, `viz-render`,
@@ -147,15 +156,20 @@ The Gate 1 archive contains:
 - `artifacts/structured-data/` and
   `docs/integration/stage1-entity-aliases.json`.
 - Built token output under `packages/tokens/dist/`, including the compiled
-  brand A/B CSS and the legacy `dist/ts/tokens.ts` output. Token source under
-  `packages/tokens/src/` does not ship.
+  brand A/B CSS and the legacy `dist/ts/tokens.ts` output.
+- The brand documents `brand.apply` reads: `packages/tokens/src/tokens/brands/`
+  (`A` and `B`, each with `base.json`, `dark.json` and `hc.json`). No other
+  token source, palette generator or token build script ships.
 - `packages/mcp-server/dist/registry/readiness-attestation.v1.json`, generated
   during assembly from host-resolved React/Vue evidence references. Each reference
   records its hash and evidence class, and the attestation binds those claims to
   all shipped first-party package bytes. Generation verifies it before accepting
   readiness without host source or test files.
-- Root `LICENSE`, `forge-runtime.manifest.json`, and
-  `runtime-sbom-lite.json`.
+- The terms at the archive root: `LICENSE` (PolyForm Noncommercial 1.0.0 with
+  the Required Notice), `COMMERCIAL.md` and the generated
+  `THIRD-PARTY-NOTICES.md`, each byte-identical to the repository copy and
+  recorded in the manifest.
+- `forge-runtime.manifest.json` and `runtime-sbom-lite.json`.
 
 The `packages/<workspace>/dist` layout is load-bearing. Production modules
 resolve `REPO_ROOT` by walking up from those dist locations, so flattening a
@@ -165,9 +179,12 @@ keeping `.d.ts` declarations and `dist/ts/*.ts` built token outputs.
 Tracked TypeScript assets elsewhere in the boundary remain present; in
 particular, `.ts` files under `traits/` are data inputs, not build debris.
 
+## What the archive never contains
+
 The archive never contains a `cmos/` directory, planning inputs, consumer
-fixtures, consumer intake data, brand source, `stories/`, source code or tests. Three
-independent boundary checks make the distinction enforceable:
+fixtures, intake data, `stories/`, tests, or source code beyond the brand
+documents named above. Three independent boundary checks make the distinction
+enforceable:
 
 1. The member gate rejects every archive path rooted at `cmos/`.
 2. The executable-JavaScript gate rejects a quoted `cmos` path in bundled
@@ -196,7 +213,7 @@ source repository.
 
 ### Runtime-relative roots
 
-The runtime's root-relative reads and their Gate 1 disposition are:
+The runtime's root-relative reads and their disposition in the archive:
 
 | Root                                                                     | Purpose                                                              | Disposition                              |
 | ------------------------------------------------------------------------ | -------------------------------------------------------------------- | ---------------------------------------- |
@@ -208,16 +225,18 @@ The runtime's root-relative reads and their Gate 1 disposition are:
 | `docs/integration/stage1-entity-aliases.json`                            | Stage 1 entity aliases                                               | Included                                 |
 | `packages/tokens/dist/css/`                                              | Runtime document styling                                             | Included                                 |
 | `packages/tokens/dist/tailwind/`                                         | Code-generation token mapping                                        | Included                                 |
+| `packages/tokens/src/tokens/brands/`                                     | Brand documents read by `brand.apply`                                | Included                                 |
 | `packages/mcp-server/dist/schemas/`                                      | Tool wire schemas and relocated component schema                     | Included inside the server dist          |
 | `packages/mcp-server/dist/security/`                                     | Server policy and redaction patterns                                 | Included inside the server dist          |
 | `configs/agent/policy.json`                                               | Required bridge policy                                               | Included                                 |
 | `packages/mcp-server/dist/registry/readiness-attestation.v1.json`          | Hash-bound portable React/Vue readiness                              | Generated at assembly                    |
 | `packages/component-contracts/registry/`                                 | Component capability records used by target-aware code generation    | Included                                 |
 | `packages/components-{react,vue}/evidence/`                              | Target readiness records loaded through public package subpaths      | Included                                 |
+| `LICENSE`, `COMMERCIAL.md`, `THIRD-PARTY-NOTICES.md`                     | The terms                                                            | Included, recorded in the manifest       |
 | `stories/`                                                               | Optional catalog stories facet                                       | Not shipped; that facet degrades to `[]` |
-| `packages/tokens/src/`, `packages/tokens/scripts/`, `apps/explorer/src/` | Brand application, token rebuilding, and host diagnostics            | Host repository only                     |
+| The rest of `packages/tokens/src/`, `packages/tokens/scripts/`, `apps/explorer/src/` | Token rebuilding, palette generation and host diagnostics | Host repository only                     |
 
-## Tool surface and host-only calls
+## Tool surface and portable outcomes
 
 The default adapter advertises 19 auto tools in the order of `registry.auto`; five on-demand tools remain outside this default surface. The tool ledger contains 24 live entries and the three recorded retirements.
 
@@ -243,17 +262,19 @@ object
 repl
 ```
 
-Advertisement includes two typed portable limits. `brand.apply` requires canonical brand source, which Gate 1 omits; even its dry-run returns `OODS-N020` at the adapter wire. `brand.intake` validates inline documents entirely in memory and succeeds without canonical brand source. `tokens.build apply:true` exports five artifacts from shipped outputs without rebuilding; dry-run remains preview/transcript only. A missing portable output returns `OODS-N011` with `buildAttempted:false`. `fidelity.preview` works with inline manifests; named fixtures are host-only. The optional catalog stories facet remains empty when stories are absent.
+Eighteen of the nineteen advertised tools execute from the extracted archive. One typed limit remains: `design.preview` requires the local design-loop server and returns retryable `OODS-N019` when it is unavailable. The adapter retains structured native failures as JSON text content shaped `{error:{...native,retryable}}` with `isError:true`, so the native code is preserved at `tools/call` and a client can tell a dependency limit from a failure.
 
-`design.preview` requires the local design-loop server and returns retryable `OODS-N019` when it is unavailable. Adapter v0.3.0 retains structured native failures as JSON text content shaped `{error:{...native,retryable,data}}` with `isError:true`; the native code is preserved at `tools/call`. React/Vue `code.generate` and `pipeline` emit real artifacts using the assembly-time readiness attestation. Missing or tampered attestation evidence returns `OODS-N015` without an artifact. The tool ledger therefore retains two `portableLimits` rows: `brand.apply` and `design.preview`.
+`brand.apply` executes from the archive because the brand documents ship. `apply:false` previews the delta against the shipped brand source. `apply:true` from the archive emits the review kit under the run directory (the three applied theme snapshots, `specimens.json`, `variables.css` and `diagnostics.json`) and skips the two host-only steps, the source write and the token build; the receipt records `sourceWritten:false`, `build:null` and `portable:{sourceWrites:"skipped",tokenBuild:"skipped"}`, and the shipped brand source and built output stay byte-identical. `OODS-N020` is returned only when the brand-source directory is missing.
 
 ## E2E sequence and lifecycle
 
-`scripts/runtime/e2e.mjs` initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary adapter process makes 29 calls across all 19 advertised tools. It retains the four two/four-panel dashboard renders, positive and negative chart certification, and adds a content-pinned recipe per advertised tool. Dynamic schema/spec references bind directly to prior tool output without editing schemas. Map create/resolve/delete and schema save/load/delete prove scoped persistence. Token dry-run confirms B/dark metadata and writes only a transcript/index; an additional apply call checks all five exported artifacts against shipped outputs. Health separately checks the built scopes. A second code-generation call exercises Vue alongside React, and pipeline returns a real artifact. Brand-source absence and unavailable preview are asserted with their wire codes as the two typed limits.
+`scripts/runtime/e2e.mjs` verifies the embedded manifest, the SBOM, the terms files against the manifest and the repository copies, the shipped brand directories, and the adapter version, then initializes the extracted adapter and checks `tools/list` against the extracted registry. The primary adapter process makes 30 calls across all 19 advertised tools. It retains the four twin dashboard renders, the certification positive and negative pillars, the real token export, both React and Vue generation, the saved-schema and mapping round trips, and the two `brand.apply` calls: the preview, then an apply whose review kit lands under the extraction's `artifacts/current-state/` while the brand-source digest is proven unchanged.
 
-Every dashboard HTML hash covers returned bytes; repeats compare deterministic response projections while excluding only the three ephemeral reference fields. Certification retains all four positive pillars and the HTML-negative OODS-V126 control. Health reports exact built scopes and a configured A/light default. The test checks token transcript paths inside the extraction artifact root and directs map/schema writes to a fresh extraction-local root. It removes only those owned roots, then requires the complete extracted tree digest to match its pre-test value.
+Every dashboard HTML hash covers returned bytes; repeats compare deterministic response projections while excluding only the three ephemeral reference fields. Certification retains all four positive pillars and the typed negative code.
 
-Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 30 adapter calls across two processes. The E2E separately launches the bundled bridge on an ephemeral port, checks `/health` revision against the manifest commit and structured-data hash, checks the 19-name `/tools` roster, compares a `/run` `viz.render` svgHash to the same adapter operand, and stops the bridge and its child cleanly. Per-tool outcomes, fixture hashes, lifecycle results and restored tree hashes are retained in CI's `portable-runtime-e2e` artifact. The source-derived ledger counts literal calls; the separate E2E receipt proves execution.
+Closing stdin must stop the adapter cleanly. A second process initializes, calls health, and exits on SIGTERM without SIGKILL. Total: 31 adapter calls across two processes. The E2E separately launches the bundled bridge on an owned loopback port, checks its stamped revision against the manifest, lists the same 19 tools and renders one chart through `POST /run` with the same SVG hash the adapter produced. It exercises the token transcript, mapping, saved-schema and brand review-kit writers inside owned extraction roots, cleans up, and proves the complete tree is restored.
+
+The retained receipt of the run behind the current tool ledger is named by `portableExecution.path` in `packages/mcp-server/registry/tool-capability-ledger.v1.json`; `docs/mcp/Tool-Specs.md` renders each tool's portable outcome from it.
 
 ## Reference applications from the bundle
 
@@ -261,7 +282,7 @@ The runtime-cell harness has a bundle mode for 42 fixed cells: Organization,
 Subscription and User × card, detail, form, inline, list, timeline and workflow
 × React and Vue. Supply both the extracted directory and its original archive;
 the extraction must be outside the repository. Use the pinned Linux Playwright
-browser environment required by the host runtime sweep.
+browser environment the host runtime sweep uses.
 
 ```sh
 pnpm exec tsx scripts/product-reality/s193-runtime-cells.ts \
@@ -302,10 +323,9 @@ executed `bundleHead` and `archiveSha256`. Those fields identify the measured
 archive, even when a later bundle carries the evidence. Missing or invalid
 release evidence yields `release: null` and a warning.
 
-The first s196-m03 sweep passed all 42 cells with host artifact hash equality.
-Its bootstrap archive predates the first release ledger. Recorded identity and retained evidence are
-in the [m03 receipt index](../../artifacts/product-reality/sprint-196/m03/README.md);
-neither a complete 42-cell result nor a hosted CI pass is claimed yet.
+The first bundle sweep (Sprint 196 m03) passed all 42 cells with host artifact hash equality;
+its recorded identity and retained evidence are in the
+[m03 receipt index](../../artifacts/product-reality/sprint-196/m03/README.md).
 
 ## Bridge entry point
 
@@ -326,21 +346,20 @@ that exact run directory. SIGINT or SIGTERM closes both bridge and native child.
 The bundle supports read-only use without creating files. Calls that opt into
 state changes use these real locations:
 
-| Writer                                       | Default location and override                                                                                                                                                       |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Policy-governed run bundles                  | `<bundle-root>/artifacts/current-state/<UTC-date>/...`, resolved from `packages/mcp-server/dist/security/policy.json`. There is no environment override for `artifactsBase`.        |
-| `schema` and schema-writing pipeline actions | `.oods/schemas` below the adapter's native-server cwd, `packages/mcp-server/`. Set `MCP_SCHEMA_STORE_ROOT` and/or `MCP_SCHEMA_STORE_DIR` to relocate it.                            |
-| `map`                                        | `artifacts/structured-data/component-mappings.json`, or `MCP_MAPPINGS_PATH`; apply conflicts write below `<bundle-root>/.oods/conflicts/`.                                          |
-| `tokens.build`                               | Policy run bundles containing five artifacts copied or resolved from shipped dist outputs. Portable calls never rebuild or rewrite `packages/tokens/dist`. |
-| Legacy file telemetry                        | `MCP_TELEMETRY_DIR` selects a JSONL destination, but `packages/mcp-server/src/telemetry/log.ts` has zero production importers. It performs no runtime writes today.                 |
-
-The E2E exercises token transcript, mapping and saved-schema writers inside owned extraction roots, cleans up, and proves the complete tree is restored.
+| Writer                                       | Default location and override                                                                                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Policy-governed run bundles                  | `<bundle-root>/artifacts/current-state/<UTC-date>/...`, resolved from `packages/mcp-server/dist/security/policy.json`. There is no environment override for `artifactsBase`. |
+| `schema` and schema-writing pipeline actions | `.oods/schemas` below the adapter's native-server cwd, `packages/mcp-server/`. Set `MCP_SCHEMA_STORE_ROOT` and/or `MCP_SCHEMA_STORE_DIR` to relocate it.            |
+| `map`                                        | `artifacts/structured-data/component-mappings.json`, or `MCP_MAPPINGS_PATH`; apply conflicts write below `<bundle-root>/.oods/conflicts/`.                          |
+| `tokens.build`                               | Policy run bundles containing five artifacts copied or resolved from shipped dist outputs. Portable calls never rebuild or rewrite `packages/tokens/dist`.           |
+| `brand.apply`                                | Policy run bundles under `review-kit/brand.apply/` holding the applied theme snapshots, specimens, `variables.css` and diagnostics. Portable calls never rewrite `packages/tokens/src/tokens/brands` or `packages/tokens/dist`. |
+| Legacy file telemetry                        | `MCP_TELEMETRY_DIR` selects a JSONL destination, but `packages/mcp-server/src/telemetry/log.ts` has zero production importers. It performs no runtime writes today.  |
 
 ## Environment contract
 
 The native server and bridge load `<bundle-root>/.env` through dotenv when the
-file is present. None of these 26 operational variables is required for the Gate 1
-E2E; an absent variable uses the stated default or leaves the optional feature
+file is present. None of these 26 operational variables is required by the E2E;
+an absent variable uses the stated default or leaves the optional feature
 disabled.
 
 | Variable                    | Purpose / default                                                                  |
@@ -361,20 +380,14 @@ disabled.
 | `MCP_SCHEMA_STORE_DIR`      | Schema-store directory, relative to its root unless absolute.                      |
 | `MCP_SCHEMA_REF_TTL_MS`     | In-memory schema/value-ref lifetime; default 30 minutes.                           |
 | `MCP_SCHEMA_REF_MAX`        | Maximum in-memory schema/value refs; default 250.                                  |
-| `MCP_RUNTIME_CELLS_PATH`    | Optional path to a validated 154-cell runtime ledger; default is the canonical registry, then shipped dist registry. |
+| `MCP_RUNTIME_CELLS_PATH`    | Optional path to a validated runtime-cell ledger; default is the canonical registry, then shipped dist registry. |
 | `MCP_RELEASE_CELLS_PATH`    | Optional path to a validated 42-cell release ledger; default is the canonical registry, then shipped dist registry. Invalid or absent proof degrades health. |
 | `MCP_MAPPINGS_PATH`         | Mapping-document path; relative values resolve from the bundle root.               |
 | `MCP_TELEMETRY_DIR`         | Legacy JSONL path; its writer currently has no production importer.                |
+| `MCP_BRAND_SOURCE_ROOT`     | Host-only override of the tokens package root read by `brand.apply` and `tokens.build`; unset in the bundle. |
 | `OODS_NODE_PATH`            | Node executable used by the adapter; default `process.execPath`.                   |
 | `OODS_TAILWIND_TOKENS_PATH` | Tailwind-token file override for code generation.                                  |
 | `OODS_OTLP_ENDPOINT`        | Enables OTLP/HTTP trace export when set.                                           |
 | `OODS_OTLP_SERVICE_NAME`    | OODS-specific service-name override.                                               |
 | `OODS_OTLP_HEADERS`         | Comma-separated OTLP exporter headers.                                             |
 | `OTEL_SERVICE_NAME`         | Standard OpenTelemetry service name; takes precedence over the OODS-specific name. |
-
-## Private handoff
-
-The Gate 1 delivery records the local path to `forge-runtime.tar.gz`, the
-detached SHA-256 sidecar, `forge-runtime.manifest.json`, and
-`runtime-sbom-lite.json`. It also records the CI-15 run URL and the commit in
-the manifest. Nothing in this runbook authorizes a public publish.

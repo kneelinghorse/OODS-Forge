@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { tokenPackageRoot, runTokenBuild, refreshTokenBundle, type TokenBuildReceipt } from '../lib/token-build.js';
+import { tokenPackageRoot, runTokenBuild, refreshTokenBundle, canRunTokenBuild, type TokenBuildReceipt } from '../lib/token-build.js';
 import { resetTokensCssCache } from '../render/document.js';
 import { todayDir, loadPolicy, withinAllowed, type Policy } from '../lib/security.js';
 import { isUnsafeKey } from '../lib/safety.js';
@@ -531,7 +531,12 @@ export interface BrandApplyReceipt {
   sourceWritten: boolean;
   sourceFiles: Array<{ path: string; sha256Before: string; sha256After: string; bytesBefore: number; bytesAfter: number }>;
   build: TokenBuildReceipt | null;
+  /** Present only when this runtime cannot rebuild tokens (the portable bundle): the host-only steps it skipped. */
+  portable?: { sourceWrites: 'skipped'; tokenBuild: 'skipped'; reason: string };
 }
+
+const PORTABLE_APPLY_REASON =
+  'This runtime ships built token output and cannot rebuild it; shipped brand source and dist stay unchanged, and the review kit carries the applied documents and variables.css.';
 
 export async function handle(input: BrandApplyInput): Promise<GenericOutput & { receipt: BrandApplyReceipt }> {
   if (!input || typeof input !== 'object') {
@@ -614,9 +619,13 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput & { 
   const startedAt = new Date();
   const receipt: BrandApplyReceipt = { sourceWritten: false, sourceFiles: [], build: null };
   const sourceHash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
+  // Source writes and the token build are host-repository steps. A runtime that ships built
+  // token output (the portable bundle) keeps its brand source and dist immutable and still
+  // emits the review kit, so a bundle user gets the applied documents and the CSS overlay.
+  const hostBuild = canRunTokenBuild();
 
   if (input.apply) {
-    for (const theme of THEMES.filter(theme => changeRecords.some(change => change.theme === theme))) {
+    for (const theme of hostBuild ? THEMES.filter(theme => changeRecords.some(change => change.theme === theme)) : []) {
       const file = resolveBrandThemeFile(brand, theme);
       const before = fs.readFileSync(file);
       fs.writeFileSync(file, stringifyStable(updated[theme]) + '\n', 'utf8');
@@ -660,10 +669,14 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput & { 
 
     await generateCssSnapshot(brand, changeRecords, runDir, artifacts, details, ensureAllowed);
 
-    receipt.build = await runTokenBuild();
-    if (receipt.build.exitCode === 0) {
-      await refreshTokenBundle();
-      resetTokensCssCache();
+    if (hostBuild) {
+      receipt.build = await runTokenBuild();
+      if (receipt.build.exitCode === 0) {
+        await refreshTokenBundle();
+        resetTokensCssCache();
+      }
+    } else {
+      receipt.portable = { sourceWrites: 'skipped', tokenBuild: 'skipped', reason: PORTABLE_APPLY_REASON };
     }
     const diagnostics = {
       brand,
@@ -696,7 +709,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput & { 
     artifacts,
     startTime: startedAt,
     endTime: new Date(),
-    exitCode: receipt.build?.exitCode ?? (input.apply ? 1 : 0),
+    exitCode: receipt.build?.exitCode ?? 0,
   });
   const bundleIndexPath = writeBundleIndex(runDir, [transcriptPath, ...artifacts]);
 

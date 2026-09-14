@@ -25,9 +25,11 @@ describe('Sprint 184 ported component style contract', () => {
     }
   });
 
-  it('resolves css and css-ported to one canonical stylesheet containing the former eight and statusables', () => {
+  it('publishes one canonical stylesheet through css only, containing the former eight and statusables', () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf8'));
-    expect(manifest.exports['./css-ported']).toEqual(manifest.exports['./css']);
+    // Sprint 200 m04 retired ./css-ported and ./ported with no migration window (#2062).
+    expect(Object.keys(manifest.exports)).toEqual(['.', './css', './package.json']);
+    expect(manifest.exports['./css']).toEqual({ default: './dist/components.css' });
     for (const id of PORTED_COMPONENT_STYLE_IDS) {
       expect(rootCss, id).toContain(`[data-oods-component='${id}']`);
     }
@@ -37,7 +39,7 @@ describe('Sprint 184 ported component style contract', () => {
     expect(rootCss.split(rules)).toHaveLength(2);
   });
 
-  it('packages the previously orphaned statusable rules through css-ported', () => {
+  it('packages the previously orphaned statusable rules in the historical stylesheet', () => {
     expect(css).toContain('@import "./statusables.css"');
     const statusables = fs.readFileSync(path.join(packageRoot, '../../src/styles/statusables.css'), 'utf8');
     expect(statusables).toContain('.statusable-badge');

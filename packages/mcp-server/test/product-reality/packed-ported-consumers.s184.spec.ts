@@ -20,7 +20,7 @@ afterEach(async () => {
 
 describe('Sprint 184 m04 packed ported consumers', () => {
   it(
-    'installs built tarballs externally and preserves the historical cohort through aliases of the canonical roots',
+    'installs built tarballs externally and preserves the historical cohort through the canonical roots with the aliases retired',
     async () => {
       const root = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-s184-m04-packed-proof-'));
       temporaryRoots.push(root);
@@ -82,15 +82,17 @@ describe('Sprint 184 m04 packed ported consumers', () => {
         expect(target.proof.rootRuntimeIds).toEqual(expect.arrayContaining([...NUCLEUS_COMPONENT_IDS]));
         expect(target.proof.readinessIds).toEqual(NUCLEUS_COMPONENT_IDS);
         expect(target.proof.cssComponentIds).toEqual(PORTED_COMPONENT_IDS);
-        expect(target.proof.aliasEquivalence).toEqual({ esm: true, cjs: true, readiness: true, css: true });
+        expect(target.proof.retiredSubpaths).toEqual({
+          [`@oods/components-${target.target}/ported`]: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+          [`@oods/components-${target.target}/readiness-ported`]: 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+          '@oods/component-styles/css-ported': 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+          '@oods/component-styles/ported': 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+        });
         expect(target.proof.resolutions.map(({ specifier }) => specifier)).toEqual([
           '@oods/component-contracts',
           `@oods/components-${target.target}`,
-          `@oods/components-${target.target}/ported`,
           `@oods/components-${target.target}/readiness`,
-          `@oods/components-${target.target}/readiness-ported`,
           '@oods/component-styles/css',
-          '@oods/component-styles/css-ported',
         ]);
         expect(target.proof.resolutions.every(({ consumerRelative }) => (
           consumerRelative.startsWith('node_modules/')
@@ -115,10 +117,11 @@ describe('Sprint 184 m04 packed ported consumers', () => {
       for (const target of ['react', 'vue'] as const) {
         const source = await fs.readFile(path.join(root, target, 'consumer.mjs'), 'utf8');
         expect(source).toContain(`from '@oods/components-${target}'`);
-        expect(source).toContain(`from '@oods/components-${target}/ported'`);
+        expect(source).not.toContain(`from '@oods/components-${target}/ported'`);
         expect(source).toContain(`from '@oods/components-${target}/readiness'`);
-        expect(source).toContain(`from '@oods/components-${target}/readiness-ported'`);
-        expect(source).toContain("import.meta.resolve('@oods/component-styles/css-ported')");
+        expect(source).not.toContain(`from '@oods/components-${target}/readiness-ported'`);
+        expect(source).toContain("import.meta.resolve('@oods/component-styles/css')");
+        expect(source).not.toContain("import.meta.resolve('@oods/component-styles/css-ported')");
         expect(source).not.toContain('/OODS-Forge/');
       }
     },

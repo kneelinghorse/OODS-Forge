@@ -114,8 +114,9 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
   it('binds proof scope, portable codes and current surface counts to their ledgers', () => {
     expect(document).toContain(sources.ledger.methodology.proofTier);
     expect(document).toContain(sources.ledger.portableExecution.sha256);
-    expect(document).toContain('17 pass and 2 typed dependency outcomes');
-    expect(document).toContain('dirty=`true`');
+    const execution = sources.ledger.portableExecution;
+    expect(document).toContain(`${execution.pass} pass and ${execution.typed} typed dependency outcomes across ${execution.tools} tools`);
+    expect(document).toContain(`dirty=\`${execution.dirty}\``);
     for (const row of sources.ledger.rows) {
       const body = section(row.name);
       expect(body).toContain(`Proof tier: \`"${row.proofTier}"\``);
@@ -139,7 +140,7 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     ['action property', (copy: typeof sources) => { copy.schemas[copy.dispatch.map.input].allOf![0].then!.properties!.newActionOption = { type: 'string' }; }],
     ['union output', (copy: typeof sources) => { copy.schemas[copy.dispatch.object.output].anyOf![0].properties!.newResponseField = { type: 'integer' }; }],
     ['description', (copy: typeof sources) => { copy.descriptions.health += ' New advertised health behavior.'; }],
-    ['portable limit', (copy: typeof sources) => { copy.ledger.rows.find(row => row.name === 'brand.apply')!.portableLimits[0].code = 'OODS-N999'; }],
+    ['portable limit', (copy: typeof sources) => { copy.ledger.rows.find(row => row.portableLimits.length > 0)!.portableLimits[0].code = 'OODS-N999'; }],
     ['proof tier', (copy: typeof sources) => { copy.ledger.rows[0].proofTier = 'none'; }],
     ['retired tool', (copy: typeof sources) => { copy.ledger.retired.push({ name: 'retired.fixture', reason: 'Retirement must change the published roster.', decisionIds: [9999] }); }],
     ['surface count', (copy: typeof sources) => { copy.components.rows[0].surfaces.react.state = 'unavailable'; }],

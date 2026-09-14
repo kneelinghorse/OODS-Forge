@@ -163,26 +163,20 @@ describe('generated artifact envelope', () => {
       peerNames: ['vue'],
       extension: '.vue',
     },
-  ])('admits the additive $framework ported subpaths without duplicating package dependencies', ({
+  ])('rejects the retired $framework ported subpaths that Sprint 200 removed from the manifests', ({
     framework,
     componentImport,
     styleImport,
-    peerNames,
     extension,
   }) => {
-    const artifact = buildGeneratedArtifact({
+    // The root subpaths are the only admitted package imports; a retired alias must fail
+    // here, before any consumer install could fail on ERR_PACKAGE_PATH_NOT_EXPORTED.
+    expect(() => buildGeneratedArtifact({
       framework,
       code: `import { StatusBadge } from '${componentImport}';\nimport '${styleImport}';\n`,
       fileExtension: extension,
       imports: [componentImport, styleImport],
-    });
-
-    expect(artifact.dependencies.map(({ name }) => name)).toEqual([
-      '@oods/component-styles',
-      framework === 'react' ? '@oods/components-react' : '@oods/components-vue',
-      ...peerNames,
-    ]);
-    expect(validateGeneratedArtifact(artifact)).toEqual([]);
+    })).toThrow(/is not a supported (?:react|vue) artifact import/);
   });
 
   it('sorts multi-file inputs and hashes identical inputs byte-for-byte', () => {

@@ -13,6 +13,8 @@ import {
   RUNTIME_MANIFEST_FILE,
   RUNTIME_SBOM_FILE,
   sha256,
+  sha256File,
+  TERMS_FILES,
   treeDigest,
   verifyEmbeddedManifest,
 } from "./manifest.mjs";
@@ -707,6 +709,22 @@ async function main() {
   assert.equal(sbom.summary.packageCount, manifest.thirdPartyCount);
   assert.equal(sbom.summary.integrityCount, manifest.thirdPartyCount);
   assert(sbom.packages.every((entry) => entry.integrity.startsWith("sha512-")));
+  // The terms ship at the archive root and match the repository copies byte for byte.
+  assert.deepEqual(manifest.terms.map((entry) => entry.path), [...TERMS_FILES]);
+  for (const entry of manifest.terms) {
+    const shipped = await sha256File(path.join(runtimeRoot, entry.path));
+    assert.equal(shipped, entry.sha256, `${entry.path} differs from the manifest`);
+    assert.equal(shipped, await sha256File(path.join(repoRoot, entry.path)),
+      `${entry.path} differs from the repository copy`);
+  }
+  assert((await fsp.readFile(path.join(runtimeRoot, "LICENSE"), "utf8")).startsWith("# PolyForm Noncommercial License 1.0.0"),
+    "shipped LICENSE is not PolyForm Noncommercial 1.0.0");
+  assert((await fsp.readFile(path.join(runtimeRoot, "THIRD-PARTY-NOTICES.md"), "utf8"))
+    .includes(`ships ${manifest.thirdPartyCount} third-party npm packages`), "notices count differs from the closure");
+  assert.equal(manifest.brandSourceTree.path, "packages/tokens/src/tokens/brands");
+  const brandDirectories = (await fsp.readdir(path.join(runtimeRoot, manifest.brandSourceTree.path), { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+  assert.deepEqual(brandDirectories, ["A", "B"], "shipped brand directories");
 
   const adapterPackage = await loadJson(
     path.join(runtimeRoot, "packages/mcp-adapter/package.json"),
@@ -774,7 +792,7 @@ async function main() {
         traits: health.registry.traits,
         objects: health.registry.objects,
       },
-      { components: 109, traits: 45, objects: 18 },
+      { components: 110, traits: 46, objects: 18 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));
@@ -806,8 +824,8 @@ async function main() {
     // generated taxonomy; health must expose their reconciled Core Profile.
     const vizTaxonomy = await loadJson(path.join(runtimeRoot, 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json'));
     assert.deepEqual(health.productReality.viz, vizTaxonomy.summary);
-    assert.deepEqual(Object.fromEntries(['types', 'patterns', 'families', 'classified', 'coreCells'].map(key => [key, health.productReality.viz[key]])), { types: 13, patterns: 21, families: 8, classified: 34, coreCells: 20 });
-    assert.equal(health.productReality.viz.coreSurfaceComplete + health.productReality.viz.typedGaps, 20);
+    assert.deepEqual(Object.fromEntries(['types', 'patterns', 'families', 'classified', 'coreCells'].map(key => [key, health.productReality.viz[key]])), { types: 13, patterns: 23, families: 8, classified: 36, coreCells: 17 });
+    assert.equal(health.productReality.viz.coreSurfaceComplete + health.productReality.viz.typedGaps, 17);
     assert(
       isInside(runtimeRoot, path.resolve(health.schemas.storeDir)),
       "health schema store escaped extraction root",
@@ -891,11 +909,42 @@ async function main() {
     }
     const data = await primary.callTool("structuredData_fetch", operand("structuredData.fetch"));
     assert.equal(data.dataset, 'components'); assert(data.etag);
-    const brand = await primary.callTool("brand_apply", operand("brand.apply"), "OODS-N020");
+    const brandSourceRoot = path.join(runtimeRoot, manifest.brandSourceTree.path);
+    const brandSourceBefore = await treeDigest(brandSourceRoot);
+    const brand = await primary.callTool("brand_apply", operand("brand.apply"));
+    assert.equal(brand.receipt.sourceWritten, false); assert.equal(brand.receipt.build, null);
+    assert.equal(brand.artifacts.length, 0, "brand.apply dry run writes no review-kit artifacts");
+    assert.match(brand.preview.summary, /brand B/);
+    for (const file of [brand.transcriptPath, brand.bundleIndexPath]) {
+      assert(isInside(artifactsRoot, file), `brand.apply receipt escaped extraction artifacts: ${file}`);
+      assert(fs.existsSync(file));
+    }
+    // apply:true from the bundle emits the review kit only: shipped brand source and dist never move.
+    const brandDelta = { color: { brand: { B: { surface: { canvas: { $value: "oklch(0.97 0.004 265)" } } } } } };
+    const appliedBrand = await primary.callTool("brand_apply", { ...operand("brand.apply"), delta: brandDelta, apply: true });
+    assert.equal(appliedBrand.receipt.sourceWritten, false, "portable brand.apply must not write shipped source");
+    assert.deepEqual(appliedBrand.receipt.sourceFiles, []);
+    assert.equal(appliedBrand.receipt.build, null, "portable brand.apply must not run the token build");
+    assert.equal(appliedBrand.receipt.portable?.sourceWrites, "skipped");
+    assert.equal(appliedBrand.receipt.portable?.tokenBuild, "skipped");
+    assert.equal(typeof appliedBrand.receipt.portable?.reason, "string");
+    assert.deepEqual(appliedBrand.artifacts.map((file) => path.basename(file)).sort(),
+      ["diagnostics.json", "specimens.json", "tokens.B.base.json", "tokens.B.dark.json", "tokens.B.hc.json", "variables.css"]);
+    for (const file of [...appliedBrand.artifacts, appliedBrand.transcriptPath, appliedBrand.bundleIndexPath]) {
+      assert(isInside(artifactsRoot, file), `brand.apply review kit escaped extraction artifacts: ${file}`);
+      assert((await fsp.stat(file)).size > 0);
+    }
+    const brandVariables = await fsp.readFile(appliedBrand.artifacts.find((file) => file.endsWith("variables.css")), "utf8");
+    assert(brandVariables.includes("--color-brand-b-surface-canvas") && brandVariables.includes("oklch(0.97 0.004 265)"), brandVariables);
+    const brandDiagnostics = JSON.parse(await fsp.readFile(appliedBrand.diagnosticsPath, "utf8"));
+    assert(brandDiagnostics.tokensChanged >= 1 && brandDiagnostics.themesTouched.includes("base"), JSON.stringify(brandDiagnostics));
+    const brandSourceAfter = await treeDigest(brandSourceRoot);
+    assert.equal(brandSourceAfter.sha256, brandSourceBefore.sha256, "portable brand.apply changed shipped brand source");
+    assert.equal(brandSourceAfter.sha256, manifest.brandSourceTree.sha256);
     const intake = await primary.callTool("brand_intake", operand("brand.intake"));
     assert.equal(intake.validated, true); assert.equal(intake.preview_only, true); assert(intake.delta.dark);
     const catalog = await primary.callTool("catalog_list", operand("catalog.list"));
-    assert.equal(catalog.totalCount, 109); assert.equal(catalog.returnedCount, 109);
+    assert.equal(catalog.totalCount, 110); assert.equal(catalog.returnedCount, 109);
     const composed = await primary.callTool("design_compose", operand("design.compose"));
     assert.equal(composed.status, 'ok'); assert(composed.schemaRef); state.compose = composed;
     await assertLoopbackPortClosed(4477);
@@ -929,12 +978,14 @@ async function main() {
     assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
     const rendered = await primary.callTool("repl", operand("repl"));
     assert.equal(rendered.status, 'ok'); assert(rendered.html.startsWith('<!DOCTYPE html>'));
-    assert.equal(primary.callCount, 29, '19 tools plus repeats, stores, real token export and Vue generation');
+    assert.equal(primary.callCount, 30, '19 tools plus repeats, stores, real token export, the bundled brand apply and Vue generation');
     assert.deepEqual([...primary.calledTools].sort(), [...expectedToolNames].sort());
     const outcomes = {
       'tokens.build': { outcome: 'pass', apply: true, artifacts: appliedTokens.artifacts.length, preview: tokens.preview.summary },
       'structuredData.fetch': { outcome: 'pass', etag: data.etag },
-      'brand.apply': { outcome: 'typed', gap: 'portable-brand-source-absent', apply: false, ...brand },
+      'brand.apply': { outcome: 'pass', dryRun: { apply: false, artifacts: 0, summary: brand.preview.summary },
+        applied: { apply: true, artifacts: appliedBrand.artifacts.length, tokensChanged: brandDiagnostics.tokensChanged, sourceWritten: false, build: null,
+          portable: appliedBrand.receipt.portable, brandSourceSha256: brandSourceAfter.sha256, brandSourceUnchanged: true } },
       'brand.intake': { outcome: 'pass', envelopeHash: intake.envelopeHash },
       'catalog.list': { outcome: 'pass', count: catalog.totalCount },
       'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
@@ -952,8 +1003,8 @@ async function main() {
       'viz.render': { outcome: 'pass', contentHash: viz.contentHash },
       'artifact.certify': { outcome: 'pass', pillars: positive.pillars, negativeCode: 'OODS-V126' },
     };
-    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 17);
-    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 2);
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'pass').length, 18);
+    assert.equal(Object.values(outcomes).filter(row => row.outcome === 'typed').length, 1);
     const bridge = await proveBridge(runtimeRoot, childEnvironment, manifest, expectedToolNames,
       vizInput, viz.svgHash);
     await assertLoopbackPortClosed(healthCanaryPort);
@@ -1049,8 +1100,8 @@ async function main() {
   const fullTreeAfter = await treeDigest(runtimeRoot);
   assert.equal(
     primary.callCount + restarted.callCount,
-    30,
-    "portable runtime E2E must make 30 tools/call operations across both adapter processes",
+    31,
+    "portable runtime E2E must make 31 tools/call operations across both adapter processes",
   );
   calls.totalAcrossProcesses = primary.callCount + restarted.callCount;
   assert.equal(

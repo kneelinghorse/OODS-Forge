@@ -142,6 +142,8 @@ export async function collectFacts(): Promise<Facts> {
     onDemandRowsMarkdown: registry.onDemand.map(tool => `| ${displayTool(tool, true)} | ${tools.rows.find(row => row.name === tool)!.proofTier} |`).join('\n'),
     portableTools: portable.length, portablePass: passed.length, portableTyped: typed.length,
     portableLimits: typed.map(row => `${row.name} (${row.portableOutcome!.code})`).join(' and '),
+    portableTypedPhrase: typed.length === 1 ? 'retains a typed dependency limit' : 'retain typed dependency limits',
+    portableLimitNoun: typed.length === 1 ? 'limit' : 'limits',
     traits: traits.length, vizTraits: traits.filter(row => row.definition.trait.category?.startsWith('viz')).length,
     traitSectionCount: traitSections.length, traitSectionRoster: traitSections.map(section => `<span class="k">${section}</span>`).join(', '),
     domainTraitsWord: words(traits.filter(row => row.file.startsWith('domains/')).length),

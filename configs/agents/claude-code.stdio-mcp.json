@@ -1,6 +1,6 @@
 {
-  "name": "OODS Forge — Claude Desktop (stdio)",
-  "summary": "Connect Claude Desktop to the OODS Forge runtime bundle through the stdio adapter.",
+  "name": "OODS Forge — Claude Code (stdio)",
+  "summary": "Register the OODS Forge runtime bundle with Claude Code as a local stdio MCP server.",
   "transport": {
     "type": "stdio",
     "command": "node",
@@ -9,17 +9,23 @@
     ]
   },
   "placement": {
-    "macOS": "~/Library/Application Support/Claude/claude_desktop_config.json",
-    "windows": "%APPDATA%\\Claude\\claude_desktop_config.json",
+    "scope": "local (the project you run the command in); add -s user to make it available everywhere",
     "key": "mcpServers.forge"
   },
-  "claudeDesktopConfig": {
+  "claudeCodeCommands": {
+    "add": "claude mcp add forge -- node /path/to/forge-runtime/packages/mcp-adapter/index.js",
+    "get": "claude mcp get forge",
+    "remove": "claude mcp remove forge"
+  },
+  "claudeCodeConfig": {
     "mcpServers": {
       "forge": {
+        "type": "stdio",
         "command": "node",
         "args": [
           "/path/to/forge-runtime/packages/mcp-adapter/index.js"
-        ]
+        ],
+        "env": {}
       }
     }
   },
@@ -34,6 +40,6 @@
     "Node 20.11.1 or newer must be on the PATH as node, or set OODS_NODE_PATH.",
     "The adapter starts the bundled native server itself; nothing else needs to be built, installed or running.",
     "Default surface: 19 tools. MCP_TOOLSET=all advertises all 24.",
-    "Restart Claude Desktop after saving the file; the tools appear under the forge server."
+    "Pass environment with -e, for example: claude mcp add forge -e MCP_TOOLSET=all -- node /path/to/forge-runtime/packages/mcp-adapter/index.js"
   ]
 }

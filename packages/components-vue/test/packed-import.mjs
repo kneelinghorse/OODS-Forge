@@ -102,7 +102,6 @@ import { sharedScenarios } from '@oods/component-contracts';
 import { createSSRApp, h } from 'vue';
 import readiness from '@oods/components-vue/readiness' with { type: 'json' };
 import * as components from '@oods/components-vue';
-import * as compatibility from '@oods/components-vue/ported';
 
 const canonicalIds = [...NUCLEUS_COMPONENT_IDS];
 const consumerPackage = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
@@ -113,29 +112,23 @@ const require = createRequire(import.meta.url);
 const commonJs = require('@oods/components-vue');
 const compatibilityIds = ['AuditTimeline', 'CancellationSummary', 'PaginationBar', 'PriceBadge', 'RelativeTimestamp', 'SearchInput', 'StatusBadge', 'StatusTimeline'];
 const commonJsRoot = require('@oods/components-vue');
-const commonJsCompatibility = require('@oods/components-vue/ported');
+// The former eight compatibility families ship through the root only: their historical
+// subpaths were retired in Sprint 200 m04 and must fail to resolve from a packed install.
 const compatibilityProof = [];
 for (const id of compatibilityIds) {
   const scenario = sharedScenarios.find(item => item.oodsComponentId === id);
   if (!scenario) throw new Error('Missing canonical scenario for compatibility family: ' + id);
   const rootMarkup = await renderToString(createSSRApp({ render: () => h(components[id], scenario.props) }));
-  const aliasMarkup = await renderToString(createSSRApp({ render: () => h(compatibility[id], scenario.props) }));
-  const result = { componentId: id, esmSame: components[id] === compatibility[id], cjsSame: commonJsRoot[id] === commonJsCompatibility[id], ssrSame: rootMarkup === aliasMarkup, rootMarkup, aliasMarkup };
-  if (!result.esmSame || !result.cjsSame || !result.ssrSame || !rootMarkup.includes('data-oods-component="' + id + '"')) throw new Error('Compatibility alias changed ' + id);
+  const result = { componentId: id, esmPresent: components[id] !== undefined, cjsPresent: commonJsRoot[id] !== undefined, rootMarkup };
+  if (!result.esmPresent || !result.cjsPresent || !rootMarkup.includes('data-oods-component="' + id + '"')) throw new Error('Compatibility family changed ' + id);
   compatibilityProof.push(result);
 }
 const rootRuntimeIds = compatibilityIds.filter(id => id in components);
-const aliasRuntimeIds = compatibilityIds.filter(id => id in compatibility);
-const compatibilitySpecifiers = {
-  root: fileURLToPath(import.meta.resolve('@oods/components-vue')),
-  alias: fileURLToPath(import.meta.resolve('@oods/components-vue/ported')),
-};
-const compatibilityResolution = {
-  runtimeSame: import.meta.resolve('@oods/components-vue') === import.meta.resolve('@oods/components-vue/ported'),
-  readinessSame: import.meta.resolve('@oods/components-vue/readiness') === import.meta.resolve('@oods/components-vue/readiness-ported'),
-  cssSame: import.meta.resolve('@oods/component-styles/css') === import.meta.resolve('@oods/component-styles/css-ported'),
-};
-if (Object.values(compatibilityResolution).some(value => value !== true)) throw new Error('Compatibility subpaths must resolve to the root artifacts.');
+const retiredSpecifiers = {};
+for (const specifier of ['@oods/components-vue/ported', '@oods/components-vue/readiness-ported', '@oods/component-styles/css-ported', '@oods/component-styles/ported']) {
+  try { import.meta.resolve(specifier); throw new Error('Retired subpath still resolves: ' + specifier); }
+  catch (error) { if (error.code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error; retiredSpecifiers[specifier] = error.code; }
+}
 const runtimeIds = canonicalIds.filter((id) => id in components);
 const commonJsIds = canonicalIds.filter((id) => id in commonJs);
 if (JSON.stringify(runtimeIds) !== JSON.stringify(canonicalIds)) throw new Error('ESM canonical export mismatch.');
@@ -203,13 +196,13 @@ for (const id of breadthIds) {
 const emptyPreview = await renderToString(createSSRApp({ render: () => h(components.VizAreaPreview) }));
 if (!emptyPreview.includes('data-viz-preview-placeholder') || !emptyPreview.includes('Area preview (640 x 360)')) throw new Error('Packed empty preview placeholder missing.');
 
-const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-vue', '@oods/components-vue/ported', '@oods/components-vue/readiness-ported', '@oods/component-styles/css-ported', '@oods/component-styles/css', '@oods/tokens/css', 'vue', '@vue/server-renderer'].map((specifier) => {
+const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-vue', '@oods/components-vue/readiness', '@oods/component-styles/css', '@oods/tokens/css', 'vue', '@vue/server-renderer'].map((specifier) => {
   const resolved = fileURLToPath(import.meta.resolve(specifier));
   if (!resolved.startsWith(process.cwd() + '/') || resolved.startsWith(repositoryRoot + '/')) throw new Error('Specifier escaped isolated consumer: ' + specifier);
   return [specifier, resolved];
 }));
 process.stdout.write(JSON.stringify({
-    breadthProof, emptyPreview, resolvedSpecifiers, compatibilityProof, compatibilityResolution, rootRuntimeIds, aliasRuntimeIds, compatibilitySpecifiers,
+    breadthProof, emptyPreview, resolvedSpecifiers, compatibilityProof, retiredSpecifiers, rootRuntimeIds,
     status: 'passed',
     directServerRendererDependency: consumerPackage.dependencies['@vue/server-renderer'],
     readinessDerivedFromInstalledContracts: true,
@@ -228,8 +221,8 @@ process.stdout.write(JSON.stringify({
   const install = run('npm', ['install', '--ignore-scripts', '--package-lock=false', '--no-audit', '--no-fund'], consumerRoot);
   commands.push(install);
   requireGreen(install);
-  const typeSource = `import * as root from '@oods/components-vue';\nimport * as compatibility from '@oods/components-vue/ported';\n`
-    + ['AuditTimeline', 'CancellationSummary', 'PaginationBar', 'PriceBadge', 'RelativeTimestamp', 'SearchInput', 'StatusBadge', 'StatusTimeline'].map(id => `const ${id}: typeof root.${id} = compatibility.${id};`).join('\n') + '\n';
+  const typeSource = `import * as root from '@oods/components-vue';\n`
+    + ['AuditTimeline', 'CancellationSummary', 'PaginationBar', 'PriceBadge', 'RelativeTimestamp', 'SearchInput', 'StatusBadge', 'StatusTimeline'].map(id => `const ${id}: typeof root.${id} = root.${id};`).join('\n') + '\n';
   writeFileSync(resolve(consumerRoot, 'compatibility-types.ts'), typeSource);
   writeFileSync(resolve(artifactRoot, 'compatibility-types.ts'), typeSource);
   const compile = run(process.execPath, ['node_modules/typescript/bin/tsc', '--noEmit', '--strict', '--skipLibCheck', 'false', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', '--target', 'ES2022', '--lib', 'ES2022,DOM', 'compatibility-types.ts'], consumerRoot);
