@@ -2,6 +2,10 @@
 
 All notable changes to OODS Foundry MCP are documented here. This project uses sprint-based development. Each entry summarizes the sprint's key deliverables.
 
+## Sprint 200 — Available to individuals (in progress)
+
+- **License: PolyForm Noncommercial 1.0.0 replaces MIT.** The root LICENSE and the five package LICENSE files carry the SPDX text verbatim with the Required Notice naming the holder, rendered from `configs/license/holder.json` by `scripts/license/render-license.mjs --check`; all 23 manifests declare `PolyForm-Noncommercial-1.0.0`, the root repository URL names `kneelinghorse/OODS-Forge`, and the packed `dist/pkg` manifest inherits the id and ships the terms files. Noncommercial use by individuals, nonprofits and governments needs nothing more; any commercial purpose, including use inside a company, needs the commercial license described in `COMMERCIAL.md` (one-page agreement in `docs/legal/`, edges in `docs/LICENSE-FAQ.md`). Contributions come under the inbound grant in `CONTRIBUTING.md`; both PR templates carry the required checkbox. The public OODS-Foundry snapshot stays MIT for those who fetched it; nothing here is MIT from this commit on.
+
 ## Sprint 181 — Preview-only brand intake and portable runtime Gate 1 (a signalled advertised contract change)
 
 - **`brand.intake` is the twentieth auto-registered tool.** It validates inline DTCG documents or content-addressed references and returns an explicit preview-only receipt with accepted count and membership. The s181 contract is read-only: `apply` is fixed to `false`, `persisted`, `applied`, and `brand_created` are all false, no files are written, consumer-local paths are rejected, and references without a Forge content store return the typed `unresolved-content-reference` outcome.

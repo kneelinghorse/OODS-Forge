@@ -1,4 +1,4 @@
-# OODS Foundry MCP
+# OODS Forge
 
 Production MCP server + toolchain for the OODS Foundry design system.
 
@@ -128,7 +128,7 @@ Full contracts: `docs/mcp/Tool-Specs.md` and `docs/api/README.md`.
 ## Repo layout (agent-first)
 
 ```
-OODS-Foundry-mcp/
+OODS-Forge/
 ├── packages/mcp-server/     # MCP server and tool handlers
 ├── packages/mcp-bridge/     # HTTP bridge for remote agents
 ├── packages/mcp-adapter/    # MCP SDK adapter
@@ -166,6 +166,17 @@ pnpm bridge:dev               # Start MCP bridge in dev mode
 The former upstream remains useful for historical architecture docs and release notes:
 https://github.com/kneelinghorse/OODS-Foundry
 
-## License
+## LICENSING
 
-[MIT](LICENSE)
+<!-- license-holder:start -->
+Copyright (c) 2026 Derek Niedringhaus (https://derekn.com). OODS Forge is licensed under the PolyForm Noncommercial License 1.0.0 (SPDX `PolyForm-Noncommercial-1.0.0`), the text in [LICENSE](LICENSE). Commercial licensing: [COMMERCIAL.md](COMMERCIAL.md) or derek@derekn.com.
+<!-- license-holder:end -->
+
+In plain words:
+
+- Individuals, students, hobbyists, researchers, nonprofits and government bodies may use, study, modify and share Forge for any noncommercial purpose, forks and patches included.
+- Any commercial purpose needs a commercial license from Derek. That includes use inside a company, evaluation by a company, products or services built on Forge, and work delivered to a paying client. [COMMERCIAL.md](COMMERCIAL.md) says what a license covers, the starting price and how to ask; [docs/LICENSE-FAQ.md](docs/LICENSE-FAQ.md) walks the edges.
+- The license is source-available and noncommercial. It is not an OSI-approved license and it never converts to one; GitHub's license detector therefore shows "Other".
+- Contributions are welcome under the inbound grant in [CONTRIBUTING.md](CONTRIBUTING.md). There is no CLA.
+
+**The OODS-Foundry snapshot.** The public OODS-Foundry repository's manifest declared MIT with no LICENSE file. Anyone who fetched those commits keeps that grant to that snapshot. Nothing in OODS-Forge from this commit on is MIT.

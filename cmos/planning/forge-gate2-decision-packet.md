@@ -20,35 +20,35 @@ Machine-readable facts and every source/proof digest: [artifacts/product-reality
 
 | Package / manifest | Version | private | license field | LICENSE files (direct package directory) | publishConfig | files | exports |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `"@oods/foundry-mcp"` — [package.json](../../package.json) | `"0.1.0"` | `true` | `"MIT"` | [LICENSE](../../LICENSE) | absent | `["dist/pkg"]` | `{".":{"types":"./dist/pkg/index.d.ts","import":"./dist/pkg/index.js","require":"./dist/pkg/index.cjs"},"./package.json":"./package.json","./provenance.json":"./dist/pkg/provenance.json"}` |
+| `"@oods/foundry-mcp"` — [package.json](../../package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [LICENSE](../../LICENSE) | absent | `["dist/pkg"]` | `{".":{"types":"./dist/pkg/index.d.ts","import":"./dist/pkg/index.js","require":"./dist/pkg/index.cjs"},"./package.json":"./package.json","./provenance.json":"./dist/pkg/provenance.json"}` |
 
 **Current workspace packages: 21**
 
 | Package / manifest | Version | private | license field | LICENSE files (direct package directory) | publishConfig | files | exports |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `"@oods/playground"` — [apps/playground/package.json](../../apps/playground/package.json) | `"0.1.0"` | `true` | absent | none | absent | absent | absent |
-| `"@oods/a11y-tools"` — [packages/a11y-tools/package.json](../../packages/a11y-tools/package.json) | `"0.1.0"` | `true` | `"MIT"` | [packages/a11y-tools/LICENSE](../../packages/a11y-tools/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
-| `"@oods/artifacts"` — [packages/artifacts/package.json](../../packages/artifacts/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["dist"]` | absent |
-| `"@oods/component-contracts"` — [packages/component-contracts/package.json](../../packages/component-contracts/package.json) | `"0.1.0"` | `true` | `"MIT"` | none | absent | `["dist","registry"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./registry/intake":"./registry/component-intake.v1.json","./registry/reconciliation":"./registry/component-reconciliation.proposed.v2.json","./registry/capabilities":"./registry/component-capability-ledger.v1.json","./registry/capabilities/foundation-v1":"./registry/component-capability-foundation-v1.s182.v1.json","./package.json":"./package.json"}` |
-| `"@oods/component-styles"` — [packages/component-styles/package.json](../../packages/component-styles/package.json) | `"0.1.0"` | `true` | `"MIT"` | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./ported":{"types":"./dist/ported.d.ts","import":"./dist/ported.js","require":"./dist/ported.cjs"},"./css":{"default":"./dist/components.css"},"./css-ported":{"default":"./dist/components.css"},"./package.json":"./package.json"}` |
-| `"@oods/components-react"` — [packages/components-react/package.json](../../packages/components-react/package.json) | `"0.1.0"` | `true` | `"MIT"` | none | absent | `["dist","evidence"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness":{"default":"./evidence/react-readiness.v1.json"},"./ported":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness-ported":{"default":"./evidence/react-readiness.v1.json"},"./status":{"types":"./dist/status.d.ts","import":"./dist/status.js","require":"./dist/status.cjs"},"./table":{"types":"./dist/table.d.ts","import":"./dist/table.js","require":"./dist/table.cjs"},"./package.json":"./package.json"}` |
-| `"@oods/components-vue"` — [packages/components-vue/package.json](../../packages/components-vue/package.json) | `"0.1.0"` | `true` | `"MIT"` | none | absent | `["dist","evidence"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./ported":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness":{"default":"./evidence/vue-readiness.v1.json"},"./readiness-ported":{"default":"./evidence/vue-readiness.v1.json"},"./package.json":"./package.json"}` |
-| `"@oods/mcp-adapter"` — [packages/mcp-adapter/package.json](../../packages/mcp-adapter/package.json) | `"0.3.0"` | `true` | absent | none | absent | absent | absent |
-| `"@oods/mcp-bridge"` — [packages/mcp-bridge/package.json](../../packages/mcp-bridge/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["dist"]` | absent |
-| `"@oods/mcp-server"` — [packages/mcp-server/package.json](../../packages/mcp-server/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"},"./types":{"types":"./dist/public-types.d.ts","import":"./dist/public-types.js"}}` |
-| `"@oods/release-utils"` — [packages/release-utils/package.json](../../packages/release-utils/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["dist"]` | absent |
-| `"@oods/schemas-tools"` — [packages/schemas-tools/package.json](../../packages/schemas-tools/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["src"]` | absent |
-| `"@oods/sdk"` — [packages/sdk/package.json](../../packages/sdk/package.json) | `"0.1.0"` | `true` | absent | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"}}` |
-| `"@oods/tokens"` — [packages/tokens/package.json](../../packages/tokens/package.json) | `"0.1.0"` | `true` | `"MIT"` | [packages/tokens/LICENSE](../../packages/tokens/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","node":{"import":"./dist/index.cjs","require":"./dist/index.cjs"},"import":"./dist/index.js","require":"./dist/index.cjs"},"./css":{"import":"./dist/css/tokens.css","require":"./dist/css/tokens.css","default":"./dist/css/tokens.css"},"./tailwind":{"import":"./dist/tailwind/tokens.json","require":"./dist/tailwind/tokens.json","default":"./dist/tailwind/tokens.json"},"./package.json":"./package.json"}` |
-| `"@oods/tw-variants"` — [packages/tw-variants/package.json](../../packages/tw-variants/package.json) | `"0.1.0"` | `true` | `"MIT"` | [packages/tw-variants/LICENSE](../../packages/tw-variants/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./context-matrix":{"types":"./dist/context-matrix.d.ts","import":"./dist/context-matrix.js","require":"./dist/context-matrix.cjs"}}` |
-| `"@oods/viz-core"` — [packages/viz-core/package.json](../../packages/viz-core/package.json) | `"0.1.0"` | `true` | `"MIT"` | [packages/viz-core/LICENSE](../../packages/viz-core/LICENSE) | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
-| `"@oods/viz-render"` — [packages/viz-render/package.json](../../packages/viz-render/package.json) | `"0.1.0"` | `true` | `"MIT"` | [packages/viz-render/LICENSE](../../packages/viz-render/LICENSE) | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
-| `"@oods/agents-smoke"` — [tools/agents-smoke/package.json](../../tools/agents-smoke/package.json) | `"0.1.0"` | `true` | absent | none | absent | absent | absent |
-| `"@oods/design-lab-shell"` — [tools/design-lab-shell/package.json](../../tools/design-lab-shell/package.json) | `"0.1.0"` | `true` | absent | none | absent | absent | absent |
-| `"@oods/agent-cli"` — [tools/oods-agent-cli/package.json](../../tools/oods-agent-cli/package.json) | `"0.1.0"` | `true` | absent | none | absent | absent | absent |
-| `"@oods/soak-runner"` — [tools/soak-runner/package.json](../../tools/soak-runner/package.json) | `"0.1.0"` | `true` | absent | none | absent | absent | absent |
+| `"@oods/playground"` — [apps/playground/package.json](../../apps/playground/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
+| `"@oods/a11y-tools"` — [packages/a11y-tools/package.json](../../packages/a11y-tools/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [packages/a11y-tools/LICENSE](../../packages/a11y-tools/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
+| `"@oods/artifacts"` — [packages/artifacts/package.json](../../packages/artifacts/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | absent |
+| `"@oods/component-contracts"` — [packages/component-contracts/package.json](../../packages/component-contracts/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist","registry"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./registry/intake":"./registry/component-intake.v1.json","./registry/reconciliation":"./registry/component-reconciliation.proposed.v2.json","./registry/capabilities":"./registry/component-capability-ledger.v1.json","./registry/capabilities/foundation-v1":"./registry/component-capability-foundation-v1.s182.v1.json","./package.json":"./package.json"}` |
+| `"@oods/component-styles"` — [packages/component-styles/package.json](../../packages/component-styles/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./ported":{"types":"./dist/ported.d.ts","import":"./dist/ported.js","require":"./dist/ported.cjs"},"./css":{"default":"./dist/components.css"},"./css-ported":{"default":"./dist/components.css"},"./package.json":"./package.json"}` |
+| `"@oods/components-react"` — [packages/components-react/package.json](../../packages/components-react/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist","evidence"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness":{"default":"./evidence/react-readiness.v1.json"},"./ported":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness-ported":{"default":"./evidence/react-readiness.v1.json"},"./status":{"types":"./dist/status.d.ts","import":"./dist/status.js","require":"./dist/status.cjs"},"./table":{"types":"./dist/table.d.ts","import":"./dist/table.js","require":"./dist/table.cjs"},"./package.json":"./package.json"}` |
+| `"@oods/components-vue"` — [packages/components-vue/package.json](../../packages/components-vue/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist","evidence"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./ported":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./readiness":{"default":"./evidence/vue-readiness.v1.json"},"./readiness-ported":{"default":"./evidence/vue-readiness.v1.json"},"./package.json":"./package.json"}` |
+| `"@oods/mcp-adapter"` — [packages/mcp-adapter/package.json](../../packages/mcp-adapter/package.json) | `"0.3.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
+| `"@oods/mcp-bridge"` — [packages/mcp-bridge/package.json](../../packages/mcp-bridge/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | absent |
+| `"@oods/mcp-server"` — [packages/mcp-server/package.json](../../packages/mcp-server/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"},"./types":{"types":"./dist/public-types.d.ts","import":"./dist/public-types.js"}}` |
+| `"@oods/release-utils"` — [packages/release-utils/package.json](../../packages/release-utils/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | absent |
+| `"@oods/schemas-tools"` — [packages/schemas-tools/package.json](../../packages/schemas-tools/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["src"]` | absent |
+| `"@oods/sdk"` — [packages/sdk/package.json](../../packages/sdk/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"}}` |
+| `"@oods/tokens"` — [packages/tokens/package.json](../../packages/tokens/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [packages/tokens/LICENSE](../../packages/tokens/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","node":{"import":"./dist/index.cjs","require":"./dist/index.cjs"},"import":"./dist/index.js","require":"./dist/index.cjs"},"./css":{"import":"./dist/css/tokens.css","require":"./dist/css/tokens.css","default":"./dist/css/tokens.css"},"./tailwind":{"import":"./dist/tailwind/tokens.json","require":"./dist/tailwind/tokens.json","default":"./dist/tailwind/tokens.json"},"./package.json":"./package.json"}` |
+| `"@oods/tw-variants"` — [packages/tw-variants/package.json](../../packages/tw-variants/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [packages/tw-variants/LICENSE](../../packages/tw-variants/LICENSE) | absent | `["dist","CHANGELOG.md","README.md","LICENSE"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"},"./context-matrix":{"types":"./dist/context-matrix.d.ts","import":"./dist/context-matrix.js","require":"./dist/context-matrix.cjs"}}` |
+| `"@oods/viz-core"` — [packages/viz-core/package.json](../../packages/viz-core/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [packages/viz-core/LICENSE](../../packages/viz-core/LICENSE) | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
+| `"@oods/viz-render"` — [packages/viz-render/package.json](../../packages/viz-render/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | [packages/viz-render/LICENSE](../../packages/viz-render/LICENSE) | absent | `["dist"]` | `{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}}` |
+| `"@oods/agents-smoke"` — [tools/agents-smoke/package.json](../../tools/agents-smoke/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
+| `"@oods/design-lab-shell"` — [tools/design-lab-shell/package.json](../../tools/design-lab-shell/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
+| `"@oods/agent-cli"` — [tools/oods-agent-cli/package.json](../../tools/oods-agent-cli/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
+| `"@oods/soak-runner"` — [tools/soak-runner/package.json](../../tools/soak-runner/package.json) | `"0.1.0"` | `true` | `"PolyForm-Noncommercial-1.0.0"` | none | absent | absent | absent |
 
-The workspace inventory contains 21 explicit private packages, 12 packages without a license field, 0 publishConfig fields and 5 direct LICENSE files. The root has 1 LICENSE file. An absent field is preserved as absent; a LICENSE file is not inferred from a package license field.
+The workspace inventory contains 21 explicit private packages, 0 packages without a license field, 0 publishConfig fields and 5 direct LICENSE files. The root has 1 LICENSE file. An absent field is preserved as absent; a LICENSE file is not inferred from a package license field.
 
 **Recorded archives and source identities**
 
@@ -88,7 +88,7 @@ The portable health response carries an earlier measured release ledger: `{"apps
 | --- | --- | --- | --- | --- | --- |
 | `package.json` | `private` | absent | `true` | #1952 | Protect the repository root from accidental publication; prepare this packet. |
 
-#1952 does not approve a license choice, a public package, registry metadata, MCPB, OCI, or a new health field. Package license fields retain their existing values until s200-m03. Decision #2061 additionally approves setting private:true and removing publishConfig on a11y-tools, tw-variants, tokens, viz-render and viz-core in s200-m01, before any public flip; the ten exact transitions are recorded below. The guard consumes only approved entries in this block; proposals elsewhere in the packet cannot authorize manifest changes.
+#1952 does not approve a license choice, a public package, registry metadata, MCPB, OCI, or a new health field. Package license fields retained their existing values until s200-m03, which sets every workspace manifest to PolyForm-Noncommercial-1.0.0 under #2061 (ten from MIT, twelve from absent); those 22 exact transitions are recorded below beside the ten s200-m01 entries. Decision #2061 additionally approves setting private:true and removing publishConfig on a11y-tools, tw-variants, tokens, viz-render and viz-core in s200-m01, before any public flip; the ten exact transitions are recorded below. The guard consumes only approved entries in this block; proposals elsewhere in the packet cannot authorize manifest changes.
 
 <!-- publish-shape-approvals:start -->
 ```json
@@ -247,6 +247,302 @@ The portable health response carries an earlier measured release ledger: `{"apps
     },
     "after": {
       "present": false
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/a11y-tools/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/tokens/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/tw-variants/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/viz-core/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/viz-render/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/component-contracts/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/component-styles/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/components-react/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/components-vue/package.json",
+    "field": "license",
+    "before": {
+      "present": true,
+      "value": "MIT"
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/artifacts/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/mcp-adapter/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/mcp-bridge/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/mcp-server/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/release-utils/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/schemas-tools/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "packages/sdk/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "tools/agents-smoke/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "tools/design-lab-shell/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "tools/oods-agent-cli/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "tools/soak-runner/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
+    },
+    "decisionId": 2061,
+    "status": "approved"
+  },
+  {
+    "path": "apps/playground/package.json",
+    "field": "license",
+    "before": {
+      "present": false
+    },
+    "after": {
+      "present": true,
+      "value": "PolyForm-Noncommercial-1.0.0"
     },
     "decisionId": 2061,
     "status": "approved"

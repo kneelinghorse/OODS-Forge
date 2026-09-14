@@ -1,6 +1,6 @@
-# Contributing to OODS Foundry MCP
+# Contributing to OODS Forge
 
-Thanks for your interest in contributing. This guide covers the dev setup, workflow, and expectations.
+Thanks for your interest in contributing. This guide covers the dev setup, workflow, and expectations. Cloning and building this repository is the contributor path; the GitHub Release is the user path (see the README).
 
 ## Prerequisites
 
@@ -11,8 +11,8 @@ Thanks for your interest in contributing. This guide covers the dev setup, workf
 ## Dev Setup
 
 ```bash
-git clone https://github.com/kneelinghorse/OODS-Foundry-mcp.git
-cd OODS-Foundry-mcp
+git clone https://github.com/kneelinghorse/OODS-Forge.git
+cd OODS-Forge
 pnpm install
 ```
 
@@ -46,7 +46,7 @@ pnpm tokens-validate          # Full token validation pipeline
 2. Make your changes with tests. Aim for zero regressions.
 3. Run `pnpm local:pr-check` before pushing.
 4. Open a PR against `main` with a clear description of what changed and why.
-5. Ensure CI passes. A reviewer will be assigned automatically via CODEOWNERS.
+5. Run the local gates before asking for review; hosted CI is off. A reviewer will be assigned automatically via CODEOWNERS. Tick the inbound license grant checkbox in the template; it is required.
 
 ## Code Style
 
@@ -72,6 +72,10 @@ Use GitHub Issues. Include:
 - Steps to reproduce.
 - Node/pnpm versions and OS.
 
-## License
+## Inbound license grant
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+<!-- license-holder:start -->
+By submitting a contribution (code, documentation, tokens, tests or any other material) to OODS Forge, you grant Derek Niedringhaus a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, distribute and sublicense that contribution under any terms, including commercial licenses, and you confirm that you have the right to grant it.
+<!-- license-holder:end -->
+
+Your contribution is otherwise licensed to everyone under the PolyForm Noncommercial License 1.0.0 in [LICENSE](LICENSE), like the rest of the project. Both pull request templates carry a required checkbox confirming this grant; there is no contributor license agreement to sign.

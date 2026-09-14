@@ -4,15 +4,15 @@
 
 | Version | Supported |
 |---------|-----------|
-| 0.1.x   | Yes       |
+| 0.1.x (the v0.1.0 release line) | Yes |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in OODS Foundry MCP, please report it responsibly.
+If you discover a security vulnerability in OODS Forge, please report it responsibly.
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Instead, email **security@oods-foundry.dev** with:
+Instead, email **derek@derekn.com** (the licensor's contact in COMMERCIAL.md) with:
 
 - A description of the vulnerability.
 - Steps to reproduce or a proof of concept.

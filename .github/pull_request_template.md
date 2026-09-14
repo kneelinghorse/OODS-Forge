@@ -13,6 +13,10 @@
 - [ ] `pnpm run test:coverage` meets thresholds / coverage report attached
 - [ ] Visual regression comment (Chromatic) reviewed and snapshots acknowledged
 
+## Inbound license grant (required)
+
+- [ ] I grant this contribution under the inbound license grant in CONTRIBUTING.md and confirm I have the right to do so.
+
 ## Preview Links
 
 - PR comment (Chromatic) or alternate preview URL:

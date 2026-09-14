@@ -7,6 +7,7 @@ Use this template for any design token changes (Theme 0, Dark, HC). Keep compone
 - Impacted layers: `--theme-*`, `--sys-*`, `--cmp-*`
 - Contexts affected: e.g., Form, Timeline, List
 - Regression risk: low/medium/high
+- [ ] I grant this contribution under the inbound license grant in CONTRIBUTING.md and confirm I have the right to do so (required).
 
 ## Figma → Repo Handshake
 - [ ] Figma source link (file + page + frame):

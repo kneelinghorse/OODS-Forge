@@ -15,6 +15,8 @@ type ProvenanceRecord = {
 
 const WORKSPACE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const PACKAGE_DIST_DIR = path.join(WORKSPACE_ROOT, 'dist', 'pkg');
+/** Terms files copied beside the packed manifest when present; the manifest inherits the workspace license id. */
+export const TERMS_FILES = ['LICENSE', 'COMMERCIAL.md', 'THIRD-PARTY-NOTICES.md'] as const;
 
 const STORYBOOK_PROJECT = path.join(WORKSPACE_ROOT, 'storybook-static', 'project.json');
 const VRT_ROOT = path.join(WORKSPACE_ROOT, 'artifacts', 'vrt');
@@ -228,8 +230,11 @@ async function createDistPackage(provenance: ProvenanceRecord): Promise<void> {
   if (await copyIfExists('CHANGELOG.md', PACKAGE_DIST_DIR)) {
     files.push('CHANGELOG.md');
   }
-  if (await copyIfExists('LICENSE', PACKAGE_DIST_DIR)) {
-    files.push('LICENSE');
+  // The terms travel with the package: the license, the commercial path and (once generated) the notices.
+  for (const terms of TERMS_FILES) {
+    if (await copyIfExists(terms, PACKAGE_DIST_DIR)) {
+      files.push(terms);
+    }
   }
 
   const distPackage = {

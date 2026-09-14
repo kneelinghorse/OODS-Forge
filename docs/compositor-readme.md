@@ -436,4 +436,4 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on:
 
 ## License
 
-MIT License - see [LICENSE](../LICENSE)
+PolyForm Noncommercial License 1.0.0 - see [LICENSE](../LICENSE); commercial use needs [COMMERCIAL.md](../COMMERCIAL.md)

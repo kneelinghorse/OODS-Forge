@@ -53,10 +53,12 @@ function verifyShapes(before: Row[], after: Row[], approvals: Approval[], docume
   assert.equal(used.size, approvals.length, 'Unused or duplicate approvals must not grant broader authority');
 }
 
+const MIT_MANIFESTS = ["package.json", "packages/a11y-tools/package.json", "packages/tokens/package.json", "packages/tw-variants/package.json", "packages/viz-core/package.json", "packages/viz-render/package.json", "packages/component-contracts/package.json", "packages/component-styles/package.json", "packages/components-react/package.json", "packages/components-vue/package.json"];
+const UNLICENSED_MANIFESTS = ["packages/artifacts/package.json", "packages/mcp-adapter/package.json", "packages/mcp-bridge/package.json", "packages/mcp-server/package.json", "packages/release-utils/package.json", "packages/schemas-tools/package.json", "packages/sdk/package.json", "tools/agents-smoke/package.json", "tools/design-lab-shell/package.json", "tools/oods-agent-cli/package.json", "tools/soak-runner/package.json", "apps/playground/package.json"];
 const currentRows = (): Row[] => collectPackageFacts(root).map(row => ({ path: row.path, name: row.name, shape: shape(JSON.parse(read(row.path))) }));
 
 describe('Gate-2 preparation changes no publish shape without a named decision (s196 m06)', () => {
-  it('pins every root/workspace baseline to clean Git bytes and permits only the approved root hygiene and s200 package safety changes', () => {
+  it('pins every root/workspace baseline to clean Git bytes and permits only the approved root hygiene, s200 package safety and s200 license changes', () => {
     expect(baseline.sourceHead).toBe('8fd3d04ddf9af7d17863308ab579e3023ef4f491');
     expect(baseline.packages).toHaveLength(22);
     for (const row of baseline.packages) {
@@ -72,6 +74,9 @@ describe('Gate-2 preparation changes no publish shape without a named decision (
         { path: `packages/${name}/package.json`, field: 'private', before: { present: false }, after: { present: true, value: true }, decisionId: 2061, status: 'approved' },
         { path: `packages/${name}/package.json`, field: 'publishConfig', before: { present: true, value: { access: 'public', provenance: true } }, after: { present: false }, decisionId: 2061, status: 'approved' },
       ]),
+      // s200-m03: every guarded manifest takes the PolyForm Noncommercial id under #2061 (ten from MIT, twelve from absent).
+      ...MIT_MANIFESTS.map(path => ({ path, field: 'license', before: { present: true, value: 'MIT' }, after: { present: true, value: 'PolyForm-Noncommercial-1.0.0' }, decisionId: 2061, status: 'approved' })),
+      ...UNLICENSED_MANIFESTS.map(path => ({ path, field: 'license', before: { present: false }, after: { present: true, value: 'PolyForm-Noncommercial-1.0.0' }, decisionId: 2061, status: 'approved' })),
     ]);
     expect(JSON.parse(read('package.json')).private).toBe(true);
     verifyShapes(baseline.packages, currentRows(), approvals, packet);
