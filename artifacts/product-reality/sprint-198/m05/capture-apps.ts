@@ -5,13 +5,13 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { runAppConsumers, observeFlow, observeCollectionControls, assertWorkflowFlow, type AppInspection } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
 import { packFoundationPackages } from '../../../../scripts/product-reality/s182-m04-consumer-harness.mjs';
-const root = process.cwd();
 const output = path.resolve(process.argv[2] ?? 'artifacts/product-reality/sprint-198/m05');
 const objects = process.argv.slice(3).length ? process.argv.slice(3) : ['Organization', 'User', 'Subscription'];
 const sourceHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const hash = (value: string | Buffer) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
 const json = async (file: string, value: unknown) => { await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, JSON.stringify(value, null, 2) + '\n'); };
 assert(process.env.OODS_PLAYWRIGHT_WS_ENDPOINT, 'Use the owned pinned Linux browser for native keyboard proof');
+await fs.mkdir(output, { recursive: true });
 const packed = await packFoundationPackages(output);
 const inspect: AppInspection = async ({ page, url, output, framework, artifact, schema, object, requireBillingViews, titleField, requiredFlow, editProbe }) => {
   const observations: Array<Record<string, any>> = [];
