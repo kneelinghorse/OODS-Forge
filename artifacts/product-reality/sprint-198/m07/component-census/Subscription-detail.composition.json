@@ -1,0 +1,1132 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "align": "space-between",
+              "gapToken": "stack-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "detail-header-1-record-title",
+                "component": "DetailHeader",
+                "props": {
+                  "titleField": "plan_name",
+                  "headingLevel": 2
+                }
+              },
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-26",
+                    "component": "VizAreaPreview",
+                    "props": {
+                      "title": "Payment amounts",
+                      "description": "Recorded sample payments in major currency units."
+                    },
+                    "chart": {
+                      "chartType": "area",
+                      "source": "payment-events",
+                      "dateFields": [
+                        "last_payment_at",
+                        "next_payment_due_at"
+                      ],
+                      "amountField": "amount",
+                      "minorUnits": 100,
+                      "currencyField": "currency"
+                    }
+                  },
+                  {
+                    "id": "ve-header-27",
+                    "component": "StatusTimeline",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "statesParameter": "states",
+                      "showActorId": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "ve-header-28",
+                    "component": "CancellationSummary",
+                    "props": {
+                      "cancelAtPeriodEndField": "cancel_at_period_end",
+                      "reasonField": "cancellation_reason",
+                      "codeField": "cancellation_reason_code",
+                      "requestedAtField": "cancellation_requested_at"
+                    }
+                  },
+                  {
+                    "id": "ve-header-29",
+                    "component": "ArchiveSummary",
+                    "props": {
+                      "archivedField": "is_archived",
+                      "archivedAtField": "archived_at",
+                      "restoredAtField": "restored_at",
+                      "reasonField": "archive_reason",
+                      "archivedByField": "archived_by",
+                      "metadataField": "archive_metadata",
+                      "retainHistoryParameter": "retainHistory",
+                      "restoreWindowParameter": "restoreWindowDays",
+                      "allowPartialRestoreParameter": "allowPartialRestore"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tabs-9-read-fields",
+                    "component": "Stack",
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-tabs-9-created_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-created_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Created at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-created_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "created_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-updated_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-updated_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Updated at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-updated_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "updated_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-subscription_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-subscription_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Subscription id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-subscription_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "subscription_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-plan_code-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-plan_code-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Plan code"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-plan_code-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "plan_code"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-plan_interval-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-plan_interval-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Plan interval"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-plan_interval-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "plan_interval"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-customer_name-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-customer_name-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Customer name"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-customer_name-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "customer_name"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-customer_email-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-customer_email-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Customer email"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-customer_email-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "customer_email"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "props": {
+                      "label": "Billing"
+                    },
+                    "children": [
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "CycleProgressCard",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0"
+                        },
+                        "props": {
+                          "progressField": "current_period_progress",
+                          "periodStartField": "current_period_start",
+                          "periodEndField": "current_period_end",
+                          "intervalField": "billing_interval"
+                        }
+                      },
+                      {
+                        "id": "slot-tab-1-6",
+                        "component": "PaymentTimeline",
+                        "meta": {
+                          "intent": "slot:tab-1",
+                          "label": "tab-1"
+                        },
+                        "props": {
+                          "lastPaymentField": "last_payment_at",
+                          "nextPaymentField": "next_payment_due_at",
+                          "paymentStatusField": "payment_status",
+                          "paymentMethodField": "payment_method_type",
+                          "amountField": "amount",
+                          "currencyField": "currency"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onCancel": "handleCancel",
+          "onViewTimeline": "handleViewTimeline"
+        }
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "semanticType": "billing.subscription.status"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "semanticType": "billing.subscription.cancel_at_period_end"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "semanticType": "billing.subscription.cancellation_reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when cancellation was initiated.",
+        "semanticType": "billing.subscription.cancellation_requested_at"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "billing_cycle_started",
+          "billing_cycle_completed",
+          "payment_received",
+          "cancellation_requested"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "amount": {
+        "type": "integer",
+        "required": true,
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "semanticType": "billing.plan.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency code used for billing.",
+        "semanticType": "billing.plan.currency"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "semanticType": "billing.subscription.interval"
+      },
+      "payment_status": {
+        "type": "string",
+        "required": false,
+        "default": "pending",
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "semanticType": "billing.cycle.payment_status"
+      },
+      "payment_method_type": {
+        "type": "string",
+        "required": false,
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "semanticType": "billing.cycle.payment_method"
+      },
+      "proration_amount": {
+        "type": "integer",
+        "required": false,
+        "default": 0,
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "semanticType": "billing.cycle.proration"
+      },
+      "proration_date": {
+        "type": "integer",
+        "required": false,
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "semanticType": "billing.cycle.proration_timestamp"
+      },
+      "last_payment_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp of the most recent successful payment.",
+        "semanticType": "billing.subscription.last_payment_at"
+      },
+      "next_payment_due_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the next payment attempt should occur.",
+        "semanticType": "billing.subscription.next_payment_due_at"
+      },
+      "current_period_start": {
+        "type": "datetime",
+        "required": true,
+        "description": "Start timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_start"
+      },
+      "current_period_end": {
+        "type": "datetime",
+        "required": true,
+        "description": "End timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_end"
+      },
+      "current_period_progress": {
+        "type": "number",
+        "required": false,
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "semanticType": "billing.subscription.current_period_progress"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "semanticType": "billing.subscription.id"
+      },
+      "plan_name": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable plan label shown in headers.",
+        "semanticType": "billing.plan.name"
+      },
+      "plan_code": {
+        "type": "string",
+        "required": false,
+        "description": "Internal plan code or price identifier.",
+        "semanticType": "billing.plan.code"
+      },
+      "plan_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "semanticType": "billing.plan.interval"
+      },
+      "customer_name": {
+        "type": "string",
+        "required": false,
+        "description": "Customer or account name associated with the subscription.",
+        "semanticType": "customer.account.name"
+      },
+      "customer_email": {
+        "type": "email",
+        "required": false,
+        "description": "Billing contact email address.",
+        "semanticType": "customer.account.email"
+      }
+    }
+  },
+  "schemaRef": "compose-474a9a64",
+  "schemaRefCreatedAt": "2026-09-14T03:50:33.376Z",
+  "schemaRefExpiresAt": "2026-09-14T04:20:33.376Z",
+  "selections": [
+    {
+      "slotName": "tab-0",
+      "intent": "status-indicator",
+      "selectedComponent": "CycleProgressCard",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "CycleProgressCard was selected for slot \"tab-0\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "CycleProgressCard",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "metadata-display",
+      "selectedComponent": "PaymentTimeline",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PaymentTimeline was selected for slot \"tab-1\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PaymentTimeline",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "VizAreaPreview",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "VizAreaPreview was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "VizAreaPreview",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StatusTimeline",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "CancellationSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "ArchiveSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-2\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "AuditTimeline",
+      "confidence": 0.4,
+      "confidenceLevel": "low",
+      "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagSummary (0.95), TagManager (0.90). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+      "candidates": [
+        {
+          "name": "AuditTimeline",
+          "confidence": 1,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "alternativeCandidates": [
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed."
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "status-indicator",
+      "selectedComponent": "StatusBadge",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge was selected for slot \"tab-3\" because preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "StatusBadge",
+          "confidence": 1,
+          "reason": "preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Badge",
+          "confidence": 0.81,
+          "reason": "preferred for \"status-indicator\" (rank 2); 1 tag match(es); tag match (status); 2 context match(es); 1 category match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "ColorizedBadge",
+          "confidence": 0.61,
+          "reason": "preferred for \"status-indicator\" (rank 3); 1 tag match(es); tag match (status); 1 region match(es); 1 category match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-4\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.94,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.58,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-5\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-6\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Subscription' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"status\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_reason\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"amount\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"currency\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"billing_interval\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_start\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_end\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"current_period_progress\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"last_payment_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V117",
+      "message": "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+    },
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    }
+  ],
+  "objectUsed": {
+    "name": "Subscription",
+    "version": "2.0.0",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Cancellable",
+      "lifecycle/Timestampable",
+      "financial/Billable",
+      "lifecycle/Archivable",
+      "viz/MarkArea"
+    ],
+    "fieldsComposed": 36,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 7,
+      "form": 4,
+      "timeline": 5,
+      "card": 4
+    }
+  },
+  "meta": {
+    "intentParsed": "Subscription detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 10,
+    "nodeCount": 41,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Subscription' has maturity 'beta' — composed output may change.",
+      "Field collision: \"status\" in object schema overrides trait definition",
+      "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_reason\" in object schema overrides trait definition",
+      "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition",
+      "Field collision: \"amount\" in object schema overrides trait definition",
+      "Field collision: \"currency\" in object schema overrides trait definition",
+      "Field collision: \"billing_interval\" in object schema overrides trait definition",
+      "Field collision: \"current_period_start\" in object schema overrides trait definition",
+      "Field collision: \"current_period_end\" in object schema overrides trait definition",
+      "Field collision: \"current_period_progress\" in object schema overrides trait definition",
+      "Field collision: \"last_payment_at\" in object schema overrides trait definition",
+      "Field collision: \"next_payment_due_at\" in object schema overrides trait definition",
+      "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 5,
+      "expansionReason": "Expanded from 3 to 8 tabs for 36 fields",
+      "patternGroups": [
+        {
+          "slotName": "tab-0",
+          "patternId": "status-timeline",
+          "compositeComponent": "StatusTimeline",
+          "matchedFields": [
+            "status",
+            "allowed_transitions"
+          ],
+          "confidence": 1
+        }
+      ],
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.83,
+      "lowConfidenceSlots": 1,
+      "lowConfidenceSlotNames": [
+        "metadata"
+      ]
+    }
+  }
+}

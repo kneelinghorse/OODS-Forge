@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <TimelineEntryLabel id=\"ve-entry-0-15\" data-oods-component=\"TimelineEntryLabel\" compact :label=\"label\" />\n          </Stack>\n      <section id=\"timeline-entries-13\" data-oods-collection=\"events\"><template v-if=\"events.length === 0\"><Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" /></template><ol v-else aria-label=\"Lifecycle history\" class=\"oods-collection\"><li v-for=\"(collectionEvent, collectionIndex) in chronologicalEvents(events)\" :key=\"collectionEvent.id\"><Card :id=\"'timeline-entries-13-entry-' + collectionIndex\"><strong>{{ collectionEvent.title }}</strong><time :datetime=\"collectionEvent.at\">{{ formatDateTime(collectionEvent.at) }}</time><p>{{ collectionEvent.description }}</p></Card></li></ol></section>\n      <Stack id=\"timeline-entries-13-trait-events\" data-oods-component=\"Stack\">\n            <StateTransitionEvent id=\"ve-entry-0-16\" data-oods-component=\"StateTransitionEvent\" showActor showReason :history=\"stateHistory\" :status=\"status\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\nimport { Banner, Card, Stack, StateTransitionEvent, TimelineEntryLabel } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  events?: CollectionEvent[];\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Chunk count. */\n  chunkCount?: number;\n  /** Chunked. */\n  chunked?: boolean;\n  /** Chunks. */\n  chunks?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Collection date. */\n  collectionDate?: string;\n  /** Content. */\n  content?: string;\n  /** uploaded_at when present; unavailable otherwise. */\n  createdAt?: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Embedded. */\n  embedded?: boolean;\n  /** File path. */\n  filePath?: string;\n  /** File size. */\n  fileSize?: number;\n  /** File type. */\n  fileType?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Id. */\n  id: string;\n  /** Display projection of name; retain the complete source field. */\n  label: string;\n  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */\n  lastEvent?: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Mime type. */\n  mimeType?: string;\n  /** Name. */\n  name: string;\n  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */\n  ownerId?: string;\n  /** user only when an authoritative owner_id is present. */\n  ownerType?: 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Participant count. */\n  participantCount?: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Preview. */\n  preview?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Processed. */\n  processed?: boolean;\n  /** Processing events. */\n  processingEvents?: unknown[];\n  /** Project id. */\n  projectId: string;\n  /** Raw content. */\n  rawContent?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Source type. */\n  sourceType?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical research lifecycle. Display projection only: explicit latest failure, then embedded, chunked, processed, pending; missing input remains unknown. */\n  status: 'pending' | 'processed' | 'chunked' | 'embedded' | 'failed';\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Tags. */\n  tags?: unknown[];\n  /** Total tokens. */\n  totalTokens?: number;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Transcription accuracy. */\n  transcriptionAccuracy?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Uploaded at. */\n  uploadedAt?: string;\n  /** Validation status. */\n  validationStatus?: string;\n  /** Word count. */\n  wordCount?: number;\n}\n\nconst { activeFilters, allowedTransitions, categories, chunkCount, chunked, chunks, classificationMetadata, collectionDate, content, createdAt, description, embedded, filePath, fileSize, fileType, filterCount, filters, id, label, lastEvent, lastEventAt, mimeType, name, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, participantCount, placeholder, preview, primaryCategoryId, primaryCategoryPath, processed, processingEvents, projectId, rawContent, searchActive, searchQuery, sourceType, stateHistory, status, tagCount, tagPreview, tags, totalItems, totalPages, totalTokens, transcriptionAccuracy, updatedAt, uploadedAt, validationStatus, wordCount, events = [] } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:0dcc244c6ddf8374d534c047d9102d40f9035768e9a324a01b566c1990a9d9ce"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:99d992435d314450e23c3c3931bc4f8e321679d060c8758b495f35d4808975a7"
+  },
+  "code": "<template>\n  <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <TimelineEntryLabel id=\"ve-entry-0-15\" data-oods-component=\"TimelineEntryLabel\" compact :label=\"label\" />\n          </Stack>\n      <section id=\"timeline-entries-13\" data-oods-collection=\"events\"><template v-if=\"events.length === 0\"><Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" /></template><ol v-else aria-label=\"Lifecycle history\" class=\"oods-collection\"><li v-for=\"(collectionEvent, collectionIndex) in chronologicalEvents(events)\" :key=\"collectionEvent.id\"><Card :id=\"'timeline-entries-13-entry-' + collectionIndex\"><strong>{{ collectionEvent.title }}</strong><time :datetime=\"collectionEvent.at\">{{ formatDateTime(collectionEvent.at) }}</time><p>{{ collectionEvent.description }}</p></Card></li></ol></section>\n      <Stack id=\"timeline-entries-13-trait-events\" data-oods-component=\"Stack\">\n            <StateTransitionEvent id=\"ve-entry-0-16\" data-oods-component=\"StateTransitionEvent\" showActor showReason :history=\"stateHistory\" :status=\"status\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\nimport { Banner, Card, Stack, StateTransitionEvent, TimelineEntryLabel } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  events?: CollectionEvent[];\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Chunk count. */\n  chunkCount?: number;\n  /** Chunked. */\n  chunked?: boolean;\n  /** Chunks. */\n  chunks?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Collection date. */\n  collectionDate?: string;\n  /** Content. */\n  content?: string;\n  /** uploaded_at when present; unavailable otherwise. */\n  createdAt?: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Embedded. */\n  embedded?: boolean;\n  /** File path. */\n  filePath?: string;\n  /** File size. */\n  fileSize?: number;\n  /** File type. */\n  fileType?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Id. */\n  id: string;\n  /** Display projection of name; retain the complete source field. */\n  label: string;\n  /** Only from an explicit event or timestamp projection; absence is unknown, not a fabricated audit event. */\n  lastEvent?: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Mime type. */\n  mimeType?: string;\n  /** Name. */\n  name: string;\n  /** Authoritative nullable server owner_id. Not exposed by the current response; unavailable until the API exposes it. Never derive from created_by, user_id, or project owner. */\n  ownerId?: string;\n  /** user only when an authoritative owner_id is present. */\n  ownerType?: 'user';\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Participant count. */\n  participantCount?: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Preview. */\n  preview?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Processed. */\n  processed?: boolean;\n  /** Processing events. */\n  processingEvents?: unknown[];\n  /** Project id. */\n  projectId: string;\n  /** Raw content. */\n  rawContent?: string;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Source type. */\n  sourceType?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical research lifecycle. Display projection only: explicit latest failure, then embedded, chunked, processed, pending; missing input remains unknown. */\n  status: 'pending' | 'processed' | 'chunked' | 'embedded' | 'failed';\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Tags. */\n  tags?: unknown[];\n  /** Total tokens. */\n  totalTokens?: number;\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Transcription accuracy. */\n  transcriptionAccuracy?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Uploaded at. */\n  uploadedAt?: string;\n  /** Validation status. */\n  validationStatus?: string;\n  /** Word count. */\n  wordCount?: number;\n}\n\nconst { activeFilters, allowedTransitions, categories, chunkCount, chunked, chunks, classificationMetadata, collectionDate, content, createdAt, description, embedded, filePath, fileSize, fileType, filterCount, filters, id, label, lastEvent, lastEventAt, mimeType, name, ownerId, ownerType, ownershipRole, ownershipTransferredAt, page, pageSize, participantCount, placeholder, preview, primaryCategoryId, primaryCategoryPath, processed, processingEvents, projectId, rawContent, searchActive, searchQuery, sourceType, stateHistory, status, tagCount, tagPreview, tags, totalItems, totalPages, totalTokens, transcriptionAccuracy, updatedAt, uploadedAt, validationStatus, wordCount, events = [] } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/component-contracts",
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:99d992435d314450e23c3c3931bc4f8e321679d060c8758b495f35d4808975a7"
+    }
+  },
+  "meta": {
+    "nodeCount": 8,
+    "componentCount": 5
+  }
+}

@@ -80,11 +80,14 @@ if (process.argv.includes('--check-history')) {
   process.exit(0);
 }
 assert.equal(json(sources.sourceProof).head, implementationHead);
+const ciEvidence = json(sources.ci);
 const currentCriteria = [
   [`${out}/five-suite-closeout/four-suite-baseline.json`, sources.preFreeze],
   [sources.preFreeze, sources.near],
   [sources.runtime, sources.runtimeValidation, sources.toolLedger, sources.compatibility, sources.schemaMovement, sources.sourceProof, sources.registry, sources.patternRegistry, sources.taxonomy],
-  [sources.ci],
+  [sources.ci, ciEvidence.prReceipt.path, ...ciEvidence.runs.map(run => run.receipt.path),
+    `${out}/preparation/ci-correction.json`, `${out}/preparation/ci-d03d9374-disposition.json`,
+    `${out}/preparation/ci-coverage-d03d9374.log`, `${out}/preparation/ci-viz-d03d9374.log`, `${out}/preparation/ci-product-reality-d03d9374.log`],
   [sources.boundary, sources.headRelations],
 ];
 executions.push({ id: 'm07-closeout', head: executionHead, historical: false,

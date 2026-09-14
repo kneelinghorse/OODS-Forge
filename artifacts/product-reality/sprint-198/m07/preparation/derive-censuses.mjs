@@ -16,6 +16,8 @@ const census = json(`${out}/component-census/report.json`);
 assert.equal(census.head, head); assert.equal(census.greenTotalSchemas, 77); assert.equal(census.greenTotalCells, 154);
 assert.equal(census.objects.length, 11); assert.equal(census.availableObjects.length, 18);
 const previous = json('artifacts/product-reality/sprint-197/m07/component-census/report.json');
+const beforeLabelFix = `${out}/census-before-timeline-label-fix`;
+const correctionBaseline = json(`${beforeLabelFix}/component-census/report.json`);
 const normalize = schema => {
   const nodes = []; const walk = node => { nodes.push(node); (node.children ?? []).forEach(walk); }; schema.screens.forEach(walk);
   const ids = new Map(nodes.map((node, index) => [node.id, `node-${index}`]));
@@ -36,8 +38,15 @@ const changed = rows.filter(row => row.beforeNormalizedHash !== row.afterNormali
 const attribution = changed.map(row => {
   const context = row.input.context;
   const missions = context === 'list' ? ['s198-m02','s198-m04'] : context === 'detail' ? ['s198-m03','s198-m04','s198-m05','s198-m06'] : context === 'form' ? ['s198-m04','s198-m05'] : context === 'timeline' ? ['s198-m03','s198-m04'] : context === 'workflow' ? ['s198-m02','s198-m03','s198-m04','s198-m05','s198-m06'] : ['s198-m04'];
+  const prior = correctionBaseline.allRows.find(candidate => JSON.stringify(candidate.input) === JSON.stringify(row.input)); assert(prior);
+  const beforeCorrection = normalize(json(prior.composition.path.replace(`${out}/`, `${beforeLabelFix}/`)).schema);
+  const afterCorrection = normalize(json(row.after.path).schema);
+  const correctionPaths = changedPaths(beforeCorrection, afterCorrection);
+  const planEditorCorrection = row.input.object === 'Plan' && ['form', 'workflow'].includes(context);
+  if (correctionPaths.length || planEditorCorrection) missions.push('s198-m07');
   assert(row.changedPaths.every(value => /^\/(?:screens|objectSchema|workflow|metadata|meta|warnings|tokens|version|components|capabilities|object)(?:\/|$)/.test(value)), `Unattributed schema field: ${JSON.stringify(row)}`);
-  return { ...row.input, missions, reason: `Shared ${context} producer reconciliation and parameter/example/default metadata; exact normalized field changes retained.`, changedPaths: row.changedPaths };
+  return { ...row.input, missions, reason: `Shared ${context} producer reconciliation and parameter/example/default metadata; exact normalized field changes retained.${planEditorCorrection ? ' M07 removes the duplicate Plan name editor.' : ''}${correctionPaths.length ? ' M07 preserves the declared timeline label once in the header; the exact post-d03 correction paths are retained.' : ''}`, changedPaths: row.changedPaths,
+    ...(correctionPaths.length ? { m07Correction: { beforeHead: correctionBaseline.head, before: ref(prior.composition.path.replace(`${out}/`, `${beforeLabelFix}/`)), changedPaths: correctionPaths } } : {}) };
 });
 write(`${out}/schema-movement.json`, { baselineHead: previous.head, head, executionHead: head, changedSchemas: changed.length, unchangedSchemas: rows.length - changed.length, allRows: rows, attribution, unattributedChanges: [], builderSelfCertified: false });
 const oldStores = json('artifacts/product-reality/sprint-197/m07/saved-compatibility.json');

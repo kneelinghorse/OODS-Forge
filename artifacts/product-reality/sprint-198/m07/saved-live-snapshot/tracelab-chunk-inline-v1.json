@@ -1,0 +1,223 @@
+{
+  "name": "tracelab-chunk-inline-v1",
+  "schemaRef": "compose-e3c1f90c",
+  "schema": {
+    "version": "2026.02",
+    "theme": "light",
+    "screens": [
+      {
+        "id": "screen-list-9",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "list-toolbar-4",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-search-1",
+                "component": "SearchInput",
+                "meta": {
+                  "intent": "slot:search",
+                  "label": "search",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                },
+                "bindings": {
+                  "onUpdate": "handleUpdate_embedding_id"
+                },
+                "props": {
+                  "field": "embedding_id",
+                  "label": "Embedding id",
+                  "placeholder": "Enter embedding id"
+                }
+              },
+              {
+                "id": "slot-filters-2",
+                "component": "Input",
+                "meta": {
+                  "intent": "slot:filters",
+                  "label": "filters",
+                  "confidence": 0.67,
+                  "confidenceLevel": "low"
+                },
+                "props": {
+                  "type": "number",
+                  "field": "chunk_index",
+                  "label": "Chunk index",
+                  "placeholder": "Enter chunk index"
+                },
+                "bindings": {
+                  "onChange": "handleChange_chunk_index"
+                }
+              },
+              {
+                "id": "slot-toolbar-actions-3",
+                "component": "Button",
+                "meta": {
+                  "intent": "slot:toolbar-actions",
+                  "label": "toolbar-actions",
+                  "confidence": 1,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-items-5",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "children": [
+              {
+                "id": "slot-items-6",
+                "component": "InlineLabel",
+                "meta": {
+                  "intent": "slot:items",
+                  "label": "items"
+                },
+                "props": {
+                  "field": "label",
+                  "maxLength": 40,
+                  "label": "Label"
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-pagination-7",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "center"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-pagination-8",
+                "component": "PaginationBar",
+                "meta": {
+                  "intent": "slot:pagination",
+                  "label": "pagination",
+                  "confidence": 0.77,
+                  "confidenceLevel": "low"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Display projection of content; retain the complete source field.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "document_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Document id.",
+        "semanticType": "research.chunk.document_id"
+      },
+      "chunk_index": {
+        "type": "number",
+        "required": true,
+        "description": "Chunk index.",
+        "semanticType": "research.chunk.chunk_index"
+      },
+      "content": {
+        "type": "string",
+        "required": true,
+        "description": "Content.",
+        "semanticType": "text.label"
+      },
+      "embedding_id": {
+        "type": "string",
+        "required": false,
+        "description": "Embedding id.",
+        "semanticType": "research.chunk.embedding_id"
+      },
+      "token_count": {
+        "type": "number",
+        "required": false,
+        "description": "Token count.",
+        "semanticType": "research.chunk.token_count"
+      },
+      "start_char": {
+        "type": "number",
+        "required": false,
+        "description": "Start char.",
+        "semanticType": "research.chunk.start_char"
+      },
+      "end_char": {
+        "type": "number",
+        "required": false,
+        "description": "End char.",
+        "semanticType": "research.chunk.end_char"
+      },
+      "prev_chunk_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Prev chunk id.",
+        "semanticType": "research.chunk.prev_chunk_id"
+      },
+      "next_chunk_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Next chunk id.",
+        "semanticType": "research.chunk.next_chunk_id"
+      },
+      "id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Id.",
+        "semanticType": "research.chunk.id"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Created at.",
+        "semanticType": "research.chunk.created_at"
+      }
+    }
+  },
+  "object": "Chunk",
+  "version": 2,
+  "author": "TraceLab UX-1",
+  "createdAt": "2026-09-12T23:09:15.063Z",
+  "updatedAt": "2026-09-12T23:38:44.615Z",
+  "tags": [
+    "tracelab",
+    "research",
+    "ux-1",
+    "inline"
+  ]
+}

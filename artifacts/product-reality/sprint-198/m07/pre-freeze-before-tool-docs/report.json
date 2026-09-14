@@ -1,0 +1,79 @@
+{
+  "status": "incomplete",
+  "skipped": 0,
+  "reports": [
+    {
+      "name": "readiness",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/product-reality/s196-release-readiness.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-final/readiness.log",
+        "sha256": "b5ed03b1d15ae9c2f0b20c5a70443174f8d6480b9bfd628d89855c96ad8525a9"
+      }
+    },
+    {
+      "name": "palette",
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "scripts/tokens/generate-palette.ts",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-final/palette.log",
+        "sha256": "b2f1f902c2355e047fc84897846b84e868bd874ad73acfdf629e71e607f61a88"
+      }
+    },
+    {
+      "name": "tokens",
+      "command": [
+        "pnpm",
+        "check:tokens"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-final/tokens.log",
+        "sha256": "7b2c168f73a6521a9deebe0cce6833a3ca577ad315b0bfc7d71312c15ee0e9e5"
+      }
+    },
+    {
+      "name": "tool-truth",
+      "command": [
+        "node",
+        "scripts/product-reality/s193-tool-truth.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-final/tool-truth.log",
+        "sha256": "05c13cb31c43b25fbf13792b0d2ff6dfe55de35c8b091164f2a4d08ada11388d"
+      }
+    },
+    {
+      "name": "docs",
+      "command": [
+        "pnpm",
+        "docs:check"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "log": {
+        "path": "artifacts/product-reality/sprint-198/m07/pre-freeze-final/docs.log",
+        "sha256": "800a880a91190581fc1c69e3c098beed8923dd0149b8bd22653e1b24ad2360b5"
+      }
+    }
+  ],
+  "builderSelfCertified": false
+}

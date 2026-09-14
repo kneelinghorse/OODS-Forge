@@ -1,0 +1,49 @@
+
+> @oods/foundry-mcp@0.1.0 docs:check /Users/systemsystems/.codex/worktrees/s198/OODS-Forge
+> pnpm run docs:api -- --check && tsx scripts/product-reality/s195-viz-taxonomy.ts --check && tsx scripts/product-reality/s195-pattern-census.ts --check && pnpm run docs:components -- --check && pnpm run docs:tools -- --check && pnpm run docs:claims -- --check
+
+
+> @oods/foundry-mcp@0.1.0 docs:api /Users/systemsystems/.codex/worktrees/s198/OODS-Forge
+> tsx scripts/docs/generate-api-reference.ts "--" "--check"
+
+✔ docs/api is fresh (25 files checked, no orphans).
+{
+  "types": 13,
+  "patterns": 21,
+  "families": 8,
+  "classified": 34,
+  "coreCells": 20,
+  "coreSurfaceComplete": 13,
+  "typedGaps": 7
+}
+{
+  "identities": 21,
+  "cells": 84,
+  "public": 8,
+  "authoringOnly": 13,
+  "nonconformantCells": 0
+}
+
+> @oods/foundry-mcp@0.1.0 docs:components /Users/systemsystems/.codex/worktrees/s198/OODS-Forge
+> tsx scripts/docs/generate-component-docs.ts "--" "--check"
+
+Component docs check passed: 109 pages + index.
+
+> @oods/foundry-mcp@0.1.0 docs:tools /Users/systemsystems/.codex/worktrees/s198/OODS-Forge
+> tsx scripts/docs/generate-tool-specs.ts "--" "--check"
+
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.
+/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/scripts/docs/generate-tool-specs.ts:259
+    if (!fs.existsSync(destination) || fs.readFileSync(destination, 'utf8') !== output) throw new Error(`${TOOL_SPECS_PATH} is stale; run pnpm run docs:tools`);
+                                                                                              ^
+
+
+Error: docs/mcp/Tool-Specs.md is stale; run pnpm run docs:tools
+    at generateToolSpecs (/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/scripts/docs/generate-tool-specs.ts:259:95)
+    at <anonymous> (/Users/systemsystems/.codex/worktrees/s198/OODS-Forge/scripts/docs/generate-tool-specs.ts:286:3)
+    at ModuleJob.run (node:internal/modules/esm/module_job:371:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:669:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.6.0

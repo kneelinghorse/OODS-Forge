@@ -1,0 +1,1114 @@
+{
+  "status": "ok",
+  "layout": "detail",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-detail-13",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "detail-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "align": "space-between",
+              "gapToken": "stack-default"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "detail-header-1-record-title",
+                "component": "DetailHeader",
+                "props": {
+                  "titleField": "transaction_id",
+                  "headingLevel": 2
+                }
+              },
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-24",
+                    "component": "StatusTimeline",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "statesParameter": "states",
+                      "showActorId": true,
+                      "showReason": true
+                    }
+                  },
+                  {
+                    "id": "ve-header-25",
+                    "component": "PriceSummary",
+                    "props": {
+                      "amountField": "unit_amount_cents",
+                      "currencyField": "currency",
+                      "modelField": "pricing_model",
+                      "intervalField": "billing_interval",
+                      "taxBehaviorField": "tax_behavior"
+                    }
+                  },
+                  {
+                    "id": "ve-header-26",
+                    "component": "CancellationSummary",
+                    "props": {
+                      "cancelAtPeriodEndField": "cancel_at_period_end",
+                      "reasonField": "cancellation_reason",
+                      "codeField": "cancellation_reason_code",
+                      "requestedAtField": "cancellation_requested_at"
+                    }
+                  },
+                  {
+                    "id": "ve-header-27",
+                    "component": "ArchiveSummary",
+                    "props": {
+                      "archivedField": "is_archived",
+                      "archivedAtField": "archived_at",
+                      "restoredAtField": "restored_at",
+                      "reasonField": "archive_reason",
+                      "archivedByField": "archived_by",
+                      "metadataField": "archive_metadata",
+                      "retainHistoryParameter": "retainHistory",
+                      "restoreWindowParameter": "restoreWindowDays",
+                      "allowPartialRestoreParameter": "allowPartialRestore"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "detail-body-10",
+            "component": "Card",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "detail-tabs-9",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "detail-tabs-9-read-fields",
+                    "component": "Stack",
+                    "props": {
+                      "label": "Details"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-tabs-9-created_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-created_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Created at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-created_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "created_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-updated_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-updated_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Updated at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-updated_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "updated_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-last_event_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-last_event_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Last event at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-last_event_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "last_event_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-user_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-user_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "User id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-user_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "user_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-organization_id-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-organization_id-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Organization id"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-organization_id-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "organization_id"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-occurred_at-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-occurred_at-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Occurred at"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-occurred_at-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "occurred_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-payment_method-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-payment_method-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Payment method"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-payment_method-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "payment_method"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-payment_reference-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-payment_reference-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Payment reference"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-payment_reference-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "payment_reference"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "detail-tabs-9-risk_score-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "detail-tabs-9-risk_score-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Risk score"
+                            }
+                          },
+                          {
+                            "id": "detail-tabs-9-risk_score-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "risk_score"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-0-4",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:tab-0",
+                          "label": "tab-0",
+                          "notes": "pattern-group:status-timeline"
+                        },
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "pg-status-timeline-30-read-field",
+                            "component": "Stack",
+                            "children": [
+                              {
+                                "id": "pg-status-timeline-30-label",
+                                "component": "Text",
+                                "props": {
+                                  "as": "strong",
+                                  "content": "Allowed transitions"
+                                }
+                              },
+                              {
+                                "id": "pg-status-timeline-30-value",
+                                "meta": {
+                                  "intent": "read-only-field"
+                                },
+                                "component": "Text",
+                                "props": {
+                                  "field": "allowed_transitions"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": "slot-tab-1-6-read-field",
+                        "component": "Stack",
+                        "children": [
+                          {
+                            "id": "slot-tab-1-6-label",
+                            "component": "Text",
+                            "props": {
+                              "as": "strong",
+                              "content": "Channel"
+                            }
+                          },
+                          {
+                            "id": "slot-tab-1-6-value",
+                            "meta": {
+                              "intent": "read-only-field"
+                            },
+                            "component": "Text",
+                            "props": {
+                              "field": "channel"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "props": {
+                  "ariaLabel": "Record details"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onEdit": "handleEdit",
+          "onDelete": "handleDelete",
+          "onCancel": "handleCancel",
+          "onViewTimeline": "handleViewTimeline"
+        }
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "enum": [
+          "pending",
+          "authorized",
+          "settled",
+          "failed",
+          "refunded"
+        ],
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "initiated",
+          "authorized",
+          "settled",
+          "refunded",
+          "failed"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "unit_amount_cents": {
+        "type": "number",
+        "required": true,
+        "description": "Base unit price expressed in the smallest currency denomination.",
+        "semanticType": "commerce.price.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO currency code for the unit amount.",
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "AUD"
+        ],
+        "semanticType": "commerce.price.currency"
+      },
+      "pricing_model": {
+        "type": "string",
+        "required": true,
+        "description": "Monetization model applied to the entity.",
+        "enum": [
+          "one_time",
+          "usage_based"
+        ],
+        "semanticType": "commerce.price.model"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing cadence when pricing_model indicates recurring revenue.",
+        "enum": [
+          "one_time"
+        ],
+        "semanticType": "commerce.price.interval"
+      },
+      "tax_behavior": {
+        "type": "string",
+        "required": true,
+        "default": "exclusive",
+        "description": "Defines whether taxes are included in the displayed price.",
+        "enum": [
+          "exclusive",
+          "inclusive"
+        ],
+        "semanticType": "commerce.price.tax_behavior"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Whether cancellation occurs at the natural period end instead of immediately. When true the entity is in a REVERSIBLE pending-cancellation state: the schedule can be undone (set back to false) any time before period end, returning the entity to active. This is distinct from a terminal cancellation (a `terminated`/canceled subscription), which is irreversible and non-reactivatable. Mirrors Stripe's cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).",
+        "semanticType": "status.cancel.deferred"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form detail describing why cancellation occurred.",
+        "semanticType": "status.cancel.reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "enum": [
+          "customer_request",
+          "suspected_fraud",
+          "duplicate_charge",
+          "payment_method_error"
+        ],
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp capturing when the cancellation workflow was initiated.",
+        "semanticType": "status.cancel.timestamp"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "transaction_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Unique identifier for the transaction record.",
+        "semanticType": "commerce.transaction.id"
+      },
+      "user_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the user associated with the transaction.",
+        "semanticType": "identity.user.id"
+      },
+      "organization_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Tenant organization responsible for the transaction.",
+        "semanticType": "organization.id"
+      },
+      "occurred_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp when the transaction occurred in the source system.",
+        "semanticType": "commerce.transaction.timestamp"
+      },
+      "payment_method": {
+        "type": "string",
+        "required": true,
+        "description": "Funding source used to complete the transaction.",
+        "enum": [
+          "card",
+          "bank_transfer",
+          "digital_wallet",
+          "invoice"
+        ],
+        "semanticType": "commerce.payment.method"
+      },
+      "channel": {
+        "type": "string",
+        "required": true,
+        "default": "online",
+        "description": "Sales channel through which the transaction was initiated.",
+        "enum": [
+          "online",
+          "in_app",
+          "point_of_sale",
+          "partner"
+        ],
+        "semanticType": "commerce.transaction.channel"
+      },
+      "payment_reference": {
+        "type": "string",
+        "required": false,
+        "description": "Provider reference code linking to the payment processor."
+      },
+      "risk_score": {
+        "type": "number",
+        "required": false,
+        "description": "Fraud assessment score assigned during authorization.",
+        "semanticType": "risk.transaction.score"
+      }
+    }
+  },
+  "schemaRef": "compose-1a24b710",
+  "schemaRefCreatedAt": "2026-09-14T03:45:17.269Z",
+  "schemaRefExpiresAt": "2026-09-14T04:15:17.269Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "StatusTimeline",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusTimeline was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "StatusTimeline",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "PriceSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "CancellationSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "ArchiveSummary",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-0",
+      "intent": "status-indicator",
+      "selectedComponent": "StatusBadge",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "StatusBadge was selected for slot \"tab-0\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "StatusBadge",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    },
+    {
+      "slotName": "tab-1",
+      "intent": "metadata-display",
+      "selectedComponent": "Text",
+      "confidence": 0.76,
+      "confidenceLevel": "medium",
+      "explanation": "Text was selected for slot \"tab-1\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+      "candidates": [
+        {
+          "name": "Text",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.94,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.58,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-2",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-2\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "metadata",
+      "intent": "metadata-display",
+      "selectedComponent": "AuditTimeline",
+      "confidence": 0.4,
+      "confidenceLevel": "low",
+      "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagSummary (0.95), TagManager (0.90). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+      "candidates": [
+        {
+          "name": "AuditTimeline",
+          "confidence": 1,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "alternativeCandidates": [
+        {
+          "name": "TagSummary",
+          "confidence": 0.95,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagManager",
+          "confidence": 0.9,
+          "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 1,
+          "contextTraitMatches": 0
+        }
+      ],
+      "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed."
+    },
+    {
+      "slotName": "tab-3",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-3\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-4",
+      "intent": "status-indicator",
+      "selectedComponent": "StatusBadge",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge was selected for slot \"tab-4\" because preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "StatusBadge",
+          "confidence": 1,
+          "reason": "preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Badge",
+          "confidence": 0.81,
+          "reason": "preferred for \"status-indicator\" (rank 2); 1 tag match(es); tag match (status); 2 context match(es); 1 category match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "ColorizedBadge",
+          "confidence": 0.61,
+          "reason": "preferred for \"status-indicator\" (rank 3); 1 tag match(es); tag match (status); 1 region match(es); 1 category match(es); 1 trait(s)",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-5",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-5\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-6",
+      "intent": "metadata-display",
+      "selectedComponent": "Stack",
+      "confidence": 0.71,
+      "confidenceLevel": "medium",
+      "explanation": "Stack was selected for slot \"tab-6\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+      "candidates": [
+        {
+          "name": "Stack",
+          "confidence": 1,
+          "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.9,
+          "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Card",
+          "confidence": 0.61,
+          "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "tab-7",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.94,
+      "confidenceLevel": "high",
+      "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 1,
+          "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Table",
+          "confidence": 0.98,
+          "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Stack",
+          "confidence": 0.66,
+          "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V120",
+      "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    }
+  ],
+  "objectUsed": {
+    "name": "Transaction",
+    "version": "1.0.0",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "financial/Priceable",
+      "lifecycle/Cancellable",
+      "lifecycle/Archivable"
+    ],
+    "fieldsComposed": 31,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 5,
+      "form": 2,
+      "timeline": 4,
+      "card": 4
+    }
+  },
+  "meta": {
+    "intentParsed": "Transaction detail view",
+    "layoutDetected": "context-inferred: detail (from context=\"detail\")",
+    "slotCount": 10,
+    "nodeCount": 48,
+    "intentSynthetic": true,
+    "warnings": [
+      "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 5,
+      "expansionReason": "Expanded from 3 to 8 tabs for 31 fields",
+      "patternsApplied": 1,
+      "patternGroups": [
+        {
+          "slotName": "tab-0",
+          "patternId": "status-timeline",
+          "compositeComponent": "StatusTimeline",
+          "matchedFields": [
+            "status",
+            "allowed_transitions"
+          ],
+          "confidence": 1
+        }
+      ],
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.78,
+      "lowConfidenceSlots": 1,
+      "lowConfidenceSlotNames": [
+        "metadata"
+      ]
+    }
+  }
+}

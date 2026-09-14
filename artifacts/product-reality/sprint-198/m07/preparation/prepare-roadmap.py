@@ -28,6 +28,11 @@ assert original.split(marker, 1)[1] == retained
 assert '198 — **LOCKED 2026-09-13**' in top
 top = top.replace('198 — **LOCKED 2026-09-13**', '198 — **BUILT, REVIEW PENDING**', 1)
 top = top.replace('### Sprint 198 — Application craft — LOCKED 2026-09-13', '### Sprint 198 — Application craft — BUILT, REVIEW PENDING', 1)
+row = next(line for line in top.splitlines() if '| 198 — **BUILT, REVIEW PENDING**' in line)
+cells = row.split('|')
+assert len(cells) == 6
+cells[3] = cells[3].rstrip() + '; measured **240/240 runtime cells**, **1,308/1,308 component cells**, **77/77 retained schemas**, and **18 canonical objects** '
+top = top.replace(row, '|'.join(cells), 1)
 anchor = "The Product Reality Program's eighth exit criterion"
 assert anchor in top
 record = f'''Build evidence: canonical runtime **240/240** from frozen implementation `{runtime['head']}`, across **18 objects** (Chunk inline-only); component themes **1,308/1,308** across React/Vue, both brands and light/dark/HC. The separate retained comparison is **77/77 schemas / 154 cells over 11 objects**, not the full 18-object population. The 78-cell chart census and 84-cell pattern census retain their existing typed gaps and registry hashes. Tool ledger: **24 rows (19 auto, 5 on-demand)**. Saved compatibility: the original **17-file cohort** and the current **37-file store** are unchanged. [Application receipts](../../../artifacts/product-reality/sprint-198/m05/index.html) and [research receipts](../../../artifacts/product-reality/sprint-198/m06/index.html) support independent review. `builderSelfCertified:false`; usable certification is pending. The release-profile claim is explicitly narrowed: **References are format-checked and hash-bound, not re-executed.** Optional visual chrome is carried to Sprint200; research sample-timestamp and classification limits remain disclosed in m06. No reconnect, delivery or consumer notice is included.

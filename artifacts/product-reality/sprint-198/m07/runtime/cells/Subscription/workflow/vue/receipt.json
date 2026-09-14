@@ -1,0 +1,547 @@
+{
+  "object": "Subscription",
+  "context": "workflow",
+  "framework": "vue",
+  "head": "2b095b1575bfd5d4a131ab78a7b406148f8b52be",
+  "runId": "640d21c9-9033-496e-b48d-417d00ec77d9",
+  "status": "pass",
+  "artifactHash": "sha256:68436395e0db62c52ff64e14733bf88d82d1864df4e33d18a27545f27f769381",
+  "components": [
+    "ArchiveEvent",
+    "ArchiveSummary",
+    "ArchivedRowOverlay",
+    "Banner",
+    "BillingAmountInput",
+    "BillingIntervalSelector",
+    "BillingSummaryBadge",
+    "Button",
+    "CancellationEvent",
+    "CancellationForm",
+    "CancellationSummary",
+    "Card",
+    "Checkbox",
+    "CycleProgressCard",
+    "DetailHeader",
+    "Input",
+    "PaginationBar",
+    "PaymentEventTimeline",
+    "PaymentTimeline",
+    "RelativeTimestamp",
+    "SearchInput",
+    "Select",
+    "Stack",
+    "StateTransitionEvent",
+    "StatusBadge",
+    "StatusSelector",
+    "StatusTimeline",
+    "Tabs",
+    "Text",
+    "VizAreaPreview"
+  ],
+  "gates": [
+    {
+      "name": "generation",
+      "status": "pass",
+      "detail": {
+        "artifactHash": "sha256:68436395e0db62c52ff64e14733bf88d82d1864df4e33d18a27545f27f769381",
+        "response": "workflows/Subscription/vue-generation.json"
+      }
+    },
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "isolation": {
+            "outsidePnpmWorkspace": true,
+            "freshNodeModules": true,
+            "emptyVerifierOwnedNpmConfiguration": true,
+            "installScripts": false,
+            "localPackagesFromBuiltTarballsOnly": true,
+            "workspaceAliases": false,
+            "workspaceSymlinks": false,
+            "repositorySourceImports": false,
+            "inheritedNodeModules": false,
+            "allResolvedPathsOutsideRepository": true,
+            "installed": [
+              {
+                "name": "@oods/tokens",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/tokens"
+              },
+              {
+                "name": "@oods/component-contracts",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-contracts"
+              },
+              {
+                "name": "@oods/component-styles",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/component-styles"
+              },
+              {
+                "name": "@oods/components-vue",
+                "version": "0.1.0",
+                "consumerRelative": "node_modules/@oods/components-vue"
+              }
+            ]
+          },
+          "resolutions": [
+            {
+              "specifier": "@oods/component-contracts",
+              "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+            },
+            {
+              "specifier": "@oods/component-styles/css",
+              "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+            },
+            {
+              "specifier": "@oods/components-vue",
+              "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+            },
+            {
+              "specifier": "@vitejs/plugin-vue",
+              "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+            },
+            {
+              "specifier": "@vue/server-renderer",
+              "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+            },
+            {
+              "specifier": "vue",
+              "consumerRelative": "node_modules/vue/index.mjs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/typecheck.log"
+        }
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "exitCode": 0,
+          "log": "vue/logs/build.log"
+        }
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "htmlHash": "sha256:19228398071a065adcdd9e2eeae63b68c9ca187c0162211eefcbd2ef26b7df88",
+          "generatedEntry": "src/ssr.ts"
+        }
+      }
+    },
+    {
+      "name": "mount",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "screenCount": 1,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "preservesSsrRoot": true,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "files": [
+            "index-D9-LVy_0.css"
+          ],
+          "bytes": 157235,
+          "sha256": "sha256:e91e3b5610baac923d3329d02bfea4655491266b844402d6553ff8ab7f1f293d",
+          "core": true,
+          "ported": true,
+          "requiresPorted": true,
+          "tokens": true
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "pass",
+      "detail": {
+        "report": "workflows/Subscription/vue/receipt.json",
+        "observation": {
+          "flowRows": 9,
+          "stateObservations": 16,
+          "screenshots": 18,
+          "errors": []
+        }
+      }
+    },
+    {
+      "name": "accessibility-tree",
+      "status": "pass",
+      "detail": {
+        "path": "workflows/Subscription/vue/accessibility-tree.txt"
+      }
+    },
+    {
+      "name": "context-states",
+      "status": "pass",
+      "detail": {
+        "observations": [
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\n\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "success",
+            "marker": "success",
+            "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nAtlas Plan\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$49.00 · monthly\nCedar Plan\n✔︎\nActive\nSep 1, 2026, 12:00 PM\n$99.00 · monthly\nHarbor Plan\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$49.00 · yearly\nJuniper Plan\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$149.00 · monthly\nMeadow Plan\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$99.00 · yearly\nNorthstar Plan\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nOrchard Plan\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$249.00 · monthly\nSummit Plan\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$149.00 · yearly\nWillow Plan\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$19.00 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\n\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "success",
+            "marker": "success",
+            "text": "Atlas Plan\nJun 07\nJun 14\nJun 21\nJun 28\nJul 05\nJul 12\nJul 19\nJul 26\nAug 02\nAug 09\nAug 16\nAug 23\nAug 30\nDate\n0\n10\n20\n30\n40\n50\nAmount\nPayment amounts\n\nRecorded sample payments in major currency units.\n\nStatus Timeline\n\nCurrent status: Unpaid\n\nBilling Cycle Started\n\nSep 1, 2026, 12:00 PM\n\nUnpaid\n\nReason: Record created\n\nCancellation Summary\nCancel at period end\nNo\nArchive Summary\nArchived\nNo\nDetails\nBilling\nCreated at\nSep 1, 2026, 12:00 PM\nUpdated at\nSep 1, 2026, 12:00 PM\nLast event\nBilling Cycle Started\nLast event at\nSep 1, 2026, 12:00 PM\nSubscription id\nsubscription-007\nPlan code\natlas_007\nPlan interval\nNot recorded\nCustomer name\nNot recorded\nCustomer email\nsam.brooks@example.com"
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\n\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "success",
+            "marker": "success",
+            "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nChoose the current status.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency\n*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event\n*\nBilling Cycle Started\nBilling Cycle Completed\nPayment Received\nCancellation Requested\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "loading",
+            "marker": "loading",
+            "text": "Loading\n\nLoading your records."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "success",
+            "marker": "success",
+            "text": "Atlas Plan\n$49.00 · monthly\nBilling Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$49.00 · monthly\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$49.00 · monthly\n\nState transitions\nBilling Cycle Started · Unpaid\n\nSep 1, 2026, 12:00 PM\n\nReason: Record created\n\nCancellation event\n\nNo events recorded.\n\nArchive events\n\nNo events recorded."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\n\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\n\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\n\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "empty",
+            "marker": "empty",
+            "text": "No records found\n\nChange the filters or add a record."
+          },
+          {
+            "framework": "vue",
+            "screen": "list",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\n\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "detail",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\n\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "form",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\n\nTry again or choose another record."
+          },
+          {
+            "framework": "vue",
+            "screen": "timeline",
+            "state": "error",
+            "marker": "error",
+            "text": "Unable to load records\n\nTry again or choose another record."
+          }
+        ],
+        "flow": [
+          {
+            "name": "ten-sample-records",
+            "status": "passed",
+            "detail": {
+              "active": [
+                "subscription-007",
+                "subscription-003",
+                "subscription-002",
+                "subscription-009",
+                "subscription-008",
+                "subscription-001",
+                "subscription-005",
+                "subscription-004",
+                "subscription-006"
+              ],
+              "archived": [
+                "subscription-010"
+              ],
+              "archivePresentation": {
+                "opacity": "0.7",
+                "accessibleName": "Archived: Brook Plan",
+                "tabLabel": "Archived",
+                "keyboardNavigation": true
+              },
+              "mounts": [
+                {
+                  "nodeId": "list-ve-items-13-0",
+                  "component": "ArchivedRowOverlay",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "list-slot-toolbar-actions-3-0",
+                  "component": "BillingSummaryBadge",
+                  "present": true,
+                  "passed": true
+                }
+              ],
+              "total": 10,
+              "disposition": "nine active and one in the generated Archived view"
+            }
+          },
+          {
+            "name": "detail-navigation",
+            "status": "passed",
+            "detail": {
+              "id": "subscription-003",
+              "heading": "Cedar Plan",
+              "billingViews": {
+                "cycle": "Billing cycle\n\n23% complete · 18 days remaining\n\nmonthly",
+                "payments": "Payments\n\n$99.00 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+              },
+              "mounts": [
+                {
+                  "nodeId": "detail-ve-header-26",
+                  "component": "VizAreaPreview",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "detail-slot-tab-0-4",
+                  "component": "CycleProgressCard",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "detail-slot-tab-1-6",
+                  "component": "PaymentTimeline",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "detail-ve-header-26",
+                  "component": "VizAreaPreview",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "detail-slot-tab-0-4",
+                  "component": "CycleProgressCard",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "detail-slot-tab-1-6",
+                  "component": "PaymentTimeline",
+                  "present": true,
+                  "passed": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "edit-seeded-values",
+            "status": "passed",
+            "detail": {
+              "id": "subscription-003",
+              "field": "plan_name",
+              "plan": "Cedar Plan"
+            }
+          },
+          {
+            "name": "billing-edit-values",
+            "status": "passed",
+            "detail": {
+              "options": [
+                "monthly",
+                "yearly"
+              ],
+              "amount": "19.99",
+              "interval": "yearly",
+              "invalidSaveStayedOnForm": true
+            }
+          },
+          {
+            "name": "save-plan-name",
+            "status": "passed",
+            "detail": {
+              "heading": "Team annual"
+            }
+          },
+          {
+            "name": "billing-save-persists",
+            "status": "passed",
+            "detail": {
+              "id": "subscription-003",
+              "storedMinorUnits": 1999,
+              "majorUnitEditorValue": "19.99",
+              "interval": "yearly"
+            }
+          },
+          {
+            "name": "cancel-detail",
+            "status": "passed",
+            "detail": {
+              "text": "SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nTeam annual\nJun 07\nJun 14\nJun 21\nJun 28\nJul 05\nJul 12\nJul 19\nJul 26\nAug 02\nAug 09\nAug 16\nAug 23\nAug 30\nDate\n0\n20\n40\n60\n80\n100\nAmount\nPayment amounts\n\nRecorded sample payments in major currency units.\n\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nBilling Cycle Started\n\nSep 1, 2026, 12:00 PM\n\nActive\n\nReason: Record created\n\nPending Cancellation\n\nSep 14, 2026, 3:26 AM\n\nActive → Pending Cancellation\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 14, 2026, 3:26 AM\nReason\nBudget changed for next year\nCode\nCustomer Request\nArchive Summary\nArchived\nNo\nDetails\nBilling\nCreated at\nSep 1, 2026, 12:00 PM\nUpdated at\nSep 14, 2026, 3:26 AM\nLast event\nBilling Cycle Started\nLast event at\nSep 1, 2026, 12:00 PM\nSubscription id\nsubscription-003\nPlan code\ncedar_003\nPlan interval\nNot recorded\nCustomer name\nNot recorded\nCustomer email\nsunny.rivera@example.com\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session.",
+              "id": "subscription-003",
+              "onDemand": true,
+              "readOnlyBeforeActivation": true
+            }
+          },
+          {
+            "name": "cancel-list-badge",
+            "status": "passed",
+            "detail": {
+              "text": "…\nPending Cancellation"
+            }
+          },
+          {
+            "name": "timeline-navigation-and-history",
+            "status": "passed",
+            "detail": {
+              "text": "Billing Cycle Started\nSep 1, 2026, 12:00 PM\n\nRecord created\n\nLast payment\nSep 1, 2026, 12:00 PM\n\n$19.99 · yearly\n\nPending Cancellation\nSep 14, 2026, 3:26 AM\n\nBudget changed for next year\n\nNext payment\nOct 1, 2026, 12:00 PM\n\n$19.99 · yearly",
+              "id": "subscription-003",
+              "paymentEvents": "Last paymentSep 1, 2026, 12:00 PM$19.99 · yearly\nNext paymentOct 1, 2026, 12:00 PM$19.99 · yearly",
+              "mounts": [
+                {
+                  "nodeId": "timeline-timeline-header-1-billing",
+                  "component": "BillingSummaryBadge",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "timeline-ve-entry-0-17-1",
+                  "component": "PaymentEventTimeline",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "timeline-ve-entry-0-17-3",
+                  "component": "PaymentEventTimeline",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "timeline-ve-entry-0-15",
+                  "component": "StateTransitionEvent",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "timeline-ve-entry-0-16",
+                  "component": "CancellationEvent",
+                  "present": true,
+                  "passed": true
+                },
+                {
+                  "nodeId": "timeline-ve-entry-0-18",
+                  "component": "ArchiveEvent",
+                  "present": true,
+                  "passed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "screenshots",
+      "status": "pass",
+      "detail": [
+        {
+          "width": 390,
+          "path": "workflows/Subscription/screenshots/vue-list-390.png",
+          "hash": "sha256:c8f68ae1594b4749bae542096e64c6803a754cdfdac0bfb9a8fc1ac7a486884e"
+        },
+        {
+          "width": 1440,
+          "path": "workflows/Subscription/screenshots/vue-list-1440.png",
+          "hash": "sha256:94e447ad4c94fc6210293051a43c84989a256f64dfa3ff0ca6b00be167a070ed"
+        }
+      ]
+    }
+  ],
+  "report": "cells/Subscription/workflow/vue/receipt.json"
+}
