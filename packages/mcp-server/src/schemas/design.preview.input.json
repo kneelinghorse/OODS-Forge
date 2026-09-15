@@ -2,10 +2,19 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.input.json",
   "title": "Design preview input",
-  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls.",
+  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "render",
+        "compare"
+      ],
+      "default": "render",
+      "description": "render (default): open the version as the running app. compare: the structural what-changed between compositionId@version and against, with the side-by-side URL."
+    },
     "compositionId": {
       "type": "string",
       "pattern": "^cmp-[a-f0-9]{12}$",
@@ -100,6 +109,25 @@
         }
       },
       "additionalProperties": false
+    },
+    "against": {
+      "type": "object",
+      "required": [
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$",
+          "description": "The other composition; default the same composition."
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "description": "action compare: the version on the right; the left is compositionId@version."
     }
   },
   "examples": [
@@ -115,6 +143,14 @@
       "compositionId": "cmp-0123456789ab",
       "version": 2,
       "framework": "vue"
+    },
+    {
+      "action": "compare",
+      "compositionId": "cmp-0123456789ab",
+      "version": 1,
+      "against": {
+        "version": 2
+      }
     }
   ],
   "anyOf": [

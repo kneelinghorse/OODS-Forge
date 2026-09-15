@@ -2,6 +2,8 @@ import path from 'node:path';
 import fastifyStatic from '@fastify/static';
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import { compileArtifact, PreviewCompileError } from './compile.js';
+import { renderComparePage } from './compare.js';
+import { diffVersions, sharedFrameworks } from './diff.js';
 import { renderPreviewAppPage } from './page.js';
 import { defaultRuntimeDirectory, loadPreviewRuntime, resolveEsbuildPlatform, type PreviewRuntime } from './runtime.js';
 import { FIXED_WIDTHS, renderPreviewShell } from './shell.js';
@@ -117,6 +119,34 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
   fastify.get<{ Params: Params }>(`${base}/:id/:version/record.json`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     return reply.type('application/json; charset=utf-8').send(JSON.stringify(record));
+  });
+
+  // Side by side: /compare/<id>@<v>/<id>@<v> with the structural what-changed and both measurement panels.
+  const compareBase = base.replace(/\/preview$/, '') + '/compare';
+  const parseRef = (value: string): { id: string; version: number } | undefined => {
+    const match = /^(cmp-[a-f0-9]{12})@([1-9]\d{0,6})$/.exec(value);
+    return match ? { id: match[1]!, version: Number(match[2]) } : undefined;
+  };
+  const loadPair = (params: { left: string; right: string }, reply: FastifyReply): { left: CompositionVersion; right: CompositionVersion } | undefined => {
+    const refs = [parseRef(params.left), parseRef(params.right)];
+    if (!refs[0] || !refs[1]) { void fail(reply, 400, 'Compare references are <compositionId>@<version>, for example cmp-0123456789ab@2.'); return undefined; }
+    const [left, right] = refs.map(ref => readVersion(compositionsDir, ref!.id, ref!.version));
+    if (!left) { void fail(reply, 404, `No composition ${refs[0].id} version ${refs[0].version} under ${compositionsDir}.`); return undefined; }
+    if (!right) { void fail(reply, 404, `No composition ${refs[1].id} version ${refs[1].version} under ${compositionsDir}.`); return undefined; }
+    return { left, right };
+  };
+  fastify.get<{ Params: { left: string; right: string } }>(`${compareBase}/:left/:right/diff.json`, async (request, reply) => {
+    const pair = loadPair(request.params, reply); if (!pair) return;
+    return reply.type('application/json; charset=utf-8').send(JSON.stringify(diffVersions(pair.left, pair.right)));
+  });
+  fastify.get<{ Params: { left: string; right: string }; Querystring: ScopeQuery }>(`${compareBase}/:left/:right`, async (request, reply) => {
+    const pair = loadPair(request.params, reply); if (!pair) return;
+    const frameworks = sharedFrameworks(pair.left, pair.right);
+    if (!frameworks.length) return fail(reply, 409, 'The two versions share no generated framework yet; ask design.preview for both.');
+    const framework = (request.query.framework && request.query.framework.length ? request.query.framework : frameworks[0]) as PreviewFramework;
+    if (!frameworks.includes(framework)) return fail(reply, 404, `Both versions carry ${frameworks.join(', ')}, not ${framework}.`);
+    const resolved = scope(pair.left, { ...request.query, framework }, reply); if (!resolved) return;
+    return reply.type('text/html; charset=utf-8').send(renderComparePage({ ...pair, diff: diffVersions(pair.left, pair.right), frameworks, framework, brand: resolved.brand, theme: resolved.theme, width: resolved.width, base }));
   });
 
   fastify.get<{ Params: Params & { '*': string }; Querystring: ScopeQuery }>(`${base}/:id/:version/files/*`, async (request, reply) => {

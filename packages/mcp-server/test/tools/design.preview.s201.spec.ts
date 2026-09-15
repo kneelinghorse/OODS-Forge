@@ -150,4 +150,41 @@ describe('design.preview serves a composition version through the preview host (
     expect(description).not.toContain('OODS-N019');
     expect(fs.readFileSync(path.join(root, 'docs/api/design-preview.md'), 'utf8')).toContain(description);
   });
+
+  it('action compare reports exactly the swapped slot and the artifact files it moved, and zero differences for a version against itself (s201-m03)', async () => {
+    const compositionsDir = resolveCompositionsDir();
+    const hostUrl = await host(compositionsDir);
+    const base = await preview({ object: 'Subscription', context: 'detail' }, { previewHostUrl: hostUrl });
+    expect(base.action).toBe('render');
+    const id = base.compositionId;
+    // Pin the metadata slot to one of the composer's own candidates on version 2 (the README's documented override).
+    const swapped = await compose({ object: 'Subscription', context: 'detail', compositionId: id, preferences: { componentOverrides: { metadata: 'TagSummary' } } });
+    expect(swapped).toMatchObject({ compositionId: id, version: 2, parentVersion: 1, operation: 'recompose' });
+    await preview({ compositionId: id, version: 2 }, { previewHostUrl: hostUrl });
+    const result = await preview({ action: 'compare', compositionId: id, version: 1, against: { version: 2 } }, { previewHostUrl: hostUrl });
+    const validate = getAjv().compile(outputSchema);
+    expect(validate(result), JSON.stringify(validate.errors)).toBe(true);
+    expect(result.action).toBe('compare');
+    if (result.action !== 'compare') throw new Error('compare output expected');
+    expect(result).toMatchObject({ left: { compositionId: id, version: 1, operation: 'compose' }, right: { compositionId: id, version: 2, parentVersion: 1, operation: 'recompose' }, frameworks: ['react', 'vue'], identical: false, host: { url: hostUrl, compositionsDir } });
+    expect(result.compareUrl).toBe(`${hostUrl}/compare/${id}@1/${id}@2?framework=react&brand=A&theme=light`);
+    expect(Object.entries(result.diff.summary).filter(([, count]) => count > 0).map(([category]) => category)).toEqual(['slots', 'artifacts']);
+    expect(result.diff.differences.filter(entry => entry.category === 'slots')).toEqual([{ category: 'slots', field: 'metadata', before: ['AuditTimeline'], after: ['TagSummary'], note: 'slot components changed' }]);
+    const moved = result.diff.differences.filter(entry => entry.category === 'artifacts').map(entry => entry.field);
+    expect(moved).toEqual(expect.arrayContaining(['react.contentHash', 'react.files.src/GeneratedUI.tsx', 'vue.contentHash', 'vue.files.src/GeneratedUI.vue']));
+    expect(result.differenceCount).toBe(result.diff.differences.length);
+    const page = await fetch(result.compareUrl);
+    expect(page.status).toBe(200);
+    const html = await page.text();
+    expect(html).toContain(`src="/preview/${id}/1/app?framework=react&brand=A&theme=light"`);
+    expect(html).toContain(`src="/preview/${id}/2/app?framework=react&brand=A&theme=light"`);
+    expect(html).toContain('<ul data-oods-diff="slots">');
+    expect(await (await fetch(result.diffUrl)).json()).toEqual(result.diff);
+    const same = await preview({ action: 'compare', compositionId: id, version: 2, against: { version: 2 } }, { previewHostUrl: hostUrl });
+    if (same.action !== 'compare') throw new Error('compare output expected');
+    expect(same).toMatchObject({ identical: true, differenceCount: 0 });
+    expect(same.diff.differences).toEqual([]);
+    await expect(preview({ action: 'compare', compositionId: id, version: 1 } as never, { previewHostUrl: hostUrl })).rejects.toMatchObject({ opiCode: 'OODS-V203' });
+    await expect(preview({ action: 'compare', compositionId: id, version: 1, against: { version: 9 } }, { previewHostUrl: hostUrl })).rejects.toMatchObject({ opiCode: 'OODS-N022' });
+  });
 });

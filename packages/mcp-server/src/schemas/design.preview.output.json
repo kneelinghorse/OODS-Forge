@@ -2,186 +2,519 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/design.preview.output.json",
   "title": "Design preview output",
-  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022.",
-  "type": "object",
-  "required": [
-    "status",
-    "compositionId",
-    "version",
-    "parentVersion",
-    "operation",
-    "head",
-    "schemaHash",
-    "object",
-    "context",
-    "previewUrl",
-    "previews",
-    "host",
-    "brand",
-    "theme",
-    "recordPath",
-    "durationMs"
-  ],
-  "additionalProperties": false,
-  "properties": {
-    "status": {
-      "const": "ok"
+  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "version",
+        "parentVersion",
+        "operation",
+        "head",
+        "schemaHash",
+        "object",
+        "context",
+        "previewUrl",
+        "previews",
+        "host",
+        "brand",
+        "theme",
+        "recordPath",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "render"
+        },
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parentVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "compose",
+            "recompose",
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ]
+        },
+        "head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "schemaHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Canonical hash of the version's composed schema."
+        },
+        "object": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "previewUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The first compiled framework's page with lineage and controls; open it in a browser."
+        },
+        "previews": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "framework",
+              "url",
+              "appUrl",
+              "moduleUrl",
+              "artifactContentHash",
+              "compiled"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "framework": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The page with the lineage panel and the brand, theme and width controls around the running app."
+              },
+              "appUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "The bare running app the page frames; it re-mounts on brand and theme messages."
+              },
+              "moduleUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "The artifact compiled to one ESM module; fetched once here so a compile failure fails this call."
+              },
+              "artifactContentHash": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "compiled": {
+                "type": "object",
+                "required": [
+                  "bytes",
+                  "sha256"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^sha256:[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "brand": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B"
+          ]
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        },
+        "recordPath": {
+          "type": "string"
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
     },
-    "compositionId": {
-      "type": "string",
-      "pattern": "^cmp-[a-f0-9]{12}$"
-    },
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "parentVersion": {
-      "type": [
-        "integer",
-        "null"
-      ]
-    },
-    "operation": {
-      "type": "string",
-      "enum": [
-        "compose",
-        "recompose",
-        "reorder-region",
-        "swap-slot",
-        "reorder-fields",
-        "seed"
-      ]
-    },
-    "head": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "schemaHash": {
-      "type": "string",
-      "pattern": "^sha256:[a-f0-9]{64}$",
-      "description": "Canonical hash of the version's composed schema."
-    },
-    "object": {
-      "type": "string"
-    },
-    "context": {
-      "type": "string"
-    },
-    "previewUrl": {
-      "type": "string",
-      "format": "uri",
-      "description": "The first compiled framework's page with lineage and controls; open it in a browser."
-    },
-    "previews": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 2,
-      "items": {
-        "type": "object",
-        "required": [
-          "framework",
-          "url",
-          "appUrl",
-          "moduleUrl",
-          "artifactContentHash",
-          "compiled"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "framework": {
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "left",
+        "right",
+        "compareUrl",
+        "diffUrl",
+        "frameworks",
+        "identical",
+        "differenceCount",
+        "diff",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "compare"
+        },
+        "left": {
+          "type": "object",
+          "required": [
+            "compositionId",
+            "version",
+            "schemaHash",
+            "parentVersion",
+            "operation",
+            "object",
+            "context"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "compositionId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer"
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "parentVersion": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "operation": {
+              "type": "string"
+            },
+            "object": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "context": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "right": {
+          "type": "object",
+          "required": [
+            "compositionId",
+            "version",
+            "schemaHash",
+            "parentVersion",
+            "operation",
+            "object",
+            "context"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "compositionId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer"
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "parentVersion": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "operation": {
+              "type": "string"
+            },
+            "object": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "context": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "compareUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Both running apps side by side with the what-changed and both measurement panels."
+        },
+        "diffUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
             "type": "string",
             "enum": [
               "react",
               "vue"
             ]
           },
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "The page with the lineage panel and the brand, theme and width controls around the running app."
-          },
-          "appUrl": {
-            "type": "string",
-            "format": "uri",
-            "description": "The bare running app the page frames; it re-mounts on brand and theme messages."
-          },
-          "moduleUrl": {
-            "type": "string",
-            "format": "uri",
-            "description": "The artifact compiled to one ESM module; fetched once here so a compile failure fails this call."
-          },
-          "artifactContentHash": {
-            "type": "string",
-            "pattern": "^sha256:[a-f0-9]{64}$"
-          },
-          "compiled": {
-            "type": "object",
-            "required": [
-              "bytes",
-              "sha256"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "bytes": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "sha256": {
-                "type": "string",
-                "pattern": "^sha256:[a-f0-9]{64}$"
+          "description": "Frameworks both versions carry, shown side by side."
+        },
+        "identical": {
+          "type": "boolean"
+        },
+        "differenceCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diff": {
+          "type": "object",
+          "required": [
+            "left",
+            "right",
+            "identical",
+            "differenceCount",
+            "summary",
+            "differences"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "left": {
+              "type": "object",
+              "required": [
+                "compositionId",
+                "version",
+                "schemaHash",
+                "parentVersion",
+                "operation",
+                "object",
+                "context"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "compositionId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                },
+                "schemaHash": {
+                  "type": "string"
+                },
+                "parentVersion": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "object": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "context": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "type": "object",
+              "required": [
+                "compositionId",
+                "version",
+                "schemaHash",
+                "parentVersion",
+                "operation",
+                "object",
+                "context"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "compositionId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                },
+                "schemaHash": {
+                  "type": "string"
+                },
+                "parentVersion": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "object": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "context": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "identical": {
+              "type": "boolean"
+            },
+            "differenceCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "summary": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "differences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "category",
+                  "field",
+                  "before",
+                  "after",
+                  "note"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "regions",
+                      "slots",
+                      "nodes",
+                      "props",
+                      "fieldOrder",
+                      "seed",
+                      "artifacts"
+                    ]
+                  },
+                  "field": {
+                    "type": "string"
+                  },
+                  "before": {},
+                  "after": {},
+                  "note": {
+                    "type": "string"
+                  }
+                }
               }
             }
+          },
+          "description": "The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes outside slots, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Identical versions report zero differences."
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
           }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
         }
       }
-    },
-    "host": {
-      "type": "object",
-      "required": [
-        "url",
-        "port",
-        "compositionsDir"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "url": {
-          "type": "string",
-          "format": "uri"
-        },
-        "port": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 65535
-        },
-        "compositionsDir": {
-          "type": "string",
-          "description": "Where the version files live and where the host reads them; beside the saved-schema store."
-        }
-      }
-    },
-    "brand": {
-      "type": "string",
-      "enum": [
-        "A",
-        "B"
-      ]
-    },
-    "theme": {
-      "type": "string",
-      "enum": [
-        "light",
-        "dark",
-        "hc"
-      ]
-    },
-    "recordPath": {
-      "type": "string"
-    },
-    "durationMs": {
-      "type": "number",
-      "minimum": 0
     }
-  }
+  ]
 }

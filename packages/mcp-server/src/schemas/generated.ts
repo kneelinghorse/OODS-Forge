@@ -3731,7 +3731,7 @@ export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
 // Source: design.preview.input.json
 export namespace DesignPreviewInputSchema {
   /**
-   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls.
+   * Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action "compare" returns the structural what-changed between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL.
    */
   export type DesignPreviewInput = DesignPreviewInput1 & DesignPreviewInput2;
   export type DesignPreviewInput1 = {
@@ -3739,6 +3739,10 @@ export namespace DesignPreviewInputSchema {
   };
 
   export interface DesignPreviewInput2 {
+    /**
+     * render (default): open the version as the running app. compare: the structural what-changed between compositionId@version and against, with the side-by-side URL.
+     */
+    action?: 'render' | 'compare';
     /**
      * An existing composition from design.compose; with no version, its latest version opens.
      */
@@ -3791,6 +3795,16 @@ export namespace DesignPreviewInputSchema {
         [k: string]: string;
       };
     };
+    /**
+     * action compare: the version on the right; the left is compositionId@version.
+     */
+    against?: {
+      /**
+       * The other composition; default the same composition.
+       */
+      compositionId?: string;
+      version: number;
+    };
   }
 }
 export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
@@ -3798,107 +3812,186 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022.
+   * The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead.
    */
-  export interface DesignPreviewOutput {
-    status: 'ok';
-    compositionId: string;
-    version: number;
-    parentVersion: number | null;
-    operation: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
-    head: string | null;
-    /**
-     * Canonical hash of the version's composed schema.
-     */
-    schemaHash: string;
-    object: string;
-    context: string;
-    /**
-     * The first compiled framework's page with lineage and controls; open it in a browser.
-     */
-    previewUrl: string;
-    /**
-     * @minItems 1
-     * @maxItems 2
-     */
-    previews:
-      | [
-          {
-            framework: 'react' | 'vue';
-            /**
-             * The page with the lineage panel and the brand, theme and width controls around the running app.
-             */
-            url: string;
-            /**
-             * The bare running app the page frames; it re-mounts on brand and theme messages.
-             */
-            appUrl: string;
-            /**
-             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
-             */
-            moduleUrl: string;
-            artifactContentHash: string;
-            compiled: {
-              bytes: number;
-              sha256: string;
-            };
-          }
-        ]
-      | [
-          {
-            framework: 'react' | 'vue';
-            /**
-             * The page with the lineage panel and the brand, theme and width controls around the running app.
-             */
-            url: string;
-            /**
-             * The bare running app the page frames; it re-mounts on brand and theme messages.
-             */
-            appUrl: string;
-            /**
-             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
-             */
-            moduleUrl: string;
-            artifactContentHash: string;
-            compiled: {
-              bytes: number;
-              sha256: string;
-            };
-          },
-          {
-            framework: 'react' | 'vue';
-            /**
-             * The page with the lineage panel and the brand, theme and width controls around the running app.
-             */
-            url: string;
-            /**
-             * The bare running app the page frames; it re-mounts on brand and theme messages.
-             */
-            appUrl: string;
-            /**
-             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
-             */
-            moduleUrl: string;
-            artifactContentHash: string;
-            compiled: {
-              bytes: number;
-              sha256: string;
-            };
-          }
-        ];
-    host: {
-      url: string;
-      port: number;
-      /**
-       * Where the version files live and where the host reads them; beside the saved-schema store.
-       */
-      compositionsDir: string;
-    };
-    brand: 'A' | 'B';
-    theme: 'light' | 'dark' | 'hc';
-    recordPath: string;
-    durationMs: number;
-  }
+  export type DesignPreviewOutput =
+    | {
+        status: 'ok';
+        action: 'render';
+        compositionId: string;
+        version: number;
+        parentVersion: number | null;
+        operation: 'compose' | 'recompose' | 'reorder-region' | 'swap-slot' | 'reorder-fields' | 'seed';
+        head: string | null;
+        /**
+         * Canonical hash of the version's composed schema.
+         */
+        schemaHash: string;
+        object: string;
+        context: string;
+        /**
+         * The first compiled framework's page with lineage and controls; open it in a browser.
+         */
+        previewUrl: string;
+        /**
+         * @minItems 1
+         * @maxItems 2
+         */
+        previews:
+          | [
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              }
+            ]
+          | [
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              },
+              {
+                framework: 'react' | 'vue';
+                /**
+                 * The page with the lineage panel and the brand, theme and width controls around the running app.
+                 */
+                url: string;
+                /**
+                 * The bare running app the page frames; it re-mounts on brand and theme messages.
+                 */
+                appUrl: string;
+                /**
+                 * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+                 */
+                moduleUrl: string;
+                artifactContentHash: string;
+                compiled: {
+                  bytes: number;
+                  sha256: string;
+                };
+              }
+            ];
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        brand: 'A' | 'B';
+        theme: 'light' | 'dark' | 'hc';
+        recordPath: string;
+        durationMs: number;
+      }
+    | {
+        status: 'ok';
+        action: 'compare';
+        left: {
+          compositionId: string;
+          version: number;
+          schemaHash: string;
+          parentVersion: number | null;
+          operation: string;
+          object: string | null;
+          context: string | null;
+        };
+        right: {
+          compositionId: string;
+          version: number;
+          schemaHash: string;
+          parentVersion: number | null;
+          operation: string;
+          object: string | null;
+          context: string | null;
+        };
+        /**
+         * Both running apps side by side with the what-changed and both measurement panels.
+         */
+        compareUrl: string;
+        diffUrl: string;
+        /**
+         * Frameworks both versions carry, shown side by side.
+         */
+        frameworks: ('react' | 'vue')[];
+        identical: boolean;
+        differenceCount: number;
+        /**
+         * The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes outside slots, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Identical versions report zero differences.
+         */
+        diff: {
+          left: {
+            compositionId: string;
+            version: number;
+            schemaHash: string;
+            parentVersion: number | null;
+            operation: string;
+            object: string | null;
+            context: string | null;
+          };
+          right: {
+            compositionId: string;
+            version: number;
+            schemaHash: string;
+            parentVersion: number | null;
+            operation: string;
+            object: string | null;
+            context: string | null;
+          };
+          identical: boolean;
+          differenceCount: number;
+          summary: {
+            [k: string]: number;
+          };
+          differences: {
+            category: 'regions' | 'slots' | 'nodes' | 'props' | 'fieldOrder' | 'seed' | 'artifacts';
+            field: string;
+            before: any;
+            after: any;
+            note: string;
+          }[];
+        };
+        host: {
+          url: string;
+          port: number;
+          /**
+           * Where the version files live and where the host reads them; beside the saved-schema store.
+           */
+          compositionsDir: string;
+        };
+        durationMs: number;
+      };
 }
 export type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
 

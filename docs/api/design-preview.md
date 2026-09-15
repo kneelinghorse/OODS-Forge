@@ -1,6 +1,6 @@
 # design.preview
 
-> Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
+> Open a composition version as the generated React or Vue app actually running in a browser: an existing compositionId (and optional version) or an object and context composed now as a new composition. Generates one or both frameworks onto the version, seeds the deterministic field model, compiles each artifact once through the preview host and returns one URL per framework with the lineage (compositionId, version, parentVersion, operation, head), the schema hash and the compiled module digests; the page shows the lineage beside the running app with brand, theme and width controls, and brand and theme re-mount the app in place. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. action compare (compositionId@version against another version) returns the structural what-changed the compare page shows: regions added, removed or reordered, slot components, nodes outside slots, props, field order, the seed and artifact files whose hash moved, with the side-by-side URL; identical versions report zero differences. Typed limits: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data; an unknown composition or version is OODS-N022. Writes only the version's artifacts and model; never saves or edits a schema. A running preview is an observation, not usability certification.
 
 **Registration:** auto
 
@@ -8,6 +8,7 @@
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
+| `action` | `render` \| `compare` | No | `"render"` | render (default): open the version as the running app. compare: the structural what-changed between compositionId@version and against, with the side-by-side URL. |
 | `compositionId` | string | Yes |  | An existing composition from design.compose; with no version, its latest version opens. |
 | `version` | integer | No |  | The version of compositionId to open. |
 | `object` | string | Yes |  | Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it. |
@@ -21,27 +22,13 @@
 | `preferences.tabCount` | integer | No |  | Number of tabs for detail layout. |
 | `preferences.tabLabels` | string[] | No |  | Custom tab labels for detail layout. |
 | `preferences.componentOverrides` | Record<string, string> | No |  | Slot-name → component-name overrides (e.g., { 'items': 'Table' }). |
+| `against` | object | No |  | action compare: the version on the right; the left is compositionId@version. |
+| `against.compositionId` | string | No |  | The other composition; default the same composition. |
+| `against.version` | integer | Yes |  |  |
 
 ## Output Shape
 
-| Field | Type | Always Present | Description |
-|-------|------|----------------|-------------|
-| `status` | any | Yes |  |
-| `compositionId` | string | Yes |  |
-| `version` | integer | Yes |  |
-| `parentVersion` | integer \| null | Yes |  |
-| `operation` | `compose` \| `recompose` \| `reorder-region` \| `swap-slot` \| `reorder-fields` \| `seed` | Yes |  |
-| `head` | string \| null | Yes |  |
-| `schemaHash` | string | Yes | Canonical hash of the version's composed schema. |
-| `object` | string | Yes |  |
-| `context` | string | Yes |  |
-| `previewUrl` | string | Yes | The first compiled framework's page with lineage and controls; open it in a browser. |
-| `previews` | object[] | Yes |  |
-| `host` | object | Yes |  |
-| `brand` | `A` \| `B` | Yes |  |
-| `theme` | `light` \| `dark` \| `hc` | Yes |  |
-| `recordPath` | string | Yes |  |
-| `durationMs` | number | Yes |  |
+_See tool response._
 
 ## Error Codes
 

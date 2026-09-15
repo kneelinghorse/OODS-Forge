@@ -9,7 +9,10 @@ import type { DesignPreviewInputSchema, DesignPreviewOutputSchema } from '../sch
 import { handle as generate } from './code.generate.js';
 import { handle as compose } from './design.compose.js';
 
-type PreviewEntry = DesignPreviewOutputSchema.DesignPreviewOutput['previews'][number];
+type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
+type RenderOutput = Extract<DesignPreviewOutput, { action: 'render' }>;
+type CompareOutput = Extract<DesignPreviewOutput, { action: 'compare' }>;
+type PreviewEntry = RenderOutput['previews'][number];
 const PROBE_TIMEOUT_MS = 3_000;
 const COMPILE_TIMEOUT_MS = 60_000;
 const digest = (value: string) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
@@ -42,8 +45,8 @@ async function probeHost(hostUrl: string): Promise<HostStatus> {
   return status;
 }
 
-/** Open a composition version (or compose a new one) as the generated app running in the preview host. */
-export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput, context?: ToolContext): Promise<DesignPreviewOutputSchema.DesignPreviewOutput> {
+/** Open a composition version (or compose a new one) as the generated app running in the preview host; or compare two versions. */
+export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput, context?: ToolContext): Promise<DesignPreviewOutput> {
   const started = performance.now();
   const hostUrl = resolvePreviewHostUrl(context);
   if (!hostUrl) throw unreachable('no preview host is configured; call through the HTTP bridge or the stdio adapter, which host it, or set OODS_PREVIEW_HOST_URL to a running host', { hostUrl: null });
@@ -58,6 +61,7 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   if (!input.compositionId && !(input.object && input.context)) {
     throw new ToolError('OODS-V203', 'design.preview needs either compositionId (with an optional version) or object and context', { input: Object.keys(input) });
   }
+  if (input.action === 'compare') return compare(input, hostUrl, compositionsDir, started);
 
   // The version to open: an existing one, or the first version of a fresh composition.
   let record: CompositionVersion;
@@ -118,11 +122,35 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
   }
 
   return {
-    status: 'ok',
+    status: 'ok', action: 'render',
     compositionId: record.compositionId, version: record.version, parentVersion: record.parentVersion, operation: record.operation, head: record.head,
     schemaHash: record.schemaHash, object, context: viewContext,
-    previewUrl: previews[0]!.url, previews: previews as DesignPreviewOutputSchema.DesignPreviewOutput['previews'],
+    previewUrl: previews[0]!.url, previews: previews as RenderOutput['previews'],
     host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir },
     brand, theme, recordPath: versionPath(compositionsDir, record.compositionId, record.version), durationMs: performance.now() - started,
+  };
+}
+
+/** The same what-changed the compare page shows, from the host that computes it over the two version records. */
+async function compare(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<CompareOutput> {
+  if (!input.compositionId || !input.against) throw new ToolError('OODS-V203', 'design.preview action compare needs compositionId (with version) on the left and against.version on the right', { input: Object.keys(input) });
+  const leftVersion = input.version ?? await latestVersion(compositionsDir, input.compositionId);
+  const rightId = input.against.compositionId ?? input.compositionId;
+  const left = await readVersion(compositionsDir, input.compositionId, leftVersion);
+  const right = await readVersion(compositionsDir, rightId, input.against.version);
+  const frameworks = (['react', 'vue'] as PreviewFramework[]).filter(framework => left.artifacts[framework] && right.artifacts[framework]);
+  const pair = `${left.compositionId}@${left.version}/${right.compositionId}@${right.version}`;
+  const diffUrl = `${hostUrl}/compare/${pair}/diff.json`;
+  const response = await fetch(diffUrl, { signal: AbortSignal.timeout(COMPILE_TIMEOUT_MS) });
+  if (!response.ok) throw unreachable(`the preview host could not compare ${pair} (HTTP ${response.status}): ${(await response.text()).slice(0, 500)}`, { hostUrl, pair });
+  const diff = await response.json() as CompareOutput['diff'];
+  const brand = (input.preferences?.brand ?? left.brand) as PreviewBrand;
+  const theme = (input.preferences?.theme ?? left.theme) as PreviewTheme;
+  const framework = input.framework && input.framework !== 'both' && frameworks.includes(input.framework) ? input.framework : frameworks[0];
+  return {
+    status: 'ok', action: 'compare', left: diff.left, right: diff.right,
+    compareUrl: `${hostUrl}/compare/${pair}${framework ? `?framework=${framework}&brand=${brand}&theme=${theme}` : ''}`, diffUrl, frameworks,
+    identical: diff.identical, differenceCount: diff.differenceCount, diff,
+    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
   };
 }

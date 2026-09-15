@@ -130,7 +130,7 @@ Full contracts: [docs/mcp/Tool-Specs.md](docs/mcp/Tool-Specs.md) and [docs/api/R
 
 Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and the tool capability ledger by `pnpm docs:claims`. Proof tiers describe source evidence location; they do not certify execution.
 
-**Auto-registered (19 tools)** — available by default. The four action families (`map`, `schema`, `object`, `repl`) use the top-level `action` parameter.
+**Auto-registered (19 tools)** — available by default. The five action families (`design.preview`, `map`, `schema`, `object`, `repl`) use the top-level `action` parameter.
 
 | Tool / actions | Source evidence tier |
 | --- | --- |
@@ -141,7 +141,7 @@ Generated from `packages/mcp-server/src/tools/registry.json`, input schemas and 
 | `catalog.list` | product-reality |
 | `code.generate` | product-reality |
 | `design.compose` | product-reality |
-| `design.preview` | product-reality |
+| `design.preview` (`render`/`compare`) | product-reality |
 | `pipeline` | product-reality |
 | `health` | product-reality |
 | `registry.snapshot` | product-reality |
