@@ -6,7 +6,7 @@ OODS Forge is licensed under the PolyForm Noncommercial License 1.0.0 ([LICENSE]
 
 **A nonprofit, a charity, a school or a government body?** Yes. Noncommercial use by such organizations is a permitted purpose under the license's own terms.
 
-**I work at a company and want to try Forge internally.** That is commercial use, and so is an internal evaluation. The commercial license exists for exactly this; COMMERCIAL.md lists a paid 60-day evaluation credited to the first year.
+**I work at a company and want to try Forge internally.** That is commercial use, and so is an internal evaluation. Ask for a commercial license through COMMERCIAL.md.
 
 **I am a freelancer evaluating Forge for a client's project.** Commercial. Work done for a paying client is a commercial purpose even when you are one person.
 

@@ -13,7 +13,7 @@ const CANONICAL_SHA256 = 'ffcca38841adb694b6f380647e15f17c446a4d1656fed51a1e2041
 const GUARDED = ['package.json', ...['a11y-tools', 'tokens', 'tw-variants', 'viz-core', 'viz-render', 'component-contracts', 'component-styles', 'components-react', 'components-vue', 'artifacts', 'mcp-adapter', 'mcp-bridge', 'mcp-server', 'release-utils', 'schemas-tools', 'sdk'].map(name => `packages/${name}/package.json`),
   ...['agents-smoke', 'design-lab-shell', 'oods-agent-cli', 'soak-runner'].map(name => `tools/${name}/package.json`), 'apps/playground/package.json'];
 const MANIFESTS = [...GUARDED, 'examples/sample-app/package.json'];
-const TERMS_CARRIERS = ['README.md', 'CONTRIBUTING.md', 'COMMERCIAL.md', 'SECURITY.md', 'docs/LICENSE-FAQ.md', 'docs/legal/commercial-license-agreement.md', 'docs/README.md', 'docs/compositor-readme.md'];
+const TERMS_CARRIERS = ['README.md', 'CONTRIBUTING.md', 'COMMERCIAL.md', 'SECURITY.md', 'docs/LICENSE-FAQ.md', 'docs/README.md', 'docs/compositor-readme.md'];
 const RENDERED = [...LICENSE_FILES, 'README.md', 'COMMERCIAL.md', 'CONTRIBUTING.md'] as string[];
 // Tracked and untracked (unignored) files alike, so a new carrier cannot hide before it is committed.
 const textFiles = () => execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--', '.', ':(exclude)artifacts', ':(exclude)cmos'], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trim().split('\n')
@@ -32,7 +32,7 @@ describe('s200-m03 license shape: PolyForm Noncommercial from one holder source'
   it('renders the six LICENSE files identically with the holder\'s Required Notice and nothing else changed', () => {
     const { holder, canonical, outputs } = renderAll(root);
     // The name itself is never spelled here: holder.json is the only authored source of it.
-    expect(holder).toEqual({ holder: expect.stringMatching(/^\S+ \S+$/), url: 'https://derekn.com', contact: 'derek@derekn.com', year: 2026 });
+    expect(holder).toEqual({ holder: expect.stringMatching(/\S/), url: expect.stringMatching(/^https:\/\/\S+$/), contact: expect.stringMatching(/^\S+@\S+\.\S+$/), year: 2026 });
     for (const file of LICENSE_FILES) {
       expect(read(file), file).toBe(outputs[file]);
       expect(read(file)).toContain(`> ${requiredNotice(holder)}`);
@@ -95,19 +95,19 @@ describe('s200-m03 license shape: PolyForm Noncommercial from one holder source'
     expect(changelog.slice(changelog.indexOf('## Sprint 200'), changelog.indexOf('## Sprint 181'))).not.toMatch(/open[ -]source/i);
   });
 
-  it('states the inbound grant, the PR checkboxes, the commercial terms and the plain-words licensing section', () => {
+  it('states the inbound grant, the PR checkboxes, the contact-only commercial path and the plain-words licensing section', () => {
     const contributing = read('CONTRIBUTING.md');
     expect(contributing).toContain('## Inbound license grant');
     expect(contributing).toContain('perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, distribute and sublicense');
     expect(contributing).toContain('there is no contributor license agreement to sign');
     expect(contributing).toContain('the contributor path');
     for (const file of ['.github/pull_request_template.md', '.github/PULL_REQUEST_TEMPLATE/token-change.md']) expect(read(file), file).toMatch(/- \[ \] I grant this contribution under the inbound license grant in CONTRIBUTING\.md/);
+    // 2026-09-15: no published price, no evaluation offer, no agreement text; commercial licensing is by contact, terms case by case.
     const commercial = read('COMMERCIAL.md');
-    expect(commercial).toMatch(/<!-- commercial-price:start -->\nUSD 5,000 per organization per year for up to 25 people; larger organizations by quote; a 60-day paid evaluation at USD 500, credited to the first year\.\n<!-- commercial-price:end -->/);
-    expect(commercial).toContain('derek@derekn.com');
-    const agreement = read('docs/legal/commercial-license-agreement.md');
-    for (const clause of ['**Parties.**', '**Grant.**', '**Scope.**', '**Term.**', '**Fee.**', '**No support or warranty.**', '**Liability.**', '**Termination.**', '**Governing law.**', '**Entire agreement.**']) expect(agreement).toContain(clause);
-    expect(agreement).toContain('State of Illinois');
+    expect(commercial).toContain(`Contact: ${renderAll(root).holder.contact}.`);
+    expect(commercial).toContain('Terms are agreed case by case.');
+    for (const carrier of ['COMMERCIAL.md', 'README.md', 'docs/LICENSE-FAQ.md', 'CHANGELOG.md']) expect(read(carrier), carrier).not.toMatch(/USD|\$\s?\d|per organization per year|paid evaluation|commercial-price|commercial-license-agreement|docs\/legal/);
+    expect(fs.existsSync(path.join(root, 'docs/legal'))).toBe(false);
     const faq = read('docs/LICENSE-FAQ.md');
     for (const edge of ['freelancer', 'student', 'nonprofit', 'government', 'internally', 'fork', 'OSI-approved', 'Other']) expect(faq, edge).toContain(edge);
     const readme = read('README.md');
