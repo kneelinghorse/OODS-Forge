@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s202-m02",
+  "kind": "claude-code-install-proof",
+  "builderSelfCertified": false,
+  "executedAt": "2026-09-15T20:23:13.539Z",
+  "host": {
+    "platform": "darwin",
+    "node": "v24.6.0",
+    "claudeCode": "2.0.76 (Claude Code)"
+  },
+  "cleanHome": {
+    "created": true,
+    "removedAfterwards": true,
+    "realHomeUntouched": true
+  },
+  "bundle": {
+    "commit": "e8e0b4579c450f649bbdea1e16fb3f580b8fd300",
+    "dirty": true,
+    "payloadTreeSha256": "c2b66c1d546c94dd8481926bfe1dd70b71cca385aeba4d0a09d2be3170dac014",
+    "archive": "forge-runtime.tar.gz",
+    "archiveSha256": "cd396de87371a3018c50e01e73b4a097bad837990bd0d19bd241d407da766347"
+  },
+  "installStep": {
+    "documented": "claude mcp add forge -- node /path/to/forge-runtime/packages/mcp-adapter/index.js",
+    "executed": "claude mcp add forge -- node <forge-runtime-dir>/packages/mcp-adapter/index.js"
+  },
+  "claudeMcpAdd": {
+    "exitCode": 0,
+    "stdout": "Added stdio MCP server forge with command: node <forge-runtime-dir>/packages/mcp-adapter/index.js to local config\nFile modified: <clean-home>/.claude.json [project: /private<clean-home>/scratch-project]"
+  },
+  "claudeMcpGet": {
+    "exitCode": 0,
+    "stdout": "forge:\n  Scope: Local config (private to you in this project)\n  Status: ✓ Connected\n  Type: stdio\n  Command: node\n  Args: <forge-runtime-dir>/packages/mcp-adapter/index.js\n  Environment:\n\nTo remove this server, run: claude mcp remove \"forge\" -s local"
+  },
+  "registered": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "<forge-runtime-dir>/packages/mcp-adapter/index.js"
+    ],
+    "env": {}
+  },
+  "stdio": {
+    "protocolVersion": "2024-11-05",
+    "serverInfo": {
+      "name": "oods-foundry-adapter",
+      "version": "0.4.0"
+    },
+    "capabilities": {
+      "tools": {},
+      "resources": {},
+      "extensions": {
+        "io.modelcontextprotocol/ui": {}
+      }
+    },
+    "toolsListed": 19,
+    "tools": [
+      "tokens_build",
+      "structuredData_fetch",
+      "brand_apply",
+      "brand_intake",
+      "catalog_list",
+      "code_generate",
+      "design_compose",
+      "design_preview",
+      "pipeline",
+      "health",
+      "registry_snapshot",
+      "viz_render",
+      "dashboard_render",
+      "artifact_certify",
+      "fidelity_preview",
+      "map",
+      "schema",
+      "object",
+      "repl"
+    ],
+    "toolsMatchExtractedRegistry": true,
+    "toolsWithUiMeta": [],
+    "mcpAppsReceipt": "[oods-mcp-adapter] client s200-claude-code-proof 1 (protocol 2024-11-05); MCP Apps io.modelcontextprotocol/ui: not advertised; preview app kept as the text result; client capability keys: none",
+    "health": {
+      "status": "ok",
+      "registry": {
+        "components": 110,
+        "traits": 46,
+        "objects": 18,
+        "lastSync": "2026-09-14T00:00:00Z"
+      }
+    }
+  },
+  "claudeMcpRemove": {
+    "exitCode": 0,
+    "stdout": "Removed MCP server \"forge\" from local config\nFile modified: <clean-home>/.claude.json [project: /private<clean-home>/scratch-project]"
+  }
+}

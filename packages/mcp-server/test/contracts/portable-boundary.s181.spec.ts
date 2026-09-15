@@ -285,7 +285,7 @@ describe('s181 portable-runtime publish boundary', () => {
     const adapterDir = path.join(path.dirname(stagedServer), 'mcp-adapter');
     const sourceAdapter = path.join(REPO_ROOT, 'packages/mcp-adapter');
     fs.mkdirSync(adapterDir);
-    for (const file of ['index.js', 'sanitize-schema.js', 'tool-descriptions.json', 'package.json']) fs.copyFileSync(path.join(sourceAdapter, file), path.join(adapterDir, file));
+    for (const file of ['index.js', 'sanitize-schema.js', 'mcp-apps.js', 'tool-descriptions.json', 'package.json']) fs.copyFileSync(path.join(sourceAdapter, file), path.join(adapterDir, file));
     fs.symlinkSync(path.join(sourceAdapter, 'node_modules'), path.join(adapterDir, 'node_modules'), 'dir');
     const { response } = await requestAdapterInitialize(adapterDir, true);
     expect(response.error).toBeUndefined();

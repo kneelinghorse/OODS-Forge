@@ -40,7 +40,7 @@ function fail(reply: FastifyReply, status: number, message: string) {
 }
 
 type Params = { id: string; version: string };
-type ScopeQuery = { framework?: string; brand?: string; theme?: string; width?: string };
+type ScopeQuery = { framework?: string; brand?: string; theme?: string; width?: string; format?: string };
 
 /** Register the preview host on a Fastify instance; the runtime must exist or registration fails. */
 export async function registerPreviewHost(fastify: FastifyInstance, options: PreviewHostOptions): Promise<PreviewHostStatus> {
@@ -110,17 +110,29 @@ export async function registerPreviewHost(fastify: FastifyInstance, options: Pre
   });
 
   // The module for a scope: the scoped generation when the placed chart needed one, else the version's own artifact.
+  // format=esm (default) for the page's import map; format=iife for the MCP app, bound to the inlined runtime globals.
   fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/module.js`, async (request, reply) => {
     const record = load(request.params, reply); if (!record) return;
     const resolved = scope(record, request.query, reply); if (!resolved) return;
+    const format = request.query.format ?? 'esm';
+    if (format !== 'esm' && format !== 'iife') return fail(reply, 400, 'format must be esm or iife.');
     const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
     try {
-      const compiled = await compileArtifact(served.entry.artifact);
-      return reply.type('text/javascript; charset=utf-8').header('x-oods-artifact-hash', compiled.artifactContentHash).header('x-oods-compiled-sha256', compiled.sha256).header('x-oods-externals', compiled.externals.join(',')).header('x-oods-generated-for', scopeKey(served.generatedFor.brand, served.generatedFor.theme)).send(compiled.code);
+      const compiled = await compileArtifact(served.entry.artifact, { format });
+      return reply.type('text/javascript; charset=utf-8').header('x-oods-artifact-hash', compiled.artifactContentHash).header('x-oods-compiled-sha256', compiled.sha256).header('x-oods-externals', compiled.externals.join(',')).header('x-oods-generated-for', scopeKey(served.generatedFor.brand, served.generatedFor.theme)).header('x-oods-format', compiled.format).header('x-oods-global-name', compiled.globalName ?? '').send(compiled.code);
     } catch (error) {
       if (error instanceof PreviewCompileError) return fail(reply, 422, error.message);
       return fail(reply, 500, `Preview host cannot compile: ${error instanceof Error ? error.message : String(error)}`);
     }
+  });
+
+  // The artifact's own stylesheets for the MCP app (the runtime CSS is inlined in the app itself); empty when the artifact carries none.
+  fastify.get<{ Params: Params; Querystring: ScopeQuery }>(`${base}/:id/:version/styles.css`, async (request, reply) => {
+    const record = load(request.params, reply); if (!record) return;
+    const resolved = scope(record, request.query, reply); if (!resolved) return;
+    const served = servedArtifact(record, resolved.framework, resolved.brand, resolved.theme)!;
+    const css = served.entry.artifact.files.filter(file => file.path.endsWith('.css')).map(file => `/* ${file.path} */\n${file.contents}`).join('\n');
+    return reply.type('text/css; charset=utf-8').header('x-oods-artifact-hash', served.entry.artifact.contentHash).header('x-oods-generated-for', scopeKey(served.generatedFor.brand, served.generatedFor.theme)).send(css);
   });
 
   // What a brand or theme switch mounts (Sprint 202 m01): a version with a placed chart is generated and certified for the

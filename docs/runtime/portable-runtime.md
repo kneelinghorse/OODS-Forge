@@ -147,7 +147,7 @@ and exercised locally, but it is not a release artifact.
   contracts registry ships as package data; the MCP server directly loads its
   capability baseline plus the React/Vue readiness evidence through public
   JSON subpaths. The adapter contributes only `index.js`, `sanitize-schema.js`,
-  `tool-descriptions.json`, and its `package.json`.
+  `mcp-apps.js`, `tool-descriptions.json`, and its `package.json`.
 - The production dependency closure installed for the MCP server, adapter and bridge.
 - `configs/agent/policy.json`, required by the bridge. Missing policy refuses
   startup with `BRIDGE_POLICY_MISSING`; no substitute tool roster is used.

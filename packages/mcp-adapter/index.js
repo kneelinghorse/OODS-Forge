@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { ErrorCode, McpError, ListToolsRequestSchema, CallToolRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { sanitizeSchema } from './sanitize-schema.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -50,6 +50,11 @@ function resolvePreviewHostEntry() {
   return null;
 }
 const SCHEMAS_DIR = path.join(NATIVE_DIST, 'schemas');
+/** The preview app the bridge build emits (dist/preview-app/app.html): one self-contained HTML resource. */
+const PREVIEW_APP_CANDIDATES = [
+  path.join(PROJECT_ROOT, 'packages', 'mcp-bridge', 'dist', 'preview-app', 'app.html'),
+  path.join(__dirname, '..', 'mcp-bridge', 'dist', 'preview-app', 'app.html'),
+];
 
 const DEFAULT_ROLE = process.env.MCP_ROLE || 'designer';
 const REGISTRY_PATH = path.join(NATIVE_DIST, 'tools', 'registry.json');
@@ -210,6 +215,8 @@ class PreviewHost {
   }
 }
 
+import { UI_EXTENSION, APP_MIME_TYPE, APP_RESOURCE_PREFIX, COMPOSITION_RESOURCE_PREFIX, PreviewApp, parseCompositionResource, previewResources, readNegotiation } from './mcp-apps.js';
+
 class NativeOodsClient {
   constructor({ cwd, role }) {
     this.cwd = cwd;
@@ -312,22 +319,66 @@ async function main() {
   const client = new NativeOodsClient({ cwd: NATIVE_SERVER_DIR, role: DEFAULT_ROLE });
   const previewHostEntry = resolvePreviewHostEntry();
   const previewHost = previewHostEntry ? new PreviewHost({ entry: previewHostEntry, serverCwd: NATIVE_SERVER_DIR }) : null;
+  const previewApp = new PreviewApp(PREVIEW_APP_CANDIDATES);
   const server = new Server(
     { name: 'oods-foundry-adapter', version: ADAPTER_VERSION },
-    { capabilities: { tools: {} } }
+    { capabilities: { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } } }
   );
+  // Bilateral: the preview app is offered only to a client that advertised the extension (or an operator who forced it).
+  let negotiation = readNegotiation(undefined);
+  const uiOffered = () => (negotiation.extension || negotiation.forced) && previewApp.current() !== null;
 
   // Map MCP name → internal name for dispatch
   const nameMap = new Map(toolManifest.map(t => [t.mcpName, t.internalName]));
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: toolManifest.map(t => ({
-      name: t.mcpName,
-      description: t.description,
-      inputSchema: t.inputSchema,
-      annotations: t.annotations,
-    })),
-  }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const app = uiOffered() ? previewApp.current() : null;
+    return {
+      tools: toolManifest.map(t => ({
+        name: t.mcpName,
+        description: t.description,
+        inputSchema: t.inputSchema,
+        annotations: t.annotations,
+        // The spec's key and the one the 1.x-line hosts read, both naming the same resource.
+        ...(app && t.internalName === 'design.preview' ? { _meta: { ui: { resourceUri: app.uri }, 'ui/resourceUri': app.uri } } : {}),
+      })),
+    };
+  });
+
+  // The preview app is the one listed resource; composition modules and styles are readable by URI.
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    const app = previewApp.current();
+    return {
+      resources: app ? [{
+        uri: app.uri, name: 'Forge design preview', title: 'Forge design preview',
+        description: `The running-app preview of a composition version, rendered inside the conversation (revision ${app.revision}, ${app.bytes} bytes, self-contained).`,
+        mimeType: APP_MIME_TYPE,
+      }] : [],
+    };
+  });
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const uri = String(request.params?.uri ?? '');
+    if (uri.startsWith(APP_RESOURCE_PREFIX)) {
+      const app = previewApp.current();
+      if (!app) throw new McpError(ErrorCode.InvalidParams, 'No preview app is built (packages/mcp-bridge/dist/preview-app/app.html); build @oods/mcp-bridge.');
+      if (uri !== app.uri) throw new McpError(ErrorCode.InvalidParams, `The preview app moved: this adapter serves ${app.uri}. Reload the MCP configuration so the host refreshes its tool list.`);
+      return { contents: [{ uri, mimeType: APP_MIME_TYPE, text: app.html }] };
+    }
+    const parsed = parseCompositionResource(uri);
+    if (!parsed) throw new McpError(ErrorCode.InvalidParams, `Unknown resource ${uri}: this adapter serves ${APP_RESOURCE_PREFIX}<revision>/app.html and ${COMPOSITION_RESOURCE_PREFIX}<id>/<n>/<react|vue>.(js|css)[?brand=&theme=].`);
+    if (!previewHost) throw new McpError(ErrorCode.InternalError, 'No preview host is built (packages/mcp-bridge/dist/preview/standalone.js); the composition modules cannot be compiled.');
+    const hostUrl = await previewHost.ensure();
+    const scope = `${parsed.brand ? `&brand=${parsed.brand}` : ''}${parsed.theme ? `&theme=${parsed.theme}` : ''}`;
+    const route = parsed.kind === 'js' ? `${parsed.version}/module.js?framework=${parsed.framework}&format=iife${scope}`
+      : parsed.kind === 'css' ? `${parsed.version}/styles.css?framework=${parsed.framework}${scope}`
+      : parsed.kind === 'record' ? `${parsed.version}/record.json` : 'versions.json';
+    const mimeType = { js: 'text/javascript', css: 'text/css', record: 'application/json', versions: 'application/json' }[parsed.kind];
+    const response = await fetch(`${hostUrl}/preview/${parsed.compositionId}/${route}`, { signal: AbortSignal.timeout(60_000) });
+    const text = await response.text();
+    if (!response.ok) throw new McpError(response.status === 404 ? ErrorCode.InvalidParams : ErrorCode.InternalError, `The preview host could not serve ${uri} (HTTP ${response.status}): ${text.slice(0, 500)}`);
+    return { contents: [{ uri, mimeType, text }] };
+  });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
@@ -349,6 +400,10 @@ async function main() {
         }
       }
       const result = await client.run(internalName, args ?? {}, context);
+      // design_preview carries its result as structuredContent too (for the app, never for the model); the text is unchanged.
+      const structured = internalName === 'design.preview' && result && typeof result === 'object' && !Array.isArray(result)
+        ? { ...result, ...(uiOffered() ? { resources: previewResources(result, previewApp.current()) } : {}) }
+        : undefined;
       return {
         content: [
           {
@@ -356,6 +411,7 @@ async function main() {
             text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
           },
         ],
+        ...(structured ? { structuredContent: structured } : {}),
       };
     } catch (error) {
       if (error?.nativeError) {
@@ -385,9 +441,29 @@ async function main() {
     }
   });
 
-  console.error(`[oods-mcp-adapter] v${ADAPTER_VERSION} | ${enabled.length} tools (${registry.auto.length} auto, ${registry.onDemand.length} on-demand) | server: ${NATIVE_DIST}`);
+  const app = previewApp.current();
+  console.error(`[oods-mcp-adapter] v${ADAPTER_VERSION} | ${enabled.length} tools (${registry.auto.length} auto, ${registry.onDemand.length} on-demand) | server: ${NATIVE_DIST} | preview app: ${app ? `${app.uri} (${app.bytes} bytes)` : 'not built'}`);
 
   const transport = new StdioServerTransport();
+  // The initialize request is read raw, before the SDK's capability schema drops the extensions the client declared.
+  let onmessage;
+  Object.defineProperty(transport, 'onmessage', {
+    configurable: true, enumerable: true,
+    get: () => onmessage,
+    set: (handler) => {
+      onmessage = typeof handler === 'function'
+        ? (message, extra) => {
+          if (message && message.method === 'initialize') {
+            negotiation = readNegotiation(message.params);
+            const client = negotiation.client ? `${negotiation.client.name} ${negotiation.client.version}` : 'unnamed client';
+            // The receipt of a real host session: which client connected and whether the preview app was offered.
+            console.error(`[oods-mcp-adapter] client ${client} (protocol ${negotiation.protocolVersion ?? '?'}); MCP Apps ${UI_EXTENSION}: ${negotiation.extension ? `negotiated (mimeTypes ${JSON.stringify(negotiation.mimeTypes)})` : 'not advertised'}${negotiation.forced ? '; OODS_MCP_APPS_UI=1 forces the preview app' : ''}; preview app ${uiOffered() ? 'offered on design_preview' : 'kept as the text result'}; client capability keys: ${negotiation.capabilityKeys.join(', ') || 'none'}`);
+          }
+          return handler(message, extra);
+        }
+        : handler;
+    },
+  });
   let shuttingDown = false;
   const shutdown = async () => {
     if (shuttingDown) return;

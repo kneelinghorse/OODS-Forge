@@ -46,7 +46,7 @@ test('s196 adapter 0.3 preserves native error fields through the actual tools/ca
   const adapterRoot = path.join(temporary, 'packages/mcp-adapter');
   const nativeDist = path.join(temporary, 'packages/mcp-server/dist');
   fs.mkdirSync(adapterRoot, { recursive: true });
-  for (const file of ['index.js', 'sanitize-schema.js', 'package.json']) {
+  for (const file of ['index.js', 'sanitize-schema.js', 'mcp-apps.js', 'package.json']) {
     fs.copyFileSync(path.join(adapterDirectory, file), path.join(adapterRoot, file));
   }
   fs.symlinkSync(path.join(adapterDirectory, 'node_modules'), path.join(adapterRoot, 'node_modules'), 'dir');
