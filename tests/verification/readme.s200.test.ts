@@ -32,14 +32,16 @@ describe('s200-m05 README for a newcomer', () => {
   });
 
   it('takes every count from the generated claims templates', () => {
-    expect(readme).toContain(`${facts.objectDefinitions} object definitions`);
+    expect(readme).toContain(`${facts.objectNames} objects, ${facts.traits} traits`);
+    expect(readme).toContain(`Forge ships ${facts.objectNames} objects`);
     expect(readme).toContain(`${facts.traits} traits`);
     expect(readme).toContain(`${facts.components} governed components`);
     expect(readme).toContain(`${facts.chartTypes} chart types`);
     expect(readme).toContain(`${facts.taxonomyPatterns} named patterns`);
     expect(readme).toContain(`${facts.auto} tools by default (${facts.tools} in all)`);
     expect(readme).toContain(`## MCP tool surface (${facts.tools} tools)`);
-    expect(readme).toContain(`${facts.accuracyRules} rules about baselines`);
+    expect(readme).toContain(`${facts.accuracyRules} structural-distortion rules about baselines`);
+    expect(readme).toContain('a chart is graded on the ones that apply to its type');
     expect(readme).toContain(`${facts.dashboardTypes} admitted chart types`);
     for (const key of ['what-forge-is', 'three-words', 'generates-and-certifies', 'first-run-health', 'schema-ttl', 'tool-surface']) {
       expect(readme, key).toContain(`<!-- forge-claim:${key} -->`);
@@ -72,6 +74,12 @@ describe('s200-m05 README for a newcomer', () => {
     expect([...positions].sort((left, right) => left - right)).toEqual(positions);
     expect(run).toContain('`pillars: {"a11yEquivalence": "pass", "determinism": "pass", "contrast": "pass", "accuracy": "pass"}`');
     expect(run).toContain('`src/GeneratedUI.tsx`');
+    // Run 1 of the ten-minute proof: the ref's scope, the sample call's warnings and the preview's placeholders must be stated.
+    expect(run).toContain('it lives in the running server for 30 minutes; your client keeps that server running for the whole conversation');
+    expect(run).toContain('`warnings` are normal on this call');
+    expect(run).toContain('four of the set apply to a plain bar chart');
+    expect(run).toContain('titled `OODS Preview`, showing the composed screen\'s structure');
+    expect(readme).toContain('a restarted client starts a new one that does not know earlier refs (`OODS-N003`)');
     expect(run).toContain('OODS-N019');
     expect(run).toContain('[FEEDBACK.md](FEEDBACK.md)');
   });

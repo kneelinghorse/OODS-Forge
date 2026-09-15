@@ -1,0 +1,34 @@
+The call failed because the schemaRef 'compose-b8fc9aa5' is missing or expired. Schema references have a 30-minute TTL (time to live). 
+
+**Error Details:**
+- **Code**: OODS-N003
+- **Message**: The schemaRef 'compose-b8fc9aa5' is missing and needs to be regenerated
+
+**Validation Receipt (from failed call):**
+- **Profile**: build
+- **Rationale**: Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve
+- **Not Checked** (18 items):
+  1. schema-structure
+  2. component-registry
+  3. state-contract
+  4. target-readiness
+  5. normalization-fidelity
+  6. binding-contract
+  7. props-contract
+  8. slots-contract
+  9. events-contract
+  10. dependency-closure
+  11. fallback-policy
+  12. rendered-evidence
+  13. interaction-evidence
+  14. accessibility-evidence
+  15. theme-evidence
+  16. determinism-evidence
+  17. performance-evidence
+  18. certification-evidence
+
+To proceed, you would need to:
+1. Run `design.compose` again to get a fresh schemaRef, or
+2. Pass the schema inline via the `schema` field instead of using a schemaRef
+
+Would you like me to help you regenerate the schema or do you have the original schema object that we can pass inline?

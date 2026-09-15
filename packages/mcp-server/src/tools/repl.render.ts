@@ -145,7 +145,7 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
         errors.push({
           code,
           message: `schemaRef '${input.schemaRef}' is ${resolved.reason}.`,
-          hint: 'Run design.compose again to obtain a fresh schemaRef, or pass schema inline via the schema field.',
+          hint: 'schemaRefs live in the server process that issued them, so a restarted client does not know earlier refs. Run design.compose again in this session for a fresh schemaRef, pass the schema inline via the schema field, or keep one across sessions with schema.save and schema.load.',
         });
       }
     } else {

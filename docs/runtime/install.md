@@ -18,13 +18,13 @@ Inside the archive, `LICENSE`, `COMMERCIAL.md` and `THIRD-PARTY-NOTICES.md` sit 
 
 ## 2. Requirements
 
-- Node.js 20.11.1 or newer on the PATH as `node` (or set `OODS_NODE_PATH` to a Node binary).
+- Node.js 20.11.1 or newer on the PATH as `node` (or set `OODS_NODE_PATH` to a Node binary); the bundle is built and exercised on Node 24.
 - macOS, Linux or Windows with a shell that can run `tar`; no package manager, no build step.
 - One of the clients below.
 
 ## 3. Verify and extract
 
-Check the download against its digest, then extract into a directory you keep. The commands below use `~/forge-runtime`; any absolute path works.
+Check the download against its digest, then extract into a directory you keep. The archive has no top-level folder, so always extract into a directory you created for it. The commands below use `~/forge-runtime`; any absolute path works.
 
 ```sh
 shasum -a 256 -c forge-runtime.tar.gz.sha256        # macOS

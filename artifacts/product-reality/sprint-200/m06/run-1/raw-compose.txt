@@ -1,0 +1,89 @@
+## Report: design.compose for Subscription detail
+
+### Status
+✓ **ok** - Schema successfully composed with validation passed
+
+### Layout
+**detail** - Context-inferred from `context="detail"` parameter
+
+### Schema Reference
+- **schemaRef**: `compose-b8fc9aa5`
+- **Created**: 2026-09-14T23:46:15.980Z
+- **Expires**: 2026-09-15T00:16:15.980Z (30-minute TTL)
+
+### Object Used
+- **Name**: Subscription
+- **Version**: 2.0.0
+- **Maturity**: beta ⚠️
+- **Traits Applied**: 6 traits
+  - lifecycle/Stateful
+  - lifecycle/Cancellable
+  - lifecycle/Timestampable
+  - financial/Billable
+  - lifecycle/Archivable
+  - viz/MarkArea
+- **Fields Composed**: 36 fields
+- **View Extensions Applied**:
+  - list: 4
+  - detail: 7
+  - form: 4
+  - timeline: 5
+  - card: 4
+
+### Component Selections (10 slots)
+
+#### High Confidence Selections (6 slots)
+
+1. **tab-0** → **CycleProgressCard** (0.95)
+   - Intent: status-indicator
+   - Reason: view_extension placement
+
+2. **tab-1** → **PaymentTimeline** (0.95)
+   - Intent: metadata-display
+   - Reason: view_extension placement
+
+3. **header** → **VizAreaPreview** (0.95)
+   - Intent: page-header
+   - Reason: view_extension placement
+   - Other candidates: StatusTimeline, CancellationSummary, ArchiveSummary (all 0.95)
+
+4. **tab-3** → **StatusBadge** (1.00)
+   - Intent: status-indicator
+   - Reason: Preferred for status-indicator (rank 1); tag match (status); 2 context matches; name contains "status"
+
+5. **tab-5** → **Card** (0.94)
+   - Intent: data-display
+   - Reason: Preferred for data-display (rank 1); 2 tag matches; position affinity
+
+6. **tab-7** → **Card** (0.94)
+   - Intent: data-display
+   - Reason: Preferred for data-display (rank 1); 2 tag matches; position affinity
+
+#### Medium Confidence Selections (3 slots)
+
+7. **tab-2** → **Stack** (0.71)
+   - Intent: metadata-display
+   - Reason: Preferred for metadata-display (rank 1); position affinity
+
+8. **tab-4** → **Text** (0.76)
+   - Intent: metadata-display
+   - Reason: Preferred for metadata-display (rank 2); field affinity for datetime type
+
+9. **tab-6** → **Stack** (0.71)
+   - Intent: metadata-display
+   - Reason: Preferred for metadata-display (rank 1); position affinity
+
+#### Low Confidence Selection (1 slot) ⚠️
+
+10. **metadata** → **AuditTimeline** (0.40)
+    - Intent: metadata-display
+    - Reason: 1 tag match (metadata); 1 context match
+    - **Alternatives to review**:
+      - TagSummary (0.95)
+      - TagManager (0.90)
+    - ⚠️ **Review hint**: Low-confidence selection. Consider using `preferences.componentOverrides` to pin a different component.
+
+### Warnings
+- ⚠️ **OODS-V121**: Object 'Subscription' has maturity 'beta' — composed output may change
+- ⚠️ **OODS-V117**: 13 field collisions where object schema overrides trait definitions
+- ⚠️ **OODS-V120**: No matching slot for position "bottom" from lifecycle/Timestampable/AuditTimeline

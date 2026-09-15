@@ -1,6 +1,6 @@
 # design.compose
 
-> Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes). Use schema.save to persist beyond TTL.
+> Compose a complete UiSchema from a natural-language intent description. Returns schemaRef for reuse in validate/render/code.generate. schemaRef includes createdAt/expiresAt timestamps (default TTL: 30 minutes) and lives in the server process that issued it: a restarted client starts a new server that does not know earlier refs and returns OODS-N003 for them. Use schema.save to persist beyond TTL or across sessions.
 
 **Registration:** auto
 
