@@ -339,7 +339,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N017', { code: 'OODS-N017', category: 'not_found', message: 'Generated artifact envelope missing', retryable: false }],
   ['OODS-N018', { code: 'OODS-N018', category: 'not_found', message: 'HTML Tailwind styling unavailable', retryable: false }],
 
-  ['OODS-N019', { code: 'OODS-N019', category: 'not_found', message: 'Design loop server not running; start it with pnpm design:loop serve', retryable: true }],
+  ['OODS-N021', { code: 'OODS-N021', category: 'not_found', message: 'design.preview: no preview host is reachable; call through the HTTP bridge or the stdio adapter, or set OODS_PREVIEW_HOST_URL', retryable: true }],
   ['OODS-N020', { code: 'OODS-N020', category: 'not_found', message: 'brand.apply: canonical brand source is not shipped in this runtime', retryable: false }],
 
   // ── Conflict ────────────────────────────────────────────────────────────

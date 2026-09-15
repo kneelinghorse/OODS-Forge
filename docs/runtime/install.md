@@ -20,6 +20,7 @@ Inside the archive, `LICENSE`, `COMMERCIAL.md` and `THIRD-PARTY-NOTICES.md` sit 
 
 - Node.js 20.11.1 or newer on the PATH as `node` (or set `OODS_NODE_PATH` to a Node binary); the bundle is built and exercised on Node 24.
 - macOS, Linux or Windows with a shell that can run `tar`; no package manager, no build step.
+- The running-app preview (`design.preview`) compiles generated screens with a bundled esbuild binary on macOS (arm64, x64) and Linux (arm64, x64); on any other platform the other tools work and `design.preview` returns `OODS-N021` naming the platform.
 - One of the clients below.
 
 ## 3. Verify and extract
@@ -118,4 +119,4 @@ Read-only use creates no files. Calls that opt into writing (`apply: true`, save
 
 ## 8. Versions and feedback
 
-This page describes runtime v0.1.0 with adapter 0.3.0. The manifest inside the archive names the exact source commit. Problems, questions and "this did not read right" notes go to <https://github.com/kneelinghorse/OODS-Forge/issues/new/choose>.
+This page describes runtime v0.1.0 with adapter 0.4.0. The manifest inside the archive names the exact source commit. Problems, questions and "this did not read right" notes go to <https://github.com/kneelinghorse/OODS-Forge/issues/new/choose>.

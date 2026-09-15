@@ -24,6 +24,16 @@ export const TERMS_FILES = Object.freeze([
 // The only token source that ships: the per-brand DTCG documents brand.apply reads.
 export const BRAND_SOURCE_PATH = "packages/tokens/src/tokens/brands";
 
+// The preview host compiles generated artifacts with esbuild; these four platform binaries ship
+// as plain dependencies of @oods/mcp-bridge (the closure installs without optional packages).
+export const PREVIEW_PLATFORMS = Object.freeze([
+  "darwin-arm64",
+  "darwin-x64",
+  "linux-arm64",
+  "linux-x64",
+]);
+export const PREVIEW_RUNTIME_MANIFEST = "packages/mcp-bridge/dist/preview-runtime/manifest.json";
+
 export const RUNTIME_PACKAGES = Object.freeze([
   "mcp-server",
   "mcp-adapter",

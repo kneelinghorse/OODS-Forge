@@ -82,9 +82,13 @@ describe('s200-m05 README for a newcomer', () => {
     expect(run).toContain(`\`health\` reports the tool ledger's ${facts.tools} entries by evidence tier`);
     expect(run).toContain('`warnings` are normal on this call');
     expect(run).toContain('four of the set apply to a plain bar chart');
-    expect(run).toContain('titled `OODS Preview`, showing the composed screen\'s structure');
+    expect(run).toContain('titled after the screen (`Subscription detail`), showing the composed screen\'s structure');
+    expect(run).toContain('a field bound by name with no value shows `—` where live data would go');
     expect(readme).toContain('a restarted client starts a new one that does not know earlier refs (`OODS-N003`)');
-    expect(run).toContain('OODS-N019');
+    // Sprint 201: design.preview runs from the bundle through the adapter's preview host.
+    expect(run).toContain('`design.preview` opens the composed screen as the generated React or Vue app actually running');
+    expect(run).toContain('OODS-N021');
+    expect(readme).not.toContain('OODS-N019');
     expect(run).toContain('[FEEDBACK.md](FEEDBACK.md)');
     // Run 3 (#115): the overrides example names the slot that carries the hint on the sample call and one of its candidates.
     expect(readme).toContain('{"componentOverrides": {"metadata": "TagSummary"}}');

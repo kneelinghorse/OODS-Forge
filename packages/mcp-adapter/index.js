@@ -36,6 +36,19 @@ function resolveNativeServerDir() {
 
 const NATIVE_SERVER_DIR = resolveNativeServerDir();
 const NATIVE_DIST = path.join(NATIVE_SERVER_DIR, 'dist');
+const PREVIEW_HOST_CANDIDATES = [
+  path.join(PROJECT_ROOT, 'packages', 'mcp-bridge'),
+  path.join(__dirname, '..', 'mcp-bridge'),
+];
+
+/** The bridge's standalone preview host (dist/preview/standalone.js), when the bridge is built. */
+function resolvePreviewHostEntry() {
+  for (const candidate of PREVIEW_HOST_CANDIDATES) {
+    const entry = path.join(candidate, 'dist', 'preview', 'standalone.js');
+    if (fs.existsSync(entry)) return entry;
+  }
+  return null;
+}
 const SCHEMAS_DIR = path.join(NATIVE_DIST, 'schemas');
 
 const DEFAULT_ROLE = process.env.MCP_ROLE || 'designer';
@@ -114,6 +127,89 @@ function deriveAnnotations(toolName, policy) {
   return { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 }
 
+// ── Preview host ──────────────────────────────────────────────────────
+// design.preview needs the running-app preview host. The adapter starts it lazily on
+// 127.0.0.1 the first time that tool is called, reads the port it chose from its first
+// stdout line, tells the native server where it listens with every request, and stops it
+// when the adapter stops. stdout stays reserved for JSON-RPC; the host logs to stderr.
+
+class PreviewHost {
+  constructor({ entry, serverCwd }) {
+    this.entry = entry;
+    this.serverCwd = serverCwd;
+    this.child = null;
+    this.url = null;
+    this.port = null;
+    this.starting = null;
+  }
+
+  async ensure() {
+    if (this.url && this.child && this.child.exitCode === null) return this.url;
+    if (this.starting) return this.starting;
+    this.starting = this.start().finally(() => { this.starting = null; });
+    return this.starting;
+  }
+
+  start() {
+    return new Promise((resolve, reject) => {
+      const nodeBin = process.env.OODS_NODE_PATH || process.execPath;
+      const child = spawn(nodeBin, [this.entry, '--server-cwd', this.serverCwd, '--port', '0'], {
+        cwd: path.dirname(this.entry),
+        stdio: ['pipe', 'pipe', 'inherit'],
+        env: { ...process.env },
+      });
+      this.child = child;
+      let buffer = '';
+      let settled = false;
+      const fail = (error) => {
+        if (settled) return;
+        settled = true;
+        this.child = null;
+        this.url = null;
+        this.port = null;
+        reject(error);
+      };
+      child.stdout.setEncoding('utf8');
+      child.stdout.on('data', (chunk) => {
+        buffer += chunk;
+        const newline = buffer.indexOf('\n');
+        if (newline < 0 || settled) return;
+        const line = buffer.slice(0, newline).trim();
+        buffer = '';
+        let parsed;
+        try { parsed = JSON.parse(line); } catch { return fail(new Error(`Preview host announced itself unreadably: ${line}`)); }
+        const host = parsed && parsed.previewHost;
+        if (!host || typeof host.url !== 'string' || !Number.isInteger(host.port)) return fail(new Error(`Preview host announced no port: ${line}`));
+        settled = true;
+        this.url = host.url;
+        this.port = host.port;
+        console.error(`[oods-mcp-adapter] preview host started on ${host.url} (pid ${child.pid})`);
+        resolve(host.url);
+      });
+      child.once('error', (error) => fail(error));
+      child.once('exit', (code, signal) => {
+        if (this.child === child) { this.child = null; this.url = null; this.port = null; }
+        fail(new Error(`Preview host exited before announcing a port (${code ?? signal})`));
+      });
+    });
+  }
+
+  async close() {
+    const child = this.child;
+    this.child = null;
+    this.url = null;
+    this.port = null;
+    if (!child || child.exitCode !== null) return;
+    await new Promise((resolve) => {
+      const timer = setTimeout(() => { if (child.exitCode === null) child.kill('SIGKILL'); }, 2000);
+      timer.unref();
+      child.once('close', () => { clearTimeout(timer); resolve(); });
+      child.stdin.end();
+      if (!child.killed && !child.kill('SIGTERM')) { clearTimeout(timer); resolve(); }
+    });
+  }
+}
+
 class NativeOodsClient {
   constructor({ cwd, role }) {
     this.cwd = cwd;
@@ -174,10 +270,10 @@ class NativeOodsClient {
     }
   }
 
-  async run(tool, input) {
+  async run(tool, input, context) {
     this.ensure();
     const id = ++this.seq;
-    const payload = JSON.stringify({ id, tool, input, role: this.role }) + '\n';
+    const payload = JSON.stringify({ id, tool, input, role: this.role, ...(context ? { context } : {}) }) + '\n';
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
       this.child.stdin.write(payload, 'utf8');
@@ -214,6 +310,8 @@ async function main() {
   }));
 
   const client = new NativeOodsClient({ cwd: NATIVE_SERVER_DIR, role: DEFAULT_ROLE });
+  const previewHostEntry = resolvePreviewHostEntry();
+  const previewHost = previewHostEntry ? new PreviewHost({ entry: previewHostEntry, serverCwd: NATIVE_SERVER_DIR }) : null;
   const server = new Server(
     { name: 'oods-foundry-adapter', version: ADAPTER_VERSION },
     { capabilities: { tools: {} } }
@@ -241,7 +339,16 @@ async function main() {
       };
     }
     try {
-      const result = await client.run(internalName, args ?? {});
+      let context;
+      if (internalName === 'design.preview') {
+        // Start the preview host now, so the native call can hand back a URL that already serves.
+        if (!previewHost) {
+          console.error('[oods-mcp-adapter] design.preview: no preview host is built (packages/mcp-bridge/dist/preview/standalone.js); the native server will report OODS-N021');
+        } else {
+          context = { previewHostUrl: await previewHost.ensure() };
+        }
+      }
+      const result = await client.run(internalName, args ?? {}, context);
       return {
         content: [
           {
@@ -286,6 +393,7 @@ async function main() {
     if (shuttingDown) return;
     shuttingDown = true;
     await client.close();
+    if (previewHost) await previewHost.close();
     await transport.close();
     process.exit(0);
   };

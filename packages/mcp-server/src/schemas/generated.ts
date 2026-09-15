@@ -968,6 +968,11 @@ export namespace BrandApplyOutputSchema {
         }[];
         durationMs: number;
       } | null;
+      portable?: {
+        sourceWrites: 'skipped';
+        tokenBuild: 'skipped';
+        reason: string;
+      };
     };
     artifacts: string[];
     diagnosticsPath?: string;
@@ -3635,7 +3640,7 @@ export namespace DesignComposeOutputSchema {
     intent: string;
     selectedComponent?: string;
     /**
-     * Raw confidence score (0-1) before normalization.
+     * The slot's selection confidence (0-1, raw). Not the same number as candidates[].score, which ranks each candidate.
      */
     confidence?: number;
     /**
@@ -3652,7 +3657,10 @@ export namespace DesignComposeOutputSchema {
     reviewHint?: string;
     candidates: {
       name: string;
-      confidence: number;
+      /**
+       * The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it.
+       */
+      score: number;
       reason: string;
       keywordTagMatches?: number;
       keywordTraitMatches?: number;
@@ -3660,11 +3668,18 @@ export namespace DesignComposeOutputSchema {
       contextTraitMatches?: number;
     }[];
     /**
+     * Every component the layout or a view extension placed in this slot, in render order; the first is selectedComponent.
+     */
+    placedComponents?: string[];
+    /**
      * Alternative candidates surfaced when confidence < 0.5.
      */
     alternativeCandidates?: {
       name: string;
-      confidence: number;
+      /**
+       * The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it.
+       */
+      score: number;
       reason: string;
       keywordTagMatches?: number;
       keywordTraitMatches?: number;
@@ -3684,7 +3699,7 @@ export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
 // Source: design.preview.input.json
 export namespace DesignPreviewInputSchema {
   /**
-   * Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.
+   * Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL.
    */
   export interface DesignPreviewInput {
     /**
@@ -3695,27 +3710,19 @@ export namespace DesignPreviewInputSchema {
      * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.
      */
     context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
-    framework?: 'react' | 'vue' | 'both';
     /**
-     * @minItems 1
-     * @maxItems 10
+     * Which generated app to compile and serve; both frameworks by default, each at its own URL.
      */
-    widths?:
-      | [number]
-      | [number, number]
-      | [number, number, number]
-      | [number, number, number, number]
-      | [number, number, number, number, number]
-      | [number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number, number]
-      | [number, number, number, number, number, number, number, number, number, number];
+    framework?: 'react' | 'vue' | 'both';
     preferences?: {
       /**
-       * Theme token (e.g., 'light', 'dark').
+       * Theme the page mounts with (data-theme and the matching token CSS scope).
        */
-      theme?: string;
+      theme?: 'light' | 'dark' | 'hc';
+      /**
+       * Brand the page mounts with (data-brand and the matching token CSS scope).
+       */
+      brand?: 'A' | 'B';
       /**
        * Number of metric columns for dashboard layout.
        */
@@ -3746,32 +3753,78 @@ export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
 // Source: design.preview.output.json
 export namespace DesignPreviewOutputSchema {
   /**
-   * Validated browser receipts, including local paths, accessibility text, measurements, errors, source and artifact hashes. An unavailable loop throws OODS-N019 before writing partial output.
+   * The URL of the generated app running in the preview host, one per compiled framework, with the stored record, the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written.
    */
   export interface DesignPreviewOutput {
     status: 'ok';
-    schemaHash: string;
     /**
-     * Exact receipts validated against scripts/design-loop/receipt.schema.json by the shared render leg.
-     *
+     * Canonical hash of the composed schema; the preview key is its first sixteen hex characters.
+     */
+    schemaHash: string;
+    key: string;
+    /**
+     * The first compiled framework's page; open it in a browser.
+     */
+    previewUrl: string;
+    /**
      * @minItems 1
      * @maxItems 2
      */
-    receipts:
+    previews:
       | [
           {
-            [k: string]: any;
+            framework: 'react' | 'vue';
+            url: string;
+            /**
+             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+             */
+            moduleUrl: string;
+            artifactContentHash: string;
+            compiled: {
+              bytes: number;
+              sha256: string;
+            };
           }
         ]
       | [
           {
-            [k: string]: any;
+            framework: 'react' | 'vue';
+            url: string;
+            /**
+             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+             */
+            moduleUrl: string;
+            artifactContentHash: string;
+            compiled: {
+              bytes: number;
+              sha256: string;
+            };
           },
           {
-            [k: string]: any;
+            framework: 'react' | 'vue';
+            url: string;
+            /**
+             * The artifact compiled to one ESM module; fetched once here so a compile failure fails this call.
+             */
+            moduleUrl: string;
+            artifactContentHash: string;
+            compiled: {
+              bytes: number;
+              sha256: string;
+            };
           }
         ];
-    receiptPaths: string[];
+    host: {
+      url: string;
+      port: number;
+      /**
+       * Where the record was written and where the host reads it; beside the saved-schema store.
+       */
+      previewsDir: string;
+    };
+    brand: 'A' | 'B';
+    theme: 'light' | 'dark' | 'hc';
+    recordPath: string;
     durationMs: number;
   }
 }
@@ -4024,6 +4077,9 @@ export namespace HealthOutputSchema {
     status: 'ok' | 'degraded';
     server: {
       version: string;
+      /**
+       * Milliseconds since the native server process started.
+       */
       uptime: number;
     };
     registry: {

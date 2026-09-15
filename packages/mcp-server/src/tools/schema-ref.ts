@@ -9,6 +9,8 @@ export type SchemaRefRecord = {
   // via internal casts; generic callers use createValueRef / resolveValueRef.
   schema: unknown;
   source: string;
+  /** Human title of what the ref holds (e.g. "Subscription detail"); the preview document is titled with it. */
+  label?: string;
   createdAt: string;
   expiresAt: string;
   createdAtMs: number;
@@ -91,8 +93,10 @@ export function hydrateSchemaRef(schema: unknown, options: HydrateSchemaRefOptio
   return record;
 }
 
-export function createSchemaRef(schema: UiSchema, source = 'compose'): SchemaRefRecord {
-  return hydrateSchemaRef(schema, { source });
+export function createSchemaRef(schema: UiSchema, source = 'compose', label?: string): SchemaRefRecord {
+  const record = hydrateSchemaRef(schema, { source });
+  if (label) record.label = label;
+  return record;
 }
 
 export function resolveSchemaRef(ref: string): { ok: true; record: SchemaRefRecord; schema: UiSchema } | { ok: false; reason: 'missing' | 'expired' } {

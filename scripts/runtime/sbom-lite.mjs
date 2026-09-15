@@ -6,7 +6,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
-import { canonicalJson, RUNTIME_PACKAGES, sha256 } from "./manifest.mjs";
+import { canonicalJson, PREVIEW_PLATFORMS, RUNTIME_PACKAGES, sha256 } from "./manifest.mjs";
 
 function bytewiseCompare(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -131,8 +131,9 @@ export function buildSbomLiteFromLock(
       version,
       integrity,
       optional: record.optional === true,
-      ...(Array.isArray(record.os) ? { os: [...record.os] } : {}),
-      ...(Array.isArray(record.cpu) ? { cpu: [...record.cpu] } : {}),
+      // pnpm's post-install lock keeps os but drops cpu, so the SBOM records one normalized
+      // marker instead of the raw arrays and stays identical between the two locks.
+      ...(Array.isArray(record.os) || Array.isArray(record.cpu) ? { platformSpecific: true } : {}),
     });
 
     const peerDependencyNames = new Set(
@@ -156,7 +157,7 @@ export function buildSbomLiteFromLock(
   );
   const optionalCount = packages.filter((entry) => entry.optional).length;
   const platformSpecificCount = packages.filter(
-    (entry) => entry.os || entry.cpu,
+    (entry) => entry.platformSpecific,
   ).length;
   const integrityCount = packages.filter((entry) =>
     entry.integrity.startsWith("sha512-"),
@@ -184,10 +185,11 @@ export function buildSbomLiteFromLock(
     0,
     "portable runtime closure gained optional packages",
   );
-  assert.equal(
-    platformSpecificCount,
-    0,
-    "portable runtime closure gained platform-specific packages",
+  // Sprint 201: exactly the esbuild binaries the preview host ships, nothing else platform-bound.
+  assert.deepEqual(
+    packages.filter((entry) => entry.platformSpecific).map((entry) => entry.name).sort(bytewiseCompare),
+    PREVIEW_PLATFORMS.map((platform) => `@esbuild/${platform}`).sort(bytewiseCompare),
+    "portable runtime closure platform-specific packages must be the shipped esbuild binaries",
   );
 
   return {

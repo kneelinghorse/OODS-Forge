@@ -133,6 +133,7 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
   let appliedPatch = false;
   let meta: ReplValidationMeta | undefined;
 
+  let documentTitle: string | undefined;
   if (mode === 'full') {
     if (input.schema) {
       workingTree = cloneTree(input.schema);
@@ -140,6 +141,7 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
       const resolved = resolveSchemaRef(input.schemaRef);
       if (resolved.ok) {
         workingTree = resolved.schema;
+        documentTitle = resolved.record.label;
       } else {
         const code = resolved.reason === 'expired' ? 'OODS-N004' : 'OODS-N003';
         errors.push({
@@ -324,6 +326,9 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
         screenHtml,
         schema: workingTree,
         compact,
+        // The document is titled after what it shows (the composed object and context, or the
+        // screen's own title); "OODS Preview" remains only for an untitled inline schema.
+        ...(documentTitle ? { title: documentTitle } : {}),
         // s169 m04 — brand. `renderDocument` already accepted and escaped `brand`; only
         // this plumbing was missing. Passed ONLY when supplied, so `normalizeBrand`'s
         // 'default' fallback (and every byte of the existing document) is untouched

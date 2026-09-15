@@ -50,7 +50,7 @@ describe('s200 portable runtime contract: a public runbook, generated install st
   });
 
   it('carries every runtime environment variable the bridge and server read', () => {
-    for (const variable of ['MCP_TOOLSET', 'MCP_EXTRA_TOOLS', 'MCP_BRIDGE_PORT', 'BRIDGE_TOKEN', 'MCP_BRIDGE_CORS_ORIGIN', 'MCP_ROLE', 'MCP_USER', 'MCP_HEALTH_PORT', 'MCP_BRAND', 'MCP_THEME', 'MCP_SCHEMA_STORE_ROOT', 'MCP_SCHEMA_STORE_DIR', 'MCP_MAPPINGS_PATH', 'MCP_BRAND_SOURCE_ROOT', 'OODS_NODE_PATH']) {
+    for (const variable of ['MCP_TOOLSET', 'MCP_EXTRA_TOOLS', 'MCP_BRIDGE_PORT', 'BRIDGE_TOKEN', 'MCP_BRIDGE_CORS_ORIGIN', 'MCP_ROLE', 'MCP_USER', 'MCP_HEALTH_PORT', 'MCP_BRAND', 'MCP_THEME', 'MCP_SCHEMA_STORE_ROOT', 'MCP_SCHEMA_STORE_DIR', 'MCP_MAPPINGS_PATH', 'MCP_BRAND_SOURCE_ROOT', 'OODS_NODE_PATH', 'OODS_PREVIEW_HOST_URL', 'ESBUILD_BINARY_PATH']) {
       expect(runbook, variable).toContain(`\`${variable}\``);
     }
   });

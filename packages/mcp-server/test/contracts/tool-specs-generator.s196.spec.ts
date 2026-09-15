@@ -49,7 +49,7 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     for (const family of ['map', 'schema', 'object', 'repl']) expect(links).toContain(`../api/${family}.md`);
   });
 
-  it('includes every adapter description verbatim and every one of the 119 actual root input properties', () => {
+  it('includes every adapter description verbatim and every one of the 118 actual root input properties', () => {
     let inputs = 0;
     for (const name of names) {
       const body = section(name);
@@ -65,8 +65,8 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
         }
       }
     }
-    expect(inputs).toBe(119); // The handoff's 118 was stale; dispatch measurement is the denominator.
-    expect(document).toContain('119 root input parameters');
+    expect(inputs).toBe(118); // s201-m01: design.preview dropped widths; dispatch measurement is the denominator.
+    expect(document).toContain('118 root input parameters');
     expect(sources.dispatch['diag.snapshot'].input).toBe('packages/mcp-server/src/schemas/generic.input.json');
     expect(sources.dispatch['tokens.build'].output).toBe('packages/mcp-server/src/schemas/generic.output.json');
   });
@@ -140,7 +140,8 @@ describe('Tool-Specs generated from dispatched contracts (s196 m04)', () => {
     ['action property', (copy: typeof sources) => { copy.schemas[copy.dispatch.map.input].allOf![0].then!.properties!.newActionOption = { type: 'string' }; }],
     ['union output', (copy: typeof sources) => { copy.schemas[copy.dispatch.object.output].anyOf![0].properties!.newResponseField = { type: 'integer' }; }],
     ['description', (copy: typeof sources) => { copy.descriptions.health += ' New advertised health behavior.'; }],
-    ['portable limit', (copy: typeof sources) => { copy.ledger.rows.find(row => row.portableLimits.length > 0)!.portableLimits[0].code = 'OODS-N999'; }],
+    // s201-m01: no advertised tool keeps a typed limit, so the mutation introduces one instead of editing one.
+    ['portable limit', (copy: typeof sources) => { copy.ledger.rows.find(row => row.name === 'design.preview')!.portableLimits.push({ id: 'portable-fixture-unavailable', tool: 'design.preview', status: 'typed', kind: 'documented-limit', code: 'OODS-N999', retryable: true, blocker: 'Fixture dependency unavailable.', transportOutcome: 'tools/call returned isError with OODS-N999', receipt: { path: copy.ledger.portableExecution.path, sha256: copy.ledger.portableExecution.sha256, bundleHead: copy.ledger.portableExecution.bundleHead } } as never); }],
     ['proof tier', (copy: typeof sources) => { copy.ledger.rows[0].proofTier = 'none'; }],
     ['retired tool', (copy: typeof sources) => { copy.ledger.retired.push({ name: 'retired.fixture', reason: 'Retirement must change the published roster.', decisionIds: [9999] }); }],
     ['surface count', (copy: typeof sources) => { copy.components.rows[0].surfaces.react.state = 'unavailable'; }],

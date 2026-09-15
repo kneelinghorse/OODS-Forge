@@ -4,7 +4,7 @@
 
 This operator contract is generated from the live dispatcher, registry, adapter descriptions, JSON schemas and capability ledgers. Optional policy and usage notes belong in `docs/mcp/tool-notes/<tool>.md`.
 
-The 24 live tools declare 119 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
+The 24 live tools declare 118 root input parameters. Conditional action parameters and output union branches are expanded below. Required flags apply only within the displayed branch; alternatives do not make every key mandatory. Nested structures remain defined by the linked dispatch schemas.
 
 ## Registration + enablement
 
@@ -19,13 +19,13 @@ Bridge-exposed tools require both [agent policy](../../configs/agent/policy.json
 
 ## Evidence and portable outcomes
 
-Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`.
+Tool ledger: [packages/mcp-server/registry/tool-capability-ledger.v1.json](../../packages/mcp-server/registry/tool-capability-ledger.v1.json), recorded source head `"a93012abefc0b53ec95325bb58b30adf6b155d27"`.
 
 Proof tier methodology: Highest location tier of a literal runtime import of a handler-bearing module in mcp-server test/spec sources. Grouped action imports roll up to their registered family. Imports are source evidence, not proof of invocation, passing execution or browser certification. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not promote a tier.
 
 README references in product-reality directories containing browser/packed/runtime/SVG/screenshot prose. Current census reports are excluded. References are discovery pointers, never verified receipts or tier promotions.
 
-Recorded portable execution: 18 pass and 1 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-200/m04/e2e-host.json](../../artifacts/product-reality/sprint-200/m04/e2e-host.json); SHA-256 `"sha256:0ec3551038a9d61557066b8d0e2e28c514704976a3d28179bb05eb3b2350d099"`; bundle head `"723bc2195cb99fa3482cad3fbd5700d8713e9a7e"`; dirty=`false`. This records the measured development bundle, not a later clean release.
+Recorded portable execution: 19 pass and 0 typed dependency outcomes across 19 tools. Receipt: [artifacts/product-reality/sprint-201/m01/e2e-host.json](../../artifacts/product-reality/sprint-201/m01/e2e-host.json); SHA-256 `"sha256:f1198c1d6198ce1f6911e71414c4201743e584d343c6276ac4b858524b586a0e"`; bundle head `"a93012abefc0b53ec95325bb58b30adf6b155d27"`; dirty=`true`. This records the measured development bundle, not a later clean release.
 
 ## Current component capability counts
 
@@ -516,30 +516,27 @@ Additional properties: `false`.
 
 ### `design.preview`
 
-Render a public object/context through the same local browser design loop used by pnpm design:loop render. Returns exact React/Vue receipts with screenshots, accessibility text, layout measurements, browser errors, and schema/artifact hashes. Defaults to both frameworks at 390/820/1440 px. Requires pnpm design:loop serve in this checkout; OODS-N019 explains how to start it when unavailable. Writes isolated local receipt artifacts only; never saves or edits a schema. This observation is not usability certification. Local dependency limitation: when the design-loop server at 127.0.0.1:4477 is absent, the outcome is typed OODS-N019; no hosted preview is implied. Adapter v0.3.0 preserves the native OODS-N019 code, retryable flag and data in JSON error content at the tools/call wire.
+Open a public object/context as the generated React or Vue app actually running in a browser. Composes the screen, generates one or both frameworks, seeds the deterministic field model, stores the preview beside the saved-schema store and compiles each artifact once through the preview host; returns one URL per framework with the schema hash and the compiled module digests. The HTTP bridge hosts the preview in-process and the stdio adapter starts it on 127.0.0.1 for Claude Desktop, Claude Code and Cursor, so the extracted runtime bundle serves it with no Vite, npm install or browser automation. Typed limit: without a reachable host (a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary) the outcome is OODS-N021, retryable, with the host details in data. Writes only the preview record; never saves or edits a schema. A running preview is an observation, not usability certification.
 
 [Complete input/output reference](../api/design-preview.md). The tables below follow the actual dispatch schema paths; those paths control when the legacy API page selects a different schema.
 
-Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"typed"` (`"OODS-N019"`).
+Proof tier: `"product-reality"` (source-import classification under the methodology above). Portable outcome: `"pass"`.
 
 Server policy: roles `"designer"`, `"maintainer"`; read-only; timeout 150000 ms; rate 10/minute; concurrency 1.
 
-Portable limit `"portable-design-loop-unavailable"`: Design loop server not running in this checkout. Start it with pnpm design:loop serve. Code `"OODS-N019"`; retryable=`true`. tools/call returned isError with OODS-N019, retryable and data preserved.
-
-Documented limit (documented-limit): Requires the local design-loop server in this checkout and a browser runtime; unavailable dependency returns OODS-N019. Source: [packages/mcp-server/src/tools/design.preview.ts](../../packages/mcp-server/src/tools/design.preview.ts).
+Documented limit (documented-limit): Requires a reachable preview host: the HTTP bridge hosts it in-process and the stdio adapter starts it; a native server run on its own, a host reading another schema store root, or a platform without a bundled esbuild binary returns retryable OODS-N021. Source: [packages/mcp-server/src/tools/design.preview.ts](../../packages/mcp-server/src/tools/design.preview.ts).
 
 #### Input contract
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.input.json](../../packages/mcp-server/src/schemas/design.preview.input.json).
 
-Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.
+Open a public object/context as the generated React or Vue app actually running in a browser. Compose, generate and store the preview; the preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at the returned URL.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
 | `object` | string | Yes | — | Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.; minLength: `1` |
 | `context` | `"detail"` or `"list"` or `"form"` or `"timeline"` or `"card"` or `"inline"` or `"workflow"` | Yes | — | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
-| `framework` | `"react"` or `"vue"` or `"both"` | No | `"both"` | — |
-| `widths` | array of integer | No | `[390,820,1440]` | minItems: `1`; maxItems: `10`; uniqueItems: `true` |
+| `framework` | `"react"` or `"vue"` or `"both"` | No | `"both"` | Which generated app to compile and serve; both frameworks by default, each at its own URL. |
 | `preferences` | object | No | — | additionalProperties: `false` |
 
 Required keys in this branch: `"object"`, `"context"`.
@@ -550,17 +547,22 @@ Additional properties: `false`.
 
 Dispatch schema: [packages/mcp-server/src/schemas/design.preview.output.json](../../packages/mcp-server/src/schemas/design.preview.output.json).
 
-Validated browser receipts, including local paths, accessibility text, measurements, errors, source and artifact hashes. An unavailable loop throws OODS-N019 before writing partial output.
+The URL of the generated app running in the preview host, one per compiled framework, with the stored record, the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written.
 
 | Parameter / field | Type | Required in this branch | Default | Description / constraints |
 |---|---|---|---|---|
 | `status` | `"ok"` | Yes | — | — |
-| `schemaHash` | string | Yes | — | pattern: `"^sha256:[a-f0-9]{64}$"` |
-| `receipts` | array of object | Yes | — | Exact receipts validated against scripts/design-loop/receipt.schema.json by the shared render leg.; minItems: `1`; maxItems: `2` |
-| `receiptPaths` | array of string | Yes | — | — |
+| `schemaHash` | string | Yes | — | Canonical hash of the composed schema; the preview key is its first sixteen hex characters.; pattern: `"^sha256:[a-f0-9]{64}$"` |
+| `key` | string | Yes | — | pattern: `"^[a-f0-9]{16}$"` |
+| `previewUrl` | string | Yes | — | The first compiled framework's page; open it in a browser.; format: `"uri"` |
+| `previews` | array of object | Yes | — | minItems: `1`; maxItems: `2` |
+| `host` | object | Yes | — | additionalProperties: `false` |
+| `brand` | `"A"` or `"B"` | Yes | — | — |
+| `theme` | `"light"` or `"dark"` or `"hc"` | Yes | — | — |
+| `recordPath` | string | Yes | — | — |
 | `durationMs` | number | Yes | — | minimum: `0` |
 
-Required keys in this branch: `"status"`, `"schemaHash"`, `"receipts"`, `"receiptPaths"`, `"durationMs"`.
+Required keys in this branch: `"status"`, `"schemaHash"`, `"key"`, `"previewUrl"`, `"previews"`, `"host"`, `"brand"`, `"theme"`, `"recordPath"`, `"durationMs"`.
 
 Additional properties: `false`.
 

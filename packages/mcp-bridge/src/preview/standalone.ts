@@ -1,0 +1,55 @@
+/**
+ * The preview host on its own, for the stdio adapter: it listens on 127.0.0.1 at a free port,
+ * prints one JSON line naming the URL on stdout, logs to stderr, and exits when its stdin closes
+ * or it receives SIGTERM, so it never outlives the adapter that started it.
+ *
+ *   node dist/preview/standalone.js --server-cwd <packages/mcp-server> [--port 0]
+ */
+import '../load-env.js';
+import Fastify from 'fastify';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { registerPreviewHost } from './host.js';
+import { resolvePreviewStoreDir } from './store.js';
+
+function parseArgs(argv: string[]): { serverCwd: string; port: number } {
+  let serverCwd = fileURLToPath(new URL('../../../mcp-server/', import.meta.url));
+  let port = 0;
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index]!;
+    if (arg === '--server-cwd') serverCwd = path.resolve(argv[++index] ?? '');
+    else if (arg === '--port') port = Number(argv[++index]);
+    else throw new Error(`unknown argument: ${arg}`);
+  }
+  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('--port must be an integer between 0 and 65535');
+  return { serverCwd, port };
+}
+
+async function main() {
+  const { serverCwd, port } = parseArgs(process.argv.slice(2));
+  const fastify = Fastify({ logger: false });
+  const previewsDir = resolvePreviewStoreDir(serverCwd);
+  const status = await registerPreviewHost(fastify, { previewsDir });
+  await fastify.listen({ port, host: '127.0.0.1' });
+  const address = fastify.server.address();
+  const actualPort = typeof address === 'object' && address ? address.port : port;
+  const url = `http://127.0.0.1:${actualPort}`;
+  process.stdout.write(JSON.stringify({ previewHost: { url, port: actualPort, pid: process.pid, previewsDir, platform: status.platform } }) + '\n');
+  process.stderr.write(`[oods-preview-host] listening on ${url}; previews from ${previewsDir}\n`);
+  let stopping = false;
+  const stop = () => {
+    if (stopping) return;
+    stopping = true;
+    fastify.close().then(() => process.exit(0)).catch(error => { process.stderr.write(`[oods-preview-host] shutdown failed: ${error}\n`); process.exit(1); });
+  };
+  process.once('SIGINT', stop);
+  process.once('SIGTERM', stop);
+  process.stdin.once('end', stop);
+  process.stdin.once('close', stop);
+  process.stdin.resume();
+}
+
+main().catch(error => {
+  process.stderr.write(`[oods-preview-host] failed to start: ${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
+  process.exit(1);
+});

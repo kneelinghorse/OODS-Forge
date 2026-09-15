@@ -11,6 +11,8 @@ import { fileURLToPath } from "node:url";
 import {
   buildRuntimeManifest,
   canonicalJson,
+  PREVIEW_PLATFORMS,
+  PREVIEW_RUNTIME_MANIFEST,
   RUNTIME_ARCHIVE_FILE,
   RUNTIME_ARCHIVE_SHA256_FILE,
   RUNTIME_MANIFEST_FILE,
@@ -285,6 +287,12 @@ async function copyWorkspaceInputs(builderRoot) {
     }
   }
 
+  const previewRuntimeManifest = path.join(packagesRoot, "..", PREVIEW_RUNTIME_MANIFEST);
+  assert(
+    fs.existsSync(previewRuntimeManifest),
+    `the bridge preview runtime is missing from the built dist: ${PREVIEW_RUNTIME_MANIFEST}; run pnpm --filter @oods/mcp-bridge run build`,
+  );
+
   const adapterSource = path.join(REPO_ROOT, "packages", "mcp-adapter");
   const adapterDestination = path.join(packagesRoot, "mcp-adapter");
   await fsp.mkdir(adapterDestination, { recursive: true });
@@ -349,6 +357,23 @@ async function installProductionClosure(builderRoot) {
     ],
     { cwd: builderRoot, env },
   );
+}
+
+/** The four shipped esbuild binaries must be installed in the closure and each carry its executable. */
+async function assertPreviewPlatformBinaries(root) {
+  const virtualStore = path.join(root, "node_modules", ".pnpm");
+  const entries = await fsp.readdir(virtualStore);
+  for (const platform of PREVIEW_PLATFORMS) {
+    const prefix = `@esbuild+${platform}@`;
+    const match = entries.find((entry) => entry.startsWith(prefix));
+    assert(match, `esbuild platform package missing from the closure: ${prefix}*`);
+    const binary = path.join(virtualStore, match, "node_modules", "@esbuild", platform, "bin", "esbuild");
+    const stat = await fsp.stat(binary).catch(() => null);
+    assert(stat?.isFile() && stat.size > 0, `esbuild binary missing: ${binary}`);
+  }
+  const bridgeModules = path.join(root, "packages", "mcp-bridge", "node_modules", "@esbuild");
+  const linked = (await fsp.readdir(bridgeModules).catch(() => [])).sort();
+  assert.deepEqual(linked, [...PREVIEW_PLATFORMS].sort(), "@oods/mcp-bridge must resolve every shipped esbuild platform package");
 }
 
 async function installedClosureCount(root) {
@@ -554,6 +579,8 @@ function allowedCmosProvenance(relative) {
     relative === "artifacts/structured-data/manifest.json" ||
     relative === "packages/component-contracts/dist/index.cjs" ||
     relative === "packages/component-contracts/dist/index.js" ||
+    // The preview host's prebuilt runtime bundles the component-contracts dist and its provenance string.
+    relative === "packages/mcp-bridge/dist/preview-runtime/oods-component-contracts.js" ||
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
     relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||
@@ -830,6 +857,7 @@ async function main() {
   );
   await copyWorkspaceInputs(builderRoot);
   await installProductionClosure(builderRoot);
+  await assertPreviewPlatformBinaries(builderRoot);
   const installedSbom = await buildSbomLiteFromFile(
     path.join(builderRoot, "node_modules/.pnpm/lock.yaml"),
     { expectedCount: sbom.summary.packageCount },
